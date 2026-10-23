@@ -1,0 +1,182 @@
+---
+title: "Ollama smart home integration, free and open source"
+sidebar_label: "Ollama"
+description: "Ask your local Ollama models from a scene, and follow the state of the server. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-ollama.png"
+keywords:
+  - "ollama"
+  - "ollama smart home"
+  - "gladys ollama"
+  - "ollama gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-ollama instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Ollama","description":"Ask your local Ollama models from a scene, and follow the state of the server.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-ollama","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-ollama.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T18:01:57Z"}} />
+
+[Ollama](https://ollama.com) runs large language models (Llama, Mistral, Qwen, Gemma…) on your
+own machine. This integration lets your Gladys scenes ask them questions, with the scene
+information in the question, and use the answer in the next actions: send it as a message, have
+it read aloud, test it in a condition. Everything stays on your network: no account, no cloud.
+
+It also follows the server: online or not, models installed, models in memory and the memory
+they hold, with a dashboard widget and two scene triggers.
+
+Gladys already has an AI assistant through Gladys Plus (OpenAI). This integration is its local
+counterpart: free, private, and as quick as your hardware.
+
+## What you need
+
+- Gladys 5.1 or later.
+- An Ollama server on your network, with at least one model (`ollama pull llama3.2`, for
+  example). A small model (1 to 3 billion parameters) answers in a few seconds on a recent
+  processor; a graphics card makes larger models usable.
+- If Ollama runs on another machine than Gladys, it must accept the network: start it with
+  `OLLAMA_HOST=0.0.0.0` (see the
+  [Ollama FAQ](https://docs.ollama.com/faq#how-do-i-configure-ollama-server)). Ollama has no
+  password: keep port 11434 inside your network.
+
+## Set up
+
+1. In Gladys, open **Integrations**, find **Ollama** and install it.
+2. In **Configuration**, fill in:
+   - **Address**: the IP address or name of the server, e.g. `192.168.1.20` (port 11434 is
+     added), `192.168.1.20:8080`, or the full URL of a reverse proxy
+     (`https://ai.example.org`);
+   - **API key (optional)**: only for a reverse proxy that asks for a Bearer token;
+   - **Default model**: the model used when a scene action names none, e.g. `llama3.2`;
+   - **Longest wait for an answer**: 30 to 110 seconds (60 by default);
+   - **Keep the model in memory**: how long Ollama keeps the model after a question or a load.
+     Longer means quicker answers, but the memory stays taken;
+   - **Refresh interval**: how often the state of the server is read (one minute by default);
+   - **Language of the feature names**: the names given to the features and the texts of the
+     scene events and errors.
+3. Save, then press **Test the connection**: it shows the version of Ollama and the models
+   installed, with their exact names.
+4. In the **Discovery** tab, add the **Ollama** device to Gladys.
+
+## The Ollama device
+
+| Feature            | Meaning                                                         |
+| ------------------ | --------------------------------------------------------------- |
+| `Online`           | 1 when the server answers, 0 after two failed readings in a row |
+| `Installed models` | number of models on the server                                  |
+| `Models in memory` | number of models loaded, ready to answer                        |
+| `Memory used`      | memory held by the loaded models, in megabytes                  |
+
+## Dashboard
+
+The **Ollama** widget shows the server (online, version), the number of installed models, the
+models in memory with their size and the minutes before Ollama unloads them, and the memory
+used. Two buttons:
+
+- **Load model**: puts the default model in memory, so that the next question is quick (a
+  check mark when it already is);
+- **Free memory**: unloads every model in memory.
+
+## Scenes
+
+### Triggers
+
+- **Ollama is offline**: the server stops answering (two failed readings in a row, 15 seconds
+  apart). Variable: the reason.
+- **Ollama is back online**: the server answers again. Variable: the length of the outage, in
+  minutes.
+
+### Actions
+
+- **Ask Ollama**: asks a model a question.
+  - **Question**: type `{{` to insert scene information, e.g. the temperature of a sensor or a
+    value of the trigger;
+  - **Model**: empty for the default model;
+  - **Instructions**: how the model must answer, e.g. "Answer in one short sentence, in
+    English.";
+  - **Creativity**: the model's own setting, or from precise (0) to very creative (1.2);
+  - **Longest answer**: in characters (1000 by default, 10,000 at most). A longer answer is
+    cut at the end of a sentence (or of a word), marked with `…`.
+
+  Its results are available to the following actions: **Answer**, **Model used**, **Answer
+  time** (seconds) and **Answer cut** (yes/no). In a **Send Message** action, type `{{` and
+  pick **Answer**. When the question fails (server offline, model not installed, too long), the
+  answer is empty and the scene goes on.
+
+- **Load an Ollama model**: puts a model in memory ahead of time (empty: the default model).
+  Result: the model loaded.
+- **Unload an Ollama model**: frees the memory of a model (empty: every model in memory).
+  Result: the number of models unloaded.
+
+### Scene ideas
+
+- **Morning briefing**: at 7:00, **Ask Ollama** "In two friendly sentences, sum up the day:
+  outside temperature `{{…}}`, weather `{{…}}`.", then send the **Answer** to your phone.
+- **Readable alert**: when the washing machine plug drops below 5 W, ask "Write a short and
+  funny message saying the laundry is done." and use **Talk on a speaker** with the **Answer**.
+- **Free the memory at night**: at 1:00, **Unload an Ollama model** with an empty model, so
+  that the server is free for its other tasks.
+- **Watch the server**: on **Ollama is offline**, send yourself a message with the reason.
+
+## Troubleshooting
+
+- **"Ollama does not answer"**: check the address and the port (11434), that the server is
+  started, and that it listens on the network (`OLLAMA_HOST=0.0.0.0`). With Docker, the port
+  must be published.
+- **"model not installed"**: the name must be the exact one listed by **Test the connection**
+  (`ollama list` on the server). Install it with `ollama pull <name>`.
+- **"Ollama took too long to answer"**: the first question after a while loads the model from
+  disk. Use **Load an Ollama model** ahead of time, keep the model in memory longer, raise the
+  longest wait, or choose a smaller model.
+- **"access refused"**: the reverse proxy refused the API key.
+- Problems and ideas: [GitHub issues](https://github.com/guim31/gladys-ollama/issues).
+
+## Limits
+
+- One question, one answer: the action keeps no conversation history between two runs.
+- Text only: no image in the question, no tool calls.
+- Gladys waits two minutes at most for an action: very large models on a processor alone may
+  not fit. The answer is capped at 10,000 characters.
+- Reasoning models (DeepSeek-R1, Qwen3…) are asked to answer without their reasoning; any
+  reasoning left is removed from the answer.
+- The questions and the answers never go to the integration logs.
+- Tested against a real Ollama 0.40 server with small models (qwen2.5 0.5B, SmolLM2 135M).
+- Not affiliated with Ollama.
+
+## Configuration settings
+
+These are the settings Ollama asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Ollama server | `section` | No | Ollama listens on port 11434. If it runs on another machine than Gladys, start it with OLLAMA_HOST=0.0.0.0 so that it accepts the network. |
+| Address | `string` | Yes | IP address or name of the server (port 11434 by default), or the full URL of a reverse proxy. |
+| API key (optional) | `secret` | No | Only for a reverse proxy that asks for a Bearer token: Ollama itself has no password. |
+| Default model | `string` | No | Used when a scene action names no model. "Test the connection" lists the installed models. |
+| Longest wait for an answer | `select` | No | A large model on a processor without graphics card can take a minute or more. |
+| Keep the model in memory | `select` | No | After a question or a load. Longer: quicker answers, but the memory stays taken. |
+| Refresh interval | `select` | No | How often the state of the server is read. |
+| Language of the feature names | `select` | No | Names given to the features when the device is added, and texts of the scene events and errors. |
+
+## How to install Ollama in Gladys
+
+1. In Gladys, open **Integrations**: Ollama appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-ollama:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-ollama](https://github.com/guim31/gladys-ollama).
+
+Ollama requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Ollama is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-ollama) — [source of this documentation](https://github.com/guim31/gladys-ollama/blob/HEAD/docs/en.md)

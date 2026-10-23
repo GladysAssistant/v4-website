@@ -1,0 +1,227 @@
+---
+title: "Intégration domotique OpenEVSE, gratuite et open source"
+sidebar_label: "OpenEVSE"
+description: "Bornes OpenEVSE par l'API HTTP locale : état, courant, énergie, température ; commandes en option. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-openevse.png"
+keywords:
+  - "openevse"
+  - "domotique openevse"
+  - "gladys openevse"
+  - "openevse gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-openevse instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"OpenEVSE","description":"Bornes OpenEVSE par l'API HTTP locale : état, courant, énergie, température ; commandes en option.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-openevse","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-openevse.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-21T00:14:34Z"}} />
+
+Affiche votre borne de recharge **OpenEVSE** (module WiFi ESP32, firmware
+4.x ou 5.x) dans Gladys par son **API HTTP locale** : sans cloud, sans compte,
+directement sur votre réseau.
+
+> **Jamais testé avec une vraie borne.** Sans lien avec OpenEVSE.
+> L'intégration parle à la borne comme la bibliothèque python-openevse-http
+> (utilisée par Home Assistant). Une mise à jour du firmware peut changer
+> l'API.
+
+## Ce que vous obtenez
+
+Un appareil par borne, avec :
+
+| Fonctionnalité              | Contenu                                                                         |
+| --------------------------- | ------------------------------------------------------------------------------- |
+| État                        | Aucun véhicule, branché en attente, en charge, en pause, désactivée, défauts    |
+| Connecteur                  | Disponible, occupé, en défaut ou indisponible (catégorie « borne de recharge ») |
+| État de charge              | En charge, véhicule connecté, en pause par la borne, inactif                    |
+| Véhicule branché            | Oui / non                                                                       |
+| Puissance                   | En W (donnée par la borne, sinon tension × courant)                             |
+| Courant, tension            | En A, en V                                                                      |
+| Courant proposé au véhicule | En A (le signal pilote)                                                         |
+| Énergie de la session       | En kWh, un capteur simple                                                       |
+| Index d'énergie             | En kWh, le compteur total de la borne, protégé (voir plus bas)                  |
+| Température de la borne     | En °C                                                                           |
+| Forçage manuel              | Aucun (la borne décide), charge forcée, charge en pause                         |
+| Défaut signalé              | Oui / non (défaut de terre, relais collé, surchauffe…)                          |
+| Démarrer la charge          | Bouton (commandes autorisées seulement)                                         |
+| Mettre la charge en pause   | Bouton (commandes autorisées seulement)                                         |
+| Régler le courant de charge | Liste de 6 A au plafond (commandes autorisées seulement)                        |
+
+Lecture toutes les 30 secondes par défaut (de 10 s à 10 min, réglable).
+
+## Index d'énergie (protégé)
+
+L'**index d'énergie** est le compteur total de la borne (`total_energy`) :
+Gladys en tire la consommation et le coût de la borne dans son onglet Énergie.
+Comme Gladys compte chaque hausse en entier, l'index passe par une **garde**
+(la même que l'intégration P1 Monitor) :
+
+- un index à 0 n'est **jamais** publié ;
+- une hausse plausible (au plus 25 kW en moyenne depuis la dernière valeur)
+  passe ;
+- un **saut** vers le haut ou une **baisse** (compteur remis à zéro, autre
+  borne à la même adresse) est **retenu** : la dernière valeur acceptée est
+  renvoyée, l'état de l'intégration l'affiche, et la retenue est gardée dans
+  `/data` après un redémarrage. Ni le temps ni la répétition ne la
+  confirment ;
+- seul le bouton **Accepter l'index retenu** de la configuration la prend, en
+  **deux clics** : le premier montre la valeur et les kWh en jeu, le second
+  (dans les 2 minutes) prend exactement cette valeur (plus ce que la borne a
+  pu consommer depuis). Une baisse acceptée ne facture rien.
+
+La borne est déjà comptée par votre compteur principal : dans les réglages
+Énergie de Gladys, rangez-la **sous** votre compteur principal pour qu'elle ne
+soit pas comptée deux fois. Aucune consommation journalière n'est publiée.
+
+## Installation
+
+1. Donnez à la borne une **adresse IP fixe** dans votre box (ou utilisez son
+   nom `openevse-xxxx.local`).
+2. Vérifiez dans son interface web que le **firmware WiFi est en 4.0 ou plus
+   récent** (4.1.2 pour démarrer la charge et régler le courant). Les firmwares 2.x et 3.x ne
+   donnent pas de numéro de série : ils ne sont pas pris en charge.
+3. Installez l'intégration depuis le store de Gladys. Dans sa configuration,
+   saisissez l'**adresse IP de la borne**, et, seulement si son interface web
+   en demande, le **nom d'utilisateur** et le **mot de passe** (authentification
+   HTTP).
+4. Enregistrez, puis ajoutez la borne depuis l'onglet **Découverte**.
+
+Le mot de passe est **gardé par Gladys dans sa base, jamais réaffiché**, et
+envoyé seulement à la borne (authentification HTTP Basic). La borne ne parle
+qu'en HTTP simple : le nom et le mot de passe passent **en clair** sur votre
+réseau local, comme avec l'interface web elle-même. Gardez la borne sur un
+réseau de confiance. Ils ne sont jamais écrits dans les journaux, ni dans
+`/data`, ni dans un état. La configuration de la borne contient aussi ses
+propres mots de passe (WiFi, MQTT…) : l'intégration n'en lit que l'identité,
+les versions et les courants (minimum, maximum, courant propre), rien
+d'autre n'est gardé. Ne collez jamais une adresse avec `nom:motdepasse@` :
+elle est refusée, et jamais affichée.
+
+Le bouton **Tester la connexion** lit la borne une fois (au plus toutes les
+10 secondes).
+
+## Commandes (désactivées par défaut)
+
+« Démarrer la charge », « Mettre la charge en pause » et « Régler le courant
+de charge » refusent toute commande tant que **Autoriser les commandes** est
+désactivé. Activé, elles passent par le **forçage manuel** de la borne
+(`/override`) :
+
+- **Mettre en pause** pose un forçage « en pause » : la borne arrête de
+  charger. Les réglages du forçage en cours (courant, limites de session,
+  libération automatique) sont gardés. La pause n'est **jamais retenue** :
+  elle part tout de suite, en une seule requête, sans relecture, même pendant
+  une autre commande (qui lui cède la place si elle n'est pas encore partie ;
+  sinon la pause est renvoyée une fois quand elle se termine), même dans la
+  minute qui suit un démarrage, même pendant une pause 429 ou 5xx, même quand
+  les identifiants viennent d'être refusés, quel que soit le firmware, et même
+  juste après un redémarrage de l'intégration, avant toute lecture de la
+  borne (le numéro de série de la borne est gardé dans `/data`) ;
+- **Démarrer** pose un forçage « charge » (les réglages du forçage en cours
+  sont gardés) ; **jamais au-dessus du plafond** : le courant du forçage en
+  cours, sinon le courant propre de la borne (`max_current_soft`), est ramené
+  au plafond ; refusé si la borne ne donne pas son courant ; **refusé sans
+  véhicule branché**, ou sur un défaut ou un état inconnu ; sans effet (non
+  envoyé) si la borne charge déjà sans pause ; après un redémarrage, il
+  attend une première lecture de la borne ;
+- **Courant de charge** : de 6 A (ou le minimum matériel de la borne) au
+  **plafond** : le plus bas du « Plafond du courant de charge » de la
+  configuration (16 A par défaut, 80 A au plus) et du maximum matériel lu sur
+  la borne. L'état du forçage en cours est gardé : **une pause reste une
+  pause**, changer le courant ne relance jamais la charge. Firmware WiFi
+  4.1.2 ou plus récent.
+- **Un démarrage ou un changement de courant par minute au plus** : pas de
+  régulation fine depuis Gladys.
+
+Ce sont des **boutons** et une **liste**, jamais des interrupteurs : un
+« éteins tout » (depuis Gladys, Google Home, Alexa ou HomeKit) ne les atteint
+jamais. Une scène peut les déclencher, seulement par une action explicite, et
+seulement quand les commandes sont autorisées. Notez que le chat IA de Gladys
+(MCP) peut créer et lancer une telle scène : tant que les commandes sont
+autorisées, il peut démarrer la charge ou la mettre en pause.
+
+Avant un démarrage ou un changement de courant, l'intégration **relit la
+borne** (état et forçage) et décide sur cette lecture seulement ; l'option est
+revérifiée juste avant l'envoi. Une commande qui ne peut pas partir dans les
+3,5 secondes est refusée sans être envoyée. Quand la borne ne confirme pas
+(silence, erreur 5xx, réponse incomprise), Gladys affiche « Commande envoyée,
+sans confirmation » : vérifiez l'état, relu 5 puis 20 secondes plus tard.
+Quand une commande est restée sans confirmation, elle peut encore atteindre
+la borne plus tard : une pause envoyée dans les 90 secondes qui suivent est
+surveillée, et renvoyée (deux fois au plus) si une lecture montre de nouveau
+la charge permise alors qu'aucune autre commande n'est partie.
+
+Le forçage manuel garde le comportement de la borne : avec « libération
+automatique » (réglage du forçage), il prend fin quand le véhicule est
+débranché ; une pause n'est alors jamais réaffirmée sans véhicule. Si la
+borne ne peut pas dire qu'il n'y a aucun forçage (une réponse 404 sans le
+message du firmware), démarrer et le courant sont refusés.
+
+## Erreurs et limites
+
+- **Borne injoignable** : seuls le connecteur (« indisponible ») et l'état
+  (« Borne injoignable ») changent ; les autres valeurs gardent la dernière.
+  Nouvel essai après 30 s, 1, 2, puis 5 minutes, jamais plus vite que
+  l'intervalle.
+- **Identifiants refusés** (ou demandés alors qu'aucun n'est saisi) : l'état
+  le dit ; nouveaux essais après 15 minutes, 1 heure, puis toutes les
+  6 heures, jamais plus tôt (gardé dans `/data` après un redémarrage) ;
+  enregistrer de nouveaux identifiants réessaie aussitôt.
+- **429 (trop de requêtes)** ou **5xx** : une pause (de 1 minute à 6 heures
+  pour un 429) pour les lectures et les commandes sauf la pause de la charge,
+  jamais plus courte que l'intervalle, gardée dans `/data` après un
+  redémarrage.
+- Une seule borne par intégration. Ni le mode solaire (divert), ni la
+  programmation, ni les limites de session, ni le redémarrage, ni le
+  firmware ne se changent depuis Gladys. Le websocket de la borne n'est pas
+  utilisé (lecture périodique).
+- Une borne OpenEVSE reliée à un serveur **OCPP** (par exemple l'intégration
+  OCPP de sescandell) peut être pilotée des deux côtés : la dernière commande
+  l'emporte. Choisissez un seul pilote.
+- Les journaux ne contiennent jamais le texte des réponses de la borne, ni le
+  nom d'utilisateur, ni le mot de passe.
+
+## Crédits
+
+Portage de [python-openevse-http](https://github.com/firstof9/python-openevse-http)
+(firstof9, Apache-2.0, version 1.9.0), la bibliothèque de l'intégration
+OpenEVSE de Home Assistant. Licence Apache-2.0.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par OpenEVSE dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre borne OpenEVSE | `section` | Non | Affiche votre borne OpenEVSE (firmware WiFi 4.0 ou plus récent) dans Gladys par son API HTTP locale, sans cloud : état, véhicule branché, puissance, courant, tension, courant proposé, énergie de la session, index d'énergie, température, forçage manuel. Saisissez l'adresse IP de la borne (donnez-lui une adresse fixe dans votre box), et le nom d'utilisateur et le mot de passe de son interface web si vous en avez mis, enregistrez, puis ajoutez-la depuis l'onglet Découverte. Démarrer, mettre en pause et le courant de charge ne se changent depuis Gladys que si vous autorisez les commandes ci-dessous. Jamais testé avec une vraie borne. Sans lien avec OpenEVSE. |
+| Adresse IP de la borne | `string` | Oui | Une adresse IPv4 ou un nom d'hôte (openevse-xxxx.local), éventuellement suivi d'un port (80 par défaut). |
+| Nom d'utilisateur de l'interface web | `string` | Non | Seulement si l'interface web de la borne en demande un (Réglages, authentification HTTP). Laissez vide sinon. Jamais dans le champ de l'adresse. |
+| Mot de passe de l'interface web | `secret` | Non | Avec le nom d'utilisateur ci-dessus. Gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement à la borne, en clair (authentification HTTP Basic) sur le réseau local. Des identifiants refusés sont réessayés après 15 min, 1 h, puis toutes les 6 h. |
+| Autoriser les commandes | `boolean` | Non | Désactivé par défaut. Activé : Gladys peut démarrer et mettre en pause la charge (boutons) et régler le courant de charge (liste, de 6 A au plafond ci-dessous). Désactivé : ces trois fonctionnalités refusent toute commande. Une fois activé, la pause n'est jamais retenue. |
+| Plafond du courant de charge (A) | `number` | Non | Le courant le plus élevé que Gladys peut demander, démarrage compris : le plus bas de cette valeur (16 A par défaut) et du maximum matériel lu sur la borne. |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture de la borne, en secondes. |
+| Langue des noms des fonctionnalités | `select` | Non | Sert aux noms des fonctionnalités des appareils ajoutés désormais, aux textes d'état et aux erreurs des commandes. |
+
+## Comment installer OpenEVSE dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : OpenEVSE apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-openevse:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-openevse](https://github.com/LM1LC3N7/gladys-openevse).
+
+OpenEVSE nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+OpenEVSE est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-openevse) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-openevse/blob/HEAD/docs/fr.md)

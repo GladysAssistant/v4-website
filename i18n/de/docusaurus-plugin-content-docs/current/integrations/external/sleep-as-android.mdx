@@ -1,0 +1,199 @@
+---
+title: "Sleep as Android Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Sleep as Android"
+description: "Schlafaufzeichnung, Wecker und Schlafphasen der App Sleep as Android in Gladys. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-sleepasandroid.png"
+keywords:
+  - "sleep as android"
+  - "sleep as android smart home"
+  - "gladys sleep as android"
+  - "sleep as android gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/prohand/gladys-sleepasandroid instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Sleep as Android","description":"Schlafaufzeichnung, Wecker und Schlafphasen der App Sleep as Android in Gladys.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-sleepasandroid","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-sleepasandroid.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-21T08:32:46Z"}} />
+
+Diese Integration bringt die App [Sleep as Android](https://sleep.urbandroid.org/) in Gladys: ob die
+Schlafaufzeichnung läuft, die Schlafphase (wach, leicht, tief, REM), der klingelnde Wecker, der
+nächste Wecker und wie lange du geschlafen hast. Jedes Ereignis der App kann eine Gladys-Szene
+starten: Rollläden schließen, wenn die Aufzeichnung startet, das Licht sanft einschalten, wenn der
+Wecker klingelt, eine Nachricht senden, wenn ein Baby weint.
+
+Erfordert **Gladys 5.1 oder neuer**.
+
+## Wie die Ereignisse zu Gladys gelangen
+
+Sleep as Android sendet seine Ereignisse von sich aus, Gladys fragt das Telefon nie ab. Zwei Kanäle,
+nutze einen oder beide:
+
+| Kanal       | Badge in Gladys | Was du brauchst                                        | Funktioniert unterwegs |
+| ----------- | --------------- | ------------------------------------------------------ | ---------------------- |
+| **MQTT**    | lokal           | einen MQTT-Broker in deinem Netzwerk (z. B. Mosquitto) | nein                   |
+| **Webhook** | Cloud           | ein Gladys-Plus-Abonnement                             | ja                     |
+
+Mit beiden kommt jedes Ereignis zweimal an: Die Integration behält die erste Kopie und verwirft die
+andere. Der Schalter **Lokale Verbindung bevorzugen** im Konfigurationsbildschirm bestimmt, welchen
+Kanal das Geräte-Badge zeigt, wenn beide funktionieren.
+
+## 1. Die Integration einrichten
+
+Öffne **Integrationen → Sleep as Android → Konfiguration**.
+
+| Feld                          | Was eintragen                                                                                                                      |
+| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Schläfer                      | Leer für ein einziges Telefon. Ein Telefon pro Person: ihre Vornamen, durch Kommas getrennt (`Alice, Bob`). Je ein Gladys-Gerät.   |
+| Adresse des MQTT-Brokers      | `mqtt://192.168.1.10:1883` (oder `mqtts://…:8883` für TLS). Die Netzwerkadresse des Brokers, **nie `localhost`**. Leer: kein MQTT. |
+| MQTT-Benutzername / -Passwort | Das Konto des Brokers, falls er eines verlangt.                                                                                    |
+| MQTT-Topic                    | Standardmäßig `SleepAsAndroid`. Muss dasselbe wie in der App sein.                                                                 |
+| Zeitzone                      | Die Zone, in der der nächste Wecker angezeigt wird (`Europe/Berlin`, `Europe/Vienna`…).                                            |
+
+Für den Cloud-Kanal füge deinen **Gladys-Plus-Open-API-Schlüssel** im Block **Gladys Plus
+Webhooks** desselben Bildschirms ein.
+
+Klicke dann auf **Verbindung testen**: Die Antwort sagt, welche Kanäle funktionieren, und nennt für
+jeden Schläfer **das genaue Topic und die URL für die App**.
+
+## 2. Sleep as Android einrichten
+
+### MQTT (lokal)
+
+In der App: **Einstellungen → Dienste → Automatisierung → MQTT**.
+
+- einschalten;
+- **URL**: `tcp://192.168.1.10:1883` (die Broker-Adresse, mit `tcp://`, oder `ssl://` für TLS);
+- **Topic**: `SleepAsAndroid` für den ersten (oder einzigen) Schläfer, `SleepAsAndroid/bob` für Bob;
+- **Client ID**: etwas Eindeutiges, z. B. `telefon-bob`;
+- Benutzername und Passwort, falls dein Broker sie verlangt.
+
+Die Integration abonniert das Topic und alle Unter-Topics. Mit dem _Retain_-Flag veröffentlichte
+Nachrichten werden ignoriert: Es sind alte Ereignisse, sie erneut abzuspielen würde deine Szenen
+wieder starten.
+
+### Webhook (Cloud, über Gladys Plus)
+
+In der App: **Einstellungen → Dienste → Automatisierung → Webhooks**, einschalten und die URL von
+**Verbindung testen** einfügen. Bei mehreren Schläfern bekommt jedes Telefon die URL gefolgt von
+`?sleeper=<name>` (z. B. `…?sleeper=bob`); der erste Schläfer kann die URL unverändert verwenden.
+
+Halte diese URL geheim: Wer sie hat, kann in deinem Namen Ereignisse senden.
+
+### Prüfen
+
+Nutze die **Test**-Schaltfläche der App (im MQTT- oder Webhooks-Bildschirm) oder starte eine
+Schlafaufzeichnung: Die Funktion **Last event** des Geräts ändert sich innerhalb von Sekunden.
+
+## 3. Die Geräte anlegen
+
+**Integrationen → Sleep as Android → Erkennung**: ein Gerät pro Schläfer, `Sleep as Android` (ein
+Telefon) oder `Sleep as Android — Alice` genannt. Lege sie an.
+
+| Funktion            | Werte                                                                               |
+| ------------------- | ----------------------------------------------------------------------------------- |
+| Sleep tracking      | 1 während der Aufzeichnung, 0 wenn beendet oder pausiert                            |
+| Sleep phase         | 0 wach, 1 REM, 2 leicht, 3 tief (je tiefer, desto höher: gezeichnet ein Hypnogramm) |
+| Alarm ringing       | 1 solange der Wecker klingelt, 0 nach Ausschalten oder Schlummern                   |
+| Next alarm          | Text, z. B. `2026-10-22 07:00 · Arbeit`, `—` wenn keiner gestellt ist               |
+| Last event          | Text, der Rohname des letzten Ereignisses (`deep_sleep`, `alarm_alert_start`…)      |
+| Last sleep duration | aufgezeichnete Stunden der letzten Sitzung, ohne Pausen                             |
+
+Die Zustände werden von der Integration gespeichert: Ein Neustart von Gladys in der Nacht verliert
+den Beginn der Sitzung nicht.
+
+Einen Schläfer in der Konfiguration umzubenennen legt ein neues Gerät an: Seine Kennung kommt aus
+seinem Namen.
+
+## 4. Szenen
+
+Auslöser (**Wenn…**), jeweils mit einem Filter **Schläfer** (leer = alle):
+
+| Auslöser                                  | Filter                                                                                                                                                                          | Variablen                                        |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| Schlafaufzeichnung gestartet oder beendet | gestartet, beendet, pausiert, fortgesetzt                                                                                                                                       | sleeper, state, duration_hours (beim Beenden)    |
+| Wecker-Ereignis                           | klingelt, ausgeschaltet, schlummern, schlummern abgebrochen, nächster übersprungen, neu geplant, Aufwach-Kontrolle, Zeit fürs Bett, Wecker bald, smartes Wecken bald / begonnen | sleeper, event, alarm_time, alarm_label          |
+| Schlafphase geändert                      | wach, eingeschlafen, leicht, tief, REM                                                                                                                                          | sleeper, phase                                   |
+| Geräusch im Schlaf erkannt                | Schnarchen, Sprechen, Husten, Baby weint, Lachen, Atemalarm (Apnoe), Anti-Schnarchen                                                                                            | sleeper, sound                                   |
+| Beliebiges Sleep-as-Android-Ereignis      | —                                                                                                                                                                               | sleeper, event (Rohname), value1, value2, value3 |
+
+Lies eine Variable in den folgenden Aktionen mit `{{triggerEvent.data.alarm_label}}`.
+
+Aktionen (**Dann…**):
+
+- **Schlafstatus lesen**: legt `tracking`, `phase`, `alarm_ringing`, `next_alarm`, `last_event` und
+  `last_sleep_hours` eines Schläfers in Variablen ab — „wenn die Aufzeichnung läuft, kein Licht
+  einschalten“;
+- **Schläfer zurücksetzen**: zurück auf wach, nichts läuft — für den Morgen nach einem Telefon, das
+  nachts ausging.
+
+Beispiele:
+
+- _Wenn_ Schlafaufzeichnung gestartet (gestartet) → Schlafzimmer-Rollläden schließen, Licht aus.
+- _Wenn_ Wecker-Ereignis (klingelt) → Licht auf 20 %, dann Rollläden öffnen.
+- _Wenn_ Geräusch erkannt (Baby weint) → den Eltern eine Nachricht senden.
+
+Um eine Szene tagsüber zu bauen, spielt **Ereignis simulieren** (Konfigurationsbildschirm) jedes
+Ereignis ab, als hätte das Telefon es gesendet.
+
+## 5. Dashboard-Widget
+
+Füge das Widget **Schlaf** hinzu und wähle einen Schläfer (leer: den ersten). Es zeigt die Kacheln
+Aufzeichnung und Wecker, die letzten zwölf Stunden als Hypnogramm, die Phase, den nächsten Wecker,
+die Dauer der letzten Nacht, wie die Ereignisse ankommen (MQTT oder Gladys Plus) und eine
+Schaltfläche **Zurücksetzen**.
+
+## Fehlerbehebung
+
+- **Über MQTT kommt nichts an**: `localhost` und `127.0.0.1` zeigen auf den Container der
+  Integration selbst, verwende die Netzwerkadresse des Brokers. **Verbindung testen** zeigt die
+  Antwort des Brokers (Passwort abgelehnt, nicht erreichbar…). Das Topic der App muss dem der
+  Konfiguration entsprechen, inklusive Groß- und Kleinschreibung.
+- **Badge „Cloud“ mit orangem Punkt**: Du bevorzugst lokal, ein Broker ist eingerichtet, aber nicht
+  erreichbar, und die Ereignisse kommen über Gladys Plus.
+- **„Webhook nicht verfügbar“**: Gladys Plus ist nicht verknüpft, oder der Open-API-Schlüssel fehlt
+  im Block Gladys Plus Webhooks.
+- **Ein Ereignis für einen unbekannten Schläfer wird ignoriert**: Das Topic
+  `SleepAsAndroid/<name>` oder `?sleeper=<name>` muss einen Schläfer der Konfiguration nennen
+  (Groß-/Kleinschreibung und Akzente spielen keine Rolle).
+- **Die Aufzeichnung bleibt an**: Das Telefon ging aus, bevor es „Aufzeichnung beendet“ senden
+  konnte. Nutze **Zurücksetzen** (Widget oder Szenenaktion).
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Sleep as Android in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Erste Schritte | `section` | Nein | Sleep as Android sendet seine Ereignisse (Aufzeichnung gestartet, Wecker klingelt, Tiefschlaf…) auf zwei Wegen, nutze einen oder beide. Lokal: MQTT, an einen Broker in deinem Netzwerk (Einstellungen > Dienste > Automatisierung > MQTT in der App). Cloud: ein von Gladys Plus weitergeleiteter Webhook, der auch unterwegs funktioniert (Einstellungen > Dienste > Automatisierung > Webhooks). „Verbindung testen“ nennt das genaue Topic und die URL für die App. |
+| Schläfer | `string` | Nein | Ein Telefon pro Person? Ihre Vornamen, durch Kommas getrennt: je ein Gladys-Gerät. Leer lassen für ein einziges Telefon. Der Erste hört auf das Basis-Topic und die URL, wie sie ist, die anderen auf das Basis-Topic gefolgt von /ihr-name und die URL gefolgt von ?sleeper=ihr-name. |
+| Lokal: MQTT | `section` | Nein | Der Broker, an den die App veröffentlicht, z. B. der der Gladys-MQTT-Integration. Lass die Adresse leer, um nur über Gladys Plus zu empfangen. |
+| Adresse des MQTT-Brokers | `string` | Nein | mqtt:\/\/adresse:1883, oder mqtts:\/\/ für TLS. Verwende die Netzwerkadresse des Brokers, nie localhost: Die Integration läuft in einem eigenen Container. |
+| MQTT-Benutzername | `string` | Nein |  |
+| MQTT-Passwort | `secret` | Nein |  |
+| MQTT-Topic | `string` | Nein | Das in der App eingetragene Topic. Alle Unter-Topics werden ebenfalls abonniert (eines pro Schläfer). |
+| Zeitzone | `string` | Nein | Die Zeitzone, in der der nächste Wecker angezeigt wird, ein IANA-Name wie Europe/Berlin. |
+
+## So installierst du Sleep as Android in Gladys
+
+1. Öffne in Gladys **Integrationen**: Sleep as Android erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/prohand/gladys-sleepasandroid:1.0.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/prohand/gladys-sleepasandroid](https://github.com/prohand/gladys-sleepasandroid).
+
+Sleep as Android benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Sleep as Android ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [prohand](https://github.com/prohand) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/prohand/gladys-sleepasandroid) — [Quelle dieser Dokumentation](https://github.com/prohand/gladys-sleepasandroid/blob/HEAD/docs/de.md)

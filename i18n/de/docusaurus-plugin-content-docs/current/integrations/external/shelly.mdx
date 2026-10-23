@@ -1,7 +1,7 @@
 ---
 title: "Shelly Smart-Home-Integration, kostenlos und Open Source"
 sidebar_label: "Shelly"
-description: "Connect your Shelly devices (relays, plugs, energy meters) to Gladys Assistant. Free, open source, installable in one click."
+description: "Verbinde deine Shelly-Geräte (Relais, Stecker, Zähler, Rollläden, Lichter) lokal mit Gladys. Kostenlos, Open Source, mit einem Klick installiert."
 image: "https://integration-store-storage.gladysassistant.com/covers/Terdious--gladys-shelly.png"
 keywords:
   - "shelly"
@@ -14,322 +14,487 @@ custom_edit_url: null
 ---
 
 {/* GENERATED FILE: built by `yarn load-external-integrations` from the
-integration store. Do not edit by hand, edit docs/en.md in
+integration store. Do not edit by hand, edit docs/de.md in
 https://github.com/Terdious/gladys-shelly instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Shelly","description":"Connect your Shelly devices (relays, plugs, energy meters) to Gladys Assistant.","owner":"Terdious","owner_avatar_url":"https://avatars.githubusercontent.com/u/35010958?v=4","repo_url":"https://github.com/Terdious/gladys-shelly","cover_url":"https://integration-store-storage.gladysassistant.com/covers/Terdious--gladys-shelly.png","type":"device","version":"1.0.0","gladys_version":">=4.83.0","stars":0,"pushed_at":"2026-08-01T10:57:04Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Shelly","description":"Verbinde deine Shelly-Geräte (Relais, Stecker, Zähler, Rollläden, Lichter) lokal mit Gladys.","owner":"Terdious","owner_avatar_url":"https://avatars.githubusercontent.com/u/35010958?v=4","repo_url":"https://github.com/Terdious/gladys-shelly","cover_url":"https://integration-store-storage.gladysassistant.com/covers/Terdious--gladys-shelly.png","type":"device","version":"1.4.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-19T10:12:27Z"}} />
 
-:::info
+Diese Integration verbindet deine **Shelly**-Geräte mit Gladys Assistant:
+Relais, smarte Steckdosen, Energiezähler, Rollläden, Dimmer und Farblichter,
+Eingänge und Taster.
 
-Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+Sie spricht **direkt mit deinen Geräten in deinem lokalen Netzwerk** (Gen2+-RPC-
+Protokoll) und lässt sie **ihre Änderungen in Echtzeit melden**: Ein an der Wand
+geschaltetes Relais erscheint nach etwa einer Sekunde in Gladys. Ist ein Gerät
+lokal nicht erreichbar, kann sie auf **MQTT** und dann auf die **Shelly Cloud**
+ausweichen. Nichts ist Pflicht: Eine rein lokale Installation funktioniert mit
+einem **völlig leeren Formular**.
 
-:::
+Virtuelle Komponenten werden nach der Selbstbeschreibung des Geräts benannt und typisiert (`Shelly.GetComponents`, bei jedem Scan gelesen): nach der deklarierten Rolle, sonst nach Name, Einheit und Zugriff. `enum:N`-Komponenten werden noch nicht abgebildet. Eine virtuelle Komponente zu steuern braucht das lokale Netz oder MQTT — die Shelly Cloud kann das nicht weiterleiten.
 
-This integration connects your **Shelly** devices to Gladys Assistant: relays,
-smart plugs and energy meters.
-
-It talks **directly to your devices on your local network** (the Gen2+ RPC
-protocol) and lets them **push their changes in real time**, so a relay flipped
-on the wall appears in Gladys in about a second. It can fall back to the
-**MQTT**, then to the **Shelly Cloud**, when a device cannot be reached
-locally. Nothing is mandatory: a fully local setup works with an **entirely
-empty form**.
-
-> **Supported generations:** Gen2 and later — Shelly **Plus**, **Pro**,
-> **Mini**, **Gen3**, **Gen4** — **and Gen1** (Shelly 1, 1PM, 2.5, Plug S
-> "SHPLG-S", EM, 3EM…).
+> **Unterstützte Generationen:** Gen2 und neuer — Shelly **Plus**, **Pro**,
+> **Mini**, **Gen3**, **Gen4** — **und Gen1** (Shelly 1, 1PM, 2.5, Plug S
+> „SHPLG-S“, EM, 3EM, Dimmer, i3…).
 >
-> Gen1 speaks a completely different API (REST instead of JSON-RPC, Basic auth
-> instead of Digest), but the integration normalizes it into the **same model**:
-> a Gen1 Shelly 3EM exposes exactly the same features, under the same names, as
-> a Gen2 Pro 3EM. Your dashboards and scenes cannot tell them apart.
+> Gen1 spricht eine völlig andere API (REST statt JSON-RPC, Basic- statt
+> Digest-Authentifizierung), aber die Integration bildet sie auf **dasselbe
+> Modell** ab: Ein Gen1-Shelly-3EM hat genau dieselben Funktionen mit denselben
+> Namen wie ein Gen2-Pro-3EM. Deine Dashboards und Szenen merken keinen
+> Unterschied.
 >
-> One limit worth knowing: locally, Gen1 devices have **no real-time channel**.
-> Their push protocol (CoIoT) is multicast, which never reaches a Docker
-> container, so their values follow the refresh interval. **Over MQTT they do**,
-> exactly like Gen2+.
+> Eine Grenze: Lokal haben Gen1-Geräte **keinen Echtzeitkanal**. Ihr Push-
+> Protokoll (CoIoT) ist Multicast und erreicht nie einen Docker-Container, ihre
+> Werte folgen also dem Aktualisierungsintervall. **Über MQTT** melden sie
+> dagegen in Echtzeit, genau wie Gen2+.
 
 ---
 
-## Requirements
+## Voraussetzungen
 
-- Gladys Assistant **4.83.0** or newer.
-- Your Shelly devices are powered and joined to your Wi-Fi (set up from the
-  Shelly app or the device web interface).
-- Gladys and your Shelly devices are on the **same local network** — or you know
-  the IP addresses of the devices sitting on another VLAN.
-
----
-
-## Step 1 — Install the integration
-
-In Gladys: **Integrations → Install an integration → Shelly**, then **Install**.
-Gladys pulls the Docker image and starts the container.
-
-There is **nothing to configure** for a simple local setup: go straight to
-step 3.
+- Gladys Assistant **5.1.0** oder neuer (Dashboard-Widgets, Szenen-Auslöser und
+  Szenen-Aktionen).
+- Deine Shelly-Geräte sind eingeschaltet und mit deinem WLAN verbunden
+  (eingerichtet über die Shelly-App oder die Weboberfläche des Geräts).
+- Gladys und deine Shelly-Geräte sind im **selben lokalen Netzwerk** — oder du
+  kennst die IP-Adressen der Geräte in einem anderen VLAN.
 
 ---
 
-## Step 2 — Configure (only if you need to)
+## Schritt 1 — Integration installieren
 
-Open the integration **Configuration** screen. Every field is optional.
+In Gladys: **Integrationen → Integration installieren → Shelly**, dann
+**Installieren**. Gladys lädt das Docker-Image und startet den Container.
 
-### Local connection
-
-| Field                           | When to fill it in                                                                                                                                     |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Additional device addresses** | Your Shelly devices are not found automatically (another VLAN, mDNS disabled on the device or filtered by the router). Enter the IPs, comma-separated. |
-| **Device username**             | Leave it as `admin`: it is the only username Gen2+ devices accept.                                                                                     |
-| **Device password**             | You enabled authentication on your Shelly devices. **One single password** is used for all of them.                                                    |
-
-> ⚠️ If your Shelly devices have **different** passwords, the integration can
-> only reach the ones sharing the password you entered. Unify the password, or
-> disable authentication on your trusted local network.
-
-### Shelly Cloud (fallback)
-
-Fill this in only if you want Gladys to keep controlling a device that is
-**unreachable locally** (Gladys hosted elsewhere, device on another network,
-temporary Wi-Fi drop).
-
-1. Open the **Shelly** app (or [https://control.shelly.cloud/](https://control.shelly.cloud/)).
-2. **Settings → User settings → Authorization cloud key**.
-3. Click **Get key**: the app shows the **authorization key** and the **server
-   address** (something like `shelly-53-eu.shelly.cloud`).
-4. Copy both values into Gladys and turn on **Enable the Shelly Cloud
-   fallback**.
-
-> 🔐 This key grants **full control** over every device of your Shelly account.
-> Treat it like a password. Gladys stores it encrypted and never shows it in
-> clear text.
-
-When both channels are configured, Gladys shows a standard **"Prefer the local
-connection"** toggle (on by default). It is a preference: the integration
-applies it when it can, and reports the per-device reality through the
-**transport badges** (see below).
-
-### MQTT (recommended past a handful of devices)
-
-Fill this in if some devices are never discovered, or if you want real time on
-Gen1 hardware.
-
-**On each Shelly**: device web interface → **Settings → MQTT** →
-
-| Setting                                | Value                                                              |
-| -------------------------------------- | ------------------------------------------------------------------ |
-| **Enable**                             | ticked                                                             |
-| **Server**                             | your broker address, e.g. `10.5.0.50:1883`                         |
-| **Username / Password**                | your broker credentials, if it is protected                        |
-| **Enable 'MQTT Control'**              | ticked — this is what lets Gladys **control** the device over MQTT |
-| **RPC status notifications over MQTT** | ticked — this is what sends the values in real time                |
-| **MQTT prefix**                        | leave the default (the device id)                                  |
-
-**In Gladys**: tick **Enable MQTT** and enter the same broker address, plus the
-credentials if needed.
-
-The prefix is free-form, slashes included: the integration does not rely on it.
-It identifies each device by the `src` field of its messages, which is the
-hardware id — so renaming a prefix breaks nothing.
-
-> 💡 **Gen1 too.** They publish in a completely different dialect
-> (`shellies/<id>/emeter/0/power`, one value per topic, no JSON anywhere), which
-> the integration also understands. A Gen1 3EM on MQTT therefore reports in real
-> time, unlike the same device locally.
-
-### Advanced
-
-**Refresh interval**: how often Gladys reads the state of every device. 30
-seconds by default.
-
-A shorter interval means fresher values but more requests. Gladys rate-limits an
-integration to **300 states per minute**: the integration only publishes values
-that **actually changed** (with a forced refresh every 30 minutes so a frozen
-value does not look dead), so a short interval only hurts when many values move
-constantly. A single Shelly Pro 3EM carries ~25 measurements: past three or four
-energy meters, stay at 30 seconds or more.
+Für eine einfache lokale Installation ist **nichts zu konfigurieren**: Geh
+direkt zu Schritt 3.
 
 ---
 
-## Step 3 — Discover your devices
+## Schritt 2 — Konfigurieren (nur bei Bedarf)
 
-Go to the integration **Discovery** tab and click **Scan**.
+Öffne die Seite **Konfiguration** der Integration. Alle Felder sind optional.
 
-Gladys queries four sources and merges them:
+### Lokale Verbindung
 
-1. **mDNS** — your Shelly devices announce themselves on the network
-   (`_shelly._tcp` for Gen2+, `_http._tcp` for Gen1). The Gladys core listens on
-   behalf of the integration: containers run on a bridge network and never
-   receive multicast traffic.
-2. **Your MQTT broker**, if you configured one — see below.
-3. **The addresses you typed** in step 2.
-4. **Every address already seen**, whether the device was created in Gladys or
-   merely spotted during an earlier scan. An address that answered once is
-   re-probed on every scan: a device found once is never lost again.
+| Feld                           | Wann ausfüllen                                                                                                                                                    |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Zusätzliche Geräteadressen** | Deine Shelly-Geräte werden nicht automatisch gefunden (anderes VLAN, mDNS am Gerät deaktiviert oder vom Router gefiltert). Gib die IPs durch Kommas getrennt ein. |
+| **Benutzername der Geräte**    | Lass `admin` stehen: Das ist der einzige Benutzername, den Gen2+-Geräte akzeptieren.                                                                              |
+| **Passwort der Geräte**        | Du hast die Authentifizierung an deinen Shelly-Geräten aktiviert. Das gemeinsame Passwort deiner Geräte (die anderen ins nächste Feld).                           |
+| **Passwörter pro Gerät**       | Manche Geräte haben ein anderes Passwort: Einträge `Gerät=Passwort`, getrennt durch `;` (Shelly-ID, MAC- oder IP-Adresse).                                        |
 
-Each address is then queried over **unicast** (which does cross the bridge
-network). Click **Create** to add a device to Gladys.
+> 🔑 **Unterschiedliche Passwörter?** Behalte das häufigste unter **Passwort
+> der Geräte** und trage die anderen unter **Passwörter pro Gerät** ein, als
+> Einträge `Gerät=Passwort`, getrennt durch `;`: Das Gerät ist seine Shelly-ID
+> (`shellyplus1-a8032ab12345`), seine MAC-Adresse oder seine IP-Adresse. Ein
+> Gerät, das sein Passwort ablehnt, zeigt einen orangen Punkt auf seinem Badge,
+> und die Konfigurationsseite nennt es.
 
-### ⚠️ A device is missing? Use MQTT
+### Shelly Cloud (Ausweichlösung)
 
-**This is the most important part of this page if you have more than a handful
-of devices.**
+Nur ausfüllen, wenn Gladys ein **lokal nicht erreichbares** Gerät weiter steuern
+soll (Gladys woanders gehostet, Gerät in einem anderen Netz, kurzer WLAN-
+Ausfall).
 
-mDNS works in short multicast bursts. On an installation with about fifteen
-Shelly devices, one scan reports 19 announcements, the next 27, and some devices
-are **never announced at all** — while working perfectly and answering HTTP the
-moment you know their address. It is not a signal problem, nor a device setting.
+1. Öffne die **Shelly**-App (oder [https://control.shelly.cloud/](https://control.shelly.cloud/)).
+2. **Einstellungen → Benutzereinstellungen → Autorisierungs-Cloud-Schlüssel**.
+3. Klicke auf **Schlüssel abrufen**: Die App zeigt den **Autorisierungs-
+   schlüssel** und die **Serveradresse** (etwa `shelly-53-eu.shelly.cloud`).
+4. Kopiere beide Werte in Gladys und aktiviere **Shelly-Cloud-Ausweichlösung
+   aktivieren**.
 
-Three ways out, most effective first:
+> 🔐 Dieser Schlüssel gewährt die **volle Kontrolle** über alle Geräte deines
+> Shelly-Kontos. Behandle ihn wie ein Passwort. Gladys speichert ihn
+> verschlüsselt und zeigt ihn nie im Klartext.
 
-1. **Configure MQTT** (next section). A device publishing to your broker
-   announces itself **continuously**: there is no window left to miss. It is
-   discovered, it reports in real time, and it stays controllable even when it
-   is unreachable on the local network. Past a handful of devices this is the
-   only reliable inventory.
-2. **Enable the Shelly Cloud.** It does not discover devices, but it keeps the
-   ones Gladys already knows readable and controllable when the local network
-   fails.
-3. **Type the IP addresses by hand** in "Additional device addresses". Immediate
-   and effective, but you have to redo it if a DHCP lease changes — reserve a
-   fixed IP on your router in that case.
+Die Integration liest das ganze Konto mit **einer Anfrage pro
+Aktualisierungszyklus** und hält zwischen ihren Aufrufen eine Sekunde Abstand,
+das Limit der Shelly-Cloud-API: Auch eine ganze Installation über die Cloud
+überschreitet es nie.
 
-### One Shelly = one Gladys device
+Sind beide Kanäle eingerichtet, zeigt Gladys den Standardschalter **„Lokale
+Verbindung bevorzugen“** (standardmäßig an). Er ist eine Vorliebe: Die
+Integration befolgt ihn, wenn sie kann, und meldet die Realität pro Gerät über
+die **Transport-Badges** (siehe unten).
 
-A Shelly Pro 4PM becomes **one single Gladys device** carrying **four** On/Off
-features, plus their measurements. This is the Gladys convention, and it keeps
-the external ids stable when you rename a channel.
+### MQTT (empfohlen ab einer Handvoll Geräte)
 
-If you named your channels in the Shelly app ("Bathroom", "Toilet"…), those
-names are picked up: you get "Bathroom — On/Off" rather than four identical
-"On/Off". **Name your channels in the Shelly app before running the
-discovery**: it is the fastest way to get a readable result.
+Fülle dies aus, wenn manche Geräte nie gefunden werden, oder wenn du Echtzeit
+auf Gen1-Hardware willst.
 
----
+**An jedem Shelly**: Weboberfläche des Geräts → **Settings → MQTT** →
 
-## Supported devices and measurements
+| Einstellung                            | Wert                                                           |
+| -------------------------------------- | -------------------------------------------------------------- |
+| **Enable**                             | angekreuzt                                                     |
+| **Server**                             | Adresse deines Brokers, z. B. `10.5.0.50:1883`                 |
+| **Username / Password**                | Zugangsdaten des Brokers, falls geschützt                      |
+| **Enable 'MQTT Control'**              | angekreuzt — damit kann Gladys das Gerät über MQTT **steuern** |
+| **RPC status notifications over MQTT** | angekreuzt — damit werden die Werte in Echtzeit gesendet       |
+| **MQTT prefix**                        | Standard lassen (die Geräte-ID)                                |
 
-Features are derived from what the device **actually reports**, never from a
-hard-coded model table: a Shelly Pro 1 (no metering) only exposes an On/Off, a
-Pro 1PM also exposes power, voltage, current and energy — and a Shelly released
-after this version works as long as it speaks the same vocabulary.
+**In Gladys**: Kreuze **MQTT aktivieren** an und gib dieselbe Brokeradresse ein,
+bei Bedarf mit Zugangsdaten.
 
-| Shelly component      | What you get in Gladys                                                                                                        |
-| --------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `switch:N`            | On/Off (controllable), power (W), voltage (V), current (A), total energy (kWh), internal temperature (°C)                     |
-| `em:N` (three-phase)  | Per L1/L2/L3 phase: active power (W), apparent power (VA), voltage (V), current (A) — plus the totals and the neutral current |
-| `emdata:N`            | Total and returned energy, per phase and total (kWh)                                                                          |
-| `em1:N` / `em1data:N` | Single-phase equivalents (Shelly Pro EM, 1PM Mini Gen3)                                                                       |
-| `pm1:N`               | Power, voltage, current and energy of a standalone meter (PM Mini)                                                            |
-| `temperature:N`       | Temperature (°C)                                                                                                              |
-| `humidity:N`          | Humidity (%)                                                                                                                  |
-| `devicepower:N`       | Battery level (%)                                                                                                             |
+Der Präfix ist frei wählbar, Schrägstriche inklusive: Die Integration erkennt
+jedes Gerät am Feld `src` seiner Nachrichten, also an der Hardware-ID — ein
+umbenannter Präfix stört nichts.
 
-Hardware validated by design against real payloads: **Shelly Pro 3EM**,
-**Shelly Pro 4PM**, **Shelly Plus Plug S**.
+> 💡 **Auch Gen1.** Sie publizieren in einem ganz anderen Dialekt
+> (`shellies/<id>/emeter/0/power`, ein Wert pro Topic, kein JSON), den die
+> Integration ebenfalls versteht. Ein Gen1-3EM über MQTT meldet also in
+> Echtzeit, anders als dasselbe Gerät lokal.
 
-> **Not supported yet:** roller shutters (`cover`), dimmable lights (`light`),
-> inputs (`input`). See the [roadmap](https://github.com/Terdious/gladys-shelly/blob/HEAD/ROADMAP.md).
+### Erweitert
 
-### The neutral current
+**Namen der Funktionen**: die Sprache der Funktionsnamen für die Geräte, die du
+ab jetzt anlegst (Englisch, Französisch, Deutsch oder Spanisch). Ein bereits
+angelegtes Gerät behält seine Namen — benenne seine Funktionen in Gladys um,
+wenn du willst; ihre IDs, ihr Verlauf und deine Szenen hängen nie vom Namen ab.
 
-On a Pro 3EM, `n_current` is only measured when you **wired the neutral clamp**.
-Without it the device returns `null`: the feature is then **not created at all**
-rather than showing a permanently empty chart. If you add the clamp later, run a
-discovery again to make the measurement appear.
+**Aktualisierungsintervall**: wie oft Gladys den Zustand jedes Geräts liest.
+Standardmäßig 30 Sekunden.
 
----
-
-## Transport badges
-
-Every device shows a badge in Gladys telling you **which channel actually
-reaches it**:
-
-| Badge                  | Meaning                                                                                                            |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| **Local**              | Nominal. Gladys talks directly to the device on your network.                                                      |
-| **Cloud**              | Gladys goes through the Shelly Cloud (you turned off "Prefer the local connection").                               |
-| **Cloud** + orange dot | **Degraded**: the device was not reachable locally, Gladys fell back to the cloud. Hover the badge for the reason. |
-| **Unreachable**        | Neither the local network nor the cloud answered.                                                                  |
-
-A **Cloud badge with an orange dot** is the one to watch: your setup works, but
-not in its nominal mode. The tooltip gives the cause — device powered off, IP
-changed, or password refused.
+Ein kürzeres Intervall liefert frischere Werte, aber mehr Anfragen. Gladys
+begrenzt eine Integration auf **300 Zustände pro Minute**: Die Integration
+publiziert nur Werte, die sich **wirklich geändert** haben (mit einer erzwungenen
+Aktualisierung alle 30 Minuten, damit ein stehender Wert nicht tot wirkt). Ein
+einziger Shelly Pro 3EM hat ~25 Messwerte: Ab drei oder vier Energiezählern
+bleib bei 30 Sekunden oder mehr.
 
 ---
 
-## Updating the integration
+## Schritt 3 — Geräte finden
 
-Gladys shows available updates in **Integrations**. Click **Update**: the
-container is recreated with the new image, and your configuration and devices
-are preserved.
+Öffne den Reiter **Erkennung** der Integration und klicke auf **Scannen**.
+
+Gladys fragt vier Quellen ab und führt sie zusammen:
+
+1. **mDNS** — deine Shelly-Geräte melden sich im Netzwerk an (`_shelly._tcp`
+   für Gen2+, `_http._tcp` für Gen1). Der Gladys-Kern hört stellvertretend für
+   die Integration zu: Container laufen in einem Bridge-Netz und empfangen nie
+   Multicast.
+2. **Dein MQTT-Broker**, falls eingerichtet.
+3. **Die Adressen, die du eingegeben hast** (Schritt 2).
+4. **Jede bereits gesehene Adresse**, ob das Gerät in Gladys angelegt wurde oder
+   nur bei einem früheren Scan auftauchte. Ein einmal gefundenes Gerät geht nie
+   wieder verloren.
+
+Jede Adresse wird dann per **Unicast** abgefragt (das überquert das Bridge-
+Netz). Klicke auf **Anlegen**, um ein Gerät zu Gladys hinzuzufügen.
+
+### ⚠️ Ein Gerät fehlt? Nutze MQTT
+
+**Das ist der wichtigste Teil dieser Seite, wenn du mehr als eine Handvoll
+Geräte hast.**
+
+mDNS arbeitet mit kurzen Multicast-Schüben. Bei etwa fünfzehn Shelly-Geräten
+meldet ein Scan 19 Ankündigungen, der nächste 27, und manche Geräte werden **nie
+angekündigt** — obwohl sie einwandfrei funktionieren und per HTTP antworten,
+sobald man ihre Adresse kennt.
+
+Drei Auswege, der wirksamste zuerst:
+
+1. **MQTT einrichten**. Ein Gerät, das an deinen Broker publiziert, meldet sich
+   **ständig**: Es gibt kein Zeitfenster mehr zu verpassen. Es wird gefunden,
+   meldet in Echtzeit und bleibt steuerbar, auch wenn es lokal nicht erreichbar
+   ist.
+2. **Die Shelly Cloud aktivieren.** Sie findet keine Geräte, hält aber die
+   bekannten lesbar und steuerbar, wenn das lokale Netz ausfällt.
+3. **Die IP-Adressen von Hand eingeben** unter „Zusätzliche Geräteadressen“.
+   Sofort wirksam, aber bei einem neuen DHCP-Lease zu wiederholen — reserviere
+   in dem Fall eine feste IP im Router.
+
+### Ein Shelly = ein Gladys-Gerät
+
+Ein Shelly Pro 4PM wird **ein einziges Gladys-Gerät** mit **vier**
+Ein/Aus-Funktionen und ihren Messwerten. Das ist die Gladys-Konvention, und sie
+hält die externen IDs stabil, wenn du einen Kanal umbenennst.
+
+Hast du deine Kanäle in der Shelly-App benannt („Bad“, „WC“…), werden diese
+Namen übernommen: Du bekommst „Bad — Ein/Aus“ statt viermal „Ein/Aus“.
+**Benenne deine Kanäle in der Shelly-App vor der Erkennung.**
 
 ---
 
-## Troubleshooting
+## Unterstützte Geräte und Messwerte
 
-### No device found during the scan
+Die Funktionen ergeben sich aus dem, was das Gerät **tatsächlich meldet**, nie
+aus einer festen Modellliste: Ein Shelly Pro 1 (ohne Messung) hat nur ein
+Ein/Aus, ein Pro 1PM zusätzlich Leistung, Spannung, Strom und Energie — und ein
+nach dieser Version erschienener Shelly funktioniert, solange er dasselbe
+Vokabular spricht.
 
-1. **Check that the device answers.** From a browser on the same network, open
-   `http://<shelly-ip>/shelly`. You should see JSON containing `"gen": 2` (or 3,
-   or 4). If there is **no** `gen` field but a `"type"` field, this is a Gen1
-   device: supported too, over polling.
-2. **mDNS does not cross VLANs, nor some Wi-Fi access points.** Enter the IP
-   addresses by hand in **Additional device addresses**, then save: the
-   discovery re-runs automatically.
-3. **Read the container logs** (`docker logs <container>`). The integration logs
-   how many candidate addresses it has, where each came from, and the exact
-   reason an address was discarded.
+| Shelly-Komponente             | Was du in Gladys bekommst                                                                                                                                                                                           |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `switch:N`                    | Ein/Aus (steuerbar), Leistung (W), Spannung (V), Strom (A), Gesamtenergie (kWh), interne Temperatur (°C)                                                                                                            |
+| `cover:N`                     | Rollladen öffnen / stopp / schließen (steuerbar), Position (%) nach Kalibrierung, Leistung, Spannung, Strom, Energie                                                                                                |
+| `light:N`                     | Licht ein/aus und Helligkeit (steuerbar), Leistung und Energie                                                                                                                                                      |
+| `rgb:N` / `rgbw:N`            | Wie `light:N`, plus die Farbe (steuerbar)                                                                                                                                                                           |
+| `cct:N`                       | Wie `light:N`, plus die Farbtemperatur (steuerbar)                                                                                                                                                                  |
+| `input:N`                     | Schaltermodus: ein Eingang (ein/aus). Tastermodus: ein Taster und der Szenen-Auslöser „Taster gedrückt“. Zählmodus: ein Zähler                                                                                      |
+| `em:N` (dreiphasig)           | Pro Phase L1/L2/L3: Wirkleistung (W), Scheinleistung (VA), Spannung (V), Strom (A) — plus Summen und Neutralleiterstrom                                                                                             |
+| `emdata:N`                    | Gesamte und eingespeiste Energie, pro Phase und gesamt (kWh)                                                                                                                                                        |
+| `em1:N` / `em1data:N`         | Einphasige Entsprechungen (Shelly Pro EM, 1PM Mini Gen3)                                                                                                                                                            |
+| `pm1:N`                       | Leistung, Spannung, Strom und Energie eines eigenständigen Zählers (PM Mini)                                                                                                                                        |
+| `temperature:N`, `humidity:N` | Temperatur (°C), Luftfeuchtigkeit (%)                                                                                                                                                                               |
+| `devicepower:N`               | Batteriestand (%)                                                                                                                                                                                                   |
+| `flood:N`, `smoke:N`          | Wasserleck, Rauch (Gen1 Flood und Smoke, Gen2+-Entsprechungen)                                                                                                                                                      |
+| `contact:N`, `illuminance:N`  | Tür-/Fensteröffnung (geschlossen / offen) und Helligkeit (Lux) eines Gen1 Door/Window                                                                                                                               |
+| `number:N` / `boolean:N`      | Virtuelle Komponenten von „Powered by Shelly“-Geräten (LinkedGo ST1820…): Thermostat-Sollwert (steuerbar, auf Bereich und Schritt des Geräts begrenzt), Raumtemperatur (°C), Luftfeuchtigkeit (%), Ein/Aus-Optionen |
 
-### "The device refused the password"
+Mit echten Daten geprüfte Hardware: **Shelly Pro 3EM**, **Shelly Pro 4PM**,
+**Shelly Pro 3**, **Shelly Plus 2PM**, **Shelly Plus Plug S** und der **Gen1
+3EM**. Rollläden, Lichter und Eingänge folgen der dokumentierten Shelly-API und
+warten auf deine Rückmeldung mit echter Hardware: Wenn du solche Geräte hast,
+melde bitte, wie sie sich verhalten (siehe [Diagnose](#diagnose)).
 
-You enabled authentication on that Shelly, and the password entered in Gladys
-does not match. On Gen2+ the username is **always** `admin`: only the password
-matters. Fix it and save — the correction takes effect immediately, without
-restarting the container.
+Bei **Gen1** gilt dasselbe Modell: Ein Shelly 2.5 im Rollladenmodus wird ein
+Rollladen, ein Dimmer, eine Bulb oder ein Duo ein Licht, ein RGBW2 im Farbmodus
+ein Farblicht, die Eingänge eines i3 werden Eingänge **und Taster** (einfacher,
+doppelter, dreifacher und langer Druck, aus dem Druckzähler jeder Abfrage oder
+sofort über MQTT), ein **Flood** ein Wassermelder, ein **Smoke** ein
+Rauchmelder, ein **Door/Window** ein Öffnungssensor mit seiner Helligkeit.
 
-### A device keeps falling back to Cloud (orange badge)
+**Batteriegeräte schlafen** (H&T, Flood, Door/Window, Smoke, Button, Plus/Gen3
+H&T…): Schlafend antworten sie nicht, das ist ihr Normalzustand. Die Integration
+hält sie daher **lokal**, solange sie sich in den letzten 26 Stunden gemeldet
+haben, pausiert sie nie und löst während ihres Schlafs nie „Erreichbarkeit eines
+Shelly“ aus. Ihre Werte kommen beim Aufwachen: Richte **MQTT** auf ihnen ein, um
+jeden Bericht sofort zu erhalten; ein schlafendes Gerät ist bei einer Abfrage
+fast nie wach.
 
-Its IP address most likely changed (DHCP lease). Run a **discovery** again: the
-address is re-learned and remembered. To avoid a repeat, reserve a static IP for
-your Shelly devices in your router.
+### Rollläden
 
-### The Shelly Cloud rejected the authorization key
+Ein Rollladen bietet die Standard-**Rollladen**-Steuerung von Gladys:
+**Öffnen**, **Stopp**, **Schließen** und einen **Positions**-Regler. Die
+Position (100 % = ganz offen, dieselbe Konvention bei Shelly und in Gladys) gibt
+es erst, wenn der Rollladen in der Shelly-App **kalibriert** ist. Kalibriere
+ihn, starte eine neue Erkennung und klicke beim Gerät auf **Aktualisieren**.
 
-Copy the key **and** the server address from the Shelly app: they go together,
-and the server address depends on your account region. A valid key on the wrong
-server is rejected.
+Während der Bewegung zeigt Gladys die Richtung (öffnet / schließt); danach
+„gestoppt“ und die echte Position.
 
-### Values do not update as fast as expected
+### Lichter
 
-**On/off states are near-instant** (about a second): your devices push them to
-Gladys over a WebSocket, without waiting for the next refresh.
+Dimmer und Farbausgänge werden Gladys-**Lichter**: ein/aus, Helligkeit (0 bis
+100 %), Farbe bei `rgb` / `rgbw`, Farbtemperatur bei `cct` (2700 K warm bis
+6500 K kalt). Die Helligkeit zu ändern schaltet das Licht weder ein noch aus.
+Ein RGBW-Ausgang bietet auch seine **weißen** LEDs an (0 bis 100 %). Analoge
+Eingänge werden noch nicht angeboten.
 
-**Every instantaneous power** — a meter's total power, the power of **each
-phase** of a three-phase meter, each relay's power — rides a dedicated
-**real-time lane**, published every 5 seconds by default (adjustable from 1 s to
-30 s, or disabled). That is what a scene needs to react: steering a battery,
-shedding a load.
+### Eingänge und Taster
 
-**Every other measurement** (voltages, currents, apparent power, energy
-counters, temperatures) follows the refresh interval you configured. That is
-deliberate, and it is a hard constraint rather than a choice: Gladys limits an
-integration to **300 states per minute**, while a single Pro 3EM pushes about
-**one update per second across ~25 measurements**. Forwarding all of it verbatim
-would be roughly 900 states per minute — three times over the cap. So
-measurements are coalesced: Gladys gets the _freshest_ value at your configured
-cadence, without an HTTP round trip.
+Was aus einem Eingang wird, hängt von seinem **Modus** in der Shelly-App ab:
 
-The integration also only publishes values that **changed**; a stable value is
-republished every 30 minutes so it does not look dead.
+- **Schalter** (Wandschalter, potentialfreier Kontakt): eine Funktion
+  **Eingang**, ein oder aus, in Echtzeit gemeldet;
+- **Taster** (Drucktaster): eine Funktion **Taster** und der Szenen-Auslöser
+  **Taster an einem Shelly gedrückt**, bei jedem einfachen, doppelten,
+  dreifachen oder langen Druck — in Echtzeit, über WebSocket oder MQTT. Ein
+  Shelly i4 liefert so vier Taster für deine Szenen;
+- **Zählen**: ein **Zähler**.
 
-**What happens when your fleet is too big for your cadence.** The cost of the
-lane comes from the fleet, not from the setting: a value that never moves is
-free, a value that always moves costs a slot in every window. So the integration
-**measures** what it actually publishes and stretches its own interval once it
-passes 240 states per minute — and it says so:
+Modus eines Eingangs in der Shelly-App geändert? Starte eine neue Erkennung und
+klicke beim Gerät auf **Aktualisieren**.
+
+### Der Neutralleiterstrom
+
+Bei einem Pro 3EM wird `n_current` nur gemessen, wenn du **die
+Neutralleiterzange angeschlossen** hast. Ohne sie liefert das Gerät `null`: Die
+Funktion wird dann **gar nicht angelegt** statt eines dauerhaft leeren
+Diagramms. Schließt du die Zange später an, starte eine neue Erkennung.
+
+---
+
+## Transport-Badges
+
+Jedes Gerät zeigt in Gladys ein Badge, **über welchen Kanal es tatsächlich
+erreicht wird**:
+
+| Badge                     | Bedeutung                                                                                                            |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| **Lokal**                 | Normalbetrieb. Gladys spricht direkt mit dem Gerät in deinem Netzwerk.                                               |
+| **Cloud**                 | Gladys geht über die Shelly Cloud (du hast „Lokale Verbindung bevorzugen“ ausgeschaltet).                            |
+| **Cloud** + oranger Punkt | **Eingeschränkt**: Das Gerät war lokal nicht erreichbar, Gladys ist auf die Cloud ausgewichen. Fahre über das Badge. |
+| **Nicht erreichbar**      | Weder das lokale Netz noch die Cloud haben geantwortet.                                                              |
+
+Ein **Cloud-Badge mit orangem Punkt** ist das, worauf du achten solltest: Es
+funktioniert, aber nicht im Normalbetrieb. Der Tooltip nennt die Ursache — Gerät
+aus, IP geändert oder Passwort abgelehnt.
+
+---
+
+## Szenen
+
+Im Szeneneditor, Kategorie **Integrationen**:
+
+**Auslöser**
+
+- **Taster an einem Shelly gedrückt** — wähle das Gerät, optional den Eingang
+  (0 bis 3) und die Druckarten (einfach, doppelt, dreifach, lang). Die Variablen
+  `device_name`, `input` und `event` stehen den folgenden Aktionen zur
+  Verfügung.
+- **Erreichbarkeit eines Shelly** — ein Gerät ist über alle Transporte (lokal,
+  MQTT und Cloud) nicht mehr erreichbar, oder antwortet wieder. Praktisch für
+  eine Benachrichtigung, wenn der Zähler des Hauptverteilers nichts mehr meldet.
+
+**Aktionen**
+
+- **Für eine Dauer einschalten** — schaltet ein Relais oder ein Licht ein, und
+  **der Shelly selbst** schaltet es nach der Dauer aus (1 Sekunde bis 1 Tag).
+  Der Timer läuft im Gerät: Ein Neustart von Gladys zwischendurch lässt nie die
+  Pumpe, die Heizung oder die Bewässerung weiterlaufen. Ausgang 0 ist das erste
+  Relais oder Licht des Geräts, 1 das zweite usw.
+- **Einen Shelly neu starten** — das übliche Mittel gegen ein Gerät, das nach
+  einem WLAN-Wechsel nichts mehr meldet.
+
+Die üblichen Aktionen (ein, aus, Position, Helligkeit…) bleiben die
+Standard-Geräteaktionen von Gladys.
+
+---
+
+## Dashboard-Widgets
+
+Füge sie im Dashboard-Editor hinzu, Spalte **Integrationen**:
+
+- **Shelly-Energiezähler** — für einen messenden Shelly (Pro 3EM, Pro EM, PM
+  Mini, eine Steckdose oder ein Relais mit Messung): eine Live-
+  Leistungsanzeige (unter null bei Einspeisung), eine Kachel pro Phase oder
+  Kanal, die Gesamtenergie, die Leistungskurve über den gewählten Zeitraum, dann
+  Spannungen, Ströme, Scheinleistung, Leistungsfaktor und Frequenz der letzten
+  Messung sowie die Quelle. Stelle das Maximum der Anzeige auf deine
+  Anschlussleistung.
+- **Shelly-Schalter** — die Relais und Lichter eines Raums oder des ganzen
+  Hauses (Auswahl leer lassen für alle): Zustand und Leistung jedes Ausgangs,
+  Anzahl eingeschaltet, Gesamtleistung und die Schaltflächen **Alle an** /
+  **Alle aus** (mit Bestätigung).
+- **Shelly-Rollläden** — eine Rollladengruppe: Zustand und Position jedes
+  Rollladens, die mittlere Position und die Schaltflächen **Öffnen**, **Stopp**,
+  **Schließen** und **Position** für die ganze Gruppe (das Positionsformular ist
+  mit dem aktuellen Mittelwert vorausgefüllt).
+- **Zustand des Shelly-Netzwerks** — wie viele Geräte in Echtzeit melden,
+  ausweichen oder nicht erreichbar sind, dann die Liste dessen, was Aufmerksamkeit
+  verdient (nicht erreichbar, eingeschränkt, schwaches WLAN-Signal, Firmware-
+  Update verfügbar), und der genutzte Anteil des Gladys-Budgets von 300
+  Zuständen pro Minute.
+
+---
+
+## Diagnose
+
+Die Seite **Konfiguration** der Integration bietet zwei rein lesende
+Schaltflächen, gemacht für ein GitHub-Issue oder einen Forumsbeitrag:
+
+- **Diagnose der Geräte** — ein Textbericht der gesamten Installation:
+  Konfiguration (nie ein Passwort oder der Cloud-Schlüssel), WebSocket- und
+  MQTT-Kanäle, in der letzten Minute publizierte Zustände und Takt des
+  Echtzeitkanals, dann pro Gerät Transport und ob eingeschränkt, Alter der
+  letzten Daten, lokaler Schutzschalter, Komponenten, WLAN-Signal, Laufzeit,
+  verfügbares Firmware-Update und Zustand der Ausgänge. Wähle ein Gerät, um nur
+  dieses zu diagnostizieren.
+- **Ein Gerät testen** — liest ein Gerät **sofort** an der Adresse, die die
+  Integration verwendet: Identität `/shelly` und Antwortzeit, dann der
+  vollständige Zustand (mit Passwort), die Komponenten und die abgeleiteten
+  Funktionen, das WLAN-Signal und ob es in Echtzeit meldet. Bei einem Fehler
+  der genaue Fehler und was zu tun ist. Funktioniert auch für ein **nicht in
+  Gladys angelegtes** Gerät: Gib seine IP-Adresse ein — der schnellste Weg zu
+  verstehen, warum ein Scan es nicht findet. Schreibt nie etwas in das Gerät.
+
+Standardmäßig ist der MAC-Teil der Geräte-IDs gekürzt und die lokalen Adressen
+sind verborgen: Der Bericht kann unverändert öffentlich gepostet werden. Kreuze
+**Geräte-IDs und lokale Adressen anzeigen** für einen privaten Austausch an.
+Die Berichte stehen auch in den Protokollen der Integration, immer maskiert.
+
+---
+
+## Integration aktualisieren
+
+Gladys zeigt verfügbare Updates unter **Integrationen**. Klicke auf
+**Aktualisieren**: Der Container wird mit dem neuen Image neu erstellt, deine
+Konfiguration und Geräte bleiben erhalten. Die Hinweise jeder Version stehen auf
+der [GitHub-Releases-Seite](https://github.com/Terdious/gladys-shelly/releases).
+
+Ein Shelly, der sein **Profil** wechselt (ein Plus 2PM von Relais auf Rollladen,
+ein Dimmer von Licht auf Schalter), behält seine alten Funktionen in Gladys,
+leer. Der Scan nennt sie in den Protokollen und die **Diagnose der Geräte**
+listet sie auf: Klicke für die neuen auf **Aktualisieren** und lösche die alten
+in Gladys.
+
+Neue Funktionen eines bestehenden Geräts (ein inzwischen kalibrierter Rollladen,
+eine neu unterstützte Komponente) erscheinen nach einer **Erkennung**: Klicke
+beim als „Bereits hinzugefügt“ markierten Gerät auf **Aktualisieren**. Seine
+bestehenden Funktionen, sein Verlauf, deine Szenen und Dashboards bleiben
+erhalten.
+
+---
+
+## Fehlerbehebung
+
+### Beim Scan wird kein Gerät gefunden
+
+1. **Prüfe, ob das Gerät antwortet.** Öffne in einem Browser im selben Netz
+   `http://<shelly-ip>/shelly`. Du solltest ein JSON mit `"gen": 2` (oder 3,
+   oder 4) sehen. Steht dort **kein** Feld `gen`, aber ein Feld `"type"`, ist es
+   ein Gen1-Gerät: ebenfalls unterstützt, per Abfrage.
+2. **mDNS überquert keine VLANs und manche WLAN-Access-Points nicht.** Gib die
+   IP-Adressen unter **Zusätzliche Geräteadressen** ein und speichere: Die
+   Erkennung startet automatisch neu.
+3. **Nutze „Ein Gerät testen“** auf der Konfigurationsseite mit der IP des
+   Geräts: Es sagt, ob das Gerät antwortet, das Passwort ablehnt oder kein
+   Shelly ist.
+4. **Lies die Container-Protokolle** (`docker logs <container>`). Die
+   Integration protokolliert die Kandidatenadressen, ihre Herkunft und den
+   genauen Grund, warum eine Adresse verworfen wurde.
+
+### „Das Gerät hat das Passwort abgelehnt“
+
+Du hast an diesem Shelly die Authentifizierung aktiviert, und das in Gladys
+eingegebene Passwort stimmt nicht. Bei Gen2+ ist der Benutzername **immer**
+`admin`: Nur das Passwort zählt. Korrigiere es und speichere — die Korrektur
+wirkt sofort, ohne Neustart des Containers.
+
+Hat nur dieses Gerät ein anderes Passwort, trage es unter **Passwörter pro
+Gerät** ein (`seine-shelly-id=sein-passwort`), statt das gemeinsame zu ändern.
+Die Konfigurationsseite nennt die Geräte, die ihr Passwort ablehnen, und **Ein
+Gerät testen** sagt, welches Passwort versucht wurde.
+
+### Ein Gerät weicht ständig auf die Cloud aus (oranges Badge)
+
+Seine IP-Adresse hat sich höchstwahrscheinlich geändert (DHCP-Lease). Starte
+eine neue **Erkennung**: Die Adresse wird neu gelernt und gespeichert. Um das zu
+vermeiden, reserviere im Router feste IPs für deine Shelly-Geräte.
+
+### Die Shelly Cloud hat den Autorisierungsschlüssel abgelehnt
+
+Kopiere den Schlüssel **und** die Serveradresse aus der Shelly-App: Sie gehören
+zusammen, und die Serveradresse hängt von der Region deines Kontos ab. Ein
+gültiger Schlüssel auf dem falschen Server wird abgelehnt.
+
+### Die Werte aktualisieren sich nicht so schnell wie erwartet
+
+**Ein/Aus-Zustände sind fast sofort da** (etwa eine Sekunde): Deine Geräte
+melden sie über eine WebSocket, ohne auf die nächste Aktualisierung zu warten.
+
+**Jede Momentanleistung** — Gesamtleistung eines Zählers, Leistung **jeder
+Phase**, Leistung jedes Relais — sowie die Zustände von Rollläden, Lichtern und
+Eingängen laufen über einen **Echtzeitkanal**, standardmäßig alle 5 Sekunden
+(einstellbar von 1 s bis 30 s oder deaktiviert). Das braucht eine Szene, um zu
+reagieren.
+
+**Alle anderen Messwerte** (Spannungen, Ströme, Scheinleistung, Energiezähler,
+Temperaturen) folgen dem eingestellten Aktualisierungsintervall. Das ist eine
+harte Grenze: Gladys erlaubt einer Integration **300 Zustände pro Minute**,
+während ein einziger Pro 3EM etwa **eine Aktualisierung pro Sekunde über ~25
+Messwerte** sendet. Alles weiterzuleiten wären rund 900 Zustände pro Minute.
+Die Messwerte werden daher zusammengefasst: Gladys bekommt den _frischesten_
+Wert im eingestellten Takt.
+
+**Wenn deine Installation zu groß für den Takt ist**, misst die Integration, was
+sie tatsächlich publiziert, und verlängert ihr Intervall ab 240 Zuständen pro
+Minute selbst — und meldet das in den Protokollen:
 
 ```
 Real-time lane slowed to 10s (you asked for 5s): the fleet is publishing
@@ -337,60 +502,42 @@ Real-time lane slowed to 10s (you asked for 5s): the fleet is publishing
 fewer devices, or raise the refresh interval, to stay at 5s.
 ```
 
-Your setting is a **floor**: the lane returns to it on its own as soon as the
-budget allows. A slower lane is visible; a state Gladys refuses would not be.
+Deine Einstellung ist eine **Untergrenze**: Der Kanal kehrt von selbst dorthin
+zurück, sobald das Budget es erlaubt. Einmal pro Minute sagt eine Zeile, wo du
+stehst; das Widget **Zustand des Shelly-Netzwerks** und die **Diagnose der
+Geräte** zeigen dieselben Zahlen.
 
-The controller is deliberately slow to change its mind: it slows down in
-proportion (a big installation reaches its cadence in one or two steps) but it
-speeds back up **one second at a time**, only once the rate has fallen well
-under the threshold, and never more than once a minute. The rate is measured
-over a rolling minute, so deciding faster would mean deciding on a number that
-still describes the previous cadence — and oscillating.
-
-If Gladys refuses states anyway, it says so by name, and the lane slows down
-immediately without waiting:
-
-```
-Gladys refused 38 state(s): over the 300/min limit. They are retried on the
-next cycle, and the real-time lane slows down.
-```
-
-Once a minute, one line tells you where you stand:
-
-```
-Real-time lane: 54 state(s) published in the last minute (every 5s, from
-4 WebSocket and 15 MQTT device(s)); 61/300 states/min of the Gladys budget used
-```
-
-**Checking that real time is actually working.** Two distinct lines per device
-in the container logs:
+**Prüfen, ob Echtzeit wirklich funktioniert.** Zwei Zeilen pro Gerät in den
+Container-Protokollen:
 
 ```
 shellypro4pm-ece334ea4d10: real-time WebSocket connected
 shellypro4pm-ece334ea4d10: real-time updates flowing
 ```
 
-The first one means the connection is established **and the device answered
-us**; the second appears with the first notification received. If the first
-line never shows up, the device is refusing the connection (password? old Gen2
-firmware?): its values then simply follow the refresh interval, nothing is
-lost.
+Erscheint die erste nie, lehnt das Gerät die Verbindung ab (Passwort? alte
+Gen2-Firmware?): Seine Werte folgen dann einfach dem Aktualisierungsintervall,
+nichts geht verloren.
 
-### Migrating from an existing MQTT / Node-RED setup
+### Umstieg von einer bestehenden MQTT- / Node-RED-Lösung
 
-This integration creates its **own** devices with its own external ids
-(`ext:shelly:device:...`). It does not carry over the history of devices created
-through MQTT: both can coexist during the transition, then you delete the old
-ones.
+Diese Integration legt ihre **eigenen** Geräte mit eigenen externen IDs an
+(`ext:shelly:device:...`). Sie übernimmt nicht den Verlauf von über MQTT
+angelegten Geräten: Beide können während des Übergangs nebeneinander bestehen,
+dann löschst du die alten. **Entferne die Geräte aus der alten Brücke**, bevor
+du sie hier anlegst, sonst siehst du jeden Shelly doppelt.
 
 ---
 
-## Going further
+## Weiterführend
 
-- [Project README](https://github.com/Terdious/gladys-shelly/blob/HEAD/./README.md) — architecture and development
-- [Roadmap](https://github.com/Terdious/gladys-shelly/blob/HEAD/ROADMAP.md) — what is done, what is coming
-- [Shelly Gen2+ API documentation](https://shelly-api-docs.shelly.cloud/gen2/)
-- [Report an issue](https://github.com/Terdious/gladys-shelly/issues)
+- [Projekt-README](https://github.com/Terdious/gladys-shelly/blob/HEAD/./README.md) — Architektur und Entwicklung
+- [Roadmap](https://github.com/Terdious/gladys-shelly/blob/HEAD/ROADMAP.md) — was fertig ist, was kommt
+- [Dokumentation der Shelly-Gen2+-API](https://shelly-api-docs.shelly.cloud/gen2/)
+- [Versionshinweise](https://github.com/Terdious/gladys-shelly/releases) und
+  das [Changelog](https://github.com/Terdious/gladys-shelly/blob/HEAD/./CHANGELOG.md)
+- [Problem melden](https://github.com/Terdious/gladys-shelly/issues) — füge den
+  Bericht der **Diagnose der Geräte** bei
 
 ## Konfigurationseinstellungen
 
@@ -398,31 +545,33 @@ Diese Einstellungen fragt Shelly in seinem Konfigurationsbildschirm in Gladys ab
 
 | Einstellung | Typ | Pflichtfeld | Beschreibung |
 | --- | --- | --- | --- |
-| Local connection (recommended) | `section` | Nein | Gladys talks to your Shelly devices directly on your network, with no cloud in between: faster, and it keeps working when the Internet is down. Devices announce themselves over mDNS and are found automatically when you run a scan — nothing to fill in here unless your devices are password-protected or invisible to mDNS. Gen2 and later are supported (Plus, Pro, Mini, Gen3, Gen4); Gen1 devices are not supported yet. |
-| Additional device addresses | `string` | Nein | Optional. Comma-separated IP addresses or hostnames of Shelly devices that mDNS does not find (different VLAN, mDNS disabled on the device, static setup). Example: 10.5.0.171, 10.5.0.172, shellypro4pm-ece334ea4d10.local |
-| Device username | `string` | Nein | Only if you enabled authentication on your Shelly devices. On Gen2+ the username is always 'admin' — leave it as is. |
-| Device password | `secret` | Nein | Only if you enabled authentication on your Shelly devices. A single password is used for every device — set the same one on all of them, or leave this empty and disable authentication on your local network. |
-| Shelly Cloud (fallback) | `section` | Nein | Optional. When a device cannot be reached locally (away from home, another VLAN, Wi-Fi drop), Gladys can fall back to the Shelly Cloud. Get the authorization key and the server address in the Shelly app: Settings, then User settings, then Authorization cloud key. Leave this section empty for a local-only setup. |
-| Enable the Shelly Cloud fallback | `boolean` | Nein | Use the Shelly Cloud when a device is unreachable on the local network. Requires the server address and the authorization key below. |
-| Shelly Cloud server | `string` | Nein | The server your account is hosted on, shown next to the authorization key in the Shelly app. Example: shelly-53-eu.shelly.cloud |
-| Shelly Cloud authorization key | `secret` | Nein | The authorization cloud key of your Shelly account. It grants full control over every device of the account — treat it like a password. |
-| MQTT (recommended for large installations) | `section` | Nein | Optional, and the most reliable way to reach a large fleet. Shelly devices announce themselves over mDNS in short multicast bursts that are easily missed, so on an installation with many devices some are simply never discovered. A device configured to publish to your MQTT broker announces itself continuously instead: it is discovered, it reports in real time, and it can still be controlled when it is unreachable on the local network. Configure the broker in each Shelly: Settings, then MQTT, then tick Enable, Enable MQTT Control and RPC status notifications over MQTT. |
-| Enable MQTT | `boolean` | Nein | Listen to your MQTT broker to discover, read and control the Shelly devices that publish to it. |
-| MQTT broker address | `string` | Nein | Host and port of your broker, exactly as entered in the Server field of your Shelly devices. The port defaults to 1883. |
-| MQTT username | `string` | Nein | Only if your broker requires authentication. Use the same credentials you set in your Shelly devices. |
-| MQTT password | `secret` | Nein | Only if your broker requires authentication. |
-| Advanced | `section` | Nein | Sensible defaults are already set — change these only if you know why. A shorter refresh interval means fresher values but more requests on your network and against the Gladys state rate limit. |
-| Refresh interval | `select` | Nein | How often Gladys reads the state of every device. |
-| Real-time interval (power and on/off) | `select` | Nein | How fast the values a scene reacts to are published: every instantaneous power (total, per phase, per relay) and every on/off state. Everything else (voltages, currents, energy counters, temperatures) follows the refresh interval above. This is a floor, not a promise: Gladys accepts 300 states per minute in total, so on a large fleet the integration slows this lane down on its own and says so in the logs, then returns here as soon as the budget allows. |
+| Lokale Verbindung (empfohlen) | `section` | Nein | Gladys spricht direkt in deinem Netzwerk mit deinen Shelly-Geräten, ohne Cloud dazwischen: schneller, und es funktioniert auch ohne Internet weiter. Die Geräte melden sich per mDNS an und werden bei einem Scan automatisch gefunden — hier ist nichts auszufüllen, außer deine Geräte sind passwortgeschützt oder per mDNS unsichtbar. Alle Generationen werden unterstützt: Gen1, Gen2, Plus, Pro, Mini, Gen3 und Gen4. |
+| Zusätzliche Geräteadressen | `string` | Nein | Optional. Durch Kommas getrennte IP-Adressen oder Hostnamen von Shelly-Geräten, die mDNS nicht findet (anderes VLAN, mDNS am Gerät deaktiviert, statische Einrichtung). Beispiel: 10.5.0.171, 10.5.0.172, shellypro4pm-ece334ea4d10.local |
+| Benutzername der Geräte | `string` | Nein | Nur wenn du die Authentifizierung an deinen Shelly-Geräten aktiviert hast. Bei Gen2+ ist der Benutzername immer „admin“ — lass ihn so. |
+| Passwort der Geräte | `secret` | Nein | Nur wenn du die Authentifizierung an deinen Shelly-Geräten aktiviert hast. Gilt für alle Geräte, außer denen unter Passwörter pro Gerät unten. |
+| Passwörter pro Gerät | `secret` | Nein | Optional, für Geräte mit einem anderen Passwort als oben: Einträge Gerät=Passwort, durch Semikolons getrennt. Das Gerät ist seine Shelly-ID, seine MAC-Adresse oder seine IP-Adresse. Beispiel: shellyplus1-a8032ab12345=erstes; 10.5.0.42=zweites |
+| Shelly Cloud (Ausweichlösung) | `section` | Nein | Optional. Wenn ein Gerät lokal nicht erreichbar ist (unterwegs, anderes VLAN, WLAN-Ausfall), kann Gladys auf die Shelly Cloud ausweichen. Den Autorisierungsschlüssel und die Serveradresse findest du in der Shelly-App: Einstellungen, dann Benutzereinstellungen, dann Autorisierungs-Cloud-Schlüssel. Lass diesen Abschnitt für eine rein lokale Installation leer. |
+| Shelly-Cloud-Ausweichlösung aktivieren | `boolean` | Nein | Die Shelly Cloud verwenden, wenn ein Gerät im lokalen Netzwerk nicht erreichbar ist. Erfordert die Serveradresse und den Autorisierungsschlüssel unten. |
+| Shelly-Cloud-Server | `string` | Nein | Der Server, auf dem dein Konto liegt, angezeigt neben dem Autorisierungsschlüssel in der Shelly-App. Beispiel: shelly-53-eu.shelly.cloud |
+| Shelly-Cloud-Autorisierungsschlüssel | `secret` | Nein | Der Autorisierungs-Cloud-Schlüssel deines Shelly-Kontos. Er gewährt die volle Kontrolle über alle Geräte des Kontos — behandle ihn wie ein Passwort. |
+| MQTT (empfohlen für große Installationen) | `section` | Nein | Optional, und der zuverlässigste Weg zu einer großen Installation. Shelly-Geräte melden sich per mDNS in kurzen Multicast-Schüben an, die leicht verpasst werden: Bei vielen Geräten werden manche nie gefunden. Ein Gerät, das an deinen MQTT-Broker publiziert, meldet sich dagegen ständig: Es wird gefunden, meldet in Echtzeit und bleibt steuerbar, auch wenn es im lokalen Netzwerk nicht erreichbar ist. Richte den Broker in jedem Shelly ein: Einstellungen, dann MQTT, dann Enable, Enable MQTT Control und RPC status notifications over MQTT ankreuzen. |
+| MQTT aktivieren | `boolean` | Nein | Deinen MQTT-Broker abhören, um die dort publizierenden Shelly-Geräte zu finden, zu lesen und zu steuern. |
+| Adresse des MQTT-Brokers | `string` | Nein | Host und Port deines Brokers, genau wie im Feld Server deiner Shelly-Geräte eingetragen. Standardport ist 1883. |
+| MQTT-Benutzername | `string` | Nein | Nur wenn dein Broker eine Authentifizierung verlangt. Verwende dieselben Zugangsdaten wie in deinen Shelly-Geräten. |
+| MQTT-Passwort | `secret` | Nein | Nur wenn dein Broker eine Authentifizierung verlangt. |
+| Erweitert | `section` | Nein | Sinnvolle Standardwerte sind bereits gesetzt — ändere sie nur, wenn du weißt, warum. Ein kürzeres Intervall liefert frischere Werte, aber mehr Anfragen in deinem Netzwerk und gegenüber dem Zustandslimit von Gladys. |
+| Namen der Funktionen | `select` | Nein | Sprache der Funktionsnamen neu erkannter Geräte. Ein bereits angelegtes Gerät behält seine Namen: Benenne seine Funktionen bei Bedarf in Gladys um. |
+| Aktualisierungsintervall | `select` | Nein | Wie oft Gladys den Zustand jedes Geräts liest. |
+| Echtzeit-Intervall (Leistung und Ein/Aus) | `select` | Nein | Wie schnell die Werte publiziert werden, auf die eine Szene reagiert: jede Momentanleistung (gesamt, pro Phase, pro Relais), jeder Ein/Aus-Zustand, Rollladen- und Lichtzustand. Alles andere (Spannungen, Ströme, Energiezähler, Temperaturen) folgt dem Aktualisierungsintervall oben. Das ist eine Untergrenze, kein Versprechen: Gladys nimmt insgesamt 300 Zustände pro Minute an, daher verlangsamt die Integration diesen Kanal bei großen Installationen selbst, meldet das in den Logs und kehrt zurück, sobald das Budget es erlaubt. |
 
 ## So installierst du Shelly in Gladys
 
 1. Öffne in Gladys **Integrationen**: Shelly erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
-2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/terdious/gladys-shelly:1.0.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/terdious/gladys-shelly:1.4.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
 3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
 4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/Terdious/gladys-shelly](https://github.com/Terdious/gladys-shelly).
 
-Shelly benötigt Gladys `>=4.83.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+Shelly benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
 
 Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
 
@@ -436,4 +585,4 @@ Shelly ist eine **externe Integration**: eine Community-Integration, die als Doc
 
 - [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
 - [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
-- [Quellcode auf GitHub](https://github.com/Terdious/gladys-shelly) — [Quelle dieser Dokumentation](https://github.com/Terdious/gladys-shelly/blob/HEAD/docs/en.md)
+- [Quellcode auf GitHub](https://github.com/Terdious/gladys-shelly) — [Quelle dieser Dokumentation](https://github.com/Terdious/gladys-shelly/blob/HEAD/docs/de.md)

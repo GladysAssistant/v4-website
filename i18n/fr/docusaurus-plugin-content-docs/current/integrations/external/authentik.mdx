@@ -1,0 +1,241 @@
+---
+title: "Intégration domotique authentik, gratuite et open source"
+sidebar_label: "authentik"
+description: "authentik dans Gladys : échecs de connexion, pays inhabituels et avant-postes hors ligne en scènes. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-authentik.png"
+keywords:
+  - "authentik"
+  - "domotique authentik"
+  - "gladys authentik"
+  - "authentik gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/guim31/gladys-authentik instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"authentik","description":"authentik dans Gladys : échecs de connexion, pays inhabituels et avant-postes hors ligne en scènes.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-authentik","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-authentik.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T17:26:29Z"}} />
+
+[authentik](https://goauthentik.io/) est un fournisseur d'identité libre :
+authentification unique (SSO) et authentification à plusieurs facteurs pour les
+services de votre maison ou de votre entreprise. Cette intégration amène ses
+**événements de sécurité** dans Gladys : un appareil « authentik » avec les
+échecs et connexions du jour et les avant-postes en ligne, des scènes qui se
+déclenchent sur un échec de connexion, une série d'échecs, une connexion depuis
+un pays inhabituel, un avant-poste hors ligne ou un autre événement de sécurité
+(pour vous envoyer une notification avec l'utilisateur, l'adresse et le pays),
+et un widget de tableau de bord avec les derniers événements.
+
+Testée contre un vrai authentik 2026.8.4 (Docker, avec les bases GeoIP de test
+officielles de MaxMind ; échecs et connexions joués par l'API des flux).
+Développée sans installation de production : vos retours sont les bienvenus sur
+[les issues](https://github.com/guim31/gladys-authentik/issues).
+
+## Ce qu'il faut
+
+- Gladys Assistant 5.1.0 ou plus récent.
+- authentik, joignable depuis la machine de Gladys (son adresse publique, ou son
+  adresse locale sur le port 9000 ou 9443). Testé avec la 2026.8 ; une version
+  plus ancienne avec la même API v3 devrait fonctionner.
+- Un **compte de service** avec un rôle qui peut lire les événements, les
+  utilisateurs et les avant-postes, et un **jeton d'API** pour lui (ci-dessous).
+- Facultatif : la **GeoIP** dans authentik (une base MaxMind GeoLite2 gratuite),
+  pour le pays et la ville de chaque connexion. Sans elle, tout fonctionne sauf
+  le déclencheur « Connexion depuis un pays inhabituel ».
+
+Gladys ne fait que lire : rien dans authentik ne peut être modifié depuis Gladys.
+
+## Pour commencer
+
+### 1. Créer un compte de service
+
+Dans l'interface d'administration d'authentik : **Annuaire → Utilisateurs →
+Nouveau compte de service**, nom `gladys`, décochez « Créer un groupe » et
+« Expire ». Le jeton affiché alors est un mot de passe d'application : il est
+**refusé par l'API**, ne l'utilisez pas.
+
+### 2. Lui donner les permissions de lecture
+
+**Annuaire → Rôles → Créer**, nom `Gladys read-only`. Dans le rôle, onglet
+**Permissions → Attribuer une permission**, ajoutez :
+
+- `authentik_events | event | Can view Event` (`view_event`) ;
+- `authentik_core | User | Can view User` (`view_user`) ;
+- `authentik_outposts | Outpost | Can view Outpost` (`view_outpost`).
+
+Puis onglet **Utilisateurs → Ajouter un utilisateur existant** : le compte
+`gladys`.
+
+### 3. Créer un jeton d'API
+
+**Annuaire → Jetons et mots de passe d'application → Créer** : identifiant
+`gladys-api`, utilisateur `gladys`, intention **API**, décochez « Expire ».
+Copiez le jeton avec le bouton « Copier le jeton ».
+
+### 4. Configurer l'intégration
+
+Dans Gladys, **Intégrations → authentik → Configuration** :
+
+- **Adresse d'authentik** : par ex. `https://auth.example.com`.
+- **Jeton d'API** : le jeton de l'étape 3.
+- **Échecs pour une série** et **Fenêtre de la série** : la règle du
+  déclencheur « Série d'échecs de connexion », 5 échecs en 10 minutes par
+  défaut.
+- **Pays habituels** : codes ISO des pays depuis lesquels vos utilisateurs se
+  connectent (`FR, BE`). Vide, l'intégration les apprend (voir plus bas).
+- **Intervalle de rafraîchissement** : 1 minute par défaut.
+- **Langue des noms** : langue des noms de fonctionnalités et de la phrase.
+
+**Tester la connexion** lit authentik tout de suite et résume ce qu'il voit.
+
+### 5. Ajouter l'appareil
+
+Dans **Découverte**, ajoutez l'appareil « authentik ».
+
+## L'appareil
+
+| Fonctionnalité               | Ce qu'elle contient                                    |
+| ---------------------------- | ------------------------------------------------------ |
+| `Joignable`                  | 1 quand l'API d'authentik répond, 0 sinon              |
+| `Échecs de connexion (1 h)`  | Échecs de connexion de la dernière heure               |
+| `Échecs de connexion (24 h)` | Échecs de connexion des dernières 24 heures            |
+| `Connexions (24 h)`          | Connexions réussies des dernières 24 heures            |
+| `Utilisateurs`               | Comptes utilisateur actifs (hors comptes de service)   |
+| `Avant-postes en ligne`      | Avant-postes avec au moins une instance connectée      |
+| `Avant-postes`               | Avant-postes déclarés dans authentik (intégré compris) |
+| `Version`                    | Version du serveur authentik                           |
+
+« Joignable » passe à 0 après deux lectures ratées de suite : un redémarrage
+d'authentik passe inaperçu. Les compteurs peuvent déclencher des scènes comme
+n'importe quel capteur (par ex. « Échecs de connexion (1 h) » au-dessus de 20).
+
+## Tableau de bord
+
+Le widget **Sécurité authentik** affiche les échecs et connexions des dernières
+24 heures, les avant-postes en ligne, puis les derniers événements de sécurité
+(utilisateur, ce qui s'est passé, pays, heure). **Actualiser** relit authentik.
+
+## Scènes
+
+### Déclencheurs
+
+- **Échec de connexion** : quelqu'un a saisi un mauvais mot de passe ou un nom
+  d'utilisateur inconnu. Filtre : le nom d'utilisateur. Variables : nom
+  d'utilisateur saisi, adresse, pays, ville.
+- **Série d'échecs de connexion** : les échecs atteignent le nombre réglé dans
+  la configuration, dans sa fenêtre. Une fois par série, puis à nouveau
+  seulement quand le compte est repassé sous le seuil. Variables : nombre
+  d'échecs, fenêtre, noms d'utilisateur et adresses différents, dernier nom
+  d'utilisateur, adresse et pays.
+- **Connexion depuis un pays inhabituel** : une connexion réussie depuis un pays
+  hors des pays habituels. Champ « Pays habituels » vide, l'intégration apprend
+  les pays des connexions réussies (le premier en silence, les dernières 24
+  heures au premier démarrage) : la première connexion depuis un nouveau pays
+  déclenche, les suivantes non. Filtre : le nom d'utilisateur. Variables : nom
+  d'utilisateur, adresse, pays, ville.
+- **Avant-poste hors ligne** : un avant-poste (proxy, LDAP, RADIUS…) n'a plus
+  d'instance connectée pendant deux lectures de suite. Une fois, jusqu'à son
+  retour. Filtre : le nom de l'avant-poste. Variables : nom, type.
+- **Événement de sécurité** : une requête suspecte, un changement de mot de
+  passe ou une usurpation par un administrateur. Filtre : l'événement.
+  Variables : événement, nom d'utilisateur, adresse, pays, ville, message
+  d'authentik.
+
+Les noms d'utilisateur et les adresses sont des données personnelles : ils sont
+transmis à vos scènes (pour écrire une notification) et affichés sur le widget,
+jamais écrits dans les logs de l'intégration au niveau info.
+
+### Actions
+
+- **État d'authentik** : résume authentik pour un message : échecs sur 1 heure
+  et 24 heures, connexions, avant-postes en ligne et au total, version, dernier
+  nom d'utilisateur et dernière adresse en échec, et une phrase toute faite
+  (« authentik : 3 échec(s) de connexion en 1 h, 3 en 24 h, 2 connexion(s) en
+  24 h, avant-postes en ligne : 1/2, 2 utilisateur(s) »).
+
+### Idées de scènes
+
+- **Échec de connexion** avec le nom d'utilisateur `admin` → une notification
+  « Quelqu'un essaie le compte admin depuis \{\{triggerEvent.data.country\}\}
+  (\{\{triggerEvent.data.ip\}\}) ».
+- **Série d'échecs de connexion** → une notification, et la lumière du perron
+  clignote en rouge si personne n'est à la maison.
+- **Avant-poste hors ligne** → une notification : les services web derrière le
+  proxy n'authentifient plus.
+- Chaque soir, **État d'authentik** → la phrase dans un message.
+
+## Dépannage
+
+- **« jeton d'API refusé »** : le jeton est faux, expiré, ou c'est le mot de
+  passe d'application du compte de service : créez un jeton d'intention
+  **API**.
+- **« permission manquante pour le jeton »** : le rôle n'a pas `view_event`, ou
+  le compte n'est pas dans le rôle. « avant-postes illisibles » ou
+  « utilisateurs illisibles » dans le test : il manque `view_outpost` ou
+  `view_user`.
+- **« TLS refusé »** : authentik utilise un certificat auto-signé, ou `https://` a été saisi pour le port HTTP 9000.
+  Utilisez son adresse locale en `http://…:9000`, ou un certificat reconnu.
+- **« pas d'API authentik à cette adresse »** : vérifiez l'adresse (celle de
+  l'interface d'administration, sans `/if/admin`).
+- **Pas de pays dans les événements** : la GeoIP n'est pas configurée dans
+  authentik.
+- Logs détaillés : `LOG_LEVEL=debug` sur le conteneur.
+
+## Limites
+
+- authentik n'a pas de filtre par date sur ses événements : l'intégration lit
+  les dernières pages jusqu'à un événement déjà vu, 1 000 événements au plus par
+  lecture, 3 000 à la première. Au-delà (une attaque massive), les compteurs
+  sont des minimums.
+- Au plus 10 événements de scène par déclencheur et par lecture : une attaque
+  n'envoie jamais des centaines de notifications.
+- Ce qui s'est passé pendant l'arrêt de l'intégration est annoncé au démarrage
+  suivant (dans les dernières 24 heures, la date du dernier événement étant
+  gardée dans `/data`) ; le tout premier démarrage n'annonce rien.
+- Les événements gardés par authentik expirent selon la rétention réglée dans
+  authentik.
+- Seules les connexions et les événements de sécurité ci-dessus sont suivis, pas
+  les autorisations d'applications ni les changements de configuration.
+
+Sans lien avec Authentik Security Inc.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par authentik dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre serveur authentik | `section` | Non | Dans authentik, créez un compte de service, un rôle avec les permissions view_event, view_user et view_outpost, et un jeton d'intention API. Le guide montre chaque étape. |
+| Adresse d'authentik | `string` | Non | L'adresse avec laquelle vous ouvrez authentik, ou son adresse locale (port 9000 ou 9443). |
+| Jeton d'API | `secret` | Non | Jeton du compte de service, intention API. Lecture seule : Gladys ne modifie rien dans authentik. |
+| Alertes | `section` | Non | Une série d'échecs se déclenche une fois quand ce nombre d'échecs survient dans la fenêtre choisie. Pays habituels : codes ISO (FR, BE…) ; vide, les pays des connexions passées sont appris. |
+| Échecs pour une série | `number` | Non |  |
+| Fenêtre de la série | `select` | Non |  |
+| Pays habituels | `string` | Non | Demande la GeoIP dans authentik. Vide : appris des connexions. |
+| Options | `section` | Non |  |
+| Intervalle de rafraîchissement | `select` | Non | Fréquence de lecture d'authentik : seulement les nouveaux événements. |
+| Langue des noms | `select` | Non | Langue des noms de fonctionnalités (fixés à l'ajout de l'appareil) et des résultats de scène. |
+
+## Comment installer authentik dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : authentik apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/guim31/gladys-authentik:1.0.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/guim31/gladys-authentik](https://github.com/guim31/gladys-authentik).
+
+authentik nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+authentik est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [guim31](https://github.com/guim31), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/guim31/gladys-authentik) — [source de cette documentation](https://github.com/guim31/gladys-authentik/blob/HEAD/docs/fr.md)

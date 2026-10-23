@@ -1,0 +1,249 @@
+---
+title: "Integración domótica Kopia, gratuita y de código abierto"
+sidebar_label: "Kopia"
+description: "Sus instantáneas de Kopia en Gladys: su estado y una alerta si una falla o deja de ejecutarse. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-kopia.png"
+keywords:
+  - "kopia"
+  - "domótica kopia"
+  - "gladys kopia"
+  - "kopia gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-kopia instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Kopia","description":"Sus instantáneas de Kopia en Gladys: su estado y una alerta si una falla o deja de ejecutarse.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-kopia","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-kopia.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T17:53:44Z"}} />
+
+[Kopia](https://kopia.io/) hace instantáneas cifradas y deduplicadas de sus
+archivos en un disco, un NAS o un almacenamiento en la nube. Esta integración
+lleva las fuentes de un servidor Kopia a Gladys: cada fuente (una carpeta
+copiada) se convierte en un dispositivo con su estado, su última instantánea
+correcta, su tamaño, sus archivos y los errores de su última instantánea. Las
+escenas pueden reaccionar cuando **cualquier** instantánea se completa, falla
+o tiene retraso (sin éxito desde hace demasiado), un widget del panel muestra
+primero las fuentes fallidas, y una escena puede iniciar una instantánea.
+
+Probada con un Kopia 0.23 real (imagen Docker `kopia/kopia`, repositorio en
+sistema de archivos, autenticación Basic, HTTP y HTTPS autofirmado): una
+instantánea que se completa, una con un archivo ilegible, una cuya carpeta se
+eliminó, y una instantánea iniciada desde la integración. Aún no probada en un
+Gladys real: sus comentarios son bienvenidos en
+[las issues](https://github.com/guim31/gladys-kopia/issues).
+
+## Lo que necesita
+
+- Gladys Assistant 5.1.0 o posterior.
+- Kopia iniciado como **servidor** con su interfaz web, `kopia server start`,
+  accesible desde la máquina de Gladys (puerto 51515 por defecto). KopiaUI, la
+  aplicación de escritorio, solo escucha su propio ordenador: no sirve.
+- El usuario y la contraseña del servidor, dados con `--server-username`
+  (`kopia` por defecto) y `--server-password`. No la contraseña del
+  repositorio.
+
+La integración lee Kopia cada 5 minutos por defecto (cada 30 segundos durante
+una instantánea): unas pocas peticiones ligeras en su propia red.
+
+## Primeros pasos
+
+### 1. Iniciar el servidor Kopia
+
+Por ejemplo, con un certificado generado por Kopia:
+
+```
+kopia server start --address=0.0.0.0:51515 \
+  --server-username=kopia --server-password=… \
+  --tls-generate-cert
+```
+
+En el primer inicio, Kopia muestra `SERVER CERT SHA256: …`: anote esta
+huella. Con `--insecure` en lugar de un certificado, el servidor habla HTTP
+simple: úselo solo en una red de confianza. La imagen Docker `kopia/kopia`
+acepta las mismas opciones.
+
+### 2. Configurar la integración
+
+En Gladys, **Integraciones → Kopia → Configuración**:
+
+- **Dirección de Kopia**: `https://192.168.1.2:51515` por ejemplo (`http://`
+  con `--insecure`). Una dirección sola (`192.168.1.2`) significa `http://` en
+  el puerto 51515; una dirección copiada del navegador también sirve.
+- **Usuario** y **Contraseña**: el `--server-username` y el
+  `--server-password` del servidor.
+- **Huella del certificado**: solo para un certificado autofirmado
+  (`--tls-generate-cert`): el `SERVER CERT SHA256` anotado antes. La
+  integración acepta entonces este certificado, y ningún otro, siempre por `https://`. Déjelo vacío
+  con `http://` o con un certificado firmado por una autoridad reconocida.
+- **Intervalo de actualización**: 1, 5 (por defecto) o 15 minutos.
+- **Con retraso tras**: cuándo una fuente sin instantánea correcta pasa a
+  tener retraso. _Automático_ (por defecto) sigue la política de programación
+  de cada fuente: su intervalo más una cuarta parte (una hora como mínimo) — 30
+  horas para una instantánea diaria, también con «horas del día». Una fuente
+  sin intervalo (manual, o una expresión cron) nunca tiene retraso entonces. O
+  un plazo fijo, de 12 horas a una semana, para todas las fuentes.
+- **Permitir iniciar instantáneas**: permite que funcione la acción de escena
+  «Iniciar una instantánea». Desactívelo si nadie debe iniciar una instantánea
+  desde Gladys.
+- **Idioma de los nombres**: idioma de los nombres de las funciones, de los
+  estados y de los resultados de escena.
+
+**Probar la conexión** lee Kopia y resume: el número de fuentes, fallidas y
+con retraso.
+
+### 3. Añadir las fuentes
+
+En la pestaña **Descubrir**, añada las fuentes que quiere seguir, y el
+dispositivo «Kopia» para el servidor. Una fuente aparece en cuanto tiene una
+política o una instantánea en Kopia. Los disparadores de escena funcionan para
+todas las fuentes, añadidas o no.
+
+## Los dispositivos
+
+Cada fuente:
+
+| Función                           | Valor                                                      |
+| --------------------------------- | ---------------------------------------------------------- |
+| Estado                            | Correcta, Fallida, Con retraso, En curso o Sin instantánea |
+| Última instantánea correcta       | día/mes horas:minutos, «-» si no hay                       |
+| Horas desde el último éxito       | en horas                                                   |
+| Duración de la última instantánea | en segundos                                                |
+| Tamaño                            | tamaño de los archivos de la última instantánea, en MB     |
+| Archivos                          | archivos de la última instantánea                          |
+| Instantáneas                      | instantáneas conservadas en el repositorio                 |
+| Errores de la última instantánea  | archivos ilegibles (1 para una instantánea fallida)        |
+| En ejecución                      | 1 mientras se ejecuta una instantánea de esta fuente       |
+| Próxima instantánea programada    | día/mes horas:minutos, «-» sin programación                |
+
+El dispositivo «Kopia», para el servidor:
+
+- **Repositorio conectado**: 1, o 0 cuando el servidor no está conectado a su
+  repositorio;
+- **Instantánea en curso**: 1 o 0;
+- **Progreso**: en %;
+- **Fuente actual**: su ruta, «-» si no hay;
+- **Fuentes fallidas** y **Fuentes con retraso**: cuántas.
+
+Una instantánea «falla» cuando Kopia no pudo leer algunos archivos (guarda la
+instantánea sin ellos), cuando está incompleta, o cuando falla del todo (una
+carpeta eliminada, un almacenamiento inaccesible: no se guarda ninguna
+instantánea). Los errores que la política de la fuente ignora no cuentan. El
+estado muestra primero lo que requiere atención: una fuente fallida muestra
+«Fallida» aunque también tenga retraso.
+
+Las fuentes de otro ordenador o usuario (clientes del mismo repositorio) se
+llaman `usuario@host:/ruta`.
+
+## Panel
+
+El widget **Kopia** muestra el número de fuentes fallidas, con retraso y
+correctas, y después una fila por fuente: primero las fallidas, luego con
+retraso, en curso, sin instantánea, correctas, con el último éxito (o el
+progreso de la que está en curso). Todas las fuentes por defecto, o las
+elegidas en sus ajustes. El botón **Actualizar** vuelve a leer Kopia.
+
+## Escenas
+
+### Disparadores
+
+- **Una instantánea se completa**: una instantánea termina sin errores.
+  Información: fuente, duración (minutos), archivos, tamaño, instantáneas
+  conservadas.
+- **Una instantánea falla**: archivos ilegibles, una instantánea incompleta, o
+  un fallo completo. Información: fuente, primer error, errores.
+- **Una fuente tiene retraso**: una fuente no ha tenido una instantánea
+  correcta desde hace más que el plazo «Con retraso tras». Una vez por plazo
+  superado, de nuevo tras un nuevo éxito. Información: fuente, horas desde el
+  último éxito, último éxito.
+
+Cada disparador puede limitarse a algunas fuentes (vacío: todas).
+
+### Acciones
+
+- **Estado de una fuente**: lee el estado de una fuente para las siguientes
+  acciones: fallida, con retraso, el estado en palabras, la fuente, el último
+  éxito, las horas desde el último éxito (-1 si no hay), y una frase lista
+  («/home/anna: Fallida, último éxito 18/10 02:05.»).
+- **Iniciar una instantánea**: inicia ahora una instantánea de la fuente.
+  Rechazada cuando «Permitir iniciar instantáneas» está desactivado.
+
+### Ideas de escenas
+
+- **Una instantánea falla** → enviar un mensaje con la fuente y su primer
+  error, tomados de la información del disparador.
+- **Una fuente tiene retraso** → avisar con la fuente y las horas desde su
+  último éxito.
+- Cada domingo a las 10:00 → **Estado de una fuente** → enviar la frase; o
+  iniciar una instantánea de las fotos al salir de casa, con **Iniciar una
+  instantánea**.
+
+## Solución de problemas
+
+- **«Kopia no responde»**: compruebe la dirección y el puerto desde la máquina
+  de Gladys, y que el servidor escucha la red (`--address=0.0.0.0:51515`, no
+  `127.0.0.1`).
+- **«usuario o contraseña rechazados por Kopia»**: introdúzcalos de nuevo; son
+  los de `--server-username` y `--server-password`.
+- **«certificado rechazado»**: un certificado autofirmado; introduzca su huella
+  en la configuración.
+- **«el certificado no coincide con la huella»**: el certificado cambió (Kopia
+  genera uno nuevo cuando se borran sus archivos): introduzca la nueva huella.
+- **«Kopia no está conectado a su repositorio»**: vuelva a conectar el
+  servidor a su repositorio en su interfaz web.
+- **Una fuente nunca tiene retraso**: en _Automático_, una fuente sin
+  intervalo no puede tener retraso; elija un plazo fijo. Una fuente que nunca
+  se completó tampoco tiene retraso: muestra Fallida o Sin instantánea.
+- **Un fallo completo ya no aparece tras reiniciar Kopia**: Kopia solo guarda
+  sus tareas en memoria; la integración lo anunció igualmente en su momento.
+- Para ver más, ponga la variable `LOG_LEVEL` de la integración en `debug`.
+
+## Límites
+
+- Un solo servidor Kopia por integración.
+- Un fallo completo (ninguna instantánea guardada) solo se conoce por la lista
+  de tareas del servidor, que se pierde al reiniciarlo.
+- La integración no restaura, elimina ni modifica instantáneas o políticas: las
+  vigila, y las inicia si está permitido.
+- Sin relación con Kopia. Informe de un problema o una idea en
+  [las issues](https://github.com/guim31/gladys-kopia/issues).
+
+## Parámetros de configuración
+
+Estos son los parámetros que Kopia te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Su servidor Kopia | `section` | No | Kopia iniciado como servidor con su interfaz web (kopia server start). Introduzca su dirección, su usuario y su contraseña, y después añada las fuentes desde la pestaña Descubrir. |
+| Dirección de Kopia | `string` | Sí | La dirección de la interfaz web, puerto 51515 por defecto. https:\/\/ si el servidor usa TLS. |
+| Usuario | `string` | No | El --server-username del servidor, kopia por defecto. |
+| Contraseña | `secret` | Sí | La --server-password del servidor (no la contraseña del repositorio). |
+| Huella del certificado | `string` | No | Solo para un certificado autofirmado (--tls-generate-cert): su huella SHA-256, que Kopia muestra al iniciar (SERVER CERT SHA256). Vacío en otro caso. |
+| Opciones | `section` | No |  |
+| Intervalo de actualización | `select` | No | Con qué frecuencia se lee Kopia. Cada 30 segundos durante una instantánea. |
+| Con retraso tras | `select` | No | Una fuente sin instantánea correcta desde hace este tiempo tiene retraso. Automático: su intervalo de programación más un margen; una fuente sin intervalo nunca tiene retraso. |
+| Permitir iniciar instantáneas | `boolean` | No | Permite que la acción de escena «Iniciar una instantánea» inicie una instantánea en Kopia. |
+| Idioma de los nombres | `select` | No | Idioma de los nombres de las funciones (fijados al añadir un dispositivo), de los estados y de los resultados de escena. |
+
+## Cómo instalar Kopia en Gladys
+
+1. En Gladys, abre **Integraciones**: Kopia aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-kopia:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-kopia](https://github.com/guim31/gladys-kopia).
+
+Kopia requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Kopia es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-kopia) — [fuente de esta documentación](https://github.com/guim31/gladys-kopia/blob/HEAD/docs/es.md)

@@ -1,0 +1,171 @@
+---
+title: "Integración domótica PurpleAir, gratuita y de código abierto"
+sidebar_label: "PurpleAir"
+description: "Unofficial connector: your PurpleAir air quality sensors, local or cloud. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-purpleair.png"
+keywords:
+  - "purpleair"
+  - "domótica purpleair"
+  - "gladys purpleair"
+  - "purpleair gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-purpleair instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"PurpleAir","description":"Unofficial connector: your PurpleAir air quality sensors, local or cloud.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-purpleair","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-purpleair.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T10:11:31Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+Unofficial connector, not affiliated with PurpleAir, Inc. It brings the
+readings of your [PurpleAir](https://www2.purpleair.com/) air quality sensors
+into Gladys, read only: nothing is ever changed on a sensor.
+
+> This integration has never been tested with a real PurpleAir sensor nor a
+> real API key yet. Your feedback is welcome on the Gladys forum.
+
+## What you get
+
+For each sensor, a device in the Discovery tab with:
+
+| Feature                     | Category           | Unit  |
+| --------------------------- | ------------------ | ----- |
+| PM2.5                       | PM2.5 sensor       | µg/m³ |
+| PM10                        | PM10 sensor        | µg/m³ |
+| AQI (US EPA, PM2.5)         | Air quality sensor | AQI   |
+| Temperature (sensor)        | Temperature sensor | °C    |
+| Humidity (sensor)           | Humidity sensor    | %     |
+| Pressure (sensors with BME) | Pressure sensor    | hPa   |
+
+- PM2.5 and PM10: the mean of the two lasers (channels A and B) when the
+  sensor has two; the `ATM` correction outdoors, `CF=1` indoors, as the
+  PurpleAir API does.
+- AQI: the US EPA index computed from the current PM2.5 with the
+  breakpoints of the 2024 revision (indicative: the official index uses
+  24-hour averages).
+- Temperature and humidity are measured **inside the sensor**: the
+  temperature reads a few degrees above the outdoor air, the humidity a
+  few points below. They are published as measured, without correction.
+- A/B check: when the two lasers disagree (a gap of 5 µg/m³ or more AND
+  70 % or more of their mean, the US EPA quality check for PurpleAir), a
+  laser is probably failing: the particles (and the AQI) of that read are
+  not published, the status and the test button say "channels A/B
+  disagree"; temperature, humidity and pressure still are. In cloud mode,
+  PurpleAir's own `channel_flags` does the same (any downgraded channel).
+- PM1 is shown by the test button but not published: Gladys has no PM1
+  category yet.
+
+## Local mode (recommended, free)
+
+Every PurpleAir sensor serves its readings on your network
+(`http://<sensor address>/json`). No account, no key, no cost.
+
+1. Give the sensor a fixed IP address in your router (DHCP reservation).
+2. Enter that address in "Sensor address (local)" (up to three sensors).
+3. Keep the default interval of 2 minutes (the sensor averages over 2
+   minutes), or choose up to 60.
+
+The integration recognizes a sensor by its MAC address: if the router gives
+its address to another sensor, that one becomes a new device and the first
+one gets no value from it.
+
+## Cloud mode (optional, paid)
+
+For a sensor out of your network (a neighbour's sensor on the map, a sensor
+at another house). The official PurpleAir API charges **points** for each
+call, bought from PurpleAir.
+
+1. Create an API key in [develop.purpleair.com](https://develop.purpleair.com/)
+   (a **READ** key) and enter it in "API key (read)".
+2. Find the sensor index on the [PurpleAir map](https://map.purpleair.com/):
+   click the sensor, the number after `select=` in the link is its index.
+3. For a private sensor, also enter its read key.
+4. The interval is **60 minutes by default** (10 minutes at least): each call
+   costs points for each field asked. Only the fields used are asked (last
+   seen, channel flags, PM1, PM2.5, PM10, temperature, humidity, pressure;
+   the name and the model only at the first call, they never change).
+   Removing a sensor or the key by mistake and putting it back does not
+   make an early call.
+
+The API key is kept by Gladys in its database, never shown again, and sent
+only to the PurpleAir API (`api.purpleair.com`) in a header, never in a link
+nor in the logs. The read key of a private sensor is kept the same way; the
+API wants it in the request link, which is never logged.
+
+## Pace and errors
+
+- Nothing reads a sensor (nor calls the API) sooner than its interval: not
+  the test button, nor the Discovery tab, nor a reconnection, nor a saved
+  configuration, nor a restart of the container. The time of the last
+  request is kept in `/data` (written at most once a minute).
+- A sensor or the API answering 429 or 5xx: a pause (Retry-After, else 5
+  minutes doubling, 1 minute to 6 hours), kept across restarts; the test
+  button waits for it too.
+- A refused API key, or an account without points: no cloud call for 6
+  hours (or until you change the key); the test button tries again once the
+  interval has passed. The local sensors carry on.
+- An unknown sensor index or a refused private sensor: no call for that
+  sensor for 6 hours (or until its read key changes).
+- A cloud sensor that PurpleAir has not heard from for an hour publishes
+  nothing ("offline").
+
+## Test button
+
+"Test the sensors" reads each sensor whose interval has passed and shows
+the last values (PM1 included) and the time of the next possible read.
+
+## Credits
+
+The cloud client follows [aiopurpleair](https://github.com/bachya/aiopurpleair)
+(MIT, Aaron Bach), the library Home Assistant uses: endpoint, header of the
+key, error codes. See `THIRD_PARTY_NOTICES.md`.
+
+## Parámetros de configuración
+
+Estos son los parámetros que PurpleAir te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| PurpleAir in Gladys | `section` | No | Unofficial connector, not affiliated with PurpleAir, Inc. It reads your PurpleAir sensors: PM2.5, PM10, the US AQI computed from PM2.5, and the temperature, humidity and pressure measured inside the sensor. Read only: nothing is ever changed on the sensor. Local mode is recommended: free, no account, enter the IP address of the sensor on your network (a fixed address in your router is best). The cloud mode uses the official API, whose calls cost points (paid credits): it is read every hour by default. Never tested with a real sensor yet. |
+| Sensor address (local) | `string` | No | Its IPv4 address (or host name) on your network: the integration reads its page http:\/\/\<address>/json. Free, no account. |
+| Second sensor address (local) | `string` | No |  |
+| Third sensor address (local) | `string` | No |  |
+| Local read interval (minutes) | `number` | No | One request per sensor each time; the sensor averages over 2 minutes. Nothing reads a sensor sooner, not even the test button or a restart. |
+| Cloud mode (optional, paid) | `section` | No | For a sensor you cannot reach on your network. Create an API key (a READ key) in develop.purpleair.com: each call costs points, bought from PurpleAir. The sensor index is the number shown in the PurpleAir map ("select=" in its link). A private sensor also needs its read key. |
+| API key (read) | `secret` | No | Kept by Gladys in its database, never shown again; sent only to the PurpleAir API (api.purpleair.com), in a header, never in a link nor in the logs. |
+| Sensor index (cloud) | `string` | No |  |
+| Read key of a private sensor (optional) | `secret` | No | Kept by Gladys in its database, never shown again; sent only to the PurpleAir API. |
+| Second sensor index (cloud) | `string` | No |  |
+| Second sensor: read key (optional) | `secret` | No | Kept by Gladys in its database, never shown again; sent only to the PurpleAir API. |
+| Third sensor index (cloud) | `string` | No |  |
+| Third sensor: read key (optional) | `secret` | No | Kept by Gladys in its database, never shown again; sent only to the PurpleAir API. |
+| Cloud read interval (minutes) | `number` | No | One API call per sensor each time, each costing points: 60 minutes by default, 10 at least. Nothing calls the API sooner, not even the test button or a restart. |
+
+## Cómo instalar PurpleAir en Gladys
+
+1. En Gladys, abre **Integraciones**: PurpleAir aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-purpleair:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-purpleair](https://github.com/LM1LC3N7/gladys-purpleair).
+
+PurpleAir requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+PurpleAir es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-purpleair) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-purpleair/blob/HEAD/docs/en.md)

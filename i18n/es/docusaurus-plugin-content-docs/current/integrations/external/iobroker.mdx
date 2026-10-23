@@ -1,0 +1,208 @@
+---
+title: "Integración domótica ioBroker, gratuita y de código abierto"
+sidebar_label: "ioBroker"
+description: "Puente a ioBroker: importe sus estados (luces, persianas, sensores…) en Gladys y contrólelos. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-iobroker.png"
+keywords:
+  - "iobroker"
+  - "domótica iobroker"
+  - "gladys iobroker"
+  - "iobroker gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-iobroker instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"ioBroker","description":"Puente a ioBroker: importe sus estados (luces, persianas, sensores…) en Gladys y contrólelos.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-iobroker","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-iobroker.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T17:50:11Z"}} />
+
+Esta integración trae los estados de su [ioBroker](https://www.iobroker.net) a Gladys: luces, enchufes,
+persianas, termostatos, sensores y detectores se convierten en dispositivos de Gladys, seguidos en
+directo y controlables. Práctico para pasar a Gladys poco a poco, o para usar ambos a la vez.
+
+Probada contra un ioBroker real (js-controller 7.2, adaptador rest-api 4.0) en Docker, con objetos
+Homematic IP, Shelly y Zigbee reproducidos según sus adaptadores. Sin relación con ioBroker.
+
+## Requisitos
+
+- Un ioBroker accesible desde la máquina de Gladys.
+- El adaptador **REST API** (`rest-api`) instalado en ioBroker, con una instancia (Adaptadores → buscar
+  «REST API» → instalar, y conservar el puerto por defecto **8093**). El antiguo adaptador `simple-api`
+  no se usa.
+- Opcional: si marca **Autenticación** en la instancia rest-api, un usuario de ioBroker para Gladys. Lo
+  más seguro es un usuario dedicado, con derechos de lectura, y de escritura solo sobre lo que Gladys
+  deba controlar.
+
+## Configuración
+
+### Dirección y usuario
+
+- **Dirección del adaptador rest-api**: la dirección IP de ioBroker y el puerto del adaptador, por
+  ejemplo `http://192.168.1.40:8093` (`192.168.1.40` solo toma el puerto 8093). Sin nombre `.local`,
+  sin `localhost`: la integración se ejecuta en su propio contenedor.
+- **Nombre de usuario** y **Contraseña**: solo si la autenticación está marcada en la instancia
+  rest-api. Unas credenciales erróneas muestran «Acceso rechazado» en la configuración.
+
+Luego **Probar la conexión**: indica la versión de ioBroker, el número de dispositivos ofrecidos y los
+roles no importados, con su número.
+
+### Elegir lo que se importa
+
+Por defecto, todo estado que Gladys sabe mostrar se ofrece en la pestaña **Descubrir**. En una
+instalación grande, acote:
+
+- **Solo estos objetos de ioBroker**: patrones de identificadores, separados por comas, `*` para
+  cualquier texto, por ejemplo `hm-rpc.0.*, shelly.0.*, 0_userdata.0.*`. Solo se leen estos objetos.
+- **Solo los objetos de estas habitaciones**: habitaciones de ioBroker (`enum.rooms`), por nombre en
+  cualquier idioma o por identificador, por ejemplo `Salón, Cocina`.
+- **Estados a excluir**: patrones de identificadores que nunca se importan, por ejemplo `*.RSSI_*`.
+
+Los estados del propio ioBroker (`system.*`, el canal `info` de cada adaptador) nunca se importan.
+
+### Cerraduras, portones, puertas de garaje y alarmas
+
+Son **de solo lectura por defecto**: Gladys muestra su estado, pero no puede abrirlos, desbloquearlos
+ni desarmarlos, ni desde el dispositivo, ni desde una escena, ni con un asistente de voz. Se reconocen
+por su rol (`switch.lock`, `switch.gate`, `button.open.door`, roles de alarma) y, para los relés
+simples, por su nombre o identificador (garage, gate, lock, alarm, cerradura, portón, alarma…). Marque
+**Permitir comandos de cerraduras, portones, puertas de garaje y alarmas** solo si lo acepta.
+
+### Opciones
+
+- **Intervalo mínimo entre dos valores de un sensor**: un contador que informa cada segundo se envía a
+  Gladys como mucho a este ritmo (10 s por defecto). Interruptores, luces y detectores nunca se
+  retrasan.
+- **Estados vigilados para las escenas**: identificadores de estados (`*` admitido) que activan el
+  disparador de escena, aunque no estén añadidos a Gladys.
+- **Idioma de los nombres de funciones**: francés por defecto.
+
+## Lo que obtiene
+
+### Dispositivos
+
+Un dispositivo de Gladys por **dispositivo** de ioBroker (por ejemplo un actuador Homematic IP con todos
+sus canales), si no por **canal**, si no por estado aislado (un estado de `0_userdata`). Su habitación,
+si la tiene, se añade a su nombre. Las funciones vienen del **rol** de cada estado:
+
+| Rol de ioBroker                                                 | Función de Gladys                          |
+| --------------------------------------------------------------- | ------------------------------------------ |
+| `switch`, `switch.power`, `switch.light`, `state` modificable   | interruptor o encendido de luz             |
+| `level.dimmer`, `level.brightness`                              | brillo (y encendido/apagado si va solo)    |
+| `level.color.rgb`                                               | color de la luz                            |
+| `level.blind`, `value.blind`                                    | posición de persiana, abrir/cerrar/parar   |
+| `level.temperature`                                             | consigna de termostato                     |
+| `value.temperature`, `value.humidity`, `value.pressure`         | temperatura, humedad, presión              |
+| `value.brightness`, `value.co2`, `value.uv`, `value.speed.wind` | luminosidad, CO2, UV, velocidad del viento |
+| `value.power`, `value.energy`, `value.power.consumption`        | potencia (W), índice de energía (Wh, kWh)  |
+| `value.voltage`, `value.current`, `value.battery`               | tensión, corriente, batería                |
+| `sensor.window`, `sensor.door`, `value.window`                  | sensor de apertura                         |
+| `sensor.motion`, `sensor.presence`                              | movimiento, presencia                      |
+| `sensor.alarm.flood`, `sensor.alarm.fire`, `indicator.lowbat`   | fuga, humo, batería baja                   |
+| `switch.lock`                                                   | cerradura (solo lectura salvo permiso)     |
+| `value`, `level` con una unidad conocida (°C, W, kWh, hPa, lx…) | el sensor de esa unidad                    |
+
+Un estado solo es controlable si su objeto indica `write: true`. Los comandos se envían como desde la
+interfaz de ioBroker (`ack: false`): el adaptador del dispositivo los ejecuta, y el valor que confirma
+se muestra en Gladys. Solo se siguen los estados de los dispositivos añadidos a Gladys. Los estados de `0_userdata` y `javascript`, que ningún adaptador confirma, se muestran en cuanto se escriben. Los patrones de identificadores distinguen mayúsculas y minúsculas, como los identificadores de ioBroker.
+
+### Widget del panel
+
+**ioBroker** muestra la conexión, cómo llegan los valores (en directo o por consulta), la versión de
+ioBroker, los dispositivos ofrecidos y añadidos y los estados seguidos. Su botón **Recargar** vuelve a
+leer los objetos.
+
+### Disparadores de escena
+
+**Estado de ioBroker modificado** inicia una escena cuando un estado vigilado (configuración) cambia de
+valor. Filtros: el identificador del estado y, opcionalmente, el nuevo valor. Variables: `id`, `name`,
+`value`, `old_value`.
+
+### Acciones de escena
+
+**Escribir un estado de ioBroker** escribe un valor en cualquier estado, añadido a Gladys o no: `true`,
+`false`, `50`, `19,5`, un texto. El valor se convierte al tipo del estado. Se rechazan los estados de
+solo lectura (`write: false`) y, salvo permiso, los estados de seguridad.
+
+## Ejemplos de escenas
+
+- **Buenas noches**: a las 23:00, escribir `true` en `0_userdata.0.good_night` para lanzar su script de
+  ioBroker que cierra las persianas, mientras Gladys apaga sus propias luces.
+- **Lavadora terminada**: cuando la potencia del enchufe Homematic se queda por debajo de 5 W, Gladys le
+  envía un mensaje.
+- **Timbre**: vigilar `0_userdata.0.doorbell`; cuando pasa a `true`, Gladys reproduce un sonido y muestra
+  la cámara.
+
+## Solución de problemas
+
+- **No accesible**: compruebe la dirección y el puerto (8093), que la instancia rest-api funciona (verde
+  en ioBroker) y que la máquina de Gladys puede alcanzarla.
+- **Acceso rechazado**: la autenticación está marcada en la instancia rest-api: indique el nombre de
+  usuario y la contraseña, y compruebe los derechos de ese usuario.
+- **Falta un dispositivo**: **Probar la conexión** muestra los roles no importados. Dé al estado un rol
+  estándar en ioBroker (objeto → editar → rol), o use la acción de escena.
+- **Los valores llegan con retraso**: el widget indica «Consulta periódica» cuando el long polling de
+  rest-api no pasa (un proxy entre ambos): los estados se leen entonces cada 30 segundos.
+- Más detalles en los registros de la integración, con `LOG_LEVEL=debug`.
+
+## Limitaciones
+
+- ioBroker no envía los valores por sí mismo: rest-api se sigue por long polling, un cambio por
+  petición, y los estados seguidos se vuelven a leer cada 5 minutos, lo que también recupera un cambio
+  que rest-api no pudo entregar.
+- El rol de un estado lo decide todo: un estado con rol genérico (`state`, `value` sin unidad) o un
+  texto no se importa (disparador y acción de escena para él). La temperatura de color, el tono y la
+  inclinación no se importan.
+- `switch.lock`: true significa desbloqueado en ioBroker (STATE_ROLES), mostrado como «desbloqueado» en
+  Gladys.
+- `level.blind` se toma como lo define ioBroker (máximo = abierto); un adaptador que lo invierte muestra
+  una posición invertida.
+- Los nombres de las funciones son los de ioBroker al añadir el dispositivo; un cambio de nombre
+  posterior en ioBroker no los cambia en Gladys.
+
+## Privacidad
+
+Todo se queda en su red: Gladys solo habla con el adaptador rest-api. La contraseña se guarda en la
+configuración de Gladys y nunca se escribe en los registros.
+
+## Parámetros de configuración
+
+Estos son los parámetros que ioBroker te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Sus estados de ioBroker en Gladys | `section` | No | Gladys lee los objetos de su ioBroker mediante su adaptador rest-api y sigue sus cambios en directo. En ioBroker, instale el adaptador «REST API» (rest-api, puerto 8093) y añada una instancia. Sus dispositivos y canales aparecen luego en la pestaña Descubrir, con su habitación: añada los que quiera. |
+| Dirección del adaptador rest-api | `string` | Sí | Dirección IP de ioBroker y puerto del adaptador (8093), vistos desde la máquina de Gladys. Sin nombre .local, sin localhost. |
+| Nombre de usuario | `string` | No | Solo si «Autenticación» está marcada en la instancia rest-api: un usuario de ioBroker (admin, o un usuario con menos derechos). |
+| Contraseña | `secret` | No |  |
+| Solo estos objetos de ioBroker | `string` | No | Patrones de identificadores, separados por comas; * sustituye cualquier texto. Vacío: todos los objetos. Recomendado en una instalación grande. |
+| Solo los objetos de estas habitaciones | `string` | No | Habitaciones de ioBroker (enum.rooms), por nombre o identificador, separadas por comas. Vacío: todos los objetos, en una habitación o no. |
+| Estados a excluir | `string` | No | Identificadores de estados, separados por comas; * sustituye cualquier texto. Nunca se importan. |
+| Permitir comandos de cerraduras, portones, puertas de garaje y alarmas | `boolean` | No | Desactivado: muestran su estado, pero Gladys no puede abrirlos, desbloquearlos ni desarmarlos, desde un dispositivo, una escena o un asistente de voz. |
+| Intervalo mínimo entre dos valores de un sensor (s) | `number` | No | Un contador que informa cada segundo se envía a Gladys a este ritmo. Interruptores y detectores nunca se retrasan. |
+| Escenas | `section` | No | Los estados indicados aquí activan el disparador de escena «Estado de ioBroker modificado» en cada cambio de valor, aunque no estén añadidos a Gladys (un texto, una variable de script, un modo de alarma…). |
+| Estados vigilados para las escenas | `string` | No | Identificadores de estados, separados por comas; * sustituye cualquier texto. |
+| Idioma de los nombres de funciones | `select` | No |  |
+
+## Cómo instalar ioBroker en Gladys
+
+1. En Gladys, abre **Integraciones**: ioBroker aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-iobroker:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-iobroker](https://github.com/guim31/gladys-iobroker).
+
+ioBroker requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+ioBroker es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-iobroker) — [fuente de esta documentación](https://github.com/guim31/gladys-iobroker/blob/HEAD/docs/es.md)

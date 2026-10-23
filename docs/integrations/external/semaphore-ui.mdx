@@ -1,0 +1,210 @@
+---
+title: "Semaphore UI smart home integration, free and open source"
+sidebar_label: "Semaphore UI"
+description: "Run your Semaphore UI templates (Ansible…) from Gladys scenes and follow their result. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-semaphore.png"
+keywords:
+  - "semaphore ui"
+  - "semaphore ui smart home"
+  - "gladys semaphore ui"
+  - "semaphore ui gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-semaphore instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Semaphore UI","description":"Run your Semaphore UI templates (Ansible…) from Gladys scenes and follow their result.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-semaphore","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-semaphore.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T18:11:33Z"}} />
+
+[Semaphore UI](https://semaphoreui.com/) is an open-source web interface to
+run Ansible playbooks, Terraform/OpenTofu code, and shell or Python scripts:
+each "template" is a job you start with a click and whose result you follow.
+This integration brings the templates **you allow** into Gladys: each one
+becomes a device with the status of its last task, a scene can **run a
+template** (and wait for its end) or **stop** its running task, scenes can
+react when a task **succeeds** or **fails**, and a dashboard widget shows their
+last status with a **Run** button.
+
+Tested against a real Semaphore UI 2.19 (Docker, SQLite, Ansible playbooks);
+not against a real Gladys instance yet: feedback welcome on
+[the issues](https://github.com/guim31/gladys-semaphore/issues).
+
+## What you need
+
+- Gladys Assistant 5.1.0 or later.
+- Semaphore UI 2.x, reachable from the Gladys machine.
+- An API token of a Semaphore user who may run the templates (role "Task
+  Runner" or more in their project).
+
+Running a template runs code on your machines. That is why nothing can be run
+from Gladys until you type its number in the allowed list, and why the
+integration never reads the output of the tasks (Ansible logs may hold
+secrets): only their status and their duration.
+
+At each refresh (one minute by default) the integration reads the list of
+projects, then the templates of the projects that hold an allowed template;
+every 5 seconds while a task of an allowed template runs. Semaphore sets no
+rate limit on its API.
+
+## Getting started
+
+### 1. Create an API token
+
+In Semaphore, open the user menu (bottom left) → **API tokens** and create a
+token. On a version without this screen, the API creates one:
+`POST /api/user/tokens` while logged in. The token acts with the rights of its
+user: a dedicated user, member of the projects concerned only, limits what
+Gladys can do.
+
+### 2. Configure the integration
+
+In Gladys, **Integrations → Semaphore UI → Configuration**:
+
+- **Semaphore address**: the address you open Semaphore with, e.g.
+  `http://192.168.1.2:3000` (port 3000 is added to a bare IP address).
+- **API token**: the token of step 1.
+- **Language of the names**: French by default; it sets the feature names when
+  a device is added, the statuses and the scene results.
+
+Save, then click **Test the connection**: it lists every template the token
+sees, with its number, its project and its name, e.g.
+`#3 Home lab: Update servers`.
+
+### 3. Allow templates
+
+Type the numbers of the templates Gladys may follow and run in **Allowed
+templates (numbers)**, separated by commas: `3, 7`. The number is also in the
+address of a template in Semaphore (`…/project/1/templates/3`). Empty: nothing
+is followed, nothing can be run.
+
+### 4. Add the devices
+
+In the **Discover** tab, add the templates you want as devices. The triggers,
+the actions and the widget work for every allowed template; the devices bring
+the states and the history.
+
+## The devices
+
+One device per allowed template, named after it:
+
+| Feature             | Meaning                                                                   |
+| ------------------- | ------------------------------------------------------------------------- |
+| Last task           | status of the last task: Succeeded, Failed, Running, Stopped, Waiting…    |
+| Last task succeeded | 1 when the last finished task succeeded, 0 when it failed or was stopped  |
+| Running             | 1 while a task of the template runs                                       |
+| Last run            | when the last task started (day/month hours:minutes, time zone of Gladys) |
+| Last task duration  | duration of the last finished task, in seconds                            |
+
+There is no command on the device: running Ansible is not a switch a voice
+assistant or a misplaced tap should reach. A template is run from a scene or
+from the widget, which asks for a confirmation.
+
+## Dashboard
+
+The **Semaphore templates** widget lists the allowed templates (or the ones
+chosen in its settings), the failing ones first, then the running ones: last
+status, when it started, how long it took. Under the list, one button per
+template (the first three): **Run**, or **Stop** while a task runs. Gladys asks
+for a confirmation before sending it. **Refresh** reads Semaphore again.
+
+## Scenes
+
+### Triggers
+
+- **A Semaphore task succeeds**: a task of an allowed template ends
+  successfully.
+- **A Semaphore task fails**: a task of an allowed template ends in error.
+
+Both can be limited to some templates, and give the template name, the
+project, the task number and the duration in seconds. A stopped task is
+neither. Tasks started from Semaphore itself, a schedule or another tool count
+too. The first reading after the installation announces nothing from the past;
+a task that ended while Gladys or the integration restarted is announced once.
+
+### Actions
+
+- **Run a Semaphore template**: runs an allowed template. **Extra variables
+  (JSON)** is optional: a JSON object passed to the task, e.g.
+  `{"target": "web1"}` (scene values can be inserted).
+  With **Wait for the end (90 s at most)**, the scene waits for the task and
+  the next actions get its result. Outputs: task number, finished, succeeded,
+  status, duration (s).
+- **Stop a Semaphore task**: stops the running task of an allowed template.
+  Outputs: a task was stopped (yes/no), task number.
+
+Both refuse a template that is not in the allowed list, even if its device
+still exists in Gladys.
+
+### Scene ideas
+
+- Every Sunday at 3 am, run "Update servers"; when **A Semaphore task fails**,
+  send a Telegram message: "\{\{triggerEvent.data.template\}\} failed after
+  \{\{triggerEvent.data.duration\}\} s".
+- When you leave home, run "Nightly backup" with **Wait for the end**, then
+  notify you only if "Succeeded" is false.
+- A button on the wall tablet: the widget, with "Restart the media server"
+  allowed.
+
+## Troubleshooting
+
+- **API token refused**: the token was deleted or mistyped; create a new one.
+- **Refused by Semaphore: this user may not run tasks in the project**: give
+  the user of the token the "Task Runner" role (or more) in the project.
+- **Allowed but not found**: the number is wrong, the template was deleted, or
+  the user of the token is not a member of its project. **Test the
+  connection** lists what the token sees.
+- **No Semaphore API at this address**: check the address and the port;
+  behind a reverse proxy, include its path.
+- **The address redirects**: type the `https://` address.
+- A task does not show up at once: the integration reads Semaphore every minute
+  (configurable), every 5 seconds while a task runs.
+
+## Limits
+
+- Only the last task of each template is read: when two tasks of the same
+  template both end between two readings, only the last one fires a trigger.
+- The output of the tasks is never read nor shown, by design.
+- "Wait for the end" waits 90 s at most (the limit of a scene action in
+  Gladys); a longer task goes on, and the triggers report its end.
+- Terraform tasks waiting for a confirmation show "To confirm"; confirming is
+  done in Semaphore.
+- Developed and tested against Semaphore UI 2.19.17; older 2.x versions should
+  work (same API), untested.
+
+## Configuration settings
+
+These are the settings Semaphore UI asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Semaphore | `section` | No | In Semaphore, open the user menu → API tokens and create a token. Paste it below with the address of Semaphore, click Test the connection to list the templates with their number, then type the numbers of the templates Gladys may run. Nothing can be run until then. |
+| Semaphore address | `string` | No | The address you open Semaphore with. Port 3000 is added to a bare IP address. |
+| API token | `secret` | No | Created in the user menu → API tokens. It acts with the rights of its user. |
+| Allowed templates (numbers) | `string` | No | Numbers of the templates Gladys may follow and run, separated by commas. Empty: none. Test the connection lists them. |
+| Options | `section` | No |  |
+| Refresh interval | `select` | No | How often Semaphore is read; every 5 seconds while a task runs. |
+| Language of the names | `select` | No | Language of the feature names (set when a device is added), of the statuses and of the scene results. |
+
+## How to install Semaphore UI in Gladys
+
+1. In Gladys, open **Integrations**: Semaphore UI appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-semaphore:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-semaphore](https://github.com/guim31/gladys-semaphore).
+
+Semaphore UI requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Semaphore UI is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-semaphore) — [source of this documentation](https://github.com/guim31/gladys-semaphore/blob/HEAD/docs/en.md)

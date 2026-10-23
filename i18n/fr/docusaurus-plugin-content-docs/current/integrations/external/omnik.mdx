@@ -1,0 +1,211 @@
+---
+title: "Intégration domotique Omnik, gratuite et open source"
+sidebar_label: "Omnik"
+description: "Non officiel : onduleurs solaires Omnik en local : puissance, énergie du jour, index d'énergie. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-omnik.png"
+keywords:
+  - "omnik"
+  - "domotique omnik"
+  - "gladys omnik"
+  - "omnik gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-omnik instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Omnik","description":"Non officiel : onduleurs solaires Omnik en local : puissance, énergie du jour, index d'énergie.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-omnik","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-omnik.png","type":"device","version":"0.1.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-22T20:50:38Z"}} />
+
+Connecteur non officiel, sans lien avec Omnik. Il lit votre onduleur solaire
+Omnik sur votre réseau local, par son enregistreur Wi-Fi, sans cloud et sans
+compte.
+
+**Jamais testé avec un vrai onduleur Omnik** : il a été construit à partir de
+la bibliothèque omnikinverter (celle de Home Assistant) et des exemples de ses
+tests. Merci de signaler ce que vous voyez (voir « Retours » plus bas).
+
+## Ce que vous obtenez
+
+Un appareil Gladys par onduleur, nommé d'après son numéro de série :
+
+| Fonction                          | Ce que c'est                                                                               |
+| --------------------------------- | ------------------------------------------------------------------------------------------ |
+| Production solaire (W)            | la puissance produite maintenant ; 0 la nuit                                               |
+| Énergie solaire du jour (kWh)     | le compteur du jour de l'onduleur, tel qu'il le donne                                      |
+| Index de production solaire (kWh) | un index cumulatif pour le suivi énergétique de Gladys (production par demi-heure, revenu) |
+| Onduleur éveillé                  | 1 quand l'onduleur produit ou est prêt, 0 en veille (la nuit)                              |
+| Température de l'onduleur (°C)    | seulement avec la source tcp (les pages web ne la donnent pas)                             |
+
+Lecture seule : l'intégration n'envoie jamais de commande à l'onduleur. Le
+compteur total de l'onduleur n'est pas publié (voir « L'index d'énergie »).
+
+## Mise en place
+
+1. Trouvez l'adresse IP de l'enregistreur Wi-Fi de l'onduleur dans votre box
+   (il apparaît comme un appareil de votre réseau). Donnez-lui une adresse
+   fixe si possible.
+2. Dans Gladys, ouvrez l'intégration, saisissez l'adresse (de jour : la nuit
+   l'onduleur dort et ne répond pas), choisissez la source et enregistrez :
+   - **js** (par défaut) : la page `/js/status.js`, donnée par la plupart des
+     enregistreurs ;
+   - **json** : la page `/status.json` ; certains enregistreurs n'y donnent pas
+     de numéro de série. L'appareil est alors nommé d'après une empreinte de
+     l'adresse : une **adresse fixe dans votre box est obligatoire** (une
+     nouvelle adresse fait un nouvel appareil, et changer de source peut en
+     faire un aussi). La puissance nominale de la réponse est gardée (0 vaut
+     « non donnée ») : une réponse qui en donne une autre (un autre onduleur
+     derrière l'adresse) passe l'état au rouge et n'écrit rien ; si vous avez
+     remplacé l'onduleur exprès, cliquez sur « Tester la connexion » pour
+     apprendre la nouvelle. Préférez js s'il fonctionne ;
+   - un appareil créé sous une telle empreinte (ou sous celle de
+     l'enregistreur, html et tcp sans numéro de série) la garde, même si un
+     numéro de série apparaît plus tard (mise à jour du firmware) : le premier
+     numéro vu avec lui est appris et continue d'y aller ; tout autre numéro
+     est un autre onduleur, sur son propre appareil. Reste : un autre onduleur
+     avec numéro de série qui répondrait à l'adresse avant que le vôtre en ait
+     jamais donné un serait appris à sa place ; d'où l'adresse fixe ;
+   - **html** : la page `/status.html`, qui demande toujours le nom
+     d'utilisateur et le mot de passe de la page web de l'enregistreur
+     (souvent admin) ;
+   - **tcp** : le port 8899, qui demande le numéro de série de l'enregistreur
+     Wi-Fi (chiffres seulement, sur son étiquette ou dans sa page web ; pas le
+     numéro de série de l'onduleur). Il donne aussi la température de
+     l'onduleur.
+     Si l'état dit que la réponse n'est pas l'état d'un onduleur Omnik, essayez
+     une autre source.
+3. Le nom d'utilisateur et le mot de passe, s'ils sont saisis, sont aussi
+   envoyés aux sources js et json (certains enregistreurs les demandent). Le
+   mot de passe est gardé par Gladys dans sa base, jamais réaffiché, et envoyé
+   seulement à l'enregistreur, en Basic auth sur du HTTP simple dans votre
+   réseau (l'enregistreur n'a pas de HTTPS).
+4. Ouvrez l'onglet « Découverte » et créez l'appareil. Ses valeurs arrivent à
+   la lecture suivante (dans la minute, de jour).
+5. Facultatif mais conseillé : saisissez la puissance crête de vos panneaux
+   (kWc, sur la facture de l'installateur). Elle borne ce que l'index
+   d'énergie peut prendre entre deux lectures. Laissée vide, elle est apprise
+   depuis la puissance atteinte par l'onduleur sur une semaine (30 kW d'ici
+   là, ce qui laisse passer plus de lectures aberrantes). Ne saisissez jamais
+   moins que la vraie puissance crête (un long silence à midi pourrait alors
+   faire perdre le reste de la journée) : dans le doute, laissez vide.
+
+Le bouton « Tester la connexion » lit l'onduleur si une lecture est due, et
+sinon donne la dernière lecture : l'intégration ne lit jamais plus d'une fois
+par minute, quoi qui le demande.
+
+## Un mot de passe refusé
+
+Quand l'enregistreur refuse le nom d'utilisateur ou le mot de passe (HTTP 401
+ou 403), l'intégration arrête de lire avec eux, définitivement, même après un
+redémarrage : un mauvais mot de passe n'est jamais réessayé seul. Saisissez
+les bons et enregistrez (les lectures reprennent à leur rythme), ou, si
+l'enregistreur les accepte de nouveau, cliquez sur « Tester la connexion » :
+une lecture, et le refus est levé en cas de succès. Seule une empreinte salée
+d'un jeu refusé est gardée, effacée au premier succès ; jamais le mot de
+passe.
+
+## La nuit
+
+Un onduleur Omnik est alimenté par ses panneaux : au coucher du soleil il
+s'arrête, et son enregistreur Wi-Fi répond sans production ou se tait. Ce
+n'est pas une erreur : après trois lectures sans réponse (ou tout de suite
+quand l'enregistreur le dit : ni puissance ni compteur du jour, vides ou écrits
+4294967295, même avec son numéro de série), l'onduleur est « en veille », sa puissance passe
+à 0, l'état reste vert et le dit, et il est lu toutes les 5 minutes jusqu'à
+son réveil. L'état passe au rouge si l'onduleur disparaît (ou si son
+enregistreur répond sans lui) en produisant 50 W ou plus, si un autre
+enregistreur Wi-Fi répond à l'adresse, si la réponse n'est pas l'état d'un
+onduleur, ou s'il n'y a aucune lecture depuis plus d'un jour ; après une heure
+de silence il est de toute façon considéré en veille.
+
+## L'index d'énergie
+
+L'onduleur donne un compteur du jour (il repart chaque matin, au 0,01 kWh) et
+un compteur total (au 0,1 kWh, pas fiable sur tous les firmwares), alors que
+le suivi énergétique de Gladys compte les hausses d'un index cumulatif.
+L'intégration construit cet index à partir du compteur du jour, avec le
+mécanisme de l'intégration Zeversolar : l'index repart de sa dernière valeur
+et ajoute ce qu'ajoute le compteur du jour. Il ne revient jamais à 0 et ne
+baisse jamais : un nouveau jour (le compteur revenu à 0 le matin) le laisse
+où il était. Quand l'onduleur réaffiche le compteur de la veille (au lever du
+soleil, ou après un redémarrage dans la journée), cette valeur est tenue hors
+de l'index et de l'énergie du jour. Les doutes sont tranchés du côté de
+compter moins : un redémarrage de l'onduleur qui remet vraiment son compteur
+à zéro dans la journée, un compteur qui saute (le reste de la journée peut
+alors être perdu), des heures sans lecture autour du changement de jour, une
+horloge mal réglée.
+
+Risque restant (il compterait trop) : une valeur de la veille réaffichée à
+plus de 0,1 kWh de la dernière valeur lue, au-dessus ou en dessous, ou toute
+lecture fausse qui tient dans la puissance crête de l'installation depuis la
+dernière lecture. Saisir la puissance crête garde cette marge petite. Et la
+veille réaffichée moins de 0,1 kWh au-dessus du compteur du jour peut être
+prise : 0,1 kWh au plus.
+
+L'index passe aussi par une garde : un saut de l'index lui-même est retenu,
+affiché dans l'état de l'intégration, et pris seulement quand vous cliquez
+sur « Accepter l'index retenu » dans la configuration (il est alors compté
+d'un coup). Une baisse de l'index n'est jamais acceptée : elle se corrige
+seule, l'index reprend quand le compteur l'a rattrapé. Enregistrer la
+configuration n'accepte jamais rien.
+
+## Limites
+
+- Un onduleur par enregistreur et par intégration.
+- Production après minuit local (grand nord en juin, ou un fuseau de Gladys
+  à l'est de la maison) : la remise à zéro du compteur tombe le même jour
+  local et ce jour est sous-compté.
+- Certains enregistreurs gardent les dernières valeurs la nuit : la puissance
+  reste alors à sa dernière valeur jusqu'à ce que l'enregistreur se taise.
+- L'intégration demande Gladys 5.2.0 ou plus récent.
+
+## Vie privée
+
+Rien ne sort de votre réseau : l'intégration ne parle qu'à l'adresse saisie,
+avec une petite requête par minute (toutes les 5 minutes la nuit). De
+l'identifiant de l'enregistreur, seule une courte empreinte est gardée (pour
+distinguer un enregistreur d'un autre). Le nom d'utilisateur et le mot de
+passe ne sont jamais journalisés, affichés ni écrits dans `/data`.
+
+## Retours
+
+Issues et pull requests : [https://github.com/LM1LC3N7/gladys-omnik](https://github.com/LM1LC3N7/gladys-omnik). Si vous
+avez un onduleur Omnik, le texte de `http://<adresse>/js/status.js` (de jour
+et de nuit, numéros de série masqués) aide beaucoup.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Omnik dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Onduleur Omnik | `section` | Non | Connecteur non officiel, sans lien avec Omnik. Il lit l'enregistreur Wi-Fi de votre onduleur Omnik sur votre réseau, sans cloud, une fois par minute : puissance solaire, énergie du jour, température (source tcp), et un index de production solaire pour le suivi énergétique de Gladys, construit à partir du compteur du jour. La nuit l'onduleur dort : la puissance passe à 0, l'index attend le matin. Lecture seule : il n'envoie jamais de commande à l'onduleur. Jamais testé avec un vrai onduleur Omnik. |
+| Adresse de l'enregistreur | `string` | Oui | L'adresse IP de l'enregistreur Wi-Fi de l'onduleur sur votre réseau (visible dans votre box), avec un port seulement s'il n'est pas l'habituel (80, ou 8899 pour la source tcp). Saisissez-la de jour : la nuit l'onduleur dort et ne répond pas. Donnez-lui de préférence une adresse fixe dans votre box. |
+| Source | `select` | Oui | Comment l'enregistreur est lu ; cela dépend de son firmware. js (/js/status.js) convient à la plupart ; json (/status.json) et html (/status.html, qui demande le nom d'utilisateur et le mot de passe) à d'autres ; tcp (port 8899) demande le numéro de série de l'enregistreur et donne aussi la température. Si l'état dit que ce n'est pas la bonne réponse, essayez-en une autre. |
+| Nom d'utilisateur de l'enregistreur (sources web) | `string` | Non | Le nom d'utilisateur de la page web de l'enregistreur (souvent admin). Requis par la source html ; envoyé aux sources js et json s'il est saisi. Laissez vide pour tcp. |
+| Mot de passe de l'enregistreur (sources web) | `secret` | Non | Le mot de passe de la page web de l'enregistreur. Gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement à l'enregistreur, en Basic auth sur du HTTP simple dans votre réseau (l'enregistreur n'a pas de HTTPS). S'il est refusé, aucune lecture automatique n'est faite tant que vous ne le changez pas. |
+| Numéro de série de l'enregistreur (source tcp) | `string` | Non | Seulement pour la source tcp : le numéro de série de l'enregistreur Wi-Fi, chiffres seulement (sur son étiquette ou dans sa page web, commence souvent par 6). Pas le numéro de série de l'onduleur. |
+| Puissance crête de l'installation (kWc, facultatif) | `number` | Non | La puissance crête de vos panneaux (sur la facture de l'installateur). Elle borne ce que l'index d'énergie peut prendre entre deux lectures (une lecture aberrante est retenue). Vide : apprise depuis la puissance atteinte par l'onduleur sur une semaine (30 kW d'ici là). Ne saisissez jamais moins que la vraie puissance crête : dans le doute, laissez vide. |
+
+## Comment installer Omnik dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Omnik apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-omnik:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-omnik](https://github.com/LM1LC3N7/gladys-omnik).
+
+Omnik nécessite Gladys `>=5.2.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Omnik est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-omnik) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-omnik/blob/HEAD/docs/fr.md)

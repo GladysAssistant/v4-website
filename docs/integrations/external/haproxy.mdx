@@ -1,0 +1,225 @@
+---
+title: "HAProxy smart home integration, free and open source"
+sidebar_label: "HAProxy"
+description: "Your HAProxy load balancer in Gladys: backends, servers up or down, 5xx errors, alerts in scenes. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-haproxy.png"
+keywords:
+  - "haproxy"
+  - "haproxy smart home"
+  - "gladys haproxy"
+  - "haproxy gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-haproxy instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"HAProxy","description":"Your HAProxy load balancer in Gladys: backends, servers up or down, 5xx errors, alerts in scenes.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-haproxy","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-haproxy.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T17:43:37Z"}} />
+
+[HAProxy](https://www.haproxy.org) is the load balancer and reverse proxy in
+front of many services: it spreads the requests over several servers, checks
+that each one still answers, and takes a server out when it fails. This
+integration brings its statistics into Gladys: an "HAProxy" device with the
+frontends open and the servers up, and one device per backend with its
+servers, sessions and share of 5xx errors. Scenes can react when **any**
+server goes down or comes back, when a backend has no server left, or when
+HAProxy itself no longer answers; a dashboard widget lists the backends down
+first. Read-only: nothing is ever changed in HAProxy.
+
+Tested against a real HAProxy 3.2 (Docker, the three sources below, two
+backends behind HTTP health checks, servers stopped and started again on
+purpose, basic auth). HAProxy 2.x has the same statistics and should work,
+untested: feedback welcome on
+[the issues](https://github.com/guim31/gladys-haproxy/issues).
+
+## What you need
+
+- Gladys Assistant 5.1.0 or later.
+- HAProxy reachable from the Gladys machine through **one** of these sources:
+  - **Statistics page (HTTP)**, the simplest: a frontend with the statistics
+    page, optionally behind a user and password:
+
+    ```
+    frontend stats
+      bind :8404
+      stats enable
+      stats uri /stats
+      stats auth gladys:a-long-password
+    ```
+
+  - **Data Plane API**, if it already runs next to HAProxy (port 5555 by
+    default): enter its user and password;
+  - **Runtime API in TCP**: a statistics socket exposed on the network,
+    `stats socket ipv4@0.0.0.0:9999 level user`. It has no password: only on
+    a trusted network.
+- To know whether a server is **down**, a health check on it (`check` on the
+  `server` line, `option httpchk` for HTTP). Without one, HAProxy shows the
+  server as "no check" and the integration counts it up.
+
+## Getting started
+
+### 1. Open the statistics of HAProxy
+
+Add the statistics page above to `haproxy.cfg` (or the socket line in
+`global`), reload HAProxy, and open `http://<HAProxy machine>:8404/stats` in a
+browser: the page lists the frontends, backends and servers.
+
+### 2. Configure the integration
+
+In Gladys, open **Integrations → HAProxy → Configuration**:
+
+- **Source**: Statistics page (HTTP), Data Plane API, or Runtime API in TCP
+  (show stat).
+- **Address**: the URL of the statistics page as in the browser
+  (`http://192.168.1.2:8404/stats`), the base URL of the Data Plane API
+  (`http://192.168.1.2:5555`), or `host:port` of the socket
+  (`192.168.1.2:9999`).
+- **User** and **Password**: those of `stats auth`, or of the Data Plane API.
+  Leave empty otherwise.
+- **One device per server**: also propose each server in the Discover tab.
+- **Refresh interval**: 15 seconds to 5 minutes, 30 seconds by default. One
+  light request each time.
+- **Language of the names**: the language of the feature names and of the
+  scene results.
+
+Save, then press **Test the connection**: the answer gives the number of
+backends and of servers up.
+
+### 3. Add the devices
+
+Open the **Discover** tab and add the HAProxy device and the backends to
+follow. The scene triggers and the widget work for every backend, added or
+not.
+
+## The devices
+
+**HAProxy**
+
+| Feature          | Meaning                                                |
+| ---------------- | ------------------------------------------------------ |
+| Reachable        | 1 when the statistics answer, 0 when they no longer do |
+| Frontends open   | frontends accepting connections (not stopped)          |
+| Backends down    | backends without any server available                  |
+| Servers up       | servers taking traffic, every backend                  |
+| Servers in total | servers declared, every backend                        |
+| Current sessions | sessions open on the frontends                         |
+
+**One device per backend** (with at least one server), named as in HAProxy
+
+| Feature          | Meaning                                                           |
+| ---------------- | ----------------------------------------------------------------- |
+| Available        | 1 when HAProxy has a server for it (backups included)             |
+| Servers up       | servers taking traffic: UP, or without health check               |
+| Servers in total | servers declared, backups included                                |
+| Current sessions | sessions open on the backend                                      |
+| 5xx errors       | share of 5xx among the HTTP answers since the previous read, in % |
+
+**One device per server** (option), named `backend/server`: **Online**, 1 when
+the server is UP or has no health check, 0 when DOWN, in maintenance (MAINT)
+or draining.
+
+## Dashboard
+
+The **HAProxy** widget shows three tiles (backends down, servers out, backends
+OK), then the backends — down first, then degraded, then the others — with
+their servers up, and the servers out with their HAProxy status and last
+health check (`DOWN · L4TOUT`). The **Refresh** button reads HAProxy at once.
+Its settings can limit it to some backends (devices added to Gladys).
+
+## Scenes
+
+### Triggers
+
+- **A server goes down**: a server stops taking traffic (DOWN, MAINT, drain).
+  Variables: backend name, server name, HAProxy status, last health check.
+- **A server is back up**: with the outage length in minutes.
+- **A backend has no server left**: HAProxy has no server for it, backups
+  included: its clients get 503 errors.
+- **HAProxy is unreachable**: two reads in a row without answer, with the
+  reason.
+
+The first three can be limited to some backends (empty: any). Nothing fires
+at the first read: only changes are announced, also those that happened while
+Gladys or the integration restarted.
+
+### Actions
+
+- **State of a backend**: available or not, state, servers up and in total,
+  current sessions, the servers out with their status, and a ready-made
+  sentence ("app: Degraded, 1/2 server(s) up (app2: DOWN).").
+- **State of HAProxy**: reachable or not, backends down with their names,
+  servers up, and a sentence. "HAProxy does not answer" is an answer: the
+  scene goes on.
+
+### Scene ideas
+
+- **A server goes down** → send a Telegram message "\{\{server\}\} of
+  \{\{backend_name\}\}: \{\{status\}\} (\{\{check\}\})".
+- **A backend has no server left** → a notification to every user, and a red
+  light in the office.
+- Every morning at 8:00 → **State of HAProxy** → send its sentence.
+
+## Troubleshooting
+
+- **"no HAProxy statistics at this address"**: check the source and the
+  address. For the statistics page, open the same address followed by `;csv`
+  in a browser: it must show lines starting with `# pxname,svname`.
+- **"user or password refused"**: the user of `stats auth`, or of the Data
+  Plane API.
+- **"the address redirects"**: the page is served in HTTPS: enter the
+  `https://` address.
+- **A server stays up although its service is stopped**: it has no health
+  check (`check` on the `server` line).
+- **5xx errors stay empty**: the share needs two reads, and a backend in TCP
+  mode has no HTTP answers (0 %).
+- Logs: **Integrations → HAProxy → Logs**; `LOG_LEVEL=debug` shows every read.
+
+## Limits
+
+- Read-only: no server is put in maintenance or drained from Gladys.
+- One HAProxy per integration. With several processes (`nbproc` of old
+  versions), the first one is read.
+- Backends without server (redirects, the statistics page) are not proposed.
+- A self-signed HTTPS certificate is not accepted (use `http://` on the local
+  network).
+- The runtime API in TCP has no password: keep it on a trusted network.
+
+## Configuration settings
+
+These are the settings HAProxy asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your HAProxy statistics | `section` | No | Read-only. Enable the statistics page of HAProxy (stats enable, stats uri), or use the Data Plane API or the runtime API in TCP. Then add the backends to follow from the Discover tab. |
+| Source | `select` | No | Where the statistics are read. |
+| Address | `string` | No | Statistics page: its URL, as in the browser. Data Plane API: http:\/\/host:5555. Runtime API: host:port. |
+| User | `string` | No | The user of stats auth, or of the Data Plane API. Leave empty otherwise. |
+| Password | `secret` | No |  |
+| Options | `section` | No |  |
+| One device per server | `boolean` | No | Also propose each server (online or not) in the Discover tab, besides the backends. |
+| Refresh interval | `select` | No | How often HAProxy is read: one light request each time. |
+| Language of the names | `select` | No | Language of the feature names (set when a device is added) and of the scene results. |
+
+## How to install HAProxy in Gladys
+
+1. In Gladys, open **Integrations**: HAProxy appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-haproxy:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-haproxy](https://github.com/guim31/gladys-haproxy).
+
+HAProxy requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+HAProxy is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-haproxy) — [source of this documentation](https://github.com/guim31/gladys-haproxy/blob/HEAD/docs/en.md)

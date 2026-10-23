@@ -1,0 +1,190 @@
+---
+title: "Integración domótica igloohome, gratuita y de código abierto"
+sidebar_label: "igloohome"
+description: "igloohome locks, padlocks and key boxes via the igloohome API: battery, sync, bridge lock. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-igloohome.png"
+keywords:
+  - "igloohome"
+  - "domótica igloohome"
+  - "gladys igloohome"
+  - "igloohome gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-igloohome instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"igloohome","description":"igloohome locks, padlocks and key boxes via the igloohome API: battery, sync, bridge lock.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-igloohome","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-igloohome.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T21:01:21Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+This integration brings the igloohome devices of your account (locks,
+padlocks, key boxes, keypads) into Gladys through the **official igloohome
+API** (igloodeveloper), the one Home Assistant uses.
+
+> Unofficial integration, **not affiliated with igloohome**.
+>
+> Never tested with a real device nor a real account: only against a fake
+> igloohome server in the tests. Your feedback is welcome.
+
+## What you get
+
+For each device of the account (the bridges are not shown):
+
+- **Battery** (%), when igloohome gives it;
+- **Hours since the last sync**: the age of the last sync of the device with
+  igloohome (handy for a "lock silent for 48 h" scene).
+
+And for a **lock linked to a bridge**:
+
+- a **Lock** button (always allowed);
+- an **Unlock** button (off by default, see below);
+- **Last command**: what igloohome says of the job of the last command
+  ("accepted, waiting for the bridge", "job processed by the bridge (result
+  not read)", "igloohome says the job expired", "result unknown"…).
+
+igloohome **gives no locked/unlocked state** for a lock: the integration does
+not invent one (Home Assistant shows an assumed state).
+
+## What you need
+
+1. One or more igloohome locks paired in the igloohome app, and an
+   **igloohome bridge** to command them (without a bridge: battery and sync
+   only).
+2. An **API client** created in the **iglooaccess** portal (an offer mostly
+   aimed at businesses): it gives a _client id_ and a _client secret_. The
+   client needs the scopes `get-devices`, `lock-bridge-proxied-job` and
+   `get-job-status`. The `unlock-bridge-proxied-job` right is needed only if
+   you allow unlocking; without it, igloohome itself refuses every unlock
+   (the rest works, the status says so). **igloohome may bill the use of the
+   API** (for instance per active device and per month): check the terms of
+   your offer.
+
+## Configuration
+
+- **Client id** and **Client secret**: those of the API client. The secret is
+  kept by Gladys in its database, never shown again, sent only to igloohome
+  (`auth.igloohome.co`) to get an access token. The token stays in the memory
+  of the container, never written to disk.
+- **Allow unlocking the locks from Gladys**: off by default. On, a scene, a
+  dashboard or a voice assistant connected to Gladys can open your door. The
+  token carries the unlock right only while the option is on (a new token is
+  asked when you change it).
+- **Refresh interval**: 900 s (15 min) by default, from 300 s to 86,400 s.
+  One request per read for the whole account.
+- **Language of the feature names**.
+
+Save, then add the devices from the **Discovery** tab.
+
+## The commands and their safety
+
+igloohome commands a lock **through its bridge**, as a "job" the bridge runs
+later (it takes about 2 a minute). **A job igloohome has accepted cannot be
+cancelled**, and the order in which the bridge runs the jobs is not
+guaranteed.
+
+- **Unlock** is refused while the option is off; the option is checked again
+  on arrival, after the read and right before sending. Before acting, the
+  device list is **read again from igloohome**: the lock must still be in it,
+  as a lock, linked to a bridge. One unlock at a time per lock; none while the
+  job of the previous one is watched (until its end, 15 min at most, kept
+  across a restart); none within 30 s of another job on the same bridge.
+- **Lock** is never blocked: no read before, no queue, one try even during a
+  pause asked by igloohome or a stop, and possible right after a restart (the
+  bridge of each lock is kept in `/data`). It cancels at once every unlock of
+  that lock not sent yet.
+- A command leaves within 3.5 s of your click, or is refused without sending
+  anything. It is **never answered done**: a job accepted by igloohome is
+  "Command sent, without confirmation". Its status is then read (5, 15, 30,
+  60, 100, 140 s, then every minute) until igloohome says it was processed,
+  or expired (igloohome's own time, the `Date` header of its answer, past the
+  expiry date: never the clock of Gladys), or 15 min at most (then "result
+  unknown: check the lock"). What igloohome says of the result of a processed
+  job is not read yet (unknown form): check the lock.
+- When an unlock sent **before** a lock is processed too, whatever the order,
+  **Last command** says so until the next command (a restart included):
+  check the lock and press Lock again (never resent by itself).
+- The buttons are never switches: a "turn everything off" of a voice assistant
+  or a scene cannot reach them.
+
+## Errors and rate limits
+
+- **Credentials refused or rights missing** (any refusal of the token
+  endpoint but 429/5xx): a final stop kept in `/data`, **no automatic new
+  try**. Saving other credentials lifts it, or a success of the **Test the
+  connection** button (which tries once).
+- **HTTP 429 or 5xx**: a pause of 1 min to 6 h kept in `/data` (locking still
+  gets one try). A 5xx on the status of a job only skips that read.
+- Other errors: a new try at the interval (5 min at least). The test button
+  (unless read less than an interval ago), the Discovery tab, a reconnection
+  to Gladys or a restart never read sooner than the interval.
+- After a restart, the last successful read kept in `/data` gives the
+  Discovery tab at once, and the "connected" status and the badges when the
+  last read before the restart succeeded (else the status says so), until the
+  next read (its values are not republished as new). A command whose watch
+  ended while stopped shows "result unknown".
+
+## What is kept in `/data`
+
+The file `igloohome-state.json` (readable by the container user only) keeps:
+the pauses, the stops (with the salted fingerprint of **refused** credentials,
+never of good ones), the time of the last read and of the last success, a
+bounded summary of the device list (names, types, battery, sync, bridge), the
+igloohome ids of the locks and their bridges, the jobs watched and the unlock
+guards (written right after sending). Never the secret nor the token.
+
+## Known limits
+
+- No locked/unlocked state (the API gives none without a bridge job), no
+  access log nor PIN code in this version.
+- Only the first page of the device list is read (a message says so when
+  igloohome gives more).
+- The exact meaning of a "processed" job (succeeded, or only ended) and its
+  life are still to be checked on a real account.
+
+## Credits
+
+Logic ported from [igloohome-api](https://github.com/keithle888/igloohome-api)
+(MIT) and from the igloohome integration of Home Assistant (Apache-2.0): see
+`THIRD_PARTY_NOTICES.md`.
+
+## Parámetros de configuración
+
+Estos son los parámetros que igloohome te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Your iglooaccess API client | `section` | No | Brings the igloohome devices of your account into Gladys through the official igloohome API (igloodeveloper): battery and hours since the last sync of each lock, padlock, key box or keypad; for a lock linked to a bridge, Lock and Unlock buttons and the result of the last command. Needs an API client (client id and secret) created in the iglooaccess portal, which igloohome may bill. Read every 15 minutes by default. Locking is always allowed; unlocking stays off until you allow it below. igloohome gives no locked/unlocked state. Never tested with a real device. Not affiliated with igloohome. |
+| Client id | `string` | Sí |  |
+| Client secret | `secret` | Sí | Kept by Gladys in its database, never shown again, sent only to igloohome (auth.igloohome.co) to get a token. |
+| Allow unlocking the locks from Gladys | `boolean` | No | Off by default: Gladys can lock, never unlock. On, a scene, a dashboard or a voice assistant connected to Gladys can open your door. |
+| Refresh interval (s) | `number` | No | Seconds between two reads of the device list (300 to 86400). The battery and the sync change slowly. |
+| Language of the feature names | `select` | No | Used for the feature names of the devices added from now on, and for the last command. |
+
+## Cómo instalar igloohome en Gladys
+
+1. En Gladys, abre **Integraciones**: igloohome aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-igloohome:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-igloohome](https://github.com/LM1LC3N7/gladys-igloohome).
+
+igloohome requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+igloohome es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-igloohome) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-igloohome/blob/HEAD/docs/en.md)

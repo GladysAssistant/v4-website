@@ -1,0 +1,268 @@
+---
+title: "Icinga Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Icinga"
+description: "Deine Icinga-2-Hosts und -Services in Gladys, mit Szenen bei Host-Ausfällen und Service-Problemen. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-icinga.png"
+keywords:
+  - "icinga"
+  - "icinga smart home"
+  - "gladys icinga"
+  - "icinga gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-icinga instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Icinga","description":"Deine Icinga-2-Hosts und -Services in Gladys, mit Szenen bei Host-Ausfällen und Service-Problemen.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-icinga","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-icinga.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T17:47:59Z"}} />
+
+Hol dein [Icinga 2](https://icinga.com/)-Monitoring in Gladys: Jeder Host wird
+ein Gerät (erreichbar, Services WARNING, CRITICAL und UNKNOWN, unbehandelte
+Probleme, quittiert, Wartungszeit), ein Gerät „Icinga“ fasst alles zusammen,
+und deine Szenen reagieren, wenn ein Host ausfällt oder ein Service ein Problem
+hat — ein rotes Licht, wenn das NAS ausfällt, eine Nachricht, wenn ein Backup
+CRITICAL ist. Eine Szene kann auch die Probleme eines Hosts quittieren, und
+ein Widget im Dashboard listet die laufenden Probleme auf.
+
+Die Integration liest die REST-API von Icinga 2 (Port 5665) in deinem lokalen
+Netzwerk, mit einem API-Benutzer. Nichts läuft über eine Cloud.
+
+Getestet mit einem echten Icinga 2.16 (offizielles Docker-Image
+`icinga/icinga2`, `dummy`-Checks, auf WARNING, CRITICAL und UNKNOWN
+gezwungen, ein Host DOWN, ein Host UNREACHABLE dahinter, eine Wartungszeit,
+eine Quittierung, ein nie geprüfter Host). Rückmeldungen sind willkommen:
+[github.com/guim31/gladys-icinga/issues](https://github.com/guim31/gladys-icinga/issues).
+
+## Was du brauchst
+
+- Gladys Assistant 5.1.0 oder neuer.
+- Icinga 2 mit aktivierter REST-API (`icinga2 api setup`, das die meisten
+  Installationen und das offizielle Docker-Image erledigen), vom
+  Gladys-Rechner aus auf Port 5665 erreichbar. Icinga Web und Icinga DB sind
+  nicht nötig.
+- Einen API-Benutzer für Gladys (ein `ApiUser`-Objekt), nur mit den nötigen
+  Berechtigungen.
+
+## Erste Schritte
+
+### 1. Einen API-Benutzer anlegen
+
+Füge auf dem Icinga-2-Server in `/etc/icinga2/conf.d/api-users.conf` (oder in
+eine andere Konfigurationsdatei) hinzu:
+
+```
+object ApiUser "gladys" {
+  password = "ein-langes-zufaelliges-passwort"
+  permissions = [
+    "objects/query/Host",
+    "objects/query/Service",
+    "status/query",
+    "actions/acknowledge-problem",
+  ]
+}
+```
+
+`status/query` dient nur der Version, die „Verbindung testen“ anzeigt: Du
+kannst es weglassen. Lass `actions/acknowledge-problem` weg, wenn Gladys nie
+quittieren soll. Prüfe und lade dann neu: `icinga2 daemon -C` und
+`systemctl reload icinga2`. Nimm nicht den Benutzer `root` von
+`icinga2 api setup`: Er darf alles.
+
+### 2. Die Integration konfigurieren
+
+Öffne in Gladys die Konfiguration der Integration:
+
+- **Adresse**: die Adresse des Icinga-2-Servers, z. B. `192.168.1.2`.
+  `https://` und Port 5665 werden ergänzt, außer du gibst andere ein (z. B.
+  `https://monitoring.example.com:443/icinga-api` hinter einem Reverse
+  Proxy).
+- **API-Benutzer** und **Passwort**: der Benutzer aus Schritt 1.
+- **Hostgruppen (optional)**: Namen von Hostgruppen, durch Kommas getrennt,
+  z. B. `homelab, linux-servers`: Ein Host in einer davon wird übernommen.
+  Leer: alle Hosts, die der API-Benutzer sieht.
+- **Aktualisierungsintervall**: 30 Sekunden bis 5 Minuten (standardmäßig
+  1 Minute).
+- **Quittieren aus Szenen erlauben**: Deaktiviere es, um die Aktion zum
+  Quittieren auszuschalten.
+- **Selbstsignierte Zertifikate akzeptieren**: Icinga signiert das Zertifikat
+  seiner API mit der eigenen Zertifizierungsstelle, deshalb ist es
+  standardmäßig aktiviert. Deaktiviere es nur, wenn dein Zertifikat
+  vertrauenswürdig ist (ein Reverse Proxy mit öffentlichem Zertifikat).
+- **Sprache der Namen**: Sprache der Funktionsnamen und der Szenen-Ergebnisse.
+
+Speichere und klicke dann auf **Verbindung testen**: Das zeigt die Version
+von Icinga, die Anzahl der Hosts, der ausgefallenen Hosts und der Services mit
+Problem.
+
+### 3. Die Geräte hinzufügen
+
+Öffne den Tab **Entdecken** der Integration und füge die Hosts hinzu, die du
+verfolgen willst, und das Gerät „Icinga“, wenn du die Summen möchtest. Die
+Szenen-Auslöser funktionieren für jeden Host, ob in Gladys angelegt oder
+nicht.
+
+## Die Geräte
+
+Jeder **Host** (unter seinem Anzeigenamen in Icinga):
+
+| Funktion              | Wert                                                                     |
+| --------------------- | ------------------------------------------------------------------------ |
+| Host UP               | 1 UP, 0 DOWN oder UNREACHABLE; leer, solange der Host PENDING ist        |
+| Services WARNING      | Anzahl der Services WARNING                                              |
+| Services CRITICAL     | Anzahl der Services CRITICAL                                             |
+| Services UNKNOWN      | Anzahl der Services UNKNOWN                                              |
+| Unbehandelte Probleme | Host- und Service-Probleme, weder quittiert noch in einer Wartungszeit   |
+| Host quittiert        | 1, solange der Host DOWN oder UNREACHABLE und sein Problem quittiert ist |
+| In Wartungszeit       | 1, solange der Host in einer geplanten Wartungszeit ist                  |
+
+Das Gerät **Icinga**: Hosts DOWN (DOWN oder UNREACHABLE), Services WARNING,
+Services CRITICAL, Services UNKNOWN und Unbehandelte Probleme, über die Hosts
+der Konfiguration.
+
+Ein Host ist UNREACHABLE, wenn er DOWN ist und Icinga über eine Abhängigkeit
+weiß, dass auch sein Elternhost ausgefallen ist. Die Service-Anzahlen zählen
+auch die Zustände, die Icinga noch bestätigt (SOFT), wie Icinga Web sie zeigt.
+Die Werte werden nur an Gladys gesendet, wenn sie sich ändern, sonst alle
+6 Stunden.
+
+## Dashboard
+
+Das Widget **Icinga-Probleme** zeigt drei Kacheln — „Hosts DOWN“, „Services
+CRITICAL“, „Unbehandelt“ — und die Probleme: Hosts DOWN, dann UNREACHABLE,
+dann Services CRITICAL, UNKNOWN und WARNING, die neuesten zuerst. Jede Zeile
+nennt den Service und seinen Zustand, den Host, ✓ wenn quittiert und ⏸ in
+einer Wartungszeit. Höchstens zehn Zeilen. **Aktualisieren** liest Icinga neu.
+In seinen Einstellungen kannst du Hosts wählen, um nur deren Probleme zu
+zeigen (leer: alle Hosts).
+
+## Szenen
+
+### Auslöser
+
+- **Ein Host fällt aus**: Ein Host wird DOWN oder UNREACHABLE. Filter: Hosts
+  (leer: beliebig). Variablen: Hostname, Zustand (DOWN, UNREACHABLE). Ein
+  Host, der von DOWN zu UNREACHABLE wechselt, wird nicht zweimal gemeldet.
+- **Ein Host ist wieder da**: Ein als ausgefallen gemeldeter Host ist wieder
+  UP. Variablen: Hostname, Dauer in Minuten.
+- **Ein Service hat ein Problem**: Ein Service wird WARNING, CRITICAL oder
+  UNKNOWN oder wechselt zwischen ihnen (zum Beispiel von WARNING zu CRITICAL).
+  Filter: Hosts, Zustände (leer: beliebig; für „nur CRITICAL“ wähle CRITICAL).
+  Variablen: Hostname, Service, Zustand, Check-Ausgabe (ihre erste Zeile).
+- **Ein Service ist wieder OK**: Ein als Problem gemeldeter Service ist wieder
+  OK. Filter: Hosts, der zuletzt gemeldete Problemzustand. Variablen:
+  Hostname, Service, letzter Problemzustand, Dauer in Minuten.
+- **Icinga antwortet nicht mehr**: Die REST-API antwortet zweimal
+  hintereinander nicht (Variablen: Adresse, Fehler).
+
+Probleme, die beim Start der Integration schon bestehen, werden nicht
+gemeldet, ihr Ende aber schon. Nur bestätigte Zustände (HARD) zählen: Solange
+Icinga einen Check wiederholt (Zustand SOFT, bis `max_check_attempts`), wird
+nichts gemeldet, denn Icinga benachrichtigt auch nicht. Eine Änderung, die
+passiert, während Gladys oder die Integration neu startet, wird beim nächsten
+Lesen einmal gemeldet. Ein Problem in einer Wartungszeit (des Service oder
+seines Hosts) wird nicht gemeldet; besteht es am Ende der Wartungszeit noch,
+wird es dann gemeldet.
+
+### Aktionen
+
+- **Probleme eines Hosts quittieren**: quittiert in Icinga das Host-Problem
+  (DOWN, UNREACHABLE) und jeden seiner Services mit Problem, der noch nicht
+  quittiert ist, mit einem Kommentar (leer: „In Gladys quittiert“) und dem
+  Autor „Gladys“. Die Quittierung ist dauerhaft (bis der Host UP oder der
+  Service OK ist) und sendet keine Benachrichtigung. Gibt die Anzahl der
+  Quittierungen zurück. Ausschalten mit „Quittieren aus Szenen erlauben“.
+- **Probleme lesen**: zählt und listet die Probleme eines Hosts oder aller
+  Hosts für die nächsten Aktionen: Anzahl, unbehandelt, Hosts DOWN, Services
+  CRITICAL, WARNING und UNKNOWN, und die Liste „Host: Problem“.
+
+### Szenen-Ideen
+
+- **Ein rotes Licht, wenn das NAS ausfällt**: Auslöser „Ein Host fällt aus“,
+  Host NAS → schalte die Wohnzimmerlampe auf Rot und sende
+  `{{triggerEvent.data.host}}: {{triggerEvent.data.state_name}}`.
+- **Nur kritische Services**: Auslöser „Ein Service hat ein Problem“, Zustand
+  CRITICAL → Nachricht `\{\{triggerEvent.data.host\}\} /
+\{\{triggerEvent.data.service\}\}: \{\{triggerEvent.data.output\}\}`.
+- **Morgenbericht**: jeden Tag um 8:00 Uhr „Probleme lesen“ → sende die Anzahl
+  und die Liste, wenn die Anzahl über 0 liegt.
+- **Vom Sofa aus gesehen**: Ein Button im Dashboard oder eine
+  Zigbee-Fernbedienung startet „Probleme eines Hosts quittieren“ für das NAS.
+
+## Fehlerbehebung
+
+- **„API-Benutzer oder Passwort abgelehnt“**: Prüfe das `ApiUser`-Objekt und
+  ob Icinga nach dem Hinzufügen neu geladen wurde.
+- **„Icinga antwortet nicht“**: Prüfe die Adresse und Port 5665 vom
+  Gladys-Rechner aus (eine Firewall sperrt ihn oft). `localhost` ist der
+  Container der Integration selbst: Nimm die IP-Adresse des Icinga-Rechners.
+- **„keine Icinga-2-API unter dieser Adresse“**: Dort antwortet etwas anderes
+  (zum Beispiel Icinga Web auf Port 80 oder 443): Nimm Port 5665.
+- **„die Icinga-API spricht nur HTTPS“**: Gib `https://` ein, oder nichts vor
+  der Adresse.
+- **„Berechtigung des API-Benutzers fehlt“** oder **„kein Host sichtbar“**:
+  Füge dem `ApiUser`-Objekt die Berechtigungen aus Schritt 1 hinzu und lade
+  Icinga neu. Eine Berechtigung mit `filter` kann auch alle Hosts verbergen.
+- **„Zertifikat abgelehnt“**: Aktiviere „Selbstsignierte Zertifikate
+  akzeptieren“.
+- **Ein Host fehlt**: Er ist in keiner der Hostgruppen der Konfiguration.
+- **Die Quittierung wird abgelehnt**: Der API-Benutzer braucht die
+  Berechtigung `actions/acknowledge-problem`.
+
+## Grenzen
+
+- Eine Icinga-2-Instanz pro Integration (bei einem Cluster die Adresse eines
+  Masters: Er sieht alle Hosts seiner Zonen).
+- Nur Host- und Service-Zustände: keine Metriken, keine Performance-Daten.
+- Die Integration liest Icinga im gewählten Intervall: Ein Ereignis, das
+  zwischen zwei Lesevorgängen kommt und geht, wird verpasst. Der Stream
+  `/v1/events` wird nicht genutzt.
+- „Ein Service ist wieder OK“ wird auch ausgelöst, wenn ein Service mit
+  Problem aus dem Monitoring entfernt wird; ein aus Icinga oder aus dem
+  Bereich entfernter Host endet still.
+- Höchstens 30 Szenen-Ereignisse pro Lesevorgang: Ein Netzwerkausfall kann
+  Dutzende auf einmal auslösen; der Rest folgt bei den nächsten Lesevorgängen.
+- Kein Kontingent für die REST-API: Jedes Lesen sendet zwei Anfragen (einmal
+  pro Stunde drei, für die Version).
+
+Nicht mit dem Icinga-Projekt oder der Icinga GmbH verbunden.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Icinga in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Dein Icinga 2 | `section` | Nein | Lege auf dem Icinga-2-Server ein ApiUser-Objekt (api-users.conf) mit den Berechtigungen objects/query/Host, objects/query/Service, status/query und zum Quittieren actions/acknowledge-problem an. Lege die Hosts dann im Tab „Entdecken“ an: Die Auslöser gelten für alle Hosts. |
+| Adresse | `string` | Ja | Die Adresse des Icinga-2-Servers; https:\/\/ und Port 5665, außer du gibst andere ein. |
+| API-Benutzer | `string` | Ja |  |
+| Passwort | `secret` | Ja | Das Passwort des ApiUser-Objekts. Nicht den Benutzer root: nur die Berechtigungen oben. |
+| Hostgruppen (optional) | `string` | Nein | Namen von Hostgruppen, durch Kommas getrennt: Ein Host in einer davon wird übernommen. Leer: alle Hosts, die der Benutzer sieht. |
+| Optionen | `section` | Nein |  |
+| Aktualisierungsintervall | `select` | Nein | Wie oft Icinga gelesen wird: jedes Mal zwei oder drei API-Anfragen. |
+| Quittieren aus Szenen erlauben | `boolean` | Nein | Deaktiviere es, um die Szenen-Aktion „Probleme eines Hosts quittieren“ auszuschalten. |
+| Selbstsignierte Zertifikate akzeptieren | `boolean` | Nein | Icinga signiert das Zertifikat seiner API mit der eigenen CA: Lass es aktiviert, außer dein Zertifikat ist vertrauenswürdig. |
+| Sprache der Namen | `select` | Nein | Sprache der Funktionsnamen (beim Hinzufügen eines Geräts festgelegt) und der Szenen-Ergebnisse. |
+
+## So installierst du Icinga in Gladys
+
+1. Öffne in Gladys **Integrationen**: Icinga erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-icinga:1.0.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-icinga](https://github.com/guim31/gladys-icinga).
+
+Icinga benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Icinga ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-icinga) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-icinga/blob/HEAD/docs/de.md)

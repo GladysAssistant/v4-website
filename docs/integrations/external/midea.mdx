@@ -1,7 +1,7 @@
 ---
 title: "Midea smart home integration, free and open source"
 sidebar_label: "Midea"
-description: "Midea air conditioners and their rebrands on the local network: mode, setpoint, fan, energy. Free, open source, installable in one click."
+description: "Midea air conditioners, heat pumps, dehumidifiers and their rebrands, on the local network. Free, open source, installable in one click."
 image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-midea.png"
 keywords:
   - "midea"
@@ -19,7 +19,7 @@ https://github.com/guim31/gladys-midea instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Midea","description":"Midea air conditioners and their rebrands on the local network: mode, setpoint, fan, energy.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-midea","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-midea.png","type":"device","version":"1.0.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-13T21:34:34Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Midea","description":"Midea air conditioners, heat pumps, dehumidifiers and their rebrands, on the local network.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-midea","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-midea.png","type":"device","version":"1.3.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-22T17:58:03Z"}} />
 
 Control your Midea air conditioners from Gladys, on your local network: on/off, mode, setpoint, fan speed, swing, eco, turbo and sleep modes, indoor and outdoor temperature, and the energy consumption of the units that measure it.
 
@@ -35,7 +35,11 @@ The criterion is the app, not the brand on the unit: an air conditioner (Midea a
 
 Midea builds units for many brands; units of related brands such as Comfee, Carrier or some Toshiba lines often use these apps. Split, window and portable units all speak the same protocol.
 
-Not supported: other Midea appliances (dehumidifiers, water heaters...), which the search lists as "not supported", and the very first Wi-Fi modules (protocol V1, around 2015).
+**Air-to-water heat pumps** (Midea appliance type `0xC3`, the "Heat Pump Wi-Fi Controller" of a hydronic heat pump, e.g. model 171H120F) are also supported: heating zones, domestic hot water, eco and silent modes, water and outdoor temperatures. They show up in the Discovery tab like the air conditioners.
+
+**Dehumidifiers** (Midea appliance type `0xA1`: Midea, Comfee, Inventor... set up in the SmartHome / MSmartHome app) are supported too.
+
+Not supported: other Midea appliances (water heaters, fans...), which the search lists as "not supported", and the very first Wi-Fi modules (protocol V1, around 2015).
 
 ## Requirements
 
@@ -53,14 +57,15 @@ Not supported: other Midea appliances (dehumidifiers, water heaters...), which t
    - **Language of the device names**: language of the names given to the new devices and their features (French by default).
    - **Beep on each command**: off by default, so that a scene at night stays silent.
    - **Energy data format**: leave "Standard (BCD)" unless the power or energy shown is absurd.
-   - **Keys of recent units (V3)**: the **Cloud region** of the public account used to fetch the keys (Europe by default), or your own account, in **NetHome Plus account** and **NetHome Plus password** (both optional).
+   - **Keys of recent units (V3)**: the **Cloud app** your units are set up in (**NetHome Plus** by default, or **SmartHome**: the MSmartHome app, also used by Comfee and other brands), the **Cloud region** of the public accounts used to fetch the keys (Europe by default), or your own account of that app, in **Own cloud account** and **Password of this account** (both optional).
+   - **Token and key typed by hand**: optional, only for a V3 unit the cloud gives no key (see below).
 4. Open the **Discovery** tab: every unit found appears, named "Air conditioner" followed by the last four characters of its Wi-Fi name. Add the ones you want to Gladys.
 
 The **Search for air conditioners** button (Configuration tab) runs a new search and lists every unit found, its address, its protocol and whether it answers.
 
 ### About the keys of the V3 units
 
-A V3 unit only talks to a client that knows its token and key. These are stored by Midea in its cloud, filed under the unit itself, not under an account: the integration fetches them **once**, with public NetHome Plus accounts (the practice of the open-source libraries msmart-ng and midea-local), or with your own account if you enter it. They are then saved in Gladys' integration volume (`/data`) and never written in the logs. If the unit is reset or paired again in its app, the integration notices the refused key and fetches a new one.
+A V3 unit only talks to a client that knows its token and key. These are stored by Midea in its cloud, filed under the unit itself, not under an account, but only in the cloud of the app the unit was set up with: NetHome Plus or SmartHome (MSmartHome). The integration fetches them **once**, with public accounts of both apps (the practice of the open-source libraries msmart-ng and midea-local), or with your own account if you enter it (tried on both clouds, then the public accounts): the chosen app first, then the other one, so a unit of either app gets its key without changing anything. They are then saved in Gladys' integration volume (`/data`) and never written in the logs. If the unit is reset or paired again in its app, the integration notices the refused key and fetches a new one.
 
 ## Devices and features
 
@@ -81,13 +86,60 @@ Each air conditioner is one Gladys device. Its features depend on what the unit 
 
 The changes made with the remote or the app are picked up at the next reading.
 
+### Heat pumps
+
+A heat pump (type `0xC3`) is a Gladys device of its own, named "Heat pump" followed by the last four characters of its Wi-Fi name. Its features follow the installation it announces (one or two zones, hot water, heating only or heating and cooling):
+
+| Feature                                                                            | What it does                                                                                                                                                                                                                           |
+| ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Zone 1 mode**, **Zone 2 mode**                                                   | Off, Heat, Cool, Auto: Off stops the zone, the other values set the operating mode of the heat pump, shared by both zones. Zone 2 only with two zones.                                                                                 |
+| **Zone 1 setpoint**, **Zone 2 setpoint**                                           | The water temperature of the zone (whole degrees), or the room temperature for a zone run by a room thermostat (by halves), within the limits the unit announces.                                                                      |
+| **Hot water**, **Hot water setpoint**                                              | Domestic hot water on or off, and its setpoint within the unit's limits.                                                                                                                                                               |
+| **Hot water tank temperature**                                                     | The temperature measured in the tank.                                                                                                                                                                                                  |
+| **Outdoor temperature**, **Water inlet temperature**, **Water outlet temperature** | Measured by the outdoor and hydraulic units, when the unit gives them.                                                                                                                                                                 |
+| **Zone 1 operation**, **Zone 2 operation**                                         | Idle, heating or cooling: what the zone is doing right now (idle when off or while the unit heats the hot water).                                                                                                                      |
+| **Zone 1 weather curve**, **Zone 2 weather curve**                                 | The zone's water setpoint follows the outdoor temperature (the curve set on the controller).                                                                                                                                           |
+| **Hot water heating**                                                              | The unit is heating the hot water right now.                                                                                                                                                                                           |
+| **Water flow**, **Water pressure**                                                 | Flow of the heating loop (m³/h) and its pressure (kPa).                                                                                                                                                                                |
+| **Eco mode**, **Silent mode**, **Super silent mode**                               | The presets of the unit. Super silent mode is the quietest level of silent mode, when the unit offers it.                                                                                                                              |
+| **Compressor**, **Defrosting**, **Backup electric heater**                         | Whether the compressor runs, the outdoor unit defrosts, an electric heater (backup or tank) helps.                                                                                                                                     |
+| **Compressor run time**                                                            | Hours of the compressor: it appears once the unit has sent it.                                                                                                                                                                         |
+| **Error code**                                                                     | The code the controller shows (E8, P1, H6...), or "No error". The "Unit error" trigger gives it as `error_display`.                                                                                                                    |
+| **Power draw**                                                                     | The instant power (W), when the unit gives it.                                                                                                                                                                                         |
+| **Energy consumed**, **Heat produced (kWh)**                                       | Total electricity consumed and total heat produced (kWh): they appear once the unit has sent its counters. Their ratio is the seasonal efficiency (COP). The heat is a plain counter, so that Gladys does not count it as electricity. |
+
+The tank booster heater, fast hot water and anti-legionella disinfection stay in the hands of the unit and its controller. The "Midea unit" widget has a heat pump view (see Widget); the "Run the air conditioner" scene action is for air conditioners only; the "Unit error" trigger works for heat pumps too. Heat pump support was written from midea-local's code and is waiting for feedback on real units.
+
+### Dehumidifiers
+
+A dehumidifier (type `0xA1`) is a Gladys device of its own, named "Dehumidifier" followed by the last four characters of its Wi-Fi name. Gladys has no dehumidifier category: the mode, the fan speed and the target humidity are selection lists, as on the Tuya integration.
+
+| Feature                                   | What it does                                                         |
+| ----------------------------------------- | -------------------------------------------------------------------- |
+| **On/off**                                | Turns the dehumidifier on or off.                                    |
+| **Mode**                                  | Setpoint, Continuous, Auto, Clothes drying, Shoes drying.            |
+| **Fan speed**                             | Lowest, Low, Medium, High, Auto.                                     |
+| **Target humidity**                       | 35 to 85 %, by steps of 5 (the setpoint of the "Setpoint" mode).     |
+| **Humidity**, **Temperature**             | Measured by the unit.                                                |
+| **Water tank level**, **Water tank full** | The tank level (%) and whether it reached the level set on the unit. |
+| **Child lock**, **Ionizer**, **Swing**    | The options of the unit.                                             |
+| **Drain pump**                            | Only on a unit that has one.                                         |
+
+The "Filter needs cleaning" trigger works for dehumidifiers too. The "Run the air conditioner" scene action and the widget are for air conditioners only. Dehumidifier support was written from midea-local's code and is waiting for feedback on real units.
+
 ## Widget
 
-The **Air conditioner** widget (choose the unit in its settings) shows the room temperature, the setpoint and the outdoor temperature (or the humidity), then the mode, the fan speed, the filter state and the error code of the unit. Its buttons:
+The **Midea unit** widget (choose the unit in its settings) adapts to the kind of unit. For an air conditioner, it shows the room temperature, the setpoint and the outdoor temperature (or the humidity), then the mode, the fan speed, the filter state and the error code of the unit. Its buttons:
 
 - **Turn on** / **Turn off**;
 - **−0.5 °C** and **+0.5 °C** (by 1 °C on the units that do not take half degrees);
 - **Mode and fan**: a small form to choose the mode and the fan speed together; the unit is switched on.
+
+For a **heat pump**, it shows zone 1's setpoint, the tank temperature and the outdoor temperature, then what runs right now: each zone (mode, heating or idle), the hot water (on/off, setpoint, heating), the compressor (with defrosting and backup heater), the power draw, the efficiency since the counters started (**COP (total)**: heat produced divided by electricity consumed) and the error code. Its buttons:
+
+- **Zone 1 on** / **Zone 1 off**: zone 1 restarts in the unit's operating mode;
+- **−1 °C** and **+1 °C** on zone 1's setpoint (by half degrees for a zone run by a room thermostat), within the limits the unit announces;
+- **Settings**: a small form for zone 1's mode, the hot water and its setpoint, and eco mode (silent mode too on a unit without hot water). The zone and the hot water travel in a single frame.
 
 ## Scene triggers
 
@@ -117,15 +169,19 @@ Turning the unit off, or changing a single setting, uses the standard "Control a
 ## Troubleshooting
 
 - **No unit found**: check that the unit is connected in its app and on the same network as Gladys; enter its IP address in the configuration; run **Search for air conditioners**.
-- **"A recent (V3) unit has no key"**: Gladys could not reach the Midea cloud, or the public account of the region does not know the unit. Try another **Cloud region**, or enter your own NetHome Plus account, then run **Search for air conditioners** again.
+- **"A recent (V3) unit has no key"**: Gladys could not reach the Midea cloud, or the public accounts of the region do not know the unit. Try another **Cloud region**, or enter your own account of the app the unit is set up in (choose that app in **Cloud app**), then run **Search for air conditioners** again.
+- **The cloud gives no key** (some heat pumps): if Home Assistant's Midea AC LAN integration already talks to the unit, copy its token and key (in its saved configuration) into **Token and key typed by hand**, as `token:key`, then run **Search for air conditioners** again.
 - **The unit does not answer**: check that it is powered and that its address did not change; a module only accepts one connection at a time, so close other local tools that talk to it.
 - **Absurd power or energy values**: switch the **Energy data format** to "Binary".
+- **Diagnostic of the units** (Configuration tab, read-only): a text report of the installation: configuration without any token, key or password, discovery, the appliances found but not supported, then each unit (protocol, keys present or not, last answer, last error, capabilities, last state). Pick a unit to see it alone. Copy the report into a [GitHub issue](https://github.com/guim31/gladys-midea/issues).
+- **Test a unit** (Configuration tab, read-only): reads one unit now, picked in the list or by its IP address. Every query of its kind is sent, with the raw answer, its decoding and the answer time; no command is ever sent. For an address not known yet, the report gives the discovery answer: which appliance it is, and whether it is supported. This is what a request for a new Midea appliance needs.
+- Both reports shorten ids and serial numbers and hide local addresses, so they can be posted publicly. The option "Show ids, serial numbers and local addresses" shows them in full: keep that report private; the logs only keep the masked version.
 - **More details**: set the `LOG_LEVEL` environment variable of the container to `debug`.
 
 ## Limits
 
 - Developed without the hardware: feedback welcome on [GitHub](https://github.com/guim31/gladys-midea/issues).
-- Air conditioners only: dehumidifiers and other Midea appliances are not supported yet.
+- Air conditioners, air-to-water heat pumps and dehumidifiers only: other Midea appliances are not supported yet.
 - The louver positions, the display (LED) and the advanced presets (breeze, iECO, fresh air...) are not handled.
 - The first-generation modules (V1) are not supported.
 - Gladys shows the setpoint by whole degrees on some screens; the unit itself takes half degrees.
@@ -143,15 +199,17 @@ These are the settings Midea asks for in its configuration screen in Gladys.
 | Language of the device names | `select` | No | Names given to new devices and their features (Mode, Fan speed...). |
 | Beep on each command | `boolean` | No | The unit beeps when Gladys changes a setting, as with its remote. |
 | Energy data format | `select` | No | Units with an energy meter encode it in one of two ways. Change it only if the power or energy shown is absurd. |
-| Keys of recent units (V3) | `section` | No | Units sold since about 2020 need a key, fetched once from the Midea cloud, then kept in Gladys: everything else stays local. Public accounts are used by default; you may enter your own NetHome Plus account instead. |
+| Keys of recent units (V3) | `section` | No | Units sold since about 2020 need a key, fetched once from the Midea cloud, then kept in Gladys: everything else stays local. Public accounts are used by default; you may enter your own NetHome Plus or SmartHome account instead. |
+| Cloud app | `select` | No | The app your units are set up in. The other one is tried too if the key cannot be fetched. |
 | Cloud region | `select` | No | Region of the public account. Try another one if the key cannot be fetched. |
-| NetHome Plus account (optional) | `string` | No |  |
-| NetHome Plus password (optional) | `secret` | No |  |
+| Own cloud account (optional) | `string` | No | Account of the cloud app chosen above. It is tried on both clouds, then the public accounts. |
+| Password of this account (optional) | `secret` | No |  |
+| Token and key typed by hand (optional) | `secret` | No | Only if the cloud gives no key: token:key of a unit (128 and 64 hexadecimal characters), as Home Assistant's Midea AC LAN keeps them. Several pairs separated by commas. |
 
 ## How to install Midea in Gladys
 
 1. In Gladys, open **Integrations**: Midea appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-midea:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-midea:1.3.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-midea](https://github.com/guim31/gladys-midea).
 

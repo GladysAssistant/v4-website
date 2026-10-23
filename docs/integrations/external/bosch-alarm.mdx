@@ -1,0 +1,237 @@
+---
+title: "Bosch Alarm smart home integration, free and open source"
+sidebar_label: "Bosch Alarm"
+description: "Bosch Solution, AMAX, B and G Series alarm panels, locally (Mode 2). Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-bosch-alarm.png"
+keywords:
+  - "bosch alarm"
+  - "bosch alarm smart home"
+  - "gladys bosch alarm"
+  - "bosch alarm gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-bosch-alarm instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Bosch Alarm","description":"Bosch Solution, AMAX, B and G Series alarm panels, locally (Mode 2).","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-bosch-alarm","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-bosch-alarm.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-20T19:08:54Z"}} />
+
+This integration links a **Bosch** alarm panel to Gladys Assistant,
+**locally** over your network, with Bosch's **"Mode 2"** automation
+protocol: Solution 2000, 3000, 4000 (and 2100, 3100, 4100), AMAX 2100, 3000,
+4000, B Series (B3512, B4512, B5512, B6512), G Series (B8512G, B9512G) and
+D7412GV4 / D9412GV4.
+
+> **Never tested with a real device.** The protocol comes from the
+> [bosch-alarm-mode2](https://github.com/mag1024/bosch-alarm-mode2) 0.4.11
+> library (the one of the Home Assistant Bosch Alarm integration), ported to
+> JavaScript and checked against a simulated panel only. Make your first
+> tries on site, with the panel disarmed, and report what goes wrong.
+>
+> Unofficial integration, not affiliated with Bosch.
+
+## Before you start
+
+- The panel on your network (built-in network module, or the B426 / B450 /
+  IP module of the panel), reachable from Gladys: give it a fixed address in
+  your router.
+- **Automation (Mode 2) enabled** on the panel by your installer (A-Link
+  Plus, RPS or Installer Services), with its port (7700 by default) and:
+  - B, G Series and GV4: an **automation code**;
+  - AMAX: an **automation code** and the **installer code**;
+  - Solution: the **code of a user** (no automation code).
+- The panel takes a limited number of automation connections: if another
+  software holds them all (Home Assistant, another Gladys…), the integration
+  says so and tries again one minute later at the earliest.
+
+## What you get
+
+The areas, points and outputs are the ones the panel declares, with their
+names.
+
+- **Bosch panel**: connected or not, trouble, AC power failure, battery low
+  or missing (model, firmware and serial number as parameters).
+- **One device per area**:
+  - **State**, read-only: disarmed, arming (exit delay), entry delay, armed
+    (away), armed (stay);
+  - **Armed**, **Ready to arm** (panels with a subscription), **Alarm in
+    progress** (an armed area with a burglary, gas or fire alarm in memory),
+    **Fire alarm memory** (until it is cleared at a keypad);
+  - three **buttons**: arm away, arm stay, disarm.
+- **One device per point**: open or closed (opening, motion, smoke or leak,
+  as chosen).
+- **One device per output**: on or off, and two **buttons**: turn on, turn
+  off.
+- **Scene triggers**: alarm triggered (with the point when the panel gives
+  it, and whether it is a fire), area armed (mode, asked by Gladys or not),
+  area disarmed.
+- **Scene actions**: arm (away or stay), disarm.
+
+No command is a switch: a "turn everything off" of a voice assistant, of
+HomeKit or of a scene can neither disarm the alarm nor drive an output. The
+states are read-only, the commands are buttons.
+
+## Configuration
+
+1. **Address of the panel**: the IP address of its network module.
+2. **Automation port**: 7700, unless your installer changed it.
+3. **Automation code**: B, G Series, GV4 and AMAX (not used by Solution).
+4. **User code (Solution) or installer code (AMAX)**: 8 digits at most. Not
+   used by B and G Series. For Solution, create a dedicated user with only
+   the rights Gladys needs.
+5. **Kind of the points** (optional): e.g. `7:motion, 9-10:smoke, 12:leak`.
+   Kinds: `opening` (default), `motion`, `smoke`, `leak`. Changing the kind
+   of a point already created in Gladys adds a new feature and keeps the old
+   one (and its history): delete the old one by hand if you do not want it.
+6. **Safety**: see below.
+7. **Language of the names**: French or English.
+
+The codes are secret fields: kept by Gladys in its database, never shown
+again in the interface, sent only to the panel. They never appear in the
+logs nor in `/data`.
+
+The **Test the connection** button connects at once when no connection is
+open (else it waits for the one in progress) and tells the model, the state
+of the areas and the number of points and outputs. It never jumps ahead of
+a new try already planned (a wait after a cut or "no free connection"): it
+then tells the current state.
+
+The **Allow a new try of the code** button lifts the stop set after a
+refused code (see "Safety"): the integration logs in once more with the
+codes of the configuration.
+
+## What travels on the network
+
+- The link with the panel goes through **TLS, without a check of the panel's
+  certificate** (as Home Assistant does: the panel has a self-signed
+  certificate). A device that only listens to your network cannot read the
+  exchanges; a device able to pose as the panel on your local network could
+  receive the codes.
+- The codes are sent at each login to the panel.
+- Protect your network (a separate guest Wi-Fi for the devices you are not
+  sure of) and give Gladys a code with limited rights.
+
+## Safety
+
+- **Arming** is always allowed, without an option: it is a protective
+  command. Arming while someone is inside (a badly set scene, a mistake) may
+  raise a false alarm, the sirens and a call of your alarm monitoring
+  company.
+- **Disarming is off by default.** Once the option is checked, **every
+  Gladys user, every scene and the Gladys mobile app can disarm without
+  typing any code**. Allow it only if your Gladys is well protected
+  (accounts, remote access). Going from armed away to armed stay lowers the
+  protection: it needs this option too.
+- **The outputs are off by default**, behind their own option: an output may
+  drive a siren, a gate or a lock. Check what each one does first.
+- The options are read again right before each send: an option unchecked
+  while a command waits its turn blocks that command.
+- Before each command, the integration **reads the state from the panel
+  again** and decides on that state, never on what it has in memory
+  (already in the asked state: nothing is sent; entry delay running: arming
+  refused). The commands go one at a time, in order. A command whose time
+  ran out while it waited its turn is refused, nothing is sent. An arming
+  goes before the disarms and outputs waiting, and withdraws a disarm of
+  the same area, waiting or in progress, as long as it has not left for
+  the panel.
+- A command that cannot leave in time (slow panel, unreadable state) is
+  refused with "nothing was sent". A command that left without a clear
+  answer (no answer, a cut) is reported "sent, without confirmation": the
+  connection is restarted at once (about 5 s) and the state read again as
+  soon as it is back; it is never reported "not sent". Only a refusal of
+  the panel is reported "refused" (no right, cannot arm…).
+- **If the panel refuses a code at login, the integration stops and never
+  sends it again by itself**, even after a restart (a panel may count wrong
+  codes and report a code tamper). The same goes when the panel does not
+  answer the login clearly twice in a row (connection closed, no answer
+  within 15 s, unreadable answer): the code may have been refused. Change a
+  code in the configuration, or click "Allow a new try of the code" (one
+  try per click). The file `/data/bosch-alarm-state.json` only keeps the
+  date of the stop, never a code; the stop holds even if the address of the
+  panel changes. An unreadable file counts as a stop (and is told as such); if the stop cannot be
+  written, the connection status says so.
+- Every command, sent or refused, is written in the integration logs; the
+  codes never are.
+
+## Connection
+
+- One connection at a time, never two: at least 5 seconds between two
+  connections.
+- After a cut, the new tries are spaced: 10 s, 30 s, 1 min, 2 min, then
+  every 5 minutes; at least one minute when the panel has no free
+  connection, five minutes for an unknown model. A connection that drops
+  less than a minute after it opened counts as a failure (the waits grow).
+  After a command without an answer, the connection is back in about 5 s.
+- The panels that can send each change themselves do (subscription); the
+  others are read every 2 seconds. Everything is read again every 10
+  minutes, the faults every minute.
+- A request after 60 seconds of silence checks that the panel still
+  answers; with nothing received for 150 s, or no answer to a request, the
+  integration reconnects.
+
+## Known limits
+
+- Never tested with a real device (see above).
+- No event log, no doors (access control of the B and G Series), no instant
+  arming, no clock setting in this version.
+- "Ready to arm" only exists on the panels that send their changes
+  (subscription).
+- Outputs over 255 are shown but cannot be controlled (the protocol command
+  takes one byte).
+- An alarm already in progress when the integration starts does not trigger
+  a scene (only the changes seen do).
+- The alarm memory stays on the panel until it is cleared at a keypad:
+  arming again an area whose memory was not cleared triggers "Bosch alarm
+  triggered" again (as in Home Assistant). Clear the memory at a keypad
+  after an alarm.
+- Frames over 8 KB are refused (the connection is restarted).
+
+## Privacy
+
+Everything stays on your network: the integration talks to the panel only.
+
+## Licence
+
+Apache-2.0. Protocol logic ported from bosch-alarm-mode2 0.4.11 (MIT,
+Michael Grigoriev): see `THIRD_PARTY_NOTICES.md`.
+
+## Configuration settings
+
+These are the settings Bosch Alarm asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Bosch alarm panel | `section` | No | For Bosch Solution 2000/3000/4000, AMAX 2100/3000/4000, B Series (B3512 to B6512), G Series (B8512G, B9512G) and GV4 panels with their network module, on your network, without any cloud, through the "Mode 2" automation protocol: the state of each area (disarmed, arming, armed away or stay, entry delay, alarm, fire alarm memory), its points (open or closed), the outputs, the panel troubles, arm and disarm buttons, scene triggers. Enable the automation (Mode 2) on the panel with Bosch's installer software (A-Link Plus, RPS). Never tested on a real panel. Unofficial, not affiliated with Bosch. |
+| Address of the panel | `string` | Yes | The IP address of its network module (give it a fixed address in your router). |
+| Automation port | `number` | No | 7700 unless your installer changed it. |
+| Automation code | `secret` | No | B, G Series, GV4 and AMAX panels: the automation passcode set by your installer (not used by Solution panels). It is sent to the panel at each login, over TLS without a check of the panel's certificate. A code refused by the panel is never sent again by itself ("Allow a new try of the code" button). Kept by Gladys in its database, never shown again, sent only to the panel, never in the logs. |
+| User code (Solution) or installer code (AMAX) | `secret` | No | Solution panels: the code of a user (up to 8 digits) with the rights Gladys needs. AMAX panels: the installer code (up to 8 digits), with the automation code above. Not used by B and G Series. It is sent to the panel at each login, over TLS without a check of the panel's certificate. A code refused by the panel is never sent again by itself ("Allow a new try of the code" button). Kept by Gladys in its database, never shown again, sent only to the panel, never in the logs. |
+| Kind of the points | `string` | No | Optional: points that are not openings, e.g. "7:motion, 9-10:smoke, 12:leak" (opening, motion, smoke, leak). Every other point shows as an opening. |
+| Safety | `section` | No | Anyone who can control the devices in Gladys (dashboard, scenes, the Gladys app) can use the alarm through this integration. Arming is always allowed: arming while someone is inside (a scene, a mistake) may raise a false alarm, sirens and a call of your alarm monitoring company. Disarming and the outputs (which may drive a siren, a gate or a lock) are off by default, each behind its own option: allow them only if your Gladys is well protected. Every command is written in the integration logs; the codes never are. |
+| Allow disarming from Gladys | `boolean` | No | Once checked, every Gladys user, every scene and the Gladys mobile app can disarm, without typing any code. Also needed to go from armed away to armed stay (a lower protection). |
+| Allow controlling the outputs from Gladys | `boolean` | No | Turn on / turn off buttons of the outputs. An output may drive a siren, a gate or a lock: check what each one does first. |
+| Language of the names | `select` | No | Used for the names of the devices and features added from now on, and for the area state. |
+
+## How to install Bosch Alarm in Gladys
+
+1. In Gladys, open **Integrations**: Bosch Alarm appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-bosch-alarm:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-bosch-alarm](https://github.com/LM1LC3N7/gladys-bosch-alarm).
+
+Bosch Alarm requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Bosch Alarm is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-bosch-alarm) — [source of this documentation](https://github.com/LM1LC3N7/gladys-bosch-alarm/blob/HEAD/docs/en.md)

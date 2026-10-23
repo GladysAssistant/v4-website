@@ -1,0 +1,160 @@
+---
+title: "RecycleApp smart home integration, free and open source"
+sidebar_label: "RecycleApp"
+description: "Belgian waste collection calendar (RecycleApp): reminders, scenes and dashboard widget. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-recycleapp.png"
+keywords:
+  - "recycleapp"
+  - "recycleapp smart home"
+  - "gladys recycleapp"
+  - "recycleapp gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/prohand/gladys-recycleapp instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"RecycleApp","description":"Belgian waste collection calendar (RecycleApp): reminders, scenes and dashboard widget.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-recycleapp","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-recycleapp.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-21T09:29:58Z"}} />
+
+This integration reads the waste collection calendar that
+[RecycleApp](https://www.recycleapp.be) (Fost Plus) publishes for a Belgian
+address, and makes it usable in Gladys: devices, scenes and a dashboard widget.
+
+No account, no key: the integration calls the same public API as the
+recycleapp.be website. It only needs Internet access (**cloud** badge).
+
+## Installation
+
+1. Install **RecycleApp** from the Gladys integration catalog (Gladys 5.1 or
+   later).
+2. In **Configuration**, fill in:
+   - **Zip code**: for example `5000`;
+   - **Street**: the street name in French, Dutch or German, as RecycleApp
+     writes it (case and accents do not matter);
+   - **House number**.
+3. Press **Test the connection**: the answer gives the address found, the waste
+   types and the next collection.
+4. In the **Discovery** tab, add the devices you want.
+
+Cannot find your street? Use **Find my street**: type part of the name (for
+example `fer`), the answer lists the streets RecycleApp knows in your zip code.
+Copy the right name into the **Street** field.
+
+> Some municipalities (Brussels-Capital in particular) do not publish their
+> calendar on RecycleApp. If **Test the connection** finds no collection, check
+> on recycleapp.be that your address has a calendar there.
+
+## Settings
+
+| Setting                            | Default | What it does                                                                         |
+| ---------------------------------- | ------- | ------------------------------------------------------------------------------------ |
+| Language of the waste types        | French  | Language of the device names, their states and the scene variables (fr, nl, de, en). |
+| Reminder time (the evening before) | 19:00   | Belgian time of the "Waste collection tomorrow" trigger.                             |
+| Time of the collection-day trigger | 07:00   | Belgian time of the "Waste collection today" trigger.                                |
+| Days read ahead                    | 60      | How far ahead the calendar is read (7 to 365 days).                                  |
+| Refresh interval (h)               | 12      | Hours between two reads of RecycleApp (1 to 48).                                     |
+
+Times are written `19:00`, `19h00` or `7:00`.
+
+## Devices
+
+- **Next waste collection** (summary):
+  - _Days until the collection_: 0 = today, 1 = tomorrow…;
+  - _Collection day_: for example "Friday 23 October";
+  - _Waste collected_: for example "PMD and Paper-cardboard".
+- **PMD collection**, **Paper-cardboard collection**… (one per waste type):
+  - _Days until the collection_;
+  - _Collection day_.
+
+A waste type with no collection in the window read (Christmas trees in summer)
+shows **-1** and "No collection planned".
+
+The values change at midnight (Belgian time). When RecycleApp stops answering,
+the last calendar read is still used: the cloud badge turns degraded (orange
+dot) and tells the date of the last read.
+
+## Scenes
+
+### Triggers
+
+| Trigger                                  | When                                                       | Variables                    |
+| ---------------------------------------- | ---------------------------------------------------------- | ---------------------------- |
+| Waste collection tomorrow                | The evening before, at the reminder time, once for the day | `fractions`, `count`, `date` |
+| A given waste type is collected tomorrow | The evening before, at the reminder time, for that type    | `fraction`, `date`           |
+| Waste collection today                   | In the morning, at the time set, once for the day          | `fractions`, `count`, `date` |
+
+Example: "Waste collection tomorrow" → send a message
+`Tomorrow: {{triggerEvent.data.fractions}}, put the bins out!`
+
+Each trigger fires once a day, even after a restart. When Gladys or the
+integration restarts after the time set, the trigger still fires, up to 4 hours
+later.
+
+### Actions
+
+- **Get the next waste collection**: for one waste type (or any when the field
+  is empty), returns `found`, `days` (-1 when none), `date` (YYYY-MM-DD) and
+  `fractions`, for the following actions and conditions.
+- **Read the waste calendar again**: asks RecycleApp now and returns
+  `collections`, `next_date` and `next_fractions`.
+
+## Dashboard widget
+
+The **Waste collections** widget shows the next collection, the following ones
+with their RecycleApp logo and the days left, the address and the date of the
+last read. The **Refresh** button reads the calendar again. Setting: how many
+collections are shown (1 to 8). Waste types are named in each user's language
+when RecycleApp has it.
+
+## Troubleshooting
+
+- **"RecycleApp does not know the zip code"**: check the zip code.
+- **"No street …"** or **"Several streets match"**: use **Find my street** and
+  copy the exact name.
+- **No collection**: check the house number, or whether your municipality
+  publishes its calendar on RecycleApp.
+- **"RecycleApp could not be read"**: RecycleApp or the Internet does not
+  answer. The integration retries every 15 minutes and keeps the last calendar.
+
+The calendar read and the triggers already sent are kept in `/data`, the only
+folder the container can write to.
+
+## Configuration settings
+
+These are the settings RecycleApp asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Getting started | `section` | No | The integration reads the waste collection calendar RecycleApp (Fost Plus) publishes for a Belgian address: no account, no key. Type your address as on recycleapp.be, then press "Test the connection". One device per waste type, plus the next collection, appear in the Discovery tab. |
+| Zip code | `string` | Yes |  |
+| Street | `string` | Yes | The street name in French, Dutch or German, as RecycleApp writes it. Not sure? "Find my street" lists the streets of your zip code. |
+| House number | `string` | Yes |  |
+| Language of the waste types | `select` | No | The language the waste types are named in: device names, device states and scene variables. The dashboard widget follows the language of each user. |
+| Reminder time (the evening before) | `string` | No | When the "Collection tomorrow" scene trigger fires, Belgian time, HH:MM. |
+| Time of the collection-day trigger | `string` | No | When the "Collection today" scene trigger fires, Belgian time, HH:MM. |
+| Days read ahead | `number` | No | How far ahead the calendar is read, in days. A waste type with no collection in that window shows -1. |
+| Refresh interval (h) | `number` | No | Hours between two reads of RecycleApp. A calendar changes a few times a year: 12 hours is plenty. |
+
+## How to install RecycleApp in Gladys
+
+1. In Gladys, open **Integrations**: RecycleApp appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-recycleapp:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-recycleapp](https://github.com/prohand/gladys-recycleapp).
+
+RecycleApp requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+RecycleApp is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [prohand](https://github.com/prohand), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/prohand/gladys-recycleapp) — [source of this documentation](https://github.com/prohand/gladys-recycleapp/blob/HEAD/docs/en.md)

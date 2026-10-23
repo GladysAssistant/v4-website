@@ -1,0 +1,260 @@
+---
+title: "Intégration domotique Sungrow iSolarCloud, gratuite et open source"
+sidebar_label: "Sungrow iSolarCloud"
+description: "Non officiel : solaire et batteries Sungrow par iSolarCloud, lecture seule : puissance, énergie. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-sungrow.png"
+keywords:
+  - "sungrow isolarcloud"
+  - "domotique sungrow isolarcloud"
+  - "gladys sungrow isolarcloud"
+  - "sungrow isolarcloud gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-sungrow instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Sungrow iSolarCloud","description":"Non officiel : solaire et batteries Sungrow par iSolarCloud, lecture seule : puissance, énergie.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-sungrow","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-sungrow.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T10:21:18Z"}} />
+
+Cette intégration lit vos **onduleurs et batteries Sungrow** par l'API
+officielle **iSolarCloud OpenAPI**, **en lecture seule** : rien n'est jamais
+commandé (ni mode de batterie, ni limite d'injection).
+
+> Connecteur non officiel, **sans lien avec Sungrow**. **Jamais testé avec un
+> vrai compte** iSolarCloud, et **jamais testé avec un vrai appareil**
+> (onduleur, batterie) pour l'instant : il suit la bibliothèque `pysolarcloud`
+> (MIT), utilisée par Home Assistant. Vos retours sont les bienvenus sur le
+> forum Gladys. Sungrow et iSolarCloud sont des marques de leur propriétaire.
+
+## Ce que vous obtenez
+
+Pour chaque centrale (« plant ») que vous autorisez, jusqu'à trois appareils :
+
+| Appareil                               | Fonction                                       | Unité / type                   |
+| -------------------------------------- | ---------------------------------------------- | ------------------------------ |
+| **Centrale** (toujours)                | Puissance solaire                              | W, production                  |
+|                                        | Production solaire (index)                     | kWh, **index de production**   |
+|                                        | Production solaire (30 minutes)                | kWh, remplie par Gladys        |
+|                                        | Production solaire du jour                     | capteur simple (kWh)           |
+|                                        | Puissance, consommation du jour et totale      | capteurs simples (W, kWh)      |
+| **Réseau** (si iSolarCloud le donne)   | Énergie achetée au réseau (index)              | kWh, **index de consommation** |
+|                                        | Puissance réseau (signe donné par iSolarCloud) | capteur simple (W)             |
+|                                        | Achetée du jour, injectée du jour et totale    | capteurs simples (kWh)         |
+| **Batterie** (si iSolarCloud la donne) | Charge de la batterie                          | %                              |
+|                                        | Puissance de la batterie                       | capteur simple (W)             |
+|                                        | Chargée et déchargée, du jour et totales       | capteurs simples (kWh)         |
+
+### Les deux index d'énergie
+
+- **Production solaire (index)** : le total produit par la centrale depuis sa
+  mise en service. Il est accompagné de la fonction **Production solaire
+  (30 minutes)**, que Gladys remplit elle-même depuis l'index (l'intégration
+  n'y écrit jamais) : c'est elle qui alimente le suivi d'énergie.
+- **Énergie achetée au réseau (index)** : le total acheté au réseau, compté
+  par Gladys comme consommation électrique (avec son coût, selon votre
+  contrat d'énergie dans Gladys).
+
+Si un autre compteur alimente déjà Gladys (Linky, P1, compteur Zigbee…),
+**n'ajoutez pas l'appareil « réseau »** : la même consommation serait comptée
+deux fois. L'appareil « centrale » reste utile seul.
+
+Ces deux index passent par une **garde** (la même que l'intégration P1
+Monitor) avant d'être envoyés à Gladys, parce que Gladys compte chaque
+hausse en entier :
+
+- une valeur à 0 ou absente n'est jamais envoyée ;
+- une hausse plausible (pas plus que la **puissance maximale de
+  l'installation** depuis la lecture précédente, 36 kW par défaut) passe ;
+- une **baisse** ou un **saut** n'est jamais confirmé par le temps ni par la
+  répétition : la valeur est **retenue** (la dernière valeur acceptée est
+  renvoyée), le statut de l'intégration l'affiche, et elle reste retenue
+  après un redémarrage ;
+- si la valeur retenue est juste (compteur remplacé, remise à zéro), cliquez
+  sur **Accepter les index retenus** : elle est prise à la lecture suivante,
+  une seule fois, et seulement si c'est bien la valeur affichée (plus ce qui a
+  pu être produit ou consommé entre-temps).
+
+Tous les autres totaux et valeurs du jour sont des **capteurs simples** : Gladys
+ne les compte nulle part.
+
+## Étape 1 : créer votre application développeur Sungrow
+
+L'API iSolarCloud demande une **application développeur** que vous créez
+vous-même, une seule fois, sur le portail de Sungrow. Les quatre étapes
+ci-dessous sont celles de la bibliothèque `pysolarcloud` :
+
+1. Créez un compte sur le portail développeur iSolarCloud :
+   [https://developer-api.isolarcloud.com/](https://developer-api.isolarcloud.com/).
+2. Créez une **application** dans le portail :
+   - à la question « authorize with OAuth2.0 », répondez **Yes** ;
+   - donnez une **Redirect URL** (elle peut être changée plus tard) :
+     l'adresse vers laquelle iSolarCloud renverra votre navigateur après
+     l'autorisation. Deux possibilités :
+     - **l'adresse de retour de votre Gladys** (recommandé). Pour la
+       connaître : faites d'abord l'étape 2 ci-dessous sans URL de
+       redirection, cliquez une fois sur **Connecter** : le statut de
+       l'intégration affiche « L'adresse de retour de ce Gladys est … ».
+       Copiez-la dans le portail ;
+     - **une autre adresse à vous** en https : il faudra alors copier-coller
+       l'adresse finale (voir plus bas).
+3. Attendez que Sungrow **valide** l'application.
+4. Dans le portail, relevez :
+   - l'**Appkey** ;
+   - la **Secret Key** ;
+   - l'**Application Id** : il apparaît dans l'URL d'autorisation affichée par
+     le portail, après `applicationId=` (un nombre).
+
+Non vérifié, d'après d'autres projets : le portail accepterait aussi les
+identifiants de votre compte Sungrow (essayez-les avant d'en créer un
+nouveau) ; la durée de la validation et la façon dont le portail l'affiche
+ne sont pas connues.
+
+## Étape 2 : configurer l'intégration
+
+Dans **Intégrations → Sungrow iSolarCloud → Configuration** :
+
+1. **Serveur iSolarCloud** : celui de votre compte (**Europe** pour la France,
+   la Belgique, la Suisse). Non vérifié : l'application développeur est
+   probablement liée au même serveur.
+2. **Appkey**, **Secret Key**, **Application Id** : ceux de l'étape 1.
+3. Laissez **URL de redirection** vide si l'application renvoie vers Gladys ;
+   sinon, saisissez l'adresse enregistrée dans le portail.
+4. Enregistrez.
+
+## Étape 3 : autoriser
+
+1. Cliquez sur **Connecter** : la page d'iSolarCloud s'ouvre.
+2. Connectez-vous avec votre compte iSolarCloud habituel. **Votre mot de passe
+   se saisit sur la page d'iSolarCloud seulement** : l'intégration ne le voit
+   jamais.
+3. **Cochez la ou les centrales** à partager, puis autorisez.
+4. iSolarCloud vous renvoie vers Gladys : l'intégration lit vos centrales.
+   Ajoutez les appareils depuis l'onglet **Découverte**.
+
+### Avec une autre URL de redirection
+
+1. Après l'autorisation, le navigateur s'arrête sur votre adresse (la page
+   peut afficher une erreur, c'est normal). Copiez **l'adresse complète** de
+   la barre d'adresse : elle contient `code=` et `state=`.
+2. Collez-la dans l'action **Terminer l'autorisation**, dans les 15 minutes.
+   Elle doit commencer par l'URL de redirection configurée : une autre
+   adresse est refusée (l'autorisation reste alors utilisable).
+
+Une autorisation démarrée ne sert qu'une fois. Si iSolarCloud tarde à répondre
+(plus de 3,5 secondes au retour vers Gladys), l'intégration affiche
+« iSolarCloud lent, cliquez de nouveau sur Connecter » : recommencez.
+
+## Ce que l'intégration garde
+
+- La **Secret Key** est gardée par Gladys dans sa base, comme toute valeur de
+  configuration : jamais réaffichée, envoyée seulement à iSolarCloud.
+- Les **jetons** d'iSolarCloud (accès et renouvellement) sont gardés en clair
+  dans le fichier `/data/sungrow-state.json` du volume de l'intégration,
+  lisible par son conteneur seulement (droits 0600), et envoyés seulement à
+  iSolarCloud. Le même fichier garde les pauses, les arrêts, la liste des
+  centrales, le nombre de requêtes du jour et l'état des gardes d'index.
+  Aucun mot de passe n'y est jamais écrit.
+
+## Rythme et limites de l'API
+
+- iSolarCloud met à jour ses données **toutes les 5 minutes** : l'intégration
+  lit **toutes les centrales en une seule requête**, toutes les 5 minutes par
+  défaut (5 minutes au minimum, 60 au plus).
+- La liste des centrales est relue toutes les 6 heures (et sur demande depuis
+  Découverte).
+- Le jeton est renouvelé par un minuteur un peu avant sa fin, jamais deux
+  fois dans la même minute.
+- **Au plus 600 requêtes par jour** (UTC) au total, autorisation et
+  renouvellements compris : environ 320 au rythme par défaut. Si ce plafond
+  est atteint (ce qui ne devrait jamais arriver), tout attend le lendemain.
+- Après un redémarrage, la première lecture attend la fin de l'intervalle
+  depuis la dernière lecture et la fin d'une pause en cours.
+
+Sungrow ne publie pas le nombre de requêtes permises : l'intégration réagit à
+un refus (HTTP 429 ou réponse « trop fréquent ») par une pause.
+
+## Erreurs et arrêts
+
+| Situation                                                     | Ce que fait l'intégration                                                           |
+| ------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| iSolarCloud demande de ralentir (HTTP 429, « trop fréquent ») | pause de 1 minute à 6 heures (15 minutes par défaut), gardée après un redémarrage   |
+| iSolarCloud indisponible (erreur 5xx, « occupé »)             | pause de 5 minutes à 1 heure, gardée après un redémarrage                           |
+| Plafond de requêtes du jour atteint                           | pause jusqu'au lendemain (minuit UTC)                                               |
+| Réseau coupé, réponse inattendue                              | nouvel essai après l'intervalle, puis 5, 15, 30 minutes, gardé après un redémarrage |
+| Une centrale sans données                                     | les autres continuent ; ses appareils passent « injoignables »                      |
+| Renouvellement refusé par iSolarCloud                         | arrêt « session terminée », gardé : cliquez sur Connecter                           |
+| Accès refusé même avec un nouveau jeton, ou clés refusées     | arrêt gardé : vérifiez les clés, puis Connecter ou « Tester iSolarCloud »           |
+
+L'intégration ne se reconnecte jamais d'elle-même et ne réessaie jamais un
+refus : seul un clic le fait. Le bouton **Tester iSolarCloud** ne relit
+jamais plus vite que l'intervalle ni pendant une pause : il affiche le
+dernier résultat et l'heure de la prochaine lecture, et ne lit que si
+l'intervalle est écoulé depuis la dernière lecture. Il relit tout de suite
+une seule fois après un arrêt « accès refusé » (c'est ainsi qu'on le lève).
+Une fois toutes les 30 secondes au plus.
+
+## Dépannage
+
+- **« Saisissez la clé d'application »** : Appkey, Secret Key ou Application
+  Id manquant (l'Application Id est un nombre).
+- **iSolarCloud refuse l'autorisation** : serveur, Appkey, Secret Key ou URL
+  de redirection faux, application pas encore validée par Sungrow, ou adresse
+  collée de plus de 15 minutes.
+- **Aucune centrale** : cliquez de nouveau sur Connecter et cochez la centrale
+  sur la page d'iSolarCloud.
+- **Un index retenu** : voir « Les deux index d'énergie » plus haut.
+- **Une fonction reste vide** : toutes les centrales ne donnent pas tous les
+  points de mesure (cela dépend du modèle d'onduleur et du compteur).
+
+## Limites
+
+- Lecture seule : aucune commande (ni batterie, ni injection).
+- Les valeurs viennent du cloud iSolarCloud (mises à jour toutes les 5
+  minutes), pas de l'onduleur en local.
+- Le signe des puissances du réseau et de la batterie est celui d'iSolarCloud,
+  non vérifié.
+- Jamais testé avec un vrai compte ni un vrai appareil : les points de mesure
+  et les unités suivent `pysolarcloud` 0.5.0.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Sungrow iSolarCloud dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Les centrales Sungrow dans Gladys | `section` | Non | Connecteur non officiel, sans lien avec Sungrow. Il lit vos onduleurs et batteries Sungrow par l'API officielle iSolarCloud OpenAPI, en lecture seule : puissance et production solaires, consommation de la maison, énergie achetée au réseau et injectée, charge et puissance de la batterie. La production solaire et l'énergie achetée sont des index d'énergie, contrôlés avant que Gladys les compte. Il faut une application développeur que vous créez vous-même sur le portail développeur de Sungrow (validée par Sungrow) : suivez le guide. Votre mot de passe se saisit sur la page d'iSolarCloud seulement. Jamais testé pour l'instant avec un vrai compte. Sungrow et iSolarCloud sont des marques de leur propriétaire. |
+| 1. Votre application développeur | `section` | Non | Sur le portail développeur de Sungrow, créez un compte, puis une application : répondez Oui à « authorize with OAuth2.0 » et donnez une URL de redirection (l'adresse de retour de ce Gladys, affichée ici après un premier clic sur Connecter, ou une autre adresse à vous). Attendez que Sungrow la valide. Copiez ensuite son Appkey, sa Secret Key et son Application Id (le applicationId= de l'URL d'autorisation du portail) ci-dessous, choisissez le serveur de votre compte iSolarCloud, et enregistrez. |
+| Serveur iSolarCloud | `select` | Non | Le serveur de votre compte et de votre application développeur (Europe pour la France, la Belgique, la Suisse). |
+| Appkey | `string` | Oui | L'Appkey de votre application développeur. |
+| Secret Key | `secret` | Oui | La Secret Key de votre application développeur. Gardée par Gladys dans sa base, jamais réaffichée, envoyée seulement à iSolarCloud. |
+| Application Id | `string` | Oui | Le nombre après applicationId= dans l'URL d'autorisation que le portail affiche pour votre application. |
+| 2. Autoriser | `section` | Non | Cliquez sur Connecter : la page d'iSolarCloud s'ouvre ; connectez-vous, cochez votre ou vos centrales et autorisez. iSolarCloud vous renvoie vers Gladys et l'intégration lit vos centrales. Si l'URL de redirection de votre application n'est pas ce Gladys, saisissez-la dans « URL de redirection » : à la fin, copiez l'adresse complète affichée par le navigateur (elle contient code= et state=) et collez-la dans « Terminer l'autorisation » plus bas, dans les 15 minutes. Les jetons sont gardés en clair dans le volume /data de l'intégration (lisible par son conteneur seulement), envoyés seulement à iSolarCloud. |
+| URL de redirection (facultative) | `string` | Non | Vide : iSolarCloud vous renvoie vers ce Gladys. Sinon, l'URL de redirection de votre application développeur (https, ou http sur localhost seulement) : terminez en collant l'adresse sur laquelle le navigateur s'est arrêté. |
+| Compte iSolarCloud | `oauth2` | Non | Ouvre la page d'autorisation d'iSolarCloud (enregistrez d'abord les clés). |
+| Intervalle de relecture (minutes) | `number` | Non | iSolarCloud met à jour ses données toutes les 5 minutes : une requête par lecture pour toutes les centrales, 600 requêtes par jour au plus. |
+| Puissance maximale de l'installation (kW) | `number` | Non | Le plus que la centrale peut produire ou la maison tirer du réseau. Un index qui monte plus vite, ou qui baisse, est retenu jusqu'à ce que vous l'acceptiez. |
+| Langue des noms et des textes | `select` | Non |  |
+
+## Comment installer Sungrow iSolarCloud dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Sungrow iSolarCloud apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-sungrow:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-sungrow](https://github.com/LM1LC3N7/gladys-sungrow).
+
+Sungrow iSolarCloud nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Sungrow iSolarCloud est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-sungrow) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-sungrow/blob/HEAD/docs/fr.md)

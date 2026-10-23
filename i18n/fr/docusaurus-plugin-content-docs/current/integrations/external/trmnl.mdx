@@ -1,0 +1,146 @@
+---
+title: "Intégration domotique TRMNL, gratuite et open source"
+sidebar_label: "TRMNL"
+description: "Écrans e-ink TRMNL : batterie, signal Wi-Fi et mode veille de chaque écran. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-trmnl.png"
+keywords:
+  - "trmnl"
+  - "domotique trmnl"
+  - "gladys trmnl"
+  - "trmnl gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-trmnl instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"TRMNL","description":"Écrans e-ink TRMNL : batterie, signal Wi-Fi et mode veille de chaque écran.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-trmnl","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-trmnl.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T15:52:20Z"}} />
+
+Amène dans Gladys les écrans e-ink [TRMNL](https://trmnl.com) de votre
+compte, par l'API de compte officielle de TRMNL : batterie, Wi-Fi et mode
+veille de chaque écran.
+
+> **Jamais testé avec un vrai appareil.** Cette intégration a été écrite à
+> partir du client Python `trmnl` (celui de l'intégration Home Assistant) et
+> testée seulement contre une API TRMNL simulée. Non officielle, sans lien
+> avec TRMNL.
+
+## Ce que vous obtenez
+
+Un appareil par écran (onglet Découverte), identifié par son numéro TRMNL :
+
+- **Batterie** (%), et **tension de la batterie** (V) ;
+- **Force du Wi-Fi** (0 à 100, comme TRMNL la note) et **signal Wi-Fi**
+  (dBm) ;
+- **Mode veille** (activé ou non) et **heures de veille** (par exemple
+  `22:00-08:00`, à l'heure de votre compte TRMNL) ;
+- en option, deux **boutons** : « Activer le mode veille » et « Désactiver
+  le mode veille » (voir plus bas).
+
+Ce que l'écran affiche (playlists, plugins) reste géré dans TRMNL. L'API ne
+donne pas l'heure du dernier contact d'un écran : elle n'est pas affichée.
+
+## Mise en route
+
+1. Sur [trmnl.com](https://trmnl.com), ouvrez **Account** et copiez la
+   **API key** de votre compte (elle commence par `user_`).
+2. Dans Gladys, ouvrez cette intégration, collez la clé et enregistrez. La
+   clé est gardée par Gladys dans sa base, jamais réaffichée, et envoyée
+   seulement à trmnl.com, dans l'en-tête `Authorization` des requêtes.
+3. Vos écrans apparaissent dans l'onglet Découverte : créez ceux que vous
+   voulez.
+
+## Rythme de lecture
+
+- Une requête pour tous les écrans, à chaque intervalle de rafraîchissement
+  (15 minutes par défaut, de 5 minutes à 1 heure). Un écran donne sa
+  batterie et son signal quand il se réveille : lire plus souvent montre
+  rarement plus.
+- **Jamais plus vite que l'intervalle** : ni la reconnexion de Gladys, ni un
+  enregistrement de la configuration sans changement, ni le bouton
+  Découverte, ni « Tester la connexion », ni un redémarrage du conteneur
+  (l'heure du dernier essai est gardée) n'ajoutent de lecture. Une nouvelle
+  clé est essayée une minute au plus après le dernier essai.
+- En cas d'erreur, nouvel essai après l'intervalle, puis le double, jusqu'à
+  1 heure.
+- 429 (TRMNL demande de ralentir) ou 5xx : pause de la durée demandée, sinon
+  15 ou 5 minutes, entre 1 minute et 6 heures, gardée même après un
+  redémarrage. Ni lecture ni commande pendant la pause.
+- Après un redémarrage qui suit une lecture réussie, l'intégration est
+  « connectée » tout de suite, jusqu'à la lecture suivante.
+- Un 403 (il peut venir du réseau qui protège trmnl.com) n'est pas un refus
+  de la clé : nouvel essai comme pour toute autre erreur.
+- **Clé refusée** (401) : plus aucun essai automatique, même après un
+  redémarrage. Collez une nouvelle clé (régénérée sur trmnl.com ;
+  réenregistrer la même clé ne fait rien), ou appuyez sur « Tester la
+  connexion » une fois l'intervalle écoulé : le refus n'est effacé qu'après une lecture
+  réussie.
+
+## Boutons du mode veille (désactivés par défaut)
+
+Cochez « Autoriser le changement du mode veille des écrans » dans la
+configuration. Chaque écran reçoit alors deux boutons (jamais un
+interrupteur : ni assistant vocal ni « tout éteindre » ne peut les
+atteindre). Chaque appui :
+
+1. relit l'écran chez TRMNL (et vérifie que c'est le même écran : adresse
+   MAC et identifiant) ; s'il est déjà dans le mode demandé, rien n'est
+   envoyé ;
+2. revérifie que l'option est toujours cochée, puis change le mode veille ;
+3. relit l'écran : la commande n'est dite réussie que si TRMNL montre la
+   nouvelle valeur. Sinon : « Commande envoyée, sans confirmation » (la
+   prochaine lecture montrera le mode réel).
+
+Rien n'est envoyé au-delà de 3,5 secondes après l'appui (Gladys attend 5
+secondes), ni pendant une pause 429/5xx ; 6 commandes par minute au plus.
+
+## Questions aux testeurs
+
+Si vous avez un écran TRMNL, dites-nous (forum, ou un ticket sur GitHub) :
+la batterie, la tension et le signal correspondent-ils à ce que montre
+trmnl.com ? Les boutons du mode veille agissent-ils sur l'écran ?
+
+## Données et vie privée
+
+L'intégration ne parle qu'à trmnl.com. Elle garde dans son volume `/data` :
+une clé aléatoire, l'empreinte (HMAC) d'une clé refusée (effacée au premier
+succès ; jamais d'empreinte d'une clé qui marche), la fin d'une pause, l'heure
+du dernier essai, et la liste des écrans (numéro, nom, identifiant, adresse
+MAC). Elle ne lit pas votre profil (nom, e-mail).
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par TRMNL dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre compte TRMNL | `section` | Non | Amène dans Gladys les écrans e-ink TRMNL de votre compte, par l'API de compte officielle de TRMNL (trmnl.com) et la clé d'API de votre compte : pour chaque écran sa batterie (charge et tension), la force et le signal de son Wi-Fi, son mode veille et ses heures de veille. Lu à chaque intervalle de rafraîchissement, jamais plus vite. Des boutons facultatifs activent ou désactivent le mode veille (désactivés par défaut, voir plus bas). Ce que l'écran affiche (playlists, plugins) reste dans TRMNL. Jamais testé avec un vrai appareil. Non officiel, sans lien avec TRMNL. |
+| Clé d'API de votre compte | `secret` | Oui | Sur trmnl.com, Account, la « API key » de votre compte (elle commence par user_). Gardée par Gladys dans sa base, jamais réaffichée, envoyée seulement à trmnl.com, dans l'en-tête Authorization des requêtes. |
+| Rafraîchissement | `select` | Oui | À quel rythme Gladys lit TRMNL (une requête pour tous les écrans). Un écran donne sa batterie et son signal quand il se réveille, souvent toutes les 15 minutes : lire plus souvent montre rarement plus. |
+| Langue des noms | `select` | Non | Sert aux noms des fonctionnalités ajoutées désormais. |
+| Boutons du mode veille | `section` | Non | Par défaut Gladys ne fait que lire. Une fois autorisé ci-dessous, chaque écran reçoit deux boutons, « Activer le mode veille » et « Désactiver le mode veille » (jamais un interrupteur : ni assistant vocal ni « tout éteindre » ne peut les atteindre). Chaque appui lit d'abord l'écran, change son mode veille dans votre compte TRMNL, puis le relit : il n'est dit fait que lorsque TRMNL montre la nouvelle valeur. |
+| Autoriser le changement du mode veille des écrans | `boolean` | Non |  |
+
+## Comment installer TRMNL dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : TRMNL apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-trmnl:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-trmnl](https://github.com/LM1LC3N7/gladys-trmnl).
+
+TRMNL nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+TRMNL est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-trmnl) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-trmnl/blob/HEAD/docs/fr.md)

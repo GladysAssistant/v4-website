@@ -1,0 +1,202 @@
+---
+title: "Scrypted smart home integration, free and open source"
+sidebar_label: "Scrypted"
+description: "Scrypted cameras, doorbells, motion and object detection, switches and locks in Gladys. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-scrypted.png"
+keywords:
+  - "scrypted"
+  - "scrypted smart home"
+  - "gladys scrypted"
+  - "scrypted gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/prohand/gladys-scrypted instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Scrypted","description":"Scrypted cameras, doorbells, motion and object detection, switches and locks in Gladys.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-scrypted","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-scrypted.png","type":"device","version":"1.0.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-19T09:44:34Z"}} />
+
+This integration connects Gladys to **[Scrypted](https://scrypted.app)**, the
+home video platform that brings together your cameras (Reolink, Hikvision,
+Amcrest, UniFi, ONVIF, Ring, Nest…), doorbells and their detections. Scrypted
+does the video work; Gladys gets the devices, the pictures and the events, and
+turns them into scenes and dashboards.
+
+## What you get
+
+| In Scrypted                               | In Gladys                                      |
+| ----------------------------------------- | ---------------------------------------------- |
+| Camera                                    | Camera (pictures)                              |
+| Motion sensor (camera or sensor)          | Motion sensor + "sees motion" scene trigger    |
+| Doorbell button                           | Doorbell + "doorbell is pressed" scene trigger |
+| Object detection (NVR, detection plugins) | "detects an object" scene trigger              |
+| Light (on/off, brightness)                | Light                                          |
+| Switch, plug                              | Switch                                         |
+| Siren                                     | Siren                                          |
+| Lock                                      | Lock                                           |
+| Door / window sensor                      | Opening sensor                                 |
+| Thermometer, hygrometer                   | Temperature sensor, humidity sensor            |
+| Battery                                   | Battery level                                  |
+
+Scrypted pushes every change as it happens: nothing is polled.
+
+## Before you start
+
+You need a running Scrypted server with your cameras already working in it.
+
+1. In the Scrypted console, open **Settings → Users** and create a user for
+   Gladys. An administrator sees every device; a plain user only sees the
+   devices you give it, which is what you want if some cameras must stay out of
+   Gladys.
+2. Get a **login token** for that user rather than using its password: on a
+   computer of your network, run `npx scrypted login <scrypted address>` and log
+   in as that user. The token is saved in the `login.json` file of the
+   `.scrypted` folder of your home directory (the `token` value). A token can be
+   revoked without changing the password.
+
+## Configuration
+
+Open the integration in Gladys, then **Configuration**.
+
+| Field                       | What to put                                                                                  |
+| --------------------------- | -------------------------------------------------------------------------------------------- |
+| Local address               | The address of the server on your network, with its port: `https://192.168.1.20:10443/`      |
+| Scrypted Cloud address      | The address the Scrypted Cloud plugin gives your server (or your own domain). Can stay empty |
+| User name                   | The Scrypted user created for Gladys                                                         |
+| Password or login token     | Its login token (or its password)                                                            |
+| Camera picture interval (s) | How often each camera sends a fresh picture. 60 by default, 10 minimum, 0 = only on events   |
+| Picture on every event      | A fresh picture when a camera sees motion, an object or a doorbell press                     |
+| Object detection pause (s)  | How long a camera waits before firing "detects an object" again for the same kind of object  |
+
+Then click **Test the connection**: the answer says which address answered,
+the Scrypted version, and how many devices and cameras were found.
+
+### Local or cloud
+
+The manifest declares both connections, so Gladys shows a **Prefer the local
+connection** switch:
+
+- **on** (default): the local address is tried first, Scrypted Cloud takes over
+  when it does not answer;
+- **off**: Scrypted Cloud first, the local address as a fallback.
+
+Fill in one address or both. When Gladys runs on the fallback, every Scrypted
+device shows its transport badge with an **orange dot**, and its tooltip says
+why. The preferred address is tried again every 10 minutes, and taken back as
+soon as it answers.
+
+Scrypted uses a self-signed certificate on `https://<ip>:10443`: the
+integration accepts it, like the Scrypted apps do. Plain `http://<ip>:11080`
+works too on a trusted network.
+
+## Adding the devices
+
+Once connected, open the **Discover** tab of the integration: every Scrypted
+device that Gladys can use is there, under its Scrypted name. Add the ones you
+want and put them in their room.
+
+A camera added or renamed later in Scrypted shows up by itself after a few
+seconds. The **Synchronize the devices** button does it on demand.
+
+## Camera pictures
+
+Each camera sends a picture:
+
+- every **Camera picture interval** seconds;
+- on every motion, object or doorbell press (when **Picture on every event** is
+  on);
+- when the Gladys dashboard or a chat message asks for one;
+- when a scene runs **Take a picture with a Scrypted camera**.
+
+Gladys takes pictures up to 150 KB: they are asked smaller from Scrypted until
+they fit. A camera never sends more than 12 pictures a minute.
+
+## Scenes
+
+### Triggers
+
+- **A Scrypted camera sees motion**: when a camera or motion sensor goes from
+  still to motion. Filter: the device. Variable: the device name.
+- **A Scrypted doorbell is pressed**: the doorbell button. Filter: the
+  doorbell. Variable: the device name.
+- **A Scrypted camera detects an object**: what the Scrypted object detection
+  (Scrypted NVR, OpenVINO, CoreML, ONNX…) recognizes. Filters: the camera and
+  the kind of object (person, vehicle, animal, package, face, license plate,
+  other object). Variables: the device name, the kind of object, the name
+  (recognized face or plate, when there is one) and the confidence in percent.
+
+A person walking in front of a camera gives one event, not one per frame: the
+same camera waits for the **Object detection pause** before firing again for
+the same kind of object.
+
+### Actions
+
+- **Take a picture with a Scrypted camera**: a fresh picture is sent to Gladys,
+  ready for the "send a camera picture" action. Output: whether a picture was
+  taken.
+- **Synchronize the Scrypted devices**: reads the Scrypted device list again.
+  Output: the number of devices found.
+
+Example: _"When the doorbell is pressed, take a picture with the doorbell
+camera and send it to me in a message."_
+
+## Dashboard widgets
+
+- **Scrypted**: the connection (local, cloud, fallback or unreachable), the
+  server version, the number of devices and cameras, the last events seen, and
+  two buttons: **Synchronize** and **All pictures**.
+- **Scrypted camera**: choose a camera in the widget settings. It shows its
+  last picture, its live motion state and a **Take a picture** button.
+
+## Troubleshooting
+
+| What you see                                      | What to do                                                                                               |
+| ------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| "Fill in the Scrypted address…"                   | An address, the user name and the password or token are all needed                                       |
+| "Scrypted does not answer (… statusCode 401)"     | Wrong user name, password or token. Create a new token with `npx scrypted login`                         |
+| "Scrypted does not answer (ECONNREFUSED)"         | Wrong address or port, or Scrypted is stopped. Open the same address in a browser from your network      |
+| "Scrypted does not answer (no answer after 20 s)" | The address answers too slowly or not at all: firewall, VPN, wrong IP                                    |
+| A camera is missing                               | The Scrypted user does not have access to it, or it has no picture support in Scrypted (Snapshot plugin) |
+| No "detects an object" event                      | Object detection must be enabled for that camera in Scrypted (Scrypted NVR or a detection plugin)        |
+| Orange dot on the transport badge                 | Gladys runs on the fallback address: the tooltip says why the preferred one did not answer               |
+
+The password and the login token never appear in the integration logs.
+
+## Configuration settings
+
+These are the settings Scrypted asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Getting started | `section` | No | Gladys talks to your Scrypted server the way the Scrypted web console does. Give it the local address of the server, the Scrypted Cloud address, or both: the "Prefer the local connection" switch decides which one is tried first, the other one takes over when it does not answer. Use a Scrypted account made for Gladys, and preferably a login token instead of its password. |
+| Local address | `string` | No | The address of the Scrypted server on your network, with its port: https:\/\/\<ip>:10443/ by default. Its self-signed certificate is accepted. |
+| Scrypted Cloud address | `string` | No | The address the Scrypted Cloud plugin gives your server (or your own domain behind it). Leave empty to stay on the local network. |
+| User name | `string` | Yes | A Scrypted user (Settings, Users). An administrator sees every device; a user only sees the ones it was given. |
+| Password or login token | `secret` | Yes | The password of that user, or better a login token: run npx scrypted login on a computer of your network, then paste the token saved in ~/.scrypted/login.json. It is never written in the logs. |
+| Camera picture interval (s) | `number` | No | How often each camera sends a fresh picture to Gladys, in seconds (10 minimum). 0 only sends pictures on events and on request. |
+| Picture on every event | `boolean` | No | Send a fresh picture of the camera when it sees motion, an object or a doorbell press. |
+| Object detection pause (s) | `number` | No | After an "object detected" event, the same camera waits this many seconds before firing it again for the same kind of object: a person walking by is one event, not thirty. |
+
+## How to install Scrypted in Gladys
+
+1. In Gladys, open **Integrations**: Scrypted appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-scrypted:1.0.2`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-scrypted](https://github.com/prohand/gladys-scrypted).
+
+Scrypted requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Scrypted is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [prohand](https://github.com/prohand), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/prohand/gladys-scrypted) — [source of this documentation](https://github.com/prohand/gladys-scrypted/blob/HEAD/docs/en.md)

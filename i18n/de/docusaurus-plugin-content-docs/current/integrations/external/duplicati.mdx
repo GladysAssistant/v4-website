@@ -1,0 +1,228 @@
+---
+title: "Duplicati Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Duplicati"
+description: "Deine Duplicati-Sicherungen in Gladys: ihr Zustand und ein Alarm, wenn eine fehlschlägt. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-duplicati.png"
+keywords:
+  - "duplicati"
+  - "duplicati smart home"
+  - "gladys duplicati"
+  - "duplicati gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-duplicati instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Duplicati","description":"Deine Duplicati-Sicherungen in Gladys: ihr Zustand und ein Alarm, wenn eine fehlschlägt.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-duplicati","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-duplicati.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T17:34:08Z"}} />
+
+[Duplicati](https://duplicati.com/) sichert deine Dateien verschlüsselt auf
+eine Festplatte, ein NAS oder einen Cloud-Speicher. Diese Integration bringt
+die Sicherungsaufgaben eines Duplicati-Servers in Gladys: Jede Aufgabe wird ein
+Gerät mit ihrem Zustand, ihrer letzten erfolgreichen Sicherung, der Größe am
+Ziel und den Fehlern ihres letzten Laufs. Szenen können reagieren, wenn
+**irgendeine** Sicherung gelingt, fehlschlägt oder überfällig ist (zu lange
+kein Erfolg), ein Dashboard-Widget listet zuerst die fehlgeschlagenen
+Sicherungen, und eine Szene kann eine Sicherung starten.
+
+Getestet mit einem echten Duplicati 2.4 (Docker-Image `duplicati/duplicati`):
+eine Sicherung, die gelingt, eine mit Warnungen, eine, die nach dem Löschen
+ihres Ziels fehlschlägt, und eine aus der Integration gestartete Sicherung.
+Noch nicht mit einem echten Gladys getestet: Rückmeldungen gern in
+[den Issues](https://github.com/guim31/gladys-duplicati/issues).
+
+## Was du brauchst
+
+- Gladys Assistant 5.1.0 oder neuer.
+- Duplicati **2.1 oder neuer** (seine Weboberfläche, standardmäßig auf Port
+  8200), vom Gladys-Rechner aus erreichbar. Duplicati 2.0 und älter haben eine
+  andere API und werden nicht unterstützt.
+- Das Passwort der Duplicati-Weboberfläche. Duplicati 2.1 schützt sie immer:
+  Lege es in den Einstellungen von Duplicati fest oder mit der Variable
+  `DUPLICATI__WEBSERVICE_PASSWORD` seines Docker-Images.
+
+Die Integration liest Duplicati standardmäßig alle 5 Minuten (alle 30 Sekunden
+während einer Sicherung): ein paar leichte Anfragen in deinem Netzwerk.
+
+## Erste Schritte
+
+### 1. Die Adresse von Duplicati finden
+
+Öffne die Duplicati-Oberfläche im Browser und notiere ihre Adresse, zum
+Beispiel `http://192.168.1.2:8200`. Wenn Duplicati nur auf seinem eigenen
+Rechner lauscht (`localhost`), erlaube die anderen Rechner des Netzwerks:
+Option `--webservice-interface=any` (im Docker-Image schon so), und füge den
+Namen oder die Adresse, die Gladys nutzt, zu `--webservice-allowed-hostnames`
+hinzu, wenn du es über einen Namen erreichst.
+
+### 2. Die Integration konfigurieren
+
+In Gladys, **Integrationen → Duplicati → Konfiguration**:
+
+- **Duplicati-Adresse**: die oben notierte Adresse. Eine reine Adresse
+  (`192.168.1.2`) nutzt Port 8200; eine aus dem Browser kopierte Adresse geht
+  auch.
+- **Passwort**: das Passwort der Duplicati-Oberfläche.
+- **Aktualisierungsintervall**: 1, 5 (Standard) oder 15 Minuten.
+- **Überfällig nach**: wann eine Sicherung ohne Erfolg überfällig wird.
+  _Automatisch_ (Standard) folgt dem Zeitplan jeder Sicherung: ihre Periode,
+  plus die Tage, die sie auslässt, plus ein Viertel der Periode (mindestens
+  eine Stunde), also 30 Stunden für eine tägliche Sicherung. Eine Sicherung ohne
+  Zeitplan ist dann nie überfällig. Oder eine feste Zeit, von 12 Stunden bis zu
+  einer Woche, für alle Sicherungen.
+- **Starten von Sicherungen erlauben**: lässt die Szenenaktion „Sicherung
+  starten“ arbeiten. Schalte es ab, wenn niemand aus Gladys eine Sicherung
+  starten soll.
+- **Sprache der Namen**: Sprache der Funktionsnamen, der Zustände und der
+  Szenen-Ergebnisse.
+
+**Verbindung testen** liest Duplicati und fasst zusammen: die Zahl der
+Sicherungen, der fehlgeschlagenen und der überfälligen.
+
+### 3. Die Sicherungen hinzufügen
+
+Lege im Tab **Entdecken** die Sicherungen an, denen du folgen willst, und das
+Gerät „Duplicati“ für den Server. Die Szenen-Auslöser funktionieren für alle
+Sicherungen, angelegt oder nicht.
+
+## Die Geräte
+
+Jede Sicherungsaufgabe:
+
+| Funktion                      | Wert                                                                   |
+| ----------------------------- | ---------------------------------------------------------------------- |
+| Zustand                       | OK, Mit Warnungen, Fehlgeschlagen, Überfällig, Läuft oder Nie gelaufen |
+| Letzte erfolgreiche Sicherung | Tag/Monat Stunden:Minuten, „-“ wenn keine                              |
+| Stunden seit letztem Erfolg   | in Stunden                                                             |
+| Dauer des letzten Laufs       | in Sekunden                                                            |
+| Größe am Ziel                 | die Dateien am Ziel, in MB                                             |
+| Versionen                     | am Ziel aufbewahrte Sicherungsversionen                                |
+| Fehler des letzten Laufs      | Anzahl der Fehler                                                      |
+| Warnungen des letzten Laufs   | Anzahl der Warnungen                                                   |
+| Läuft                         | 1, solange diese Sicherung läuft                                       |
+| Nächster geplanter Lauf       | Tag/Monat Stunden:Minuten, „-“ ohne Zeitplan                           |
+
+Das Gerät „Duplicati“ für den Server:
+
+- **Sicherung läuft**: 1 oder 0;
+- **Fortschritt**: in %;
+- **Aktuelle Sicherung**: ihr Name, „-“ wenn keine;
+- **Fehlgeschlagene Sicherungen** und **Überfällige Sicherungen**: wie viele.
+
+Eine Sicherung „gelingt“, wenn Duplicati sie abschließt, mit oder ohne
+Warnungen: Eine Version entsteht. Fehlgeschlagen ist sie, wenn sie mit Fehlern
+endet (Ziel nicht erreichbar, Dateien fehlen im Speicher…). Der Zustand zeigt
+zuerst, was Aufmerksamkeit braucht: Eine fehlgeschlagene Sicherung zeigt
+„Fehlgeschlagen“, auch wenn sie zugleich überfällig ist.
+
+## Dashboard
+
+Das Widget **Duplicati** zeigt die Zahl der fehlgeschlagenen, überfälligen und
+OK-Sicherungen, dann eine Zeile pro Sicherung: zuerst die fehlgeschlagenen,
+dann die überfälligen, laufenden, mit Warnungen, nie gelaufenen, OK, mit dem
+letzten Erfolg (oder dem Fortschritt der laufenden). Standardmäßig alle
+Sicherungen, oder die in seinen Einstellungen gewählten. Der Knopf
+**Aktualisieren** liest Duplicati neu.
+
+## Szenen
+
+### Auslöser
+
+- **Eine Sicherung gelingt**: Eine Sicherung wird abgeschlossen, mit oder ohne
+  Warnungen. Informationen: Name der Sicherung, Dauer (Minuten), Warnungen,
+  Versionen, Größe am Ziel.
+- **Eine Sicherung schlägt fehl**: Eine Sicherung endet mit Fehlern. Der Filter
+  **Ergebnis** wählt Fehler, Warnungen oder beides (leer). Informationen: Name
+  der Sicherung, erster Fehler oder erste Warnung, Fehler, Warnungen.
+- **Eine Sicherung ist überfällig**: Eine Sicherung war länger als die Zeit
+  „Überfällig nach“ nicht erfolgreich. Einmal pro Überschreitung, erneut nach
+  einem neuen Erfolg. Informationen: Name der Sicherung, Stunden seit letztem
+  Erfolg, letzter Erfolg.
+
+Jeder Auslöser lässt sich auf einige Sicherungen beschränken (leer: alle).
+
+### Aktionen
+
+- **Zustand einer Sicherung**: Liest den Zustand einer Sicherung für die
+  nächsten Aktionen: fehlgeschlagen, überfällig, der Zustand in Worten, der
+  Name, der letzte Erfolg, die Stunden seit letztem Erfolg (-1 wenn keiner) und
+  ein fertiger Satz („Photos: Fehlgeschlagen, letzter Erfolg 18.10. 02:05.“).
+- **Sicherung starten**: Startet jetzt eine Sicherung. Duplicati stellt sie in
+  die Warteschlange, wenn eine andere läuft. Abgelehnt, wenn „Starten von
+  Sicherungen erlauben“ abgeschaltet ist.
+
+### Szenen-Ideen
+
+- **Eine Sicherung schlägt fehl** → eine Nachricht mit dem Namen der Sicherung
+  und ihrem ersten Fehler senden, gewählt aus den Informationen des Auslösers.
+- **Eine Sicherung ist überfällig** → mit dem Namen der Sicherung und den
+  Stunden seit ihrem letzten Erfolg benachrichtigen.
+- Jeden Sonntag um 10:00 → **Zustand einer Sicherung** → den Satz senden; oder
+  die Sicherung der Fotos starten, wenn du das Haus verlässt, mit **Sicherung
+  starten**.
+
+## Fehlerbehebung
+
+- **„Duplicati antwortet nicht“**: Prüfe Adresse und Port vom Gladys-Rechner
+  aus, und dass Duplicati im Netzwerk lauscht (`--webservice-interface=any`).
+- **„Passwort von Duplicati abgelehnt“**: Gib das Passwort der Oberfläche
+  erneut ein. Duplicati kann auch einen Hostnamen ablehnen, den es nicht kennt:
+  Füge ihn zu `--webservice-allowed-hostnames` hinzu.
+- **„kein Duplicati 2.1 oder neuer unter dieser Adresse“**: Die Adresse zeigt
+  auf etwas anderes oder auf Duplicati 2.0 (aktualisiere es).
+- **„Zertifikat abgelehnt“**: ein selbstsigniertes Zertifikat; nutze die
+  `http://`-Adresse in deinem Netzwerk.
+- **Eine Sicherung wird nie überfällig**: Bei _Automatisch_ kann eine Sicherung
+  ohne Zeitplan nicht überfällig sein; wähle eine feste Zeit. Eine Sicherung, die nie erfolgreich war, ist auch nicht überfällig, sondern zeigt Fehlgeschlagen oder Nie gelaufen.
+- Für mehr Details setze die Variable `LOG_LEVEL` der Integration auf `debug`.
+
+## Grenzen
+
+- Ein Duplicati-Server pro Integration.
+- Nur Duplicati 2.1 oder neuer.
+- Die Ergebnisse stammen aus dem Protokoll, das Duplicati für jede Sicherung
+  führt: Eine Sicherung, deren lokale Datenbank gelöscht wurde, zeigt nur, was
+  ihre Zusammenfassung sagt.
+- Die Integration stellt nicht wieder her, repariert und bearbeitet keine
+  Sicherungen, sondern überwacht sie und startet sie, wenn erlaubt.
+- Nicht mit Duplicati verbunden. Melde ein Problem oder eine Idee in
+  [den Issues](https://github.com/guim31/gladys-duplicati/issues).
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Duplicati in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Dein Duplicati-Server | `section` | Nein | Duplicati 2.1 oder neuer. Gib die Adresse seiner Weboberfläche und das Passwort ein, das sie schützt (Einstellungen → Zugriff auf die Oberfläche). Lege dann die Sicherungen im Tab „Entdecken“ an. |
+| Duplicati-Adresse | `string` | Ja | Die Adresse der Weboberfläche, standardmäßig Port 8200. |
+| Passwort | `secret` | Ja | Das Passwort der Duplicati-Weboberfläche. |
+| Optionen | `section` | Nein |  |
+| Aktualisierungsintervall | `select` | Nein | Wie oft Duplicati gelesen wird. Alle 30 Sekunden während einer Sicherung. |
+| Überfällig nach | `select` | Nein | Eine Sicherung ohne Erfolg seit dieser Zeit ist überfällig. Automatisch: ihr Zeitplan plus ein Puffer; eine Sicherung ohne Zeitplan ist dann nie überfällig. |
+| Starten von Sicherungen erlauben | `boolean` | Nein | Erlaubt der Szenenaktion „Sicherung starten“, eine Sicherung in Duplicati zu starten. |
+| Sprache der Namen | `select` | Nein | Sprache der Funktionsnamen (beim Anlegen eines Geräts festgelegt), der Zustände und der Szenen-Ergebnisse. |
+
+## So installierst du Duplicati in Gladys
+
+1. Öffne in Gladys **Integrationen**: Duplicati erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-duplicati:1.0.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-duplicati](https://github.com/guim31/gladys-duplicati).
+
+Duplicati benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Duplicati ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-duplicati) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-duplicati/blob/HEAD/docs/de.md)

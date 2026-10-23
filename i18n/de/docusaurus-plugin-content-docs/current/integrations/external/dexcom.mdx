@@ -1,0 +1,265 @@
+---
+title: "Dexcom Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Dexcom"
+description: "Glucose of the Dexcom sensors shared with Dexcom Share, read only. Not a medical device. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-dexcom.png"
+keywords:
+  - "dexcom"
+  - "dexcom smart home"
+  - "gladys dexcom"
+  - "dexcom gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-dexcom instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Dexcom","description":"Glucose of the Dexcom sensors shared with Dexcom Share, read only. Not a medical device.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-dexcom","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-dexcom.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T10:14:41Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+The glucose of a Dexcom sensor (G6, G7, ONE+) shared with
+[Dexcom Share](https://www.dexcom.com/), in Gladys, through the cloud of
+Dexcom, with the Dexcom account of the person wearing the sensor.
+
+**Not a medical device: never use it for a treatment decision; the alerts may be late or missing.**
+
+Gladys reads the cloud at the refresh you choose, through the internet, the
+phone that receives the sensor and the servers of Dexcom: any of them can be
+late, down or wrong, and Gladys says nothing when it cannot read. Keep the
+alarms of the Dexcom apps and your care team's advice; this integration
+only adds home automation on top (a lamp that turns orange, a
+notification), never a medical alarm.
+
+- the account becomes a Gladys device: **glucose** (mg/dL or mmol/L),
+  **trend** (a number and the **arrow**) and **measurement age** (minutes);
+- a measurement older than the chosen delay (15 minutes by default) **is
+  never published as current**: only its age moves, and the status of the
+  integration says so;
+- three scene triggers: **Glucose low**, **Glucose high** and
+  **Measurement too old**.
+
+Read only: Gladys never changes anything at Dexcom (alarms, sharing,
+followers stay in the apps).
+
+> **This integration has never been tested with a real Dexcom account or sensor.**
+> This first version was written from the
+> [pydexcom](https://github.com/gagebenne/pydexcom) library (MIT), ported to
+> JavaScript, and tested against a fake Dexcom Share API only. Tell the
+> Gladys forum what works and what does not.
+
+Unofficial integration, not affiliated with Dexcom.
+
+## Before you start
+
+In the Dexcom app (G6, G7 or ONE+) of the person wearing the sensor, turn
+**Share** on and invite **at least one follower** (Dexcom Follow): without a
+follower, Dexcom Share publishes nothing. The account to type in Gladys is
+**the one of the person wearing the sensor**, not a follower's.
+
+## Configuration
+
+- **User name**: the user name, e-mail address or phone number (with `+`
+  and the country code) of the Dexcom account. The Dexcom account id (a
+  UUID) is accepted too. Never written to a log.
+- **Password**: kept by Gladys in its database, never shown again, never
+  written to a log, and sent only to the Dexcom Share API of the chosen
+  region (over https, certificate checked). Dexcom locks an account after
+  several wrong passwords: see "Connection problems".
+- **Region of the account**: **outside the United States** (France,
+  Belgium, Switzerland and the rest of Europe; the default), **United
+  States** or **Japan**. A wrong region is answered like a wrong password:
+  check it first.
+- **Refresh**: every 5 minutes (the default), 10 or 15 minutes. One request
+  per reading (a login now and then, when the session expires). The sensor
+  sends a measurement every 5 minutes: reading more often brings nothing.
+  **Never more than one reading every 5 minutes**, whatever starts it: the
+  test button, a saved configuration, the search button of Discovery or a
+  reconnection of Gladys never read again an account read less than 5
+  minutes ago (even after a restart: the time of the last reading is kept
+  in `/data`). They publish the last reading again instead (its age and
+  currency computed again), and the next reading comes at its time. The
+  only exception: other credentials after a refusal or a lock are tried at
+  once (see "Connection problems").
+- **Measurement no longer current after**: 10, 15 (the default), 20,
+  30 minutes or 1 hour. See "Current measurement or not".
+- **Glucose unit**: mg/dL (the default) or mmol/L: the unit of the glucose
+  feature that Discovery offers, and of the glucose handed to the scene
+  triggers. The core of Gladys has no glucose unit: the unit is written in
+  the name of the feature (`Glucose (mg/dL)`) and in its key. Changing it
+  adds a feature in the new unit (update the device from Discovery); every
+  glucose feature a device has keeps receiving its values, each in its own
+  unit. mmol/L values are converted from mg/dL (÷ 18.0156, one decimal):
+  they may differ by 0.1 from what the app shows.
+
+Then open the **Discovery** tab and create the device (named "Dexcom":
+rename it if you like). Only the created device receives its values and
+fires the triggers.
+
+## What each feature shows
+
+- **Glucose** (mg/dL or mmol/L): the latest measurement of the sensor, when
+  it is current.
+- **Trend** (0 to 9, the scale of Dexcom and pydexcom): 1 rising quickly
+  (↑↑), 2 rising (↑), 3 rising slightly (↗), 4 steady (→), 5 falling
+  slightly (↘), 6 falling (↓), 7 falling quickly (↓↓), 8 unable to
+  determine (?), 9 trend unavailable (-), 0 none (-).
+- **Trend arrow** (text): the same trend as an arrow.
+- **Measurement age** (minutes): how old the latest measurement is, at each
+  reading. When Dexcom Share gives no measurement for the last 24 hours,
+  the age **keeps counting** from the last measurement received.
+- **No history by default** for every feature (health data): Gladys keeps
+  only the last value. You may turn the history on per feature, knowing
+  that Gladys then keeps these health data in its database and backups.
+
+## Current measurement or not
+
+A measurement is **current** when it is at most the chosen delay old (15
+minutes by default) and not dated in the future. Otherwise (sensor ended
+or removed, phone out of range or without network, sharing off...), it **is
+never published as current**: the glucose, the trend and the arrow are not
+sent to Gladys (the device keeps its last value, with its date), only the
+**measurement age** moves, and the **status** of the integration
+(configuration page) says that the measurement is no longer current. The
+currency is computed again at every publication to Gladys: an update of the
+device or a reconnection between two readings never sends a measurement
+that got too old. Scenes may use the age (for example "age > 15") or the
+"Measurement too old" trigger. A measurement dated more than 5 minutes in
+the future is not taken (no value, no age: the age goes on from the last
+measurement taken) and makes the status ask to check the clock of Gladys.
+A measurement older than the last one taken is ignored. Values 0 to 12
+(sensor error codes at Dexcom) are never glucose values.
+
+The same glucose at a new measurement is sent again: Gladys then dates it
+from that new measurement (never a "frozen" glucose dated 30 minutes ago).
+
+## Scene triggers
+
+**Glucose low** and **Glucose high**: choose the device (or any) and the
+threshold (**required**): 54 / 70 / 80 mg/dL (low), 180 / 250 / 300 mg/dL
+(high). The scene starts when a new **current** measurement is below
+(above) it, at the next reading. A measurement counts only if the
+integration first saw it within the chosen delay. **Once per crossing**:
+again only after a measurement 5 mg/dL back above (below) the threshold,
+or after at least one reading missed: when the account was not read, or
+two measurements are apart, for longer than max(that delay, refresh + 2
+minutes). A low or high already there when the integration starts is told
+at the first reading (a missing alert is worse than a repeated one): a
+restart of the integration may tell it once more. Never for a measurement
+that is not current, nor at a reading where the clock of Gladys jumped.
+Variables: name of the device, glucose, unit, trend, arrow, time of the
+measurement (UTC).
+
+**Measurement too old**: choose the device (or any) and the delay
+(**required**: 15 minutes to 4 hours). The scene starts when no new
+measurement came for this delay. Once per wait: a new measurement arms it
+again. Never for a delay already reached when the integration starts, nor
+at a reading after a clock jump. **Nothing is told when Dexcom Share itself
+cannot be read** (no internet, Dexcom down, account stopped): watch the
+connection status of the integration.
+
+## Connection problems
+
+- **Credentials refused** (or a wrong region): a wrong password tried again
+  and again locks the account. Gladys therefore stops for **1 hour**, then
+  **6 hours**, then **24 hours** after each new refusal, never in a loop.
+  The stop is kept in `/data`: a restart, a reconnection of Gladys and the
+  test button wait too. An attempt still in flight when the integration
+  stops counts as a refusal. Saving the configuration with the same
+  credentials makes **one** attempt at once per step of the stop; other
+  credentials or another region are tried at once. A reading that works
+  forgets the refusals.
+- **Account locked by Dexcom** (too many attempts): the same stop of
+  1 hour, 6 hours then 24 hours, so as not to extend the lock. The lock is
+  about the account: another password saved makes **one** attempt at once,
+  then waits for the next step (never back to 1 hour). Check the password
+  in the Dexcom app.
+- **Unknown error at the login** (a code the integration does not know):
+  taken as a refusal (1 hour, 6 hours, 24 hours), never as a mere pause, so
+  as not to send the password again and again. A login that works ends the
+  stop, even if the reading fails after it (a pause or a normal retry).
+- **Session refused**: Gladys opens **one** new session and reads once
+  more; refused again, the reading fails and is done again later, never in
+  a loop.
+- **Dexcom Share overloaded** (HTTP 429) or **server error** (HTTP 5xx
+  without a known error code): every request is paused, for the time
+  Dexcom asks between 1 minute and 6 hours, never less than the refresh.
+  The pause is kept in `/data`, even across a restart, a reconnection of
+  Gladys or a saved configuration.
+- **Unexpected answer, Dexcom Share unreachable** (network, 30 s timeout,
+  certificate): retried after the refresh, then the delay doubles up to
+  1 hour, even after a restart (the wait is kept in `/data`). The
+  integration never gives up.
+- **Test the connection** reads again and says whether the latest
+  measurement is current; read less than 5 minutes ago, it reads nothing
+  and answers "read N min ago... next reading in M min". It never shortens
+  a stop nor a pause.
+
+## Privacy
+
+Glucose values, trends, dates of measurements, the user name, the password,
+the account id and the session id are never written to a log nor to the
+`/data` volume of the integration. `/data` only keeps a short digest of the
+credentials (4 characters, used only to see that they changed) with the
+end of a stop, of a pause or of a wait, and the time of the last reading
+(not of a measurement). The session stays in memory. As
+pydexcom does, the session id goes in the address of the reading request
+(over https): the integration never writes an address to its logs. Gladys
+keeps the last value of each feature in its database (and its backups),
+and the history only if you turn it on. The scene triggers hand the glucose
+to your scenes (to write a notification): it is then where your scenes send
+it. The external id of the device is a non-secret digest of the Dexcom
+account id (never the id itself). **The name and the glucose go wherever
+the names and values of devices go**: scenes, notifications, Gladys Plus,
+and the assistants and AI connected to Gladys (Google Home, Alexa, MCP...).
+
+## Limits
+
+- One account (one sensor) per integration.
+- Nothing is commanded: neither the alarms of the app, nor the sharing.
+- No history of the sensor: only the latest measurement of the last 24
+  hours.
+- Never tested with a real account or sensor: see TODO.md in the
+  repository.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Dexcom in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| How it works | `section` | Nein | NOT A MEDICAL DEVICE: never use it for a treatment decision; its values and alerts may be late or missing. Gladys reads, through the cloud of Dexcom (Dexcom Share), the latest measurement of a Dexcom G6, G7 or ONE+ sensor: glucose, trend (arrow) and age of the measurement, on one Gladys device (Discovery tab). Use the account of the person wearing the sensor, with Share turned on in the Dexcom app and at least one follower. A measurement older than the chosen delay is never published as current. Read only. Health data: no history by default, never in the logs. Never tested with a real account or sensor. Unofficial integration, not affiliated with Dexcom. |
+| User name | `string` | Ja | The user name, e-mail address or phone number (with + and the country code) of the Dexcom account of the person wearing the sensor (not a follower’s). Never logged. |
+| Password | `secret` | Ja | The password of this Dexcom account. Kept by Gladys in its database, never shown again, never logged, sent only to the Dexcom Share API of the chosen region. |
+| Region of the account | `select` | Ja | Where the Dexcom account was created. A wrong region is answered like a wrong password: check it first. |
+| Refresh | `select` | Ja | How often Gladys reads Dexcom Share (one request). The sensor sends a measurement every 5 minutes: reading more often brings nothing. Never more than one reading every 5 minutes, whatever starts it (test button, saved configuration, Discovery, reconnection of Gladys). |
+| Measurement no longer current after | `select` | Ja | A measurement older than this is not published as current: its glucose and trend are not sent to Gladys (the device keeps its last value, with its date), only its age; the status says so, and “low” / “high” never fire from it. |
+| Glucose unit | `select` | Ja | The unit of the glucose feature that Discovery offers, and of the glucose of the scene triggers. Changing it adds a feature in the new unit (update the device from Discovery); every glucose feature a device has keeps receiving its values, each in its own unit. |
+
+## So installierst du Dexcom in Gladys
+
+1. Öffne in Gladys **Integrationen**: Dexcom erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-dexcom:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-dexcom](https://github.com/LM1LC3N7/gladys-dexcom).
+
+Dexcom benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Dexcom ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-dexcom) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-dexcom/blob/HEAD/docs/en.md)

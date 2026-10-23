@@ -1,0 +1,236 @@
+---
+title: "Integración domótica Backrest, gratuita y de código abierto"
+sidebar_label: "Backrest"
+description: "Sus planes de Backrest en Gladys: su estado y una alerta si una copia falla o deja de ejecutarse. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-backrest.png"
+keywords:
+  - "backrest"
+  - "domótica backrest"
+  - "gladys backrest"
+  - "backrest gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-backrest instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Backrest","description":"Sus planes de Backrest en Gladys: su estado y una alerta si una copia falla o deja de ejecutarse.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-backrest","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-backrest.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T17:27:19Z"}} />
+
+[Backrest](https://github.com/garethgeorge/backrest) es una interfaz web y un
+planificador para las copias de seguridad de [restic](https://restic.net/).
+Esta integración lleva a Gladys los planes y repositorios de una instancia de
+Backrest: cada plan se convierte en un dispositivo con su estado, su última
+copia correcta, los datos que añadió y los errores de su última copia; cada
+repositorio muestra su tamaño y sus instantáneas. Las escenas pueden reaccionar
+cuando **cualquier** copia se completa, falla o tiene retraso (sin éxito desde
+hace demasiado tiempo), un widget del panel muestra primero los planes
+fallidos, y una escena puede iniciar una copia.
+
+Probada con un Backrest 1.14 real (imagen Docker `garethgeorge/backrest`,
+repositorio restic local): una copia que se completa, una cuya carpeta falta,
+una con un archivo ilegible, una copia iniciada desde la integración, con y sin
+autenticación. Todavía no probada en un Gladys real: sus comentarios son
+bienvenidos en [las issues](https://github.com/guim31/gladys-backrest/issues).
+
+## Requisitos
+
+- Gladys Assistant 5.1.0 o posterior.
+- Backrest 1.x (probado con la 1.14.1), con su interfaz web accesible desde el
+  equipo de Gladys (puerto 9898 por defecto).
+- Si su autenticación está activada: un usuario y su contraseña (Backrest,
+  **Settings → Users**). Mejor un usuario dedicado que el suyo.
+
+La integración lee Backrest cada 5 minutos por defecto (cada 30 segundos
+durante una copia): una petición ligera por plan, más el historial de cada
+repositorio una vez por hora. Nada sale de su red.
+
+## Primeros pasos
+
+### 1. Comprobar la dirección de Backrest
+
+Abra Backrest en un navegador y anote su dirección, por ejemplo
+`http://192.168.1.2:9898`. Por defecto, Backrest solo escucha en su propio
+equipo (`127.0.0.1:9898`): para acceder desde Gladys, inícielo con
+`BACKREST_PORT=0.0.0.0:9898` (la imagen Docker ya lo hace).
+
+### 2. Configurar la integración
+
+En Gladys, **Integraciones → Backrest → Configuración**:
+
+- **Dirección de Backrest**: la dirección anotada arriba. Una dirección sola
+  (`192.168.1.2`) usa el puerto 9898; una dirección copiada del navegador
+  también sirve.
+- **Usuario** y **Contraseña**: un usuario de Backrest. Déjelos vacíos si su
+  autenticación está desactivada.
+- **Intervalo de actualización**: 1, 5 (por defecto) o 15 minutos.
+- **Con retraso tras**: cuándo un plan sin éxito pasa a tener retraso.
+  _Automático_ (por defecto) sigue la programación de cada plan: su periodo
+  («cada 24 horas») o el mayor intervalo de su expresión cron, más una cuarta
+  parte (una hora como mínimo): 30 horas para un plan diario, 90 horas para un
+  plan solo en días laborables. Un plan sin programación nunca tiene retraso.
+  O un plazo fijo, de 12 horas a una semana, para todos los planes.
+- **Permitir iniciar copias**: permite que funcione la acción de escena
+  «Iniciar una copia». Desactívelo si nadie debe iniciar copias desde Gladys.
+- **Idioma de los nombres**: idioma de los nombres de las funciones, de los
+  estados y de los resultados de escena.
+
+**Probar la conexión** lee Backrest y resume: el número de planes y
+repositorios, fallidos y con retraso.
+
+### 3. Añadir los planes
+
+En la pestaña **Descubrir**, añada los planes y repositorios a seguir, y el
+dispositivo «Backrest» para la instancia. Los activadores de escena funcionan
+para todos los planes, añadidos o no.
+
+## Los dispositivos
+
+Cada plan:
+
+| Función                            | Valor                                                            |
+| ---------------------------------- | ---------------------------------------------------------------- |
+| Estado                             | OK, Con avisos, Fallido, Con retraso, En curso o Nunca ejecutado |
+| Última copia correcta              | día/mes horas:minutos, «-» si no hay                             |
+| Horas desde el último éxito        | en horas                                                         |
+| Duración de la última copia        | en segundos                                                      |
+| Datos añadidos por la última copia | datos nuevos enviados al repositorio, en MB                      |
+| Instantáneas                       | instantáneas de este plan conservadas en el repositorio          |
+| Errores de la última copia         | 1 si falló, si no 0                                              |
+| Avisos de la última copia          | número de archivos que no pudo leer                              |
+| En ejecución                       | 1 mientras este plan hace una copia                              |
+| Próxima copia programada           | día/mes horas:minutos, «-» sin programación                      |
+
+Cada repositorio:
+
+- **Tamaño del repositorio**: en MB, según la última operación «stats» de
+  Backrest (tras un prune, una vez al día como máximo; **Stats** en la página
+  del repositorio en Backrest lanza una);
+- **Instantáneas**: las instantáneas que contiene.
+
+El dispositivo «Backrest», para la instancia:
+
+- **Copia en curso**: 1 o 0;
+- **Progreso**: en %;
+- **Plan actual**: su nombre, «-» si no hay;
+- **Planes fallidos** y **Planes con retraso**: cuántos.
+
+Una copia «se completa» cuando restic crea una instantánea, con o sin avisos
+(archivos ilegibles). «Falla» cuando no se crea ninguna instantánea (carpeta
+ausente, repositorio inaccesible o bloqueado…). El estado muestra primero lo
+que requiere su atención: un plan fallido muestra «Fallido» aunque también
+tenga retraso. Las pruebas en seco (dry run) se ignoran.
+
+## Panel
+
+El widget **Backrest** muestra el número de planes fallidos, con retraso y OK,
+y después una línea por plan: primero los fallidos, luego los retrasados, en
+curso, con avisos, nunca ejecutados, OK, con el último éxito (o el progreso de
+la copia en curso). Todos los planes por defecto, o los elegidos en sus
+ajustes. El botón **Actualizar** vuelve a leer Backrest.
+
+## Escenas
+
+### Activadores
+
+- **Una copia se completa**: una copia termina con una instantánea, con o sin
+  avisos. Información: plan, duración (minutos), avisos, datos añadidos,
+  instantáneas.
+- **Una copia falla**: una copia termina sin instantánea. El filtro
+  **Resultado** elige los errores, los avisos, o ambos (vacío). Información:
+  plan, el error (o el primer archivo no leído), errores, avisos.
+- **Un plan tiene retraso**: un plan no ha tenido éxito desde hace más que el
+  plazo «Con retraso tras». Una vez por superación, de nuevo tras un nuevo
+  éxito. Información: plan, horas desde el último éxito, último éxito.
+
+Cada activador puede limitarse a algunos planes (vacío: todos).
+
+### Acciones
+
+- **Estado de un plan**: lee el estado de un plan para las acciones
+  siguientes: fallido, con retraso, el estado en palabras, el nombre, el último
+  éxito, las horas desde el último éxito (-1 si no hay), y una frase lista
+  («photos: Fallido, último éxito 18/10 02:05.»).
+- **Iniciar una copia**: inicia ahora una copia del plan (Backrest la pone en
+  cola tras la tarea en curso). Un error en los primeros segundos (carpeta
+  ausente, plan eliminado) es el error de la acción; después, los activadores
+  indican cómo terminó. Rechazada cuando «Permitir iniciar copias» está
+  desactivado.
+
+### Ideas de escenas
+
+- **Una copia falla** → enviar un mensaje con el plan y su error, tomados de la
+  información del activador.
+- **Un plan tiene retraso** → avisar con el plan y las horas desde su último
+  éxito: el ordenador de las fotos lleva días apagado.
+- Cada domingo a las 10:00 → **Estado de un plan** → enviar la frase; o copiar
+  los documentos al salir de casa, con **Iniciar una copia**.
+
+## Solución de problemas
+
+- **«Backrest no responde»**: compruebe la dirección y el puerto desde el
+  equipo de Gladys, y que Backrest escucha en la red
+  (`BACKREST_PORT=0.0.0.0:9898`).
+- **«usuario o contraseña ausentes o rechazados por Backrest»**: su
+  autenticación está activada: introduzca el usuario y la contraseña de un
+  usuario de Backrest.
+- **«no hay ningún Backrest en esta dirección»**: la dirección apunta a otra
+  cosa.
+- **«certificado rechazado»**: un certificado autofirmado en un proxy inverso;
+  use la dirección `http://` en su red.
+- **Tamaño del repositorio vacío**: Backrest aún no lo ha calculado; lance
+  **Stats** desde la página del repositorio en Backrest.
+- **Un plan nunca tiene retraso**: en _Automático_, un plan sin programación no
+  puede tener retraso; elija un plazo fijo. Un plan que nunca tuvo éxito
+  tampoco tiene retraso: muestra Fallido o Nunca ejecutado.
+- Para ver más, ponga la variable `LOG_LEVEL` de la integración en `debug`.
+
+## Límites
+
+- Una instancia de Backrest por integración; los planes de las otras
+  instancias sincronizadas con ella no se muestran.
+- Backrest conserva sus operaciones unos 30 días: más allá, el último éxito es
+  el que la integración recuerda.
+- La integración no restaura, no purga ni modifica nada: vigila los planes, e
+  inicia una copia si está permitido.
+- Sin relación con Backrest ni con restic. Comunique un problema o una idea en
+  [las issues](https://github.com/guim31/gladys-backrest/issues).
+
+## Parámetros de configuración
+
+Estos son los parámetros que Backrest te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Su Backrest | `section` | No | Backrest, la interfaz web de restic. Introduzca su dirección y, si su autenticación está activada, su usuario y su contraseña. Después añada los planes y repositorios desde la pestaña Descubrir. |
+| Dirección de Backrest | `string` | Sí | La dirección de la interfaz web, puerto 9898 por defecto. |
+| Usuario | `string` | No | Un usuario de Backrest (Ajustes → Usuarios). Vacío si su autenticación está desactivada. |
+| Contraseña | `secret` | No | La contraseña de este usuario. Vacía si la autenticación de Backrest está desactivada. |
+| Opciones | `section` | No |  |
+| Intervalo de actualización | `select` | No | Con qué frecuencia se lee Backrest. Cada 30 segundos durante una copia. |
+| Con retraso tras | `select` | No | Un plan sin copia correcta desde hace este tiempo tiene retraso. Automático: el mayor intervalo de su programación más un margen; un plan sin programación nunca tiene retraso. |
+| Permitir iniciar copias | `boolean` | No | Permite que la acción de escena «Iniciar una copia» ejecute un plan en Backrest. |
+| Idioma de los nombres | `select` | No | Idioma de los nombres de las funciones (fijados al añadir un dispositivo), de los estados y de los resultados de escena. |
+
+## Cómo instalar Backrest en Gladys
+
+1. En Gladys, abre **Integraciones**: Backrest aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-backrest:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-backrest](https://github.com/guim31/gladys-backrest).
+
+Backrest requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Backrest es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-backrest) — [fuente de esta documentación](https://github.com/guim31/gladys-backrest/blob/HEAD/docs/es.md)

@@ -1,0 +1,219 @@
+---
+title: "Nightscout smart home integration, free and open source"
+sidebar_label: "Nightscout"
+description: "Your Nightscout glucose in Gladys: value, trend, alerts. Read only. Not a medical device. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-nightscout.png"
+keywords:
+  - "nightscout"
+  - "nightscout smart home"
+  - "gladys nightscout"
+  - "nightscout gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-nightscout instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Nightscout","description":"Your Nightscout glucose in Gladys: value, trend, alerts. Read only. Not a medical device.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-nightscout","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-nightscout.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T18:01:05Z"}} />
+
+**NOT A MEDICAL DEVICE.** This integration is a convenience for the home: it
+copies into Gladys what your Nightscout site shows. Never use it to decide a
+treatment or a dose. Its values and its alerts may be late, wrong or missing
+(network, phone, sensor, Gladys restarting…). Keep the alarms of your sensor,
+your pump or your follow app: they are the ones to trust.
+
+[Nightscout](https://nightscout.github.io/) is the open-source,
+self-hosted site where a continuous glucose monitor (Dexcom, FreeStyle Libre,
+Medtronic… through xDrip+, AndroidAPS, Loop, Spike and others) sends its
+values. This integration reads your site and brings into Gladys the current
+glucose, its trend and the age of the last value, scene triggers for highs,
+lows, fast changes and missing data, a scene action to put the glucose in a
+message, and a dashboard widget with the curve of the last three hours.
+
+Read only: Gladys never writes to Nightscout. Your site may run at home or at
+a hosting provider (the device badge says "local" or "cloud").
+
+Tested against a real Nightscout in Docker (15.0.8, with MongoDB), fed with
+simulated values: a fast fall, highs, lows, missing data, with an access token,
+with the API_SECRET and on a public site.
+Developed without the hardware: feedback welcome on
+[the issues](https://github.com/guim31/gladys-nightscout/issues).
+
+## What you need
+
+- Gladys Assistant 5.1.0 or later.
+- A Nightscout site reachable from Gladys (version 14 or 15), receiving the
+  values of a sensor.
+- To read it: an access token with the `readable` role (recommended), or the
+  site's API_SECRET, or nothing if the site is public.
+
+## Getting started
+
+### 1. Create a read-only access token
+
+In Nightscout, open the menu, **Admin tools**, then **Add new Subject**: give
+it a name (`gladys`) and the `readable` role, save. Copy the token shown in the
+list (`gladys-0123456789abcdef`). A token can only read, unlike the
+API_SECRET, which also allows writing.
+
+### 2. Configure the integration
+
+In Gladys, **Integrations → Nightscout → Configuration**:
+
+- **Nightscout address**: the address of your site, as in the browser
+  (`https://my-site.example.org`, or `http://192.168.1.20:1337` at home). A
+  copied address with `?token=…` works too.
+- **Access token (recommended)**: the token of step 1. Empty for a public
+  site.
+- **API_SECRET (if no token)**: only when you have no token. It is sent
+  hashed, never stored in the logs.
+- **Glucose unit**: as in Nightscout (default), mg/dL or mmol/L.
+- **Refresh interval**: 1 minute (default), 2 or 5 minutes.
+- **A value is current for**: 15 minutes by default. Beyond, the glucose is
+  no longer published as current and no glucose trigger fires.
+- **Language of the names**: the language of the feature names and of the
+  sentences sent to scenes.
+
+Save, then **Test the connection**: Gladys answers with the version of the
+site, its target range and the last glucose.
+
+### 3. Add the device
+
+In the **Discover** tab, add the Nightscout device. The scene triggers, the
+scene action and the widget work even if you do not add it.
+
+## The device
+
+One device for the site, with these features:
+
+| Feature                                                 | Value                                                        |
+| ------------------------------------------------------- | ------------------------------------------------------------ |
+| Glucose (mg/dL) or Glucose (mmol/L)                     | the last current value                                       |
+| Change over 5 min (mg/dL) or Change over 5 min (mmol/L) | the change since the previous value, scaled to 5 minutes     |
+| Trend (1 ↑↑, 4 →, 7 ↓↓)                                 | 1 rising quickly … 4 steady … 7 falling quickly, 8-9 unknown |
+| Trend arrow                                             | ↑↑ ↑ ↗ → ↘ ↓ ↓↓                                              |
+| Measurement age                                         | minutes since the last value                                 |
+| Out of target range                                     | 1 when the value is out of the target range of the site      |
+| Uploader battery                                        | the phone or uploader battery, when the site reports it      |
+
+The trend numbers are the ones of the Dexcom and LibreLinkUp integrations, so
+your scenes read the same way. Changing the unit adds a feature in the new
+unit: update the device from the Discover tab, the old feature keeps its
+history.
+
+Health data: no history is kept by default. You can switch it on per feature
+in Gladys.
+
+## Dashboard
+
+The **Glucose** widget shows the glucose colored by the range of the site
+(green in range, orange low or high, red urgent), the arrow and the change, the
+age of the value, and the curve of the last three hours. When no value is
+current, a line says so. **Refresh** reads Nightscout at once.
+
+## Scenes
+
+### Triggers
+
+Every trigger has an optional **Device** field (empty: any). The glucose
+triggers only fire on a current value, read at the chosen refresh interval.
+
+- **Glucose low**: below the low target of Nightscout, 70 or 80 mg/dL. Once
+  per crossing; again after a value 5 mg/dL above, or after a gap in the data.
+- **Glucose very low**: below the urgent low of Nightscout or 54 mg/dL.
+- **Glucose high**: above the high target of Nightscout, its urgent high, 180,
+  250 or 300 mg/dL. Once per crossing; again after a value 5 mg/dL below.
+- **Glucose back in range**: back in the target range of the site (5 mg/dL
+  inside it) after a value out of it.
+- **Glucose rising fast** / **Glucose falling fast**: the trend reaches ↑ or
+  ↑↑ (or ↑↑ only), ↓ or ↓↓ (or ↓↓ only). Once, until the trend is steady again.
+- **Measurement too old**: no new value for 15 minutes, 30 minutes, 1, 2 or
+  4 hours (sensor, phone, uploader, or Nightscout not answering).
+
+Variables: the device name, the glucose and its unit, the trend number and
+arrow, the change over 5 minutes, the time of the value (UTC); for "too old",
+the minutes without a value.
+
+The thresholds of Nightscout are the ones of its settings (`BG_TARGET_BOTTOM`,
+`BG_TARGET_TOP`, `BG_LOW`, `BG_HIGH`), read at every refresh.
+
+### Actions
+
+- **Read the glucose**: reads Nightscout and gives the next actions the
+  glucose, its unit, the trend, the arrow, the change, the age in minutes,
+  whether it is current, whether it is out of range, the time of the value and
+  a ready sentence: `Glucose 142 mg/dL → +3, 4 min ago`.
+
+### Scene ideas
+
+- At night, **Glucose very low** → turn on the bedroom light at 30 % and send
+  a Telegram message to the parents with `{{triggerEvent.data.glucose}}`.
+- **Measurement too old** (30 minutes) → a notification "check the sensor and
+  the phone".
+- A button on the dashboard → **Read the glucose** → say the sentence on the
+  living room speaker.
+
+## Troubleshooting
+
+- **Access refused**: the token is wrong or its role cannot read; with the
+  API_SECRET, check it is the one of the site (12 characters at least).
+- **No Nightscout at this address**: check the address in a browser; a site
+  in a sub-folder needs its path (`https://example.org/ns`).
+- **The address redirects**: enter the `https://` address.
+- **Nightscout answers with an error**: its database (MongoDB) is down or
+  full.
+- **No current value**: the sensor, the phone or the uploader app stopped
+  sending; Nightscout shows the same.
+- More details: set `LOG_LEVEL=debug` on the integration. The logs never show
+  the token, the secret nor any glucose value.
+
+## Limits
+
+- **NOT A MEDICAL DEVICE**: no guarantee of delay or delivery.
+- One Nightscout site per integration.
+- Read at the refresh interval (1 minute at best): a trigger may come one
+  minute or more after Nightscout's own alarm.
+- Not read: insulin on board, carbs on board, pump and loop details, the
+  treatments.
+- The thresholds offered in mg/dL are fixed choices; the ones of Nightscout
+  follow your site.
+- Unofficial integration, not affiliated with the Nightscout project.
+
+## Configuration settings
+
+These are the settings Nightscout asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| How it works | `section` | No | NOT A MEDICAL DEVICE: never use it for a treatment decision; values and alerts may be late or missing. Gladys reads your Nightscout site, read only: glucose, trend and age on one device (Discovery tab). Health data: no history by default, never in the logs. |
+| Nightscout address | `string` | Yes | The address of your site, as in the browser. |
+| Access token (recommended) | `secret` | No | A token with the readable role: Nightscout, Admin tools, Add new Subject. Empty for a public site. |
+| API_SECRET (if no token) | `secret` | No | Only used without a token, sent hashed. It also allows writing: prefer a read-only token. |
+| Glucose unit | `select` | Yes | Changing it adds a feature in the new unit: update the device from the Discovery tab. |
+| Refresh interval | `select` | Yes | How often Nightscout is read. A sensor sends a value every 1 to 5 minutes. |
+| A value is current for | `select` | Yes | Beyond, the glucose and the trend are no longer published as current, and no glucose trigger fires. |
+| Language of the names | `select` | Yes | Language of the feature names (set when a device is added) and of the texts sent to scenes. |
+
+## How to install Nightscout in Gladys
+
+1. In Gladys, open **Integrations**: Nightscout appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-nightscout:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-nightscout](https://github.com/guim31/gladys-nightscout).
+
+Nightscout requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Nightscout is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-nightscout) — [source of this documentation](https://github.com/guim31/gladys-nightscout/blob/HEAD/docs/en.md)

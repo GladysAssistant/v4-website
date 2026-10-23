@@ -19,7 +19,7 @@ https://github.com/Terdious/gladys-zendure instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Zendure","description":"Conecte sus baterías solares Zendure (SolarFlow) a Gladys Assistant a través de la nube de Zendure.","owner":"Terdious","owner_avatar_url":"https://avatars.githubusercontent.com/u/35010958?v=4","repo_url":"https://github.com/Terdious/gladys-zendure","cover_url":"https://integration-store-storage.gladysassistant.com/covers/Terdious--gladys-zendure.png","type":"device","version":"1.8.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-18T08:45:41Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Zendure","description":"Conecte sus baterías solares Zendure (SolarFlow) a Gladys Assistant a través de la nube de Zendure.","owner":"Terdious","owner_avatar_url":"https://avatars.githubusercontent.com/u/35010958?v=4","repo_url":"https://github.com/Terdious/gladys-zendure","cover_url":"https://integration-store-storage.gladysassistant.com/covers/Terdious--gladys-zendure.png","type":"device","version":"1.12.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-23T07:08:57Z"}} />
 
 Conecte sus baterías solares **Zendure SolarFlow / Hyper** a Gladys Assistant.
 La integración lee la telemetría (nivel de batería, potencias de carga y
@@ -106,6 +106,8 @@ Según el modelo, una batería recibe también estas funcionalidades:
 | Energía cargada desde la red       | Sensor de red                     | kWh    | todos los modelos                                                   |
 | Temperatura del dispositivo        | Sensor de temperatura del aparato | °C     | todos los modelos, si se informa                                    |
 | Temperatura del pack más caliente  | Sensor de temperatura del aparato | °C     | todos los modelos, si se informa                                    |
+| Tiempo de descarga restante        | Duración                          | min    | todos los modelos con batería, si se estima                         |
+| Tiempo de carga restante           | Duración                          | min    | todos los modelos con batería, si se estima                         |
 
 - **Salida fuera de red**: la potencia del enchufe fuera de red (de respaldo)
   de la batería (`gridOffPower`). Un valor negativo significa que el enchufe
@@ -121,6 +123,14 @@ Según el modelo, una batería recibe también estas funcionalidades:
   décimas de kelvin y que se convierten a °C. Una batería que no las informa
   las deja vacías; un valor imposible (por debajo de −40 °C o por encima de
   120 °C) se ignora.
+- **Tiempo restante**: el tiempo hasta el límite de descarga
+  (`remainOutTime`) y hasta el objetivo de carga (`remainInputTime`), tal como
+  lo estima la batería, en minutos. Cuando la batería no tiene estimación (en
+  reposo, o cargando para el tiempo de descarga), Zendure informa 999 h: ese
+  valor no se publica, la funcionalidad conserva su última estimación y su
+  hora de actualización indica su antigüedad (0 se leería «vacía ahora» y
+  dispararía sus escenas, 999 h aplastaría los gráficos). Un SolarFlow 800 o
+  un Hyper 2000 sin ningún pack no publica nada.
 
 **Jerarquía de energía — evitar el doble conteo.** La potencia de carga desde
 la red es un **sensor de red**: si su vivienda ya tiene un contador principal
@@ -132,6 +142,49 @@ que toma se contaría dos veces.
 Una batería creada con una versión anterior recibe estas funcionalidades con el
 mismo **Actualizar** de la pestaña **Descubrir**: se conservan las
 funcionalidades existentes, su historial, las escenas y los paneles.
+
+### Packs de batería como dispositivos separados (opcional)
+
+Desactivado por defecto. Con **Packs de batería como dispositivos separados**
+activado (pestaña Configuración), la pestaña **Descubrir** también lista un
+dispositivo por pack de batería, con el nombre de su batería:
+`Batería del desván — pack 1`, `Batería del desván — pack 2`… Cada dispositivo
+de pack se identifica por el número de serie del propio pack: sus
+identificadores nunca chocan con los de la batería.
+
+| Funcionalidad        | Categoría de Gladys                   | Unidad | Fuente                                |
+| -------------------- | ------------------------------------- | ------ | ------------------------------------- |
+| Nivel del pack       | Batería                               | %      | `socLevel`                            |
+| Temperatura del pack | Sensor de temperatura del dispositivo | °C     | `maxTemp` (celda más caliente)        |
+| Tensión del pack     | Sensor de energía                     | V      | `totalVol`                            |
+| Corriente del pack   | Sensor de energía                     | A      | `batcur`, con el signo que da el pack |
+| Potencia del pack    | Sensor de energía                     | W      | `power`, cuando el pack la da         |
+
+- Un pack aparece en cuanto su batería lo ha listado: en sus informes (API
+  local, nube de Zendure, broker local) o en la lista de dispositivos de
+  Zendure. Si falta un pack, vuelva a abrir la pestaña **Descubrir** unos
+  minutos después.
+- Los valores vienen de la fuente que sirve la batería: la lista de packs del
+  informe de la API local o de la nube (valores brutos, convertidos:
+  centésimas de voltio, décimas de amperio, décimas de kelvin), o los topics
+  MQTT locales del propio pack `Zendure/sensor/<número de serie del pack>/…`
+  (valores ya en V, A, °C). Pasan por el mismo canal pausado que los de la
+  batería.
+- La batería sigue siendo el dispositivo que cuenta en las funcionalidades de
+  energía de Gladys. Por eso el nivel del pack es un simple nivel de
+  **Batería**, no un nivel de batería doméstica (el de la batería ya lo es:
+  contar cada pack otra vez contaría dos veces la misma carga), y por eso la
+  tensión, la corriente y la potencia son simples medidas: deje los
+  dispositivos de pack **fuera de la jerarquía de energía** de Gladys. Único
+  efecto secundario: si activó la notificación de batería baja de Gladys, un
+  pack por debajo de su umbral en el momento de la comprobación aparece en
+  ella.
+- El estado de salud de los packs se queda en el diagnóstico.
+- **Desactivar la opción no crea nada nuevo ni elimina nada**: los
+  dispositivos de pack ya creados se quedan en Gladys con su historial, pero
+  dejan de actualizarse. Elimínelos en Gladys si ya no los quiere (vea
+  [Eliminar una batería](#eliminar-una-batería)): la integración los ignora
+  entonces.
 
 ## Obtener su clave de la nube de Zendure
 
@@ -158,7 +211,16 @@ aplicación móvil Zendure:
 4. (Opcional) Active **Activar el MQTT local (zenSDK)** — vea más abajo.
 5. (Opcional) Elija el idioma de los **Nombres de las funcionalidades** (inglés
    por defecto): se aplica a las baterías que cree a partir de ahora.
-6. Haga clic en **Guardar configuración**. Sus baterías aparecen en la pestaña
+6. (Opcional) Active **Packs de batería como dispositivos separados** para un
+   dispositivo más por pack (desactivado por defecto) — vea
+   [Packs de batería como dispositivos separados](#packs-de-batería-como-dispositivos-separados-opcional).
+7. (Instalación trifásica) En **Instalación eléctrica**, ponga **Instalación
+   eléctrica** en _Trifásica_ y coloque cada batería en **Baterías de la fase
+   L1**, **Baterías de la fase L2** o **Baterías de la fase L3**, la fase que
+   alimenta. Los widgets **Instalación Zendure** y **Energía de hoy** la leen
+   aquí (vea [Widgets del panel](#widgets-del-panel)). Una instalación
+   monofásica la deja como está.
+8. Haga clic en **Guardar configuración**. Sus baterías aparecen en la pestaña
    **Descubrir**, listas para añadirse.
 
 ### API local (zenSDK, activada por defecto)
@@ -268,13 +330,44 @@ batería deja de informar en todas las fuentes, o vuelve a hacerlo (API local o
 MQTT local). Sus variables dan el nombre de la batería, el nuevo estado y la fuente
 de telemetría.
 
+El disparador **Alerta de batería** inicia una escena cuando un estado de una
+batería empieza o termina. Sus filtros, todos opcionales (vacíos: cualquier
+valor):
+
+- **Batería**: una batería;
+- **Alerta**: _Fallo_ (indicador de error `is_error`, o nivel de fallo
+  `faultLevel` mayor que 0), _Calefacción_ (la calefacción de los packs
+  funciona, `heatState`), _Calibración_ (la calibración del estado de carga
+  está en curso, `socStatus`), _Temperatura baja_ (`lowTemperature`), _Flujo
+  inverso_ (`reverseState`);
+- **Cambio**: _Empieza_ o _Termina_.
+
+Sus variables dan el nombre de la batería, la alerta, el cambio (`started` /
+`ended`), el código informado (el nivel de fallo para un fallo) y la fuente de
+telemetría (`local` / `cloud`). Ejemplos:
+
+- recibir un aviso cuando una batería se calienta: disparador **Alerta de
+  batería**, Alerta _Calefacción_, Cambio _Empieza_, y luego una acción
+  **Enviar un mensaje** que nombra la batería con las variables;
+- recibir un aviso de un fallo, y de su fin: una escena con Alerta _Fallo_ y
+  Cambio _Empieza_, otra con Cambio _Termina_.
+
+Una alerta solo se dispara con un cambio: el estado de una batería al iniciar
+la integración (o al volver a crearla) es su estado inicial, no un evento. Un
+nuevo estado debe mantenerse 30 segundos, en al menos dos informes, antes de
+que la escena empiece: un código que parpadea durante un informe nunca la
+dispara. Una batería eliminada en Gladys y los dispositivos de pack no
+disparan ninguna alerta.
+
 ## Widgets del panel
 
 En el editor del panel hay cuatro widgets disponibles (Gladys 5.1 o
 posterior):
 
-- **Batería Zendure**: una batería, elegida en los ajustes del widget. Su nivel
-  y sus cuatro potencias siguen la batería en directo; debajo, su fuente
+- **Batería Zendure**: una batería, elegida en los ajustes del widget. Sus
+  cuatro potencias siguen la batería en directo; su nivel y las líneas de
+  debajo se actualizan cada dos minutos (varía como mucho un 1 % por minuto):
+  su fuente
   (local, nube, respaldo, inaccesible), la energía almacenada, los límites de
   salida y de carga, el modo AC y los niveles de carga que informa. Los botones
   **Límites de potencia** y **Modo y niveles** abren un formulario rellenado
@@ -286,9 +379,12 @@ posterior):
   coloreada según su fuente. Deje la lista de baterías vacía para tomar todas
   las baterías de la cuenta.
 - **Instalación Zendure**: toda la instalación en una tarjeta. Elija la
-  **Instalación eléctrica**: _Monofásica_ suma las baterías elegidas (ninguna:
-  todas); _Trifásica_ toma las baterías de las listas **Baterías de la fase
-  L1**, **L2** y **L3**. La tarjeta muestra los totales de la instalación
+  **Instalación eléctrica**: _Según la configuración de la integración_ (por
+  defecto, recomendado) usa la instalación y las fases de la sección
+  **Instalación eléctrica** de la configuración; _Monofásica_ suma las
+  baterías elegidas en el widget (ninguna: todas); _Trifásica_ toma las
+  baterías de las listas **Baterías de la fase L1**, **L2** y **L3** del
+  widget. La tarjeta muestra los totales de la instalación
   (nivel ponderado por la capacidad de los packs, carga, descarga, solar,
   salida al hogar, energía almacenada), luego en trifásica una línea por fase
   (`⌂` salida al hogar, `↑` carga, `↓` descarga, `☀` solar, en W) y el
@@ -314,18 +410,33 @@ posterior):
   Con una tarifa eléctrica en la configuración, también muestra la
   estimación del ahorro (vea **Ahorro (estimación)** más abajo).
 
-**Ejemplo trifásico:** 17 baterías en L1, L2 y L3. Añada un widget
-**Instalación Zendure**, ponga la **Instalación eléctrica** en _Trifásica_ y
-marque en **Baterías de la fase L1** las seis baterías conectadas a L1 (por
-ejemplo dos 2400 AC, una 2400 Pro, dos 800 Pro y un 800 sin batería), en
-**L2** las seis de L2 y en **L3** las cinco de L3. La tarjeta muestra los
-totales, una línea por fase como `L1 (6) · 60 %` —
-`⌂ 1890 · ↑ 500 · ↓ 1000 · ☀ 1400 W`, y `Equilibrio de fases` —
-`Δ 1490 W · L1 la más alta` en naranja por encima del umbral. Añada un widget
-**Energía de hoy** con las mismas tres listas para los kWh del día. Una
-instalación monofásica conserva el ajuste por defecto y deja las listas
-vacías. El widget **Grupo de baterías** sigue disponible para cualquier otra
-agrupación.
+**Ejemplo trifásico:** 18 baterías en L1, L2 y L3. En la pestaña
+**Configuración**, sección **Instalación eléctrica**, ponga la **Instalación
+eléctrica** en _Trifásica_ y marque en **Baterías de la fase L1** las seis
+baterías conectadas a L1 (por ejemplo dos 2400 AC, una 2400 Pro, dos 800 Pro y
+un 800 sin batería), en **Baterías de la fase L2** las seis de L2 y en
+**Baterías de la fase L3** las seis de L3, y guarde. Añada un widget
+**Instalación Zendure** y un widget **Energía de hoy**, y deje su
+**Instalación eléctrica** en _Según la configuración de la integración_: no
+hay nada más que elegir. La tarjeta de la instalación muestra los totales, una
+línea por fase como `L1 (6) · 60 %` — `⌂ 1890 · ↑ 500 · ↓ 1000 · ☀ 1400 W`, y
+`Equilibrio de fases` — `Δ 1490 W · L1 la más alta` en naranja por encima del
+umbral; la tarjeta de energía los kWh del día por fase. Una instalación
+monofásica conserva en todo los valores por defecto. El widget **Grupo de
+baterías** sigue disponible para cualquier otra agrupación.
+
+**Por qué las fases están en la configuración:** Gladys guarda como máximo
+1 KB de ajustes por widget, y cada batería marcada en una lista del widget
+ocupa unos 50 caracteres (su identificador). Por encima de unas 15 baterías en
+las listas del widget, el widget ya no puede mostrarse ni el panel guardarse
+(error 422 _settings: must be at most 1024 bytes_). La configuración no tiene
+ese límite, y las fases se definen allí una vez para los dos widgets. Un
+widget en _Según la configuración de la integración_ con una configuración
+trifásica sin ninguna batería asignada muestra todas las baterías en
+monofásica, con una línea de aviso **Ninguna fase asignada**; las fases
+rellenadas en una configuración monofásica se ignoran (línea **Fases
+ignoradas**). Los widgets configurados antes en _Monofásica_ o _Trifásica_
+conservan sus propias listas y siguen funcionando. Un widget que ya supera el límite: quítelo del panel y vuelva a añadirlo (o vacíe sus listas), dejando _Según la configuración de la integración_.
 
 Cada widget solo muestra lo que la batería tiene: un SolarFlow 800 usado sin
 pack de batería conserva su solar, su salida al hogar y su límite de salida
@@ -452,6 +563,22 @@ fuente local: si sus
 baterías responden en local, Home Assistant y Gladys ya no se disputan la
 conexión a la nube.
 
+## Eliminar una batería
+
+Eliminar una batería en Gladys (su página de dispositivo, **Eliminar**) detiene
+todo lo que la integración hace por ella, al instante y sin reinicio: su API
+local deja de consultarse, sus topics del broker se dan de baja, deja de contar
+para el respaldo en la nube (el broker de la nube se libera enseguida si ninguna
+otra batería lo necesita: Home Assistant recupera la sesión en la nube de la
+cuenta), y sale de los logs del watchdog, de los widgets del panel, de las
+acciones de escena y del diagnóstico (que la lista una vez como ignorada). Los
+logs lo dicen en una línea: `1 device(s) ignored (deleted in Gladys): …`.
+
+La lista de baterías eliminadas se guarda con la configuración de la
+integración en Gladys: un reinicio o una actualización no las devuelve. La
+batería sigue en la pestaña **Descubrir**: créela de nuevo allí y vuelve a
+seguirse al instante, con los mismos identificadores.
+
 ## Actualizar la integración
 
 **Instalada desde el catálogo** (el caso habitual): Gladys consulta el store
@@ -564,6 +691,12 @@ Estos son los parámetros que Zendure te pide en su pantalla de configuración e
 | Direcciones de la API local (opcional) | `string` | No | Solo para una batería cuya API local no se encuentra (sin dirección de la nube, nombre mDNS no resuelto): pares número de serie=dirección IP, separados por comas. |
 | Activar el MQTT local (zenSDK) | `boolean` | No | Leer también la telemetría desde el broker MQTT local del dispositivo cuando esté disponible (firmwares antiguos, Hyper 2000), antes de la nube de Zendure. |
 | Nombres de las funcionalidades | `select` | No | Idioma de los nombres de funcionalidades de las baterías recién descubiertas. Una batería ya creada conserva sus nombres: cambie el nombre de sus funcionalidades en Gladys si es necesario. |
+| Packs de batería como dispositivos separados | `boolean` | No | Desactivado por defecto. Activado: la pestaña Descubrir también lista un dispositivo por pack de batería (nivel, temperatura, tensión, corriente, potencia), con el nombre de su batería. Desactivarlo no crea nada nuevo ni elimina nada: los dispositivos de pack ya creados se quedan y dejan de actualizarse. |
+| Instalación eléctrica | `section` | No | La usan los widgets del panel «Instalación Zendure» y «Energía de hoy» configurados en «Según la configuración de la integración» (su valor por defecto). En una instalación trifásica, ponga cada batería en la fase que alimenta (L1, L2, L3): una sola vez aquí, para todos los widgets. Gladys limita los ajustes de un widget a 1 KB, unas 15 baterías: una instalación grande no puede guardar allí sus fases. |
+| Instalación eléctrica | `select` | No | Monofásica: los widgets de la instalación suman todas las baterías. Trifásica: por fase, según las tres listas de abajo. |
+| Baterías de la fase L1 | `multi_select` | No | Solo trifásica: cada batería en la fase que alimenta. |
+| Baterías de la fase L2 | `multi_select` | No | Solo trifásica: cada batería en la fase que alimenta. |
+| Baterías de la fase L3 | `multi_select` | No | Solo trifásica: cada batería en la fase que alimenta. |
 | Ahorro (estimación, sin contador) | `section` | No | Opcional. Con su tarifa eléctrica, la integración estima cada 30 minutos lo que ahorran sus baterías: la energía enviada al hogar se supone consumida por la vivienda (sin contador de red nada indica lo que se inyecta), valorada al precio del momento, menos el coste de la energía almacenada (carga desde la red a su precio, carga solar al precio de reventa o gratuita). El widget «Energía de hoy» la muestra para hoy, este mes y este año. Detalles y límites en el enlace Documentación de arriba. |
 | Tarifa eléctrica | `select` | No | Ninguna: sin estimación del ahorro. Base: un solo precio. Punta / valle: dos precios y las horas valle. |
 | Precio base (por kWh) | `number` | No | Tarifa base: el precio de un kWh comprado a la red, impuestos incluidos (€/kWh). |
@@ -578,7 +711,7 @@ Estos son los parámetros que Zendure te pide en su pantalla de configuración e
 ## Cómo instalar Zendure en Gladys
 
 1. En Gladys, abre **Integraciones**: Zendure aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
-2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/terdious/gladys-zendure:1.8.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/terdious/gladys-zendure:1.12.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
 3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
 4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/Terdious/gladys-zendure](https://github.com/Terdious/gladys-zendure).
 

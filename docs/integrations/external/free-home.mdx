@@ -1,0 +1,140 @@
+---
+title: "free@home smart home integration, free and open source"
+sidebar_label: "free@home"
+description: "Control local free@home lights, switched outputs and blinds; use button events in scenes. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/stefanbauer--gladys-freeathome.png"
+keywords:
+  - "free@home"
+  - "free@home smart home"
+  - "gladys free@home"
+  - "free@home gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/stefanbauer/gladys-freeathome instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"free@home","description":"Control local free@home lights, switched outputs and blinds; use button events in scenes.","owner":"stefanbauer","owner_avatar_url":"https://avatars.githubusercontent.com/u/3192662?v=4","repo_url":"https://github.com/stefanbauer/gladys-freeathome","cover_url":"https://integration-store-storage.gladysassistant.com/covers/stefanbauer--gladys-freeathome.png","type":"device","version":"1.1.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-20T14:16:21Z"}} />
+
+An independent integration using ABB/Busch-Jaeger's local REST and WebSocket API,
+without XMPP or a cloud connection. It implements switched consumers, dimmable
+lights, blinds/shutters and wall/panel button actions for Gladys scenes.
+
+## Setup
+
+The integration runs in its own **Linux Docker container supervised by Gladys**.
+Gladys manages startup, restart, logs and integration credentials. Users need no
+macOS, host Node.js, source checkout or `.env`. Version `1.1.0` is published with
+a public AMD64/ARM64 image. Install in Gladys using the GitHub repository URL
+`https://github.com/stefanbauer/gladys-freeathome`. Store discovery is enabled;
+catalog visibility depends on the next successful indexing and local cache.
+Local builds are covered separately in the [development guide](https://github.com/stefanbauer/gladys-freeathome/blob/HEAD/development.md).
+
+Use Gladys 5.1.0+ with Docker, a compatible SysAP with its local API enabled, the controller
+origin including `http://` or `https://`, the API username shown in free@home next
+and its password. Enter both credentials in Gladys' Configuration secret fields, separate from this
+integration's own Gladys token. Never share credentials or raw configuration.
+
+Save settings and check connection status. The test button checks REST access
+only; the ongoing status also confirms the WebSocket connection. Discovery lists
+supported channels. Create the ones you need and assign rooms yourself. One
+physical multichannel actuator can have several entries. The integration does
+not create or delete user devices automatically.
+
+Equally named channels on one device get an API channel suffix in discovery,
+such as `Double button [ch0000]` and `[ch0003]`. This does not mean upper/lower:
+REST supplies no physical mapping, and a rocker may send multiple actions on one
+channel. Existing devices keep their user-owned names; rename them in Gladys if
+needed.
+
+## Controls and button events
+
+**Since `1.1.0`:** impulse actuators (`FID_TRIGGER`, `0x0045`)
+appear as a separate writable **Press** feature (`button/push`). Create the
+actuator channel in Discovery; a same-named text sensor remains read-only.
+Press on the dashboard, or set the device value to **1** in a scene. Each press
+sends one trigger; free@home retains its configured impulse duration. No extra
+off command or software timer is added, and no contact/door state is inferred.
+Do not change the free@home function or delete existing sensor devices/scenes.
+After updating in Gladys, scan and create the actuator channel. Commands have
+synthetic test coverage; real-controller discovery passed, but physical
+actuation is unverified.
+
+Opening and slat opening are **0% closed, 100% open**. Slats appear only with
+matching datapoints, as a separate percentage slider, not calibrated degrees.
+Up/down/stop use actuator feedback; some actuators report position only when
+movement finishes. Stop first reads movement: idle is a no-op and unknown
+movement is rejected. ABB's stop also steps an idle blind, so an actuator stopping
+between that read and write remains a non-atomic protocol race. Zero brightness
+uses the separate binary off command.
+
+Create a button channel first, then choose **Integrations → free@home → Button
+action** in the scene editor. Select the button; an empty action filter matches
+any of its actions. Depending on button configuration, actions include on/off,
+dim up/down/stop, open/close and stop/step up/down. Equal live telegrams remain
+separate events. The last-action display is a state, not a press trigger.
+Telegram semantics are not a universal raw press/release or double-click API.
+Snapshots and initial synchronization never trigger scenes. Events during
+disconnection/resync are lost, not replayed; there is no reliable replay marker
+for an exactly-once guarantee.
+
+## Security and development status
+
+Prefer HTTPS with a trusted certificate. A private CA can be supplied using
+`NODE_EXTRA_CA_CERTS`; never disable TLS checks. Basic auth over HTTP is not
+encrypted. Never expose the controller API to the Internet. Commands are never
+automatically retried, including after reconnect: a lost acknowledgement does
+not prove that a command failed to execute.
+
+Alongside synthetic tests, explicitly authorized firmware 3.5.3 hardware checks
+verified a switched light, blind positioning, up/stop, repeated identical button
+scene events and restart/reconnection. A subsequent manual test confirmed dimming
+at 31% and 73% with matching feedback and off at 0%. Slats, the other button side and
+the separate down command have not been checked on real hardware. Groups,
+virtual devices, free@home scenes, HVAC and other sensors are outside this scope.
+Anonymous image downloads, full metadata/image validation and GitHub-URL
+installation with controller discovery and restart have passed for `1.0.0`.
+Device behavior and the hardware verification limits are unchanged from `0.1.0`.
+
+## Operation and updates
+
+Use Gladys' supervision controls for start/stop, restart, logs and updates. The
+Gladys/Docker host must be running; a developer's computer is not required.
+Use update, not uninstall/reinstall, to retain registration, configuration and
+devices: uninstalling in Gladys deletes them. The image contains no personal
+credentials. Runtime config comes from Gladys; no persistent local files are
+required.
+
+## Configuration settings
+
+These are the settings free@home asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Controller URL | `string` | Yes |  |
+| Local API username | `secret` | Yes |  |
+| Local API password | `secret` | Yes |  |
+
+## How to install free@home in Gladys
+
+1. In Gladys, open **Integrations**: free@home appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/stefanbauer/gladys-freeathome:1.1.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/stefanbauer/gladys-freeathome](https://github.com/stefanbauer/gladys-freeathome).
+
+free@home requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+free@home is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [stefanbauer](https://github.com/stefanbauer), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/stefanbauer/gladys-freeathome) — [source of this documentation](https://github.com/stefanbauer/gladys-freeathome/blob/HEAD/docs/en.md)

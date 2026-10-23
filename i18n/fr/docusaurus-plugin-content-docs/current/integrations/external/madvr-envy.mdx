@@ -1,0 +1,180 @@
+---
+title: "Intégration domotique madVR Envy, gratuite et open source"
+sidebar_label: "madVR Envy"
+description: "Processeurs vidéo madVR Envy en local : signal, HDR, profils, veille. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-madvr.png"
+keywords:
+  - "madvr envy"
+  - "domotique madvr envy"
+  - "gladys madvr envy"
+  - "madvr envy gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-madvr instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"madVR Envy","description":"Processeurs vidéo madVR Envy en local : signal, HDR, profils, veille.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-madvr","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-madvr.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T20:45:11Z"}} />
+
+Suivez et pilotez vos processeurs vidéo **madVR Envy** (Envy Core, Pro,
+Extreme) depuis Gladys, en local, sans aucun cloud : état de marche, signal
+d'entrée et de sortie (résolution, fréquence, HDR), format d'image détecté,
+températures internes, allumage, veille, extinction, profils, tone mapping et
+touches de télécommande.
+
+> **Important.** Cette intégration n'a jamais été testée avec un vrai
+> appareil : elle a été écrite d'après la bibliothèque `py-madvr2` (celle de
+> Home Assistant) et testée avec un faux Envy seulement. Vos retours sont les
+> bienvenus. Intégration non officielle, sans lien avec madVR Labs.
+
+## Installation
+
+1. Branchez l'Envy sur votre réseau et donnez-lui une **adresse IP fixe** dans
+   votre box (bail DHCP réservé).
+2. Allumez l'Envy : il n'écoute le réseau (port TCP 44077) qu'allumé.
+3. Dans Gladys, installez l'intégration **madVR Envy** et acceptez
+   l'autorisation **Wake-on-LAN** (Gladys envoie elle-même le paquet de réveil
+   sur votre réseau).
+4. Ouvrez sa configuration et saisissez les adresses IP, séparées par des
+   virgules (par exemple `192.168.1.60` ; port 44077 par défaut, un autre sous
+   la forme `192.168.1.60:44078`).
+5. L'Envy apparaît dans l'onglet **Découverte** : créez-le.
+
+La première fois, l'Envy doit être allumé : l'intégration lit son adresse
+MAC, qui l'identifie ensuite (et sert au Wake-on-LAN) ; son adresse IP peut
+changer : saisissez la nouvelle.
+
+## Ce que vous obtenez
+
+| Fonction                                          | Type Gladys                    | Remarque                                                    |
+| ------------------------------------------------- | ------------------------------ | ----------------------------------------------------------- |
+| Marche                                            | état binaire (lecture seule)   | 1 quand l'Envy répond, 0 sinon (éteint ou en veille)        |
+| État de marche                                    | texte (lecture seule)          | en anglais : On, Off or standby                             |
+| Allumer (Wake-on-LAN)                             | bouton                         | envoyé seulement quand l'Envy ne répond pas                 |
+| Veille, Éteindre                                  | boutons                        | jamais bloqués, voir plus bas                               |
+| Signal en entrée, Entrée HDR                      | états binaires (lecture seule) | HDR : HDR10, HLG…                                           |
+| Résolution, fréquence, dynamique, couleur, format | textes (lecture seule)         | du signal d'entrée, par exemple 3840x2160, 23.976p, HDR10   |
+| Résolution, fréquence, dynamique de sortie        | textes (lecture seule)         |                                                             |
+| Format d'image détecté, masquage                  | textes (lecture seule)         | par exemple 2.40:1 (Panavision)                             |
+| Températures GPU, HDMI, CPU, carte mère           | température de l'appareil, °C  | hors des moyennes de la pièce                               |
+| Activer un profil                                 | liste                          | profils Source, Display ou Custom 1 à 9                     |
+| Tone mapping activé / désactivé                   | boutons                        |                                                             |
+| Touche                                            | liste                          | Menu, flèches, OK, Input, Settings, couleurs (jamais Power) |
+
+Volontairement, aucun **interrupteur** : un « éteins tout » ou « allume
+tout » d'un assistant vocal ou d'une scène n'allume ni n'éteint jamais votre
+Envy. Utilisez les boutons dans vos scènes.
+
+## Commandes
+
+- **Veille** et **Éteindre** sont les commandes protectrices : elles partent
+  tout de suite, sans attendre une lecture ni une autre commande, et en un seul
+  essai. Elles annulent toute commande en cours ou en attente (Allumer et ses
+  Wake-on-LAN répétés compris) : rien de ce qui attendait ne part après
+  elles. Si l'Envy ne répond pas :
+  - dans les 2 minutes qui suivent un Wake-on-LAN (il démarre peut-être) : la
+    commande est refusée « does not answer yet: Standby will be sent once it
+    answers, nothing sent yet » (rien n'est encore envoyé), et l'intégration
+    l'envoie une fois, dès que l'Envy répond pendant ces 2 minutes (un nouvel
+    appui sur Allumer l'annule) ;
+  - sinon : elle réussit (rien à envoyer) seulement si la dernière lecture,
+    faite dans l'intervalle de rafraîchissement, avait déjà trouvé l'Envy
+    muet ; sinon elle est refusée « does not answer, nothing sent ».
+- **Allumer** relit d'abord l'Envy : s'il répond, rien n'est envoyé ; sinon
+  Gladys envoie un paquet Wake-on-LAN à son adresse MAC, puis à nouveau toutes
+  les 10 secondes pendant 2 minutes, jusqu'à ce qu'il réponde. Si la lecture
+  qui vient de finir (5 secondes au plus) l'a trouvé muet, ou si son adresse
+  est inconnue, le Wake-on-LAN part tout de suite (seule la MAC est
+  nécessaire). Si Gladys répond « trop de demandes », le paquet est redemandé
+  une fois 2 secondes plus tard ; si Gladys ne répond pas ou échoue, la
+  commande est signalée « Wake-on-LAN peut-être envoyé, sans confirmation de
+  Gladys » et les renvois continuent.
+- **Profil**, **tone mapping** et **touche** ne partent que si l'Envy répond.
+
+Avant chaque commande, l'intégration relit l'adresse MAC de l'Envy : si un
+autre Envy répond à cette adresse IP, rien n'est envoyé et l'adresse est
+oubliée. Une MAC donnée mais illisible (ou refusée par `ERROR`) ne compte pas
+comme un autre appareil : la commande part. Une MAC sans réponse à temps
+arrête un profil, un tone mapping ou une touche (« rien envoyé »), jamais la
+Veille ni l'Arrêt (envoyés dans une nouvelle connexion). Une lecture dont la
+MAC ne répond pas ne publie rien et garde les valeurs connues.
+
+Chaque commande reçoit une réponse en moins de 4 secondes (Gladys attend 5
+secondes). Une commande partie sans confirmation de l'Envy à temps est
+signalée « envoyée, sans confirmation » ; une commande refusée par l'Envy
+(`ERROR`) est signalée comme refusée ; une commande qui n'a pas pu partir est
+signalée « rien envoyé ». L'Envy est relu 5 secondes après la dernière d'une
+série de commandes, et pas du tout si rien n'est parti.
+
+## Bouton de la configuration
+
+- **Vérifier les Envy** : lit chaque Envy si l'intervalle de rafraîchissement
+  est écoulé, sinon montre la dernière lecture et l'heure de la prochaine.
+
+## Rafraîchissement, statut et limites
+
+- Chaque Envy est lu toutes les 30 secondes par défaut (10 à 300), en une
+  courte connexion fermée aussitôt. Jamais plus souvent : ni la reconnexion à
+  Gladys, ni un enregistrement de configuration inchangée, ni le bouton, ni un
+  redémarrage du conteneur (l'heure de la dernière tentative est gardée dans
+  `/data`) ne déclenchent une lecture plus tôt.
+- Un Envy qui ne répond pas affiche la marche à 0 et « Off or standby », et
+  est cité dans le statut de l'intégration.
+- Si un autre Envy répond à l'adresse d'un Envy créé (adresse changée), ce
+  dernier affiche aussi la marche à 0 et « Off or standby » : c'est une
+  supposition (il est peut-être allumé à sa nouvelle adresse), jusqu'à ce que
+  vous saisissiez sa nouvelle adresse.
+- Gladys accepte 300 états par minute par intégration : seules les valeurs qui
+  changent sont envoyées, et au-delà, la dernière valeur de chaque fonction
+  attend la minute suivante.
+
+## Données et confidentialité
+
+L'intégration garde dans `/data/madvr.json` les Envy connus (adresse MAC,
+adresse IP, port) et l'heure de la dernière lecture. Le protocole n'a pas de
+mot de passe : aucun secret n'est demandé ni gardé. Rien ne sort de votre
+réseau local.
+
+## Limites connues
+
+- L'Envy ne répond qu'allumé : éteint ou en veille, l'intégration ne peut pas
+  les distinguer (« Off or standby »).
+- Le profil actif n'est pas encore lu ; les profils proposés sont les numéros
+  1 à 9 de chaque groupe, sans leurs noms.
+- Pas encore de redémarrage, de message à l'écran ni de menus.
+- Jamais testé avec un vrai appareil : les réponses réelles peuvent différer.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par madVR Envy dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Vos madVR Envy, sur votre réseau local | `section` | Non | État de marche, signal d'entrée et de sortie (résolution, fréquence, HDR), format d'image détecté, températures internes, allumage (Wake-on-LAN), veille, extinction, profils, tone mapping et touches de télécommande de chaque madVR Envy, par le protocole de contrôle IP publié par madVR Labs (port TCP 44077), sans aucun cloud. Donnez à chaque Envy une adresse IP fixe dans votre box et saisissez-la ci-dessous pendant qu'il est allumé ; les Envy apparaissent alors dans l'onglet Découverte. Allumage, veille et extinction sont des boutons, jamais un interrupteur : un « tout éteindre » n'atteint jamais un Envy. Jamais testé avec un vrai Envy. Intégration non officielle, sans lien avec madVR Labs. |
+| Adresses IP des Envy | `string` | Non | Séparées par des virgules, par exemple 192.168.1.60. Port 44077 par défaut (un autre : 192.168.1.60:44078). |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture de chaque Envy, en secondes (10 à 300). Jamais plus souvent, même après un redémarrage ou avec le bouton de vérification. |
+| Adresse de diffusion du Wake-on-LAN (facultatif) | `string` | Non | Seulement si l'allumage ne réveille pas l'Envy : l'adresse de diffusion de votre réseau, par exemple 192.168.1.255. Vide : 255.255.255.255. Gladys envoie le paquet elle-même. |
+
+## Comment installer madVR Envy dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : madVR Envy apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-madvr:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-madvr](https://github.com/LM1LC3N7/gladys-madvr).
+
+madVR Envy nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+madVR Envy est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-madvr) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-madvr/blob/HEAD/docs/fr.md)

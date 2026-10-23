@@ -1,0 +1,218 @@
+---
+title: "Intégration domotique VMware ESXi, gratuite et open source"
+sidebar_label: "VMware ESXi"
+description: "Hôtes VMware ESXi et vCenter : CPU, mémoire, datastores, machines virtuelles, boutons. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-esxi.png"
+keywords:
+  - "vmware esxi"
+  - "domotique vmware esxi"
+  - "gladys vmware esxi"
+  - "vmware esxi gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-esxi instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"VMware ESXi","description":"Hôtes VMware ESXi et vCenter : CPU, mémoire, datastores, machines virtuelles, boutons.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-esxi","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-esxi.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T10:15:11Z"}} />
+
+Les hôtes VMware ESXi, seuls ou gérés par un vCenter, dans Gladys, par l’API
+vSphere locale (HTTPS, `/sdk`). Pratique pour un homelab :
+
+- chaque **hôte** peut devenir un appareil Gladys : **connecté** (oui /
+  non), **mode maintenance**, charge **CPU** et **mémoire** (%), **mémoire
+  utilisée** et **totale** (Go), **durée de fonctionnement** (heures),
+  **santé** (`green`, `yellow`, `red`, `gray`), **VM en marche**,
+  **version** ;
+- chaque **datastore** : **accessible**, **occupation** (%), **espace
+  libre** et **capacité** (Go) ;
+- chaque **machine virtuelle** : **en marche** (oui / non), **état**
+  (`poweredOn`, `poweredOff`, `suspended`), **VMware Tools en marche**,
+  charge **CPU** (%), **mémoire consommée** (Mo), **durée de
+  fonctionnement**, **santé**, et trois boutons : **Démarrer**, **Arrêter
+  (invité)**, **Redémarrer (invité)**, inactifs tant que vous ne les
+  autorisez pas.
+
+Gladys n’arrête, ne redémarre, ne met en maintenance ni en veille jamais un
+hôte, et ne coupe ni ne réinitialise jamais brutalement une VM.
+
+> **Cette intégration n’a jamais été testée avec un vrai hôte ESXi** ni avec
+> un vrai vCenter. Cette première version suit l’API vSphere telle que la
+> décrit pyVmomi (le SDK officiel) et n’a été testée qu’avec un faux
+> serveur. Dites sur le forum Gladys ce qui marche et ce qui ne marche pas,
+> avec la version d’ESXi ou du vCenter.
+
+Intégration non officielle, sans lien avec VMware ni Broadcom.
+
+## Avant de commencer
+
+1. **Créez un compte pour Gladys** plutôt que d’utiliser `root`. Sur un ESXi
+   seul (Host Client, `https://<hôte>/ui`) : **Hôte**, **Gérer**,
+   **Sécurité et utilisateurs**, **Utilisateurs**, **Ajouter un
+   utilisateur** ; puis **Hôte**, **Actions**, **Autorisations**, **Ajouter
+   un utilisateur** avec le rôle **Lecture seule**. Sur un vCenter : un
+   utilisateur de `vsphere.local` (ou de votre annuaire) avec le rôle
+   **Lecture seule** à la racine de l’inventaire, propagé.
+2. **Seulement si vous voulez les boutons des VM** : donnez au compte un
+   rôle qui contient en plus les privilèges **Machine virtuelle,
+   Interaction, Mettre sous tension** (Démarrer), **Mettre hors tension**
+   (Arrêter) et **Réinitialiser** (Redémarrer), sur les seules VM
+   concernées si possible.
+3. Avec une **licence ESXi gratuite**, l’API est en lecture seule : les
+   lectures fonctionnent, les boutons sont refusés par le serveur
+   (« interdit par la licence »).
+4. Facultatif : notez l’**empreinte SHA-256** du certificat du serveur
+   (affichée par votre navigateur sur son interface web, ou par
+   `openssl x509 -noout -fingerprint -sha256 -in /etc/vmware/ssl/rui.crt`
+   dans le shell d’ESXi).
+
+## Configuration
+
+- **Adresse de l’hôte ESXi ou du vCenter** : son adresse IP ou son nom
+  d’hôte. Une adresse collée depuis un navigateur
+  (`https://192.168.1.10/ui/`) est lue comme son hôte et son port. HTTPS
+  uniquement (l’API n’existe que là).
+- **Port** : vide, 443.
+- **Empreinte du certificat** : ESXi utilise un certificat auto-signé
+  qu’aucune autorité ne garantit. Vide : Gladys l’apprend à la première
+  connexion, par une requête qui ne porte aucun secret, garde son empreinte
+  SHA-256 dans son volume `/data`, et n’envoie le mot de passe que sur une
+  connexion dont le certificat correspond. Remplie : seul ce certificat est
+  accepté, dès la toute première requête. Si le serveur présente plus tard
+  un autre certificat (réinstallation, certificat renouvelé, ou autre
+  machine à cette adresse), Gladys s’arrête **avant d’envoyer quoi que ce
+  soit** et montre l’empreinte SHA-256 de ce certificat dans le statut.
+  Enregistrer la configuration ne l’accepte **pas**. Comparez l’empreinte
+  avec celle de votre serveur ; si c’est la même, appuyez sur **Faire
+  confiance au nouveau certificat** (il épingle exactement le certificat
+  montré, puis lit le serveur), ou saisissez cette empreinte dans ce champ.
+- **Nom d’utilisateur** et **Mot de passe** : le compte ci-dessus. Le mot de
+  passe est gardé par Gladys dans sa base, jamais réaffiché, envoyé
+  seulement au serveur. Il est pris tel que vous le tapez (une espace au
+  début ou à la fin compte). L’intégration ne l’écrit jamais dans ses
+  journaux ni dans `/data`, pas plus que le cookie de session.
+- **Rafraîchissement** : la fréquence de lecture du serveur (toutes les
+  minutes par défaut). Une requête à chaque fois (quelques-unes de plus pour
+  un vCenter avec beaucoup d’objets), et une connexion seulement quand la
+  session a expiré.
+- **Autoriser le démarrage / l’arrêt / le redémarrage d’une VM** :
+  désactivés par défaut (voir plus bas).
+
+Le bouton **Tester la connexion** dit ce que répond le serveur. Comme le
+scan de l’onglet Découverte, un redémarrage de Gladys ou de l’intégration, et
+la même configuration enregistrée de nouveau, il ne relit le serveur que
+quand la dernière tentative est plus ancienne que le rafraîchissement (après
+une erreur : que le délai de nouvel essai) ; sinon il donne le dernier
+résultat sans requête. Enregistrer la configuration avec d’autres valeurs
+relit tout de suite.
+
+## Les valeurs
+
+- **CPU (%)** d’un hôte : le CPU utilisé sur la capacité de ses cœurs ;
+  d’une VM : sur la capacité de ses CPU virtuels sur son hôte.
+- **Mémoire utilisée** (Go, milliards d’octets) d’un hôte : ce qu’ESXi
+  déclare utilisé ; **mémoire consommée** (Mo, millions d’octets) d’une VM :
+  la mémoire de l’hôte qu’elle occupe.
+- Un hôte que le vCenter ne joint pas ne donne que **connecté** 0, sa santé
+  et sa version ; une VM éteinte donne 0 pour son CPU, sa mémoire et sa
+  durée de fonctionnement.
+- Gladys n’a pas d’unité de pourcentage pour un processeur ou un disque :
+  l’unité est dans le nom de la fonction.
+- 32 hôtes, 64 datastores et 200 VM au plus sont lus ; les modèles de VM
+  sont laissés de côté.
+- Pas de déclencheur de scène propre : utilisez les déclencheurs d’appareil
+  de Gladys sur **Running**, **Connected** ou **Used (%)** (les fonctions
+  portent des noms anglais ; par exemple « Used (%) au-dessus de 90 »).
+
+## Les boutons des VM
+
+Arrêter une VM peut couper un service : un pare-feu, un NAS, un serveur DNS,
+Gladys lui-même s’il tourne dans l’une d’elles. Donc :
+
+- chaque bouton refuse tant que son option n’est pas activée ;
+- ce sont des boutons, jamais des interrupteurs : un « éteins tout » d’un
+  assistant vocal ou d’une scène ne les atteint jamais ;
+- avant d’envoyer, Gladys relit la VM et vérifie que c’est la même (son
+  UUID d’instance) et son état : **Démarrer** ne fait rien sur une VM en
+  marche ; **Arrêter** et **Redémarrer** demandent une VM en marche avec
+  VMware Tools en marche (ils demandent au système invité de s’arrêter ou de
+  redémarrer proprement : jamais de coupure ni de réinitialisation
+  brutale) ; une valeur illisible fait refuser ;
+- l’option, la connexion et l’échéance sont revérifiées juste avant l’envoi ;
+  quand le serveur est trop lent (3,5 s), rien n’est envoyé et Gladys le
+  dit ;
+- une action par VM et par minute au plus (même après un redémarrage de
+  l’intégration) : une scène en boucle ne peut pas marteler une VM ;
+- **Démarrer** n’est confirmé que quand la VM est relue en marche dans le
+  délai de réponse ; sinon, et toujours pour **Arrêter** et **Redémarrer**
+  (l’invité le fait de lui-même), Gladys répond « envoyé, sans
+  confirmation » et relit cette VM 20 secondes plus tard.
+
+## Dépannage
+
+Le statut de connexion de l’intégration dit ce qui se passe :
+
+- **Nom d’utilisateur ou mot de passe refusé** : Gladys s’arrête et ne
+  réessaie pas seul, même après un redémarrage (ESXi bloque un compte après
+  quelques échecs). Vérifiez-les et enregistrez la configuration.
+- **Le serveur accepte la connexion mais refuse les lectures** : il manque
+  au compte le rôle Lecture seule ; Gladys réessaie, en espaçant.
+- **Certificat HTTPS changé** : voir Empreinte du certificat plus haut (le
+  bouton **Faire confiance au nouveau certificat**, jamais un simple
+  enregistrement).
+- **HTTP 429 ou erreur serveur (5xx)** : toutes les requêtes sont
+  suspendues (d’une minute à six heures), et la pause survit à un
+  redémarrage. Une erreur SOAP (HTTP 500 avec une réponse de l’API) n’est
+  pas une pause.
+- **Pas de réponse, mauvaise adresse** : Gladys réessaie, jamais plus vite
+  que le rafraîchissement, en attendant plus longtemps à chaque fois
+  (jusqu’à 30 minutes).
+
+## Vie privée
+
+Gladys ne garde que ce qu’il affiche. Les noms d’hôte invités, adresses IP et
+MAC, annotations et UUID BIOS des VM ne sont jamais demandés. Les noms des
+hôtes, datastores et VM vont dans Gladys (ils nomment les appareils), jamais
+dans les journaux ni dans `/data`.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par VMware ESXi dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Fonctionnement | `section` | Non | Gladys lit un hôte VMware ESXi ou un vCenter par son API vSphere locale (HTTPS, /sdk), avec un compte du serveur. Chaque hôte, datastore et machine virtuelle peut devenir un appareil : hôte connecté, maintenance, charge CPU et mémoire, durée de fonctionnement, santé, VM en marche ; occupation et espace libre des datastores ; VM en marche, état, VMware Tools, CPU, mémoire, durée de fonctionnement. Chaque VM a des boutons Démarrer, Arrêter et Redémarrer, inactifs tant que vous ne les autorisez pas plus bas. Gladys n'arrête ni ne redémarre jamais un hôte. Intégration non officielle, sans lien avec VMware ni Broadcom. |
+| Adresse de l'hôte ESXi ou du vCenter | `string` | Oui | L'adresse IP (ou le nom d'hôte) de son interface web sur votre réseau local. HTTPS uniquement. |
+| Port | `number` | Non | Vide : 443. Changez-le seulement si vous avez déplacé le port HTTPS du serveur. |
+| Empreinte du certificat (SHA-256, facultatif) | `string` | Non | ESXi utilise un certificat auto-signé. Vide : Gladys l'apprend à la première connexion, avant d'envoyer le mot de passe, puis refuse tout autre (montré dans le statut, accepté seulement par le bouton Faire confiance au nouveau certificat ou en saisissant son empreinte ici). Rempli : seul ce certificat est accepté (l'empreinte SHA-256 affichée par votre navigateur ou par la console ESXi). |
+| Nom d'utilisateur | `string` | Oui | Un compte dédié avec le rôle Lecture seule est conseillé (root fonctionne mais peut tout faire). Les boutons des VM demandent en plus les privilèges Mettre sous tension, Mettre hors tension et Réinitialiser (voir la documentation). |
+| Mot de passe | `secret` | Oui | Le mot de passe de ce compte. Gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement au serveur, et seulement une fois son certificat vérifié. Si le serveur le refuse, Gladys s'arrête jusqu'à l'enregistrement de la configuration (ESXi bloque un compte après quelques échecs). |
+| Rafraîchissement | `select` | Oui | Fréquence de lecture du serveur (une requête à chaque fois, plusieurs pour un gros vCenter). |
+| Boutons des VM | `section` | Non | Arrêter une VM peut couper un service (un pare-feu, un NAS, Gladys lui-même s'il tourne dans l'une d'elles). Chaque bouton est désactivé par défaut. La VM est relue avant d'agir, une action par VM et par minute au plus, et rien n'est jamais envoyé à un hôte. |
+| Autoriser le démarrage d'une VM | `boolean` | Non | Désactivé par défaut. Activé : le bouton Démarrer d'une VM la met sous tension (ou la reprend si elle est suspendue). |
+| Autoriser l'arrêt d'une VM | `boolean` | Non | Désactivé par défaut. Activé : le bouton Arrêter demande au système invité de s'arrêter proprement (VMware Tools nécessaire). Jamais de coupure brutale. |
+| Autoriser le redémarrage d'une VM | `boolean` | Non | Désactivé par défaut. Activé : le bouton Redémarrer demande au système invité de redémarrer proprement (VMware Tools nécessaire). Jamais de réinitialisation brutale. |
+
+## Comment installer VMware ESXi dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : VMware ESXi apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-esxi:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-esxi](https://github.com/LM1LC3N7/gladys-esxi).
+
+VMware ESXi nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+VMware ESXi est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-esxi) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-esxi/blob/HEAD/docs/fr.md)

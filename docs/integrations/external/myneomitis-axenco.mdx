@@ -19,7 +19,11 @@ https://github.com/Dreamthy/gladys-neomitis instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"MyNeomitis (Axenco)","description":"Control your Neomitis / Axenco heaters and thermostats from Gladys.","owner":"Dreamthy","owner_avatar_url":"https://avatars.githubusercontent.com/u/86977969?v=4","repo_url":"https://github.com/Dreamthy/gladys-neomitis","cover_url":"https://integration-store-storage.gladysassistant.com/covers/Dreamthy--gladys-neomitis.png","type":"device","version":"1.0.2","gladys_version":">=4.86.0","stars":0,"pushed_at":"2026-08-16T18:06:32Z"}} />
+<ExternalIntegrationHeader integration={{"name":"MyNeomitis (Axenco)","description":"Control your Neomitis / Axenco heaters and thermostats from Gladys.","owner":"Dreamthy","owner_avatar_url":"https://avatars.githubusercontent.com/u/86977969?v=4","repo_url":"https://github.com/Dreamthy/gladys-neomitis","cover_url":"https://integration-store-storage.gladysassistant.com/covers/Dreamthy--gladys-neomitis.png","type":"device","version":"1.1.0","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-20T20:52:27Z"}} />
+
+**Version 1.1 — Gladys ≥ 5.2:** read the [migration guide](https://github.com/Dreamthy/gladys-neomitis/blob/HEAD/upgrade.en.md)
+for native thermostat controls, the widget and scene actions. The following
+sections also describe the legacy features.
 
 This integration controls the **Neomitis / Axenco** heaters, thermostats and
 modules managed by the **MyNeomitis** mobile app from Gladys. It is a
@@ -71,23 +75,44 @@ by its `rfid`.
 
 ## Features created in Gladys
 
-One Axenco device becomes **one Gladys device carrying several features** —
-Gladys has no `climate` entity bundling temperature, setpoint and mode the way
-Home Assistant does.
+One Axenco device becomes **one Gladys device carrying several features**.
+It works independently: creating a Gladys thermostat is optional.
 
 - **Current temperature** — sensor, in °C, with history (charts).
 - **Target temperature** — writable setpoint. Its bounds come from the device
   itself (`comfLimitMin` / `comfLimitMax`) rather than a hard-coded 7–30 °C: a
-  heater limited to 16–21 °C really shows 16–21 °C.
-- **Current mode** — read-only text: "Confort", "Éco", "Boost"… In Auto it
-  says which side of the schedule is running: "Auto (Confort)" or
-  "Auto (Éco)". The switch itself stays a single "Auto".
-- **One switch per mode** — "Auto", "Confort", "Éco", "Hors gel", "Boost",
-  "Veille"… depending on the model. Auto is a mode like any other
+  heater limited to 16–21 °C really shows 16–21 °C. On main devices it follows the
+  effective target of the active mode. In standby it remembers the value
+  without waking the heater; resume with a mode or an explicit override.
+- **Mode du radiateur** — OFF/HEATING on EV30, ECTRL, ESTAT, RSS-ECTRL, NTD
+  and ETRV; NTD also reports Cooling according to the installation changeover,
+  which stays read-only. Select it with the target in a real Gladys thermostat.
+  Protected stop/resume covers all six models; this project only has hardware
+  observations for EV30 and EWS.
+- **Mode Axenco** — one selector for the modes supported by the model:
+  Comfort, Eco, Auto, Boost, Standby, etc. It works without a Gladys thermostat.
+  On EWS it is named **Mode du module**, using **Confort −1 °C**,
+  **Confort −2 °C** and **Arrêt** to match Gladys pilot-wire terminology.
+  The **Mode** / **Commande fil pilote (6 ordres)** duplicate is removed when
+  updating from Discovery. Replace any references before updating. The widget
+  displays the full observed mode without a stale standard-order value.
+  On temperature-regulating devices, **Dérogation (consigne actuelle)** applies
+  the last observed Axenco target. To choose another temperature, change
+  **Température de consigne** or use the widget.
+- **Mode details** — the widget shows "Auto (Confort)", "Auto (Éco)" and
+  unknown codes from observed hardware state. The selector stays on "Auto".
+  The old text feature is retained as **Mode actuel (compatibilité)** only
+  when already created. Devices without a selector keep their read-only mode.
+- **Fenêtre ouverte** — one standard Gladys contact: `0` open, `1` closed.
+  An already-created legacy contact with the opposite values remains as
+  **Fenêtre ouverte (compatibilité)** to preserve existing scenes.
+- **Legacy mode switches** — "Auto", "Confort", "Éco", "Hors gel", "Boost",
+  "Veille"… These are retained only when already created in Gladys, preserving
+  existing scenes. New devices use the selector instead. Auto is a mode like any other
   (`targetMode: 0`): picking it leaves the manual modes, and vice versa.
 - **Consigne Confort / Consigne Éco / Consigne Hors gel** — the temperatures
-  the modes use, writable. Not to be confused with the target temperature
-  above, which is the one-off derogation. Neither `pyaxencoapi` nor the Home
+  the modes use, writable. These are distinct from the shared target; writing
+  that target while running starts an override. Neither `pyaxencoapi` nor the Home
   Assistant integration exposes them.
   Restricted to devices that actually **regulate** a temperature. An `EWS` does
   report the three fields but refuses to write them: it drives a fil pilote and
@@ -106,7 +131,7 @@ Home Assistant does.
 Feature names are in French, matching the MyNeomitis app and the Neomitis
 product range.
 
-Mode switches are **exclusive**: turning one on sends that mode to Axenco and
+Legacy mode switches are **exclusive**: turning one on sends that mode to Axenco and
 turns the others off in the same batch. Turning one **off** does nothing — an
 Axenco device is always in some mode, there is no "no mode" to send, so the
 switch snaps back to reality.
@@ -117,60 +142,24 @@ the same call as the official app, `targetTemp` + `overrideTemp` +
 `targetMode: 8` in one go. `climate.py` writes the mode first and then the
 temperature; that first call is a no-op, measured.
 
-## Why a mode dropdown is impossible, not merely inconvenient
+## Standard modes and legacy compatibility
 
-That is the fair question to ask in front of seven switches. The answer is in
-the Gladys code, not in a matter of taste.
-
-The dashboard picks the widget of a writable feature by looking its `type` up
-in a **static** map (`front/src/components/boxs/device-in-room/DeviceRow.jsx`).
-Every widget that draws a list has its options **hard-coded in the front**:
-
-| Type tried                    | What the widget actually renders                 |
-| ----------------------------- | ------------------------------------------------ |
-| `HEATER` / `PILOT_WIRE_MODE`  | 6 fixed fil-pilote options; `min`/`max` ignored  |
-| `AIR_CONDITIONING` / `MODE`   | 3 fixed buttons (auto / cooling / heating)       |
-| `VACUUM_CLEANER` / `RUN_MODE` | 3 fixed values                                   |
-| `FAN` / `*_SETTING`           | options from a fixed enum, labels from the front |
-| `SENSOR` / `INTEGER`          | rendered as a sensor: not writable               |
-| `TEXT` / `TEXT`               | rendered as a sensor: not writable               |
-
-Gladys does have the mechanism this would need: `supported_options`, a list of
-`{value, label, sort_order}` attached to a feature. It is validated and stored
-server side (`normalizeSupportedOptions.js`,
-`device.syncFeatureSupportedOptions.js`), and the integration could supply it.
-But **no dashboard component consumes it correctly**: the only one that reads
-it renders its label with
-
-```jsx
-<Text id={`…${AC_MODE_TRANSLATION_KEYS[mode.value]}`} default={mode.label} />
-```
-
-and `preact-i18n` has no `default` prop — its `Text` component only reads
-`{ id, children, plural, fields }` and falls back to `children[0]`. With no
-child, `translate()` returns `null`: **the button renders empty**. Values that
-do have a translation key inherit air-conditioning labels ("Cooling",
-"Heating"…) unrelated to the Axenco mode behind them.
-
-So the only writable widget whose **labels and value set are both ours** is the
-plain binary switch (`BinaryDeviceFeature`, type `binary`), whose label is
-simply the feature name. Hence the choice.
-
-**Its accepted limits:** many rows on the eight-mode models, and turning a switch
-off means nothing. In exchange, every mode of every model is reachable with the
-right label, and each one is directly usable in a scene or by the Gladys brain.
-
-**If Gladys fixes the rendering** (a `<Text>` without a non-existent prop, and a
-translation table that does not shadow `label`), the right representation
-becomes a single `AIR_CONDITIONING` / `MODE` feature carrying its
-`supported_options`. The change would be confined to `src/devices/features.js`
-and `src/devices/index.js`.
+Version 1.1 adds a real ON/OFF control for EWS relays, a standard pilot-wire
+selector and an EV30 **Mode du radiateur** with a target shared by direct
+controls and the native thermostat. Existing
+preset switches retain their ids and semantics: switching one OFF is not a
+hardware stop. Supported choices are declared through `supported_options`.
+The Neomitis widget shows live temperatures and two controls: Mode and Setpoint.
+Auto and Standby remain available in the mode selection. Connection details are optional; anomalies
+and window status remain visible. Read the
+[migration and thermostat guide](https://github.com/Dreamthy/gladys-neomitis/blob/HEAD/upgrade.en.md) for configuration.
 
 ## Using it in scenes
 
 Each mode switch is an ordinary feature: a scene can turn _Salon – Éco_ on in
-the evening and _Salon – Confort_ on in the morning. The _Mode actuel_ feature
-being text, it fits display and notifications better than conditions.
+the evening and _Salon – Confort_ on in the morning. Use **Mode Axenco** on
+new devices. The legacy _Mode actuel (compatibilité)_ text is retained only
+when already created.
 
 ## Known limitations
 
@@ -184,8 +173,8 @@ being text, it fits display and notifications better than conditions.
   reports 60 or 61 back, so all three decode to Auto on read — that read/write
   asymmetry is what made the reference library look right.
 - **An unknown code stays visible.** A mode Axenco reports that the integration
-  does not know shows as "Inconnu (42)" in _Mode actuel_ instead of being
-  silently dropped — that is how the 61 case was spotted.
+  does not know shows as "Inconnu (42)" in the widget and in an existing legacy
+  text feature, instead of being silently dropped — that is how the 61 case was spotted.
 - **`EWS` fil pilote: the mode list depends on `deviceType`.** `pyaxencoapi`
   and `select.py` advertise ten presets for every fil pilote EWS — the union of
   what Axenco hardware can do, not what a given module offers. A verified
@@ -209,19 +198,39 @@ being text, it fits display and notifications better than conditions.
   UFH is a sub-device whose mode lives on `changeOverUser`. This integration
   uses the dedicated sub-device route `pyaxencoapi` provides for exactly that
   case (`set_sub_device_mode_ufh`).
-- **The weekly program is not exposed.** The call exists in the client
-  (`setDeviceProgram`), but Gladys has no representation for a device schedule:
-  keep managing it in the MyNeomitis app. "Auto" mode follows that program.
-- **`has_feedback` is optimistic.** After a command the integration publishes
-  the requested value without waiting for Axenco to confirm; the WebSocket push
-  that follows corrects the display if the device did something else.
+- **The Axenco weekly program is not edited here.** The client supports
+  `setDeviceProgram`; keep editing this manufacturer schedule in MyNeomitis.
+  The native Gladys thermostat offers a separate schedule. Axenco Auto follows
+  the manufacturer schedule.
+- **Legacy commands publish optimistically.** Their requested values are
+  corrected by subsequent observations. Shared targets on all six thermostat models instead
+  uses confirmed hardware feedback; see the migration guide.
 
 ## Verification status per model
 
-Everything below concerns the **mode list only**. The protocol findings are the
-same for every model: `auto` is written as `targetMode: 0`, a derogation is not
-a selectable mode, and a setpoint is sent as `targetTemp` + `overrideTemp` +
-`targetMode: 8`. Those three apply to the "inherited" rows too.
+EV30 and EWS observations do not validate other models' protocols. The
+integration currently writes `targetMode: 0` for Auto on every profile that
+offers it. Main devices share the `targetTemp` + `overrideTemp` +
+`targetMode: 8` setpoint command captured on EV30; NTD and ETRV use their
+gateway with `targetMode: 8`, then `targetTemp` in a second call, as Home
+Assistant does. Applying these commands to untested models
+still needs hardware verification.
+
+The comparison on 20 October 2026 uses the
+[Home Assistant MyNeomitis source](https://github.com/home-assistant/core/tree/dev/homeassistant/components/myneomitis)
+and its `pyaxencoapi==1.0.7` dependency, whose listed repository is
+[`AXENCO-FR/ha-py-axenco-api`](https://github.com/AXENCO-FR/ha-py-axenco-api).
+These sources use Auto `60` and `overrideTemp` alone for a main device's
+setpoint. They identify differences; they do not justify replacing existing
+commands without evidence for the particular model.
+
+The latest [PyPI release](https://pypi.org/project/pyaxencoapi/) is actually
+**1.0.9**, published on 21 April 2026. Comparing the 1.0.7 and 1.0.9 archives
+shows gateway ID extraction from `parents` and reorganized per-model mode
+maps, including EWS and UFH. This integration already handles those routes
+and maps. Version 1.0.9 retains Auto `60` and `overrideTemp` alone, so it does
+not resolve the EV30 differences. Home Assistant and the latest library
+release must therefore be checked separately.
 
 | Model                                | Mode list                    | Command routing                 |
 | ------------------------------------ | ---------------------------- | ------------------------------- |
@@ -233,9 +242,10 @@ a selectable mode, and a setpoint is sent as `targetTemp` + `overrideTemp` +
 | `NTD`, `ETRV`                        | inherited from `pyaxencoapi` | inherited, gateway never tested |
 | `UFH`                                | inherited from `pyaxencoapi` | inherited, gateway never tested |
 
-"Inherited" means: the reference library's behaviour, kept as is for lack of
-hardware to check it against. That library turned out to be wrong on at least
-two counts, so treat those rows as hypotheses.
+"Inherited" describes the origin of a mode list or route, not hardware
+certification or a complete match with the current library. Automated tests
+check serialized commands and simulated readbacks for each profile; they do
+not prove that real devices apply those commands.
 
 The most doubtful one is `comfort_plus` (code 20), which `pyaxencoapi` gives to
 `ECTRL` / `ESTAT` / `RSS-ECTRL`. It is ignored by an EV30 and by an EWS, both
@@ -289,11 +299,11 @@ These are the settings MyNeomitis (Axenco) asks for in its configuration screen 
 ## How to install MyNeomitis (Axenco) in Gladys
 
 1. In Gladys, open **Integrations**: MyNeomitis (Axenco) appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/dreamthy/gladys-neomitis:1.0.2`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/dreamthy/gladys-neomitis:1.1.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/Dreamthy/gladys-neomitis](https://github.com/Dreamthy/gladys-neomitis).
 
-MyNeomitis (Axenco) requires Gladys `>=4.86.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+MyNeomitis (Axenco) requires Gladys `>=5.2.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
 
 Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
 

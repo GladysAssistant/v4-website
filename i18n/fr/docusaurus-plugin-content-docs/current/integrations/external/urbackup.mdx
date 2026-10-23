@@ -1,0 +1,240 @@
+---
+title: "Intégration domotique UrBackup, gratuite et open source"
+sidebar_label: "UrBackup"
+description: "Vos clients UrBackup dans Gladys : en ligne, dernières sauvegardes, alerte si échec ou retard. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-urbackup.png"
+keywords:
+  - "urbackup"
+  - "domotique urbackup"
+  - "gladys urbackup"
+  - "urbackup gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/guim31/gladys-urbackup instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"UrBackup","description":"Vos clients UrBackup dans Gladys : en ligne, dernières sauvegardes, alerte si échec ou retard.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-urbackup","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-urbackup.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T18:21:31Z"}} />
+
+[UrBackup](https://www.urbackup.org/) est un système de sauvegarde
+client/serveur libre : un serveur sauvegarde les fichiers (et, sous Windows,
+les images disque) des ordinateurs de la maison ou du bureau. Cette
+intégration amène les clients d'un serveur UrBackup dans Gladys : chaque
+client (un ordinateur sauvegardé) devient un appareil avec son état, s'il est
+en ligne, ses dernières sauvegardes de fichiers et d'image, la sauvegarde en
+cours et sa progression. Des scènes peuvent réagir quand **n'importe quelle**
+sauvegarde réussit, échoue ou est en retard, un widget de tableau de bord
+liste d'abord les clients en échec, et une scène peut lancer une sauvegarde de
+fichiers incrémentale.
+
+Testée sur un vrai serveur UrBackup 2.5 (image Docker `uroni/urbackup-server`
+2.5.37, client `uroni/urbackup-client` 2.5.31) : connexion avec et sans
+utilisateurs, une sauvegarde réussie, une en échec, une sauvegarde lancée
+depuis l'intégration, un client hors ligne. Pas encore testée sur un vrai
+Gladys : vos retours sont les bienvenus sur
+[les issues](https://github.com/guim31/gladys-urbackup/issues).
+
+## Ce qu'il vous faut
+
+- Gladys Assistant 5.1.0 ou plus récent.
+- Un serveur UrBackup joignable depuis la machine de Gladys, avec son
+  interface web (port 55414 par défaut).
+- Un utilisateur de cette interface web (**Paramètres → Utilisateurs**) :
+  l'admin, ou mieux un utilisateur dédié avec les droits `status`, `progress`,
+  `lastacts`, `logs` et `start_backup` (ce dernier seulement pour lancer des
+  sauvegardes depuis Gladys). Un serveur sans aucun utilisateur accepte tout le
+  monde : l'intégration fonctionne alors sans mot de passe, mais protégez votre
+  serveur.
+
+L'intégration lit UrBackup toutes les 5 minutes par défaut (toutes les 30
+secondes pendant une sauvegarde) : trois requêtes légères sur votre propre
+réseau.
+
+## Premiers pas
+
+### 1. Préparer le serveur UrBackup
+
+Dans l'interface web d'UrBackup, **Paramètres → Utilisateurs → Créer un
+utilisateur** : un nom (`gladys` par exemple), un mot de passe, et les droits
+listés ci-dessus. Avec le compte admin, rien à faire.
+
+### 2. Configurer l'intégration
+
+Dans Gladys, **Intégrations → UrBackup → Configuration** :
+
+- **Adresse d'UrBackup** : `http://192.168.1.2:55414` par exemple. Une adresse
+  seule (`192.168.1.2`) vaut `http://` sur le port 55414 ; une adresse copiée
+  depuis le navigateur fonctionne aussi. Derrière un proxy inverse, son
+  adresse en `https://` (avec un certificat valide).
+- **Nom d'utilisateur** et **Mot de passe** : l'utilisateur de l'interface
+  web.
+- **Intervalle de rafraîchissement** : 1, 5 (par défaut) ou 15 minutes.
+- **En retard après** : quand un client sans sauvegarde réussie passe en
+  retard. _Automatique_ (par défaut) suit UrBackup : un client est en retard
+  quand UrBackup ne marque plus ses sauvegardes de fichiers OK (pas de
+  sauvegarde dans l'intervalle de ses paramètres, celui de l'incrémentale par
+  défaut). Ou un délai fixe, de 12 heures à une semaine, depuis sa dernière
+  sauvegarde réussie, de fichiers ou d'image.
+- **Autoriser le lancement des sauvegardes** : permet à l'action de scène
+  « Lancer une sauvegarde de fichiers » de fonctionner. Désactivez-le si
+  personne ne doit lancer de sauvegarde depuis Gladys.
+- **Langue des noms** : langue des noms des fonctionnalités, des états et des
+  résultats de scène.
+
+**Tester la connexion** lit UrBackup et résume : le nombre de clients, en
+ligne, en échec et en retard.
+
+### 3. Ajouter les clients
+
+Dans l'onglet **Découverte**, ajoutez les clients à suivre, et l'appareil
+« UrBackup » pour le serveur. Les déclencheurs de scène fonctionnent pour
+tous les clients, ajoutés ou non.
+
+## Les appareils
+
+Chaque client :
+
+| Fonctionnalité                          | Valeur                                                 |
+| --------------------------------------- | ------------------------------------------------------ |
+| État                                    | OK, En échec, En retard, En cours ou Aucune sauvegarde |
+| En ligne                                | 1 quand le client est connecté au serveur              |
+| Dernière sauvegarde de fichiers         | jour/mois heures:minutes, « - » si aucune              |
+| Heures depuis la sauvegarde de fichiers | en heures                                              |
+| Dernière sauvegarde d'image             | jour/mois heures:minutes, « - » si aucune              |
+| Heures depuis la sauvegarde d'image     | en heures                                              |
+| Sauvegarde en cours                     | 1 pendant une sauvegarde de ce client                  |
+| Progression                             | en %, de la sauvegarde en cours                        |
+| Erreurs de la dernière sauvegarde       | erreurs du journal de sa dernière sauvegarde           |
+
+L'appareil « UrBackup », pour le serveur, compte :
+
+- **Clients en ligne** ;
+- **Sauvegardes en cours** ;
+- **Clients en échec** ;
+- **Clients en retard**.
+
+Une sauvegarde « échoue » quand son journal contient des erreurs : une
+sauvegarde qu'UrBackup n'a pas pu mener à bien, ou terminée avec des erreurs.
+Un client hors ligne prend le badge « injoignable » dans Gladys. L'état montre
+d'abord ce qui demande de l'attention : un client en échec affiche « En
+échec » même s'il est aussi en retard.
+
+## Tableau de bord
+
+Le widget **UrBackup** affiche le nombre de clients en échec, en retard et en
+ligne, puis une ligne par client : en échec d'abord, puis en retard, en cours,
+sans sauvegarde, OK, avec la dernière sauvegarde (ou la progression de celle
+en cours) ; un client OK hors ligne est en gris. Tous les clients par défaut,
+ou ceux choisis dans ses réglages. Le bouton **Actualiser** relit UrBackup.
+
+## Scènes
+
+### Déclencheurs
+
+- **Une sauvegarde réussit** : une sauvegarde (fichiers ou image) se termine
+  sans erreur. Informations : client, type (fichiers, image), durée
+  (minutes), taille transférée.
+- **Une sauvegarde échoue** : une sauvegarde se termine avec des erreurs dans
+  son journal. Informations : client, type, première erreur, erreurs.
+- **Un client est en retard** : un client n'a pas eu de sauvegarde réussie
+  depuis plus longtemps que le délai « En retard après ». Une fois, puis de
+  nouveau après une nouvelle réussite. Informations : client, heures depuis la
+  dernière réussite, dernière réussite.
+
+Chaque déclencheur peut être limité à certains clients (vide : tous).
+
+### Actions
+
+- **État d'un client** : lit l'état d'un client pour les actions suivantes :
+  en échec, en retard, en ligne, l'état en toutes lettres, le client, la
+  dernière réussite, les heures depuis la dernière réussite (-1 si aucune), et
+  une phrase toute prête (« laptop-anna : En échec, dernière sauvegarde 18/10
+  02:05. »).
+- **Lancer une sauvegarde de fichiers** : lance maintenant une sauvegarde de
+  fichiers incrémentale du client. Refusé quand « Autoriser le lancement des
+  sauvegardes » est désactivé, ou par UrBackup quand le client est hors ligne.
+
+### Idées de scènes
+
+- **Une sauvegarde échoue** → envoyer un message avec le client et sa
+  première erreur, pris dans les informations du déclencheur.
+- **Un client est en retard** → prévenir avec le client et les heures depuis
+  sa dernière réussite : le portable n'a pas été allumé depuis des jours.
+- Chaque dimanche à 10 h → **État d'un client** → envoyer la phrase ; ou
+  lancer une sauvegarde de fichiers du PC du bureau à 19 h avec **Lancer une
+  sauvegarde de fichiers**.
+
+## Dépannage
+
+- **« UrBackup ne répond pas »** : vérifiez l'adresse et le port depuis la
+  machine de Gladys (`http://…:55414`, le port de l'interface web, pas 55413
+  ni 55415).
+- **« nom d'utilisateur ou mot de passe refusé par UrBackup »** : saisissez-les
+  de nouveau ; ce sont ceux d'un utilisateur de l'interface web.
+- **« il manque un droit à cet utilisateur UrBackup »** : donnez à
+  l'utilisateur les droits `status`, `progress`, `lastacts`, `logs` (et
+  `start_backup`). Sans `logs`, les états s'affichent mais aucune sauvegarde
+  réussie ou en échec n'est annoncée.
+- **« UrBackup n'a pas lancé la sauvegarde »** : le client est hors ligne, ou
+  une sauvegarde de ce client est déjà en cours.
+- **« UrBackup met à jour sa base de données »** : après une mise à jour
+  d'UrBackup ; patientez jusqu'à la fin.
+- **Un client ne passe jamais en retard** : en _Automatique_, un client dont
+  les sauvegardes de fichiers sont désactivées, ou jamais sauvegardé, n'est pas
+  en retard ; choisissez un délai fixe pour les sauvegardes d'image.
+- Pour en voir plus, mettez la variable `LOG_LEVEL` de l'intégration à `debug`.
+
+## Limites
+
+- Un seul serveur UrBackup par intégration.
+- Après une coupure, seules les sauvegardes terminées dans les dernières
+  24 heures sont annoncées ; les plus anciennes sont enregistrées sans bruit.
+- Une sauvegarde est connue à sa fin, par son journal : les déclencheurs
+  arrivent à la lecture suivante (5 minutes par défaut).
+- L'intégration ne restaure, ne supprime ni ne configure aucune sauvegarde :
+  elle les surveille, et lance des sauvegardes de fichiers incrémentales si
+  c'est autorisé.
+- HTTPS seulement avec un certificat signé par une autorité connue (un proxy
+  inverse).
+- Sans lien avec UrBackup. Signalez un problème ou une idée sur
+  [les issues](https://github.com/guim31/gladys-urbackup/issues).
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par UrBackup dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre serveur UrBackup | `section` | Non | L'interface web du serveur UrBackup (port 55414). Saisissez son adresse et un utilisateur de cette interface, puis ajoutez les clients à suivre depuis l'onglet Découverte. |
+| Adresse d'UrBackup | `string` | Oui | L'adresse de l'interface web, port 55414 par défaut. En https:\/\/ derrière un proxy inverse. |
+| Nom d'utilisateur | `string` | Non | Un utilisateur de l'interface web (Paramètres → Utilisateurs), admin ou avec les droits status, progress, lastacts, logs et start_backup. |
+| Mot de passe | `secret` | Non | Son mot de passe. Vide pour un serveur sans aucun utilisateur (déconseillé). |
+| Options | `section` | Non |  |
+| Intervalle de rafraîchissement | `select` | Non | À quelle fréquence UrBackup est lu. Toutes les 30 secondes pendant une sauvegarde. |
+| En retard après | `select` | Non | Un client sans sauvegarde réussie depuis ce délai est en retard. Automatique : selon UrBackup, d'après l'intervalle des sauvegardes de fichiers de ses paramètres. |
+| Autoriser le lancement des sauvegardes | `boolean` | Non | Permet à l'action de scène « Lancer une sauvegarde de fichiers » de lancer une sauvegarde de fichiers incrémentale dans UrBackup. |
+| Langue des noms | `select` | Non | Langue des noms des fonctionnalités (fixés à l'ajout d'un appareil), des états et des résultats de scène. |
+
+## Comment installer UrBackup dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : UrBackup apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/guim31/gladys-urbackup:1.0.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/guim31/gladys-urbackup](https://github.com/guim31/gladys-urbackup).
+
+UrBackup nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+UrBackup est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [guim31](https://github.com/guim31), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/guim31/gladys-urbackup) — [source de cette documentation](https://github.com/guim31/gladys-urbackup/blob/HEAD/docs/fr.md)

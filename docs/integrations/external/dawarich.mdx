@@ -1,0 +1,172 @@
+---
+title: "Dawarich smart home integration, free and open source"
+sidebar_label: "Dawarich"
+description: "Your Dawarich location history in Gladys: distances, countries, trackers gone silent. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-dawarich.png"
+keywords:
+  - "dawarich"
+  - "dawarich smart home"
+  - "gladys dawarich"
+  - "dawarich gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-dawarich instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Dawarich","description":"Your Dawarich location history in Gladys: distances, countries, trackers gone silent.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-dawarich","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-dawarich.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T17:32:25Z"}} />
+
+Connect Gladys to [Dawarich](https://dawarich.app), the self-hosted location
+history (an alternative to Google Timeline): follow the distances you travel
+and the countries you visit, and get warned when your phone stops sending its
+position. Everything stays on your local network: Gladys only reads your
+Dawarich server, and sends nothing to it.
+
+Tested against a real Dawarich 1.16.0 server (the official Docker image) with
+simulated trips, not with a phone on the road: feedback welcome on the Gladys
+forum. For live GPS tracking, see the Traccar integration: this one is about
+history and statistics.
+
+## Prerequisites
+
+- Gladys Assistant 5.1 or later.
+- A Dawarich server reachable from the Gladys machine, on port 3000 by
+  default, or through a reverse proxy, and a tracking app sending it positions
+  (Dawarich app, OwnTracks, Overland…).
+- The API key of your Dawarich user: open the menu of your account →
+  **Account**, the key is shown there.
+
+## Configuration
+
+1. Open the **Configuration** tab of the integration.
+2. In **Dawarich address**, enter the IP address of the server, for example
+   `192.168.1.50`: the integration then uses port 3000. Add a port if yours
+   differs (`192.168.1.50:3100`). Behind a reverse proxy, enter the full
+   address (`https://dawarich.example.org`).
+3. Paste the **API key**.
+4. **Read Dawarich every**: 5, 15 (default), 30 or 60 minutes.
+5. **Show the coordinates of the last position**: off by default. When on,
+   the device gets one more feature with the latitude and longitude of the
+   newest point.
+6. **Language of the names** sets the feature names (fixed when the device is
+   added), the country names and the texts of the scenes. French by default.
+7. Save, then use **Test the connection**: it shows the number of points and of
+   countries visited.
+8. In the **Discovery** tab, add the **Dawarich** device.
+
+## Device
+
+**Dawarich** (one device for the user of the API key):
+
+| Feature                     | Value                                                    |
+| --------------------------- | -------------------------------------------------------- |
+| Distance today              | km travelled since midnight, summed from today's points  |
+| Distance this month         | km of the month, from the statistics of Dawarich         |
+| Distance this year          | km of the year, from the statistics of Dawarich          |
+| Total distance              | km since your first point                                |
+| Countries visited           | countries of all your points                             |
+| Cities visited              | cities, as counted by Dawarich (needs reverse geocoding) |
+| Points recorded             | number of positions stored in Dawarich                   |
+| Last position received      | date and time of the newest point, or "None"             |
+| Last position (coordinates) | "latitude, longitude", only with the option of step 5    |
+
+Distances and counters keep their history: a chart shows the kilometres of each
+day or month.
+
+## Dashboard widget
+
+**Travels**: four tiles (today, this month, this year, countries), how long ago
+the last position arrived (green, yellow after one hour, red after a day) and
+the countries of the last 30 days. It needs no setting.
+
+## Scene triggers
+
+- **New country visited**: a position arrives from a country never visited
+  before in Dawarich. Variables: **Country** (in the language of the
+  integration) and **Country code** (ISO, 3 letters, for example `ITA`). The
+  countries already in Dawarich when you install the integration, and those of
+  an old history you import later, are not announced.
+- **No position received**: no new point for at least the chosen time (1, 2,
+  3, 6, 12, 24 or 48 hours). The tracking app may have stopped, the phone may
+  be off or out of network. It fires once per silence and per duration; a new
+  point starts over. Variable: **Time of the last position**.
+
+## Scene examples
+
+- **Holiday mode**: when "New country visited" fires, send yourself a message
+  "Welcome to \{\{triggerEvent.data.country\}\}!" and switch the house to its holiday scene.
+- **Tracking app stopped**: when "No position received" fires for 6 hours,
+  send a message "Dawarich has received nothing since \{\{triggerEvent.data.last_position\}\}: check
+  the tracking app on your phone."
+- **Weekly report**: every Sunday at 20:00, send a message with the values of
+  "Distance this month" and "Countries visited".
+
+## Troubleshooting
+
+- **"Dawarich refused the API key"**: copy the key again from the **Account**
+  page. A key changes when you regenerate it.
+- **"Dawarich does not answer"**: check the address and the port from the
+  Gladys machine (`http://<address>:3000/api/v1/health` answers
+  `{"status":"ok"}`), and that Dawarich is running.
+- **"This address does not answer like Dawarich"**: the address leads to
+  another service or to a login page of a reverse proxy.
+- **The month or the year does not move**: Dawarich recomputes these
+  statistics once an hour, in the background (Sidekiq). "Distance today" is
+  computed by the integration and follows each read.
+- **Cities stay at 0**: reverse geocoding is off in Dawarich (Photon,
+  Geoapify… in its settings). The countries come from the borders and work
+  without it; **Test the connection** says when it is off.
+- Logs: in the **Logs** tab of the integration. More details with
+  `LOG_LEVEL=debug`. Coordinates and place names are never written there.
+
+## Limits
+
+- Read only: the integration never writes to Dawarich. It cannot send the
+  positions of other Gladys devices to Dawarich (an integration does not read
+  the devices of the others).
+- Kilometres of the month, year and total are whole numbers, as Dawarich gives
+  them; "Distance today" is rounded to 0.1 km and leaves out GPS jumps faster
+  than a plane.
+- The triggers react at the next read: up to the chosen interval late.
+- One Dawarich user per integration: the one of the API key.
+- The coordinates option exposes your position to every Gladys user: keep it
+  off if you do not need it.
+- Not affiliated with Dawarich. Developed against the real server, without a
+  phone on the road: feedback welcome.
+
+## Configuration settings
+
+These are the settings Dawarich asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Connect Dawarich | `section` | No | Enter the address of your Dawarich server (port 3000 by default) and the API key shown on its Account page. The integration only reads: distances, countries and cities visited, and when the last position arrived. Nothing is sent to Dawarich. |
+| Dawarich address | `string` | Yes | IP address or name, with the port if it is not 3000, or the full address behind a reverse proxy. |
+| API key | `secret` | Yes | Shown on the Account page of Dawarich (menu of your account). |
+| Read Dawarich every | `select` | No | Dawarich recomputes its monthly and yearly statistics once an hour. |
+| Show the coordinates of the last position | `boolean` | No | Off by default: adds a feature with the latitude and longitude of the newest point. Never written to the logs. |
+| Language of the names | `select` | No | Language of the feature names, country names and scene texts. |
+
+## How to install Dawarich in Gladys
+
+1. In Gladys, open **Integrations**: Dawarich appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-dawarich:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-dawarich](https://github.com/guim31/gladys-dawarich).
+
+Dawarich requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Dawarich is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-dawarich) — [source of this documentation](https://github.com/guim31/gladys-dawarich/blob/HEAD/docs/en.md)

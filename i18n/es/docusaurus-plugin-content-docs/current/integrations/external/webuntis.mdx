@@ -1,0 +1,163 @@
+---
+title: "Integración domótica WebUntis, gratuita y de código abierto"
+sidebar_label: "WebUntis"
+description: "Unofficial connector: your WebUntis school timetable on the dashboard and in scenes. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-webuntis.png"
+keywords:
+  - "webuntis"
+  - "domótica webuntis"
+  - "gladys webuntis"
+  - "webuntis gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-webuntis instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"WebUntis","description":"Unofficial connector: your WebUntis school timetable on the dashboard and in scenes.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-webuntis","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-webuntis.png","type":"provider","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T03:11:19Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+Unofficial connector, not affiliated with Untis GmbH. It reads a **WebUntis**
+school timetable, read only, and brings it to Gladys: a dashboard widget, scene
+triggers when a lesson is cancelled or changed and when the school day starts,
+and a scene action to read a school day.
+
+**Never tested with a real account**: it was built from the WebUntis JSON-RPC
+interface as the open-source library python-webuntis uses it. Please report
+what works and what does not.
+
+## What you need
+
+- The address of your school's WebUntis page, for example
+  `https://neilo.webuntis.com/WebUntis/?school=demo-school#/basic/login`.
+- A WebUntis **pupil or teacher** account of that school (username and
+  password). A parent account has no timetable of its own: enter the class
+  name too (see below).
+
+## Configuration
+
+| Field                               | What to enter                                                                                            |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| WebUntis server                     | The host of the page (`neilo.webuntis.com`); the whole address can be pasted. Always reached over HTTPS. |
+| School name                         | The `school=` part of the address (`demo-school`).                                                       |
+| Username, password                  | The WebUntis account.                                                                                    |
+| Class (optional)                    | Empty: the account's own timetable. A class name as WebUntis shows it (`7b`): that class's timetable.    |
+| Time zone of the school             | Berlin by default (Vienna, Zurich and others offered).                                                   |
+| Reading interval                    | 30 minutes by default, 15 at least.                                                                      |
+| Days read ahead                     | 7 by default (today and the next week).                                                                  |
+| "School day starts": minutes before | 60 by default.                                                                                           |
+
+The password is kept by Gladys in its database, never shown again, and sent
+only to the school's WebUntis server, in the login request. The integration
+never logs the username, the password, the school, a class or a pupil's name,
+nor the lessons: only counts and error codes.
+
+## How it reads
+
+Every reading is one short session: login, the timetable from today to the
+days ahead, logout. To be gentle with the school's server, which every pupil
+shares:
+
+- one reading every 30 minutes by default, never more often than every 15;
+- nothing reads sooner: neither the "Test the connection" button, nor a
+  restart of the integration, nor a reconnection to Gladys, nor saving an
+  unchanged configuration (the time of the last attempt is kept);
+- when the server answers "too many requests" (429) or has a problem (5xx),
+  the readings pause (its Retry-After, or 30 minutes; 6 hours at most), also
+  across a restart; an access refused (401/403) pauses them 6 hours;
+- when WebUntis **refuses the login** (wrong username or password, blocked
+  account, expired password, any other refusal), nothing more is sent with
+  these credentials, even after a restart, until you change them. The test
+  button may try once more, no sooner than the interval; the refusal is only
+  forgotten once a login succeeds. Several failed logins can lock a WebUntis
+  account: check the password on the school's page first.
+
+Widening "days read ahead" announces, at the next reading, the cancellations
+and changes already known on the new days (20 of each kind at most).
+
+## Dashboard widget "School timetable"
+
+The lessons of one day: time, subject, room and teacher; a cancelled lesson in
+red, a changed one in orange, an exam in blue; the time of the reading. Choose
+the day shown: today then the next school day (default), today, tomorrow, or
+the next school day.
+
+## Scene triggers
+
+| Trigger           | When                                                                                                           | Filters                                              |
+| ----------------- | -------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| Lesson cancelled  | A lesson of the coming days is now cancelled.                                                                  | Subject (short name), when (today, tomorrow, later). |
+| Lesson changed    | A lesson has a substitution: another teacher, room or time, or a text of the school. Again on each new change. | Subject, when.                                       |
+| School day starts | Once a school day, the configured minutes before the first lesson held.                                        | Days of the week.                                    |
+
+A change is seen at the next reading (every 30 minutes by default), not live.
+The first reading after the configuration only remembers the timetable: it
+fires nothing. Past lessons never fire.
+
+The variables of the triggers are used as `{{triggerEvent.data.<key>}}`, for
+example `{{triggerEvent.data.subject}}`, `{{triggerEvent.data.start}}`,
+`{{triggerEvent.data.room}}`, `{{triggerEvent.data.text}}`, or for "school day
+starts" `{{triggerEvent.data.first_start}}` and
+`{{triggerEvent.data.late_start}}` (true when the first lesson is cancelled).
+
+## Scene action "Read a school day"
+
+The lessons of a day from the last reading (no new request): date, lessons
+held, cancelled, changed, exams, first start, first subject, end of the day,
+the list one lesson per line. Handy for a morning message.
+
+## Limits
+
+- Read only: no homework, no messages, no absences (they are not in the
+  JSON-RPC interface this integration uses).
+- One timetable per integration.
+- A lesson changed a few minutes before it starts may be seen after it
+  started (the interval).
+- Some schools disable the JSON-RPC interface or give pupils no right to read
+  their timetable through it: the status then says so.
+
+## Parámetros de configuración
+
+Estos son los parámetros que WebUntis te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| WebUntis timetable | `section` | No | Unofficial connector, not affiliated with Untis GmbH. It reads the timetable of a pupil or teacher account through the JSON-RPC interface of the school's WebUntis server, read only: lessons, cancellations, substitutions, exams. Use the account and server of the WebUntis web page of the school. The password is kept by Gladys in its database, never shown again, and sent only to the school's WebUntis server; it is never logged, nor the username, nor any class or pupil name. To be gentle with the school's server, the timetable is read every 30 minutes by default (15 at least). Never tested with a real account. |
+| WebUntis server | `string` | Sí | The host of your school's WebUntis page, for example neilo.webuntis.com (the address of the page can be pasted as is). Always reached over HTTPS. |
+| School name | `string` | Sí | The school's login name in WebUntis: the "school=" part of the address of its WebUntis page. |
+| Username | `string` | Sí | The WebUntis username (pupil or teacher account). Never logged. |
+| Password | `secret` | Sí | Kept by Gladys in its database, never shown again, sent only to the school's WebUntis server. If WebUntis refuses it, nothing more is sent with it until you change it. |
+| Class (optional) | `string` | No | Empty: the account's own timetable. A class name as WebUntis shows it: the timetable of that class (for an account without a timetable of its own, such as a parent account). Never logged. |
+| Time zone of the school | `select` | No |  |
+| Reading interval (minutes) | `number` | No | How often the timetable is read (one login, one timetable, one logout). 30 by default, 15 at least: the school's server is shared. |
+| Days read ahead | `number` | No | The timetable is read from today to this many days ahead (7 by default, covering the next school day after a weekend). |
+| "School day starts": minutes before the first lesson | `number` | No | The "school day starts" trigger fires this many minutes before the first lesson held (60 by default, 0 at the start of the lesson). |
+
+## Cómo instalar WebUntis en Gladys
+
+1. En Gladys, abre **Integraciones**: WebUntis aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-webuntis:0.1.2`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-webuntis](https://github.com/LM1LC3N7/gladys-webuntis).
+
+WebUntis requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+WebUntis es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-webuntis) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-webuntis/blob/HEAD/docs/en.md)

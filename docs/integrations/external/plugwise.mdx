@@ -1,0 +1,208 @@
+---
+title: "Plugwise smart home integration, free and open source"
+sidebar_label: "Plugwise"
+description: "Unofficial: Plugwise Smile P1, Anna and Adam on your network: energy, heating, plugs. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-plugwise.png"
+keywords:
+  - "plugwise"
+  - "plugwise smart home"
+  - "gladys plugwise"
+  - "plugwise gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-plugwise instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Plugwise","description":"Unofficial: Plugwise Smile P1, Anna and Adam on your network: energy, heating, plugs.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-plugwise","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-plugwise.png","type":"device","version":"0.1.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-22T10:11:18Z"}} />
+
+Your Plugwise gateway in Gladys, through the local XML API of the **Smile**
+on your network, without any cloud:
+
+- **Smile P1** (smart meter): **power taken** and **injected** every 10
+  seconds, the **consumption index** (peak + off-peak tariff) every minute for
+  the Gladys energy monitoring, the **indexes per tariff** and the
+  **injection** as plain sensors, **gas** in m³, power and voltage of each
+  phase;
+- **Anna** and **Adam** (every 30 seconds): for each zone (Adam) or the room
+  of the Anna, **temperature**, **setpoint**, **heating state**, **mode**
+  (schedule, heating, off), **preset** and **active schedule**; for the boiler
+  or heat pump, **flame**, **heating**, **hot water running**, water
+  temperatures, **pressure**, modulation; the **outdoor temperature**; on an
+  Adam, the **gateway** and **regulation modes**, and the **power** and state
+  of the **Plugwise plugs**.
+
+> **This integration has never been tested with a real Smile.** This first
+> version was written from the python-plugwise library (the one of Home
+> Assistant) and tested only against its test data and a fake Smile. Tell on
+> the Gladys forum what works and what does not.
+
+Unofficial integration, not affiliated with Plugwise.
+
+## Supported Smiles
+
+- **Smile P1** firmware v4 (and a recent Smile P1 answering with a
+  `<gateway>` element), **Anna** firmware v4 (the Anna P1 included), **Adam**
+  firmware v3.
+- Not supported: the older firmwares (Smile P1 v2/v3 without `<gateway>`,
+  Anna v1/v3, Adam v2: update them from the Plugwise app), the **Stretch**, an
+  **Anna connected to an Adam** (add the Adam instead). The status of the
+  integration says so clearly.
+
+## Configuration
+
+- **Smile address**: its IP address on your network (`192.168.1.30`), shown
+  by your router or the Plugwise app; a port may follow. Prefer the IP
+  address: a `.local` name (mDNS) does not resolve in the integration's
+  container. Give the Smile a fixed address in your router; if it changes,
+  type the new one: the devices and their history are kept. The local API
+  only speaks plain http: an `https://` address is refused with a clear
+  message.
+- **Smile ID**: the 8 characters printed on the back of the Smile (also in
+  the Plugwise app). Gladys signs in with the user name `smile` and this ID.
+  The ID is kept by Gladys in its database, never shown again, sent only to
+  the Smile, in the HTTP authentication header (never in an address, never
+  in a log). Beware: the Smile has no https, so the ID crosses your local
+  network in clear, at every read.
+- **Allow the thermostat commands** and **Allow switching the plugs**: off
+  by default (see Commands).
+- **Language of the devices**: French (default) or English.
+
+Then open the **Discover** tab and create the devices to follow. The **Test
+the connection** button reads the Smile at once and lists what it shows.
+
+## Energy (Smile P1, Anna P1)
+
+- The **consumption index** (peak + off-peak tariff, in kWh) is the only
+  value the Gladys energy monitoring counts and bills. It exists only when
+  the meter gives **both tariffs** at discovery; otherwise the device has
+  plain sensors only, out of the energy monitoring.
+- The indexes per tariff, the injection and gas are **plain sensors**: never
+  counted in the energy monitoring (gas would be billed at the electricity
+  price). The injection is never in the consumption index.
+- An index is **never published at 0**. Each tariff is checked: a tariff
+  falling to 0 or dropping alone is a reading glitch, not a drop of the
+  index.
+- A **jump** of the index (more than a home can use since the last value) or
+  a **drop** is **held back**: the last accepted value is sent again, the
+  status of the integration shows the jump and its kWh, and nothing is
+  billed. If it is right (meter replaced, real index), click **Accept the
+  held index** in the configuration: only the value shown (plus what the home
+  uses until the next read) is taken. Neither time, nor repetition, nor
+  saving the configuration accepts it. The held value is kept in `/data`
+  across a restart.
+- When the Smile says the meter is not connected (P1 cable), or when the
+  power has not been logged for 5 minutes, those values are no longer sent
+  and the status says so.
+
+## Commands
+
+By default, Gladys only **reads**. Once an option is ticked, the dashboard,
+the scenes, the voice assistants (Siri / HomeKit, Alexa, Google Home) and the
+Thermostat service of Gladys can act.
+
+- **Allow the thermostat commands**:
+  - the **setpoint** of a zone, **4 to 30 °C** and within the bounds the
+    Smile gives for the zone, to a tenth of a degree; a value outside is
+    refused, never clamped;
+  - the **preset** of a zone, among the Smile's (home, night, away,
+    vacation, frost protection...);
+  - on an Adam, the **gateway mode** (home, away, vacation) and the
+    **regulation mode**, **heating** or **cooling** (when present) only:
+    turning the regulation off and the bleeding cycles stay in the Plugwise
+    app.
+- **Allow switching the plugs**: only the plugs set in the Plugwise app as
+  **lamp, lighting, TV, home cinema, set-top box, recorder, game console or
+  charger**, and **not locked** in Plugwise. A plug feeding a boiler, a
+  heating pump, a valve, a water heater, a fridge, a freezer, an Internet
+  router, an appliance in the middle of a cycle, a kettle, or set as
+  "other", is **never** switched: its state is read only in Gladys (not a
+  switch), so "turn everything off" never reaches it. To command a plug, set
+  its type in the Plugwise app and unlock it, then delete and create its
+  device again in Gladys.
+- The **mode** (schedule / heating / off) and the **active schedule** are
+  read only in this version; hot water is never commanded.
+- Just before acting, Gladys **reads the Smile again** and decides on that
+  read only: the read fails, the device is gone, a value is missing, the
+  plug is locked or of a forbidden type, and nothing is sent; the value is
+  already the one asked, and nothing is sent either. The option is checked
+  when the command arrives and again just before sending.
+- When the command cannot be checked within 3.5 s, nothing is sent and Gladys
+  shows a failure (never an action after a failure shown). Once sent, Gladys
+  answers at most 4.3 s after your command: "sent, without confirmation"
+  when the Smile has not answered yet (the command may have been applied),
+  "refused" when the Smile refused it. The Smile is read again 5 s after
+  every command sent; the value shown is always the Smile's, never the one
+  asked.
+- Commands run one after the other (one Smile).
+
+## Refresh and limits
+
+- A Smile P1 is read every **10 seconds** (the index every minute), an Anna
+  or an Adam every **30 seconds**. Only the values that change are sent to
+  Gladys (and each at least every 10 minutes).
+- The devices are known by their Plugwise ids (32 characters), not by their
+  name nor the address of the Smile.
+- The water temperatures of the boiler are probes: Gladys does not count them
+  in the temperature of the room.
+
+## Connection problems
+
+- **Smile unreachable**: every device shows unreachable; new try after 30 s,
+  then less and less often up to every 10 min (never faster than the normal
+  reading).
+- **ID refused** (HTTP 401): Gladys does not try again by itself, neither
+  after a reconnection to Gladys nor after a restart (the refusal is kept in
+  `/data` as a hash, never the ID itself). Fix the ID and save, or press
+  **Test the connection**.
+- **Smile overloaded** (HTTP 429): every request stops for 1 minute to 6
+  hours, even across a restart; saving the configuration or pressing **Test
+  the connection** lifts the pause.
+- The logs never hold the Smile ID nor the text of the Smile's answers, only
+  codes (HTTP 500, no connection...).
+
+## Limits
+
+- One Smile per integration.
+- No command of hot water, of the schedules (turning a schedule on or off),
+  of the temperature offset, nor of plug groups.
+- No Stretch, no Plugwise USB stick.
+- Never tested with a real Smile.
+
+## Configuration settings
+
+These are the settings Plugwise asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| How it works | `section` | No | Unofficial integration, not affiliated with Plugwise. Gladys reads your Plugwise Smile through its local API, on your network, without any cloud: a Smile P1 (smart meter: power taken and injected every 10 seconds, the electricity index every minute for the Gladys energy monitoring, the indexes per tariff, gas as a plain sensor), an Anna or an Adam (every 30 seconds: temperature, setpoint, preset, mode and schedule of each zone, boiler flame, heating and hot water, outdoor temperature, power of the Plugwise plugs). Only the current firmwares (Smile P1 v4, Anna v4, Adam v3); not the Stretch. Never tested with a real Smile: see the documentation. |
+| Smile address | `string` | Yes | The IP address (or name) of the Smile on your network, shown by your router or the Plugwise app. Give it a fixed address in your router: the devices and their history are kept if it changes. Plain http: the local API of the Smile has no https. |
+| Smile ID | `secret` | Yes | The 8 characters printed on the back of the Smile (also in the Plugwise app), used with the user name smile. Kept by Gladys in its database, never shown again, sent only to the Smile, in an HTTP header in clear on your local network (the Smile has no https). |
+| Commands (off by default) | `section` | No | By default Gladys only reads. Once an option is ticked, the dashboard, the scenes, the voice assistants (Siri / HomeKit, Alexa, Google Home) and the Thermostat service of Gladys can act. Each command reads the Smile again just before acting. The heating regulation is never turned off and no bleeding cycle is started from Gladys; hot water is never commanded. |
+| Allow the thermostat commands | `boolean` | No | The setpoint of a zone (4 to 30 °C, within the bounds the Smile gives), its preset, and on an Adam the gateway mode (home, away, vacation) and the regulation mode (heating or cooling only). |
+| Allow switching the plugs | `boolean` | No | Only the plugs set in the Plugwise app as lamp, lighting, TV, home cinema, set-top box, recorder, game console or charger, and not locked there. A plug feeding a boiler, a heating pump, a valve, a water heater, a fridge, a freezer, a router or any other appliance is never switched from Gladys. |
+| Language of the devices | `select` | No | Names of the devices, features and options. |
+
+## How to install Plugwise in Gladys
+
+1. In Gladys, open **Integrations**: Plugwise appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-plugwise:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-plugwise](https://github.com/LM1LC3N7/gladys-plugwise).
+
+Plugwise requires Gladys `>=5.2.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Plugwise is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-plugwise) — [source of this documentation](https://github.com/LM1LC3N7/gladys-plugwise/blob/HEAD/docs/en.md)

@@ -19,7 +19,7 @@ https://github.com/LM1LC3N7/gladys-hubitat instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Hubitat Elevation","description":"Les appareils de votre hub Hubitat dans Gladys : lumières, prises, volets, capteurs. Non officiel.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-hubitat","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-hubitat.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T03:03:05Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Hubitat Elevation","description":"Les appareils de votre hub Hubitat dans Gladys : lumières, prises, volets, capteurs. Non officiel.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-hubitat","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-hubitat.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-19T23:41:17Z"}} />
 
 Cette intégration relie Gladys à **votre hub Hubitat Elevation** par son app
 **Maker API**, et propose les appareils que vous y autorisez dans l'onglet
@@ -161,11 +161,41 @@ l'atteint jamais.
   mouvement, serrure, porte…) qu'aucun événement n'a annoncé, ou quand le
   socket est resté muet 30 minutes, il est rouvert aussitôt ; les badges ne
   passent à l'orange que si cette réouverture échoue.
-- **Énergie** : l'index d'énergie ne fait que monter. Une valeur plus basse est
-  retenue ; elle n'est acceptée que si une mesure suivante dépasse cette
-  valeur basse (compteur remis à zéro qui recompte). La même valeur basse
-  relue reste retenue : un index lu à 0 puis revenu à la normale ne crée
-  aucune fausse consommation. Un driver qui donne des Wh est converti en kWh.
+- **Énergie** : Gladys compte chaque hausse de l'index d'énergie en entier
+  dans l'onglet Énergie. L'intégration ne publie donc jamais 0, et retient
+  toute valeur anormale : une baisse, ou un saut de plus de 10 kW en moyenne
+  pour une prise ou un module (`switch/energy`), de 25 kW pour un compteur
+  seul (`energy-sensor/index`), depuis la dernière valeur acceptée (plus
+  0,5 kWh de marge). Pendant une retenue, la dernière valeur acceptée est
+  renvoyée. Un saut est signalé tout de suite ; une baisse seulement si elle
+  dure environ une minute (un driver qui oscille de 0,01 kWh ne dit rien) :
+  le badge de l'appareil passe alors à l'orange avec le saut ou la baisse et
+  les kWh en jeu, et le journal le signale. Ni la répétition, ni le temps,
+  ni une nouvelle hausse, ni un enregistrement de la configuration, ni une
+  reconnexion ne l'acceptent : seul le bouton **Accepter l'index retenu** de
+  la configuration le fait, en deux clics. Le premier liste les index retenus
+  et les kWh qui seraient comptés, sans rien accepter ; un second clic dans
+  les 2 minutes prend exactement ces index-là (si la liste a changé
+  entre-temps, ou si une valeur retenue est sortie de ce qui a été montré, il ne
+  fait que la montrer à nouveau). Chaque index est pris à
+  la valeur affichée (plus ce que l'appareil a pu consommer depuis). Un saut
+  accepté est compté d'un coup comme consommation ; une baisse acceptée ne
+  facture rien. Une valeur revenue à la normale lève la retenue. La retenue
+  est gardée dans `/data` et survit à un redémarrage ; créer l'appareil (à
+  nouveau) repart de zéro. Un driver qui donne des Wh est converti en kWh.
+
+  Deux cas à connaître :
+
+  - **Remise à zéro du compteur** (`resetEnergy`, depuis Hubitat ou
+    l'appareil) : elle est retenue comme une baisse. Tant que vous n'avez pas
+    cliqué, la dernière valeur acceptée reste envoyée : **la consommation
+    entre la remise à zéro et votre acceptation n'est pas comptée**. Acceptez
+    donc la baisse peu après la remise à zéro.
+  - **Un driver qui se remet à zéro seul** (après une coupure, une mise à
+    jour) : la baisse reste retenue aussi, sans limite de temps, jusqu'à votre
+    clic ou jusqu'au retour de l'ancienne valeur. Si l'index repart ensuite
+    au-dessus de l'ancienne valeur, c'est un saut, retenu à son tour.
+
 - **Le socket d'événements transporte les événements de tous les appareils du
   hub**, pas seulement de ceux que vous avez autorisés : l'intégration garde
   les autorisés et ignore les autres. Il ne demande pas de jeton.
@@ -205,7 +235,7 @@ Voici les paramètres demandés par Hubitat Elevation dans son écran de configu
 
 | Paramètre | Type | Obligatoire | Description |
 | --- | --- | --- | --- |
-| Vos appareils Hubitat Elevation dans Gladys | `section` | Non | Les appareils que vous autorisez dans l'app Maker API de votre hub sont proposés dans l'onglet Découverte : interrupteurs, variateurs, ampoules couleur et blanches, prises avec leur consommation, volets, thermostats, boutons, capteurs d'ouverture, de mouvement, de fuite, de fumée et de CO, température, humidité, luminosité, batterie. Les états suivent le hub en direct et Gladys pilote les appareils à travers lui, uniquement sur votre réseau local. Serrures et portes de garage restent en lecture seule tant que vous ne les autorisez pas ci-dessous ; l'alarme (HSM) et les modes ne sont jamais modifiés. Jamais testée sur un vrai hub pour l'instant. Non officiel, sans lien avec Hubitat. |
+| Vos appareils Hubitat Elevation dans Gladys | `section` | Non | Les appareils que vous autorisez dans l'app Maker API de votre hub sont proposés dans l'onglet Découverte : interrupteurs, variateurs, ampoules couleur et blanches, prises avec leur consommation, volets, thermostats, boutons, capteurs d'ouverture, de mouvement, de fuite, de fumée et de CO, température, humidité, luminosité, batterie. Les états suivent le hub en direct et Gladys pilote les appareils à travers lui, uniquement sur votre réseau local. Serrures et portes de garage restent en lecture seule tant que vous ne les autorisez pas ci-dessous ; l'alarme (HSM) et les modes ne sont jamais modifiés. Un index d'énergie qui saute ou baisse est retenu jusqu'à ce que vous l'acceptiez avec le bouton ci-dessous. Jamais testée sur un vrai hub pour l'instant. Non officiel, sans lien avec Hubitat. |
 | Adresse du hub | `string` | Oui | L'adresse IP locale de votre hub Hubitat, par exemple 192.168.1.50. Une URL de la Maker API copiée depuis la page de l'app convient aussi, sans son access_token. |
 | Numéro de l'app Maker API | `string` | Oui | Dans Hubitat, Apps → Maker API : le nombre après /apps/api/ dans les URL affichées par l'app. |
 | Jeton d'accès de la Maker API | `secret` | Oui | Affiché sur la page de l'app Maker API. Gardé par Gladys dans sa base, jamais réaffiché, et envoyé seulement à votre hub. |
@@ -220,7 +250,7 @@ Voici les paramètres demandés par Hubitat Elevation dans son écran de configu
 ## Comment installer Hubitat Elevation dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Hubitat Elevation apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-hubitat:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-hubitat:0.1.2`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-hubitat](https://github.com/LM1LC3N7/gladys-hubitat).
 

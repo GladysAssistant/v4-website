@@ -1,0 +1,143 @@
+---
+title: "TRMNL smart home integration, free and open source"
+sidebar_label: "TRMNL"
+description: "TRMNL e-ink displays: battery, Wi-Fi signal and sleep mode of each display. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-trmnl.png"
+keywords:
+  - "trmnl"
+  - "trmnl smart home"
+  - "gladys trmnl"
+  - "trmnl gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-trmnl instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"TRMNL","description":"TRMNL e-ink displays: battery, Wi-Fi signal and sleep mode of each display.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-trmnl","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-trmnl.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T15:52:20Z"}} />
+
+Brings the [TRMNL](https://trmnl.com) e-ink displays of your account into
+Gladys, through the official TRMNL account API: battery, Wi-Fi and sleep mode
+of each display.
+
+> **Never tested with a real device.** This integration was written from the
+> `trmnl` Python client (the one of the Home Assistant integration) and
+> tested against a simulated TRMNL API only. Unofficial, not affiliated with
+> TRMNL.
+
+## What you get
+
+One device per display (Discovery tab), keyed by its TRMNL id:
+
+- **Battery** (%), and **battery voltage** (V);
+- **Wi-Fi strength** (0 to 100, as TRMNL rates it) and **Wi-Fi signal**
+  (dBm);
+- **Sleep mode** (on or off) and **sleep hours** (for example
+  `22:00-08:00`, in the time zone of your TRMNL account);
+- as an option, two **buttons**: "Turn the sleep mode on" and "Turn the
+  sleep mode off" (see below).
+
+What the screen shows (playlists, plugins) stays managed in TRMNL. The API
+gives no "last contact" time of a display: it is not shown.
+
+## Getting started
+
+1. On [trmnl.com](https://trmnl.com), open **Account** and copy the **API
+   key** of your account (it starts with `user_`).
+2. In Gladys, open this integration, paste the key and save. The key is kept
+   by Gladys in its database, never shown again, and sent only to trmnl.com,
+   in the `Authorization` header of the requests.
+3. Your displays appear in the Discovery tab: create the ones you want.
+
+## How often it reads
+
+- One request for all the displays, every refresh interval (15 minutes by
+  default, from 5 minutes to 1 hour). A display reports its battery and
+  signal when it wakes up: reading more often rarely shows more.
+- **Never faster than the interval**: neither Gladys reconnecting, nor a
+  configuration saved unchanged, nor the Discovery button, nor "Test the
+  connection", nor a restart of the container (the time of the last attempt
+  is kept) adds a reading. A new key is tried one minute at most after the
+  last attempt.
+- After an error, a new try after the interval, then twice that, up to
+  1 hour.
+- 429 (TRMNL asks to slow down) or 5xx: a pause of what TRMNL asks, else 15
+  or 5 minutes, between 1 minute and 6 hours, kept across restarts. No
+  reading and no command during the pause.
+- **Key refused** (401): no automatic try any more, restarts included. Paste
+  a new key (generated again on trmnl.com; saving the same key again does
+  nothing), or press "Test the connection" once the interval has passed: the
+  refusal is erased only by a successful reading. A 403 (it may come from the
+  network protecting trmnl.com) is not a refusal of the key: tried again like
+  any other error.
+- After a restart that follows a successful reading, the integration shows
+  "connected" at once, until the next reading.
+
+## Sleep mode buttons (off by default)
+
+Tick "Allow changing the sleep mode of the displays" in the configuration.
+Each display then gets two buttons (never a switch: no voice assistant nor
+"turn everything off" can reach them). Each press:
+
+1. reads the display from TRMNL again (and checks it is the same display:
+   MAC address and friendly id); when it already is in the mode asked,
+   nothing is sent;
+2. checks again that the option is still ticked, then changes the sleep
+   mode;
+3. reads the display back: the command is said done only when TRMNL shows
+   the new value. Otherwise: "Command sent, without confirmation" (the next
+   reading shows the real mode).
+
+Nothing is sent later than 3.5 seconds after the press (Gladys waits 5
+seconds), nor during a 429/5xx pause; 6 commands per minute at most.
+
+## Questions to testers
+
+If you own a TRMNL display, tell us (forum, or a GitHub issue): do the
+battery, voltage and signal match what trmnl.com shows? Do the sleep mode
+buttons act on the display?
+
+## Data and privacy
+
+The integration only talks to trmnl.com. It keeps in its `/data` volume: a
+random key, the fingerprint (HMAC) of a refused key (erased at the first
+success; never a fingerprint of a key that works), the end of a pause, the
+time of the last attempt, and the list of displays (id, name, friendly id,
+MAC address). It does not read your profile (name, e-mail).
+
+## Configuration settings
+
+These are the settings TRMNL asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your TRMNL account | `section` | No | Brings the TRMNL e-ink displays of your account into Gladys, through the official TRMNL account API (trmnl.com) and the API key of your account: for each display its battery (charge and voltage), its Wi-Fi strength and signal, its sleep mode and sleep hours. Read every refresh interval, never faster. Optional buttons turn the sleep mode on or off (off by default, see below). What the screen shows (playlists, plugins) stays in TRMNL. Never tested with a real device. Unofficial, not affiliated with TRMNL. |
+| API key of your account | `secret` | Yes | On trmnl.com, Account, the "API key" of your account (it starts with user_). Kept by Gladys in its database, never shown again, sent only to trmnl.com, in the Authorization header of the requests. |
+| Refresh | `select` | Yes | How often Gladys reads TRMNL (one request for all the displays). A display reports its battery and signal when it wakes up, often every 15 minutes: reading more often rarely shows more. |
+| Language of the names | `select` | No | Used for the names of the features added from now on. |
+| Sleep mode buttons | `section` | No | By default Gladys only reads. Once allowed below, each display gets two buttons, "Turn the sleep mode on" and "Turn the sleep mode off" (never a switch: no voice assistant nor "turn everything off" can reach them). Each press reads the display first, changes its sleep mode in your TRMNL account, then reads it back: it is said done only when TRMNL shows the new value. |
+| Allow changing the sleep mode of the displays | `boolean` | No |  |
+
+## How to install TRMNL in Gladys
+
+1. In Gladys, open **Integrations**: TRMNL appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-trmnl:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-trmnl](https://github.com/LM1LC3N7/gladys-trmnl).
+
+TRMNL requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+TRMNL is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-trmnl) — [source of this documentation](https://github.com/LM1LC3N7/gladys-trmnl/blob/HEAD/docs/en.md)

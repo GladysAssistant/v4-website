@@ -1,0 +1,213 @@
+---
+title: "Scrutiny Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Scrutiny"
+description: "Festplattenzustand aus Scrutiny (S.M.A.R.T.) in Gladys: Status, Temperatur, Szenen bei Ausfall. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-scrutiny.png"
+keywords:
+  - "scrutiny"
+  - "scrutiny smart home"
+  - "gladys scrutiny"
+  - "scrutiny gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-scrutiny instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Scrutiny","description":"Festplattenzustand aus Scrutiny (S.M.A.R.T.) in Gladys: Status, Temperatur, Szenen bei Ausfall.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-scrutiny","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-scrutiny.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T18:11:07Z"}} />
+
+[Scrutiny](https://github.com/AnalogJ/scrutiny) überwacht den Zustand deiner Festplatten und SSDs:
+Sein Collector liest ihre S.M.A.R.T.-Daten (meist einmal am Tag), und sein Web-Dashboard zeigt,
+welche Festplatte in Ordnung ist, welche eine Warnung zeigt und welche fehlerhaft ist, mit
+Schwellen aus echten Ausfallraten. Diese Integration bringt dieses Dashboard in Gladys: Jede
+Festplatte wird ein Gerät mit Zustand, Temperatur und Zählern, Szenen reagieren, wenn eine
+Festplatte ausfällt, wieder OK ist oder nicht mehr erfasst wird, und ein Widget listet zuerst die
+Festplatten, die Aufmerksamkeit brauchen.
+
+Gladys liest den Webserver von Scrutiny und fasst deine Festplatten nie an. Alles bleibt in
+deinem Netzwerk (keine Cloud).
+
+Getestet mit einem echten Scrutiny in Docker (v0.9.5, Omnibus-Image), gespeist mit echten
+`smartctl`-Ausgaben aus der Testsuite von Scrutiny: Festplatten in Ordnung, mit Warnung, fehlerhaft
+nach S.M.A.R.T. und nach Scrutiny, eine NVMe-Festplatte, eine zu alte Erfassung. Noch nicht in
+einer echten Installation: Rückmeldungen gern in
+[den Issues](https://github.com/guim31/gladys-scrutiny/issues).
+
+## Was du brauchst
+
+- Gladys Assistant 5.1.0 oder neuer.
+- Einen Scrutiny-Webserver (das `omnibus`-Image oder `web` + InfluxDB), von Gladys erreichbar,
+  meist auf Port 8080, mit mindestens einem Collector, der ihm Daten schickt. Scrutiny v0.8 und
+  v0.9 werden unterstützt.
+- Wenn ein Reverse-Proxy vor Scrutiny eine Anmeldung verlangt: dessen Benutzer und Passwort
+  (Basic-Authentifizierung). Scrutiny selbst hat keine Anmeldung.
+
+## Erste Schritte
+
+### 1. Die Adresse von Scrutiny finden
+
+Es ist die Adresse seines Dashboards, zum Beispiel `http://192.168.1.2:8080`. Eine aus dem Browser
+kopierte Adresse geht auch (`…/web/dashboard`): Die Integration behält den Serverteil. Hinter einem
+Reverse-Proxy mit Unterpfad (Einstellung `basepath` von Scrutiny) gib die Adresse mit diesem
+Unterpfad ein.
+
+### 2. Die Integration konfigurieren
+
+Öffne in Gladys **Integrationen → Scrutiny → Konfiguration**:
+
+- **Scrutiny-Adresse**: die oben gefundene Adresse.
+- **Proxy-Benutzer (optional)** und **Proxy-Passwort (optional)**: nur wenn ein Reverse-Proxy sie
+  verlangt.
+- **Aktualisierungsintervall**: wie oft Scrutiny gelesen wird, standardmäßig alle 15 Minuten.
+  Jedes Mal eine Anfrage für die Liste der Festplatten und eine für die Einstellungen; die
+  Attribute einer Festplatte werden erst nach einer neuen Erfassung neu gelesen.
+- **Erfassung zu alt nach**: nach wie langer Zeit ohne neue Erfassung eine Festplatte „Festplatte
+  nicht mehr erfasst“ auslöst (standardmäßig 36 Stunden, für einen täglichen Collector).
+- **Sprache der Namen**: die Sprache der Funktionsnamen (beim Hinzufügen eines Geräts festgelegt)
+  und der Texte für Szenen.
+
+Klicke dann auf **Verbindung testen**: Es zeigt, wie viele Festplatten Scrutiny verfolgt und wie
+viele fehlerhaft sind.
+
+### 3. Die Festplatten hinzufügen
+
+Öffne den Tab **Entdecken** der Integration und füge die zu verfolgenden Festplatten hinzu, dazu
+das Gerät **Scrutiny**, wenn du die Summen willst. In Scrutiny archivierte Festplatten werden nicht
+angeboten. Eine Festplatte wird an ihrer Scrutiny-ID erkannt (aus Modell, Seriennummer und WWN: Eine
+WWN allein ist nicht immer eindeutig): An einem anderen Anschluss oder Rechner bleibt sie dasselbe
+Gerät, ebenso nach einem Update von Scrutiny v0.8 auf v0.9.
+
+## Die Geräte
+
+Jede Festplatte hat diese Funktionen:
+
+- **Festplatte fehlerhaft**: Ja, wenn Scrutiny die Festplatte als fehlerhaft markiert, wie sein
+  Dashboard (die „Statusschwelle“ der Scrutiny-Einstellungen: S.M.A.R.T., Scrutiny oder beide).
+  Die Bedingung für Szenen.
+- **Zustand**: OK, Warnung (die Festplatte besteht, aber ein Attribut sieht nicht gut aus) oder
+  Fehlerhaft, als Text.
+- **Temperatur**: bei der letzten Erfassung, in °C.
+- **Betriebsstunden**: wie von der Festplatte gemeldet.
+- **Neu zugewiesene Sektoren** und **Ausstehende Sektoren**: S.M.A.R.T.-Attribute 5 und 197, nur bei
+  Festplatten, die sie melden (SATA). Ein steigender Zähler ist das erste Zeichen einer sterbenden
+  Festplatte.
+- **Seit der letzten Erfassung**: Stunden seit der Collector zuletzt Daten für die Festplatte
+  geschickt hat.
+
+Das Gerät **Scrutiny** zählt die **Fehlerhafte Festplatten**, die **Festplatten mit Warnung** und
+die **Festplatten insgesamt**.
+
+## Dashboard
+
+Das Widget **Scrutiny-Festplatten** zeigt drei Kacheln (fehlerhaft, Warnungen, die höchste
+Temperatur), dann eine Zeile pro Festplatte: zuerst die fehlerhaften, dann die Warnungen, die nicht
+mehr erfassten und die gesunden Festplatten, höchstens zehn Zeilen. Wähle in seinen Einstellungen
+Festplatten, um nur sie anzuzeigen. **Aktualisieren** liest Scrutiny neu.
+
+## Szenen
+
+### Auslöser
+
+- **Eine Festplatte fällt aus**: Scrutiny markiert eine Festplatte nach einer Erfassung als
+  fehlerhaft. Variablen: der Name der Festplatte, ihr Modell, die fehlerhaften Attribute und ihre
+  Temperatur.
+- **Eine Festplatte ist wieder OK**: Eine fehlerhafte Festplatte ist bei einer neuen Erfassung
+  wieder OK, oder nach einer Änderung der Scrutiny-Schwelle. Variablen: der Name der Festplatte,
+  ihr Modell und wie viele Stunden sie fehlerhaft war.
+- **Festplatte nicht mehr erfasst**: keine neue Erfassung einer Festplatte seit der eingestellten
+  Frist (Collector gestoppt, Festplatte weg). Ein Ereignis pro Festplatte. Variablen: der Name der
+  Festplatte, ihr Modell und die Stunden seit ihrer letzten Erfassung.
+
+Jeder Auslöser lässt sich auf bestimmte Festplatten beschränken. Eine zum ersten Mal gesehene
+Festplatte löst nichts aus: Eine seit Monaten fehlerhafte Festplatte ist keine Neuigkeit. Die
+Integration merkt sich den letzten Zustand jeder Festplatte: Eine Festplatte, die während eines
+Neustarts von Gladys oder der Integration ausgefallen ist, wird trotzdem gemeldet, einmal.
+
+### Aktionen
+
+- **Zustand einer Festplatte**: liest eine Festplatte für die nächsten Aktionen: fehlerhaft oder
+  nicht, ihr Zustand, Name, Modell, Temperatur, Betriebsstunden, Stunden seit der Erfassung, die
+  betroffenen Attribute und einen fertigen Satz wie „Samsung SSD 840 (sdd): Fehlerhaft, 33 °C, vor
+  5 Tagen erfasst. UltraDMA CRC Error Count.“
+- **Fehlerhafte Festplatten zählen**: zählt die fehlerhaften Festplatten, die mit Warnung, die
+  nicht mehr erfassten und alle, und nennt die fehlerhaften, für einen Bericht.
+
+Beide lesen Scrutiny neu, wenn die letzte Lesung älter als eine Minute ist.
+
+### Szenen-Ideen
+
+- **Eine Festplatte fällt aus** → eine Telegram-Nachricht „Festplatte \{Festplatte\} fehlerhaft:
+  \{Attribute\}“ senden und eine Lampe rot einschalten.
+- Jeden Sonntag um 10:00 → **Fehlerhafte Festplatten zählen** → wenn die Zahl über 0 liegt, „\{Namen\}
+  fehlerhaft, \{Warnungen\} Festplatte(n) mit Warnung“ senden.
+- **Festplatte nicht mehr erfasst** → melden „Der Scrutiny-Collector von \{Festplatte\} steht seit
+  \{Stunden\} Stunden“: ein Backup-NAS, das nicht aufgewacht ist, ein abgestürzter
+  Collector-Container.
+
+## Fehlerbehebung
+
+- **„Scrutiny antwortet nicht“**: Prüfe Adresse und Port vom Rechner von Gladys aus, und dass keine
+  Firewall blockiert.
+- **„Scrutiny antwortet mit einem Fehler“**: Seine Datenbank (InfluxDB) ist gestoppt oder voll; das
+  Dashboard von Scrutiny zeigt denselben Fehler.
+- **„Eine Anmeldung wird verlangt“**: Ein Reverse-Proxy schützt Scrutiny; trage seinen Benutzer und
+  sein Passwort ein (nur Basic-Authentifizierung).
+- **„Die Adresse leitet um“**: Gib direkt die `https://`-Adresse ein.
+- **„Zertifikat abgelehnt“**: Ein selbstsigniertes Zertifikat wird nicht akzeptiert; nutze die
+  `http://`-Adresse in deinem Netzwerk.
+- **Keine Festplatte**: Noch kein Collector hat Daten geschickt; starte ihn einmal
+  (`docker exec scrutiny scrutiny-collector-metrics run` mit dem Omnibus-Image).
+- **Eine Festplatte bleibt „Noch nicht erfasst“**: Die Festplatte ist registriert, aber ihr Collector konnte
+  ihre S.M.A.R.T.-Daten nicht lesen (USB-Gehäuse, RAID-Controller): Sieh in die Protokolle des
+  Collectors.
+- **Der Zustand weicht vom Scrutiny-Dashboard ab**: Lade das Dashboard neu; die Integration liest
+  dieselbe Statusschwelle, im gewählten Intervall.
+
+## Grenzen
+
+- Die Daten sind die der letzten Erfassung: Mit dem täglichen Standard-Collector erscheint eine
+  Festplatte, die mittags ausfällt, bei der nächsten Erfassung.
+- Der Verlauf von Scrutiny, seine Benachrichtigungen und die Selbsttest-Ergebnisse werden nicht
+  gelesen; den Verlauf jeder Funktion speichert Gladys.
+- Die Sektorzähler gibt es nur bei SATA-Festplatten; NVMe- und SAS-Festplatten zeigen Zustand,
+  Temperatur und Stunden.
+- Nicht mit Scrutiny oder seinem Autor verbunden.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Scrutiny in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Dein Scrutiny | `section` | Nein | Gib die Adresse der Weboberfläche von Scrutiny ein. Lege dann die zu verfolgenden Festplatten im Tab „Entdecken“ an: Gladys liest Scrutiny, der Scrutiny-Collector liest die Festplatten. |
+| Scrutiny-Adresse | `string` | Ja | Adresse und Port der Weboberfläche von Scrutiny (standardmäßig 8080). |
+| Proxy-Benutzer (optional) | `string` | Nein | Nur wenn ein Reverse-Proxy vor Scrutiny eine Anmeldung verlangt (Basic-Authentifizierung). |
+| Proxy-Passwort (optional) | `secret` | Nein | Das Passwort dieses Benutzers. Scrutiny selbst hat keine Anmeldung. |
+| Optionen | `section` | Nein |  |
+| Aktualisierungsintervall | `select` | Ja | Wie oft Scrutiny gelesen wird. Sein Collector liest die Festplatten standardmäßig einmal am Tag. |
+| Erfassung zu alt nach | `select` | Ja | Eine so lange nicht erfasste Festplatte löst „Festplatte nicht mehr erfasst“ aus: Collector gestoppt, Festplatte weg. |
+| Sprache der Namen | `select` | Ja | Sprache der Funktionsnamen (beim Hinzufügen eines Geräts festgelegt) und der Texte für Szenen. |
+
+## So installierst du Scrutiny in Gladys
+
+1. Öffne in Gladys **Integrationen**: Scrutiny erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-scrutiny:1.0.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-scrutiny](https://github.com/guim31/gladys-scrutiny).
+
+Scrutiny benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Scrutiny ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-scrutiny) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-scrutiny/blob/HEAD/docs/de.md)

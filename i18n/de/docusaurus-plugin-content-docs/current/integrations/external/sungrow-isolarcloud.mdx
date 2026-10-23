@@ -1,0 +1,260 @@
+---
+title: "Sungrow iSolarCloud Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Sungrow iSolarCloud"
+description: "Unofficial: Sungrow solar and batteries via iSolarCloud, read only: power, energy, grid, battery. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-sungrow.png"
+keywords:
+  - "sungrow isolarcloud"
+  - "sungrow isolarcloud smart home"
+  - "gladys sungrow isolarcloud"
+  - "sungrow isolarcloud gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-sungrow instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Sungrow iSolarCloud","description":"Unofficial: Sungrow solar and batteries via iSolarCloud, read only: power, energy, grid, battery.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-sungrow","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-sungrow.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T10:21:18Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+This integration reads your **Sungrow inverters and batteries** through the
+official **iSolarCloud OpenAPI**, **read only**: nothing is ever commanded (no
+battery mode, no feed-in limit).
+
+> Unofficial connector, **not affiliated with Sungrow**. **Never tested with a
+> real account** on iSolarCloud, and **never tested with a real device**
+> (inverter, battery) yet: it follows the `pysolarcloud` library (MIT), used
+> by Home Assistant. Feedback is welcome on the Gladys forum. Sungrow and
+> iSolarCloud are trademarks of their owner.
+
+## What you get
+
+For each plant you authorize, up to three devices:
+
+| Device                                  | Feature                                    | Unit / type                |
+| --------------------------------------- | ------------------------------------------ | -------------------------- |
+| **Plant** (always)                      | Solar power                                | W, production              |
+|                                         | Solar production (index)                   | kWh, **production index**  |
+|                                         | Solar production (30 minutes)              | kWh, filled by Gladys      |
+|                                         | Solar production today                     | plain sensor (kWh)         |
+|                                         | Home consumption power, today and total    | plain sensors (W, kWh)     |
+| **Grid** (when iSolarCloud gives it)    | Energy bought from the grid (index)        | kWh, **consumption index** |
+|                                         | Grid power (sign as given by iSolarCloud)  | plain sensor (W)           |
+|                                         | Bought today, fed in today and in total    | plain sensors (kWh)        |
+| **Battery** (when iSolarCloud gives it) | Battery charge                             | %                          |
+|                                         | Battery power                              | plain sensor (W)           |
+|                                         | Charged and discharged, today and in total | plain sensors (kWh)        |
+
+### The two energy indexes
+
+- **Solar production (index)**: the total produced by the plant since it was
+  commissioned. It comes with the **Solar production (30 minutes)** feature,
+  which Gladys fills itself from the index (the integration never writes to
+  it): that one feeds the energy monitoring.
+- **Energy bought from the grid (index)**: the total bought from the grid,
+  counted by Gladys as electricity consumption (with its cost, according to
+  your energy contract in Gladys).
+
+If another meter already feeds Gladys (Linky, P1, a Zigbee meter…), **do not
+add the "grid" device**: the same consumption would be counted twice. The
+"plant" device is useful on its own.
+
+Both indexes go through a **guard** (the same as the P1 Monitor integration)
+before they reach Gladys, because Gladys counts every rise in full:
+
+- a value of 0, or an absent one, is never sent;
+- a plausible rise (no more than the **maximum power of the installation**
+  since the previous read, 36 kW by default) goes through;
+- a **drop** or a **jump** is never confirmed by time nor by repetition: the
+  value is **held back** (the last accepted value is sent again), the status
+  of the integration shows it, and it stays held across a restart;
+- if the value held back is right (a replaced meter, a reset), click
+  **Accept the held indexes**: it is taken at the next read, once, and only
+  if it is the value shown (plus what may have been produced or drawn
+  meanwhile).
+
+Every other total and daily value is a **plain sensor**: Gladys counts it
+nowhere.
+
+## Step 1: create your Sungrow developer app
+
+The iSolarCloud API needs a **developer app** you create yourself, once, on
+the Sungrow portal. The four steps below are those of the `pysolarcloud`
+library:
+
+1. Create an account on the iSolarCloud developer portal:
+   [https://developer-api.isolarcloud.com/](https://developer-api.isolarcloud.com/).
+2. Create an **application** in the portal:
+   - to "authorize with OAuth2.0", answer **Yes**;
+   - give a **Redirect URL** (it can be changed later): the address
+     iSolarCloud sends your browser back to after the authorization. Two
+     options:
+     - **the return address of your Gladys** (recommended). To find it: do
+       step 2 below without a redirect URL, click **Connect** once: the
+       status of the integration shows "The return address of this Gladys
+       is …". Copy it into the portal;
+     - **another https address of yours**: you will then copy and paste the
+       final address (see below).
+3. Wait for Sungrow to **approve** the app.
+4. In the portal, note:
+   - the **Appkey**;
+   - the **Secret Key**;
+   - the **Application Id**: it appears in the authorize URL the portal
+     shows, after `applicationId=` (a number).
+
+Not checked, according to other projects: the portal may also accept the
+credentials of your Sungrow account (try them before creating a new one);
+how long the approval takes and how the portal shows it are not known.
+
+## Step 2: configure the integration
+
+In **Integrations → Sungrow iSolarCloud → Configuration**:
+
+1. **iSolarCloud server**: the one of your account (**Europe** for France,
+   Belgium, Switzerland). Not checked: the developer app is probably tied to
+   the same server.
+2. **Appkey**, **Secret Key**, **Application Id**: those of step 1.
+3. Leave **Redirect URL** empty if the app sends back to Gladys; otherwise
+   enter the address registered in the portal.
+4. Save.
+
+## Step 3: authorize
+
+1. Click **Connect**: the iSolarCloud page opens.
+2. Sign in with your usual iSolarCloud account. **Your password is typed on
+   the iSolarCloud page only**: the integration never sees it.
+3. **Tick the plant(s)** to share, then authorize.
+4. iSolarCloud sends you back to Gladys: the integration reads your plants.
+   Add the devices from the **Discovery** tab.
+
+### With another redirect URL
+
+1. After the authorization, the browser ends on your address (the page may
+   show an error, that is expected). Copy **the whole address** from the
+   address bar: it holds `code=` and `state=`.
+2. Paste it into the **Finish the authorization** action, within 15 minutes.
+   It must start with the configured redirect URL: another address is
+   refused (the authorization then stays usable).
+
+An authorization started serves once. If iSolarCloud is slow to answer (more
+than 3.5 seconds on the return to Gladys), the integration shows
+"iSolarCloud is slow to answer: click Connect again": start again.
+
+## What the integration keeps
+
+- The **Secret Key** is kept by Gladys in its database, as any configuration
+  value: never shown again, sent only to iSolarCloud.
+- The iSolarCloud **tokens** (access and renewal) are kept in clear in the
+  file `/data/sungrow-state.json` of the integration's volume, readable by
+  its container only (mode 0600), and sent only to iSolarCloud. The same file
+  keeps the pauses, the stops, the list of plants, the number of requests of
+  the day and the state of the index guards. No password is ever written
+  there.
+
+## Pace and API limits
+
+- iSolarCloud updates its data **every 5 minutes**: the integration reads
+  **all the plants in one request**, every 5 minutes by default (5 minutes at
+  least, 60 at most).
+- The list of plants is read again every 6 hours (and on request from
+  Discovery).
+- The token is renewed by a timer a little before its end, never twice
+  within a minute.
+- **At most 600 requests a day** (UTC) in all, authorization and renewals
+  included: about 320 at the default pace. If that ceiling is reached (it
+  never should), everything waits for the next day.
+- After a restart, the first read waits for the end of the interval since the
+  last read and for the end of a running pause.
+
+Sungrow publishes no figures for its rate limits: the integration answers a
+refusal (HTTP 429 or a "too frequent" answer) with a pause.
+
+## Errors and stops
+
+| Situation                                                | What the integration does                                                   |
+| -------------------------------------------------------- | --------------------------------------------------------------------------- |
+| iSolarCloud asks to slow down (HTTP 429, "too frequent") | pause of 1 minute to 6 hours (15 minutes by default), kept across a restart |
+| iSolarCloud unavailable (5xx error, "busy")              | pause of 5 minutes to 1 hour, kept across a restart                         |
+| Daily ceiling of requests reached                        | pause until the next day (midnight UTC)                                     |
+| Network down, unexpected answer                          | new try after the interval, then 5, 15, 30 minutes, kept across a restart   |
+| One plant without data                                   | the others go on; its devices turn "unreachable"                            |
+| Renewal refused by iSolarCloud                           | "session ended" stop, kept: click Connect                                   |
+| Access refused even with a new token, or keys refused    | stop, kept: check the keys, then Connect or "Test iSolarCloud"              |
+
+The integration never reconnects by itself and never retries a refusal: only
+a click does. The **Test iSolarCloud** button never reads faster than the
+interval nor during a pause: it shows the last result and when the next read
+comes, and reads only once the interval has passed since the last read. After
+an "access refused" stop it reads at once, once (that is how the stop is
+lifted). Once every 30 seconds at most.
+
+## Troubleshooting
+
+- **"Enter the app key"**: Appkey, Secret Key or Application Id missing (the
+  Application Id is a number).
+- **iSolarCloud refuses the authorization**: wrong server, Appkey, Secret Key
+  or redirect URL, app not yet approved by Sungrow, or a pasted address older
+  than 15 minutes.
+- **No plant**: click Connect again and tick the plant on the iSolarCloud
+  page.
+- **An index held back**: see "The two energy indexes" above.
+- **A feature stays empty**: not every plant gives every measure point (it
+  depends on the inverter model and the meter).
+
+## Limits
+
+- Read only: no command (no battery, no feed-in).
+- The values come from the iSolarCloud cloud (updated every 5 minutes), not
+  from the inverter locally.
+- The sign of the grid and battery powers is the one of iSolarCloud, not
+  checked.
+- Never tested with a real account nor a real device: the measure points and
+  units follow `pysolarcloud` 0.5.0.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Sungrow iSolarCloud in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Sungrow plants in Gladys | `section` | Nein | Unofficial connector, not affiliated with Sungrow. It reads your Sungrow inverters and batteries through the official iSolarCloud OpenAPI, read only: solar power and production, home consumption, energy bought from and fed into the grid, battery charge and power. The solar production and the energy bought are energy indexes, checked before Gladys counts them. It needs a developer app you create yourself on the Sungrow developer portal (approved by Sungrow): follow the guide. Your password is typed on the iSolarCloud page only. Never tested yet with a real account. Sungrow and iSolarCloud are trademarks of their owner. |
+| 1. Your developer app | `section` | Nein | On the Sungrow developer portal, create an account, then an app: answer Yes to "authorize with OAuth2.0" and give a redirect URL (the return address of this Gladys, shown here after a first click on Connect, or another address of yours). Wait for Sungrow to approve it. Then copy its Appkey, its Secret Key and its Application Id (the applicationId= of the authorize URL of the portal) below, choose the server of your iSolarCloud account, and save. |
+| iSolarCloud server | `select` | Nein | The server of your account and of your developer app (Europe for France, Belgium, Switzerland). |
+| Appkey | `string` | Ja | The Appkey of your developer app. |
+| Secret Key | `secret` | Ja | The Secret Key of your developer app. Kept by Gladys in its database, never shown again, sent only to iSolarCloud. |
+| Application Id | `string` | Ja | The number after applicationId= in the authorize URL the portal shows for your app. |
+| 2. Authorize | `section` | Nein | Click Connect: the iSolarCloud page opens; sign in, tick your plant(s) and authorize. iSolarCloud sends you back to Gladys and the integration reads your plants. If the redirect URL of your app is not this Gladys, write it in "Redirect URL": at the end, copy the whole address the browser shows (it holds code= and state=) and paste it into "Finish the authorization" below, within 15 minutes. The tokens are kept in clear in the /data volume of the integration (readable by its container only), sent only to iSolarCloud. |
+| Redirect URL (optional) | `string` | Nein | Empty: iSolarCloud sends you back to this Gladys. Otherwise the redirect URL of your developer app (https, or http on localhost only): finish by pasting the address the browser ended on. |
+| iSolarCloud account | `oauth2` | Nein | Opens the iSolarCloud authorization page (save the keys first). |
+| Refresh interval (minutes) | `number` | Nein | iSolarCloud updates its data every 5 minutes: one request per read for all the plants, at most 600 requests a day. |
+| Maximum power of the installation (kW) | `number` | Nein | The most the plant may produce or the home draw from the grid. An index that rises faster, or drops, is held back until you accept it. |
+| Language of the names and texts | `select` | Nein |  |
+
+## So installierst du Sungrow iSolarCloud in Gladys
+
+1. Öffne in Gladys **Integrationen**: Sungrow iSolarCloud erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-sungrow:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-sungrow](https://github.com/LM1LC3N7/gladys-sungrow).
+
+Sungrow iSolarCloud benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Sungrow iSolarCloud ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-sungrow) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-sungrow/blob/HEAD/docs/en.md)

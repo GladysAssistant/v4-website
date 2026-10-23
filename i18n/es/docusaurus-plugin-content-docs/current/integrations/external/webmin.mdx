@@ -1,0 +1,243 @@
+---
+title: "Integración domótica Webmin, gratuita y de código abierto"
+sidebar_label: "Webmin"
+description: "Sus servidores Linux con Webmin: actualizaciones, seguridad, reinicio, carga, discos. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-webmin.png"
+keywords:
+  - "webmin"
+  - "domótica webmin"
+  - "gladys webmin"
+  - "webmin gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-webmin instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Webmin","description":"Sus servidores Linux con Webmin: actualizaciones, seguridad, reinicio, carga, discos.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-webmin","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-webmin.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T18:23:14Z"}} />
+
+[Webmin](https://webmin.com) es la interfaz web de administración de servidores
+Linux y BSD. Esta integración lee hasta tres servidores Webmin y trae a Gladys
+lo que una herramienta de supervisión no dice: las **actualizaciones de
+paquetes** pendientes en cada servidor, las de **seguridad** aparte, y si el
+servidor **espera un reinicio**. Además, lo esencial del panel de Webmin:
+carga, procesador, memoria, swap, el disco más lleno, la temperatura más alta,
+el tiempo en marcha. Las escenas pueden reaccionar a nuevas actualizaciones de
+seguridad, a un disco que se llena o a un servidor que deja de responder, y un
+widget resume un servidor. Todo se queda en su red local, y nunca se modifica
+nada en el servidor.
+
+Probada con un Webmin 2.670 real en Debian 12 (Docker): actualizaciones y
+actualizaciones de seguridad, reinicio necesario, contraseña incorrecta,
+dirección bloqueada, usuario sin derecho RPC, certificado autofirmado. Todavía
+no en un Gladys real ni en todas las distribuciones: sus comentarios son
+bienvenidos en [las issues](https://github.com/guim31/gladys-webmin/issues).
+
+## Lo que necesita
+
+- Gladys Assistant 5.1.0 o posterior.
+- Webmin (2.x probado) en cada servidor, accesible desde la máquina de Gladys
+  (puerto 10000, HTTPS, por defecto).
+- El módulo Perl **XML::Parser** en el servidor: `apt install
+libxml-parser-perl` (Debian, Ubuntu), `dnf install perl-XML-Parser` (Fedora,
+  Rocky, Alma). Sin él, Webmin no responde a ninguna llamada XML-RPC.
+- Para las actualizaciones: el módulo de Webmin **Software Package Updates**
+  (instalado con Webmin en las distribuciones habituales).
+
+## Primeros pasos
+
+### 1. Crear un usuario de Webmin para Gladys
+
+En Webmin, abra **Webmin → Webmin Users → Create a new Webmin user**:
+
+- nombre `gladys` y una contraseña larga;
+- **Can accept RPC calls?**: **Yes**;
+- no hace falta ningún módulo: déjelos todos sin marcar;
+- recomendado, **IP access control**: permita solo la dirección de la máquina
+  de Gladys.
+
+Por qué importa la restricción: mediante XML-RPC, Webmin deja que ese usuario
+llame a cualquier función de Webmin, como root. La integración solo llama a
+funciones de lectura (enumeradas en la sección Límites), pero la contraseña
+vale tanto como una contraseña de root: resérvela para Gladys y permítala solo
+desde la dirección de Gladys.
+
+### 2. Configurar la integración
+
+En la pestaña **Configuración**, para cada servidor:
+
+- **Dirección de Webmin**: `192.168.1.20`, `servidor.lan`, o la dirección
+  copiada del navegador (`https://servidor.lan:10000/`). Con un simple nombre
+  o una IP se suponen HTTPS y el puerto 10000;
+- **Usuario de Webmin** y **Contraseña**: el usuario creado arriba;
+- **Nombre en Gladys** (opcional): por defecto, el nombre de host que indica
+  Webmin.
+
+Opciones: **Intervalo de actualización** (1 a 10 minutos, 5 por defecto; las
+actualizaciones se leen una vez por hora sea cual sea este intervalo),
+**Aceptar certificados autofirmados** (marcado por defecto: Webmin crea uno al
+instalarse), **Idioma de los nombres de las funciones**.
+
+Guarde y pulse **Probar la conexión**: una línea por servidor, con la versión
+de Webmin, el número de discos y de actualizaciones.
+
+### 3. Añadir los dispositivos
+
+Abra la pestaña **Descubrir**: un dispositivo por servidor que ha respondido.
+Añada los que quiera seguir.
+
+## Los dispositivos
+
+Un dispositivo por servidor, con estas funciones (nombres en el idioma elegido
+en la configuración):
+
+- **En línea**: 1 cuando el servidor responde, 0 en cuanto deja de responder
+  dos lecturas seguidas;
+- **Procesador**, **Memoria**, **Swap** (si el servidor tiene swap): uso en %;
+- **Carga (1 min)**, **Carga (5 min)**, **Carga (15 min)**: las cargas medias;
+- **Disco más lleno**: uso del disco local más lleno, en %;
+- **Temperatura más alta**: el núcleo de procesador o el disco más caliente,
+  cuando Webmin lee temperaturas (lm-sensors, hddtemp o smartmontools en el
+  servidor);
+- **Tiempo en marcha**: en días;
+- **Actualizaciones disponibles** y **Actualizaciones de seguridad**: número
+  de paquetes;
+- **Reinicio necesario**: 1 cuando el servidor espera un reinicio (Debian y
+  Ubuntu: `/var/run/reboot-required`; familia Red Hat: `needs-restarting`).
+
+Las actualizaciones vienen de la caché del módulo de Webmin Software Package
+Updates, válida 6 horas por defecto: Gladys ve una nueva actualización cuando
+Webmin la ve. Para verlas antes, reduzca **Cache time** en la configuración de
+ese módulo.
+
+## Panel
+
+El widget **Servidor Webmin** (elija el servidor en sus ajustes) muestra el
+número de actualizaciones (naranja si hay pendientes, rojo si alguna es de
+seguridad), indicadores de memoria y del disco más lleno, la temperatura más
+alta, luego los paquetes de seguridad, el reinicio, el espacio libre, la carga,
+el swap y el tiempo en marcha. El botón **Actualizar** vuelve a leer Webmin,
+actualizaciones incluidas.
+
+## Escenas
+
+### Disparadores
+
+- **Nuevas actualizaciones de seguridad**: aparecen actualizaciones de
+  seguridad en un servidor (leído una vez por hora). Se repite con cada nuevo
+  paquete o nueva versión. Filtro: servidor. Variables: servidor, paquetes
+  nuevos, nuevas actualizaciones de seguridad, actualizaciones de seguridad,
+  actualizaciones disponibles.
+- **Disco casi lleno**: un disco alcanza el 80, 85, 90, 95 o 98 % (el umbral es
+  un filtro del disparador), para cada disco que enumera Webmin, no solo el
+  más lleno. Se avisa de nuevo cuando ha bajado 2 puntos. Variables: servidor,
+  punto de montaje, espacio usado, espacio libre (GB), umbral.
+- **Servidor inaccesible**: el servidor deja de responder dos lecturas
+  seguidas (las credenciales rechazadas no cuentan). Variables: servidor,
+  motivo.
+
+Los disparadores valen para cada servidor configurado, añadido a Gladys o no,
+y sobreviven a un reinicio de la integración: no se pierde nada ni se avisa dos
+veces.
+
+### Acciones
+
+- **Estado de un servidor Webmin**: lee un servidor y devuelve cada valor
+  (actualizaciones, actualizaciones de seguridad, reinicio necesario, paquetes
+  por actualizar, procesador, memoria, swap, cargas, disco más lleno, espacio
+  libre, temperatura, tiempo en marcha) y un **resumen** listo para un
+  mensaje, por ejemplo `NAS: 4 actualización(es), 2 de seguridad (libssl3,
+openssl), reinicio necesario, carga 0,42, memoria 66 %, disco / 87 % (59 GB
+libres)`.
+
+### Ideas de escenas
+
+- Cada lunes a las 9 h, **Estado de un servidor Webmin**, y luego el resumen a
+  su teléfono: la lista de mantenimiento de la semana.
+- **Nuevas actualizaciones de seguridad** → un mensaje de Telegram con los
+  paquetes.
+- Cuando **Reinicio necesario** pasa a 1 y no hay nadie en casa, un
+  recordatorio para reiniciar por la noche.
+- **Disco casi lleno** al 90 % → una notificación con el punto de montaje.
+
+## Solución de problemas
+
+- _instale el módulo Perl XML::Parser_: instale `libxml-parser-perl` (o
+  `perl-XML-Parser`) en el servidor, no hace falta reiniciar Webmin.
+- _este usuario de Webmin no puede hacer llamadas RPC_: ponga **Can accept RPC
+  calls?** en Yes para ese usuario.
+- _nombre de usuario o contraseña rechazados_: compruébelos. Tras 5 inicios de
+  sesión fallidos, Webmin bloquea la dirección de Gladys durante 60 segundos
+  (_Webmin bloquea Gladys…_): la integración espera entonces 30 minutos antes
+  de volver a intentarlo, o **Probar la conexión** al instante.
+- _certificado rechazado_: marque **Aceptar certificados autofirmados**.
+- _la dirección redirige_: Webmin está en HTTPS: introduzca `https://…`.
+- _no hay ningún Webmin en esta dirección_: compruebe el puerto (10000 por
+  defecto).
+- Actualizaciones desconocidas en el informe de prueba: falta el módulo
+  Software Package Updates o no puede leer el gestor de paquetes.
+
+## Límites
+
+- Solo lectura: la integración nunca instala una actualización ni reinicia un
+  servidor. Funciones llamadas: `system-status::collect_system_info`,
+  `proc::get_system_uptime`, `webmin::get_webmin_version`,
+  `webmin::get_system_hostname`, `package-updates::list_possible_updates`,
+  `package-updates::check_reboot_required`.
+- Hasta tres servidores. Usermin y Virtualmin no se leen.
+- Actualizaciones tan recientes como la caché de Webmin (6 horas por defecto),
+  leídas una vez por hora.
+- La marca de seguridad viene del origen del paquete (repositorios
+  `…-security` de Debian y Ubuntu): otras distribuciones pueden no mostrar
+  ninguna.
+- Sin relación con Webmin.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Webmin te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Primeros pasos | `section` | No | Webmin responde a Gladys mediante su interfaz XML-RPC: cree un usuario de Webmin para Gladys con derecho a llamadas RPC e instale el módulo Perl XML::Parser en el servidor. Solo lectura: no se modifica nada en el servidor. |
+| Dirección de Webmin | `string` | Sí | Nombre o IP del servidor, puerto 10000 y HTTPS por defecto, o la dirección copiada del navegador. |
+| Usuario de Webmin | `string` | No | Un usuario de Webmin autorizado a hacer llamadas RPC, idealmente creado para Gladys (consulte la documentación). |
+| Contraseña | `secret` | No |  |
+| Nombre en Gladys (opcional) | `string` | No | Por defecto, el nombre de host que indica Webmin. |
+| Segundo servidor (opcional) | `section` | No |  |
+| Dirección de Webmin | `string` | No | Nombre o IP del servidor, puerto 10000 y HTTPS por defecto, o la dirección copiada del navegador. |
+| Usuario de Webmin | `string` | No | Un usuario de Webmin autorizado a hacer llamadas RPC, idealmente creado para Gladys (consulte la documentación). |
+| Contraseña | `secret` | No |  |
+| Nombre en Gladys (opcional) | `string` | No | Por defecto, el nombre de host que indica Webmin. |
+| Tercer servidor (opcional) | `section` | No |  |
+| Dirección de Webmin | `string` | No | Nombre o IP del servidor, puerto 10000 y HTTPS por defecto, o la dirección copiada del navegador. |
+| Usuario de Webmin | `string` | No | Un usuario de Webmin autorizado a hacer llamadas RPC, idealmente creado para Gladys (consulte la documentación). |
+| Contraseña | `secret` | No |  |
+| Nombre en Gladys (opcional) | `string` | No | Por defecto, el nombre de host que indica Webmin. |
+| Opciones | `section` | No |  |
+| Intervalo de actualización | `select` | No | Con qué frecuencia se lee Webmin. Las actualizaciones de paquetes se leen una vez por hora sea cual sea este intervalo. |
+| Aceptar certificados autofirmados | `boolean` | No | Webmin crea un certificado autofirmado al instalarse: déjelo marcado salvo que el servidor tenga un certificado reconocido. |
+| Idioma de los nombres de las funciones | `select` | No | Nombres de las funciones al añadir el dispositivo e idioma de los textos enviados a las escenas. |
+
+## Cómo instalar Webmin en Gladys
+
+1. En Gladys, abre **Integraciones**: Webmin aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-webmin:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-webmin](https://github.com/guim31/gladys-webmin).
+
+Webmin requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Webmin es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-webmin) — [fuente de esta documentación](https://github.com/guim31/gladys-webmin/blob/HEAD/docs/es.md)

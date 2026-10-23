@@ -1,0 +1,220 @@
+---
+title: "V2C Trydan Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "V2C Trydan"
+description: "V2C Trydan EV chargers over the local API: state, power, current, solar control; optional commands. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-v2c-trydan.png"
+keywords:
+  - "v2c trydan"
+  - "v2c trydan smart home"
+  - "gladys v2c trydan"
+  - "v2c trydan gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-v2c-trydan instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"V2C Trydan","description":"V2C Trydan EV chargers over the local API: state, power, current, solar control; optional commands.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-v2c-trydan","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-v2c-trydan.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-19T19:28:00Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+Shows your **V2C Trydan** charging station in Gladys through its **local
+API**: no cloud, no account, straight on your network.
+
+> **Unofficial API, never tested with a real station.**
+> Not affiliated with V2C. It talks to the local API of the station as the
+> pytrydan library (used by Home Assistant) does. V2C may change it without
+> notice.
+
+## What you get
+
+One device per station with:
+
+| Feature                                                                                  | Content                                                                                  |
+| ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Status                                                                                   | No vehicle, plugged in, charging, paused, station locked, faults                         |
+| Connector                                                                                | Available, occupied, faulted or unavailable (Gladys' "charging station" category)        |
+| Charging state                                                                           | Charging, vehicle plugged in, paused (by the station), idle                              |
+| Vehicle plugged in                                                                       | Yes / no                                                                                 |
+| Charging power                                                                           | In W                                                                                     |
+| House, solar, battery power                                                              | In W, measured by the clamp or inverter linked to the station (house negative on export) |
+| Installation voltage                                                                     | In V, when the station gives it                                                          |
+| Energy of the session                                                                    | In kWh, a plain sensor                                                                   |
+| Duration of the session                                                                  | In seconds                                                                               |
+| Charging, minimum, maximum current                                                       | In A: the current setpoint and the range set on the station                              |
+| Charge paused, station locked, schedule on, dynamic modulation, modulation paused, ready | Yes / no, read only                                                                      |
+| Wiring (phases)                                                                          | Single-phase, three-phase, mixed (read only)                                             |
+| Solar control mode                                                                       | Schedule, no schedule, solar + minimum power, solar only, solar + grid, stop             |
+| Meter link                                                                               | No error, clamp not connected, Modbus errors…                                            |
+| Pause charging                                                                           | Button (commands allowed only)                                                           |
+| Resume charging                                                                          | Button (commands allowed only)                                                           |
+| Set the charging current                                                                 | List of 6 to 32 A (commands allowed only)                                                |
+| Set the solar control mode                                                               | List of the six modes (commands allowed only)                                            |
+
+Read every 30 seconds by default (10 s to 10 min, configurable).
+
+**Energy**: the energy of the session is a **plain sensor**, never an index:
+it does not enter Gladys' Energy tab (the station is already counted by your
+main meter). No daily consumption is published.
+
+## Installation
+
+1. Give the station a **fixed IP address** in your router.
+2. Install the integration from the Gladys store.
+3. In its configuration, enter the **IP address of the station** (or its
+   host name; several stations: separated by commas, four at most).
+   Loopback (127.x), multicast and broadcast (ending in .255) addresses are
+   refused, and a host name is only followed when it points to an IPv4
+   device address.
+4. Save, then add the station from the **Discovery** tab.
+
+The device takes the **identifier** (`ID`) the station gives, kept for its
+address (across restarts too): a read that misses it once does not change
+the device. But a **command** needs the read just before to really give that
+identifier: otherwise it is refused unsent ("the station did not give its
+identifier"), so that another station that took the address is never driven. Some firmware versions never give one: the device then takes
+the address typed, and changing that address creates a new device.
+
+**The same station typed twice** (its IP address and its host name, for
+instance): it gives the same identifier, so a single device; it is read
+twice per interval, and the commands go through the address that answers
+(the first one typed when both do). Type it once. Without an identifier,
+each address gives its own device.
+
+The **Test the connection** button reads each station once (at most every
+10 seconds).
+
+## Security: an API without a password
+
+The local API of the Trydan has **no authentication at all**: any machine
+on your network can read the station and drive it (pause, current, mode),
+Gladys included. This module assumes a **trusted network**: never make the
+station reachable from the Internet (no port forwarding), and preferably put
+it on a separate network for connected devices. This module asks for and
+keeps no secret.
+
+## Commands (off by default)
+
+"Pause charging", "Resume charging", "Set the charging current" and "Set the
+solar control mode" refuse every command while the **Allow the commands**
+option is off. On:
+
+- **Pause** suspends the charge (`Paused=1`); it is **never blocked**: not by
+  a command in flight (it leaves at once, without a read, and once more when
+  that command ends), not by a once-a-minute limit. An older command that
+  has not left yet gives way to it. A second pause while the first one is
+  being sent is refused ("a pause is already being sent");
+- **Resume** restarts the charge (`Paused=0`); refused when the station
+  reports a fault or an unknown state;
+- **Charging current**: whole amperes, 6 to 32 A, and **always within the
+  range set on the station** (minimum and maximum current read just before);
+  refused when the station does not give that range;
+- **Solar control**: the dynamic power mode of the station (see below). Any
+  mode but "Stop" may take power and so **start a charge**: like "Resume", it
+  is refused when the station reports a fault or an unknown state.
+
+**One change a minute at most** per station for the current, the solar
+control and resume (not meant for fine regulation); never for the pause.
+
+### The solar control modes
+
+What pytrydan says of each value (`DynamicPowerMode`); the exact effect
+depends on the station and its installation (not checked):
+
+- **Schedule (app or V2C cloud)**: the station follows the time profile set
+  in the V2C app; it may charge **from the grid**;
+- **No schedule**: the time profile is off; the station charges from the
+  grid at the current setpoint;
+- **Solar + minimum power**: the solar surplus, plus a minimum power **taken
+  from the grid**;
+- **Solar only**: the solar surplus only;
+- **Solar + grid**: the solar surplus, topped up **from the grid**;
+- **Stop**: the "stop" mode of the station, which takes no power; it is not
+  the same as "Pause charging" (`Paused`): to suspend a charge, use the
+  pause.
+
+The solar modes only act when **dynamic modulation** is on in the station
+(in the V2C app): with "Dynamic modulation" at no, a mode change is accepted
+but has no effect, and the configuration screen says so. With dynamic
+modulation, the station sets its current itself: the "charging current" sent
+from Gladys is **not a ceiling** and may be replaced by the station.
+
+Neither the lock, the wiring (phases), the current range, the schedule nor
+the contracted power can be changed from Gladys.
+
+They are **buttons** and **lists**, never switches: a "turn everything off"
+(from Gladys, Google Home, Alexa or HomeKit) does not touch them. A scene
+can trigger them, but only through an explicit action, and only when the
+commands are allowed. Beware: Gladys' AI chat (MCP) can create and run such
+a scene: while the commands are allowed, it can resume the charge or change
+the current.
+
+Before each command, the integration **reads the station again** and
+decides on that read only; the option is checked again right before
+sending. A useless command (already so) is not sent. A command that cannot
+leave within 3.5 seconds is refused unsent. When the station does not
+confirm (silence, a 5xx error, an answer other than "OK"), Gladys shows "Command sent, without
+confirmation": check the state, read again 5 then 20 seconds later. The
+station answers "OK" when it **accepts** a setting; when the read after
+shows it did not apply it (solar control, schedule…), the configuration
+screen says so. One command at a time per station, the pause aside.
+
+## Errors and limits
+
+- **Station unreachable**: only the connector ("unavailable") and the status
+  ("Station unreachable") change; the other values keep their last value. A
+  station removed from the configuration, or that never answered since the
+  start, shows the same, and the configuration screen names it. New tries
+  after 30 s, 1, 2 then 5 minutes, never faster than the interval.
+- **429 (too many requests)**, unlikely from a local station: a pause of
+  1 minute to 6 hours for everything (reads, button, commands), never
+  shorter than the refresh interval, kept in `/data` across a restart.
+- The **wiring** (`ChargeMode`) is missing from the main read of some
+  firmware versions: it is then read alone, at most once an hour.
+- The station gives no measured current: "Charging current" is the setpoint.
+- The logs never contain the text of the answers of the station.
+
+## Credits
+
+Ported from [pytrydan](https://github.com/dgomes/pytrydan) (Diogo Gomes,
+MIT, version 1.0.6). Apache-2.0 license.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt V2C Trydan in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Your V2C Trydan | `section` | Nein | Shows your V2C Trydan charging station in Gladys through its local API, without any cloud: state, charging power, house, solar and battery power, charging current and its range, energy and duration of the session, pause, lock, schedule, solar control mode. Enter the IP address of the station (give it a fixed address in your router), save, then add it from the Discovery tab. The local API has no password: anyone on your network can read and drive the station. Pausing, resuming, the current and the solar mode can be changed from Gladys only if you allow the commands below. Unofficial API, never tested with a real station. Not affiliated with V2C. |
+| IP address of the station | `string` | Ja | An IPv4 address or a host name of your network (loopback, multicast and broadcast addresses are refused). Several stations: separate them with commas, four at most. |
+| Allow the commands | `boolean` | Nein | Off by default. On: Gladys may pause and resume the charge, set the charging current (within the minimum and maximum of the station) and the solar control mode. Off: these four features refuse every command. |
+| Refresh interval (s) | `number` | Nein | How often each station is read, in seconds. |
+| Language of the feature names | `select` | Nein | Used for the feature names of the devices added from now on, for the status texts and for the command errors. |
+
+## So installierst du V2C Trydan in Gladys
+
+1. Öffne in Gladys **Integrationen**: V2C Trydan erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-v2c-trydan:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-v2c-trydan](https://github.com/LM1LC3N7/gladys-v2c-trydan).
+
+V2C Trydan benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+V2C Trydan ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-v2c-trydan) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-v2c-trydan/blob/HEAD/docs/en.md)

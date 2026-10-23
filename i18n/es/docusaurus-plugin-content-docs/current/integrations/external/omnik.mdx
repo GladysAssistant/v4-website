@@ -1,0 +1,206 @@
+---
+title: "Integración domótica Omnik, gratuita y de código abierto"
+sidebar_label: "Omnik"
+description: "Unofficial: Omnik solar inverters on your network: power, energy of the day, energy index. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-omnik.png"
+keywords:
+  - "omnik"
+  - "domótica omnik"
+  - "gladys omnik"
+  - "omnik gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-omnik instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Omnik","description":"Unofficial: Omnik solar inverters on your network: power, energy of the day, energy index.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-omnik","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-omnik.png","type":"device","version":"0.1.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-22T20:50:38Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+Unofficial connector, not affiliated with Omnik. It reads your Omnik solar
+inverter on your home network, through its Wi-Fi logger, without any cloud and
+without any account.
+
+**Never tested with a real Omnik inverter**: it was built from the
+omnikinverter library (the one Home Assistant uses) and the examples of its
+tests. Please report what you see (see "Feedback" below).
+
+## What you get
+
+One Gladys device per inverter, named after its serial number:
+
+| Feature                       | What it is                                                                              |
+| ----------------------------- | --------------------------------------------------------------------------------------- |
+| Solar production (W)          | the power the inverter produces now; 0 at night                                         |
+| Solar energy of the day (kWh) | the counter of the day of the inverter, as it gives it                                  |
+| Solar production index (kWh)  | a cumulative index for the Gladys energy monitoring (production per half hour, revenue) |
+| Inverter awake                | 1 while the inverter produces or is ready, 0 asleep (the night)                         |
+| Inverter temperature (°C)     | only with the tcp source (the web pages do not give it)                                 |
+
+Read-only: the integration never sends a command to the inverter. The
+lifetime counter of the inverter is not published (see "The energy index").
+
+## Setting it up
+
+1. Find the IP address of the inverter's Wi-Fi logger in your router (it shows
+   up as a device of your network). Give it a fixed address if you can.
+2. In Gladys, open the integration, enter the address (by day: at night the
+   inverter sleeps and does not answer), choose the source, and save:
+   - **js** (default): the page `/js/status.js`, given by most loggers;
+   - **json**: the page `/status.json`; some loggers give no serial number in
+     it. The device is then named after a fingerprint of the address, so a
+     **fixed address in your router is required**: a new address makes a new
+     device, and changing the source may too. The rated power of the answer
+     is kept (0 counts as not given): an answer with another one (another
+     inverter behind the address) turns the status red and writes nothing; if
+     you replaced the inverter on purpose, click "Test the connection" to
+     learn the new one. Prefer js if it works;
+   - a device created under such a fingerprint (or under the logger's, html
+     and tcp without serial) keeps it, even when a serial number appears
+     later (a firmware update): the first serial seen with it is learned and
+     goes on to it; any other serial is another inverter, its own device.
+     Left: another inverter with a serial that answers at the address before
+     yours ever gave one would be learned in its place; hence the fixed
+     address;
+   - **html**: the page `/status.html`, which always needs the user name and
+     password of the logger's web page (often admin);
+   - **tcp**: port 8899, which needs the serial number of the Wi-Fi logger
+     (digits only, on its label or in its web page; not the serial of the
+     inverter). It also gives the temperature of the inverter.
+     If the status says the answer is not the status of an Omnik inverter, try
+     another source.
+3. The user name and password, when given, are sent to the js and json sources
+   too (some loggers ask for them). The password is kept by Gladys in its
+   database, never shown again, and sent only to the logger, in Basic auth
+   over plain HTTP on your network (the logger has no HTTPS).
+4. Open the "Discover" tab and create the device. Its values come at the next
+   read (within a minute by day).
+5. Optional but recommended: enter the peak power of your panels (kWp, on the
+   installer's invoice). It bounds what the energy index may take between two
+   reads. Left empty, it is learned from the power the inverter reaches over a
+   week (30 kW until then, which lets more odd readings through). Never enter
+   less than the real peak power (a long silence at noon could then lose the
+   rest of the day): in doubt, leave it empty.
+
+The "Test the connection" button reads the inverter if a read is due, and
+otherwise tells the last read: the integration never reads more than once a
+minute, whatever asks.
+
+## A refused password
+
+When the logger refuses the user name or the password (HTTP 401 or 403), the
+integration stops reading with them, for good, even after a restart: a wrong
+password is never tried again on its own. Enter the right ones and save (the
+reads go on at their pace), or, if the logger accepts them again, click "Test
+the connection": one read, and the refusal is lifted on success. Only a salted
+fingerprint of a refused set is kept, erased at the first success; never the
+password.
+
+## The night
+
+An Omnik inverter is powered by its panels: at sunset it stops, and its Wi-Fi
+logger either answers without production or goes silent. That is not an
+error: after three silent reads (or at once when the logger says so: no power
+nor counter of the day, empty or written 4294967295, even with its serial), the
+inverter is "asleep", its power goes to 0, the status stays green and says so,
+and it is read every 5 minutes until it wakes up. The status turns red if the
+inverter vanishes (or its logger answers without it) while producing 50 W or
+more, if another Wi-Fi logger answers at the address, if the answer is not the
+status of an inverter, or if there is no reading for more than a day; after an
+hour of silence it is considered asleep anyway.
+
+## The energy index
+
+The inverter gives a counter of the day (it starts again every morning, to
+0.01 kWh) and a lifetime counter (to 0.1 kWh, not reliable on every
+firmware), while the Gladys energy monitoring counts the rises of a cumulative
+index. The integration builds that index from the counter of the day, with the
+mechanism of the Zeversolar integration: the index goes on from its last value
+and adds what the counter of the day adds. It never goes back to 0 and never
+drops: a new day (the counter back to 0 in the morning) leaves it where it
+was. When the inverter shows the counter of the day before again (at sunrise,
+or after a restart during the day), that value is kept out of the index and
+out of the energy of the day. Doubts are settled on the side of counting less:
+a reboot of the inverter that really resets its counter during the day, a
+counter that jumps (the rest of that day may then be lost), hours without
+reads around the change of day, a wall clock set wrong.
+
+Risk left (it would count too much): a value of the day before shown again
+more than 0.1 kWh from the last value read, above or below, or any wrong
+reading that fits within the peak power of the installation since the last
+read. Entering the peak power keeps that margin small. And the day before
+shown again less than 0.1 kWh above today's counter may be taken: 0.1 kWh at
+most.
+
+The index also goes through a guard: a jump of the index itself is held back,
+shown in the integration status, and only taken when you click "Accept the
+held index" in the configuration (it is then counted at once). A drop of the
+index is never accepted: it corrects itself, the index goes on once the
+counter is back above it. Saving the configuration never accepts anything.
+
+## Limits
+
+- One inverter per logger and per integration.
+- Production after the local midnight (far north in June, or a Gladys time
+  zone east of the house): the reset of the counter falls on the same local
+  day and that day is undercounted.
+- Some loggers keep showing the last values at night: the power then stays
+  at its last value until the logger goes silent.
+- The integration needs Gladys 5.2.0 or later.
+
+## Privacy
+
+Nothing leaves your network: the integration only talks to the address you
+entered, with one small request a minute (every 5 minutes at night). Of the
+logger's id only a short fingerprint is kept (to tell one logger from
+another). The user name and password are never logged, shown or written in
+`/data`.
+
+## Feedback
+
+Issues and pull requests: [https://github.com/LM1LC3N7/gladys-omnik](https://github.com/LM1LC3N7/gladys-omnik). If you
+own an Omnik inverter, the text of `http://<address>/js/status.js` (by day and
+at night, with the serial numbers hidden) helps a lot.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Omnik te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Omnik inverter | `section` | No | Unofficial connector, not affiliated with Omnik. It reads the Wi-Fi logger of your Omnik inverter on your network, without any cloud, once a minute: solar power, energy of the day, temperature (tcp source), and a solar production index for the Gladys energy monitoring, built from the counter of the day. At night the inverter sleeps: the power goes to 0, the index waits for the morning. Read-only: it never sends a command to the inverter. Never tested with a real Omnik inverter. |
+| Logger address | `string` | Sí | The IP address of the inverter's Wi-Fi logger on your network (shown by your router), with a port only if it is not the usual one (80, or 8899 for the tcp source). Enter it by day: at night the inverter sleeps and does not answer. Preferably give it a fixed address in your router. |
+| Source | `select` | Sí | How the logger is read; it depends on its firmware. js (/js/status.js) suits most loggers; json (/status.json) and html (/status.html, which needs the user name and password) suit others; tcp (port 8899) needs the logger's serial number and also gives the temperature. If the status says it is not the right answer, try another one. |
+| Logger user name (web sources) | `string` | No | The user name of the logger's own web page (often admin). Required by the html source; sent to the js and json sources when given. Leave empty for tcp. |
+| Logger password (web sources) | `secret` | No | The password of the logger's own web page. Kept by Gladys in its database, never shown again, sent only to the logger, in Basic auth over plain HTTP on your network (the logger has no HTTPS). If it is refused, no automatic read is made until you change it. |
+| Logger serial number (tcp source) | `string` | No | Only for the tcp source: the serial number of the Wi-Fi logger, digits only (on its label or in its web page, often starting with 6). Not the serial of the inverter. |
+| Peak power of the installation (kWp, optional) | `number` | No | The peak power of your panels (on the installer's invoice). It bounds what the energy index may take between two reads (an odd reading is held back instead). Empty: learned from the power the inverter reaches over a week (30 kW until then). Never enter less than the real peak power: in doubt, leave it empty. |
+
+## Cómo instalar Omnik en Gladys
+
+1. En Gladys, abre **Integraciones**: Omnik aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-omnik:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-omnik](https://github.com/LM1LC3N7/gladys-omnik).
+
+Omnik requiere Gladys `>=5.2.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Omnik es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-omnik) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-omnik/blob/HEAD/docs/en.md)

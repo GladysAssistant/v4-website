@@ -1,0 +1,152 @@
+---
+title: "Intégration domotique Indevolt, gratuite et open source"
+sidebar_label: "Indevolt"
+description: "Non officiel : batteries Indevolt en local : charge, puissances, solaire, index d'énergie. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-indevolt.png"
+keywords:
+  - "indevolt"
+  - "domotique indevolt"
+  - "gladys indevolt"
+  - "indevolt gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-indevolt instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Indevolt","description":"Non officiel : batteries Indevolt en local : charge, puissances, solaire, index d'énergie.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-indevolt","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-indevolt.png","type":"device","version":"0.1.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-22T10:16:02Z"}} />
+
+Intégration **non officielle**, sans lien avec Indevolt. Elle lit vos
+batteries domestiques **Indevolt** (SolidFlex, PowerFlex, BK1600…) sur votre
+réseau local, par leur API locale (HTTP, port 8080), sans cloud ni compte.
+
+**Jamais testé avec un vrai appareil** : l'intégration a été écrite d'après la
+bibliothèque [indevolt-api](https://github.com/Xirt/indevolt-api) utilisée par
+Home Assistant, sans batterie Indevolt sous la main. Le protocole local n'est
+pas documenté par Indevolt. Vos retours sont les bienvenus.
+
+## Lecture seule
+
+L'intégration **ne fait que lire**. Elle ne lance jamais de charge ni de
+décharge, ne change jamais le mode d'énergie, la réserve de secours ou une
+limite de puissance. Le mode d'énergie et la réserve sont affichés, pas
+modifiables : utilisez l'application Indevolt pour les changer.
+
+## Ce que vous obtenez
+
+Un appareil par batterie, identifié par son numéro de série (une nouvelle
+adresse IP garde l'appareil et son historique, une fois la batterie trouvée à
+cette adresse : rouvrez l'onglet **Découverte**, ou saisissez la nouvelle
+adresse ; l'ancienne n'est alors plus lue) :
+
+- niveau de charge (%), puissances de charge et de décharge (W), puissance
+  de la batterie (W, signée), état (0 = au repos, 1 = en charge, 2 = en
+  décharge) ;
+- puissance solaire totale et par entrée (W), puissance de sortie AC vers la
+  maison (W), puissance d'entrée AC, puissance de bypass, puissance du
+  compteur (W, signe non documenté) ;
+- tension et fréquence du réseau (2e génération), températures de la batterie
+  et de l'onduleur ;
+- mode d'énergie (0 = portable/extérieur, 1 = autoconsommation, 4 = pilotage
+  temps réel, 5 = programme), mode de fonctionnement (0 = principal,
+  1 = secondaire, 2 = autonome), capacité nominale, réserve de secours, cycles
+  et temps restants (2e génération) ;
+- les compteurs du jour (solaire, chargé, déchargé) en capteurs simples ;
+- **cinq index d'énergie** pour le suivi énergétique de Gladys : énergie
+  chargée et déchargée, énergie de sortie AC, énergie de sortie hors réseau,
+  production solaire (avec sa production par demi-heure, calculée par
+  Gladys).
+
+La batterie ne mesure pas ce que la maison prend au réseau : l'intégration ne
+crée **aucun index de consommation** facturé.
+
+## Prérequis
+
+- Gladys 5.2.0 ou plus récent.
+- La batterie sur le même réseau que Gladys, son API locale joignable sur le
+  port 8080.
+
+## Configuration
+
+1. Installez l'intégration depuis le store de Gladys.
+2. Ouvrez l'onglet **Découverte** : les batteries s'annoncent sur le réseau
+   (diffusion UDP sur le port 8099, écoutée par Gladys). Ou saisissez leurs
+   adresses IP dans **Adresses IP des batteries**, séparées par des virgules
+   (avec `:port` seulement si ce n'est pas 8080), six au plus.
+3. Créez l'appareil de chaque batterie depuis l'onglet **Découverte**.
+4. **Intervalle de lecture** : 30 s par défaut (comme Home Assistant), de 30 à
+   300 s. À partir de quatre batteries, chacune est lue tous les deux
+   intervalles (toutes les 60 s à 30 s), pour rester sous les 300 états par
+   minute de Gladys ; 270 valeurs au plus partent en une minute, les autres à
+   la lecture suivante.
+
+Le bouton **Tester la connexion** demande une fois à chaque batterie son
+modèle, son numéro de série et son firmware.
+
+## Index d'énergie retenus
+
+Gladys compte chaque hausse d'un index en entier. Pour ne jamais compter une
+énergie fictive, chaque index passe par une garde :
+
+- une valeur à 0 n'est jamais envoyée (un index hors réseau jamais utilisé
+  reste vide) ;
+- une baisse, ou une hausse plus rapide que 2 kW (1re génération : BK1600…) ou
+  12 kW (2e génération : SolidFlex, PowerFlex) en moyenne, est **retenue** :
+  la dernière valeur acceptée est renvoyée, et l'état de l'intégration
+  l'affiche. Ni le temps ni la répétition ne la confirment ;
+- si elle est juste, cliquez **deux fois** sur **Accepter l'index retenu** :
+  le premier clic liste ce qui est retenu sans rien accepter, le second, de
+  3 secondes à 5 minutes plus tard (un double-clic compte pour un seul clic),
+  accepte exactement ce qui a été listé (un saut est alors
+  compté d'un coup, une baisse ne compte rien). Si la valeur a bougé entre les
+  deux clics, elle n'est pas acceptée : recommencez. Enregistrer la
+  configuration n'accepte rien.
+
+## Erreurs
+
+- Une batterie injoignable est réessayée après 1 minute, puis 2, jusqu'à
+  15 minutes, jamais plus vite que l'intervalle de lecture.
+- Une réponse HTTP 429 ou 5xx met la batterie en pause de 1 minute à 6 heures,
+  gardée dans `/data` après un redémarrage.
+- Enregistrer la configuration relance tout de suite les lectures.
+- Si une autre batterie répond à une adresse (changement d'adresse DHCP), ses
+  valeurs vont dans son propre appareil, jamais dans celui de la précédente.
+
+## Confidentialité
+
+Rien ne sort de votre réseau : l'intégration ne parle qu'aux batteries, en
+HTTP local. L'API locale de la batterie ne demande aucun identifiant.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Indevolt dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Batteries Indevolt | `section` | Non | Connecteur non officiel, sans lien avec Indevolt. Il lit vos batteries domestiques Indevolt (SolidFlex, PowerFlex, BK1600...) par leur API locale (HTTP, port 8080), sans cloud ni compte, toutes les 30 secondes : niveau de charge, puissances de charge et de décharge, puissance solaire, sortie AC, températures, et des index d'énergie pour le suivi énergétique de Gladys. Lecture seule : il ne lance jamais de charge ni de décharge et ne change jamais un mode ou une limite. Ouvrez l'onglet « Découverte » (les batteries s'annoncent sur le réseau), ou saisissez leurs adresses ci-dessous. Jamais testé avec une vraie batterie Indevolt. |
+| Adresses IP des batteries (facultatif) | `string` | Non | Découverte trouve les batteries qui s'annoncent. Saisissez les autres ici, séparées par des virgules, avec :port seulement s'il n'est pas 8080 (6 au plus). Donnez-leur de préférence une adresse fixe dans votre box ; si l'une change, rouvrez Découverte (ou saisissez la nouvelle) : son appareil et son historique sont gardés. |
+| Intervalle de lecture (s) | `number` | Non | Fréquence de lecture de chaque batterie : 30 s comme Home Assistant, plus si vous le souhaitez. À partir de quatre batteries, chacune est lue tous les deux intervalles (toutes les 60 s à 30 s), pour rester dans les limites de Gladys. |
+
+## Comment installer Indevolt dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Indevolt apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-indevolt:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-indevolt](https://github.com/LM1LC3N7/gladys-indevolt).
+
+Indevolt nécessite Gladys `>=5.2.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Indevolt est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-indevolt) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-indevolt/blob/HEAD/docs/fr.md)

@@ -1,0 +1,252 @@
+---
+title: "Integración domótica SFTPGo, gratuita y de código abierto"
+sidebar_label: "SFTPGo"
+description: "Su servidor de archivos SFTPGo en Gladys: conexiones, cuotas y una escena en cada subida. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-sftpgo.png"
+keywords:
+  - "sftpgo"
+  - "domótica sftpgo"
+  - "gladys sftpgo"
+  - "sftpgo gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-sftpgo instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"SFTPGo","description":"Su servidor de archivos SFTPGo en Gladys: conexiones, cuotas y una escena en cada subida.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-sftpgo","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-sftpgo.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T17:30:59Z"}} />
+
+[SFTPGo](https://sftpgo.com/) es un servidor de archivos libre (SFTP, FTP/S,
+WebDAV y web) que muchos usan en casa: un escáner le envía sus PDF, una cámara
+sus imágenes, un teléfono sus fotos. Esta integración lleva un servidor SFTPGo a
+Gladys: las conexiones abiertas, los usuarios y sus cuotas, y sobre todo un
+disparador de escena **cuando se sube un archivo**, con su usuario, su ruta, su
+tamaño y su protocolo. También avisa cuando una cuota supera un umbral o se
+rechaza un inicio de sesión, y un widget del panel lista los últimos archivos
+subidos.
+
+Probada con un SFTPGo 2.7 real (imágenes Docker `drakkan/sftpgo` y
+`drakkan/sftpgo:plugins` con PostgreSQL): subidas por SFTP y WebDAV, cuotas,
+inicios de sesión rechazados, clave de API y contraseña de administrador, con y
+sin registro de eventos. Aún no probada en un Gladys real: se agradecen sus
+comentarios en [las issues](https://github.com/guim31/gladys-sftpgo/issues).
+
+## Qué necesita
+
+- Gladys Assistant 5.1.0 o posterior.
+- SFTPGo 2.x con su servidor web (puerto 8080 por defecto) accesible desde la
+  máquina de Gladys: la integración usa su API REST (`/api/v2`).
+- Un **administrador** de SFTPGo (no un usuario del servidor de archivos) con
+  los permisos `view_users`, `view_conns` y `view_events`: lo mejor es un
+  administrador reservado a Gladys. O bien su clave de API, o bien su usuario y
+  su contraseña.
+- Para las subidas y los inicios de sesión rechazados: el **registro de
+  eventos** de SFTPGo, es decir sus plugins `eventstore` y `eventsearch` (ver
+  más abajo). Sin él, conexiones, usuarios y cuotas funcionan, pero no las
+  subidas.
+
+La integración lee SFTPGo cada 30 segundos por defecto: unas pocas peticiones
+ligeras en su propia red.
+
+## Primeros pasos
+
+### 1. Crear un administrador para Gladys
+
+En la administración web de SFTPGo, **Admins → Add**: un usuario, una
+contraseña, y solo los permisos `view_users`, `view_conns` y `view_events`.
+Para usar una clave de API, marque «API key authentication» en el perfil de
+este administrador y después cree una clave en **API keys** (ámbito «Admin»).
+
+### 2. Activar el registro de eventos (para las subidas)
+
+Las subidas provienen del registro de eventos de SFTPGo, escrito y leído por
+dos plugins incluidos en la imagen `drakkan/sftpgo:plugins`. Necesitan una base
+de datos PostgreSQL o MySQL (los plugins no admiten SQLite). Con Docker
+Compose, añada al `environment` de SFTPGo:
+
+```
+SFTPGO_PLUGINS__0__TYPE: notifier
+SFTPGO_PLUGINS__0__NOTIFIER_OPTIONS__FS_EVENTS: upload
+SFTPGO_PLUGINS__0__NOTIFIER_OPTIONS__LOG_EVENTS: 1,2
+SFTPGO_PLUGINS__0__CMD: /usr/local/bin/sftpgo-plugin-eventstore
+SFTPGO_PLUGINS__0__ARGS: serve
+SFTPGO_PLUGINS__0__AUTO_MTLS: "1"
+SFTPGO_PLUGIN_EVENTSTORE_DRIVER: postgres
+SFTPGO_PLUGIN_EVENTSTORE_DSN: "host=db user=sftpgo password=… dbname=sftpgo_events sslmode=disable"
+SFTPGO_PLUGIN_EVENTSTORE_RETENTION: "720"
+SFTPGO_PLUGINS__1__TYPE: eventsearcher
+SFTPGO_PLUGINS__1__CMD: /usr/local/bin/sftpgo-plugin-eventsearch
+SFTPGO_PLUGINS__1__ARGS: serve
+SFTPGO_PLUGINS__1__AUTO_MTLS: "1"
+SFTPGO_PLUGIN_EVENTSEARCH_DRIVER: postgres
+SFTPGO_PLUGIN_EVENTSEARCH_DSN: "host=db user=sftpgo password=… dbname=sftpgo_events sslmode=disable"
+```
+
+`FS_EVENTS: upload` registra las subidas, `LOG_EVENTS: 1,2` los inicios de
+sesión rechazados (contraseña incorrecta, usuario desconocido); `RETENTION`
+conserva 30 días. Sin estos plugins, SFTPGo responde «no events searcher plugin
+defined» y la integración lo indica en su estado y su widget; vuelve a
+preguntar cada hora.
+
+### 3. Configurar la integración
+
+En **Integraciones → SFTPGo → Configuración**:
+
+- **Dirección de SFTPGo**: la dirección de la interfaz web, p. ej.
+  `http://192.168.1.2:8080` (también sirve una dirección copiada del navegador).
+- **Clave de API de administrador**, o **Usuario administrador** y
+  **Contraseña del administrador**.
+- **Intervalo de actualización**: de 10 segundos a 5 minutos. También es el
+  retraso de la escena ante un archivo subido.
+- **Umbral de alerta de cuota**: de 70 a 95 %.
+- **Idioma de los nombres**: el idioma de los nombres de las funciones y de los
+  textos enviados por la integración (francés por defecto).
+
+**Probar la conexión** responde, por ejemplo, «SFTPGo: conectado (2.7.6), 3
+usuario(s), 1 conexión(es), subidas seguidas».
+
+### 4. Añadir los dispositivos
+
+En la pestaña **Descubrir**, añada el servidor y los usuarios que quiera
+seguir. Los disparadores de escena funcionan para todos los usuarios, añadidos
+o no.
+
+## Los dispositivos
+
+**SFTPGo** (el servidor):
+
+| Función                              | Significado                                              |
+| ------------------------------------ | -------------------------------------------------------- |
+| **En línea**                         | 1 mientras SFTPGo responde                               |
+| **Subidas seguidas**                 | 1 cuando el registro de eventos responde                 |
+| **Conexiones**                       | conexiones abiertas (SFTP, FTP, WebDAV, web)             |
+| **Transferencias en curso**          | subidas y descargas en curso                             |
+| **Usuarios**                         | usuarios del servidor                                    |
+| **Archivos subidos hoy**             | archivos subidos desde medianoche (registro)             |
+| **Inicios de sesión rechazados hoy** | inicios de sesión rechazados desde medianoche (registro) |
+
+**SFTPGo &lt;usuario&gt;** (uno por usuario):
+
+| Función                      | Significado                                        |
+| ---------------------------- | -------------------------------------------------- |
+| **Cuota de tamaño usada**    | % de su cuota de tamaño, 0 sin cuota de tamaño     |
+| **Cuota de archivos usada**  | % de su cuota de archivos, 0 sin cuota de archivos |
+| **Espacio usado**            | MB, cuando SFTPGo sigue la cuota del usuario       |
+| **Archivos**                 | archivos, misma condición                          |
+| **Conexiones**               | sus conexiones abiertas                            |
+| **Archivos subidos hoy**     | sus subidas desde medianoche (registro)            |
+| **Último archivo subido**    | la ruta de su último archivo subido (registro)     |
+| **Hora de la última subida** | día/mes horas:minutos de esa subida (registro)     |
+
+Por defecto SFTPGo solo sigue el espacio y los archivos de los usuarios con
+cuota (`track_quota` 2): los demás no tienen **Espacio usado** ni **Archivos**.
+
+## Panel
+
+El widget **Subidas de SFTPGo** muestra tres mosaicos (archivos subidos hoy,
+conexiones, inicios de sesión rechazados del día) y después los ocho últimos
+archivos subidos, del más reciente al más antiguo, con su usuario y su hora. Sus
+ajustes eligen los usuarios mostrados (vacío: todos). El botón **Actualizar**
+vuelve a leer SFTPGo.
+
+## Escenas
+
+### Disparadores
+
+- **Se sube un archivo**: un usuario sube un archivo, por cualquier protocolo.
+  Filtros: usuarios, carpeta (exactamente, p. ej. `/scans`), extensión
+  (`pdf`). Variables: usuario, ruta, carpeta, nombre del archivo, extensión,
+  tamaño, tamaño en bytes, protocolo, dirección del cliente. Se anuncian como
+  máximo veinte subidas por lectura: una carpeta de 500 fotos no lanza 500
+  escenas.
+- **Una cuota supera el umbral**: un usuario supera el umbral de la
+  configuración (cuota de tamaño o de archivos). Una vez, y de nuevo solo
+  después de bajar 5 puntos por debajo del umbral.
+- **Se rechaza un inicio de sesión**: contraseña incorrecta o usuario
+  desconocido. Un evento por usuario y dirección en cada lectura, con el número
+  de intentos.
+
+### Acciones
+
+- **Estado de un usuario**: lee la cuota, el espacio usado, las conexiones, los
+  archivos subidos hoy y el último archivo de un usuario, y una frase lista:
+  «scanner: cuota usada al 42 %, último archivo /scans/factura.pdf el 22/10,
+  8:12.»
+
+### Ideas de escenas
+
+- Se sube un archivo, carpeta `/scans`, extensión `pdf` → enviar «Nuevo
+  escaneo: \{\{triggerEvent.data.file_name\}\}» por Telegram.
+- Se sube un archivo del usuario «camera» → encender la luz de la entrada y
+  enviar un mensaje.
+- Se rechaza un inicio de sesión → avisar con la dirección y el número de
+  intentos.
+- Cada domingo, Estado de un usuario → enviar la frase.
+
+## Solución de problemas
+
+- **«SFTPGo no responde»**: compruebe la dirección y el puerto de la interfaz
+  web (8080 por defecto), desde la máquina de Gladys.
+- **«clave de API, usuario o contraseña rechazados por SFTPGo»**: se necesitan
+  las credenciales de un administrador, no de un usuario. Una clave de API
+  requiere «API key authentication» marcado en el perfil del administrador.
+- **«el administrador necesita los permisos view_users y view_conns»**:
+  concédaselos al administrador de la integración.
+- **No se ve ninguna subida**: pulse **Probar la conexión**. «sin registro de
+  eventos» significa que faltan los plugins (paso 2); «view_events», que el
+  administrador no tiene ese permiso. Las subidas anteriores al arranque de la
+  integración no se anuncian, solo se cuentan.
+- **Sin Espacio usado para un usuario**: SFTPGo no sigue su cuota; asígnele una
+  cuota, o configure `SFTPGO_DATA_PROVIDER__TRACK_QUOTA=1`.
+- Registros: `LOG_LEVEL=debug` muestra cada lectura y cada subida.
+
+## Límites
+
+- Sin los plugins del registro de eventos no se ve ninguna subida. La
+  integración no puede recibir las acciones HTTP de las reglas de eventos de
+  SFTPGo: no tiene ningún puerto abierto.
+- Una subida se anuncia en la lectura siguiente (30 segundos por defecto).
+- Solo lectura: la integración no modifica nada en SFTPGo.
+- Un servidor SFTPGo por integración; hasta 2.500 usuarios.
+- Desarrollada y probada con un SFTPGo real en Docker, aún no en todas las
+  instalaciones: se agradecen sus comentarios.
+
+## Parámetros de configuración
+
+Estos son los parámetros que SFTPGo te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Su servidor SFTPGo | `section` | No | Introduzca la dirección de la interfaz web de SFTPGo y una clave de API de administrador, o el usuario y la contraseña de un administrador con los permisos view_users, view_conns y view_events. Después añada el servidor y los usuarios desde la pestaña Descubrir. |
+| Dirección de SFTPGo | `string` | Sí | La dirección de la interfaz web, puerto 8080 por defecto. |
+| Clave de API de administrador | `secret` | No | Opcional: una clave de API de un administrador autorizado a usarla. Si no, rellene los dos campos siguientes. |
+| Usuario administrador | `string` | No | Un administrador de SFTPGo, no un usuario del servidor de archivos. |
+| Contraseña del administrador | `secret` | No |  |
+| Subidas e inicios de sesión rechazados | `section` | No | Provienen del registro de eventos de SFTPGo: sus plugins eventstore y eventsearch (imagen drakkan/sftpgo:plugins, con PostgreSQL o MySQL). Sin ellos, el resto funciona. |
+| Intervalo de actualización | `select` | No | También el retraso de la escena ante un archivo subido. |
+| Umbral de alerta de cuota | `select` | No | El disparador de escena se activa cuando un usuario lo supera. |
+| Idioma de los nombres | `select` | No | Nombres de las funciones y textos enviados por la integración. |
+
+## Cómo instalar SFTPGo en Gladys
+
+1. En Gladys, abre **Integraciones**: SFTPGo aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-sftpgo:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-sftpgo](https://github.com/guim31/gladys-sftpgo).
+
+SFTPGo requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+SFTPGo es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-sftpgo) — [fuente de esta documentación](https://github.com/guim31/gladys-sftpgo/blob/HEAD/docs/es.md)

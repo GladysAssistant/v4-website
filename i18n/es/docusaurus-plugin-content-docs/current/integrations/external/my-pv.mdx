@@ -1,0 +1,174 @@
+---
+title: "Integración domótica my-PV, gratuita y de código abierto"
+sidebar_label: "my-PV"
+description: "my-PV solar diverters (AC•THOR, AC ELWA 2), local first: power, tank, optional boost. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-my-pv.png"
+keywords:
+  - "my-pv"
+  - "domótica my-pv"
+  - "gladys my-pv"
+  - "my-pv gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-my-pv instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"my-PV","description":"my-PV solar diverters (AC•THOR, AC ELWA 2), local first: power, tank, optional boost.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-my-pv","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-my-pv.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T10:17:53Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+Shows your my-PV solar power diverter in Gladys: AC•THOR, AC•THOR i,
+AC•THOR 9s, AC ELWA 2, SOL•THOR, HEA•THOR IoT (Viessmann, Greenheiss and
+Tuxhorn versions included). The logic is ported from
+[py-mypv](https://github.com/my-pv/py-mypv), the official library of my-PV
+(Apache-2.0), used by Home Assistant.
+
+Unofficial integration, not affiliated with my-PV. **Never tested with a real
+device**: the answers were rebuilt from py-mypv. Your feedback is welcome.
+
+## What you get
+
+One device per diverter, with, depending on what your model gives:
+
+- the status (standby, heating, boost, heating finished, error, block…);
+- the heating power (W); the solar power and voltage (SOL•THOR);
+- the meter power ("surplus", in W, as the device gives it: my-PV does not
+  document its sign);
+- temperatures 1 to 4 (sensor 1 is the tank one) and the device temperature;
+- the hot water charge (%);
+- heating enabled, boost running (read only);
+- the hot water setpoint and the boost setpoint;
+- the "Start the boost" and "Stop the boost" buttons.
+
+There is no energy index: the device gives none.
+
+## Connection: local first
+
+1. Give the device a fixed IP address in your router.
+2. In the configuration of the integration, leave **Connection** on "Local"
+   and enter the **IP address**.
+3. If the web interface of the device asks for a password (recent firmware,
+   HTTPS), enter it in **Password of the device**. It is kept by Gladys in its
+   database, never shown again, and sent only to your device. The device shows
+   a self-signed certificate: at the first connection the integration keeps
+   its fingerprint, then refuses any other certificate (the password is then
+   not sent). If you replace or reset the device, use the **Trust the new
+   certificate** button.
+4. Save, then add the device from the **Discovery** tab.
+
+Without a password the local API has no protection at all: keep the device
+on a trusted network.
+
+### The my-PV cloud (optional)
+
+Only if the device is not on your network: choose "my-PV cloud", enter the
+**serial number** (shown on live.my-pv.com) and a **token** created in your
+my-PV account. The token is kept by Gladys in its database, never shown
+again, sent only to api.my-pv.com and never written in the logs. Through the
+cloud the device is read once a minute at most. The device keeps the same id
+locally and through the cloud: switching keeps its history.
+
+## Hot water commands (off by default)
+
+Scalding risk: hot water is **capped at 55 °C by default** (from 40 to 60 °C,
+**never more than 60 °C**, whatever is typed).
+
+- **Allow the hot water setpoint**: Gladys may change the setpoint (whole
+  degrees, from 10 °C to the ceiling).
+- **Allow starting the boost**: Gladys may start a manual boost (heating from
+  the grid up to the boost setpoint set on the device). It is refused when
+  that boost setpoint is above the ceiling, when the boost mode is off on the
+  device, when the device is off or has no sensor 1, or in space heating mode
+  (AC•THOR).
+- **Stop the boost** is always allowed, without option, even while the device
+  asks to slow down (then one try). It withdraws a start not sent yet, and is
+  sent once more when a start was in flight, or when a read still shows the
+  boost running (within 90 s).
+
+Locally, a command needs the settings of the device to give its serial number
+(`serialno`): if your firmware does not, the commands are refused with a
+message that says so (please report it, with the firmware version).
+
+Each command reads the settings again just before acting, checks the options
+and the ceiling again right before sending, leaves within 3.5 s or is refused
+unsent. A command that may have reached the device without a clear answer is
+"sent, without confirmation", then the device is read again 5 and 20 s later.
+One setpoint or start at a time.
+
+The buttons and the setpoint are never switches: a "turn everything off" of a
+voice assistant or a scene never reaches them.
+
+The legionella programme of the device (which may heat higher) is not
+controlled by Gladys: set it on the device.
+
+## Errors and limits
+
+- Password or token refused: the reads stop (kept in /data), a new try once
+  an hour at most, at once when you change the password or the token, or with
+  **Test the connection**. A refused command (401/403 to a write) never stops
+  the reads.
+- 429 or a server error: reads and commands paused (Retry-After, 1 min to
+  6 h, 1 min without Retry-After locally, kept in /data), except "Stop the
+  boost". Through the cloud, a 429 to a command is never sent again and
+  pauses too.
+- Never a read sooner than the interval, even after a restart, a save or a
+  click on **Test the connection** (only a new address, password or token
+  reads at once).
+- Device unreachable: a new try after 30 s to 5 min, never sooner than the
+  interval.
+- An AC ELWA 2 in an AC ELWA-E compatibility mode is not supported (as in
+  py-mypv).
+
+## Troubleshooting
+
+**Test the connection** reads the device and shows its state (or, before the
+interval, the last state and when the next read comes). The logs of the
+integration never hold a password, a token nor a cookie.
+
+## Parámetros de configuración
+
+Estos son los parámetros que my-PV te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Your my-PV device | `section` | No | Shows your my-PV solar power diverter (AC•THOR, AC•THOR 9s, AC ELWA 2, SOL•THOR, HEA•THOR) in Gladys: heating power, tank temperatures, meter power, hot water charge and status. Local first: enter the IP address of the device (give it a fixed address in your router), and its password if its web interface has one. The my-PV cloud is optional: choose it only if the device is not on your network. Save, then add the device from the Discovery tab. The hot water setpoint and the boost start are off by default and capped (55 °C by default, never more than 60 °C); stopping the boost is always allowed. Never tested with a real device. Unofficial integration, not affiliated with my-PV. |
+| Connection | `select` | No | Local (recommended): the API of the device on your network, no account. Cloud: api.my-pv.com, with a token of your my-PV account. |
+| IP address of the device (local) | `string` | No | An IPv4 address or a host name, with an optional port (80 without a password, 443 with one). |
+| Password of the device (local, optional) | `secret` | No | Only if the web interface of the device asks for one (recent firmware, HTTPS). Kept by Gladys in its database, never shown again, sent only to your device, over HTTPS, after checking its certificate is the one seen at the first connection. |
+| Serial number (cloud) | `string` | No | Only for the cloud connection: the serial number of the device, as shown on live.my-pv.com. |
+| my-PV cloud token (cloud) | `secret` | No | Only for the cloud connection: a token created in your my-PV account (live.my-pv.com). Kept by Gladys in its database, never shown again, sent only to api.my-pv.com, never written in the logs. |
+| Hot water commands | `section` | No | By default Gladys only reads the device, and can stop a boost (always allowed, even while the device asks to wait). Once allowed below, it can also change the hot water setpoint and start a boost. Scalding risk: the setpoint is never set above the ceiling, and a boost is refused while the boost setpoint of the device is above it. The legionella programme of the device is not controlled by Gladys. |
+| Allow the hot water setpoint | `boolean` | No | Off by default. On: Gladys may change the hot water setpoint (ww1target), up to the ceiling below. |
+| Allow starting the boost | `boolean` | No | Off by default. On: Gladys may start a manual boost (heating from the grid up to the boost setpoint of the device), only when that setpoint is under the ceiling below. |
+| Hot water ceiling (°C) | `number` | No | Scalding risk: Gladys never sets the hot water above this temperature. 55 °C by default, from 40 to 60 °C (never more than 60 °C, whatever is typed). |
+| Refresh interval (s) | `number` | No | How often the device is read, in seconds (60 s at least through the cloud). |
+| Language of the feature names | `select` | No | Used for the names of the features added from now on, for the status texts and for the command errors. |
+
+## Cómo instalar my-PV en Gladys
+
+1. En Gladys, abre **Integraciones**: my-PV aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-my-pv:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-my-pv](https://github.com/LM1LC3N7/gladys-my-pv).
+
+my-PV requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+my-PV es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-my-pv) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-my-pv/blob/HEAD/docs/en.md)

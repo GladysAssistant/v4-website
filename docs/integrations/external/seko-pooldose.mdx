@@ -1,0 +1,183 @@
+---
+title: "SEKO PoolDose smart home integration, free and open source"
+sidebar_label: "SEKO PoolDose"
+description: "SEKO PoolDose pool controllers on the local network: pH, ORP, chlorine, temperature, alarms. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-seko-pooldose.png"
+keywords:
+  - "seko pooldose"
+  - "seko pooldose smart home"
+  - "gladys seko pooldose"
+  - "seko pooldose gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-seko-pooldose instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"SEKO PoolDose","description":"SEKO PoolDose pool controllers on the local network: pH, ORP, chlorine, temperature, alarms.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-seko-pooldose","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-seko-pooldose.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T10:12:02Z"}} />
+
+Unofficial integration, not affiliated with SEKO. It brings a **SEKO
+PoolDose** pool controller into Gladys (and the models built on it: VÁGNER
+POOL VA DOS, BWT MEDO CONNECT, KEMI DOSE AQUAVIVA), read through **its own
+HTTP API on the local network**, without an account nor the cloud.
+
+> **Warning: this integration has never been tested with a real device.** It was written from the python-pooldose library (the one of Home Assistant) and tested against a fake PoolDose only. Feedback is welcome.
+
+**Read only.** Gladys never commands the PoolDose: no dosing, no dosing pump,
+no pH, ORP or chlorine setpoint, no pause of the dosing. A wrong chemical
+dosing puts the swimmers at risk; these values are only shown. Commands are
+planned for a later version, off by default.
+
+## What you get
+
+A "PoolDose" device with, depending on your model:
+
+| Feature                               | Type in Gladys                                   |
+| ------------------------------------- | ------------------------------------------------ |
+| Water temperature                     | Temperature (°C)                                 |
+| pH, pH setpoint                       | pH                                               |
+| ORP (redox), ORP setpoint             | ORP (mV)                                         |
+| Free chlorine, chlorine setpoint      | Generic sensor in ppm (= mg/L)                   |
+| Mode of the pH, ORP, chlorine pumps   | Text (off, proportional, on / off, timed, cycle) |
+| Dosing direction of pH, ORP, chlorine | Text (acid pH−, alkaline pH+…)                   |
+| Dosing paused, circulation pump       | Binary (0/1)                                     |
+| Alarms                                | Binary (0/1), and scene triggers                 |
+
+Gladys has no "chlorine" category: free chlorine is a generic sensor in ppm,
+like the salt of the Ondilo integration. A temperature the device shows in °F
+reaches Gladys in °C. A value your model does not have creates no feature.
+
+The **alarms**: dosing pump, tank levels (pH, ORP, chlorine), water flow,
+alarm relay, overfeed (pH, ORP, chlorine), water too cold or too hot, pH too
+low or too high, chlorine too low or too high (ORP or direct measure), system
+on standby. Each one is a binary feature and feeds the two **scene
+triggers**:
+
+- **PoolDose alarm raised**: an alarm turns to 1;
+- **PoolDose alarm cleared**: an alarm turns back to 0.
+
+In the scene, pick the PoolDose and the alarms you want (none = all). The
+variables `alarm_name` (name of the alarm) and `device_name` (name of the
+device) are available to the actions, for a message for instance. An alarm
+already on at the very first read is not announced (its feature shows it);
+the alarms are kept in `/data`, so a restart never repeats an alarm and
+announces one raised while it was stopped.
+
+## Supported models
+
+The models of python-pooldose 0.9.15: PoolDose Double (PDPR1H1HAW100, and
+PDPR1H1HAW102), PoolDose Double Spa (PDPR1H04AW100), PoolDose pH
+(PDPH1H1HAW100), BWT MEDO CONNECT (PDPH1H1HAW1B0), VÁGNER POOL VA DOS BASIC
+and EXACT (PDHC1H1HAR1V0, PDHC1H1HAR1V1), KEMI DOSE AQUAVIVA (KDPR5050AWH00,
+KDHC5050AWH01), with their known firmware. Another model is found, but
+nothing is read: the status of the integration gives its product code and
+firmware. To have it added, follow the procedure of python-pooldose (its
+`docs/device-support.md`) and report it here.
+
+## Installation
+
+1. The PoolDose must be on your Wi-Fi (SEKO app or the web page of the
+   device). Give it a **fixed address** in your router (DHCP reservation).
+2. In Gladys, install the SEKO PoolDose integration, enter the **IP address**
+   of the device (for instance `192.168.1.50`), then save.
+3. Add the device from the **Discovery** tab.
+
+The port (0 = standard), HTTPS and the check of its certificate only matter
+when your device answers otherwise than HTTP on port 80.
+
+## Privacy and security
+
+- No account, no password: the local API of the PoolDose asks for none.
+  Nothing leaves your network.
+- Only three paths of the device are read: `/js_libs/params.js` (versions),
+  `/api/v1/debug/config` (model, firmware, ids) and
+  `/api/v1/DWI/getInstantValues` (values). The Wi-Fi endpoints of the device,
+  which answer with the Wi-Fi key, are never called. No write endpoint is
+  called.
+- The integration introduces itself as "gladys-seko-pooldose".
+- The logs never hold the address of the device.
+
+## Refresh
+
+The device is read every 60 seconds by default (30 to 900): one request for
+the values. The model and the firmware are read again every 6 hours (a
+firmware update), and by the **Test the connection** button.
+
+## Errors
+
+- **No answer** (device off, Wi-Fi down, wrong address) or a 5xx: a new try
+  after 1, 2, 5, 10 then every 15 minutes, never faster than the interval;
+  the badge turns "unreachable". This wait is kept across a restart; the
+  **Test the connection** button tries at once.
+- **Access refused** (HTTP 401 or 403, a proxy in front of the device for
+  instance): the integration stops, without a loop; one new try after 1 h,
+  6 h then every 24 h, or at once with the button or a new address. The stop
+  is kept across a restart.
+- **The device asks to slow down** (429): a pause of at least 1 minute
+  (Retry-After when given, 6 h at most), kept across a restart.
+- **Unexpected answer** (404, not JSON): the model is read again at the next
+  try.
+
+## Limits
+
+- Never tested with a real device: the mappings come from python-pooldose,
+  checked by its users.
+- On the VÁGNER POOL VA DOS (PDPR1H1HAR1V0, PDHC1H1HAR1V0/V1), the meaning
+  of the **dosing pump alarm** is not confirmed: the device gives an ON/OFF
+  label that may mean "the pump runs" rather than "alarm". Check it on the
+  device before using it in a scene.
+- The "Low" / "High" values of the ORP or chlorine dosing direction are
+  given as the device names them.
+- Read only: no command of the dosing pumps, the setpoints, the pause of the
+  dosing nor the relays (planned later, off by default).
+- Not read yet: probe calibrations, overfeed thresholds, water flow and
+  meter, auxiliary relays, delays.
+
+## Credits
+
+- [python-pooldose](https://github.com/lmaertin/python-pooldose) by lmaertin
+  (MIT): the local API, the identification of the model and the decoding of
+  the values are ported to JavaScript; the mapping files are taken as they
+  are.
+- See `THIRD_PARTY_NOTICES.md`.
+
+SEKO and PoolDose are trademarks of their owners; this project is not
+affiliated with SEKO.
+
+## Configuration settings
+
+These are the settings SEKO PoolDose asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your PoolDose | `section` | No | Brings a SEKO PoolDose pool controller (and the VÁGNER POOL, BWT and KEMI DOSE models built on it) into Gladys, read through its own HTTP API on the local network, without the cloud: water temperature, pH, ORP, free chlorine, the pH, ORP and chlorine setpoints, the mode of the dosing pumps, the pause of the dosing and the alarms, each alarm also as a scene trigger. Enter the IP address of the device, save, then add it from the Discovery tab. Read only: Gladys never doses nor changes a setpoint. Ported from python-pooldose; never tested with a real device. Not affiliated with SEKO. |
+| Address of the PoolDose | `string` | Yes | Its IP address (or host name) on your network, as shown by your router. Give it a fixed address (DHCP reservation). |
+| Port (optional) | `number` | No | 0 for the standard port (80, or 443 with HTTPS). |
+| HTTPS | `boolean` | No | Only if your device answers in HTTPS. Off by default (the PoolDose answers in HTTP). |
+| Check the HTTPS certificate | `boolean` | No | With HTTPS only. Turn it off for a self-signed certificate of the device. |
+| Refresh interval (s) | `number` | No | Seconds between two reads of the device (30 to 900). |
+| Language of the names | `select` | No | Used for the feature names of the device added from now on, the dosing modes and the alarm names of the scene triggers. |
+
+## How to install SEKO PoolDose in Gladys
+
+1. In Gladys, open **Integrations**: SEKO PoolDose appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-seko-pooldose:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-seko-pooldose](https://github.com/LM1LC3N7/gladys-seko-pooldose).
+
+SEKO PoolDose requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+SEKO PoolDose is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-seko-pooldose) — [source of this documentation](https://github.com/LM1LC3N7/gladys-seko-pooldose/blob/HEAD/docs/en.md)

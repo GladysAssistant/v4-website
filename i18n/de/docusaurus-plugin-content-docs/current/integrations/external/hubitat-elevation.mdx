@@ -19,7 +19,7 @@ https://github.com/LM1LC3N7/gladys-hubitat instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Hubitat Elevation","description":"Your Hubitat hub devices in Gladys: lights, plugs, shades, thermostats, sensors. Unofficial.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-hubitat","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-hubitat.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T03:03:05Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Hubitat Elevation","description":"Your Hubitat hub devices in Gladys: lights, plugs, shades, thermostats, sensors. Unofficial.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-hubitat","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-hubitat.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-19T23:41:17Z"}} />
 
 :::info
 
@@ -153,11 +153,37 @@ it.
   contact, motion, lock, door…) that no event told, or when the socket said
   nothing for 30 minutes, the socket is opened again at once; the badges only
   turn orange if that reopening fails.
-- **Energy**: the energy index only goes up. A lower reading is held; it is
-  taken only when a later reading rises above that low value (the meter was
-  reset and counts again). The same low value read again stays held, so an
-  index read at 0 then back to normal makes no false consumption. A driver
-  reporting Wh is converted to kWh.
+- **Energy**: Gladys counts every rise of an energy index in full in the
+  Energy tab. So the integration never publishes 0, and holds back any
+  abnormal value: a drop, or a jump of more than 10 kW on average for a plug
+  or a module (`switch/energy`), 25 kW for a meter alone
+  (`energy-sensor/index`), since the last accepted value (plus a 0.5 kWh
+  slack). While a value is held, the last accepted one is sent again. A jump
+  is told at once; a drop only if it lasts about a minute (a driver that
+  wavers by 0.01 kWh tells nothing): the badge of the device then turns
+  orange with the jump or the drop and the kWh at stake, and the log says
+  so. Neither repetition, time, a later rise, saving the configuration nor a
+  reconnection accepts it: only the **Accept the held index** button of the
+  configuration does, in two clicks. The first one lists the held indexes
+  and the kWh that would be counted, accepting nothing; a second click
+  within 2 minutes takes exactly those (if the list changed meanwhile, or a held value moved beyond what was shown,
+  it only shows it again). Each index is taken at the value shown (plus what the
+  device may have used since). An accepted jump is counted at once as
+  consumption; an accepted drop bills nothing. A value back to normal ends
+  the hold. The hold is kept in `/data` across restarts; creating the device
+  (again) starts afresh. A driver reporting Wh is converted to kWh.
+
+  Two cases to know:
+
+  - **A meter reset** (`resetEnergy`, from Hubitat or the device): it is held
+    as a drop. Until you click, the last accepted value keeps being sent:
+    **the consumption between the reset and your acceptance is not
+    counted**. So accept the drop soon after the reset.
+  - **A driver that resets by itself** (after a power cut, an update): the
+    drop stays held too, with no time limit, until your click or until the
+    old value comes back. If the index then rises above the old value, that
+    is a jump, held in its turn.
+
 - **The event socket carries the events of every device of the hub**, not
   only those you authorized: the integration keeps the authorized ones and
   drops the rest. It needs no token.
@@ -195,7 +221,7 @@ Diese Einstellungen fragt Hubitat Elevation in seinem Konfigurationsbildschirm i
 
 | Einstellung | Typ | Pflichtfeld | Beschreibung |
 | --- | --- | --- | --- |
-| Your Hubitat Elevation devices in Gladys | `section` | Nein | The devices you authorize in the Maker API app of your hub are offered in the Discovery tab: switches, dimmers, colour and white bulbs, plugs with their consumption, shades, thermostats, buttons, contact, motion, leak, smoke and CO sensors, temperature, humidity, illuminance, battery. The states follow the hub live and Gladys controls the devices through it, on your local network only. Locks and garage doors stay read-only until you allow them below; the alarm (HSM) and the modes are never changed. Never tested on a real hub yet. Unofficial, not affiliated with Hubitat. |
+| Your Hubitat Elevation devices in Gladys | `section` | Nein | The devices you authorize in the Maker API app of your hub are offered in the Discovery tab: switches, dimmers, colour and white bulbs, plugs with their consumption, shades, thermostats, buttons, contact, motion, leak, smoke and CO sensors, temperature, humidity, illuminance, battery. The states follow the hub live and Gladys controls the devices through it, on your local network only. Locks and garage doors stay read-only until you allow them below; the alarm (HSM) and the modes are never changed. An energy index that jumps or drops is held back until you accept it with the button below. Never tested on a real hub yet. Unofficial, not affiliated with Hubitat. |
 | Address of the hub | `string` | Ja | The local IP address of your Hubitat hub, like 192.168.1.50. A Maker API URL copied from the app page works too, without its access_token. |
 | Maker API app number | `string` | Ja | In Hubitat, Apps → Maker API: the number after /apps/api/ in the URLs the app shows. |
 | Maker API access token | `secret` | Ja | Shown on the Maker API app page. Kept by Gladys in its database, never shown again, and sent only to your hub. |
@@ -210,7 +236,7 @@ Diese Einstellungen fragt Hubitat Elevation in seinem Konfigurationsbildschirm i
 ## So installierst du Hubitat Elevation in Gladys
 
 1. Öffne in Gladys **Integrationen**: Hubitat Elevation erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
-2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-hubitat:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-hubitat:0.1.2`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
 3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
 4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-hubitat](https://github.com/LM1LC3N7/gladys-hubitat).
 

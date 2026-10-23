@@ -1,0 +1,204 @@
+---
+title: "Integración domótica Scrutiny, gratuita y de código abierto"
+sidebar_label: "Scrutiny"
+description: "La salud de sus discos (S.M.A.R.T.) desde Scrutiny: estado, temperatura y escenas si uno falla. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-scrutiny.png"
+keywords:
+  - "scrutiny"
+  - "domótica scrutiny"
+  - "gladys scrutiny"
+  - "scrutiny gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-scrutiny instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Scrutiny","description":"La salud de sus discos (S.M.A.R.T.) desde Scrutiny: estado, temperatura y escenas si uno falla.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-scrutiny","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-scrutiny.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T18:11:07Z"}} />
+
+[Scrutiny](https://github.com/AnalogJ/scrutiny) vigila la salud de sus discos duros y SSD: su
+recolector lee sus datos S.M.A.R.T. (normalmente una vez al día) y su panel web indica qué disco
+está bien, cuál muestra una advertencia y cuál tiene un fallo, con umbrales sacados de tasas de
+averías reales. Esta integración lleva ese panel a Gladys: cada disco se convierte en un dispositivo
+con su salud, su temperatura y sus contadores, las escenas reaccionan cuando un disco falla, vuelve
+a estar bien o ya no se recoge, y un widget muestra primero los discos que requieren su atención.
+
+Gladys lee el servidor web de Scrutiny: nunca toca sus discos. Todo se queda en su red (sin nube).
+
+Probada con un Scrutiny real en Docker (v0.9.5, imagen omnibus), alimentado con salidas `smartctl`
+reales de la batería de pruebas de Scrutiny: discos sanos, con advertencia, con fallo S.M.A.R.T. y
+de Scrutiny, un disco NVMe, una recopilación demasiado antigua. Aún no en una instalación real: sus
+comentarios son bienvenidos en [las issues](https://github.com/guim31/gladys-scrutiny/issues).
+
+## Lo que necesita
+
+- Gladys Assistant 5.1.0 o posterior.
+- Un servidor web Scrutiny (la imagen `omnibus`, o `web` + InfluxDB) accesible desde Gladys,
+  normalmente en el puerto 8080, con al menos un recolector que le envíe datos. Se admiten Scrutiny
+  v0.8 y v0.9.
+- Si un proxy inverso pide iniciar sesión delante de Scrutiny: su usuario y su contraseña
+  (autenticación básica). Scrutiny en sí no tiene inicio de sesión.
+
+## Puesta en marcha
+
+### 1. Encontrar la dirección de Scrutiny
+
+Es la dirección de su panel, por ejemplo `http://192.168.1.2:8080`. También sirve una dirección
+copiada del navegador (`…/web/dashboard`): la integración conserva la parte del servidor. Detrás de
+un proxy inverso con una subruta (ajuste `basepath` de Scrutiny), introduzca la dirección con esa
+subruta.
+
+### 2. Configurar la integración
+
+En Gladys, abra **Integraciones → Scrutiny → Configuración**:
+
+- **Dirección de Scrutiny**: la dirección encontrada arriba.
+- **Usuario del proxy (opcional)** y **Contraseña del proxy (opcional)**: solo si un proxy inverso
+  los pide.
+- **Intervalo de actualización**: con qué frecuencia se lee Scrutiny, 15 minutos por defecto. Una
+  petición para la lista de discos y otra para los ajustes cada vez; los atributos de un disco solo
+  se vuelven a leer tras una nueva recopilación.
+- **Recopilación demasiado antigua tras**: tras cuánto tiempo sin recopilación nueva un disco activa «Disco
+  ya no recopilado» (36 horas por defecto, para un recolector diario).
+- **Idioma de los nombres**: el idioma de los nombres de funciones (fijados al añadir un
+  dispositivo) y de los textos enviados a las escenas.
+
+Pulse después **Probar la conexión**: indica cuántos discos sigue Scrutiny y cuántos tienen un
+fallo.
+
+### 3. Añadir los discos
+
+Abra la pestaña **Descubrir** de la integración y añada los discos que desea seguir, y el
+dispositivo **Scrutiny** si quiere los totales. Los discos archivados en Scrutiny no se proponen. Un
+disco se identifica por su identificador de Scrutiny (calculado a partir de su modelo, su número de
+serie y su WWN: un WWN solo no siempre es único): cambiarlo de puerto o de máquina conserva el mismo
+dispositivo, y también una actualización de Scrutiny v0.8 a v0.9.
+
+## Los dispositivos
+
+Cada disco tiene estas funciones:
+
+- **Disco con fallo**: sí cuando Scrutiny marca el disco con fallo, como lo hace su panel (el
+  «umbral de estado» de los ajustes de Scrutiny: S.M.A.R.T., Scrutiny o ambos). La condición que
+  usar en las escenas.
+- **Salud**: OK, Advertencia (el disco pasa pero un atributo es dudoso) o Con fallo, como texto.
+- **Temperatura**: en la última recopilación, en °C.
+- **Horas de funcionamiento**: tal como las da el disco.
+- **Sectores reasignados** y **Sectores pendientes**: atributos S.M.A.R.T. 5 y 197, solo en los
+  discos que los dan (SATA). Un contador que sube es la primera señal de un disco que se muere.
+- **Desde la última recopilación**: horas desde el último envío del recolector para el disco.
+
+El dispositivo **Scrutiny** cuenta los **Discos con fallo**, los **Discos con advertencia** y los
+**Discos en total**.
+
+## Panel
+
+El widget **Discos de Scrutiny** muestra tres mosaicos (con fallo, advertencias, la temperatura más
+alta), y luego una fila por disco: primero los que tienen un fallo, luego las advertencias, los
+discos ya no recopilados y los sanos, diez filas como máximo. Elija discos en sus ajustes para mostrar
+solo esos. **Actualizar** vuelve a leer Scrutiny.
+
+## Escenas
+
+### Desencadenantes
+
+- **Un disco falla**: Scrutiny marca un disco con fallo tras una recopilación. Variables: el nombre del
+  disco, su modelo, los atributos con fallo y su temperatura.
+- **Un disco vuelve a estar bien**: un disco con fallo vuelve a estar bien en una nueva recopilación, o
+  tras un cambio del umbral de Scrutiny. Variables: el nombre del disco, su modelo y cuántas horas
+  tuvo el fallo.
+- **Disco ya no recopilado**: ninguna recopilación nueva de un disco desde el plazo configurado
+  (recolector parado, disco desaparecido). Un evento por disco. Variables: el nombre del disco, su
+  modelo y las horas desde su última recopilación.
+
+Cada desencadenante puede limitarse a algunos discos. Un disco visto por primera vez no activa nada:
+un disco con fallo desde hace meses no es noticia. La integración guarda el último estado de cada
+disco: un disco que falló durante un reinicio de Gladys o de la integración se anuncia igualmente,
+una vez.
+
+### Acciones
+
+- **Estado de un disco**: lee un disco para las acciones siguientes: con fallo o no, su salud,
+  nombre, modelo, temperatura, horas de funcionamiento, horas desde la recopilación, los atributos
+  afectados y una frase lista como «Samsung SSD 840 (sdd): Con fallo, 33 °C, recopilado hace 5 días.
+  UltraDMA CRC Error Count.»
+- **Contar los discos con fallo**: cuenta los discos con fallo, con advertencia, ya no recopilados y
+  en total, y nombra los que fallan, para un informe.
+
+Ambas vuelven a leer Scrutiny cuando la última lectura tiene más de un minuto.
+
+### Ideas de escenas
+
+- **Un disco falla** → enviar por Telegram «Disco \{disco\} con fallo: \{atributos\}» y encender una
+  lámpara en rojo.
+- Cada domingo a las 10:00 → **Contar los discos con fallo** → si el número es mayor que 0, enviar
+  «\{nombres\} con fallo, \{advertencias\} disco(s) con advertencia».
+- **Disco ya no recopilado** → avisar «El recolector de Scrutiny de \{disco\} se paró hace \{horas\}
+  horas»: un NAS de copias que no se despertó, un contenedor de recolector caído.
+
+## Solución de problemas
+
+- **«Scrutiny no responde»**: compruebe la dirección y el puerto desde la máquina de Gladys, y que
+  ningún cortafuegos lo bloquee.
+- **«Scrutiny responde con un error»**: su base de datos (InfluxDB) está parada o llena; el panel de
+  Scrutiny muestra el mismo error.
+- **«Se pide iniciar sesión»**: un proxy inverso protege Scrutiny; indique su usuario y su
+  contraseña (solo autenticación básica).
+- **«La dirección redirige»**: introduzca directamente la dirección `https://`.
+- **«Certificado rechazado»**: no se acepta un certificado autofirmado; use la dirección `http://` en
+  su red.
+- **Ningún disco**: ningún recolector ha enviado datos todavía; láncelo una vez
+  (`docker exec scrutiny scrutiny-collector-metrics run` con la imagen omnibus).
+- **Un disco se queda en «Aún sin recopilar»**: está registrado pero su recolector no pudo leer sus
+  datos S.M.A.R.T. (caja USB, controladora RAID): consulte los registros del recolector.
+- **La salud difiere del panel de Scrutiny**: recargue el panel; la integración lee el mismo umbral
+  de estado, con el intervalo elegido.
+
+## Límites
+
+- Los datos son los de la última recopilación: con el recolector diario por defecto, un disco que falla
+  a mediodía aparece en la siguiente recopilación.
+- No se leen el historial de Scrutiny, sus notificaciones ni los resultados de autopruebas; Gladys
+  guarda el historial de cada función.
+- Los contadores de sectores solo existen para los discos SATA; los discos NVMe y SAS muestran su
+  salud, su temperatura y sus horas.
+- Sin relación con Scrutiny ni con su autor.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Scrutiny te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Su Scrutiny | `section` | No | Introduzca la dirección de la interfaz web de Scrutiny. Después añada los discos que desea seguir desde la pestaña Descubrir: Gladys lee Scrutiny, el recolector de Scrutiny lee los discos. |
+| Dirección de Scrutiny | `string` | Sí | Dirección y puerto de la interfaz web de Scrutiny (8080 por defecto). |
+| Usuario del proxy (opcional) | `string` | No | Solo si un proxy inverso pide iniciar sesión delante de Scrutiny (autenticación básica). |
+| Contraseña del proxy (opcional) | `secret` | No | La contraseña de este usuario. Scrutiny en sí no tiene inicio de sesión. |
+| Opciones | `section` | No |  |
+| Intervalo de actualización | `select` | Sí | Con qué frecuencia se lee Scrutiny. Su recolector lee los discos una vez al día por defecto. |
+| Recopilación demasiado antigua tras | `select` | Sí | Un disco sin recopilar durante este tiempo activa «Disco ya no recopilado»: recolector parado, disco desaparecido. |
+| Idioma de los nombres | `select` | Sí | Idioma de los nombres de funciones (fijados al añadir un dispositivo) y de los textos enviados a las escenas. |
+
+## Cómo instalar Scrutiny en Gladys
+
+1. En Gladys, abre **Integraciones**: Scrutiny aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-scrutiny:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-scrutiny](https://github.com/guim31/gladys-scrutiny).
+
+Scrutiny requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Scrutiny es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-scrutiny) — [fuente de esta documentación](https://github.com/guim31/gladys-scrutiny/blob/HEAD/docs/es.md)

@@ -1,0 +1,202 @@
+---
+title: "Intégration domotique UptimeRobot, gratuite et open source"
+sidebar_label: "UptimeRobot"
+description: "Vos moniteurs UptimeRobot : en ligne ou non, temps de réponse, disponibilité 24 h, 7 et 30 j. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-uptimerobot.png"
+keywords:
+  - "uptimerobot"
+  - "domotique uptimerobot"
+  - "gladys uptimerobot"
+  - "uptimerobot gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-uptimerobot instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"UptimeRobot","description":"Vos moniteurs UptimeRobot : en ligne ou non, temps de réponse, disponibilité 24 h, 7 et 30 j.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-uptimerobot","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-uptimerobot.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T10:12:41Z"}} />
+
+Vos moniteurs [UptimeRobot](https://uptimerobot.com) dans Gladys, par l'API
+officielle d'UptimeRobot et une clé d'API de votre compte. Chaque moniteur
+devient un appareil Gladys :
+
+- **Online** : 1 en ligne, 0 hors ligne (confirmé par UptimeRobot) ; rien
+  tant que le moniteur est en pause ou pas encore vérifié ;
+- **Status** : `up`, `seems_down` (semble hors ligne, pas encore confirmé),
+  `down`, `paused` ou `not_checked` ;
+- **Response time** : le dernier temps de réponse mesuré, en millisecondes ;
+- **Uptime 24 h (%)**, **Uptime 7 days (%)** et **Uptime 30 days (%)** : la
+  disponibilité des dernières 24 heures, 7 et 30 jours ;
+- les boutons **Pause monitoring** et **Resume monitoring**, seulement si vous
+  les autorisez (voir Pause et reprise).
+
+Le type du moniteur (HTTP(s), Keyword, Ping, Port, Heartbeat) et sa cible
+apparaissent dans les paramètres de l'appareil : seulement le protocole et
+l'hôte (par exemple `https://exemple.fr`), jamais le chemin, les paramètres ni
+d'éventuels identifiants de l'adresse, et jamais l'adresse secrète d'un
+moniteur Heartbeat.
+
+> **Cette intégration n'a jamais été testée avec un vrai compte UptimeRobot.**
+> Cette première version a été écrite à partir de la documentation officielle
+> de l'API UptimeRobot, et testée seulement contre un faux UptimeRobot. Dites
+> sur le forum de Gladys ce qui marche et ce qui ne marche pas.
+
+Intégration non officielle, sans lien avec UptimeRobot.
+
+## Créer une clé en lecture seule (recommandé)
+
+Gladys n'a besoin que de lire : utilisez la **clé d'API en lecture seule**
+(« Read-only API key »), qui ne peut ni modifier ni supprimer vos moniteurs.
+
+1. Connectez-vous sur [uptimerobot.com](https://dashboard.uptimerobot.com).
+2. Ouvrez **Integrations & API**, puis la section **API**.
+3. À la ligne **Read-only API key**, cliquez sur **Create** (ou affichez la
+   clé existante) et copiez-la.
+4. Collez-la dans le champ **Clé d'API** de l'intégration et enregistrez.
+
+La clé principale (« Main API key ») marche aussi, mais elle peut tout
+changer dans le compte : ne la donnez que si vous voulez la pause et la
+reprise. Une clé propre à un moniteur (« Monitor-specific API key ») ne lit
+que ce moniteur.
+
+La clé est gardée par Gladys dans sa base, jamais réaffichée, envoyée
+seulement à `api.uptimerobot.com`, dans le corps des requêtes (jamais dans une
+adresse, jamais dans un journal, jamais dans le volume `/data`).
+
+## Configuration
+
+- **Clé d'API** : voir ci-dessus.
+- **Moniteurs** (facultatif) : les identifiants des moniteurs à suivre (les
+  chiffres à la fin de l'adresse d'un moniteur sur le tableau de bord),
+  séparés par des virgules, 50 au plus. Vide : tous les moniteurs du compte,
+  200 au plus.
+- **Rafraîchissement** : toutes les 5 minutes par défaut (de chaque minute à
+  chaque heure). Chaque lecture fait une requête par tranche de 50 moniteurs.
+  L'offre gratuite vérifie vos sites toutes les 5 minutes : lire plus souvent
+  ne sert qu'avec une offre payante.
+- **Autoriser la pause et la reprise des moniteurs** : désactivée par défaut.
+
+Ouvrez ensuite l'onglet **Découverte** et créez les moniteurs à suivre.
+
+## Déclencheurs de scène
+
+- **Moniteur hors ligne** : UptimeRobot a confirmé un moniteur hors ligne
+  (`down`) alors qu'il était en ligne à la lecture précédente.
+- **Moniteur rétabli** : un moniteur confirmé hors ligne à la lecture
+  précédente est de nouveau en ligne.
+
+Les deux peuvent viser un moniteur précis (vide : tous) et donnent à la scène
+le nom et le type du moniteur. Ils ne se déclenchent jamais :
+
+- à la première lecture (démarrage, redémarrage, nouvelle configuration) ni
+  pour un moniteur qui vient d'apparaître ;
+- après un long trou : quand la lecture précédente date de plus de deux
+  intervalles (plus une minute), le changement devient seulement la nouvelle
+  référence ;
+- sur « semble hors ligne » (`seems_down`) : UptimeRobot ne l'a pas encore
+  confirmé ;
+- après une pause ou une reprise.
+
+La scène démarre jusqu'à un intervalle de rafraîchissement après le
+changement.
+
+## Pause et reprise
+
+Par défaut Gladys ne fait que lire. Une fois **Autoriser la pause et la
+reprise des moniteurs** cochée, chaque moniteur reçoit deux boutons, **Pause
+monitoring** et **Resume monitoring** (cliquez sur **Mettre à jour** dans la
+Découverte pour les ajouter à un appareil déjà créé). Ce ne sont jamais des
+interrupteurs : ni assistant vocal ni « éteins tout » ne peut mettre vos
+moniteurs en pause.
+
+- Il faut la **clé principale** : UptimeRobot refuse la pause avec une clé en
+  lecture seule, et Gladys le dit.
+- Un moniteur en pause ne vous alerte plus.
+- Décocher l'option prend effet tout de suite ; les boutons restent sur les
+  appareils (pour ne jamais casser l'historique) mais sont refusés.
+- Quand la commande ne peut pas partir en 3,5 s, rien n'est envoyé. Une
+  commande partie sans réponse à temps (ou avec une erreur serveur) s'affiche
+  en échec avec le message « The command was sent but UptimeRobot did not
+  confirm it » (jamais « nothing was sent ») : la lecture suivante montre le
+  résultat. Les messages des commandes sont en anglais, comme ceux du cœur.
+- Un refus « trop de requêtes » (HTTP 429) s'affiche « UptimeRobot refused
+  the command (HTTP 429, too many requests): not done » : la commande n'a pas
+  été faite, et toutes les requêtes s'arrêtent pendant la pause indiquée.
+
+## Limites d'usage et problèmes de connexion
+
+- L'offre gratuite d'UptimeRobot admet **10 requêtes par minute**
+  (documentation de l'API). Gladys en envoie **8 au plus** par minute, toutes
+  requêtes comptées (lectures et boutons) : au-delà, un bouton est refusé sans
+  rien envoyer (« Too many requests to UptimeRobot this minute »), et la
+  lecture attend une minute (état « En attente du budget de requêtes de la
+  minute », ou le message propre du bouton **Tester la connexion**).
+- **Redémarrage** : après une lecture réussie, Gladys relit tout de suite,
+  mais jamais moins d'une minute après la dernière requête (des redémarrages
+  en boucle ne dépassent pas la limite). Après un échec, une pause ou un
+  budget épuisé, l'attente prévue est gardée (au plus un intervalle) ; l'état
+  l'indique (« Redémarré : … Lecture dans N min. »). **Tester la connexion**
+  lit tout de suite.
+- **API v2 retirée** (HTTP 404 ou 410) : l'état le dit (« elle a peut-être été
+  retirée. Mettez à jour l'intégration. ») ; Gladys réessaie de plus en plus
+  espacé.
+- **Clé refusée** : Gladys ne réessaie pas seul, même après un redémarrage.
+  Collez la clé et enregistrez, ou appuyez sur **Tester la connexion**.
+- **UptimeRobot surchargé** (HTTP 429) ou **erreur serveur** (HTTP 5xx) :
+  toutes les requêtes s'arrêtent, au moins l'intervalle choisi (429 : de 1
+  minute à 6 heures, ce que demande UptimeRobot), même après un redémarrage ;
+  enregistrer la configuration ou appuyer sur **Tester la connexion** lève la
+  pause.
+- **UptimeRobot injoignable** : nouvel essai à l'intervalle choisi, puis de
+  plus en plus espacé jusqu'à une heure. Les appareils apparaissent
+  injoignables entre-temps.
+
+## Limites
+
+- Un seul compte UptimeRobot par intégration, 200 moniteurs au plus (les
+  moniteurs déjà créés passent d'abord ; l'état de la connexion dit combien
+  sont écartés).
+- Gladys accepte 300 états par minute : avec beaucoup de moniteurs, la
+  première publication peut prendre quelques minutes.
+- Les disponibilités en % n'ont pas d'unité dans Gladys (le cœur n'a pas de
+  catégorie « disponibilité ») : 99.95 veut dire 99,95 %.
+- Le temps de réponse n'est publié que s'il date de moins de 2 heures.
+- Les pages de statut, les fenêtres de maintenance et les contacts d'alerte ne
+  sont pas suivis.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par UptimeRobot dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Fonctionnement | `section` | Non | Gladys lit vos moniteurs UptimeRobot par l'API officielle d'UptimeRobot, avec une clé d'API de votre compte. Chaque moniteur devient un appareil Gladys (onglet Découverte) : en ligne ou hors ligne, état, dernier temps de réponse, disponibilité des dernières 24 heures, 7 et 30 jours, et son type et son hôte (jamais l'URL complète). Deux déclencheurs de scène : « Moniteur hors ligne » et « Moniteur rétabli ». Utilisez la clé en lecture seule : sur uptimerobot.com, Integrations & API, API, puis créez la « Read-only API key ». Intégration non officielle, sans lien avec UptimeRobot. |
+| Clé d'API | `secret` | Oui | La clé d'API en lecture seule est recommandée (elle ne peut que lire). La pause et la reprise demandent la clé d'API principale. Gardée par Gladys dans sa base, jamais réaffichée, envoyée seulement à api.uptimerobot.com, dans le corps des requêtes. |
+| Moniteurs (facultatif) | `string` | Non | Identifiants des moniteurs à suivre (les chiffres à la fin de l'adresse d'un moniteur sur le tableau de bord), séparés par des virgules, 50 au plus. Vide : tous les moniteurs du compte, 200 au plus. |
+| Rafraîchissement | `select` | Oui | À quel rythme Gladys lit UptimeRobot (une requête par tranche de 50 moniteurs). L'offre gratuite vérifie toutes les 5 minutes et admet 10 requêtes par minute : lire plus souvent ne sert qu'avec une offre payante. |
+| Pause et reprise | `section` | Non | Par défaut Gladys ne fait que lire. Une fois autorisé ci-dessous, chaque moniteur reçoit deux boutons, « Pause monitoring » et « Resume monitoring » (jamais un interrupteur : ni assistant vocal ni « tout éteindre » ne peut y toucher). Un moniteur en pause ne vous alerte plus : il faut la clé d'API principale, une clé en lecture seule est refusée par UptimeRobot. |
+| Autoriser la pause et la reprise des moniteurs | `boolean` | Non |  |
+
+## Comment installer UptimeRobot dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : UptimeRobot apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-uptimerobot:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-uptimerobot](https://github.com/LM1LC3N7/gladys-uptimerobot).
+
+UptimeRobot nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+UptimeRobot est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-uptimerobot) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-uptimerobot/blob/HEAD/docs/fr.md)

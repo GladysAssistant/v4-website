@@ -1,0 +1,241 @@
+---
+title: "GLPI Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "GLPI"
+description: "GLPI-Tickets: offen, überfällig, heute gelöst; Auslöser und Tickets aus einer Szene erstellt. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-glpi.png"
+keywords:
+  - "glpi"
+  - "glpi smart home"
+  - "gladys glpi"
+  - "glpi gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-glpi instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"GLPI","description":"GLPI-Tickets: offen, überfällig, heute gelöst; Auslöser und Tickets aus einer Szene erstellt.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-glpi","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-glpi.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T07:55:08Z"}} />
+
+Die Tickets deines [GLPI](https://glpi-project.org) in Gladys: wie viele offen
+sind, wartend, über ihrer SLA, wie viele heute gelöst wurden. Eine Szene
+reagiert auf ein neues Ticket, auf ein Ticket, das überfällig wird, oder auf ein
+gelöstes Ticket, und Gladys kann **selbst ein Ticket eröffnen**, wenn es eine
+Störung erkennt: ein Wasserleck, ein zu warmer Gefrierschrank, ein Drucker oder
+ein Internet-Router, der nicht mehr antwortet.
+
+> **Rückmeldungen sind willkommen.** Diese Integration wurde gegen echte
+> GLPI-Server getestet (die offiziellen Docker-Images `glpi/glpi` 10.0.28,
+> 11.0.11 und 12.0.0, Oktober 2026), noch nicht im Alltag eines echten
+> Service-Desks. Wenn etwas nicht wie beschrieben funktioniert, sag es im
+> [Gladys-Forum](https://community.gladysassistant.com) oder in den
+> [Issues](https://github.com/guim31/gladys-glpi/issues).
+
+## Was du brauchst
+
+- Gladys Assistant 5.1.0 oder neuer.
+- **GLPI 10, 11 oder 12**, selbst gehostet oder gehostet (GLPI Network Cloud),
+  von Gladys aus erreichbar. Die Integration nutzt die klassische REST-API von
+  GLPI (`apirest.php`), die alle drei Versionen bieten.
+- Einen **GLPI-Benutzer**, in dessen Namen Gladys die Tickets liest und
+  erstellt. Am besten legst du einen eigenen an (`gladys`):
+  - mit dem Profil **Techniker** (oder einem Profil, das alle Tickets sieht) für
+    die zu verfolgenden Einheiten: Die Zähler zählen dann alle Tickets dieser
+    Einheiten;
+  - oder mit dem Profil **Self-Service**: Gladys sieht dann nur die Tickets, die
+    es selbst angefordert hat, was zum Eröffnen von Störungstickets reicht.
+
+  Die Integration sieht genau das, was dieser Benutzer in GLPI sieht (sein
+  Standardprofil, seine Einheiten und deren Untereinheiten).
+
+## Installation
+
+### In GLPI
+
+1. **Konfiguration** → **Allgemein** → Reiter **API**:
+   - aktiviere **Legacy-REST-API aktivieren** (GLPI 11 und 12) bzw. die REST-API
+     (GLPI 10);
+   - aktiviere **Login mit externem Token aktivieren**.
+2. Erlaube in der Liste **API-Clients** desselben Reiters die Adresse von
+   Gladys: Der Standard-Client („full access from localhost“) akzeptiert nur
+   `127.0.0.1`. Füge einen Client hinzu (oder ändere diesen) mit der Adresse des
+   Gladys-Rechners, wie GLPI sie sieht, als Anfang und Ende des
+   IPv4-Adressbereichs, oder lass den Bereich leer, um alle Adressen zu
+   akzeptieren. Wenn du ein **Anwendungstoken** (`app_token`) einträgst,
+   übernimm es in Gladys.
+3. Öffne das Formular des Benutzers `gladys` (oder seine Einstellungen, als er
+   angemeldet). Aktiviere beim Feld **API-Token** die Option **Neu erzeugen**,
+   speichere und kopiere dann das angezeigte Token.
+
+### In Gladys
+
+1. **Integrationen** → installiere **GLPI**.
+2. Fülle im Bildschirm **Konfiguration** aus:
+   - **Adresse**: die Adresse von GLPI wie im Browser, z. B.
+     `https://helpdesk.example.org` oder `http://192.168.1.30/glpi` (der Ordner
+     `/glpi` bleibt erhalten, `/front/…` oder `/apirest.php` werden entfernt);
+   - **Benutzer-Token**: das in Schritt 3 kopierte API-Token;
+   - **Anwendungs-Token**: nur, wenn der API-Client eines hat;
+   - **Selbstsignierte Zertifikate akzeptieren**: für ein GLPI unter `https://`
+     mit selbstsigniertem Zertifikat;
+   - **Aktualisierungsintervall**: 1, 2, 5 (Standard) oder 10 Minuten;
+   - **Sprache der Funktionsnamen**: die Sprache der Namen des Geräts und der an
+     Szenen gesendeten Texte (Dringlichkeit, Typ, Status).
+3. **Verbindung testen** zeigt die Version von GLPI, den Benutzer und sein Profil
+   sowie die Zahl der offenen Tickets.
+4. Reiter **Entdecken**: Füge das Gerät **GLPI** hinzu.
+
+## Gerät
+
+Ein Gerät **GLPI** mit sechs Zählern, die bei jedem Lesen aktualisiert werden:
+
+| Funktion               | Was sie zählt                                                         |
+| ---------------------- | --------------------------------------------------------------------- |
+| Offene Tickets         | nicht gelöste Tickets: neu, in Bearbeitung und wartend                |
+| Neue Tickets           | Tickets mit dem Status Neu                                            |
+| Tickets in Bearbeitung | Tickets in Bearbeitung (zugewiesen oder geplant)                      |
+| Wartende Tickets       | wartende Tickets                                                      |
+| Überfällige Tickets    | offene Tickets, deren Zeit zur Behebung (SLA) überschritten ist       |
+| Heute gelöste Tickets  | seit Mitternacht (Serverzeit) gelöste (oder gelöste und geschlossene) |
+
+„Überfällig“ ist die von GLPI selbst berechnete **Zeit zur Behebung
+überschritten**: Ein Ticket ohne Zeit zur Behebung ist nie überfällig. Die
+Zähler behalten ihren Verlauf und dienen als Bedingungen in Szenen („wenn
+Überfällige Tickets größer als 0“).
+
+## Dashboard
+
+Das Widget **Neueste GLPI-Tickets** zeigt drei Kacheln (offen, überfällig, neu)
+und die acht neuesten offenen Tickets mit Status, Dringlichkeit und Einheit. Ein
+überfälliges Ticket trägt das Abzeichen „Überfällig“, ein Ticket mit hoher oder
+sehr hoher Dringlichkeit das Abzeichen seiner Dringlichkeit. Läuft GLPI unter
+`https://`, bietet jedes Ticket einen Link **In GLPI öffnen**.
+
+## Szenen
+
+### Auslöser
+
+Die drei Auslöser lassen sich nach **Dringlichkeit** (eine oder mehrere, leer:
+beliebig) und nach **Typ** (Störung oder Anfrage, leer: beliebig) filtern.
+
+- **Neues GLPI-Ticket**: In GLPI wurde ein Ticket eröffnet, von einem Benutzer,
+  einem Mail-Collector oder einem Formular. Von Gladys selbst erstellte Tickets
+  lösen nichts aus (keine Schleife).
+- **GLPI-Ticket überfällig**: Ein offenes Ticket hat gerade seine Zeit zur
+  Behebung überschritten.
+- **GLPI-Ticket gelöst**: Ein beim vorigen Lesen offenes Ticket ist jetzt gelöst
+  oder geschlossen.
+
+An die Aktionen übergebene Variablen: Ticketnummer, Titel, Dringlichkeit (1 bis
+5 und in Worten), Typ, Status, Kategorie, Einheit, Anforderer, Zeit zur
+Behebung, Link zum Ticket und bei einem gelösten Ticket das Lösungsdatum. Die
+Daten sind die, die GLPI anzeigt (Zeit des GLPI-Servers).
+
+Die Ereignisse werden bei jedem Lesen erkannt und kommen höchstens ein
+Aktualisierungsintervall nach den Tatsachen an. Beim allerersten Lesen (oder
+nach einem Wechsel von Server oder Benutzer) nimmt die Integration den Bestand
+zur Kenntnis, ohne etwas auszulösen. Ein Lesen löst höchstens 30 Ereignisse aus
+(ein Massenimport überflutet Gladys nicht).
+
+### Aktionen
+
+- **GLPI-Ticket erstellen**: eröffnet ein Ticket im Namen des Benutzers des
+  Tokens, der dessen Anforderer ist. Felder: **Titel** (Pflicht),
+  **Beschreibung** (leer: der Titel; Szenenvariablen sind willkommen),
+  **Dringlichkeit** (leer: mittel), **Typ** (leer: Störung), **Kategorie** (Name
+  oder Nummer, optional) und **Einheit** (Name oder Nummer, leer: die
+  Standardeinheit des Benutzers). Ausgaben: die Ticketnummer und ihr Link.
+- **Antwort zu einem GLPI-Ticket hinzufügen**: fügt dem per Nummer angegebenen
+  Ticket (`125` oder `#125`) eine Antwort hinzu, im Namen des Benutzers des
+  Tokens. Die Nummer kann aus einem „GLPI-Ticket erstellen“ weiter oben in der
+  Szene oder aus dem Auslöser kommen. Ausgaben: Nummer und Titel des Tickets.
+
+Eine Kategorie oder Einheit gibst du per Nummer, vollem Namen
+(`Root entity > Site Nord`) oder dem letzten Teil dieses Namens (`Site Nord`)
+an, Groß- und Kleinschreibung und Akzente egal.
+
+### Szenenideen
+
+- **Wasserleck**: Der Lecksensor im Heizungsraum meldet ein Leck → **GLPI-Ticket
+  erstellen** „Wasserleck im Heizungsraum“, Dringlichkeit sehr hoch, Kategorie
+  „Gebäude“, Beschreibung mit der Uhrzeit; danach eine Gladys-Nachricht mit dem
+  Link zum Ticket.
+- **Internet-Router weg**: Der Ping des Routers schlägt seit 10 Minuten fehl →
+  Ticket „Kein Internet im Büro“; wenn der Ping zurück ist, **Antwort**
+  „Verbindung um 14:32 Uhr wieder da“ zum selben Ticket.
+- **Bereitschaft**: **Neues GLPI-Ticket**, gefiltert auf hohe und sehr hohe
+  Dringlichkeit → Telegram-Nachricht an den Techniker in Bereitschaft mit Titel,
+  Anforderer und Link; **GLPI-Ticket überfällig** → die Lampe im Großraumbüro
+  rot schalten.
+
+## Fehlerbehebung
+
+- **„keine GLPI-API unter dieser Adresse“**: Prüfe die Adresse (mit dem Ordner
+  `/glpi`, falls vorhanden), indem du `…/apirest.php` im Browser öffnest: GLPI
+  antwortet mit seiner API-Dokumentationsseite.
+- **„die REST-API ist aus“**: siehe Schritt 1 in GLPI.
+- **„kein API-Client akzeptiert die Adresse von Gladys“**: Der Adressbereich des
+  API-Clients (Schritt 2) enthält die Adresse von Gladys nicht, wie GLPI sie
+  sieht (hinter einem Proxy oder NAT die Adresse dieses Proxys oder Routers).
+- **„Anwendungs-Token fehlt oder ist falsch“**: Der API-Client hat ein
+  Anwendungstoken, das in die Konfiguration gehört, oder es ist ein anderes.
+- **„Benutzer-Token abgelehnt“**: Das Token wurde inzwischen neu erzeugt, oder
+  der Login mit externem Token ist aus (Schritt 1).
+- **„dem Profil des GLPI-Benutzers fehlt ein Recht“**: Das Profil darf kein
+  Ticket erstellen oder keine Antwort hinzufügen (oder nicht in dieser Einheit).
+- **Die Zähler bleiben bei null**: Der Benutzer sieht die Tickets nicht
+  (Self-Service-Profil oder Einheit ohne Untereinheiten).
+- **Der Anforderer ist in Szenen leer**: Das Profil darf keine Benutzer lesen;
+  der Rest funktioniert.
+
+## Grenzen
+
+- Ein GLPI pro Installation und ein Gerät für alle Tickets, die der Benutzer
+  sieht (kein Gerät pro Einheit: Nimm einen auf eine Einheit beschränkten
+  Benutzer, um nur diese zu verfolgen).
+- Gezählt werden die 5.000 neuesten Tickets (offen und heute gelöst).
+- „Heute gelöst“ und „überfällig“ folgen der Zeit des GLPI-Servers.
+- Noch nicht über die neue API von GLPI 11 (OAuth2): Die klassische REST-API
+  reicht und existiert in GLPI 10, 11 und 12.
+- Ein zwischen zwei Lesevorgängen eröffnetes und gelöstes Ticket löst „Neues
+  GLPI-Ticket“ aus, aber nicht „gelöst“.
+
+Diese Integration ist weder mit Teclib' noch mit dem GLPI-Projekt verbunden.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt GLPI in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Dein GLPI | `section` | Nein | GLPI 10 oder neuer, selbst gehostet oder GLPI Network Cloud. In GLPI: Schalte die REST-API ein (Konfiguration, Allgemein, API) und kopiere das API-Token eines Benutzers (seine Einstellungen). Siehe Dokumentation. |
+| Adresse | `string` | Ja | Adresse von GLPI wie im Browser, mit https:\/\/ für HTTPS und dem Ordner /glpi, falls vorhanden. |
+| Benutzer-Token | `secret` | Ja | Das API-Token des GLPI-Benutzers, in dessen Namen Gladys handelt: in seinen Einstellungen, API-Token, Neu erzeugen, dann kopieren. |
+| Anwendungs-Token | `secret` | Nein | Nur, wenn der API-Client von GLPI eines hat (Konfiguration, Allgemein, API, API-Clients). |
+| Optionen | `section` | Nein |  |
+| Selbstsignierte Zertifikate akzeptieren | `boolean` | Nein | Für eine https:\/\/-Adresse mit selbstsigniertem Zertifikat. Nur für deinen eigenen Server aktivieren. |
+| Aktualisierungsintervall | `select` | Nein | Wie oft GLPI gelesen wird: Zähler und Szenenauslöser folgen ihr. |
+| Sprache der Funktionsnamen | `select` | Nein | Namen der Funktionen beim Hinzufügen des Geräts und an Szenen gesendete Texte. |
+
+## So installierst du GLPI in Gladys
+
+1. Öffne in Gladys **Integrationen**: GLPI erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-glpi:1.0.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-glpi](https://github.com/guim31/gladys-glpi).
+
+GLPI benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+GLPI ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-glpi) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-glpi/blob/HEAD/docs/de.md)

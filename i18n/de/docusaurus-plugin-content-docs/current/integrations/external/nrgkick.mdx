@@ -1,0 +1,222 @@
+---
+title: "NRGkick Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "NRGkick"
+description: "NRGkick Gen2 charger over its local API: state, power, energy, pause; optional commands. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-nrgkick.png"
+keywords:
+  - "nrgkick"
+  - "nrgkick smart home"
+  - "gladys nrgkick"
+  - "nrgkick gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-nrgkick instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"NRGkick","description":"NRGkick Gen2 charger over its local API: state, power, energy, pause; optional commands.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-nrgkick","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-nrgkick.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-21T00:06:04Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+Shows your **NRGkick Gen2** portable EV charger in Gladys through its **local
+REST JSON API**: no cloud, no account, straight on your network.
+
+> **Never tested with a real charger.** Not affiliated with DiniTech (the
+> maker of the NRGkick). The integration talks to the charger as the
+> nrgkick-api library (used by Home Assistant) does. DiniTech may change its
+> API in an update.
+
+## What you get
+
+One device per charger, with:
+
+| Feature                                    | Content                                                                     |
+| ------------------------------------------ | --------------------------------------------------------------------------- |
+| Status                                     | No vehicle, plugged in not charging, charge paused, charging, waking, error |
+| Connector                                  | Available, occupied, faulted or unavailable ("charging station" category)   |
+| Charging state                             | Charging, vehicle connected, paused by the charger, idle                    |
+| Vehicle plugged in, Charge paused          | Yes / no                                                                    |
+| Power, and power L1 / L2 / L3              | In W                                                                        |
+| Current L1 / L2 / L3, Voltage L1 / L2 / L3 | In A and V (a phase the attachment does not have stays empty)               |
+| Charging current set                       | In A, the setpoint of the charger                                           |
+| Current signaled to the vehicle            | In A                                                                        |
+| Energy of the session                      | In kWh, a plain sensor (starts again at 0 at each session)                  |
+| Energy index                               | In kWh, the total energy charged: an index, guarded (see below)             |
+| Temperatures                               | Housing, attachment L1 / L2 / L3, in °C                                     |
+| Error, warning, residual current device    | Yes / no, and the error and warning codes as text                           |
+| Pause charging                             | Button, always available                                                    |
+| Resume charging                            | Button (only when allowed)                                                  |
+| Set the charging current                   | List from 6 A to the ceiling (only when allowed)                            |
+
+Read every 30 seconds by default (10 s to 10 min, configurable).
+
+## Installation
+
+1. Give the charger a **fixed IP address** in your router.
+2. In the **NRGkick app**, turn on the **local JSON API** (without it, the
+   charger answers that the API must be turned on, and the status of the
+   integration says so). If you also turn on **BasicAuth** there, note its
+   user name and password.
+3. Install the integration from the Gladys store. In its configuration,
+   enter the **IP address of the charger**, and only when BasicAuth is on,
+   its **user name** and **password** (both, or neither).
+   A user name and a password pasted in the address (`admin:…@`) are
+   ignored and never shown back: use the dedicated fields.
+4. Save, then add the charger from the **Discovery** tab.
+
+The password is **kept by Gladys in its database, never shown again**, and
+sent only to the charger. It is never written to the logs, to `/data`, nor to
+a state. The charger only speaks plain HTTP: the user name and the password
+travel **in clear, over HTTP** on your local network. Keep the charger on a
+trusted network.
+
+The **Test the connection** button reads the charger once (at most every 10
+seconds).
+
+## Energy index
+
+The total energy charged by the charger is an **index**: Gladys derives the
+consumption and the cost from it, and counts every rise in full. The
+integration guards it like the P1 Monitor integration does:
+
+- never 0; a **drop** or an implausible **jump** (more than 25 kW on average
+  since the last value; the charger delivers 22 at most) is **held**: the
+  last accepted value is sent again, the status of the integration and the
+  badge of the device show the kWh waiting, and the log says so; the hold is
+  kept in `/data`, even across a restart;
+- it is never confirmed by repetition nor by time: only the **"Accept the
+  held index"** action of the configuration takes it, **in two clicks**. The
+  first click takes nothing: it shows the value held (drop or jump, from →
+  to, kWh). A second click within 60 seconds takes exactly that — the value
+  shown, plus what the charger may have delivered since — and answers with
+  what is counted; if the value changed meanwhile, it is shown again. Saving
+  the configuration or a reconnection never accepts anything;
+- a charger added again starts from a fresh guard.
+
+The charger is usually behind your main meter: in the energy settings of
+Gladys, put it under that meter so that it is not counted twice. The
+**energy of the session** stays a plain sensor: it starts again at 0 at each
+session, it is never an index.
+
+## Commands
+
+**"Pause charging"** is always available, without any option: it only stops
+the charge (`charge_pause=1`). It is **never held back**: not by another
+command in flight (it goes at once, and is sent once more when a resume it
+overtook settles; a resume or a current not sent yet gives way), not by the
+minute between two changes, not by a 429 pause or refused credentials (then
+one request), not by a missing read (it needs none). When a resume was left
+without confirmation, it may still reach the charger later: a pause sent
+within the next 90 seconds is watched, and sent again (twice at most) if a
+read shows the charge resumed while no other resume left from Gladys.
+**Beware**: a resume made within these 90 seconds from the NRGkick app or
+through OCPP is therefore cancelled too (twice at most); do it again after.
+
+**A pause stays on the charger until a resume.** With the option below off
+(the default), only the NRGkick app resumes the charge: a forgotten pause (by
+a scene, the AI chat) may prevent the next charge and leave the car
+uncharged. The charger may also refuse a pause (for instance when solar
+charging blocks it): Gladys then answers "The charger refused the command".
+
+Before the first read after a restart (a 429 pause or a block kept in
+`/data`), the pause goes to the configured address for the last charger
+read at that address only.
+
+**"Resume charging"** and **"Set the charging current"** refuse every command
+while **Allow resuming and the charging current** is off (the default). On:
+
+- **Resume** sets `charge_pause=0` back; **refused without a vehicle plugged
+  in**, or on an error or an unknown state;
+- **Charging current**: from 6 A to the **ceiling**: the lowest of the
+  "Ceiling of the charging current" of the configuration (16 A by default,
+  32 A at most), the rated current of the charger and the max current of its
+  attachment. If the charger takes another value than the one asked, Gladys
+  shows "sent, without confirmation".
+- **One change a minute at most** (resume or current): no fine regulation
+  from Gladys.
+
+They are **buttons** and a **list**, never switches: a "turn everything off"
+(from Gladys, Google Home, Alexa or HomeKit) never reaches them. A scene can
+trigger them, only through an explicit action. Note that the AI chat of
+Gladys (MCP) can create and run such a scene: while the commands are
+allowed, it can resume the charge or change the current.
+
+Before a resume or a current change, the integration **reads the charger
+again** and decides on that read only; the option is checked again right
+before sending. A command without effect (already so) is not sent. A command
+that cannot leave within 3.5 seconds is refused unsent. When the charger does
+not confirm (silence, a 5xx error, an unexpected answer), Gladys shows
+"Command sent, without confirmation": check the state, read again 5 then 20
+seconds later. One command at a time: another one is refused at once, the
+pause aside.
+
+## Errors and limits
+
+- **Charger unreachable**: only the connector ("unavailable") and the status
+  ("Charger unreachable") change; the other values keep their last one. New
+  try after 30 s, 1, 2, then 5 minutes, never faster than the interval.
+- **JSON API turned off** in the app: the status says so; new try every 5
+  minutes.
+- **Credentials refused** (or asked for while none is entered): the status
+  asks to check them. New tries after 15 minutes, 1 hour, then every 6
+  hours, never sooner (kept in `/data` across a restart); saving new
+  credentials tries again at once.
+- **429 (too many requests)** or **5xx**: a pause (1 minute to 6 hours for a 429) for the reads and the commands but the pause of the charge, never
+  shorter than the interval, kept in `/data` across a restart.
+- Neither the energy limit nor the phase count are changed from Gladys in
+  this version. One charger per integration. No Bluetooth.
+- If your NRGkick also speaks OCPP to another software (for instance the
+  OCPP integration of Gladys), both may contradict each other on the pause
+  and the current: command only one of them.
+- The logs never hold the text of the error answers of the charger, nor the
+  password.
+
+## Credits
+
+Port of [nrgkick-api](https://github.com/andijakl/nrgkick-api) (Andreas
+Jakl, MIT, version 1.8.1), the library of Home Assistant's NRGkick
+integration. Index guard taken from the P1 Monitor integration. Apache-2.0
+license.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt NRGkick in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Your NRGkick | `section` | Nein | Shows your NRGkick Gen2 portable charger in Gladys through its local REST JSON API, without any cloud: state, vehicle plugged in, power, current and voltage per phase, energy of the session, energy index, temperatures, codes. In the NRGkick app, turn on the local JSON API; give the charger a fixed address in your router. Enter its IP address, save, then add it from the Discovery tab. Pausing the charge is always possible from Gladys; resuming it and the charging current only if you allow them below. Never tested with a real charger. Not affiliated with DiniTech. |
+| IP address of the charger | `string` | Ja | An IPv4 address or a host name, optionally followed by a port (80 by default). |
+| User name (BasicAuth, optional) | `string` | Nein | Only if BasicAuth is on in the NRGkick app: its user name. Leave empty otherwise. |
+| Password (BasicAuth, optional) | `secret` | Nein | Only if BasicAuth is on in the NRGkick app: its password. Kept by Gladys in its database, never shown again, sent only to the charger, in clear (HTTP) on the local network. Refused credentials are tried again after 15 min, 1 h, then every 6 h. |
+| Allow resuming and the charging current | `boolean` | Nein | Off by default. On: Gladys may resume the charge (button) and set the charging current (list, 6 A to the ceiling below). Off: these two features refuse every command. "Pause charging" is always available: it only stops the charge, and the pause stays on the charger until a resume; with this option off, only the NRGkick app resumes it (a forgotten pause may prevent the next charge). |
+| Ceiling of the charging current (A) | `number` | Nein | The highest current Gladys may ask for (16 A by default). The lower of this value, the rated current of the charger and the max current of its attachment applies. |
+| Refresh interval (s) | `number` | Nein | How often the charger is read, in seconds. |
+| Language of the feature names | `select` | Nein | Used for the feature names of the devices added from now on, for the status texts and for the command errors. |
+
+## So installierst du NRGkick in Gladys
+
+1. Öffne in Gladys **Integrationen**: NRGkick erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-nrgkick:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-nrgkick](https://github.com/LM1LC3N7/gladys-nrgkick).
+
+NRGkick benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+NRGkick ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-nrgkick) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-nrgkick/blob/HEAD/docs/en.md)

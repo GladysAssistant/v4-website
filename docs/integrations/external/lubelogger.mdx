@@ -1,0 +1,192 @@
+---
+title: "LubeLogger smart home integration, free and open source"
+sidebar_label: "LubeLogger"
+description: "Your LubeLogger vehicles: odometer, consumption, costs and maintenance reminders. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-lubelogger.png"
+keywords:
+  - "lubelogger"
+  - "lubelogger smart home"
+  - "gladys lubelogger"
+  - "lubelogger gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-lubelogger instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"LubeLogger","description":"Your LubeLogger vehicles: odometer, consumption, costs and maintenance reminders.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-lubelogger","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-lubelogger.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T21:06:09Z"}} />
+
+Follow your vehicles in Gladys with [LubeLogger](https://lubelogger.com), the
+self-hosted vehicle maintenance log: odometer, average consumption, spending
+of the month and above all the **maintenance reminders** (oil change, tyres,
+inspection, insurance) as scene triggers. Gladys talks directly to your
+LubeLogger server, at home or on a remote server.
+
+Tested against a real LubeLogger 1.7.4 server (the official Docker image),
+reminders by date and by odometer included. Feedback is welcome on the Gladys
+forum.
+
+## Prerequisites
+
+- Gladys Assistant 5.1 or later.
+- LubeLogger **1.5.9 or later**, reachable from the Gladys machine (port 8080
+  by default, or behind a reverse proxy).
+- If authentication is on in LubeLogger: an **API key** (LubeLogger → Settings
+  → API Keys, **View** and **Edit** permissions; View alone is enough if you do
+  not add odometer readings), or the user name and password of a LubeLogger
+  user. The integration sees the vehicles of that user.
+
+## Configuration
+
+1. Open the **Configuration** tab of the integration.
+2. In **LubeLogger address**, enter the IP address of the server, for example
+   `192.168.1.50`: the integration then uses port 8080. Add a port if yours
+   differs (`192.168.1.50:8081`). Behind a reverse proxy, enter the full
+   address (`https://example.org/lubelogger`).
+3. If authentication is on in LubeLogger, paste an **API key**, or fill in
+   **User name** and **Password**. The key wins when both are filled.
+   Otherwise, leave these fields empty.
+4. **Distance unit used in LubeLogger**: LubeLogger stores numbers without a
+   unit. Choose **Kilometres** (litres, L/100 km, kWh/100 km) or **Miles** (US
+   gallons, mpg, mi/kWh), as in your records.
+5. **Read LubeLogger every**: 5, 15 (default), 30 or 60 minutes.
+6. **Language of names and messages** sets the feature names (frozen when the
+   device is added), the texts and the dates of the scene variables. French by
+   default.
+7. Save, then use **Test the connection**: it shows the version of LubeLogger,
+   the number of vehicles and of reminders.
+8. In the **Discovery** tab, add the vehicles to follow.
+
+## Devices
+
+One device per LubeLogger vehicle, named after its make, model and licence
+plate (`Renault Clio (AA-000-AA)`). Sold vehicles are left out.
+
+| Feature             | Value                                                                  |
+| ------------------- | ---------------------------------------------------------------------- |
+| Odometer            | last reading known to LubeLogger, in km or miles                       |
+| Average consumption | L/100 km (or mpg); kWh/100 km (or mi/kWh) for an electric vehicle      |
+| Cost this month     | fuel, services, repairs, upgrades and taxes of the current month       |
+| Next reminder       | the most urgent reminder and when it is due (`Oil change · 45,000 km`) |
+| Reminders past due  | reminders whose date or odometer is passed                             |
+| Urgent reminders    | urgent or very urgent reminders                                        |
+
+The consumption is LubeLogger's average: the distance driven over the fuel
+used, on the fill-ups it can compute (not the first one, not after a missed
+fill-up). Gladys has no "L/100 km" nor "mpg" unit: the value is published in
+litres (or without unit), the full unit is in the feature name. The cost is in
+the currency of LubeLogger (euro, dollar or pound sterling; another currency
+shows in the name). A vehicle counted in hours (boat, tractor) shows its
+**Engine hours**, without consumption.
+
+The urgency of the reminders is LubeLogger's own (by default: urgent at 30 days
+or 100 km, very urgent at 7 days or 50 km, set in its settings): Gladys and
+LubeLogger always agree.
+
+## Dashboard widget
+
+**Upcoming maintenance**: two tiles (reminders past due, urgent reminders) and
+the list of the reminders, the most urgent first, with when they are due and a
+coloured badge. Setting **Vehicle**: empty for every vehicle, or one. Read
+only.
+
+## Scene triggers
+
+- **Maintenance reminder becomes urgent**: a reminder becomes urgent, then
+  very urgent. Once per level and per due date or odometer. Variables:
+  vehicle, reminder, due, urgency ("Urgent" or "Very urgent").
+- **Maintenance reminder past due**: a reminder passes its date or odometer.
+  Once per due date or odometer. Variables: vehicle, reminder, due.
+
+Both can be filtered by **Vehicle** (empty: all). The first read after the
+installation is silent: what is already urgent or past due shows on the
+device, it is not announced. A recurring reminder marked as done in LubeLogger
+gets a new due date or odometer: it is announced again when the time comes.
+The triggers fire at the first read after the change.
+
+## Scene actions
+
+- **Add an odometer reading to LubeLogger**: choose the vehicle and enter the
+  reading, a number or a scene variable (for instance the odometer reported by
+  your car maker's integration). The action reads LubeLogger, adds the reading
+  with today's date, then reads the reminders again (those by odometer move
+  with it). A reading equal to the last one adds nothing; a lower one, or one
+  more than 10,000 above it (wrong unit, sensor glitch), is refused. Results: **Reading added** and **Odometer**.
+- **Read a vehicle in LubeLogger**: returns the vehicle, the odometer, the
+  average consumption, the cost of the month, the next reminder and its
+  urgency, the number of reminders past due and urgent, for a message or a
+  condition.
+
+## Scene examples
+
+- **Oil change ahead**: trigger "Maintenance reminder becomes urgent" → message
+  "\{\{triggerEvent.data.vehicle_name\}\}: \{\{triggerEvent.data.reminder\}\} due
+  (\{\{triggerEvent.data.due\}\})".
+- **Inspection overdue**: trigger "Maintenance reminder past due" → urgent
+  message to the whole family.
+- **Automatic reading**: every evening at 9 pm → "Add an odometer reading" with
+  the odometer variable of the car, then "Read a vehicle" → continue only if
+  reminders are past due → message with the next reminder.
+
+## Troubleshooting
+
+- **"Access refused"**: check the API key (it may have been deleted), or the
+  user name and password.
+- **"LubeLogger refused the write"** when adding a reading: the API key only
+  has the View permission; create one with View and Edit.
+- **"LubeLogger does not answer"**: check the address and port from the Gladys
+  machine. The container is on a bridge network: `localhost` is the container
+  itself, enter the IP address of the server instead.
+- **"This address does not answer like LubeLogger 1.5.9 or later"**: a proxy
+  login page answers instead of LubeLogger, or its version is too old.
+- Odometer or consumption off: check the **Distance unit**.
+- For more details in the logs of the integration, set `LOG_LEVEL=debug`.
+
+## Limitations
+
+- Every read makes seven requests, among them the list of every fill-up (for
+  the consumption): keep a long interval on a very long history.
+- The only write is the odometer reading of the scene action; nothing is ever
+  deleted.
+- Reminders "by date or odometer" cannot be compared with one another: at the
+  same urgency, those with a date come before those by odometer only.
+- Not affiliated with the LubeLogger project.
+
+## Configuration settings
+
+These are the settings LubeLogger asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Connect LubeLogger | `section` | No | Enter the address of your LubeLogger server (port 8080 by default), version 1.5.9 or later. If authentication is on in LubeLogger, create an API key in its settings (View and Edit permissions; View only if you do not add odometer readings) or enter a LubeLogger user below. |
+| LubeLogger address | `string` | Yes |  |
+| API key (optional) | `secret` | No | Leave empty if authentication is off in LubeLogger, or to use a user name and password. |
+| User name (without API key) | `string` | No |  |
+| Password (without API key) | `secret` | No |  |
+| Distance unit used in LubeLogger | `select` | No | LubeLogger stores plain numbers: tell Gladys whether they are kilometres (litres, L/100 km) or miles (US gallons, mpg). |
+| Read LubeLogger every | `select` | No |  |
+| Language of names and messages | `select` | No | Feature names are set when a device is added to Gladys. |
+
+## How to install LubeLogger in Gladys
+
+1. In Gladys, open **Integrations**: LubeLogger appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-lubelogger:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-lubelogger](https://github.com/guim31/gladys-lubelogger).
+
+LubeLogger requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+LubeLogger is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-lubelogger) — [source of this documentation](https://github.com/guim31/gladys-lubelogger/blob/HEAD/docs/en.md)

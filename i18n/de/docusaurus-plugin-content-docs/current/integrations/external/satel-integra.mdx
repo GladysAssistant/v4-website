@@ -1,0 +1,235 @@
+---
+title: "Satel Integra Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Satel Integra"
+description: "Satel INTEGRA alarms through the ETHM-1 module, locally over your network. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-satel-integra.png"
+keywords:
+  - "satel integra"
+  - "satel integra smart home"
+  - "gladys satel integra"
+  - "satel integra gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-satel-integra instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Satel Integra","description":"Satel INTEGRA alarms through the ETHM-1 module, locally over your network.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-satel-integra","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-satel-integra.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T10:20:41Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+This integration connects a **Satel INTEGRA** (or INTEGRA Plus) alarm panel
+to Gladys Assistant, **locally** on your network, through its **ETHM-1** or
+**ETHM-1 Plus** module and the integration protocol published by Satel.
+
+> **Never tested with a real device.** The protocol comes from the
+> [satel-integra](https://github.com/c-soft/satel_integra) 1.5.0 library
+> (the one of the Home Assistant Satel Integra integration), ported to
+> JavaScript and checked only against a simulated module. Make your first
+> tries on site, with the panel disarmed, and report what goes wrong.
+>
+> Unofficial integration, not affiliated with SATEL.
+
+## Before you start
+
+- An **ETHM-1** or **ETHM-1 Plus** module connected to the panel, reachable
+  from Gladys (give it a fixed address in your router).
+- In DLOADX (by your installer): **the integration enabled** on the module,
+  its port (7094 by default) and, on an ETHM-1 Plus, the **integration key**
+  if any.
+- **The module accepts one integration client at a time**: stop any other
+  software connecting to it (Home Assistant, GUARDX, another Gladys). When
+  it is busy, it answers "Busy": the integration says so and tries again one
+  minute later at the soonest.
+
+## What you get
+
+- **Satel panel**: connected or not, trouble in progress, service mode.
+- **One device per partition** (named by the panel):
+  - **State**, read-only: disarmed, arming (exit time), armed (away), armed
+    (stay, modes 1 to 3);
+  - **Armed**, **Alarm in progress**, **Fire alarm**;
+  - three **buttons**: arm away, arm stay, disarm.
+- **One device per zone** (only the ones you list, named by the panel):
+  violated or not (opening, motion, smoke or leak as chosen), **tamper**,
+  alarm.
+- **One device per output** (only the ones you list): on or off, and two
+  **buttons**: turn on, turn off.
+- **Scene triggers**: alarm triggered (with the zone when the panel gives
+  it, and whether it is a fire), partition armed (mode, asked by Gladys or
+  not), partition disarmed.
+- **Scene actions**: arm (away or stay), disarm.
+
+No command is a switch: a "turn everything off" from a voice assistant,
+HomeKit or a scene can neither disarm the alarm nor drive an output. The
+states are read-only, the commands are buttons.
+
+## Configuration
+
+1. **Address of the ETHM-1 module**: its IP address.
+2. **Integration port**: 7094 unless changed in DLOADX.
+3. **Integration key (ETHM-1 Plus)**: only if a key is set on the module (12
+   characters at most). See "What travels on the network".
+4. **User code** (optional): the code of an INTEGRA user (4 to 16 digits,
+   prefix included), needed only for the commands; the states need none.
+   Create a dedicated user, with only the partitions and rights Gladys
+   needs.
+5. **Partitions**: for example `1, 2` or `1-4` (`1` by default).
+6. **Zones**: for example `1-6, 7:motion, 9:smoke, 10:leak`. Kinds: `opening`
+   (default), `motion`, `smoke`, `leak`. Changing the kind of a zone already
+   created in Gladys adds a new feature and keeps the old one (and its
+   history): delete the old one by hand if you no longer want it.
+7. **Outputs** (optional): for example `3, 5-6`.
+8. **INTEGRA mode of "arm stay"**: 1, 2 or 3, as set up by your installer
+   (arm away is mode 0).
+9. **Safety**: see below.
+10. **Language of the names**: French or English.
+
+The integration key and the user code are secret fields: kept by Gladys in
+its database, never shown again in the interface, used only with the module.
+They never appear in the logs nor in `/data`.
+
+The **Test the connection** button connects at once when no connection is
+open (otherwise it waits for the one in progress: the module takes one
+client only) and tells the model, the state of the partitions and the number
+of zones and outputs. It does not send the user code.
+
+The **Allow a new try of the code** button lifts the stop set after a refused
+user code (see "Safety"): the next command sends the code again, once. It
+sends nothing itself.
+
+## What travels on the network
+
+- **ETHM-1, or ETHM-1 Plus without an integration key: everything travels in
+  clear text** on your local network, the user code of each command
+  included. Any device of your network listening to the traffic can read
+  it.
+- **ETHM-1 Plus with an integration key**: the exchanges stay confidential
+  with AES using that key (satel-integra's method). AES does not prevent a
+  replay: a frame recorded on your network can be sent again as is to the
+  module. Set the same key on both
+  sides; when they differ, the module never answers and the integration
+  tells you.
+- Protect your network (a separate guest Wi-Fi for the devices you are not
+  sure of) and give Gladys an INTEGRA user with limited rights.
+
+## Safety
+
+- **Arming** is allowed by default (option "Allow arming from Gladys"), with
+  the user code. Arming while someone is inside (a badly set scene, a
+  mistake) may raise a false alarm, the sirens and a call of your alarm
+  monitoring company.
+- **Disarming is off by default.** Once the option is checked, **every Gladys
+  user, every scene and the Gladys mobile app can disarm, with the code of
+  the configuration, without typing any code**. Allow it only if your Gladys
+  is well protected (accounts, remote access).
+- **The outputs are off by default**, behind their own option: an output may
+  drive a siren, a gate or a lock. Check what each one does first.
+- The options are read again right before each send: an option unchecked
+  while a command waits its turn stops that command.
+- Before each command, the integration **reads the state from the panel
+  again** and decides on that state, never on what it has in memory (already
+  in the state asked: nothing is sent; armed in another mode: refused,
+  disarm first). Commands go one at a time, in order (a scene arming two
+  partitions in parallel arms both). A command whose time ran out while it
+  waited its turn is refused ("other commands took all the time of this
+  one"), nothing is sent. A disarm withdraws an arming of the same partition
+  still waiting its turn.
+- A command that cannot leave in time (slow panel, unreadable state) is
+  refused with "nothing was sent". A command sent without a clear answer (no
+  answer, an ambiguous answer, a cut) is reported "sent, without
+  confirmation" and the state is read again two seconds later: it is never
+  reported "not sent". Only a refusal answer of the panel is reported
+  "refused" (code refused, no right, cannot arm…).
+- **When the panel refuses the user code, the integration never sends it
+  again by itself**, even after a restart (an INTEGRA may raise an alarm or
+  lock the keypads after several wrong codes). The states keep coming.
+  Change the code in the configuration, or click "Allow a new try of the
+  code". A refusal that comes late (after "sent, without confirmation")
+  stops the commands too. The file `/data/satel-state.json` keeps only the
+  date of the stop, never the code; the stop holds even if the address of
+  the module changes.
+- Every command, sent or refused, is written in the integration logs; the
+  codes never are.
+
+## Connection
+
+- One connection at a time, never two: at least 5 seconds between two
+  connections.
+- On a cut, the new tries are spaced: 10 s, 30 s, 1 min, 2 min, then every 5
+  minutes; at least one minute when the module answers "Busy".
+- A message every 15 seconds of silence keeps the connection open (the
+  module drops a silent client after 25 s); with nothing received for 45 s,
+  the integration reconnects.
+
+## Known limits
+
+- Never tested with a real device (see above).
+- The "zone tamper" (0x01) and "zone alarm" (0x02) lists come from the Satel
+  description of the protocol, not from satel-integra: not checked.
+- Zones and outputs over 128 (INTEGRA 256 Plus) are asked in the 32-byte
+  format: not checked.
+- Names are read as Latin-1; Satel's own characters may be replaced.
+- No zone temperatures, no separate alarm clearing (0x85), no event log in
+  this version.
+- An alarm already in progress when the integration starts fires no scene
+  (only the changes seen do).
+
+## Privacy
+
+Everything stays on your network: the integration only talks to the ETHM-1
+module.
+
+## Licence
+
+Apache-2.0. Protocol logic ported from satel-integra 1.5.0 (MIT, Krzysztof
+Machelski): see `THIRD_PARTY_NOTICES.md`.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Satel Integra in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Your Satel INTEGRA panel | `section` | Nein | For Satel INTEGRA and INTEGRA Plus alarm panels with an ETHM-1 or ETHM-1 Plus network module, on your network, without any cloud: the state of each partition (disarmed, arming, armed away or stay, alarm, fire alarm), the zones you list (violated, tamper, alarm), the outputs you list, panel trouble, arm and disarm buttons, scene triggers. Enable the integration protocol on the module (DLOADX). The module accepts one client at a time: stop any other software using it (Home Assistant, GUARDX). Never tested on a real panel. Unofficial, not affiliated with SATEL. |
+| Address of the ETHM-1 module | `string` | Ja | Its IP address (give it a fixed address in your router). |
+| Integration port | `number` | Nein | 7094 unless it was changed in DLOADX. |
+| Integration key (ETHM-1 Plus) | `secret` | Nein | Only if an integration key is set on an ETHM-1 Plus module (12 characters at most): the exchanges are then kept confidential with AES (no protection against a frame recorded and replayed on your network). Leave empty otherwise: with an ETHM-1, or an ETHM-1 Plus without a key, everything travels in clear text on your network, the user code of the commands included. Kept by Gladys in its database, never shown again, used only with the module. |
+| User code | `secret` | Nein | Optional: the code of an INTEGRA user (4 to 16 digits, prefix included), needed only for the commands (arming, disarming, outputs); the states need none. Create a user with only the partitions and rights Gladys needs. Without an integration key it travels in clear text on your network at each command. A code refused by the panel is never sent again by itself ("Allow a new try of the code" button). Kept by Gladys in its database, never shown again, sent only to the panel, never in the logs. |
+| Partitions | `string` | Nein | The partitions to show, e.g. "1, 2" or "1-4". Names come from the panel. |
+| Zones | `string` | Nein | The zones to show, with their kind if not an opening, e.g. "1-6, 7:motion, 9:smoke, 10:leak" (opening, motion, smoke, leak). |
+| Outputs | `string` | Nein | Optional: the outputs to show, e.g. "3, 5-6". Their state is shown; controlling them needs the option below. |
+| INTEGRA mode of "arm stay" | `select` | Nein | "Arm away" is the full arming (mode 0). "Arm stay" uses the mode chosen here, as set up by your installer. |
+| Safety | `section` | Nein | Anyone who can control the devices in Gladys (dashboard, scenes, the Gladys app) can use the alarm through this integration, with the user code above. Arming is allowed by default. Disarming and the outputs (which may drive a siren, a gate or a lock) are off by default, each behind its own option: allow them only if your Gladys is well protected. Every command is written in the integration logs; the codes never are. |
+| Allow arming from Gladys | `boolean` | Nein | Arming while someone is inside (a scene, a mistake) may raise a false alarm, sirens and a call of your alarm monitoring company. |
+| Allow disarming from Gladys | `boolean` | Nein | Once checked, every Gladys user, every scene and the Gladys mobile app can disarm with the user code of the configuration, without typing any code. |
+| Allow controlling the outputs from Gladys | `boolean` | Nein | Turn on / turn off buttons of the listed outputs. An output may drive a siren, a gate or a lock: check what each one does first. |
+| Language of the names | `select` | Nein | Used for the names of the devices and features added from now on, and for the partition state. |
+
+## So installierst du Satel Integra in Gladys
+
+1. Öffne in Gladys **Integrationen**: Satel Integra erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-satel-integra:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-satel-integra](https://github.com/LM1LC3N7/gladys-satel-integra).
+
+Satel Integra benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Satel Integra ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-satel-integra) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-satel-integra/blob/HEAD/docs/en.md)

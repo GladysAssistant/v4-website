@@ -1,0 +1,173 @@
+---
+title: "Arcam smart home integration, free and open source"
+sidebar_label: "Arcam"
+description: "Arcam amplifiers and AV processors, local: power, volume, source, audio mode. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-arcam.png"
+keywords:
+  - "arcam"
+  - "arcam smart home"
+  - "gladys arcam"
+  - "arcam gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-arcam instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Arcam","description":"Arcam amplifiers and AV processors, local: power, volume, source, audio mode.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-arcam","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-arcam.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-21T00:08:37Z"}} />
+
+Control your **Arcam** AV receivers, processors and amplifiers (AVR, AV, SA,
+ST and PA series, and the JBL Synthesis SDP-55 and SDP-58 processors
+sharing the protocol) from Gladys, locally, without any cloud: power on, standby,
+volume, mute, source and audio mode of zone 1.
+
+> **Important.** This integration has never been tested with a real device:
+> it was written from the `arcam-fmj` library (the one of Home Assistant) and
+> tested against a fake device only. Feedback is welcome. Unofficial
+> integration, not affiliated with Arcam.
+
+## Installation
+
+1. On the device, turn **IP control** on (setup menu, network settings or
+   "Control") and, to be able to power it on from Gladys, keep the **network
+   on in standby** (for example "HDMI & IP On" in standby on the AVRs,
+   "Network standby" on the SA amplifiers).
+2. Give the device a **fixed IP address** in your router (DHCP reservation):
+   the address is the identity of the device in Gladys.
+3. In Gladys, install the **Arcam** integration, then open its
+   configuration.
+4. Type the IP addresses, separated by commas (for example
+   `192.168.1.40, 192.168.1.41`; port 50000 by default). The **Find the
+   devices** button can also look for them (SSDP search, optional: it cannot
+   cross every network).
+5. Choose the **volume cap** (40 by default, on the 0 to 99 scale of the
+   display).
+6. The devices appear in the **Discovery** tab: create them.
+
+The integration keeps a TCP connection open with each device (port 50000):
+changes made on the device, its remote or the Arcam app reach Gladys at once.
+Some devices accept a single IP control client at a time: if another app can
+no longer connect, this may be why. Only the devices typed, created in
+Gladys, or found by the last search (until they are created) get a
+connection. Type IPv4 addresses only (no host name): one device typed under
+two names would show twice.
+
+## What you get
+
+| Feature    | Gladys type                | Note                                                      |
+| ---------- | -------------------------- | --------------------------------------------------------- |
+| Power      | binary state (read only)   | 1 on, 0 in standby or unreachable                         |
+| Power on   | button                     | only when the network stays on in standby                 |
+| Standby    | button                     | puts the device in standby                                |
+| Volume     | music / volume (0 to 99)   | the display scale, capped; not on the PA power amplifiers |
+| Mute       | button (television / mute) | each press reads the state then sets the opposite         |
+| Source     | list                       | the inputs of the model; the list only grows              |
+| Audio mode | list                       | stereo (2 ch) and multi-channel decode modes; AVRs only   |
+
+On purpose, no **switch**: an "everything off" or "everything on" from a
+voice assistant or a scene neither wakes up nor cuts your amplifier.
+
+The model is read at connection (the AMX answer of the device): it picks the
+sources, the audio modes and the way each command is sent (direct write on
+the SA, ST and PA series, RC5 remote codes on the AVRs). An unknown model is
+handled as the AVR450 series, as `arcam-fmj` does.
+
+## Volume cap
+
+The volume asked from Gladys (dashboard, scene, voice assistant) never goes
+above the cap of the configuration: a higher volume is set to the cap. The
+cap is read again just before sending: a new value saved applies at once. The
+volume set on the device itself (knob, remote, app) is not changed by the
+integration, except in two cases where Gladys would make it heard:
+
+- **Unmute**: when the volume of the device is above the cap, it is first
+  lowered to the cap, then the mute is removed. When the volume cannot be
+  read, nothing is sent.
+- **Power on**: after the wake-up, the volume is read again and lowered to
+  the cap when above it. When the device is slow to wake up, the integration
+  checks again every 2.5 s for about 15 s, then, up to 2 minutes after the
+  press, lowers the volume to the cap as soon as the device, on, reports it.
+  Once the volume was seen under the cap, it is left alone.
+
+## Audio mode
+
+The decode modes depend on the incoming signal: stereo (PCM, analogue) or
+multi-channel (Dolby, DTS...). The list shows both kinds, marked "(2 ch)"
+and "(multi-ch)". Before each change, the signal format is read again: a
+mode of the other kind is refused, nothing sent.
+
+## Standby and reconnection
+
+- In **standby with the network on**, the device stays reachable: the Power
+  state goes to 0, the Power on button wakes it up, and the other commands
+  are refused by the device ("Refused by the device").
+- In **standby without network**, or switched off, the device no longer
+  answers: it shows as off, is named in the integration status, and the
+  integration tries to connect again at spaced intervals (10 s, then doubled
+  after each failure, up to 5 minutes). Power on cannot do anything then.
+- The address is the identity of the device: when it changes, a new device
+  appears in Discovery. Hence the fixed IP address.
+
+## Commands
+
+Every command is answered within 4 seconds (Gladys waits 5 seconds). A
+command sent to the device without confirmation is reported "sent, without
+confirmation"; the state pushed by the device then shows what it did. A
+command that could not leave is reported "nothing sent": this is the case of
+every command, Standby included, to a device that is not connected. Standby
+and mute go before the commands waiting.
+
+## Configuration buttons
+
+- **Find the devices**: SSDP search by Gladys, then every local address that
+  answers is asked on port 50000.
+- **Check the devices**: the connection, power and volume of each device, and
+  the cap in force.
+
+## Data and privacy
+
+The integration needs no account nor password: Arcam IP control has none. It
+keeps in `/data/arcam.json` the list of the known devices (address, model,
+revision, list options). Nothing leaves your local network.
+
+## Known limits
+
+- Zone 1 only (no zone 2 yet).
+- No radio presets, DAB/FM information, equalizer, balance or display
+  brightness yet.
+- On the ST60, the "Network / USB" input is not shown as a source.
+- Never tested with a real device: the real answers may differ.
+
+## Configuration settings
+
+These are the settings Arcam asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Arcam devices, on your local network | `section` | No | Power on, standby, volume, mute, source and audio mode of zone 1 of each Arcam AV receiver, processor or amplifier (AVR, AV, SA, ST, PA series...), through its IP control (TCP port 50000), without any cloud. On the device, turn IP control on, and keep the network on in standby to be able to power it on from Gladys. Give each device a fixed IP address in your router and type it below; "Find the devices" can also look for them (optional). The devices then appear in the Discovery tab. The volume set from Gladys never goes above the cap below. Never tested with a real device. Unofficial integration, not affiliated with Arcam. |
+| IP addresses of the devices | `string` | No | Separated by commas, for example 192.168.1.40, 192.168.1.41 (port 50000 by default, or 192.168.1.40:50001). Devices found by the search are kept without being typed here. |
+| Volume cap (1 to 99) | `number` | No | The highest volume Gladys may set, on the scale of the device display (0 to 99; 99: no cap). A higher volume asked by a scene, a voice assistant or the dashboard is set to this cap; unmuting, and powering on from Gladys (until the device reports its volume, 2 minutes at most), also bring a higher volume back to it. The volume set on the device itself (knob, remote, app) is not changed otherwise. |
+
+## How to install Arcam in Gladys
+
+1. In Gladys, open **Integrations**: Arcam appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-arcam:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-arcam](https://github.com/LM1LC3N7/gladys-arcam).
+
+Arcam requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Arcam is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-arcam) — [source of this documentation](https://github.com/LM1LC3N7/gladys-arcam/blob/HEAD/docs/en.md)

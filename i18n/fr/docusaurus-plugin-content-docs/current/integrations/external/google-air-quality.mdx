@@ -1,0 +1,159 @@
+---
+title: "Intégration domotique Google Air Quality, gratuite et open source"
+sidebar_label: "Google Air Quality"
+description: "Qualité de l’air par Google : indices universel et local, PM2,5, NO₂, O₃, prévision, scènes. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-google-air-quality.jpg"
+keywords:
+  - "google air quality"
+  - "domotique google air quality"
+  - "gladys google air quality"
+  - "google air quality gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/William-De71/gladys-google-air-quality instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Google Air Quality","description":"Qualité de l’air par Google : indices universel et local, PM2,5, NO₂, O₃, prévision, scènes.","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-google-air-quality","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-google-air-quality.jpg","type":"device","version":"0.1.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-20T05:53:30Z"}} />
+
+## Présentation
+
+Cette intégration apporte la qualité de l’air de Google Maps Platform dans Gladys : pour vos maisons et pour les lieux que vous ajoutez (travail, école, maison de vacances), elle donne l’indice universel de qualité de l’air, l’indice de votre pays, les concentrations des principaux polluants et une prévision sur 48 heures, et peut lancer vos scènes quand l’air se dégrade.
+
+- Chaque lieu devient un **appareil** : indice universel (UAQI, 0-100, **plus il est haut, meilleur est l’air**), indice local (sa valeur quand il est chiffré), PM2,5, PM10, NO₂, O₃, SO₂ en µg/m³, catégorie de qualité de l’air, catégorie de l’indice local, polluant majoritaire.
+- Les lieux sont mesurés **toutes les heures** par défaut (Google met à jour ses données une fois par heure), et leur prévision toutes les 6 heures, dans un budget mensuel gardé sous l’usage gratuit de Google.
+- **Déclencheurs de scène** : la catégorie de qualité de l’air change, le budget du mois est presque utilisé, Google refuse la clé d’API. **Actions de scène** : lire la qualité de l’air d’un lieu, lire l’heure la moins bonne de la prévision.
+- Trois **widgets** : la qualité de l’air d’un lieu avec les conseils santé de Google, sa prévision sur 48 heures, les requêtes du mois.
+
+![Les trois widgets de l’intégration : qualité de l’air d’une maison, sa prévision sur 48 heures et les requêtes du mois (illustration générée, pas une capture d’écran)](https://raw.githubusercontent.com/William-De71/gladys-google-air-quality/main/docs/assets/widgets.fr.png)
+
+L’image ci-dessus est une illustration générée, pas une capture d’écran. Non affiliée à Google ; pas encore testée avec une vraie clé d’API. Le pollen est hors périmètre (l’API Pollen de Google est couverte par d’autres intégrations).
+
+## Prérequis
+
+- Gladys Assistant 5.1.0 ou plus récent.
+- Une **clé d’API Google Maps Platform** avec l’**Air Quality API** activée :
+  1. Dans la [console Google Cloud](https://console.cloud.google.com/), créez un projet (ou prenez celui de votre clé Google Weather ou Google Maps Travel Time) avec un **compte de facturation** : Google en demande un même si vous restez dans l’usage gratuit.
+  2. Activez l’**Air Quality API** (API et services → Bibliothèque → « Air Quality API », ou [ce lien](https://console.cloud.google.com/apis/library/airquality.googleapis.com)).
+  3. Créez une **clé d’API** (Google Maps Platform → Clés et identifiants), ou reprenez celle du projet. Dans ses **restrictions d’API**, autorisez l’Air Quality API (à côté de Weather API ou Routes API si la clé les sert aussi). Une restriction par adresse IP ne marche que si l’adresse IP publique de votre Gladys est fixe.
+- L’**emplacement de votre maison** renseigné dans Gladys (**Paramètres → Maisons**), ou des lieux ajoutés avec **Ajouter un lieu**. À l’installation, Gladys vous demande d’autoriser l’intégration à lire l’emplacement des maisons.
+
+**Coût.** Google facture chaque requête réussie au-delà de 10 000 requêtes gratuites par mois (SKU « Air Quality Usage »), puis 5 USD les 1 000. Une mesure des conditions actuelles est une requête, une prévision sur 48 heures une requête (une page). Avec les réglages par défaut, un lieu coûte environ 870 requêtes par mois : dix lieux tiennent dans le budget par défaut, 90 % de l’usage gratuit. Au-delà, l’intégration mesure moins souvent plutôt que de le dépasser. L’usage gratuit appartient au compte de facturation : Google Weather, Travel Time et tout autre usage du compte comptent aussi.
+
+## Configuration
+
+| Champ                          | Défaut      | Rôle                                                                                                                                                                                                       |
+| ------------------------------ | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Clé d’API Google Maps Platform | —           | Obligatoire. Secrète : jamais affichée dans les journaux.                                                                                                                                                  |
+| Suivre les maisons de Gladys   | oui         | Un lieu par maison dont l’emplacement est renseigné.                                                                                                                                                       |
+| Mesure toutes les (minutes)    | 60          | 30 à 360. Une requête par lieu à chaque fois.                                                                                                                                                              |
+| Prévision toutes les (heures)  | 6           | 0 à 24. 0 : pas de prévision (ni widget ni action de prévision).                                                                                                                                           |
+| Indice local                   | vide        | Vide : l’indice par défaut du pays (ATMO en France). Sinon son code Google : `eaqi` (indice européen), `usa_epa`, `deu_uba`, `gbr_defra`… (liste : page « Air Quality Index » de la documentation Google). |
+| Budget mensuel (%)             | 90          | Part des 10 000 requêtes gratuites que l’intégration peut dépenser. Au-delà de 100, Google facture les requêtes en plus.                                                                                   |
+| Langue des textes              | automatique | Noms des fonctionnalités, catégories et conseils santé de Google, résumés des scènes, messages des boutons.                                                                                                |
+
+Boutons en bas de la page :
+
+- **Ajouter un lieu** : un nom et « latitude, longitude » (clic droit sur le lieu dans Google Maps, puis clic sur les coordonnées pour les copier, comme `45.7640, 4.8357`).
+- **Supprimer un lieu** : par son nom ou son numéro (`#2`). Son appareil reste dans Gladys jusqu’à ce que vous le supprimiez.
+- **Lister les lieux** : les intervalles, les requêtes du mois, la dernière mesure et la dernière erreur de chaque lieu.
+- **Tester la clé d’API** : lit la qualité de l’air à Paris (une requête).
+
+## Utilisation
+
+### Lieux
+
+Chaque maison de Gladys dont l’emplacement est renseigné est un lieu, nommé comme la maison. Les lieux ajoutés s’y ajoutent (20 au maximum). La première mesure d’un nouveau lieu arrive dans la minute.
+
+### Appareils
+
+Ouvrez **Intégrations → Google Air Quality → Découverte** et ajoutez les lieux voulus. Chaque appareil a :
+
+| Fonctionnalité                                                      | Catégorie / type                            | Unité                                   |
+| ------------------------------------------------------------------- | ------------------------------------------- | --------------------------------------- |
+| Indice universel (UAQI)                                             | airquality-sensor / aqi                     | 0-100, plus il est haut, mieux c’est    |
+| Indice local (quand il est chiffré : US EPA, UBA, DAQI…)            | airquality-sensor / aqi                     | l’échelle de l’indice                   |
+| PM2,5, PM10                                                         | pm25-sensor, pm10-sensor / decimal          | µg/m³                                   |
+| NO₂, O₃, SO₂                                                        | no2-sensor, o3-sensor, so2-sensor / decimal | µg/m³ (converti depuis les ppb à 25 °C) |
+| Qualité de l’air, catégorie de l’indice local, polluant majoritaire | text                                        | —                                       |
+
+ATMO (France) et EAQI (Europe) ont des catégories, pas des chiffres : leur catégorie est dans le texte « catégorie de l’indice local » (comme « Qualité de l’air dégradée »). Un polluant que Google ne mesure pas à un endroit reste sans valeur. Le CO n’a pas de catégorie de concentration dans Gladys : vous le trouvez dans les sorties de l’action « Lire la qualité de l’air ».
+
+### Widgets
+
+- **Qualité de l’air** : un lieu (choisi parmi les appareils) : jauge de l’indice universel, indice local, PM2,5, PM10, NO₂, O₃, catégories, polluant majoritaire et conseil santé de Google pour la population générale.
+- **Prévision qualité de l’air** : l’indice universel des 48 prochaines heures, l’heure la moins bonne des 24 suivantes marquée.
+- **Requêtes qualité de l’air** : les requêtes du mois face au budget, le prévu, l’état de la clé.
+
+### Scènes
+
+Déclencheurs :
+
+- **La catégorie de qualité de l’air change** (filtres : lieu, indice universel ou local, nouveau niveau universel). Variables : `name`, `index`, `category`, `previous_category`, `level`, `previous_level`, `aqi`, `dominant_pollutant`, `summary`. Seulement lors des mesures planifiées, jamais à la première.
+- **Le budget du mois est presque utilisé** (80 %, puis 100 %, une fois chacun par mois).
+- **Google refuse la clé d’API** (une fois, jusqu’à ce qu’une requête fonctionne de nouveau).
+
+Actions :
+
+- **Lire la qualité de l’air** : la dernière mesure d’un lieu (une nouvelle requête avec « La lire maintenant », aucune s’il a été mesuré il y a moins d’une minute). Sorties : `uaqi`, `level`, `category`, `local_index`, `local_aqi`, `local_category`, `dominant_pollutant`, `pm25`, `pm10`, `no2`, `o3`, `so2`, `co`, `health_recommendation`, `summary`.
+- **Lire la prévision de qualité de l’air** : l’heure la moins bonne des 1 à 48 prochaines heures. Sorties : `worst_uaqi`, `worst_level`, `worst_category`, `worst_time`, `worst_local_category`, `summary`.
+
+Exemples :
+
+- Quand l’indice universel de « Maison » passe à « médiocre » → fermer les volets et envoyer le résumé.
+- Chaque matin à 7 h → lire la prévision de « Maison » sur 12 heures → si `worst_uaqi` est sous 40, envoyer « Pas idéal pour courir ».
+- Quand les PM2,5 de « Maison » dépassent 25 µg/m³ (déclencheur d’appareil) → allumer le purificateur d’air.
+
+### Transport
+
+L’intégration utilise les serveurs de Google (cloud) : **les coordonnées de vos lieux sont envoyées à Google** à chaque mesure, avec votre clé d’API. Les lieux ajoutés sont gardés dans la configuration de Gladys ; les dernières mesures, les prévisions et le compteur de requêtes sont gardés dans le volume `/data` de l’intégration.
+
+## Dépannage
+
+- **« Google refuse la clé d’API »** : le message donne la raison de Google. `API_KEY_INVALID` : copiez de nouveau la clé. `SERVICE_DISABLED` : activez l’Air Quality API dans le projet de la clé. `BILLING_DISABLED` : associez un compte de facturation. `API_KEY_SERVICE_BLOCKED` : ajoutez l’Air Quality API aux API autorisées pour la clé. Une restriction IP refuse Gladys si son adresse publique a changé. L’intégration réessaie toutes les heures, et tout de suite après **Tester la clé d’API** ou une nouvelle clé.
+- **Aucun lieu** : renseignez l’emplacement de la maison dans **Paramètres → Maisons** (puis appuyez sur **Lister les lieux**), ou ajoutez un lieu.
+- **« Pas de données de qualité de l’air pour ce lieu »** : Google ne couvre pas tous les pays (voir la page de couverture de l’Air Quality API).
+- **Pas de valeur d’indice local** : l’indice de votre pays est une catégorie (ATMO, EAQI) ; regardez la catégorie de l’indice local, ou choisissez un indice chiffré dans la configuration.
+- **Mesures plus rares que l’intervalle** : « Pour rester dans le budget » dans le statut signifie que les lieux prévoient plus que le budget ; suivez moins de lieux, mesurez moins souvent, ou augmentez le budget.
+- **« Les requêtes du mois sont utilisées »** : le budget est atteint ; les mesures reprennent le mois prochain (UTC). Le décompte de Google (console Cloud → Google Maps Platform → Métriques) fait foi.
+- **429** : Google limite les requêtes de la clé ; l’intégration attend 15 minutes.
+- Pour signaler un problème, donnez les versions de Gladys et de l’intégration, le texte de **Lister les lieux** et les journaux de l’intégration (Paramètres → Supervision). Ne collez jamais votre clé d’API.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Google Air Quality dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Google Air Quality | `section` | Non | Comment ça marche : 1. Dans la console Google Cloud, dans un projet avec un compte de facturation, activez l’« Air Quality API » et créez une clé d’API (la clé de Google Weather ou Travel Time convient aussi, une fois l’API activée dans son projet). Collez-la ci-dessous. 2. Chaque maison de Gladys dont l’emplacement est renseigné devient un lieu ; ajoutez-en d’autres avec « Ajouter un lieu ». 3. Ouvrez l’onglet Découverte et ajoutez les lieux : chacun devient un appareil avec l’indice universel (UAQI), l’indice local, les PM2,5, PM10, NO₂, O₃ et SO₂. 4. Ajoutez les widgets à un tableau de bord et utilisez les scènes. Coût : chaque mesure est une requête, facturée par Google au-delà de 10 000 requêtes gratuites par mois (puis 5 USD les 1 000). Avec les réglages par défaut, un lieu coûte environ 870 requêtes par mois ; l’intégration reste sous 90 % de l’usage gratuit et espace les mesures plutôt que de le dépasser. Les coordonnées des lieux sont envoyées à Google. |
+| Clé d’API Google Maps Platform | `secret` | Oui | Une clé d’un projet Google Cloud où l’Air Quality API est activée. Limitez-la aux API qu’elle sert (et à l’adresse IP publique de votre Gladys si elle est fixe). |
+| Suivre les maisons de Gladys | `boolean` | Non | Un lieu par maison dont l’emplacement est renseigné dans Gladys (Paramètres → Maisons). |
+| Mesure toutes les (minutes) | `number` | Non | Google met à jour la qualité de l’air une fois par heure : 60 suffit (30 à 360). Une requête par lieu à chaque fois. |
+| Prévision toutes les (heures) | `number` | Non | La prévision sur 48 heures de chaque lieu, pour le widget et l’action de scène de prévision (une requête par lieu à chaque fois). 0 : pas de prévision. |
+| Indice local (facultatif) | `string` | Non | Vide : l’indice par défaut du pays (ATMO en France, EAQI en Belgique…). Sinon son code Google, comme eaqi, usa_epa ou deu_uba. |
+| Budget mensuel (% de l’usage gratuit) | `number` | Non | Part des 10 000 requêtes mensuelles gratuites que l’intégration peut dépenser : 90 garde une marge (Google compte aussi les autres usages du compte de facturation). Au-delà de 100, Google facture les requêtes en plus. |
+| Langue des textes | `select` | Non | Noms des fonctionnalités, catégories, conseils santé, résumés des scènes et messages des boutons. Automatique : la langue de votre tableau de bord dès qu’un widget a été affiché, devinée d’après le fuseau horaire de Gladys avant cela. |
+
+## Comment installer Google Air Quality dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Google Air Quality apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/william-de71/gladys-google-air-quality:0.1.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/William-De71/gladys-google-air-quality](https://github.com/William-De71/gladys-google-air-quality).
+
+Google Air Quality nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Google Air Quality est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [William-De71](https://github.com/William-De71), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/William-De71/gladys-google-air-quality) — [source de cette documentation](https://github.com/William-De71/gladys-google-air-quality/blob/HEAD/docs/fr.md)

@@ -1,0 +1,153 @@
+---
+title: "Intégration domotique Danfoss Air, gratuite et open source"
+sidebar_label: "Danfoss Air"
+description: "Ventilation Danfoss Air (CCM local) : températures, humidité, débit, filtre ; commandes en option. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-danfoss-air.png"
+keywords:
+  - "danfoss air"
+  - "domotique danfoss air"
+  - "gladys danfoss air"
+  - "danfoss air gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-danfoss-air instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Danfoss Air","description":"Ventilation Danfoss Air (CCM local) : températures, humidité, débit, filtre ; commandes en option.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-danfoss-air","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-danfoss-air.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T20:56:47Z"}} />
+
+Affiche une ventilation double flux **Danfoss Air** (Air a2, a3, w2…
+équipée du **CCM**, Connection and Control Module) dans Gladys, par votre
+réseau local, sans cloud ni compte. Intégration non officielle, **sans lien
+avec Danfoss**. **Jamais testé avec un vrai appareil** : elle suit le
+protocole tel que le parle la bibliothèque libre pydanfossair (utilisée par
+Home Assistant) ; merci de signaler ce que vous constatez.
+
+## Avant de commencer
+
+- Le CCM doit être sur votre réseau (Ethernet) et joignable depuis Gladys sur
+  le **port TCP 30046**. Donnez-lui une adresse IP fixe dans votre routeur.
+- Le CCM n’a **pas de mot de passe** et n’accepte **qu’une connexion à la
+  fois** : gardez-le sur un réseau de confiance, et fermez l’application
+  Danfoss Air (ou une autre domotique qui le lit) si Gladys ne peut pas s’y
+  connecter.
+
+## Installation
+
+1. Installez l’intégration depuis le store de Gladys.
+2. Saisissez l’**adresse IP du CCM** (port 30046 sauf si vous en ajoutez un),
+   enregistrez.
+3. Ouvrez l’onglet **Découverte** et ajoutez la centrale.
+
+## Ce que vous obtenez
+
+Un appareil, **Ventilation Danfoss Air**, avec :
+
+| Fonctionnalité                                                                                     | Remarques                                                                                              |
+| -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Températures de l’air extérieur, soufflé, extrait et rejeté                                        | °C                                                                                                     |
+| Température de la pièce (Air Dial) et température calculée                                         | °C                                                                                                     |
+| Humidité                                                                                           | %                                                                                                      |
+| Débit d’air                                                                                        | %, en lecture seule (il peut apparaître comme un ventilateur dans HomeKit, mais refuse toute commande) |
+| Vitesses des ventilateurs de soufflage et d’extraction                                             | tr/min                                                                                                 |
+| Durée de vie restante du filtre                                                                    | %                                                                                                      |
+| Pile de l’Air Dial                                                                                 | %                                                                                                      |
+| Boost actif, bypass ouvert, bypass automatique, mode absence                                       | lecture seule, 1 = actif                                                                               |
+| Mode de fonctionnement                                                                             | liste : à la demande, programme, manuel                                                                |
+| Palier de ventilation (mode manuel)                                                                | liste : 1 à 10                                                                                         |
+| Démarrer / arrêter le boost, ouvrir / fermer le bypass, activer / désactiver le bypass automatique | boutons                                                                                                |
+
+La centrale est lue toutes les 60 s (réglable de 30 s à 1 h). Le bouton de
+test, une recherche dans Découverte, une reconnexion de Gladys ou un
+redémarrage de l’intégration ne la relisent jamais avant l’intervalle.
+Seule exception : après une commande non confirmée, la centrale est relue
+5 s puis 20 s plus tard pour vérifier son effet.
+
+## Commandes
+
+Toutes les commandes sauf **Arrêter le boost** sont refusées tant que
+**Autoriser les commandes** n’est pas activé (désactivé par défaut). Aucun
+interrupteur : un « éteins tout » d’un assistant vocal n’atteint jamais la
+ventilation.
+
+- Chaque commande relit le registre juste avant de l’écrire, n’écrit rien
+  quand la valeur est déjà la bonne, et n’est confirmée que si la valeur
+  relue est celle demandée. Une commande qui a pu atteindre la centrale sans
+  être confirmée répond « envoyée, sans confirmation » : vérifiez la
+  centrale quelques secondes plus tard. Une commande qui ne peut pas être
+  écrite dans les 3,5 s est refusée et rien n’est envoyé.
+- Le palier ne se règle qu’en mode **manuel** (choisissez d’abord le mode).
+- **Arrêter le boost** est toujours possible : jamais bloqué par l’option,
+  par une autre commande ni par une lecture en cours, il annule une commande
+  pas encore envoyée. Si le CCM refuse un instant la connexion, il retente
+  toutes les 250 ms jusqu’à 3,5 s après l’appui. S’il n’est pas confirmé,
+  les lectures des deux minutes suivantes le renvoient (deux fois au plus)
+  tant que le boost reste actif ; un « Démarrer le boost » demandé ensuite
+  l’emporte et n’est jamais défait.
+- **Centrale arrêtée** depuis l’Air Dial (mode 3, ou palier lu à 0) : le
+  statut l’indique, les listes ne changent pas, et les commandes de mode, de
+  palier et « Démarrer le boost » sont refusées. Les commandes du bypass
+  partent telles quelles (elles déplacent un volet, elles ne relancent pas
+  les ventilateurs) ; « Arrêter le boost » reste toujours possible.
+  Gladys n’arrête ni ne relance la ventilation dans cette version (couper
+  une double flux arrête le renouvellement d’air).
+- Ouvrir le bypass arrête la récupération de chaleur (air neuf non
+  réchauffé) : à réserver à l’été.
+
+## Limites
+
+- Le protocole n’est pas documenté par Danfoss ; seuls les registres lus et
+  écrits par pydanfossair sont utilisés.
+- Le protocole ne donne pas de numéro de série : l’intégration affiche une
+  centrale, celle de l’adresse saisie. Changer l’adresse garde l’appareil et
+  son historique ; une autre centrale mise à la même adresse apparaîtrait
+  sur le même appareil et recevrait aussi ses commandes. Réservez l’adresse
+  du CCM dans votre routeur (bail DHCP fixe).
+- Une réponse de la centrale doit faire exactement 63 octets ; une réponse
+  incomplète interrompt la lecture (rien n’est publié de travers).
+- Gladys occupe la connexion pendant sa lecture (environ une seconde à
+  chaque intervalle) : l’application Danfoss Air peut devoir attendre, et
+  inversement.
+- La température de la pièce et la pile viennent de la télécommande Air
+  Dial ; sans elle, elles peuvent rester vides.
+
+## Confidentialité
+
+Rien ne sort de votre réseau. L’intégration ne garde que l’heure de sa
+dernière lecture dans son volume `/data`.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Danfoss Air dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre centrale Danfoss Air | `section` | Non | Affiche votre ventilation double flux Danfoss Air dans Gladys par son module CCM (Connection and Control Module, port TCP 30046) sur votre réseau local, sans cloud : températures (extérieur, soufflage, extraction, rejet, pièce), humidité, débit, vitesses des ventilateurs, filtre, pile de l’Air Dial, boost, bypass et mode absence. Saisissez l’adresse IP du CCM (donnez-lui une adresse fixe dans votre routeur), enregistrez, puis ajoutez la centrale depuis l’onglet Découverte. Le mode, le palier, le boost et le bypass ne se changent depuis Gladys que si vous autorisez les commandes ci-dessous ; l’arrêt du boost fonctionne toujours. Le CCM n’a pas de mot de passe et n’accepte qu’une connexion à la fois : gardez-le sur un réseau de confiance. Jamais testé avec un vrai appareil. Sans lien avec Danfoss. |
+| Adresse IP du CCM | `string` | Oui | Une adresse IPv4 ou un nom d’hôte (port 30046 sauf si vous en ajoutez un, par exemple 192.168.1.70:30046). |
+| Autoriser les commandes | `boolean` | Non | Désactivé par défaut. Activé : Gladys peut changer le mode de fonctionnement, le palier en mode manuel, démarrer le boost, ouvrir ou fermer le bypass et activer ou désactiver le bypass automatique. Désactivé : ces commandes sont refusées. L’arrêt du boost reste toujours possible. |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture de la centrale, en secondes. |
+| Langue des noms des fonctionnalités | `select` | Non | Sert aux noms de l’appareil et des fonctionnalités ajoutés désormais, au statut et aux erreurs des commandes. |
+
+## Comment installer Danfoss Air dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Danfoss Air apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-danfoss-air:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-danfoss-air](https://github.com/LM1LC3N7/gladys-danfoss-air).
+
+Danfoss Air nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Danfoss Air est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-danfoss-air) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-danfoss-air/blob/HEAD/docs/fr.md)

@@ -19,7 +19,7 @@ https://github.com/PhilippeMA/gladys-grdf instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"GRDF Gazpar","description":"Lit la consommation de gaz quotidienne de votre compteur Gazpar depuis votre compte GRDF.","owner":"PhilippeMA","owner_avatar_url":"https://avatars.githubusercontent.com/u/25247304?v=4","repo_url":"https://github.com/PhilippeMA/gladys-grdf","cover_url":"https://integration-store-storage.gladysassistant.com/covers/PhilippeMA--gladys-grdf.png","type":"device","version":"1.1.8","gladys_version":">=4.86.0","stars":1,"pushed_at":"2026-09-10T21:07:24Z"}} />
+<ExternalIntegrationHeader integration={{"name":"GRDF Gazpar","description":"Lit la consommation de gaz quotidienne de votre compteur Gazpar depuis votre compte GRDF.","owner":"PhilippeMA","owner_avatar_url":"https://avatars.githubusercontent.com/u/25247304?v=4","repo_url":"https://github.com/PhilippeMA/gladys-grdf","cover_url":"https://integration-store-storage.gladysassistant.com/covers/PhilippeMA--gladys-grdf.png","type":"device","version":"1.2.1","gladys_version":">=5.2.0","stars":1,"pushed_at":"2026-10-22T13:28:20Z"}} />
 
 Cette intégration lit la consommation de gaz mesurée par votre compteur
 **Gazpar** et la transforme en appareils Gladys : votre gaz apparaît alors à côté
@@ -81,6 +81,32 @@ dans Mon Espace, portant quatre capteurs en lecture seule :
 | Index compteur                 | m³    | Index du compteur à la fin de la journée gazière         |
 | Température extérieure moyenne | °C    | Température extérieure moyenne associée au jour par GRDF |
 
+Gladys ajoute lui-même un cinquième capteur, **le coût**, dérivé de la
+consommation quotidienne — voir ci-dessous.
+
+## Suivi du coût
+
+La consommation quotidienne n'est pas publiée comme une simple mesure : elle
+passe par le mécanisme de consommation datée de Gladys, celui prévu pour les
+fournisseurs dont les relevés arrivent après coup. Gladys en tire un capteur de
+coût rattaché au compteur et le calcule d'après votre contrat d'énergie.
+
+Pour obtenir des euros, il reste une chose à faire, une seule fois :
+
+1. ouvrez **Énergie** dans Gladys ;
+2. créez un contrat pour votre compteur Gazpar, avec votre prix du kWh et votre
+   abonnement.
+
+Deux points à connaître. D'abord, le prix du gaz vient de votre **fournisseur**
+(Engie, TotalEnergies…), pas de GRDF qui n'est que le distributeur : c'est à
+vous de le saisir, l'intégration ne peut pas le deviner. Ensuite, tant qu'aucun
+contrat n'est rattaché à ce compteur, Gladys le range sous votre compteur
+principal — en général l'électricité — et votre gaz serait alors valorisé au
+tarif de l'électricité. Le contrat dédié évite cela.
+
+Le coût de l'historique déjà importé est recalculé automatiquement dès que le
+contrat ou son prix change.
+
 Chaque valeur est enregistrée à la date du jour qu'elle concerne, et non à la
 date de son téléchargement : vos courbes restent justes malgré le retard de
 publication.
@@ -111,6 +137,28 @@ ajouté, l'historique est importé en quelques secondes, et au pire dans la minu
 — ou utilisez **Rafraîchir les données maintenant**. Un long historique met
 quelques minutes à s'afficher entièrement : il est injecté en douceur (voir
 ci-dessus), du jour le plus ancien au plus récent.
+
+**Mon compteur n'a pas de capteur de coût.** Gladys ne met pas à jour les
+capteurs d'un appareil déjà créé : un compteur ajouté avant la version qui a
+introduit le suivi du coût garde ses anciens capteurs. Supprimez l'appareil puis
+rajoutez-le depuis l'onglet **Découverte** pour obtenir la nouvelle définition —
+son historique sera réimporté sur la fenêtre configurée dans **Historique à
+importer**.
+
+**« Could not reach GRDF » / « Impossible de joindre GRDF ».** La requête n'est
+jamais arrivée : rien n'a été refusé, la connexion elle-même a échoué. Ce n'est
+donc pas un problème de mot de passe. Les causes habituelles, dans l'ordre où
+les vérifier : GRDF est indisponible (testez monespace.grdf.fr depuis un
+navigateur), votre serveur Gladys a perdu son accès à Internet, ou sa
+résolution DNS est en panne. Depuis la machine qui héberge Gladys :
+
+```
+curl -sS -o /dev/null -w '%{http_code}\n' https://monespace.grdf.fr
+```
+
+L'intégration réessaie quelques fois dans la même passe, puis abandonne et
+retente au rafraîchissement suivant : une panne de quelques heures se résorbe
+toute seule, l'historique manquant est rattrapé au premier passage qui aboutit.
 
 **« No login token in the page GRDF served ».** GRDF a servi autre chose que
 son formulaire de connexion. Le message précise ce qui a été reçu — un
@@ -177,11 +225,11 @@ Voici les paramètres demandés par GRDF Gazpar dans son écran de configuration
 ## Comment installer GRDF Gazpar dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : GRDF Gazpar apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/philippema/gladys-grdf:1.1.8`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/philippema/gladys-grdf:1.2.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/PhilippeMA/gladys-grdf](https://github.com/PhilippeMA/gladys-grdf).
 
-GRDF Gazpar nécessite Gladys `>=4.86.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+GRDF Gazpar nécessite Gladys `>=5.2.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
 
 Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
 

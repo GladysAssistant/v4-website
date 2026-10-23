@@ -1,0 +1,207 @@
+---
+title: "Linn & OpenHome Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Linn & OpenHome"
+description: "Linn and OpenHome network players, local: standby, volume, sources, pins, playback. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-linn.png"
+keywords:
+  - "linn & openhome"
+  - "linn & openhome smart home"
+  - "gladys linn & openhome"
+  - "linn & openhome gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-linn instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Linn & OpenHome","description":"Linn and OpenHome network players, local: standby, volume, sources, pins, playback.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-linn","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-linn.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T10:17:14Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+Drive your **Linn** network players (DS, DSM, Majik, Selekt, Klimax…) and the
+other **OpenHome** devices from Gladys, locally, without any cloud: power on,
+standby, volume, mute, source, pins (the presets of the Linn app), play,
+pause, next, previous and the title playing.
+
+> **Important.** This integration has never been tested with a real device:
+> it was written from the `openhomedevice` library (the one of Home
+> Assistant) and tested against a fake device only. Your feedback is welcome.
+> Unofficial integration, not affiliated with Linn Products.
+
+## This is not the DLNA integration
+
+The [DLNA integration by guim31](https://github.com/guim31/gladys-dlna)
+(`guim31/gladys-dlna`) drives any generic UPnP AV renderer (the
+`AVTransport` and `RenderingControl` services): play a URL or a media server,
+volume, playback. It works with a Linn too.
+
+This one takes another path: it only talks to the **OpenHome services**
+(`urn:av-openhome-org`), never to `AVTransport` or `RenderingControl`. It brings
+what DLNA has not got:
+
+- the **sources** of the device (Playlist, Radio, Songcast, HDMI, analogue,
+  digital inputs…), picked from a list;
+- the **pins** set in the Linn app: a radio, a playlist, an input, recalled in
+  one click;
+- **standby** (power on, standby, power state).
+
+It also drives the volume (**capped**), the mute, the playback and the title,
+through the OpenHome Volume, Transport and Info services.
+
+It does not play URLs, browse media servers or play notifications: keep the
+DLNA integration for that. Both can run side by side; the same player can
+then be created in each. Beware: the volume cap of this integration does not
+apply to what the DLNA integration sends to the same player.
+
+## Installation
+
+1. In Gladys, install the **Linn & OpenHome** integration.
+2. Choose the **volume cap** (50 by default) in its configuration.
+3. Open the **Discovery** tab: the players found by the SSDP search (run by
+   Gladys on your network) are listed. Create them.
+
+A player on another subnet or VLAN is not found by SSDP: type the URL of its
+**UPnP description** in the configuration instead (optional field, for
+example `http://192.168.1.30:55178/<uuid>/Upnp/device.xml`). A UPnP discovery
+tool on your computer shows it.
+
+## What you get
+
+| Feature        | Gladys type                | Note                                                  |
+| -------------- | -------------------------- | ----------------------------------------------------- |
+| Power          | binary state (read only)   | 1 on, 0 in standby or unreachable                     |
+| Power on       | button                     | wakes the player from standby                         |
+| Standby        | button                     | puts the player in standby                            |
+| Volume         | music / volume (0 to 100)  | capped; absent when the player has a fixed volume     |
+| Mute           | button (television / mute) | a press reads the state, sets the opposite; 0 unmutes |
+| Play, pause    | music buttons              |                                                       |
+| Next, previous | music buttons              | not on a radio                                        |
+| Playback       | music state (read only)    | 1 playing, 0 otherwise                                |
+| Source         | list                       | the visible sources, then the pins ("3. FIP")         |
+| Now playing    | text (read only)           | "Artist - Title" (or the radio text); "—" otherwise   |
+
+On purpose, no **switch**: an "everything off" or "everything on" from a
+voice assistant or a scene never wakes up or cuts your player.
+
+## Volume cap
+
+The volume asked from Gladys (dashboard, scene, voice assistant) never goes
+above the cap of the configuration: a higher volume is set to the cap. The
+cap is read just before sending: a new value saved applies at once. The volume
+set on the player itself (knob, remote, app) is not changed, except where
+Gladys would make it audible:
+
+- **Unmuting**: if the volume is above the cap, it is lowered to the cap
+  first, then the mute is removed.
+- **Power on**, or a source, a pin, Play, Next or Previous while the player is
+  in standby (a Linn then leaves standby): after the wake-up, the volume is read and lowered to the cap if above it.
+  If the player takes time to wake up, the integration checks again every
+  2.5 s for about 15 s, unless Standby is pressed meanwhile.
+
+The cap is a percentage: when the player announces a maximum volume other
+than 100 (`Volume.Characteristics`), the volume and the cap are scaled to its
+steps.
+
+## Reading the state
+
+The container of the integration has no inbound port: UPnP events (GENA)
+cannot reach it. The integration therefore reads each created player at a
+regular interval (10 s by default, 5 to 300 s): standby, source, volume, mute,
+playback state, and the title only when its counters say it changed. One
+request at a time per player. In standby, only the standby is read. The
+source list and the pins are read again every 30 minutes, or when an unknown
+source is selected.
+
+A player that stops answering is shown as off, named in the status of the
+integration, and tried again at spaced intervals (up to 5 minutes). A new
+SSDP search then runs by itself at most every 10 minutes, to follow a new
+address (the player is recognized by its UDN).
+
+## Commands
+
+Every command gets an answer within 4 seconds (Gladys waits 5 seconds): each
+request is bounded by what is left of that time, and the cap check after a
+wake-up goes on in the background if needed. A command that could not leave
+says "not sent"; a command that left but whose answer is missing or unusable
+(timeout, HTTP error) says "sent, without confirmation"; a refusal by the
+player (a SOAP fault) is quoted as is.
+
+A command cancels the state read in flight and goes before it; Standby and
+mute also go before the other commands waiting. **Standby wins over the
+commands that have sent nothing yet**: the one reading is cancelled, and those
+waiting in the queue that could wake the player (Power on, Source, pin, Play,
+Next, Previous) are no longer sent; they say "not sent (Standby went first)".
+Standby only waits for a write already sent, within its time limit, never for
+a read or a player slow to answer. A source is checked against the list read again from the
+player before sending; for a pin, the slot is read again and must still hold
+the same pin (else nothing is sent).
+
+Mute: the dashboard button sends a press, which sets the opposite of the state
+read. A scene sending 0 unmutes (cap applied); if already unmuted, nothing is
+sent.
+
+## Configuration buttons
+
+- **Check the players**: the state of each created player (power, source,
+  volume, mute) and the cap in force, within 25 seconds (a player that could
+  not be read in time says "not read").
+- **List the sources and pins**: runs the search again, then lists the
+  visible sources and the pins of each player.
+
+## Security, data and privacy
+
+- The integration asks for no account and no password: OpenHome has none. It
+  writes nothing on disk. Nothing leaves your local network.
+- The answers of the players are bounded (256 KB for a description, 64 KB for
+  a SOAP answer) and read by a linear XML parser that refuses any `DOCTYPE`:
+  no external or internal entity is ever resolved.
+- An SSDP answer is kept only when its description URL is `http` on the
+  private address that answered; every control URL must stay on the same
+  machine and port as the description.
+
+## Known limits
+
+- No Songcast (room groups), URL playback, notification, balance, sleep timer
+  or firmware update.
+- No UPnP events: a change made on the player shows at the next read at the
+  latest.
+- Never tested with a real device: the real answers may differ.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Linn & OpenHome in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Your Linn and OpenHome players, on your local network | `section` | Nein | Power on, standby, volume, mute, source, pins (the presets of the Linn app), play, pause, next, previous and the title playing of each player that has the OpenHome services (Linn DS and DSM, and other OpenHome renderers), through UPnP on your network, without any cloud. The players are found by an SSDP search and appear in the Discovery tab. The volume set from Gladys never goes above the cap below. This is not the generic DLNA integration: it drives the OpenHome services only (Product for the sources and standby, Pins, and the OpenHome Volume, Transport and Info), never the UPnP AV ones; the cap does not apply to a player also created in the DLNA integration. Never tested with a real device. Unofficial integration, not affiliated with Linn Products. |
+| Volume cap (%) | `number` | Nein | The highest volume Gladys may set, from 1 to 100 (100: no cap). A higher volume asked by a scene, a voice assistant or the dashboard is set to this cap; unmuting and waking a player up bring it back under the cap first. The volume set on the player itself (knob, remote, app) is not changed. |
+| Refresh interval (s) | `number` | Nein | How often each player is read, from 5 to 300 seconds. A player that does not answer is tried again at spaced intervals (up to 5 minutes). |
+| Description URLs (optional) | `string` | Nein | Only for a player the SSDP search cannot reach (another subnet or VLAN): the URL of its UPnP description, separated by commas. Most players are found without it. |
+
+## So installierst du Linn & OpenHome in Gladys
+
+1. Öffne in Gladys **Integrationen**: Linn & OpenHome erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-linn:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-linn](https://github.com/LM1LC3N7/gladys-linn).
+
+Linn & OpenHome benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Linn & OpenHome ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-linn) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-linn/blob/HEAD/docs/en.md)

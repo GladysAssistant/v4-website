@@ -1,0 +1,275 @@
+---
+title: "Caddy Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Caddy"
+description: "Dein Caddy-Webserver in Gladys: Sites, ausgefallene Upstreams, Zertifikate, Alarme in Szenen. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-caddy.png"
+keywords:
+  - "caddy"
+  - "caddy smart home"
+  - "gladys caddy"
+  - "caddy gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-caddy instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Caddy","description":"Dein Caddy-Webserver in Gladys: Sites, ausgefallene Upstreams, Zertifikate, Alarme in Szenen.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-caddy","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-caddy.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T17:29:50Z"}} />
+
+[Caddy](https://caddyserver.com) ist der Webserver und Reverse Proxy vor
+vielen selbst gehosteten Diensten: Er leitet `cloud.example.com` an den
+Nextcloud-Container weiter, holt und erneuert die HTTPS-Zertifikate selbst und
+kann prüfen, ob jedes Backend (Upstream) noch antwortet. Diese Integration
+bringt den Zustand von Caddy in Gladys: ein Gerät „Caddy“ mit seinen Sites,
+den ausgefallenen Upstreams und den ablaufenden Zertifikaten, und ein Gerät pro
+Site mit den Resttagen ihres Zertifikats und ihren funktionierenden Upstreams.
+Szenen können reagieren, wenn **irgendein** Upstream ausfällt oder
+zurückkommt, wenn ein Zertifikat nicht rechtzeitig erneuert wird oder wenn
+Caddy selbst nicht mehr antwortet; ein Dashboard-Widget zeigt die
+ausgefallenen Sites zuerst.
+
+Getestet mit einem echten Caddy v2.11 (Docker, Sites mit `tls internal`, zwei
+Backends hinter einem Health Check, eines absichtlich gestoppt, eine
+schreibgeschützte Site mit Basic Auth vor der Admin-API). Rückmeldungen sind
+in [den Issues](https://github.com/guim31/gladys-caddy/issues) willkommen.
+
+## Was du brauchst
+
+- Gladys Assistant 5.1.0 oder neuer.
+- Caddy 2 mit seiner **Admin-API**, erreichbar vom Gladys-Rechner (siehe
+  unten). Standardmäßig stellt Caddy sie nur auf `localhost:2019` bereit, mit
+  Absicht: Wer sie erreicht, kann die ganze Konfiguration ändern.
+- Um zu wissen, ob ein Upstream **ausgefallen** ist, einen Health Check auf
+  seinem `reverse_proxy` (`health_uri`, aktiv, oder `fail_duration`, passiv).
+  Ohne ihn zählt Caddy jeden Upstream als funktionsfähig.
+- Den Port der HTTPS-Sites (443) vom Gladys-Rechner aus erreichbar, um die
+  Zertifikate zu lesen.
+
+Die Integration sendet pro Aktualisierungsintervall (standardmäßig eine
+Minute) drei leichte Anfragen an die Admin-API und einen TLS-Handshake pro
+Site und Stunde, um die Zertifikate zu lesen. Nichts geht ins Internet, und
+nichts wird je in Caddy geschrieben.
+
+## Erste Schritte
+
+### 1. Die Admin-API erreichbar machen
+
+**Empfohlen: eine schreibgeschützte Site.** Lass die Admin-API auf
+`localhost:2019` und füge deinem Caddyfile eine Site hinzu, die nur die drei
+Lesezugriffe durchlässt, die Gladys braucht, hinter einem Passwort (den Hash
+erzeugst du mit `caddy hash-password --plaintext 'dein-passwort'`):
+
+```
+:2020 {
+	@read {
+		method GET
+		path /config/ /reverse_proxy/upstreams /metrics
+	}
+	handle @read {
+		basic_auth {
+			gladys $2a$14$...der-hash...
+		}
+		reverse_proxy localhost:2019 {
+			header_up Host localhost:2019
+			header_up Origin http://localhost:2019
+		}
+	}
+	respond 403
+}
+```
+
+Die zwei `header_up`-Zeilen sind nötig: Ohne sie lehnt die Admin-API
+weitergeleitete Anfragen ab. Alles andere (ein `POST`, ein anderer Pfad)
+bekommt ein 403. Diese Site erscheint in Gladys als Site `:2020`: Lass sie
+beiseite oder lege sie an.
+
+**Einfacher, nur in einem vertrauenswürdigen Netz:** `admin 0.0.0.0:2019` in
+den globalen Optionen des Caddyfile. Dann kann jeder im Netz die Konfiguration
+von Caddy ändern: Beschränke den Port per Firewall auf den Gladys-Rechner. Mit
+Docker veröffentlichst du Port 2019 (oder 2020) des Caddy-Containers.
+
+Hinweis: Die von Gladys gelesene Konfiguration kann Geheimnisse enthalten
+(API-Tokens eines DNS-Anbieters im Klartext, Passwort-Hashes). Die Integration
+speichert, protokolliert und veröffentlicht sie nie, aber wer die Adresse
+erreicht, kann sie lesen: Nutze für solche Tokens lieber `{env.…}`.
+
+### 2. Die Integration konfigurieren
+
+Öffne in Gladys **Integrationen → Caddy → Konfiguration**:
+
+- **Adresse der Admin-API**: `http://192.168.1.2:2020` (schreibgeschützte
+  Site) oder `http://192.168.1.2:2019`. Ein einfaches `192.168.1.2` bedeutet
+  Port 2019.
+- **Benutzer (Basic Auth)** und **Passwort (Basic Auth)**: die der
+  schreibgeschützten Site, falls vorhanden.
+- **Host der Zertifikate**: wo die Zertifikate gelesen werden, auf dem Port der
+  HTTPS-Sites (443). Leer: der Host der API-Adresse, der übliche Fall.
+- **Aktualisierungsintervall**: 30 Sekunden bis 5 Minuten.
+- **Zertifikatswarnung (Tage)**: standardmäßig 14, siehe „Ein Zertifikat läuft
+  bald ab“.
+- **Sprache der Namen**: Sprache der Funktionsnamen und der Szenen-Ergebnisse.
+
+Speichere, dann **Verbindung testen**: Das Ergebnis zeigt die Zahl der Sites,
+die ausgefallenen Upstreams und die ablaufenden Zertifikate.
+
+### 3. Die Geräte anlegen
+
+Öffne den Tab **Entdecken**: Das Gerät „Caddy“ und ein Gerät pro Site
+(`cloud.example.com`…) werden aufgelistet. Lege die an, die du verfolgen
+willst. Ein Site-Block mit mehreren Namen (`a.example.com, b.example.com`)
+ergibt ein Gerät pro Name. Eine Site ohne lesbares Zertifikat und ohne
+Upstream (ein Wildcard, das Dateien ausliefert) hat kein Gerät.
+
+## Die Geräte
+
+Das Gerät **Caddy**:
+
+| Funktion               | Wert                                                               |
+| ---------------------- | ------------------------------------------------------------------ |
+| Erreichbar             | ja, wenn die Admin-API antwortet, nein nach zwei Fehlschlägen      |
+| Konfiguration geladen  | nein, wenn das letzte Laden der Konfiguration von Caddy fehlschlug |
+| Sites                  | Sites (Hostnamen) der Konfiguration                                |
+| Ausgefallene Upstreams | Upstreams, die ihre Health Checks nicht bestehen                   |
+| Ablaufende Zertifikate | Zertifikate unter der Warnschwelle und mit verspäteter Erneuerung  |
+
+Jede **Site**:
+
+| Funktion                  | Wert                                                                     |
+| ------------------------- | ------------------------------------------------------------------------ |
+| Ablauf des Zertifikats    | Tage bis zum Ablauf ihres Zertifikats (HTTPS-Sites)                      |
+| Funktionierende Upstreams | Upstreams ihres `reverse_proxy`, die ihre Health Checks bestehen         |
+| Upstreams insgesamt       | Upstreams ihres `reverse_proxy` (Sites, die an ein Backend weiterleiten) |
+
+Caddy gibt seine Version über die Admin-API nicht preis: Deshalb wird sie nicht
+angezeigt. Eine aus der Konfiguration entfernte Site, deren Gerät in Gladys
+ist, wird als fehlend angezeigt, ohne Upstream.
+
+## Dashboard
+
+Füge das Widget **Caddy** einem Dashboard hinzu: die ausgefallenen Upstreams,
+die ablaufenden Zertifikate und die funktionierenden Sites, dann eine Zeile
+pro Site — erst ausgefallene, dann eingeschränkte (einige Upstreams aus), dann
+ablaufende Zertifikate, dann die anderen — mit ihren funktionierenden
+Upstreams und den Resttagen ihres Zertifikats, und die ausgefallenen Upstreams
+mit den Sites, die sie bedienen. In seinen Einstellungen kannst du es auf
+einige Sites beschränken (in Gladys angelegte Geräte). **Aktualisieren** liest
+Caddy und alle Zertifikate sofort.
+
+## Szenen
+
+### Auslöser
+
+- **Ein Upstream fällt aus**: Ein Upstream besteht seine Health Checks nicht,
+  bestätigt in zwei Abfragen in Folge (ein Neustart von Caddy, das bis zur
+  ersten Prüfung jeden Upstream als funktionsfähig zählt, löst ihn nicht aus).
+  Variablen: Adresse des Upstreams, bediente Sites, letzte Fehlschläge.
+- **Ein Upstream läuft wieder**: Ein ausgefallener Upstream besteht seine
+  Prüfungen wieder. Variablen: dieselben und die Dauer des Ausfalls in Minuten.
+- **Ein Zertifikat läuft bald ab**: Das Zertifikat einer Site hat weniger Tage
+  übrig als die Warnschwelle **und** Caddy erneuert es verspätet (weniger als
+  ein Fünftel seiner Laufzeit übrig; Caddy erneuert bei einem Drittel). Kurze
+  Zertifikate (12 Stunden mit `tls internal`) bleiben still, solange Caddy sie
+  erneuert. Einmal pro Zertifikat; auf einige Sites beschränkbar. Variablen:
+  Site, verbleibende Tage, Ablaufdatum, Aussteller.
+- **Caddy ist nicht erreichbar**: Die Admin-API antwortet nicht mehr, zwei
+  Abfragen in Folge. Variable: der Grund.
+
+Jeder Upstream und jede Site löst die Szenen aus, ob in Gladys angelegt oder
+nicht. Upstreams, die beim Start der Integration schon ausgefallen sind,
+werden nicht gemeldet.
+
+### Aktionen
+
+- **Zustand einer Site**: funktionsfähig oder nicht, ihr Zustand in Worten
+  (OK, Zertifikat läuft ab, Eingeschränkt, Ausgefallen, Fehlt),
+  funktionierende Upstreams und insgesamt, Resttage des Zertifikats und ein
+  fertiger Satz wie „cloud.example.com: Eingeschränkt, 1/2 Upstream(s)
+  funktionsfähig, Zertifikat noch 63 Tag(e) gültig.“
+- **Zustand von Caddy**: erreichbar oder nicht, die Zahl der Sites, Zahl und
+  Adressen der ausgefallenen Upstreams, die Sites mit ablaufendem Zertifikat
+  und ein Satz. Antwortet Caddy nicht, schlägt die Aktion nicht fehl, sondern
+  meldet es, und die Szene läuft weiter.
+
+### Szenen-Ideen
+
+- Bei **Ein Upstream fällt aus** eine Telegram-Nachricht „\{\{upstream\}\} ist
+  ausgefallen (\{\{sites\}\})“ senden, und eine weitere bei **Ein Upstream läuft
+  wieder** mit der Dauer des Ausfalls.
+- Bei **Ein Zertifikat läuft bald ab** „Das Zertifikat von \{\{site\}\} läuft am
+  \{\{expires_at\}\} ab“ senden: Die Erneuerung ist fehlgeschlagen, sieh in den
+  Protokollen von Caddy nach (DNS, Port 80 zu…).
+- Jeden Morgen um 8 Uhr **Zustand von Caddy** und, wenn etwas nicht stimmt,
+  den Satz auf dem Lautsprecher vorlesen.
+
+## Fehlerbehebung
+
+- **„Caddy antwortet nicht“**: Prüfe Adresse und Port vom Gladys-Rechner aus
+  (`curl http://192.168.1.2:2020/config/ -u gladys`) und ob der Port vom
+  Caddy-Container veröffentlicht wird.
+- **„Zugriff von Caddy verweigert“**: Die Admin-API hat die Anfrage abgelehnt.
+  Über eine schreibgeschützte Site prüfe die zwei `header_up`-Zeilen; mit
+  `admin 0.0.0.0:2019` und `origins` füge die Adresse hinzu, die Gladys nutzt.
+- **„Benutzer oder Passwort abgelehnt“**: Prüfe die Basic Auth der
+  schreibgeschützten Site.
+- **„keine Admin-API von Caddy unter dieser Adresse“**: Die Adresse zeigt auf
+  eine Site, die nicht die Admin-API ist, oder die schreibgeschützte Site lässt
+  `/config/` nicht durch.
+- **Ein Upstream fällt nie aus**: Füge seinem `reverse_proxy` einen Health
+  Check hinzu (`health_uri /`).
+- **Keine Zertifikatstage**: Die Zertifikate werden auf Port 443 des Hosts der
+  Zertifikate gelesen; trage **Host der Zertifikate** ein, wenn Caddy über eine
+  andere Adresse erreicht wird. Wildcard-Sites und IP-Adressen werden nicht
+  gelesen.
+- Mehr Details in den Protokollen der Integration (Integrationen → Caddy →
+  Protokolle), mit `LOG_LEVEL=debug` für jede Abfrage.
+
+## Grenzen
+
+- Nur lesend: Es wird nie etwas in Caddy geschrieben.
+- Caddy gibt seine Version über die Admin-API nicht preis.
+- Upstreams aus Platzhaltern und dynamische Upstreams werden nicht verfolgt.
+- Die Zertifikate von Wildcard-Sites (ein Testname könnte eine Ausstellung
+  auf Abruf auslösen), IP-Adressen und Sites ohne TLS werden nicht gelesen.
+- Die Admin-API selbst über gegenseitiges TLS (`remote`-Admin) wird nicht
+  unterstützt: Nutze eine schreibgeschützte Site.
+- Ein Caddy pro Integration.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Caddy in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Deine Admin-API von Caddy | `section` | Nein | Caddy stellt seine Admin-API nur auf localhost:2019 bereit. Mach sie für Gladys erreichbar, am besten über eine schreibgeschützte Site: Die Anleitung zeigt wie. Lege dann die Sites im Tab „Entdecken“ an. |
+| Adresse der Admin-API | `string` | Nein | Die Admin-API (Port 2019) oder die schreibgeschützte Site davor. |
+| Benutzer (Basic Auth) | `string` | Nein | Nur wenn die schreibgeschützte Site Basic Auth verlangt. Sonst leer lassen. |
+| Passwort (Basic Auth) | `secret` | Nein |  |
+| Host der Zertifikate | `string` | Nein | Wo die Zertifikate gelesen werden (Port 443, ein TLS-Handshake pro Site). Leer: der Host der API-Adresse. |
+| Optionen | `section` | Nein |  |
+| Aktualisierungsintervall | `select` | Nein | Wie oft die Admin-API gelesen wird: jedes Mal drei leichte Anfragen. Zertifikate: einmal pro Stunde. |
+| Zertifikatswarnung (Tage) | `number` | Nein | Ein Zertifikat wird gemeldet, wenn ihm weniger Tage bleiben und Caddy es nicht rechtzeitig erneuert. |
+| Sprache der Namen | `select` | Nein | Sprache der Funktionsnamen (beim Anlegen eines Geräts festgelegt) und der Szenen-Ergebnisse. |
+
+## So installierst du Caddy in Gladys
+
+1. Öffne in Gladys **Integrationen**: Caddy erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-caddy:1.0.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-caddy](https://github.com/guim31/gladys-caddy).
+
+Caddy benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Caddy ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-caddy) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-caddy/blob/HEAD/docs/de.md)

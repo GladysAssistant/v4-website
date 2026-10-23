@@ -1,0 +1,182 @@
+---
+title: "Intégration domotique Hegel, gratuite et open source"
+sidebar_label: "Hegel"
+description: "Amplis Hegel sur le réseau local : marche, volume plafonné, sourdine, entrée. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-hegel.png"
+keywords:
+  - "hegel"
+  - "domotique hegel"
+  - "gladys hegel"
+  - "hegel gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-hegel instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Hegel","description":"Amplis Hegel sur le réseau local : marche, volume plafonné, sourdine, entrée.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-hegel","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-hegel.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T20:50:26Z"}} />
+
+Pilotez depuis Gladys vos amplis **Hegel** dotés du contrôle IP (H95, H120,
+H190, H390, H590, Röst…), en local, sans aucun cloud : allumage, veille,
+volume (plafonné), sourdine et entrée.
+
+> **Important.** Cette intégration n'a jamais été testée avec un vrai
+> appareil : elle a été écrite à partir de la bibliothèque `hegel-ip-client`
+> (celle qu'utilise Home Assistant) et testée avec un faux ampli seulement.
+> Vos retours sont les bienvenus. Intégration non officielle, sans lien avec
+> Hegel Music Systems.
+
+## Installation
+
+1. Branchez l'ampli sur votre réseau et donnez-lui une **adresse IP fixe**
+   dans votre box (bail DHCP réservé).
+2. Sur l'ampli, activez le **contrôle IP** (menu de configuration, selon le
+   modèle) pour qu'il réponde aussi en veille et puisse être réveillé.
+3. Dans Gladys, installez l'intégration **Hegel**, puis ouvrez sa
+   configuration.
+4. Saisissez les adresses IP, séparées par des virgules (par exemple
+   `192.168.1.60, 192.168.1.61`). Le port de contrôle est le 50001 ; pour un
+   autre, ajoutez-le : `192.168.1.60:5000`.
+5. Choisissez le **plafond de volume** (40 par défaut) et, si vous le
+   souhaitez, nommez les entrées.
+6. Les amplis apparaissent dans l'onglet **Découverte** : créez-les.
+
+L'intégration garde une connexion ouverte avec chaque ampli : ce qui est
+changé sur l'ampli ou sa télécommande s'affiche aussitôt dans Gladys. Les états
+sont aussi relus chaque minute.
+
+## Ce que vous obtenez
+
+| Fonction | Type Gladys                    | Remarque                                                        |
+| -------- | ------------------------------ | --------------------------------------------------------------- |
+| Marche   | état binaire (lecture seule)   | 1 allumé, 0 en veille ou injoignable                            |
+| Allumer  | bouton                         | `-p.1`                                                          |
+| Veille   | bouton                         | `-p.0`                                                          |
+| Volume   | musique / volume (0 à 100)     | la valeur de l'écran de l'ampli ; commande plafonnée            |
+| Sourdine | bouton (télévision / sourdine) | chaque appui lit l'état, puis règle l'inverse                   |
+| Entrée   | liste déroulante               | les entrées nommées ou déjà vues ; la liste ne fait que grandir |
+
+Volontairement, aucun **interrupteur** : un « éteins tout » ou « allume tout »
+d'un assistant vocal ou d'une scène ne réveille ni ne coupe votre ampli.
+
+## Plafond de volume
+
+Le volume d'un ampli Hegel va de 0 à 100, comme sur son écran ; Gladys affiche
+la même valeur. Une commande de Gladys (tableau de bord, scène, assistant
+vocal) au-dessus du **plafond** règle le plafond, jamais plus. Le plafond est
+relu juste avant que la ligne parte vers l'ampli : si un plafond plus bas a été
+enregistré entre-temps, la commande est refusée et rien n'est envoyé.
+
+Le volume réglé sur l'ampli lui-même (bouton, télécommande) n'est pas modifié
+par l'intégration, sauf dans les deux cas où Gladys le rendrait audible :
+
+- **Retrait de la sourdine** : si le volume de l'ampli dépasse le plafond, il
+  est d'abord ramené au plafond, puis la sourdine est retirée. Si le volume ne
+  peut pas être lu, rien n'est envoyé ; si l'ampli ne confirme pas la baisse,
+  ou si le volume repasse au-dessus du plafond juste avant l'envoi, la
+  sourdine est gardée.
+- **Allumage** : dès que la commande d'allumage est partie vers l'ampli (même
+  sans réponse, avec une réponse tardive ou une erreur), le volume est relu
+  régulièrement pendant environ 17 secondes et ramené au plafond s'il le
+  dépasse (volume de démarrage de l'ampli), y compris un volume signalé
+  au-dessus du plafond pendant ce temps et une baisse que l'ampli aurait
+  ignorée. Un appui sur Veille n'arrête pas ces vérifications : elles ne font
+  que baisser, et seulement un ampli allumé.
+
+Sourdine : la valeur 0 envoyée par une scène retire la sourdine (plafond
+appliqué d'abord) ; toute autre valeur est un appui, qui inverse l'état lu sur
+l'ampli.
+
+Une commande n'est réussie que si l'ampli répond la valeur demandée.
+
+## Entrées
+
+Le protocole donne le numéro de l'entrée choisie, pas son nom. Saisissez les
+noms dans la configuration, numérotés comme dans le manuel de votre modèle,
+par exemple `1=Symétrique, 2=Analogique 1, 9=Réseau`. Une entrée choisie sur
+l'ampli est ajoutée à la liste sous la forme « Input N ».
+
+## Commandes
+
+Chaque commande reçoit une réponse en moins de 4 secondes (Gladys attend 5
+secondes). Une commande partie vers l'ampli sans confirmation (pas de réponse,
+ou une ligne d'erreur `-e.N` de l'ampli) est signalée « envoyée, sans
+confirmation » ; la ligne écrite ensuite par l'ampli montre ce qu'il a fait.
+Une commande qui n'a pas pu partir est signalée « rien n'a été envoyé ». La
+**veille** passe avant toutes les commandes en attente, annule un allumage
+encore en attente, et part dès que la connexion est ouverte, même avant la
+première lecture des états.
+
+## Reconnexion
+
+Un ampli qui ne répond pas (éteint, contrôle IP désactivé, débranché) affiche
+sa marche à 0 et est nommé dans le statut de l'intégration. L'intégration se
+reconnecte après 10 s, puis à intervalles doublés après chaque échec, jusqu'à
+5 minutes. Deux relectures de suite sans réponse ferment la connexion, puis la
+même reconnexion espacée s'applique. Enregistrer la configuration sans changer
+l'adresse ne raccourcit pas cette attente ; le bouton de recherche de l'onglet
+Découverte relance un essai, au plus tôt 10 s après le précédent. L'heure de la dernière tentative est
+gardée dans `/data` : après un redémarrage de l'intégration, un ampli n'est
+pas redemandé moins d'une minute après cette tentative.
+
+## Bouton de configuration
+
+- **Vérifier les amplis** : la connexion, la marche, le volume, la sourdine et
+  l'entrée de chaque ampli, tels que connus (aucune requête de plus vers
+  l'ampli), et le plafond en vigueur.
+
+## Données et vie privée
+
+L'intégration ne demande ni compte ni mot de passe : le contrôle IP Hegel n'en
+a pas. Elle garde dans `/data/hegel.json` la liste des amplis connus (adresse,
+entrées) et l'heure de la dernière tentative de connexion. Rien ne sort de
+votre réseau local.
+
+## Limites connues
+
+- L'identité d'un ampli est son adresse : le protocole ne donne ni numéro de
+  série ni modèle. Gardez une adresse IP fixe : si deux amplis échangent leurs
+  adresses (bail DHCP), l'appareil Gladys de l'un commande et affiche l'autre,
+  sans avertissement, et ses entrées s'ajoutent à la liste du premier. Ne
+  saisissez pas le même ampli deux fois (adresse IP et nom) : vous auriez deux
+  appareils et deux connexions, que l'ampli n'accepte peut-être pas.
+- Un ampli Hegel n'accepte peut-être qu'un client de contrôle IP à la fois :
+  fermez les autres outils qui s'y connectent.
+- Pas de réglage du volume par pas (`-v.u` / `-v.d`), ni de la luminosité ou
+  du délai de mise en veille.
+- Jamais testé avec un vrai appareil : les vraies réponses peuvent différer.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Hegel dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Vos amplis Hegel, sur votre réseau local | `section` | Non | Allumage, veille, volume, sourdine et entrée de chaque ampli Hegel doté du contrôle IP (H95, H120, H190, H390, H590, Röst...), sans aucun cloud. Donnez à chaque ampli une adresse IP fixe dans votre box et saisissez-la ci-dessous ; les amplis apparaissent alors dans l'onglet Découverte. Gladys ne dépasse jamais le plafond de volume ci-dessous. Jamais testé avec un vrai appareil. Intégration non officielle, sans lien avec Hegel Music Systems. |
+| Adresses IP des amplis | `string` | Non | Séparées par des virgules, par exemple 192.168.1.60, 192.168.1.61. Port 50001 par défaut ; ajoutez :port pour un autre. |
+| Plafond de volume | `number` | Non | Le volume le plus fort que Gladys peut régler, sur l'échelle de l'écran de l'ampli (de 1 à 100, 40 par défaut). Une scène, un assistant vocal ou le tableau de bord qui demande plus obtient cette valeur. Aussi appliqué après l'allumage et avant de retirer la sourdine. Le volume réglé sur l'ampli lui-même (bouton, télécommande) n'est pas modifié sinon. |
+| Noms des entrées (facultatif) | `string` | Non | Le protocole ne donne pas le nom des entrées : numéro=nom, séparés par des virgules, comme numérotés dans le manuel de votre modèle, par exemple 1=Symétrique, 2=Analogique 1, 9=Réseau. Les entrées choisies sur l'ampli sont ajoutées en Input N. |
+
+## Comment installer Hegel dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Hegel apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-hegel:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-hegel](https://github.com/LM1LC3N7/gladys-hegel).
+
+Hegel nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Hegel est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-hegel) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-hegel/blob/HEAD/docs/fr.md)

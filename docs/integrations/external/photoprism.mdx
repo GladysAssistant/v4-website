@@ -1,0 +1,195 @@
+---
+title: "PhotoPrism smart home integration, free and open source"
+sidebar_label: "PhotoPrism"
+description: "Your PhotoPrism photo library in Gladys: counters, new photos, indexing and import from scenes. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-photoprism.png"
+keywords:
+  - "photoprism"
+  - "photoprism smart home"
+  - "gladys photoprism"
+  - "photoprism gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-photoprism instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"PhotoPrism","description":"Your PhotoPrism photo library in Gladys: counters, new photos, indexing and import from scenes.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-photoprism","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-photoprism.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T16:48:14Z"}} />
+
+Bring your [PhotoPrism](https://www.photoprism.app) photo library into Gladys,
+over your local network: the number of photos, videos, albums, places and
+photos to review, the date and place of the last photo added, scenes that react
+when new photos arrive or an album grows, and scene actions that start an
+indexing or an import, with a trigger when it is finished.
+
+The integration was tested against a real PhotoPrism server (the official
+Docker image, version 261007), not yet in a real Gladys installation: feedback
+is welcome on the [Gladys forum](https://community.gladysassistant.com) or in
+the [issues](https://github.com/guim31/gladys-photoprism/issues).
+
+## What you need
+
+- Gladys Assistant 5.1.0 or later.
+- A **PhotoPrism** server reachable from Gladys (same network).
+- An **app password** with full access: in PhotoPrism, **Settings** →
+  **Account** → **Apps and Devices** → **Add**, scope "full access" (or on the
+  server: `photoprism auth add -n Gladys -s "*" -e -1 admin`). The import needs
+  full access; a narrower scope works for the counters only.
+- Without app passwords (older servers, two-factor authentication off), the
+  user name and password of an **admin** account work too.
+- A server in public mode (`PHOTOPRISM_AUTH_MODE=public`) needs neither.
+
+## Set up
+
+1. Install the integration from the Gladys catalog.
+2. In **Configuration**, enter the **Server URL** with its port (for example
+   `http://192.168.1.20:2342`; behind a reverse proxy,
+   `https://example.org/photos`) and the **app password**. Leave the user name
+   empty with an app password.
+3. Choose the **Refresh** (5 minutes by default) and the **Language of the
+   names**, then save. **Test the connection** reads the server at once.
+4. In **Discovery**, add the **PhotoPrism** device.
+
+## Devices
+
+One **PhotoPrism** device, with these features (read-only):
+
+| Feature              | What it shows                                                            |
+| -------------------- | ------------------------------------------------------------------------ |
+| Photos               | Photos of the library (archived ones excluded)                           |
+| Videos               | Videos of the library                                                    |
+| Albums               | Albums made by the users                                                 |
+| Places               | Places of the photos (needs the geocoding of PhotoPrism)                 |
+| To review            | Photos PhotoPrism puts aside for review (low quality, missing date)      |
+| Last photo added     | Day it was taken and place: `May 14, 2026 · Toulouse, Occitanie, France` |
+| Indexing in progress | 1 while an indexing or an import started from Gladys runs                |
+
+The integration reads the server itself (three requests per reading):
+nothing to set on the Gladys side. The connection badge of the device turns
+red when the server stops answering.
+
+## Dashboard
+
+The **Photo library** widget shows the counters of photos, videos, albums and
+photos to review, the last photos added (place, day taken, a badge for the
+videos; a tap shows the title and the day added), and two buttons:
+**Index** (new and changed files) and **Import** (the import folder). While a
+job runs, a status line replaces the buttons.
+
+Thumbnails are **off by default**: with the **Show thumbnails** setting, the
+224-pixel tile of each photo is shown, which means your photos appear on every
+screen that displays this dashboard (a shared tablet, a public dashboard, Gladys
+Plus). The browser never loads PhotoPrism directly: Gladys asks the integration,
+which only serves the photos the widget lists.
+
+## Scenes
+
+### Triggers
+
+- **New photos added**: photos or videos were added to the library, whatever
+  the way (upload from the app, WebDAV, import, indexing), seen at the next
+  reading. Variables: number of photos and videos added, photos, videos, title,
+  place and day taken of the last one.
+- **Photos added to an album**: an album holds more photos than at the
+  previous reading (a new album counts from zero). Filter: the album title,
+  exactly as in PhotoPrism. Variables: album title, photos added, photos in the
+  album.
+- **Indexing or import finished**: an indexing or an import started from Gladys
+  (scene or widget) is finished. Filters: kind (indexing, import) and result
+  (success, failure). Variables: kind, result, duration in seconds, photos and
+  videos added.
+
+The additions of an indexing or import started from Gladys are announced
+together at its end, just before **Indexing or import finished**.
+
+### Actions
+
+- **Start an indexing**: PhotoPrism indexes the new and changed files of the
+  originals, or of one folder (`2026/05`). **Complete rescan (slow)** reads every
+  file again. Output: **Already finished** (an indexing of a few files ends
+  within three seconds).
+- **Start an import**: PhotoPrism copies the files of its import folder into the
+  library (they are copied, not moved), into an album when one is named
+  (created if needed). Output: **Already finished**.
+
+Both actions return within a few seconds: PhotoPrism keeps working, and the
+**Indexing or import finished** trigger tells the end. Only one job started
+from Gladys runs at a time; PhotoPrism also refuses a job while another one
+runs (started from its own interface, for example).
+
+### Scene ideas
+
+- Every night at 3 a.m., **Start an indexing**; on **Indexing or import
+  finished** with result "failure", send yourself a message.
+- On **New photos added**, send the family a message with the number of new
+  photos and the place of the last one (variables of the trigger).
+- On **Photos added to an album** "Holidays 2026", show a message on the
+  living room tablet.
+
+## Troubleshooting
+
+- **"app password, user name or password refused"**: the app password was
+  deleted or mistyped; with a user name, check the password. An account with
+  two-factor authentication needs an app password.
+- **"permission denied"**: the app password lacks a scope (the import needs
+  full access), or the account is not an admin.
+- **"the server does not answer"**: check the address and the port (2342 for
+  the Docker image) from the Gladys machine.
+- **"certificate refused"**: a self-signed certificate; use the `http://`
+  address on your network.
+- **"an indexing or an import is already running"**: PhotoPrism is busy; try
+  again once it is done.
+- **The indexing ends in failure after a minute behind a reverse proxy**: the
+  proxy cut the request (PhotoPrism answers only at the end). Use the local
+  address, or raise the timeout of the proxy.
+- `LOG_LEVEL=debug` in the logs of the integration shows each reading.
+
+## Limits
+
+- PhotoPrism has no way to tell whether an indexing runs: **Indexing in
+  progress** only follows the jobs started from Gladys.
+- New photos are seen at the next reading (5 minutes by default).
+- Albums: only the albums made by the users, not the moments, folders or
+  calendar.
+- No photo leaves your network through the integration unless you turn on
+  the thumbnails of the widget, and nothing is deleted or moved: no cleanup,
+  imports copy.
+- Not affiliated with PhotoPrism UG. PhotoPrism is a registered trademark of
+  PhotoPrism UG.
+
+## Configuration settings
+
+These are the settings PhotoPrism asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Connect to your PhotoPrism server | `section` | No | Enter the address of the server (for example http:\/\/192.168.1.20:2342) and an app password: in PhotoPrism, Settings > Account > Apps and Devices, full access. Without app passwords, enter the user name and password of an admin account. |
+| Server URL | `string` | Yes | Address of the server, port included (2342 for the Docker image). An https address behind a reverse proxy works too. |
+| User name (without app password) | `string` | No | Leave empty with an app password. Filled in: the password below is the one of this account. |
+| App password (or account password) | `secret` | No |  |
+| Refresh | `select` | No | How often the counters, the last photos added and the albums are read (three requests). |
+| Language of the names | `select` | No | Language of the feature names and of the texts of the scene actions. Names are set when a device is created: to rename them after a change, delete and re-add the device. |
+
+## How to install PhotoPrism in Gladys
+
+1. In Gladys, open **Integrations**: PhotoPrism appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-photoprism:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-photoprism](https://github.com/guim31/gladys-photoprism).
+
+PhotoPrism requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+PhotoPrism is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-photoprism) — [source of this documentation](https://github.com/guim31/gladys-photoprism/blob/HEAD/docs/en.md)

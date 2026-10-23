@@ -1,7 +1,7 @@
 ---
 title: "Legrand Home + Control Smart-Home-Integration, kostenlos und Open Source"
 sidebar_label: "Legrand Home + Control"
-description: "Céliane and dooxie with Netatmo: lights, dimmers, outlets, shutters and energy meters. Free, open source, installable in one click."
+description: "Céliane, dooxie with Netatmo and Bubendorff iDiamant: lights, outlets, shutters, meters. Free, open source, installable in one click."
 image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-legrand-home-control.png"
 keywords:
   - "legrand home + control"
@@ -19,7 +19,7 @@ https://github.com/LM1LC3N7/gladys-legrand-home-control instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Legrand Home + Control","description":"Céliane and dooxie with Netatmo: lights, dimmers, outlets, shutters and energy meters.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-legrand-home-control","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-legrand-home-control.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-16T14:44:22Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Legrand Home + Control","description":"Céliane, dooxie with Netatmo and Bubendorff iDiamant: lights, outlets, shutters, meters.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-legrand-home-control","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-legrand-home-control.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T13:15:03Z"}} />
 
 :::info
 
@@ -49,10 +49,37 @@ affiliated with Legrand or Netatmo.
 | Roller shutter switch (NLV, NLLV), Zigbee covering (Z3V)            | a shutter: open, close, stop (and position) |
 | DIN energy meter, load shedder, three-phase meter (NLPC, NLPS, NLY) | power drawn (per phase for NLY)             |
 | Remote control (NLT, NLD)                                           | battery level                               |
+| Bubendorff iDiamant shutter (NBR, NBO, NBS)                         | a shutter: open, close, stop (and position) |
 
 The position of a shutter is offered for the modules that accept any position
-(NLLV); the others open, close and stop. Each device shows on its badge
-whether the module answers.
+(NLLV, and the shutters that report a step under 100); the others open, close
+and stop. Each device shows on its badge whether the module answers.
+
+## Bubendorff iDiamant with Netatmo shutters
+
+The Bubendorff shutters behind an iDiamant gateway (NBG) go through the same
+Netatmo Connect API: they show up in Discovery as **shutters** (never as
+switches), with open, close and stop, and a position only when the module
+reports one (most iDiamant shutters only open, close and stop). The favourite
+position of the Bubendorff remote is not offered yet.
+
+**Never tested with real Bubendorff shutters**: developed from the answers
+recorded by pyatmo. Your feedback is welcome.
+
+The **Connect** button now also asks for the Bubendorff rights
+(`read_bubendorff`, `write_bubendorff`). If you connected before this version,
+nothing changes for your Legrand modules; when Bubendorff shutters are found
+without the `write_bubendorff` right, the status asks you to click **Connect**
+again to add Bubendorff. If your Netatmo app does not offer these rights,
+the integration falls back to the Home + Control rights alone: at once when
+Netatmo refuses them while linking, and otherwise when you click **Connect**
+again after a Netatmo authorization page that did not bring you back to
+Gladys (that one click asks for the Home + Control rights only).
+
+A shutter command is never sent late: one at a time per shutter (a stop never
+waits), refused if Netatmo could not take it within four seconds, and
+reported as **sent, without confirmation** when it left without an answer,
+the state being read again a few seconds later.
 
 Not yet: cable outlets in pilot-wire mode (radiators: their power only),
 ventilation (NLLF), garage door (NLJ), the ecometer lines (NLE), the button
@@ -64,7 +91,8 @@ You need a **Netatmo app** of your own (free, five minutes): it gives the
 integration the right to use the API with your account.
 
 1. Go to [dev.netatmo.com](https://dev.netatmo.com/apps/createanapp) and sign
-   in with the account of the **Home + Control** app.
+   in with the account of the **Home + Control** (or **Bubendorff iDiamant**)
+   app.
 2. **Create an app**: any name and description (e.g. "Gladys"), your name and
    email as data protection contact.
 3. In the Gladys configuration of the integration, copy the **redirect URI**
@@ -73,8 +101,9 @@ integration the right to use the API with your account.
 4. Copy the **client ID** and the **client secret** of the app into the Gladys
    configuration, and **save**.
 5. Click **Connect**: Netatmo asks you to sign in and to accept the Home +
-   Control rights (`read_magellan`, `write_magellan`). You come back to Gladys,
-   connected.
+   Control rights (`read_magellan`, `write_magellan`) and, for the
+   Bubendorff shutters, `read_bubendorff` and `write_bubendorff`. You come back
+   to Gladys, connected.
 6. Open the **Discovery** tab: your modules are there, add the ones you want.
 
 **Test the connection** shows how many homes and devices were found.
@@ -99,6 +128,9 @@ asks it to. With several homes or many commands, a longer interval is safer.
   not exactly the one Gladys shows (copy it again, without a space).
 - **"Read only"**: the Home + Control rights were not all accepted: click
   **Connect** again and accept them.
+- **"click Connect again to add Bubendorff"**: your authorization predates the
+  Bubendorff rights. Click **Connect** and accept them; the Legrand modules
+  keep working meanwhile.
 - **"usage limit reached"**: Netatmo asked to slow down; the integration
   retries by itself. Increase the refresh interval if it comes back.
 - **A module is missing**: the logs list the modules the integration cannot
@@ -118,16 +150,16 @@ Diese Einstellungen fragt Legrand Home + Control in seinem Konfigurationsbildsch
 
 | Einstellung | Typ | Pflichtfeld | Beschreibung |
 | --- | --- | --- | --- |
-| Your Legrand Home + Control installation | `section` | Nein | Control the Céliane with Netatmo and dooxie with Netatmo modules of your Home + Control gateway through the Netatmo cloud: lights and dimmers, outlets, contactors, roller shutters and energy meters. 1. Sign in on dev.netatmo.com with your Home + Control account and create an app. 2. In its Redirect URI field, paste the redirect URI Gladys shows for the Connect button below. 3. Copy the client ID and the client secret of the app here and save. 4. Click Connect and accept the Home + Control rights. Unofficial integration, not affiliated with Legrand or Netatmo. |
+| Your Legrand Home + Control installation | `section` | Nein | Control the Céliane with Netatmo and dooxie with Netatmo modules of your Home + Control gateway through the Netatmo cloud: lights and dimmers, outlets, contactors, roller shutters and energy meters; and the Bubendorff iDiamant with Netatmo shutters (never tested with real Bubendorff shutters). 1. Sign in on dev.netatmo.com with your Home + Control or iDiamant account and create an app. 2. In its Redirect URI field, paste the redirect URI Gladys shows for the Connect button below. 3. Copy the client ID and the client secret of the app here and save. 4. Click Connect and accept the Home + Control and Bubendorff rights. Unofficial integration, not affiliated with Legrand, Bubendorff or Netatmo. |
 | Client ID | `string` | Ja | The client ID of the app you created on dev.netatmo.com. |
 | Client secret | `secret` | Ja | The client secret of the same app. Stored in Gladys, never shown again. |
-| Netatmo account | `oauth2` | Nein | Save the client ID and the client secret first, then connect: Netatmo asks you to sign in and to accept the Home + Control rights (read_magellan, write_magellan). |
+| Netatmo account | `oauth2` | Nein | Save the client ID and the client secret first, then connect: Netatmo asks you to sign in and to accept the Home + Control rights (read_magellan, write_magellan) and the Bubendorff ones (read_bubendorff, write_bubendorff). Linked before? Your Legrand modules keep working; connect again only to add Bubendorff. |
 | Refresh interval (s) | `number` | Nein | How often the states are read from Netatmo, in seconds (one minute minimum, within the Netatmo usage limits). A command is confirmed a few seconds after it is sent. |
 
 ## So installierst du Legrand Home + Control in Gladys
 
 1. Öffne in Gladys **Integrationen**: Legrand Home + Control erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
-2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-legrand-home-control:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-legrand-home-control:0.1.2`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
 3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
 4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-legrand-home-control](https://github.com/LM1LC3N7/gladys-legrand-home-control).
 

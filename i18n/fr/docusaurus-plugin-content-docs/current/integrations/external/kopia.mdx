@@ -1,0 +1,257 @@
+---
+title: "Intégration domotique Kopia, gratuite et open source"
+sidebar_label: "Kopia"
+description: "Vos instantanés Kopia dans Gladys : leur état, et une alerte si l'un échoue ou ne tourne plus. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-kopia.png"
+keywords:
+  - "kopia"
+  - "domotique kopia"
+  - "gladys kopia"
+  - "kopia gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/guim31/gladys-kopia instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Kopia","description":"Vos instantanés Kopia dans Gladys : leur état, et une alerte si l'un échoue ou ne tourne plus.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-kopia","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-kopia.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T17:53:44Z"}} />
+
+[Kopia](https://kopia.io/) fait des instantanés chiffrés et dédupliqués de vos
+fichiers vers un disque, un NAS ou un stockage en ligne. Cette intégration
+amène les sources d'un serveur Kopia dans Gladys : chaque source (un dossier
+sauvegardé) devient un appareil avec son état, son dernier instantané réussi,
+sa taille, ses fichiers et les erreurs de son dernier instantané. Des scènes
+peuvent réagir quand **n'importe quel** instantané réussit, échoue ou est en
+retard (pas de réussite depuis trop longtemps), un widget de tableau de bord
+liste les sources en échec d'abord, et une scène peut lancer un instantané.
+
+Testée contre un vrai Kopia 0.23 (image Docker `kopia/kopia`, dépôt sur
+système de fichiers, authentification Basic, HTTP et HTTPS auto-signé) : un
+instantané qui réussit, un avec un fichier illisible, un dont le dossier a été
+supprimé, et un instantané lancé depuis l'intégration. Pas encore testée sur un
+vrai Gladys : vos retours sont bienvenus sur
+[les issues](https://github.com/guim31/gladys-kopia/issues).
+
+## Ce qu'il vous faut
+
+- Gladys Assistant 5.1.0 ou plus récent.
+- Kopia lancé en **serveur** avec son interface web, `kopia server start`,
+  joignable depuis la machine de Gladys (port 51515 par défaut). KopiaUI,
+  l'application de bureau, n'écoute que son propre ordinateur : elle ne
+  convient pas.
+- Le nom d'utilisateur et le mot de passe du serveur, donnés par
+  `--server-username` (`kopia` par défaut) et `--server-password`. Pas le mot
+  de passe du dépôt.
+
+L'intégration lit Kopia toutes les 5 minutes par défaut (toutes les 30
+secondes pendant un instantané) : quelques requêtes légères sur votre propre
+réseau.
+
+## Premiers pas
+
+### 1. Lancer le serveur Kopia
+
+Par exemple, avec un certificat généré par Kopia :
+
+```
+kopia server start --address=0.0.0.0:51515 \
+  --server-username=kopia --server-password=… \
+  --tls-generate-cert
+```
+
+Au premier démarrage, Kopia affiche `SERVER CERT SHA256: …` : notez cette
+empreinte. Avec `--insecure` à la place d'un certificat, le serveur parle en
+HTTP simple : à réserver à un réseau de confiance. L'image Docker
+`kopia/kopia` accepte les mêmes options.
+
+### 2. Configurer l'intégration
+
+Dans Gladys, **Intégrations → Kopia → Configuration** :
+
+- **Adresse de Kopia** : `https://192.168.1.2:51515` par exemple (`http://`
+  avec `--insecure`). Une adresse seule (`192.168.1.2`) veut dire `http://`
+  sur le port 51515 ; une adresse copiée depuis le navigateur convient aussi.
+- **Nom d'utilisateur** et **Mot de passe** : le `--server-username` et le
+  `--server-password` du serveur.
+- **Empreinte du certificat** : seulement pour un certificat auto-signé
+  (`--tls-generate-cert`) : le `SERVER CERT SHA256` noté plus haut.
+  L'intégration accepte alors ce certificat, et aucun autre, toujours en `https://`. À laisser vide en
+  `http://` ou avec un certificat signé par une autorité reconnue.
+- **Intervalle de rafraîchissement** : 1, 5 (par défaut) ou 15 minutes.
+- **En retard après** : quand une source sans instantané réussi passe en
+  retard. _Automatique_ (par défaut) suit la stratégie de planification de
+  chaque source : son intervalle plus un quart de celui-ci (une heure au
+  moins) — 30 heures pour un instantané quotidien, « heures de la journée »
+  comprises. Une source sans intervalle (manuelle, ou une expression cron)
+  n'est alors jamais en retard. Ou un délai fixe, de 12 heures à une semaine,
+  pour toutes les sources.
+- **Autoriser le lancement des instantanés** : permet à l'action de scène
+  « Lancer un instantané » de fonctionner. À désactiver si personne ne doit
+  lancer d'instantané depuis Gladys.
+- **Langue des noms** : langue des noms des fonctionnalités, des états et des
+  résultats de scène.
+
+**Tester la connexion** lit Kopia et résume : le nombre de sources, en échec
+et en retard.
+
+### 3. Ajouter les sources
+
+Dans l'onglet **Découverte**, ajoutez les sources à suivre, et l'appareil
+« Kopia » pour le serveur. Une source apparaît dès qu'elle a une stratégie ou
+un instantané dans Kopia. Les déclencheurs de scène fonctionnent pour toutes
+les sources, ajoutées ou non.
+
+## Les appareils
+
+Chaque source :
+
+| Fonctionnalité                     | Valeur                                                  |
+| ---------------------------------- | ------------------------------------------------------- |
+| État                               | OK, En échec, En retard, En cours ou Aucun instantané   |
+| Dernier instantané réussi          | jour/mois heures:minutes, « - » s'il n'y en a pas       |
+| Heures depuis la dernière réussite | en heures                                               |
+| Durée du dernier instantané        | en secondes                                             |
+| Taille                             | taille des fichiers du dernier instantané, en Mo        |
+| Fichiers                           | fichiers du dernier instantané                          |
+| Instantanés                        | instantanés conservés dans le dépôt                     |
+| Erreurs du dernier instantané      | fichiers illisibles (1 pour un instantané qui a échoué) |
+| En cours                           | 1 pendant un instantané de cette source                 |
+| Prochain instantané planifié       | jour/mois heures:minutes, « - » sans planification      |
+
+L'appareil « Kopia », pour le serveur :
+
+- **Dépôt connecté** : 1, ou 0 quand le serveur n'est pas connecté à son
+  dépôt ;
+- **Instantané en cours** : 1 ou 0 ;
+- **Progression** : en % ;
+- **Source actuelle** : son chemin, « - » s'il n'y en a pas ;
+- **Sources en échec** et **Sources en retard** : combien.
+
+Un instantané « échoue » quand Kopia n'a pas pu lire certains fichiers (il
+enregistre l'instantané sans eux), quand il est incomplet, ou quand il échoue
+complètement (un dossier supprimé, un stockage injoignable : aucun instantané
+n'est enregistré). Les erreurs que la stratégie de la source ignore ne
+comptent pas. L'état montre d'abord ce qui demande de l'attention : une source
+en échec affiche « En échec » même si elle est aussi en retard.
+
+Les sources d'un autre ordinateur ou utilisateur (clients du même dépôt) sont
+nommées `utilisateur@hôte:/chemin`.
+
+## Tableau de bord
+
+Le widget **Kopia** affiche le nombre de sources en échec, en retard et OK,
+puis une ligne par source : en échec d'abord, puis en retard, en cours, sans
+instantané, OK, avec la dernière réussite (ou la progression de celle en
+cours). Toutes les sources par défaut, ou celles choisies dans ses réglages.
+Le bouton **Actualiser** relit Kopia.
+
+## Scènes
+
+### Déclencheurs
+
+- **Un instantané réussit** : un instantané se termine sans erreur.
+  Informations : source, durée (minutes), fichiers, taille, instantanés
+  conservés.
+- **Un instantané échoue** : fichiers illisibles, instantané incomplet, ou
+  échec complet. Informations : source, première erreur, erreurs.
+- **Une source est en retard** : une source n'a pas eu d'instantané réussi
+  depuis plus longtemps que le délai « En retard après ». Une fois par délai
+  dépassé, à nouveau après une nouvelle réussite. Informations : source,
+  heures depuis la dernière réussite, dernière réussite.
+
+Chaque déclencheur peut se limiter à certaines sources (vide : toutes).
+
+### Actions
+
+- **État d'une source** : lit l'état d'une source pour les actions suivantes :
+  en échec, en retard, l'état en toutes lettres, la source, la dernière
+  réussite, les heures depuis la dernière réussite (-1 s'il n'y en a pas), et
+  une phrase toute prête (« /home/anna : En échec, dernière réussite 18/10
+  02:05. »).
+- **Lancer un instantané** : lance maintenant un instantané de la source.
+  Refusé quand « Autoriser le lancement des instantanés » est désactivé.
+
+### Idées de scènes
+
+- **Un instantané échoue** → envoyer un message avec la source et sa première
+  erreur, prises dans les informations du déclencheur.
+- **Une source est en retard** → prévenir avec la source et les heures depuis
+  sa dernière réussite.
+- Chaque dimanche à 10 h → **État d'une source** → envoyer la phrase ; ou
+  lancer un instantané des photos en quittant la maison, avec **Lancer un
+  instantané**.
+
+## Dépannage
+
+- **« Kopia ne répond pas »** : vérifiez l'adresse et le port depuis la
+  machine de Gladys, et que le serveur écoute le réseau
+  (`--address=0.0.0.0:51515`, pas `127.0.0.1`).
+- **« nom d'utilisateur ou mot de passe refusé par Kopia »** : saisissez-les à
+  nouveau ; ce sont ceux de `--server-username` et `--server-password`.
+- **« certificat refusé »** : un certificat auto-signé ; saisissez son
+  empreinte dans la configuration.
+- **« le certificat ne correspond pas à l'empreinte »** : le certificat a
+  changé (Kopia en génère un nouveau quand ses fichiers sont supprimés) :
+  saisissez la nouvelle empreinte.
+- **« Kopia n'est pas connecté à son dépôt »** : reconnectez le serveur à son
+  dépôt dans son interface web.
+- **Une source ne passe jamais en retard** : en _Automatique_, une source sans
+  intervalle ne peut pas être en retard ; choisissez un délai fixe. Une source
+  qui n'a jamais réussi n'est pas en retard non plus : elle affiche En échec ou
+  Aucun instantané.
+- **Un échec complet n'apparaît plus après un redémarrage de Kopia** : Kopia
+  ne garde ses tâches qu'en mémoire ; l'intégration l'a tout de même annoncé
+  sur le moment.
+- Pour en voir plus, mettez la variable `LOG_LEVEL` de l'intégration à
+  `debug`.
+
+## Limites
+
+- Un seul serveur Kopia par intégration.
+- Un échec complet (aucun instantané enregistré) n'est connu que par la liste
+  des tâches du serveur, perdue à son redémarrage.
+- L'intégration ne restaure, ne supprime ni ne modifie les instantanés ou les
+  stratégies : elle les surveille, et les lance si c'est autorisé.
+- Sans lien avec Kopia. Signalez un problème ou une idée sur
+  [les issues](https://github.com/guim31/gladys-kopia/issues).
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Kopia dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre serveur Kopia | `section` | Non | Kopia lancé en serveur avec son interface web (kopia server start). Saisissez son adresse, son nom d'utilisateur et son mot de passe, puis ajoutez les sources à suivre depuis l'onglet Découverte. |
+| Adresse de Kopia | `string` | Oui | L'adresse de l'interface web, port 51515 par défaut. En https:\/\/ si le serveur utilise TLS. |
+| Nom d'utilisateur | `string` | Non | Le --server-username du serveur, kopia par défaut. |
+| Mot de passe | `secret` | Oui | Le --server-password du serveur (pas le mot de passe du dépôt). |
+| Empreinte du certificat | `string` | Non | Seulement pour un certificat auto-signé (--tls-generate-cert) : son empreinte SHA-256, affichée par Kopia au démarrage (SERVER CERT SHA256). Vide sinon. |
+| Options | `section` | Non |  |
+| Intervalle de rafraîchissement | `select` | Non | À quelle fréquence Kopia est lu. Toutes les 30 secondes pendant un instantané. |
+| En retard après | `select` | Non | Une source sans instantané réussi depuis ce délai est en retard. Automatique : son intervalle de planification plus une marge ; une source sans intervalle n'est alors jamais en retard. |
+| Autoriser le lancement des instantanés | `boolean` | Non | Permet à l'action de scène « Lancer un instantané » de lancer un instantané dans Kopia. |
+| Langue des noms | `select` | Non | Langue des noms des fonctionnalités (fixés à l'ajout d'un appareil), des états et des résultats de scène. |
+
+## Comment installer Kopia dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Kopia apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/guim31/gladys-kopia:1.0.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/guim31/gladys-kopia](https://github.com/guim31/gladys-kopia).
+
+Kopia nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Kopia est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [guim31](https://github.com/guim31), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/guim31/gladys-kopia) — [source de cette documentation](https://github.com/guim31/gladys-kopia/blob/HEAD/docs/fr.md)

@@ -1,0 +1,190 @@
+---
+title: "Integración domótica TA C.M.I., gratuita y de código abierto"
+sidebar_label: "TA C.M.I."
+description: "Technische Alternative controllers (UVR16x2, UVR1611…) read only through the C.M.I. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ta-cmi.png"
+keywords:
+  - "ta c.m.i."
+  - "domótica ta c.m.i."
+  - "gladys ta c.m.i."
+  - "ta c.m.i. gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-ta-cmi instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"TA C.M.I.","description":"Technische Alternative controllers (UVR16x2, UVR1611…) read only through the C.M.I.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-ta-cmi","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ta-cmi.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T10:21:31Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+Unofficial integration, not affiliated with Technische Alternative. It brings
+the controllers of **Technische Alternative** (UVR16x2, UVR1611, UVR610,
+UVR65, UVR67, RSM610, CAN-I/O45, CAN-EZ2, CAN-EZ3, CAN-BC2, CAN-MTx2…) into
+Gladys through the **official JSON API of the C.M.I.** (Control and
+Monitoring Interface), on your local network, **read only**.
+
+> **Warning: never tested with a real device.** This integration was written
+> from the ta-cmi Python library and tested against a fake C.M.I. only.
+> Feedback is welcome.
+
+## What you get
+
+One Gladys device per **CAN node** behind the C.M.I. (for example "UVR16x2
+(node 1)"), with one feature per channel:
+
+| Values read      | Features                                                                                                                                        |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Main (default)   | Inputs ("Input 1"…), outputs ("Output 1"…), DL bus inputs ("DL input 1"…).                                                                      |
+| All (on request) | Also, when the device has them: system values (general, sun), analog and digital logging, network inputs, M-Bus, Modbus, KNX, electrical power. |
+
+The JSON API gives no channel names, only their number and unit: rename the
+features in Gladys (the name you give is never overwritten).
+
+- Temperatures (°C) are **probes**: they stay out of the room average.
+- Durations, pressures, volumes, distances, speeds, CO2, illuminance,
+  precipitation and amounts (€, $) have their Gladys unit.
+- The other units (K, W/m², l/h, %, kW, kWh, MWh, V, A, Hz…) have no category
+  in Gladys: the feature is a plain sensor with the unit in its name ("Input
+  3 (l/h)").
+- Energy and power are **not** sent to the Gladys energy dashboard: the
+  C.M.I. does not say whether a kWh is electrical or thermal (a heat meter),
+  and Gladys would count it as electricity.
+- A digital channel (on/off, yes/no) is 0 or 1.
+
+The badge of each device shows "local", or "unreachable" when the C.M.I. does
+not answer or refuses the credentials (with an orange dot when only this node
+could not be read: node not available, CAN bus busy…).
+
+## Setup
+
+1. Note the **IP address** of the C.M.I. (give it a reserved DHCP lease), a
+   **user** of its web interface (admin by default) and its **password**.
+2. Optional: note the numbers of the **CAN nodes** to read (shown by the web
+   interface of the C.M.I.). Without this list, the integration asks the
+   C.M.I. for it (one more request, every 6 hours).
+3. In Gladys, install the TA C.M.I. integration, enter the address, the user
+   and the password, and save.
+4. Add the devices from the **Discovery** tab.
+
+## One request per minute
+
+The C.M.I. accepts **one request per minute** on its JSON API (it answers
+"too many requests" otherwise). The integration keeps to this limit
+strictly:
+
+- two requests are always **at least 75 seconds** apart, counted from the end
+  of the previous one (answer, error or timeout), whatever asks for them
+  (regular read, button, Discovery);
+- the time of the last request is kept in `/data` **before** each request: a
+  restart never sends anything too early;
+- all the nodes are read every **5 minutes** by default (120 to 3600
+  seconds); with several nodes, each takes one request (two for some devices
+  with "All", such as the CAN-BC2), so a full read of 4 nodes takes at least
+  4 × 75 seconds.
+
+If another program also reads the C.M.I. (or you open its web interface at
+the same time), the C.M.I. may refuse a request: the integration then pauses
+for 5, 10, then 15 minutes.
+
+The **Test the connection** button sends a request only when the limit allows
+it; otherwise it shows the status and the time left.
+
+## Read only
+
+The JSON API of the C.M.I. only reads: this integration **controls nothing**.
+Every feature is read only; a command from Gladys (scene, dashboard, voice
+assistant) is refused and nothing is sent.
+
+## Credentials and privacy
+
+- The password is **kept by Gladys in its database, never shown again, and
+  sent only to the C.M.I.** (HTTP Basic authentication). It never appears in
+  the logs, the status messages nor `/data`.
+- The `/data` volume of the integration keeps the time of the last request,
+  the current pause, a stop on refused credentials, the node list and the
+  type of each node, with a hash of the address and port. Neither the user
+  nor the password.
+- Everything stays on your local network, over HTTP: anyone listening on that
+  network can read the credentials, as with the web interface of the C.M.I.
+  Prefer a dedicated user.
+
+## Errors
+
+- **Credentials refused** (HTTP 401 or 403): the reads stop; a new try after
+  10 min, 1 h, then every 6 h, or at once when you change the address, the
+  user or the password. **Test the connection** also tries again as soon as
+  the limit allows it. The stop is kept across restarts.
+- **Too many requests** (C.M.I. code 4 or HTTP 429): a pause of 5, 10, then 15
+  minutes (Retry-After when given, 6 h at most), kept across restarts.
+- **Node not available, CAN bus busy, device not supported** (codes 1, 2, 5,
+  7): this node is marked unreachable, the others go on; it is read again at
+  the next cycle.
+- **C.M.I. unreachable** or unexpected answer: a new try after 1, 2, 5, 10,
+  then every 15 minutes, never faster than the interval.
+- An answer that is too large (over 256 KB) or not the expected JSON is
+  refused.
+
+## Limits
+
+- Never tested with a real device.
+- No channel names (the JSON API does not give them).
+- The date and time system values are not read.
+- When the unit of a channel changes on the controller, the feature already
+  created keeps its old unit and gets no more values: delete the device, then
+  add it again from Discovery (its history is lost).
+- No CoE (CAN over Ethernet), no command.
+
+## Credits
+
+- [ta-cmi](https://gitlab.com/DeerMaximum/ta-cmi) by DeerMaximum (MIT): the
+  endpoints of the JSON API, the status codes, the device types, their
+  parameters and the unit codes are ported to JavaScript.
+- See `THIRD_PARTY_NOTICES.md`.
+
+Technische Alternative, C.M.I. and UVR are trademarks of Technische
+Alternative RT GmbH; this project is not affiliated with Technische
+Alternative.
+
+## Parámetros de configuración
+
+Estos son los parámetros que TA C.M.I. te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Your C.M.I. | `section` | No | Brings the controllers of Technische Alternative (UVR16x2, UVR1611, UVR610, RSM610, CAN-EZ, CAN-BC2…) into Gladys, read only, through the official JSON API of the C.M.I. on your local network: inputs, outputs, DL bus, and on request system values, logging, M-Bus, Modbus and KNX. One device per CAN node. The C.M.I. accepts one request per minute: the integration never sends more, so a node is read every 5 minutes by default. Nothing can be changed on the controllers from Gladys. Never tested with a real device. Not affiliated with Technische Alternative. |
+| IP address of the C.M.I. | `string` | Sí | The address of the C.M.I. on your local network (":port" when it is not 80), without path. |
+| User name of the C.M.I. | `string` | Sí | A user of the web interface of the C.M.I. (admin by default). |
+| Password of the C.M.I. | `secret` | Sí | The password of this user. Kept by Gladys in its database, never shown again, sent only to the C.M.I. (HTTP Basic authentication, on your local network). |
+| CAN nodes (optional) | `string` | No | The numbers of the CAN nodes to read, separated by commas (16 at most). Empty: the list of the C.M.I. is read (one more request every 6 hours). |
+| Values read | `select` | No | Main: inputs, outputs and DL bus (one request per node). All: also system values, logging, network inputs, M-Bus, Modbus, KNX and electrical power, when the device has them (two requests for some devices). |
+| Refresh interval (s) | `number` | No | Seconds between two reads of all the nodes (120 to 3600). Whatever this value, two requests to the C.M.I. are always at least 75 s apart: with several nodes, a full read takes longer. |
+| Language of the names | `select` | No | Used for the names of the devices and features added from now on. |
+
+## Cómo instalar TA C.M.I. en Gladys
+
+1. En Gladys, abre **Integraciones**: TA C.M.I. aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-ta-cmi:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-ta-cmi](https://github.com/LM1LC3N7/gladys-ta-cmi).
+
+TA C.M.I. requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+TA C.M.I. es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-ta-cmi) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-ta-cmi/blob/HEAD/docs/en.md)

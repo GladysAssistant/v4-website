@@ -1,0 +1,239 @@
+---
+title: "CrowdSec Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "CrowdSec"
+description: "CrowdSec in Gladys: gesperrte Adressen, Alarme und Angriffe in deinen Szenen und im Dashboard. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-crowdsec.png"
+keywords:
+  - "crowdsec"
+  - "crowdsec smart home"
+  - "gladys crowdsec"
+  - "crowdsec gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-crowdsec instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"CrowdSec","description":"CrowdSec in Gladys: gesperrte Adressen, Alarme und Angriffe in deinen Szenen und im Dashboard.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-crowdsec","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-crowdsec.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T17:31:59Z"}} />
+
+[CrowdSec](https://www.crowdsec.net/) liest die Protokolle deiner Server (SSH,
+Webserver, Home Assistant, Nextcloud…), erkennt Angriffe mit seinen Szenarien
+(Brute Force, Scans, Exploits) und **sperrt** die angreifenden Adressen über
+seine Bouncer (Firewall, Reverse Proxy). Es teilt auch, was es sieht: Jede
+Installation erhält die **Community-Sperrliste**. Diese Integration bringt
+CrowdSec in Gladys: ein Gerät „CrowdSec“ mit den aktiven Entscheidungen und den
+Alarmen des Tages, Szenen, die bei jeder neuen Sperre oder jedem neuen Alarm
+auslösen (um dir eine Benachrichtigung mit Adresse und Szenario zu schicken),
+eine Aktion, die eine Adresse entsperrt, und ein Dashboard-Widget mit den
+zuletzt gesperrten Adressen.
+
+Getestet mit einem echten CrowdSec v1.8.1 (Docker, SSH-Brute-Force aus einer
+Protokolldatei abgespielt, Entscheidungen mit `cscli` hinzugefügt und
+gelöscht). Entwickelt ohne Produktivinstallation und ohne Community-Sperrliste:
+Rückmeldungen sind willkommen in
+[den Issues](https://github.com/guim31/gladys-crowdsec/issues).
+
+## Was du brauchst
+
+- Gladys Assistant 5.1.0 oder neuer.
+- CrowdSec 1.5 oder neuer, mit seiner **lokalen API** (LAPI, Port 8080),
+  erreichbar vom Gladys-Rechner. Eine native Installation lauscht nur auf
+  `127.0.0.1:8080`: Setze `listen_uri: 0.0.0.0:8080` unter `api.server` in
+  `/etc/crowdsec/config.yaml` (und halte Port 8080 zum Internet hin
+  geschlossen). Das Docker-Image lauscht bereits auf allen Schnittstellen:
+  Veröffentliche seinen Port 8080.
+- Einen **Bouncer-Schlüssel** (nur Lesezugriff auf die Entscheidungen).
+- Optional: ein **Maschinenkonto** (Login und Passwort), um die Alarme zu lesen
+  und eine Adresse zu entsperren.
+
+Die Integration liest den Entscheidungs-Stream ihres Bouncer-Schlüssels: die
+vollständige Liste beim Start und einmal pro Stunde, sonst nur die Änderungen
+(standardmäßig jede Minute). Mit einem Maschinenkonto liest sie auch die Alarme
+der letzten Stunde. Nichts geht ins Internet.
+
+## Erste Schritte
+
+### 1. Einen Bouncer-Schlüssel erstellen
+
+Auf dem CrowdSec-Rechner:
+
+```bash
+cscli bouncers add gladys
+```
+
+Mit Docker: `docker exec crowdsec cscli bouncers add gladys`. Der Schlüssel
+wird nur einmal angezeigt: Kopiere ihn.
+
+### 2. Ein Maschinenkonto erstellen (optional)
+
+Für die Alarme, das Land der Angreifer und die Entsperr-Aktion:
+
+```bash
+cscli machines add gladys --password 'ein-langes-passwort' -f /dev/null
+```
+
+`-f /dev/null` ist wichtig: Ohne diese Option schreibt `cscli` die neuen
+Zugangsdaten über die des lokalen CrowdSec-Agenten.
+
+### 3. Die Integration konfigurieren
+
+In Gladys, **Integrationen → CrowdSec → Konfiguration**:
+
+- **Adresse der lokalen API**: `http://192.168.1.2:8080` (der CrowdSec-Rechner);
+- **Bouncer-Schlüssel**: der Schlüssel aus Schritt 1;
+- **Maschinen-Login** und **Maschinen-Passwort**: das Konto aus Schritt 2, oder
+  leer;
+- **Löschen von Entscheidungen durch Szenen**: standardmäßig deaktiviert,
+  siehe unten;
+- **Aktualisierungsintervall**: von 30 Sekunden bis 5 Minuten;
+- **Sprache der Namen**: Namen der Funktionen und Szenen-Ergebnisse.
+
+**Verbindung testen** fasst zusammen, was die Integration liest.
+
+### 4. Das Gerät anlegen
+
+Lege im Tab **Entdecken** das Gerät „CrowdSec“ an. Das Widget und die
+Szenen-Auslöser funktionieren auch ohne es.
+
+## Das Gerät
+
+Das Gerät „CrowdSec“ hat diese Funktionen:
+
+| Funktion                     | Bedeutung                                                                      |
+| ---------------------------- | ------------------------------------------------------------------------------ |
+| **Erreichbar**               | 1, wenn die lokale API antwortet, 0 nach zwei fehlgeschlagenen Abfragen        |
+| **Lokale Entscheidungen**    | Aktive Entscheidungen von hier: Szenarien von CrowdSec, `cscli`, die Konsole   |
+| **Community-Entscheidungen** | Aktive Entscheidungen der Community-Sperrliste und der abonnierten Sperrlisten |
+| **Alarme (24 h)**            | Alarme der letzten 24 Stunden (nur mit Maschinenkonto)                         |
+| **Letztes Szenario**         | Szenario des letzten Alarms oder der letzten lokalen Entscheidung              |
+
+Jede Zahl behält ihren Verlauf, für ein Diagramm der Angriffe über die Wochen.
+
+## Dashboard
+
+Das Widget **CrowdSec-Entscheidungen** zeigt die aktiven lokalen
+Entscheidungen, die Community-Sperrliste und die Alarme des Tages, dann die
+zuletzt gesperrten Adressen: Adresse oder Bereich, Szenario und Restzeit, ein
+rotes Symbol für eine Sperre, ein oranges für ein Captcha. **Aktualisieren**
+liest CrowdSec neu.
+
+## Szenen
+
+### Auslöser
+
+- **Neue lokale Entscheidung**: CrowdSec sperrt eine Adresse (oder verlangt ein
+  Captcha). Der Filter behält nur die Sperren oder nur die Captchas. Variablen:
+  die Adresse oder der Bereich, der Bereichstyp (`Ip`, `Range`), die Maßnahme
+  (`ban`, `captcha`), das Szenario, die Herkunft (`crowdsec` für ein Szenario,
+  `cscli` für eine von Hand hinzugefügte Entscheidung), die Dauer in Minuten
+  und das Land des Angreifers, wenn CrowdSec es kennt (Maschinenkonto und
+  GeoIP-Anreicherung).
+- **Neuer Alarm**: Ein Szenario löst bei einer Quelle aus (nur mit
+  Maschinenkonto), mit oder ohne Entscheidung (ein Szenario im
+  Simulationsmodus erzeugt Alarme, ohne zu sperren). Variablen: das Szenario,
+  die Quelladresse, der Bereichstyp, das Land, der Netzbetreiber, die Zahl der
+  Ereignisse und der getroffenen Entscheidungen.
+
+Ein Szenario, das sperrt, löst beide Auslöser aus: Wähle einen für deine
+Benachrichtigungen. Entscheidungen der Community-Sperrliste lösen nie etwas
+aus: Davon gibt es Zehntausende. Kommen mehr als 20 Entscheidungen oder Alarme
+in einer Abfrage (ein großer Scan), lösen nur die 20 neuesten eine Szene aus.
+
+### Aktionen
+
+- **Zustand von CrowdSec**: liest die Zähler für die nächsten Aktionen —
+  erreichbar oder nicht, lokale und Community-Entscheidungen, Alarme der
+  letzten 24 Stunden, die zuletzt gesperrte Adresse, das letzte Szenario — und
+  einen fertigen Satz wie „CrowdSec: 3 lokale Entscheidung(en), 15012
+  Community-Entscheidung(en), 5 Alarm(e) in 24 h (203.0.113.7, ssh-bf).“
+- **Entscheidung löschen (entsperren)**: löscht alle Entscheidungen zu einer
+  Adresse (`203.0.113.7`) oder einem Bereich (`203.0.113.0/24`), auch die der
+  Community-Sperrliste (sie kommen beim nächsten Abruf der Liste zurück). Ein Bereich löscht die Entscheidungen darin; eine Sperre auf einem ganzen Bereich, der die Adresse enthält, bleibt bestehen. Das
+  Adressfeld akzeptiert die Variablen des Auslösers. **Standardmäßig
+  deaktiviert**: Aktiviere „Löschen von Entscheidungen durch Szenen“ in der
+  Konfiguration, mit einem Maschinenkonto. Ausgaben: die Zahl der gelöschten
+  Entscheidungen und ein Satz.
+
+### Ideen für Szenen
+
+- **Neue lokale Entscheidung** → eine Nachricht senden: „CrowdSec hat
+  \{\{triggerEvent.data.ip\}\} gesperrt (\{\{triggerEvent.data.scenario\}\}, \{\{triggerEvent.data.country\}\})“.
+- Jeden Morgen **Zustand von CrowdSec** → seinen Satz senden: die Nacht deiner
+  Server in einer Zeile.
+- Wenn die Funktion **Erreichbar** auf 0 geht, eine Nachricht senden: Der
+  Schutz des Hauses ist ausgefallen.
+- Ein Dashboard-Knopf, der **Entscheidung löschen (entsperren)** für die
+  Adresse eines versehentlich gesperrten Familienmitglieds ausführt.
+
+## Fehlerbehebung
+
+- **„CrowdSec antwortet nicht“**: Prüfe Adresse und Port vom Gladys-Rechner aus
+  (`curl http://192.168.1.2:8080/health` antwortet `{"status":"up"}`) und die
+  `listen_uri` einer nativen Installation.
+- **„Bouncer-Schlüssel abgelehnt“**: Der Schlüssel wurde falsch abgeschrieben
+  oder gelöscht (`cscli bouncers list`); erstelle einen neuen.
+- **„Maschinen-Login oder Passwort abgelehnt: keine Alarme“**: Prüfe mit
+  `cscli machines list`, dass die Maschine existiert und bestätigt ist. Die
+  Entscheidungen werden weiter gelesen.
+- **„keine lokale CrowdSec-API unter dieser Adresse“**: Die Adresse führt zu
+  einem anderen Dienst; die lokale API antwortet standardmäßig auf Port 8080.
+- **„Zertifikat abgelehnt“**: Nutze die `http://`-Adresse im lokalen Netz oder
+  ein Zertifikat, dem Gladys vertraut.
+- **Kein Land in den Variablen**: CrowdSec fügt das Land mit dem Parser
+  `crowdsecurity/geoip-enrich` hinzu, und nur zu den Alarmen: Dafür braucht es
+  das Maschinenkonto.
+- Mehr Details in den Protokollen der Integration (Integrationen → CrowdSec →
+  Protokolle). Vollständige Adressen erscheinen nur mit `LOG_LEVEL=debug`.
+
+## Grenzen
+
+- Eine lokale CrowdSec-API pro Integration.
+- Entscheidungen zu einem Land oder einem AS (andere Bereiche als `Ip` und
+  `Range`) werden nicht gezählt: Der Stream eines Bouncers enthält nur Adressen
+  und Bereiche.
+- Die Alarme brauchen ein Maschinenkonto: Mit dem Bouncer-Schlüssel allein gibt
+  es weder Alarme noch Land.
+- Eine Entscheidung hinzufügen (eine Adresse sperren) wird nicht angeboten:
+  CrowdSec und `cscli` können das besser.
+- Die CrowdSec-Konsole (app.crowdsec.net) wird nicht gelesen.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt CrowdSec in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Deine lokale CrowdSec-API | `section` | Nein | Erstelle auf dem CrowdSec-Rechner einen Bouncer-Schlüssel mit: cscli bouncers add gladys. Die lokale API lauscht auf Port 8080 und muss von Gladys aus erreichbar sein (listen_uri 0.0.0.0:8080). |
+| Adresse der lokalen API | `string` | Nein | Die Adresse der lokalen CrowdSec-API, standardmäßig Port 8080. |
+| Bouncer-Schlüssel | `secret` | Nein | Wird einmal von cscli bouncers add gladys angezeigt. Nur Lesen: Er liest nur die Entscheidungen. |
+| Alarme (optional) | `section` | Nein | Ein Maschinenkonto liest die Alarme (Szenario, Quelle, Land) und kann eine Entscheidung löschen. Erstelle es mit: cscli machines add gladys --password \<Passwort> -f /dev/null. Leer lassen, um nur den Entscheidungen zu folgen. |
+| Maschinen-Login | `string` | Nein |  |
+| Maschinen-Passwort | `secret` | Nein |  |
+| Löschen von Entscheidungen durch Szenen | `select` | Nein | Aktiviert die Szenen-Aktion, die eine Adresse entsperrt. Braucht das Maschinenkonto. |
+| Optionen | `section` | Nein |  |
+| Aktualisierungsintervall | `select` | Nein | Wie oft CrowdSec gelesen wird: nur die Änderungen, außer einmal pro Stunde. |
+| Sprache der Namen | `select` | Nein | Sprache der Funktionsnamen (beim Anlegen eines Geräts festgelegt) und der Szenen-Ergebnisse. |
+
+## So installierst du CrowdSec in Gladys
+
+1. Öffne in Gladys **Integrationen**: CrowdSec erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-crowdsec:1.0.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-crowdsec](https://github.com/guim31/gladys-crowdsec).
+
+CrowdSec benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+CrowdSec ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-crowdsec) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-crowdsec/blob/HEAD/docs/de.md)

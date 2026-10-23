@@ -1,0 +1,214 @@
+---
+title: "Integración domótica Oura, gratuita y de código abierto"
+sidebar_label: "Oura"
+description: "Oura ring (official API v2), read only: sleep, readiness, activity. Not a medical device. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-oura.png"
+keywords:
+  - "oura"
+  - "domótica oura"
+  - "gladys oura"
+  - "oura gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-oura instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Oura","description":"Oura ring (official API v2), read only: sleep, readiness, activity. Not a medical device.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-oura","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-oura.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T10:11:05Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+Reads the data of your **Oura ring** in Gladys through the **official Oura API
+v2**, read only: sleep, readiness and activity scores, sleep durations (total,
+deep, REM), lowest heart rate and heart rate variability of the night, body
+temperature deviation, average SpO2 of the night, steps and active calories of
+the day, latest heart rate.
+
+> **Not a medical device.** Never use these values for a diagnosis or a
+> treatment decision. They come from the Oura cloud when the Oura app syncs:
+> they may be late, missing or wrong.
+
+Unofficial integration, not affiliated with Oura. Oura is a trademark of its
+owner. **Never tested with a real device** (ring) nor with a real account: the
+answers of the API were modelled on the Oura documentation, on the oura-ring
+library and on the Home Assistant integration.
+
+## What you need
+
+- An Oura ring and its Oura account (the Oura API asks for an active Oura
+  membership: without it, it refuses the data, see "Statuses").
+- An **application** you create yourself on the Oura developer portal
+  (OAuth2). Personal access tokens are no longer accepted by Oura.
+- Gladys 5.1 or later.
+
+## Step by step
+
+### 1. Find the return address of Gladys
+
+1. In Gladys, open the integration, then its **Configuration** tab.
+2. Fill in any text in **Client ID** and **Client Secret** for now, save, then
+   click **Connect** once. The Oura page will refuse (unknown app): close it.
+3. The status at the top of the page now shows **"The return address of this
+   Gladys is https://…"**. Copy this address exactly (scheme, host, port,
+   path).
+
+If you cannot use this address (for example Gladys is only reachable on your
+local network over http, and the portal asks for https), use an address of
+yours instead and fill it in **Redirect URI** (see step 4).
+
+### 2. Create the Oura application
+
+1. Open [https://developer.ouraring.com/](https://developer.ouraring.com/) and sign in with your Oura account.
+2. Open **My Applications**, then create a new application (the exact names
+   of the buttons and fields were not checked on a real account).
+3. Give it a name (e.g. "Gladys"), a description, your e-mail address and
+   website or privacy policy addresses if the form asks for them.
+4. In **Redirect URIs**, paste the address of step 1 (or yours). It must match
+   exactly.
+5. If the form asks for scopes, allow at least **daily**, **heartrate** and
+   **spo2** (nothing else is needed).
+6. Save. Copy the **Client ID** and the **Client Secret** of the application.
+
+### 3. Fill in the configuration
+
+1. Paste the **Client ID** and the **Client Secret** in Gladys, then save. The
+   Client Secret is kept by Gladys in its database, never shown again, sent
+   only to Oura.
+2. Leave **Token endpoint** on `moi.ouraring.com`: the live token endpoint for the
+   apps of the current developer portal and for most older ones (it is the one
+   the Home Assistant integration uses).
+
+### 4. Authorize
+
+1. Click **Connect**: the Oura page opens. Sign in and allow the access asked:
+   daily data, heart rate and SpO2, read only (no e-mail, no personal
+   information). Your password is typed on the Oura page only, never in
+   Gladys.
+2. Oura sends you back to Gladys; the integration reads your data.
+3. **With your own redirect URI**: at the end, the browser shows your address
+   with `code=` and `state=`. Copy the whole address and paste it into
+   **Finish the authorization**, within 15 minutes.
+4. Open the **Discovery** tab and add the ring.
+
+If Oura refuses the authorization while the Client ID, the Client Secret and
+the redirect URI are right (a few old apps), choose `api.ouraring.com` in
+**Token endpoint** (the one the OpenAPI specification still names), save and
+click **Connect** again. A refused code is consumed: the two endpoints are
+never tried one after the other. A change of this field applies at the next
+Connect: a running session keeps renewing at the endpoint that issued it.
+
+## The device
+
+One device **Oura ring** (or **Bague Oura**), all features read only, no
+history by default (health data; you may turn the history on per feature):
+
+| Feature                                          | Type in Gladys   | Source                                        |
+| ------------------------------------------------ | ---------------- | --------------------------------------------- |
+| Sleep score                                      | number 0-100     | latest `daily_sleep`                          |
+| Readiness score                                  | number 0-100     | latest `daily_readiness`                      |
+| Activity score                                   | number 0-100     | latest `daily_activity`                       |
+| Sleep duration, deep sleep, REM sleep            | duration (hours) | main sleep of the latest night (`sleep`)      |
+| Lowest heart rate during sleep (bpm)             | number           | same                                          |
+| Average heart rate variability during sleep (ms) | number           | same                                          |
+| Body temperature deviation (°C)                  | number           | latest `daily_readiness`                      |
+| Average blood oxygen during sleep (SpO2, %)      | number           | latest `daily_spo2`                           |
+| Steps of the day, active calories (kcal)         | number           | latest `daily_activity`                       |
+| Latest heart rate (bpm)                          | number           | latest `heartrate` sample of the last 3 hours |
+
+Gladys has no unit for a heart rate, a score or a blood oxygen: the unit is in
+the name. Only data of yesterday or today counts as current: an older day (the
+ring did not sync) and a heart rate older than 3 hours are never published.
+
+The **Latest heart rate** is published with the time of its sample (it often
+arrives minutes or hours later, when the app syncs). Gladys then stores it as
+a dated value: a **scene triggered on this feature does not fire** (the other
+features, published without a date, trigger scenes as usual).
+
+## Requests and limits
+
+- One read every **30 minutes** by default (15 to 240): 6 to 8 requests per
+  read, at most 1,000 a day (Oura allows far more). The ring sends its data
+  when the Oura app syncs: reading more often brings nothing.
+- Never sooner than the interval, whatever starts it: the **Test Oura**
+  button, a saved configuration, Discovery, a reconnection of Gladys, a
+  restart of the container (the time of the last read is kept in `/data`).
+- A 429 (too many requests), a server error (5xx) or the daily budget pause
+  every request, kept in `/data` across a restart.
+- The token is renewed by a timer before its end, one renewal at a time,
+  never twice within a minute. Oura's renewal tokens serve once: the new one
+  is saved at once.
+- A value is published once per record (the value and its day, or the heart
+  rate and its time): nothing is sent again while Oura is down or the ring does
+  not sync, and the heart rate carries the time of its sample.
+
+## Statuses
+
+- **Not signed in**: click Connect. The integration never signs in by itself.
+- **Session ended (renewal refused)**: kept across a restart, never retried by
+  itself; click Connect to authorize again.
+- **Access refused even with a new token**: kept across a restart; click
+  Connect, or **Test Oura** once (after the interval).
+- **Oura refused the data (403)**: the API needs an active Oura membership, or
+  the daily data was not allowed at the authorization (then click Connect);
+  read again after 6 hours.
+- **Not read this time: SpO2…**: one collection was refused (scope not
+  granted, ring without that feature) or failed; the others are published.
+- A restart of the container, or an answer of Oura arriving too late, in the
+  very seconds of a renewal can lose the new renewal token (it serves once):
+  the status then becomes **Session ended**; click Connect. Rare, inherent to
+  single-use renewal tokens.
+
+## Privacy
+
+- Read only: the integration never writes to Oura.
+- The health values stay in memory and go to Gladys only: never in the logs,
+  never in a status message, never in `/data`.
+- The tokens are kept in clear in the `/data` volume of the integration
+  (readable by its container only), sent only to Oura.
+- Revoke the access at any time in your Oura account (authorized apps) or by
+  deleting the application on the developer portal.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Oura te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| How it works | `section` | No | NOT A MEDICAL DEVICE: never use it for a diagnosis or a treatment decision; its values may be late or missing. Gladys reads, through the official Oura API v2, the latest data of your Oura ring, read only: sleep, readiness and activity scores, sleep durations, lowest heart rate and heart rate variability of the night, body temperature deviation, SpO2, steps, active calories, latest heart rate. One Gladys device (Discovery tab). The ring sends its data when the Oura app syncs. It needs an app you create yourself on the Oura developer portal (OAuth2): follow the steps below or the guide. Your password is typed on the Oura page only. Health data: no history by default, never in the logs. Never tested with a real account or ring. Unofficial integration, not affiliated with Oura. |
+| 1. Your Oura app | `section` | No | On the Oura developer portal, sign in with your Oura account and create an application (OAuth). As redirect URI, give the return address of this Gladys: click Connect once below, the status at the top of this page then shows it (copy it exactly, https), or give an address of yours and fill in "Redirect URI" below. Save the application, then copy its Client ID and Client Secret below and save. |
+| Client ID | `string` | Sí | The Client ID of your Oura app. |
+| Client Secret | `secret` | Sí | The Client Secret of your Oura app. Kept by Gladys in its database, never shown again, sent only to Oura. |
+| 2. Authorize | `section` | No | Click Connect: the Oura page opens; sign in and allow the access asked (daily data, heart rate, SpO2: nothing else, read only). Oura sends you back to Gladys and the integration reads your data. If the redirect URI of your app is not this Gladys, write it in "Redirect URI": at the end, copy the whole address the browser shows (it holds code= and state=) and paste it into "Finish the authorization" below, within 15 minutes. The tokens are kept in clear in the /data volume of the integration (readable by its container only), sent only to Oura. |
+| Redirect URI (optional) | `string` | No | Empty: Oura sends you back to this Gladys. Otherwise the redirect URI of your Oura app (https, or http on localhost only): finish by pasting the address the browser ended on. |
+| Oura account | `oauth2` | No | Opens the Oura authorization page (save the Client ID and Secret first). |
+| Token endpoint | `select` | No | Leave moi.ouraring.com (the live one for the apps of the developer portal). Only if Oura refuses the authorization with a correct Client ID, Secret and redirect URI (an old app), choose the other one and click Connect again: a refused code is consumed, so they are never tried one after the other. A change applies at the next Connect: the current session keeps renewing where it was issued. |
+| Refresh interval (minutes) | `number` | No | The ring sends its data when the Oura app syncs: reading more often brings nothing. At most 8 requests per read, 1,000 a day; never sooner than this interval, whatever starts it (test button, saved configuration, Discovery, reconnection of Gladys, restart). |
+| Language of the names | `select` | No |  |
+
+## Cómo instalar Oura en Gladys
+
+1. En Gladys, abre **Integraciones**: Oura aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-oura:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-oura](https://github.com/LM1LC3N7/gladys-oura).
+
+Oura requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Oura es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-oura) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-oura/blob/HEAD/docs/en.md)

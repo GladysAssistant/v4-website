@@ -1,0 +1,262 @@
+---
+title: "Centreon smart home integration, free and open source"
+sidebar_label: "Centreon"
+description: "Your Centreon hosts and services in Gladys, with scenes when a host goes down or a service fails. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-centreon.png"
+keywords:
+  - "centreon"
+  - "centreon smart home"
+  - "gladys centreon"
+  - "centreon gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-centreon instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Centreon","description":"Your Centreon hosts and services in Gladys, with scenes when a host goes down or a service fails.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-centreon","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-centreon.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T17:30:16Z"}} />
+
+Bring your [Centreon](https://www.centreon.com/) monitoring into Gladys: each
+host becomes a device (up, services WARNING, CRITICAL and UNKNOWN, unhandled
+problems, acknowledged, downtime), a "Centreon" device sums up the whole
+setup, and your scenes react when a host goes down or a service fails — a red
+light when the NAS is down, a message when a backup is CRITICAL. A scene can
+also acknowledge the problems of a host, and a dashboard widget lists the
+problems in progress.
+
+The integration reads the REST API v2 of Centreon (`/centreon/api/latest`) on
+your local network, with a dedicated Centreon user. Nothing goes through a
+cloud.
+
+Tested against a real Centreon 24.10 (24.10.12, community all-in-one Docker
+image: test checks forced to WARNING, CRITICAL and UNKNOWN, a host DOWN, a host
+UNREACHABLE behind it, a downtime, acknowledgements, a host never checked,
+users without the rights). Feedback welcome:
+[github.com/guim31/gladys-centreon/issues](https://github.com/guim31/gladys-centreon/issues).
+
+## What you need
+
+- Gladys Assistant 5.1.0 or later.
+- Centreon with its REST API v2 (only 24.10 was tested; 22.04 and later should work), its web interface
+  reachable from the Gladys machine (usually `http://<address>/centreon`).
+  Centreon Open Source, IT or Business editions alike.
+- A Centreon user for Gladys, with only the rights it needs.
+
+## Getting started
+
+### 1. Create a Centreon user
+
+In Centreon, as an administrator:
+
+1. **Configuration > Users > Contacts / Users > Add**: a user `gladys`, not an
+   administrator, with a long password. In the **Centreon Authentication**
+   tab, set **Reach API Realtime** to Yes (Reach API Configuration is not
+   needed).
+2. **Administration > ACL > Resources Access**: a resource with the hosts to
+   follow (or all hosts) and, if you filter on host groups, **those host
+   groups too**: a user only sees a host group its resources hold.
+3. **Administration > ACL > Actions Access** (to acknowledge from Gladys): an
+   action access with **Acknowledge** for hosts and for services.
+4. **Administration > ACL > Access Groups**: a group with the user, the
+   resource and the action access.
+
+Centreon computes the ACL within a minute.
+
+### 2. Configure the integration
+
+In Gladys, open the configuration of the integration:
+
+- **Address**: the address of the Centreon web interface, e.g. `192.168.1.2`.
+  `http://` and `/centreon` are added unless you type others (e.g.
+  `https://monitoring.example.com/centreon`). An address copied from the
+  browser works too.
+- **Centreon login** and **Password**: the user of step 1.
+- **Host groups (optional)**: names of host groups separated by commas, e.g.
+  `homelab, linux-servers`: a host in one of them is kept. Empty: every host
+  the user can see.
+- **Refresh interval**: 30 seconds to 5 minutes (1 minute by default).
+- **Allow acknowledging from scenes**: untick to turn the acknowledgement
+  action off.
+- **Accept self-signed certificates**: only for an `https://` address whose
+  certificate is self-signed. Off by default.
+- **Language of the names**: language of the feature names and of the scene
+  results.
+
+Save, then click **Test the connection**: it shows the Centreon version, the
+number of hosts, of hosts down and of services in problem.
+
+### 3. Add the devices
+
+Open the **Discover** tab of the integration and add the hosts to follow, and
+the "Centreon" device if you want the totals. The scene triggers work for
+every host, added to Gladys or not.
+
+## The devices
+
+Each **host** (named after its name in Centreon; renaming it in Centreon keeps
+the same device):
+
+| Feature            | Value                                                                |
+| ------------------ | -------------------------------------------------------------------- |
+| Host up            | 1 UP, 0 DOWN or UNREACHABLE; empty while the host is PENDING         |
+| Services WARNING   | number of services WARNING                                           |
+| Services CRITICAL  | number of services CRITICAL                                          |
+| Services UNKNOWN   | number of services UNKNOWN                                           |
+| Unhandled problems | host and service problems neither acknowledged nor in a downtime     |
+| Host acknowledged  | 1 while the host is DOWN or UNREACHABLE and its problem acknowledged |
+| In downtime        | 1 while the host is in a downtime                                    |
+
+The **Centreon** device: Hosts down (DOWN or UNREACHABLE), Services WARNING,
+Services CRITICAL, Services UNKNOWN and Unhandled problems, over the hosts of
+the configuration.
+
+A host is UNREACHABLE when it is DOWN behind a parent host that is down too.
+The service counts include the states Centreon is still confirming (SOFT), as
+Resource Status shows them. Values are sent to Gladys only when they change,
+and every 6 hours otherwise.
+
+## Dashboard
+
+The **Centreon problems** widget shows three tiles — the hosts down, the
+services CRITICAL, the unhandled problems — and the problems: hosts DOWN, then
+UNREACHABLE, then services CRITICAL, UNKNOWN and WARNING, the newest first.
+Each row gives the service and its state, the host, ✓ once acknowledged and ⏸
+in a downtime. Ten rows at most. **Refresh** reads Centreon again. In its
+settings, choose hosts to show only theirs (empty: every host).
+
+## Scenes
+
+### Triggers
+
+- **A host goes down**: a host goes DOWN or UNREACHABLE. Filter: hosts
+  (empty: any). Variables: host name, state (DOWN, UNREACHABLE). A host going
+  from DOWN to UNREACHABLE is not announced twice.
+- **A host is back up**: a host announced down is UP again. Variables: host
+  name, duration in minutes.
+- **A service has a problem**: a service enters WARNING, CRITICAL or UNKNOWN,
+  or changes between them (WARNING to CRITICAL, for example). Filters: hosts,
+  states (empty: any; for "CRITICAL only", choose CRITICAL). Variables: host
+  name, service, state, check output (its first line).
+- **A service is OK again**: a service announced in problem is OK again.
+  Filters: hosts, the last problem state announced. Variables: host name,
+  service, last problem state, duration in minutes.
+- **Centreon no longer answers**: the REST API fails to answer twice in a row
+  (variables: address, error).
+
+The problems already there when the integration starts are not announced,
+but their end is. Only confirmed (HARD) states count: while Centreon retries
+a check (SOFT state, up to the "Max check attempts"), nothing is announced, as
+Centreon does not notify either. A change that happens while Gladys or the
+integration restarts is announced once at the next read. A problem in a
+downtime (of the service or of its host) is not announced; one that is still
+there when the downtime ends is announced then.
+
+### Actions
+
+- **Acknowledge the problems of a host**: acknowledges in Centreon the host
+  problem (DOWN, UNREACHABLE) and each of its services in problem not
+  acknowledged yet, with a comment (empty: "Acknowledged from Gladys"), in the
+  name of the Gladys user. The acknowledgement is sticky (until the host is UP
+  or the service OK), persistent, and notifies no one. Returns the number
+  acknowledged. Turn it off with "Allow acknowledging from scenes".
+- **Read the problems**: counts and lists the problems of one host, or of all,
+  for the next actions: number, unhandled, hosts down, services CRITICAL,
+  WARNING and UNKNOWN, and the list "host: problem".
+
+### Scene ideas
+
+- **A red light when the NAS is down**: trigger "A host goes down", host nas →
+  turn the living-room lamp red and send
+  `{{triggerEvent.data.host}}: {{triggerEvent.data.state_name}}`.
+- **Critical services only**: trigger "A service has a problem", state
+  CRITICAL → message `\{\{triggerEvent.data.host\}\} / \{\{triggerEvent.data.service\}\}:
+\{\{triggerEvent.data.output\}\}`.
+- **Morning report**: every day at 8:00, "Read the problems" → send the count
+  and the list when the count is above 0.
+- **Seen from the couch**: a dashboard button or a Zigbee remote runs
+  "Acknowledge the problems of a host" on the NAS.
+
+## Troubleshooting
+
+- **"Login or password refused by Centreon"**: check the user and its
+  password, and that it is enabled. A user authenticated by LDAP or SSO only
+  may not log in to the API: use a local user.
+- **"Access refused: allow the user to Reach API Realtime"**: step 1.1.
+- **"No host visible"**: the user has no ACL resource with hosts (step 1.2),
+  or Centreon has not computed the ACL yet (wait a minute).
+- **"Host groups not found"**: check the names, and add the host groups to the
+  ACL resource of the user (step 1.2).
+- **"Centreon does not answer"**: check the address from the Gladys machine.
+  `localhost` is the integration container itself: use the IP address of the
+  Centreon machine.
+- **"No Centreon API at this address"**: something else answers there: type the
+  address of the web interface, with its path if it is not `/centreon`
+  (a Centreon at the root of its site: `https://<address>/api/latest`).
+- **"This Centreon redirects to HTTPS"**: type `https://` before the address.
+- **"Certificate refused"**: tick "Accept self-signed certificates".
+- **A host is missing**: it is in none of the host groups of the
+  configuration, or not in the ACL resource of the user.
+- **The acknowledgement is refused**: the user needs the ACL actions to
+  acknowledge hosts and services (step 1.3).
+
+## Limits
+
+- One Centreon per integration (with remote servers and pollers, the address
+  of the central server: it sees every host).
+- Host states and service states only: no metrics, no performance data, no
+  business views (BAM).
+- The integration reads Centreon at the chosen interval: an event that comes
+  and goes between two reads is missed.
+- "A service is OK again" also fires when a service in problem is removed from
+  monitoring; a host removed from Centreon or from the scope ends quietly.
+- At most 30 scene events per read: a network outage can raise dozens at once;
+  the rest follows at the next reads.
+- No quota on the REST API: each read sends two requests (one more with host
+  groups, one more once an hour for the version), and logs in again when
+  Centreon ends the session.
+- An acknowledgement goes through Centreon's own command chain (Gorgone): if
+  it is stopped, Centreon accepts the acknowledgement but it never reaches the
+  engine.
+
+Not affiliated with Centreon.
+
+## Configuration settings
+
+These are the settings Centreon asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Centreon | `section` | No | In Centreon, create a dedicated user allowed to "Reach API Realtime", in an ACL group whose resources hold the hosts (and the host groups to filter on) and, to acknowledge, the acknowledgement actions. Then add the hosts from the Discover tab. |
+| Address | `string` | Yes | The address of the Centreon web interface; http:\/\/ and /centreon unless you type others (at the root of a site: …/api/latest). |
+| Centreon login | `string` | Yes |  |
+| Password | `secret` | Yes | The password of this user. Not an administrator: a dedicated user with the rights above only. |
+| Host groups (optional) | `string` | No | Names of host groups, separated by commas: a host in one of them is kept. Empty: every host the user sees. |
+| Options | `section` | No |  |
+| Refresh interval | `select` | No | How often Centreon is read: two API requests each time (three with host groups). |
+| Allow acknowledging from scenes | `boolean` | No | Untick to turn off the "Acknowledge the problems of a host" scene action. |
+| Accept self-signed certificates | `boolean` | No | Only for https:\/\/ with a self-signed certificate (common on a Centreon at home). |
+| Language of the names | `select` | No | Language of the feature names (set when a device is added) and of the scene results. |
+
+## How to install Centreon in Gladys
+
+1. In Gladys, open **Integrations**: Centreon appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-centreon:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-centreon](https://github.com/guim31/gladys-centreon).
+
+Centreon requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Centreon is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-centreon) — [source of this documentation](https://github.com/guim31/gladys-centreon/blob/HEAD/docs/en.md)

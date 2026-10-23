@@ -1,0 +1,239 @@
+---
+title: "Checkmk smart home integration, free and open source"
+sidebar_label: "Checkmk"
+description: "Your Checkmk hosts and services in Gladys, with scenes when a host goes down or a service fails. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-checkmk.png"
+keywords:
+  - "checkmk"
+  - "checkmk smart home"
+  - "gladys checkmk"
+  - "checkmk gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-checkmk instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Checkmk","description":"Your Checkmk hosts and services in Gladys, with scenes when a host goes down or a service fails.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-checkmk","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-checkmk.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T17:31:07Z"}} />
+
+Bring your [Checkmk](https://checkmk.com/) monitoring into Gladys: each host
+becomes a device (up, services in WARN, CRIT and UNKNOWN, unhandled problems,
+downtime), a "Checkmk" device sums up the whole site, and your scenes react
+when a host goes down or a service fails — a red light when the NAS is down, a
+message when a disk is CRIT. A scene can also acknowledge the problems of a
+host, and a dashboard widget lists the problems in progress.
+
+The integration reads the REST API of your Checkmk site on your local
+network, with an automation user. Nothing goes through a cloud.
+
+Tested against a real Checkmk 2.5 Community (official Docker image, a host
+monitored by its agent, hosts DOWN and UNREACH, local checks forced to WARN
+and CRIT, a downtime); 2.2 to 2.4 only through the same documented API.
+Feedback welcome:
+[github.com/guim31/gladys-checkmk/issues](https://github.com/guim31/gladys-checkmk/issues).
+
+## What you need
+
+- Gladys Assistant 5.1.0 or later.
+- Checkmk 2.2 or later, any edition (Community, formerly Raw, included),
+  reachable from the Gladys machine.
+- An automation user for Gladys. The role "Normal monitoring user" is enough:
+  it sees the hosts of its contact groups and may acknowledge their problems.
+
+## Getting started
+
+### 1. Create an automation user
+
+In Checkmk, open **Setup → Users → Add user**:
+
+- **Username**: e.g. `gladys`;
+- **Authentication**: "Automation secret for machine accounts", and copy the
+  secret;
+- **Roles**: "Normal monitoring user";
+- **Contact groups**: the groups of the hosts to follow (`all` by default).
+
+Save, then **activate the changes**.
+
+### 2. Configure the integration
+
+In Gladys, open the configuration of the integration:
+
+- **Site address**: the address you open Checkmk with, site name included,
+  e.g. `http://192.168.1.2/mysite`. Any page of the site copied from the
+  browser works too.
+- **Automation user** and **Automation secret**: the user of step 1.
+- **Folder (optional)**: the path of a Setup folder, e.g. `/homelab`, its
+  subfolders included. This is the path of the folder (its name in the URL),
+  not always its title. Empty: every host the user can see.
+- **Host labels (optional)**: `key:value` separated by commas, e.g.
+  `gladys:yes`; a host must carry them all. A key alone accepts any value.
+- **Refresh interval**: 30 seconds to 5 minutes (1 minute by default).
+- **Allow acknowledging from scenes**: untick to turn the acknowledgement
+  action off.
+- **Accept self-signed certificates**: for an `https://` address whose
+  certificate your browser does not trust either.
+- **Language of the names**: language of the feature names and of the scene
+  results.
+
+Save, then click **Test the connection**: it shows the Checkmk version, the
+number of hosts, of hosts down and of services in problem.
+
+### 3. Add the devices
+
+Open the **Discover** tab of the integration and add the hosts to follow, and
+the "Checkmk" device if you want the totals. The scene triggers work for every
+host, added to Gladys or not.
+
+## The devices
+
+Each **host**:
+
+| Feature            | Value                                                            |
+| ------------------ | ---------------------------------------------------------------- |
+| Host up            | 1 UP, 0 DOWN or UNREACH; empty while the host is PENDING         |
+| Services WARN      | number of services in WARN                                       |
+| Services CRIT      | number of services in CRIT                                       |
+| Services UNKNOWN   | number of services in UNKNOWN                                    |
+| Unhandled problems | host and service problems neither acknowledged nor in a downtime |
+| In downtime        | 1 while the host is in a scheduled downtime                      |
+
+The **Checkmk** device: Hosts down (DOWN or UNREACH), Services WARN, Services
+CRIT, Services UNKNOWN and Unhandled problems, over the hosts of the
+configuration.
+
+Values are sent to Gladys only when they change, and every 6 hours otherwise.
+
+## Dashboard
+
+The **Checkmk problems** widget shows three tiles — the hosts down, the
+services CRIT, the unhandled problems — and the problems: hosts DOWN, then
+UNREACH, then services CRIT, UNKNOWN and WARN, the newest first. Each row gives
+the service and its state, the host, ✓ once acknowledged and ⏸ in a downtime.
+Ten rows at most. **Refresh** reads Checkmk again. In its settings, choose
+hosts to show only theirs (empty: every host).
+
+## Scenes
+
+### Triggers
+
+- **A host goes down**: a host goes DOWN or UNREACH. Filter: hosts (empty:
+  any). Variables: host name, state (DOWN, UNREACH). A host going from DOWN to
+  UNREACH is not announced twice.
+- **A host is back up**: a host announced down is UP again. Variables: host
+  name, duration in minutes.
+- **A service has a problem**: a service enters WARN, CRIT or UNKNOWN, or
+  changes between them (WARN to CRIT, for example). Filters: hosts, states
+  (empty: any; for "CRIT only", choose CRIT). Variables: host name, service,
+  state, check output.
+- **A service is OK again**: a service announced in problem is OK again.
+  Filters: hosts, the last problem state announced. Variables: host name,
+  service, last problem state, duration in minutes.
+- **Checkmk no longer answers**: the REST API fails to answer twice in a row
+  (variables: site address, error).
+
+The problems already there when the integration starts are not announced, but their end is. Only confirmed (HARD) states count: while Checkmk retries a check (SOFT state), nothing is announced. A
+change that happens while Gladys or the integration restarts is announced once
+at the next read. A problem in a downtime (of the service or of its host) is
+not announced, as Checkmk does not notify it either; one that is still there
+when the downtime ends is announced then.
+
+### Actions
+
+- **Acknowledge the problems of a host**: acknowledges in Checkmk the host
+  problem (DOWN, UNREACH) and each of its services in problem not acknowledged
+  yet, with a comment (empty: "Acknowledged from Gladys"). The
+  acknowledgement is sticky (until the host is UP or the service OK) and sends
+  no notification. Returns the number acknowledged. Turn it off with "Allow
+  acknowledging from scenes".
+- **Read the problems**: counts and lists the problems of one host, or of all,
+  for the next actions: number, unhandled, hosts down, services CRIT, WARN and
+  UNKNOWN, and the list "host: problem".
+
+### Scene ideas
+
+- **A red light when the NAS is down**: trigger "A host goes down", host NAS →
+  turn the living-room lamp red and send
+  `{{triggerEvent.data.host}}: {{triggerEvent.data.state_name}}`.
+- **Critical services only**: trigger "A service has a problem", state CRIT →
+  message `\{\{triggerEvent.data.host\}\} / \{\{triggerEvent.data.service\}\}:
+\{\{triggerEvent.data.output\}\}`.
+- **Morning report**: every day at 8:00, "Read the problems" → send the count
+  and the list when the count is above 0.
+- **Seen from the couch**: a dashboard button or a Zigbee remote runs
+  "Acknowledge the problems of a host" on the NAS.
+
+## Troubleshooting
+
+- **"User or automation secret refused"**: check the user (an automation
+  user, not a password one) and its secret in Setup → Users, and that the
+  changes are activated.
+- **"Checkmk does not answer"**: check the address from the Gladys machine.
+  `localhost` is the integration container itself: use the IP address of the
+  Checkmk machine.
+- **"No Checkmk site at this address"**: the site name is missing or wrong in
+  the address: it is the first part of the path, `/mysite` in
+  `http://192.168.1.2/mysite/check_mk/`.
+- **"No host visible"**: the monitoring core of the site is stopped (`omd
+status`), or the user is in no contact group of the hosts.
+- **"Certificate refused"**: tick "Accept self-signed certificates", or use
+  the `http://` address on the local network.
+- **A host is missing**: it is outside the folder or the labels, or not in a
+  contact group of the user.
+- **The acknowledgement is refused**: the role of the user needs the
+  permission to acknowledge problems ("Normal monitoring user" has it).
+
+## Limits
+
+- One Checkmk site per integration (the hosts of remote sites, when the user
+  sees them from the central site, are included).
+- Host states and service states only: no metrics, no inventory.
+- "A service is OK again" also fires when a service in problem is removed from
+  monitoring; a host removed from Checkmk or from the scope ends quietly.
+- At most 30 scene events per read: a network outage can raise dozens at once;
+  the rest follows at the next reads.
+- No quota on the REST API: each read sends two requests (three once an hour,
+  for the version).
+
+Not affiliated with Checkmk GmbH. Checkmk is a trademark of Checkmk GmbH.
+
+## Configuration settings
+
+These are the settings Checkmk asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Checkmk site | `section` | No | In Checkmk (2.2+), Setup → Users: create a user with an "Automation secret for machine accounts", role "Normal monitoring user", in a contact group of the hosts to follow. Then add the hosts from the Discover tab: scene triggers work for every host, added or not. |
+| Site address | `string` | Yes | The address you open Checkmk with, site name included; the REST API is found from it. |
+| Automation user | `string` | Yes |  |
+| Automation secret | `secret` | Yes | A normal monitoring user is enough: it sees the hosts of its contact groups and may acknowledge them. |
+| Folder (optional) | `string` | No | Path of a Setup folder, subfolders included. Empty: every host the user can see. |
+| Host labels (optional) | `string` | No | key:value, separated by commas; a host must carry them all. A key alone: any value. |
+| Options | `section` | No |  |
+| Refresh interval | `select` | No | How often Checkmk is read: two or three API requests each time. |
+| Allow acknowledging from scenes | `boolean` | No | Untick to turn off the "Acknowledge the problems of a host" scene action. |
+| Accept self-signed certificates | `boolean` | No | Only for an https:\/\/ address whose certificate your browser does not trust either. |
+| Language of the names | `select` | No | Language of the feature names (set when a device is added) and of the scene results. |
+
+## How to install Checkmk in Gladys
+
+1. In Gladys, open **Integrations**: Checkmk appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-checkmk:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-checkmk](https://github.com/guim31/gladys-checkmk).
+
+Checkmk requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Checkmk is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-checkmk) — [source of this documentation](https://github.com/guim31/gladys-checkmk/blob/HEAD/docs/en.md)

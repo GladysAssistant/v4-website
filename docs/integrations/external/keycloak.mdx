@@ -1,0 +1,254 @@
+---
+title: "Keycloak smart home integration, free and open source"
+sidebar_label: "Keycloak"
+description: "Keycloak in Gladys: failed logins, locked accounts and sensitive admin events in your scenes. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-keycloak.png"
+keywords:
+  - "keycloak"
+  - "keycloak smart home"
+  - "gladys keycloak"
+  - "keycloak gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-keycloak instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Keycloak","description":"Keycloak in Gladys: failed logins, locked accounts and sensitive admin events in your scenes.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-keycloak","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-keycloak.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T06:24:00Z"}} />
+
+[Keycloak](https://www.keycloak.org/) is an open-source identity and access
+management server: single sign-on (SSO), multi-factor authentication and user
+federation for the services of your home or your company. This integration
+brings its **security events** into Gladys: one device per realm with the
+failed and successful logins of the day, the users, the active sessions and the
+locked accounts; scenes that fire on a failed login, a series of failures, an
+account locked by the brute-force protection or a sensitive admin event (to
+send yourself a notification with the user and the address); and a dashboard
+widget with the latest events.
+
+Tested against a real Keycloak 26.4.7 (Docker, `start-dev`: a test realm,
+failed and successful logins played through the OpenID Connect API, a lockout
+by the brute-force detection, users and roles changed by an administrator).
+Developed without a production installation: feedback welcome on
+[the issues](https://github.com/guim31/gladys-keycloak/issues).
+
+## What you need
+
+- Gladys Assistant 5.1.0 or later.
+- Keycloak, reachable from the Gladys machine (its public address, or its
+  local address on port 8080 or 8443). Tested with 26.4 only.
+- The **events turned on** in each realm watched (below): Keycloak saves no
+  event by default.
+- A **confidential client with a service account** and three read roles
+  (below).
+
+Gladys only reads: nothing in Keycloak can be changed from Gladys.
+
+## Getting started
+
+### 1. Turn on the events of the realm
+
+In the admin console, choose the realm, then **Realm settings → Events**:
+
+- tab **User events settings**: **Save events** on. The default event types
+  include `LOGIN`, `LOGIN_ERROR` and the lockouts. Keycloak keeps them for the
+  expiration set there: one day at least is needed for the 24-hour counts;
+- tab **Admin events settings**: **Save events** on, and **Include
+  representation** on, so that Gladys knows which user was created and which
+  roles were granted (without it, an admin role cannot be told from another).
+
+For the "Account locked" trigger: **Realm settings → Security defenses → Brute
+force detection**, choose a mode (lockout temporary or permanent).
+
+### 2. Create the client
+
+**Clients → Create client**: type OpenID Connect, client ID `gladys`. Next
+page: **Client authentication** on, tick **Service accounts roles** only
+(untick "Standard flow" and "Direct access grants"). Save, then copy the secret
+from the **Credentials** tab.
+
+### 3. Give it the read roles
+
+In the client, tab **Service accounts roles → Assign role → Filter by
+clients**, search `realm-management` and add:
+
+- `view-events` (user and admin events, lockouts);
+- `view-users` (the users, the brute-force status of an account);
+- `view-realm` (the sessions).
+
+**Several realms**: create the client in the `master` realm instead, and add
+these three roles from the client `<realm>-realm` of each realm watched (e.g.
+`home-realm`). A client of master also gets the version of Keycloak, which
+Keycloak hides from the clients of the other realms.
+
+### 4. Configure the integration
+
+In Gladys, **Integrations → Keycloak → Configuration**:
+
+- **Address of Keycloak**: e.g. `https://sso.example.com` (with `/auth` for
+  Keycloak 16 and older).
+- **Realms to watch**: e.g. `home`, or `home, family` (case-sensitive).
+- **Realm of the client**: empty when the client lives in the first realm
+  watched, `master` otherwise.
+- **Client ID** and **Client secret**: the ones of step 2.
+- **Failed logins in a series** and **Window of the series**: the rule of the
+  "Series of failed logins" trigger, 5 failures in 10 minutes by default.
+- **Refresh interval**: 1 minute by default.
+- **Language of the names**: language of the feature names and of the sentence.
+
+**Test the connection** reads Keycloak at once and sums up what it sees.
+
+### 5. Add the devices
+
+In **Discovery**, add the "Keycloak \<realm>" devices.
+
+## The device
+
+| Feature                | What it holds                                                |
+| ---------------------- | ------------------------------------------------------------ |
+| `Reachable`            | 1 when the realm can be read, 0 otherwise                    |
+| `Failed logins (1 h)`  | Failed logins of the last hour                               |
+| `Failed logins (24 h)` | Failed logins of the last 24 hours                           |
+| `Logins (24 h)`        | Successful logins of the last 24 hours                       |
+| `Users`                | User accounts of the realm (service accounts left out)       |
+| `Active sessions`      | Active sessions, one per user and application                |
+| `Locked accounts`      | Accounts the brute-force protection holds locked now         |
+| `Version`              | Version of Keycloak (only with a client of the master realm) |
+
+"Reachable" goes to 0 after two failed reads in a row: a restart of Keycloak
+goes unnoticed. The counts can trigger scenes like any sensor (e.g. "Failed
+logins (1 h)" above 20).
+
+## Dashboard
+
+The **Keycloak security** widget shows the failed and successful logins of the
+last 24 hours and the locked accounts, then the latest events (user, what
+happened, realm when there are several, time). **Refresh** reads Keycloak
+again.
+
+## Scenes
+
+### Triggers
+
+- **Failed login**: someone typed a wrong password or an unknown user name.
+  Filters: the realm, the user name. Variables: realm, user name typed,
+  address, application (client), Keycloak error code (`invalid_user_credentials`,
+  `user_not_found`, `user_temporarily_disabled`…).
+- **Series of failed logins**: the failures of a realm reach the number set in
+  the configuration within its window. Fires once per series, then again only
+  once the count fell below the threshold. Filter: the realm. Variables: realm,
+  number of failures, window, different user names and addresses, the latest
+  user name and address.
+- **Account locked**: the brute-force protection locks an account. Filters: the
+  realm, the user name. Variables: realm, user name, address of the last
+  failure, lockout (`temporary` or `permanent`).
+- **Sensitive admin event**: in a realm, an admin role is granted, another role
+  granted, a user created or deleted, a client created, changed or deleted, or
+  the realm settings changed. Filters: the realm, the event. Variables: realm,
+  event, operation, resource type, user, client or roles concerned (with
+  "Include representation"), address of the administrator.
+
+User names and addresses are personal data: they are passed to your scenes (to
+write a notification) and shown on the widget, never written to the
+integration logs at the info level.
+
+### Actions
+
+- **Keycloak state**: sums up Keycloak for a message: failed logins over 1
+  hour and 24 hours, logins, locked accounts, users, active sessions, version,
+  the latest failed user name and address, and a ready-made sentence
+  ("Keycloak: 5 failed login(s) in 1 h, 5 in 24 h, 1 login(s) in 24 h, 1 locked
+  account(s), 2 user(s)").
+
+### Scene ideas
+
+- **Account locked** → a notification "\{\{triggerEvent.data.username\}\} is
+  locked after too many failed logins (\{\{triggerEvent.data.ip\}\})".
+- **Sensitive admin event** with the event "Admin role granted" → a
+  notification at once, whatever the time.
+- **Series of failed logins** → a notification, and the porch light blinks red
+  if nobody is home.
+- Every evening, **Keycloak state** → the sentence in a message.
+
+## Troubleshooting
+
+- **"client refused"**: the client ID or the secret is wrong, "Client
+  authentication" is off, or "Service accounts roles" is not ticked. Check also
+  the **Realm of the client**.
+- **"role missing for the service account"**: `view-events` is missing.
+  "users not readable", "sessions not readable" or "lockouts not readable" in
+  the test: `view-users` or `view-realm` is missing.
+- **"realm not found"**: the realm name is case-sensitive (`Home` is not
+  `home`).
+- **No event at all**: the events are not saved in the realm (step 1), or they
+  expired.
+- **"TLS refused"**: Keycloak uses a self-signed certificate, or `https://` was
+  typed for the HTTP port 8080. Use its local address in `http://…:8080`, or a
+  trusted certificate.
+- **"no Keycloak at this address"**: check the address (the one you open the
+  admin console with, without `/admin/…`). Keycloak 16 and older need `/auth`.
+- **Version empty**: normal with a client outside master.
+- Detailed logs: set `LOG_LEVEL=debug` on the container.
+
+## Limits
+
+- At most 1,000 events per realm and per read, 3,000 at the first read. Beyond
+  (a massive attack), the counts are lower bounds.
+- At most 10 scene events per trigger and per read: an attack never sends
+  hundreds of notifications.
+- What happened while the integration was stopped is announced at the next
+  start (within the last 24 hours, the time of the latest event being kept in
+  `/data`); the first start announces nothing.
+- Each renewal of the token writes a `CLIENT_LOGIN` event in the realm of the
+  client: about 300 a day with the 5-minute tokens of a realm, up to one per
+  read with the 1-minute tokens of master.
+- At most 10 realms. The device of a realm is keyed by its name: renaming the
+  realm makes another device.
+- Only the logins, the lockouts and the admin events listed above are followed,
+  not the logouts, the token refreshes or the identity providers.
+
+Not affiliated with the Keycloak project, the Cloud Native Computing Foundation
+or Red Hat.
+
+## Configuration settings
+
+These are the settings Keycloak asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Keycloak server | `section` | No | In Keycloak, create a confidential client with a service account and give it the roles view-events, view-users and view-realm of realm-management. Turn on the user and admin events of the realm. The guide shows every step. |
+| Address of Keycloak | `string` | No | The address you open Keycloak with, or its local address (port 8080 or 8443). Add /auth for Keycloak 16 and older. |
+| Realms to watch | `string` | No | Names of the realms, separated by commas: one device each (10 at most). |
+| Realm of the client | `string` | No | Where the client lives. Empty: the first realm watched. To watch several realms, create the client in master. |
+| Client ID | `string` | No |  |
+| Client secret | `secret` | No | Credentials tab of the client. Read-only: Gladys changes nothing in Keycloak. |
+| Alerts | `section` | No | A series of failed logins fires once when this many failures happen in a realm within the chosen window. |
+| Failed logins in a series | `number` | No |  |
+| Window of the series | `select` | No |  |
+| Options | `section` | No |  |
+| Refresh interval | `select` | No | How often Keycloak is read: only the new events. |
+| Language of the names | `select` | No | Language of the feature names (set when the device is added) and of the scene results. |
+
+## How to install Keycloak in Gladys
+
+1. In Gladys, open **Integrations**: Keycloak appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-keycloak:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-keycloak](https://github.com/guim31/gladys-keycloak).
+
+Keycloak requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Keycloak is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-keycloak) — [source of this documentation](https://github.com/guim31/gladys-keycloak/blob/HEAD/docs/en.md)

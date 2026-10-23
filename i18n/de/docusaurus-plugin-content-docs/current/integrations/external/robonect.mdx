@@ -1,0 +1,163 @@
+---
+title: "Robonect Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Robonect"
+description: "Robotic mowers with a Robonect module, locally: state, battery, errors; pause, base, start. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-robonect.png"
+keywords:
+  - "robonect"
+  - "robonect smart home"
+  - "gladys robonect"
+  - "robonect gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-robonect instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Robonect","description":"Robotic mowers with a Robonect module, locally: state, battery, errors; pause, base, start.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-robonect","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-robonect.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T16:10:21Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+This integration shows a **robotic mower fitted with a Robonect module**
+(Husqvarna Automower, Gardena, Flymo, McCulloch) in Gladys, through the local
+JSON API of the module, without any cloud. **Never tested with a real
+device.** Not affiliated with Robonect, Husqvarna, Gardena nor Flymo.
+
+> **This is not the gladys-automower integration.** gladys-automower goes
+> through the Husqvarna cloud (Husqvarna account, connected Automower
+> robots). This one talks directly to the Robonect module, a board added
+> inside the mower, on your local network. If your mower has no Robonect
+> module, it is of no use to you.
+
+## What you get
+
+One mower in the Discovery tab, with:
+
+- **Mower state** (Gladys' "robot vacuum" card: mowing, paused, returning to
+  the base, charging, docked, error, stopped) and a **Return to the base**
+  button on that card;
+- **Status** as text ("Mowing", "Charging", "Mowing (stopped)"...), status
+  code, **mode** (Auto, Manual, Home, End of day...), stopped (paused);
+- **battery**, charging;
+- **error in progress**, error code and text;
+- time in the status, **mowing hours**, distance from the base, blade
+  quality, Wi-Fi signal (dBm), temperature and humidity inside the mower,
+  next start of the timer, module reachable;
+- three buttons: **Pause** (stop where it is), **Back to the base** and
+  **Start** (lift the stop).
+
+## Setup
+
+1. Give the Robonect module a **fixed IP address** in your router.
+2. In Gladys, open the Robonect integration and enter the IP address of the
+   module, its **user name** and **password** (those of its web interface).
+   Leave both empty only if the module has no login.
+3. Save, then add the mower from the **Discovery** tab.
+
+The password is kept by Gladys in its database, never shown again, sent only
+to the module. It travels **in clear** (HTTP Basic authentication, over
+HTTP) on your local network: that is how the module works. It is never
+written to the logs nor to `/data`.
+
+The module is read every 60 s (30 s to 1 h), **never more often**, even after
+a restart of the integration, a reconnection to Gladys, the "Test the
+connection" button or a Discovery scan. Only the `status` command, which
+does not wake a sleeping module, is sent for these reads.
+
+## The commands
+
+- **Pause** (stop where it is, Robonect's `stop` command) and **Back to the
+  base** ("Home" mode) are **always available**: never held back by the
+  option, a start in progress, a pause of the integration (HTTP 429 or 5xx)
+  or refused credentials, and possible right after a restart, before the
+  first read. They cancel a start not sent yet.
+- **Start** is **off by default**. Turn on "Allow the start from Gladys" to
+  use it. It lifts the stop of the mower, which then mows **according to its
+  mode** (Auto: following its timer; Home: it stays at the base). Before
+  sending, the integration reads the mower again and refuses if the module
+  does not answer fast enough, a value is missing, another module answers at
+  this address, the mower is not stopped (nothing to lift: the answer is a
+  failure, nothing is sent), or its status is not one of: parked, mowing
+  (stopped), looking for its base, charging, searching, sleeping, waiting
+  for the garage door. Any other status (error, off, offline, unknown...)
+  refuses. **Check that
+  nobody, child or pet, is on the lawn.**
+- No command is a switch: a "turn everything on/off" (voice assistants,
+  scenes) can never start the mower.
+- If the module does not answer in time, the answer is "Command sent,
+  without confirmation": check the state a few seconds later. A pause sent
+  while a start could still land is sent again if the mower runs again
+  (twice at most, within two minutes).
+- Back to the base changes the mode; if the mower was paused (stopped), it
+  may stay where it is until the stop is lifted: to be checked on a real
+  module.
+
+## Troubleshooting
+
+- "No answer": check the address, and that the module is on the Wi-Fi (it
+  may be out of range at the far end of the garden). New tries 1 to 15
+  minutes apart.
+- "Credentials refused": fix the user name or the password and save.
+  Otherwise, new try after 15 min, 1 h, then every 6 h, even after a
+  restart.
+- **The mower does not show up in Discovery** ("without a valid id"): the
+  integration identifies the module by the `id` field of its `status`
+  answer (":" and "-" removed, for a MAC address for instance), otherwise,
+  by the serial number of `cmd=version` (tried again after 15 min, 1 h,
+  then every 6 h when unreadable, or with the "Test the connection" button). If that is not enough, open
+  an issue on the GitHub repository with the anonymized answer of
+  `http://<module>/json?cmd=status`.
+- `https://` in the address is refused: this version speaks plain HTTP only
+  (the password travels in clear on the local network); enter the address
+  without `https://`.
+- "Not read any more": another module answers at this address (IP address
+  given to another device), or the mower was removed.
+
+## Limits
+
+- One mower per integration; HTTP only (no HTTPS).
+- No timers, mode choice, GPS nor MQTT in this version.
+- Never tested with a real device: the fields come from the aiorobonect
+  library and the Robonect integration for Home Assistant.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Robonect in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Your mower and its Robonect module | `section` | Nein | Shows a robotic mower fitted with a Robonect module (Husqvarna Automower, Gardena, Flymo, McCulloch) in Gladys through the local JSON API of the module, without any cloud: state, mode, battery, error, mowing hours, Wi-Fi signal, blades, next timer start. Pause and back to the base are always available; starting the mower from Gladys is off until you allow it below. Enter the IP address of the module (give it a fixed address in your router), its user name and password, save, then add the mower from the Discovery tab. This is not the gladys-automower integration (Husqvarna cloud, no module needed). Never tested with a real device. Not affiliated with Robonect. |
+| IP address of the Robonect module | `string` | Ja | An IPv4 address or a host name, optionally followed by a port (80 by default). Plain HTTP on the local network. |
+| User name of the module | `string` | Nein | The user of the web interface of the Robonect module. Leave it empty, with the password, only if the module has no login. |
+| Password of the module | `secret` | Nein | Kept by Gladys in its database, never shown again, sent only to the module, in clear (HTTP Basic authentication) on the local network. Refused credentials are tried again after 15 min, 1 h, then every 6 h. |
+| Allow the start from Gladys | `boolean` | Nein | Off by default. On: the "Start" button may lift the stop of the mower, which then mows according to its mode (check that nobody, child or pet, is on the lawn). Off: it refuses every press. Pause and back to the base always work. |
+| Refresh interval (s) | `number` | Nein | How often the module is read, in seconds (never more often, even after a restart). |
+| Language of the feature names | `select` | Nein | Used for the feature names of the devices added from now on, for the status texts and for the command errors. |
+
+## So installierst du Robonect in Gladys
+
+1. Öffne in Gladys **Integrationen**: Robonect erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-robonect:0.1.2`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-robonect](https://github.com/LM1LC3N7/gladys-robonect).
+
+Robonect benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Robonect ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-robonect) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-robonect/blob/HEAD/docs/en.md)

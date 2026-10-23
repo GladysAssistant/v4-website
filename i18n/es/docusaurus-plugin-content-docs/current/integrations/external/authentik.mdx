@@ -1,0 +1,237 @@
+---
+title: "Integración domótica authentik, gratuita y de código abierto"
+sidebar_label: "authentik"
+description: "authentik en Gladys: inicios de sesión fallidos, países inusuales y outposts caídos en escenas. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-authentik.png"
+keywords:
+  - "authentik"
+  - "domótica authentik"
+  - "gladys authentik"
+  - "authentik gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-authentik instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"authentik","description":"authentik en Gladys: inicios de sesión fallidos, países inusuales y outposts caídos en escenas.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-authentik","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-authentik.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T17:26:29Z"}} />
+
+[authentik](https://goauthentik.io/) es un proveedor de identidad libre: inicio
+de sesión único (SSO) y autenticación multifactor para los servicios de su casa
+o de su empresa. Esta integración lleva sus **eventos de seguridad** a Gladys:
+un dispositivo «authentik» con los fallos e inicios de sesión del día y los
+outposts en línea, escenas que se disparan con un inicio de sesión fallido, una
+serie de fallos, un inicio de sesión desde un país inusual, un outpost fuera de
+línea u otro evento de seguridad (para enviarse una notificación con el
+usuario, la dirección y el país), y un widget del panel con los últimos
+eventos.
+
+Probada con un authentik 2026.8.4 real (Docker, con las bases GeoIP de prueba
+oficiales de MaxMind; fallos e inicios de sesión hechos con la API de flujos).
+Desarrollada sin instalación de producción: sus comentarios son bienvenidos en
+[las issues](https://github.com/guim31/gladys-authentik/issues).
+
+## Lo que necesita
+
+- Gladys Assistant 5.1.0 o posterior.
+- authentik, accesible desde la máquina de Gladys (su dirección pública, o su
+  dirección local en el puerto 9000 o 9443). Probado con la 2026.8; una versión
+  anterior con la misma API v3 debería funcionar.
+- Una **cuenta de servicio** con un rol que pueda leer los eventos, los usuarios
+  y los outposts, y un **token de API** para ella (más abajo).
+- Opcional: **GeoIP** en authentik (una base MaxMind GeoLite2 gratuita), para el
+  país y la ciudad de cada inicio de sesión. Sin ella, todo funciona salvo el
+  disparador «Inicio de sesión desde un país inusual».
+
+Gladys solo lee: nada en authentik puede modificarse desde Gladys.
+
+## Primeros pasos
+
+### 1. Crear una cuenta de servicio
+
+En la interfaz de administración de authentik: **Directorio → Usuarios → Nueva
+cuenta de servicio**, nombre `gladys`, desmarque «Crear grupo» y «Caduca». El
+token mostrado entonces es una contraseña de aplicación: **la API la rechaza**,
+no la use.
+
+### 2. Darle los permisos de lectura
+
+**Directorio → Roles → Crear**, nombre `Gladys read-only`. En el rol, pestaña
+**Permisos → Asignar permiso**, añada:
+
+- `authentik_events | event | Can view Event` (`view_event`);
+- `authentik_core | User | Can view User` (`view_user`);
+- `authentik_outposts | Outpost | Can view Outpost` (`view_outpost`).
+
+Luego pestaña **Usuarios → Añadir usuario existente**: la cuenta `gladys`.
+
+### 3. Crear un token de API
+
+**Directorio → Tokens y contraseñas de aplicación → Crear**: identificador
+`gladys-api`, usuario `gladys`, finalidad **API**, desmarque «Caduca». Copie el
+token con el botón «Copiar token».
+
+### 4. Configurar la integración
+
+En Gladys, **Integraciones → authentik → Configuración**:
+
+- **Dirección de authentik**: p. ej. `https://auth.example.com`.
+- **Token de API**: el token del paso 3.
+- **Fallos para una serie** y **Ventana de la serie**: la regla del disparador
+  «Serie de inicios de sesión fallidos», 5 fallos en 10 minutos por defecto.
+- **Países habituales**: códigos ISO de los países desde los que se conectan
+  sus usuarios (`ES, FR`). Vacío, la integración los aprende (ver más abajo).
+- **Intervalo de actualización**: 1 minuto por defecto.
+- **Idioma de los nombres**: idioma de los nombres de funciones y de la frase.
+
+**Probar la conexión** lee authentik en el acto y resume lo que ve.
+
+### 5. Añadir el dispositivo
+
+En **Descubrimiento**, añada el dispositivo «authentik».
+
+## El dispositivo
+
+| Función                             | Lo que contiene                                          |
+| ----------------------------------- | -------------------------------------------------------- |
+| `Accesible`                         | 1 cuando la API de authentik responde, 0 si no           |
+| `Inicios de sesión fallidos (1 h)`  | Inicios de sesión fallidos de la última hora             |
+| `Inicios de sesión fallidos (24 h)` | Inicios de sesión fallidos de las últimas 24 horas       |
+| `Inicios de sesión (24 h)`          | Inicios de sesión correctos de las últimas 24 horas      |
+| `Usuarios`                          | Cuentas de usuario activas (sin las cuentas de servicio) |
+| `Outposts en línea`                 | Outposts con al menos una instancia conectada            |
+| `Outposts`                          | Outposts declarados en authentik (el integrado incluido) |
+| `Versión`                           | Versión del servidor authentik                           |
+
+«Accesible» pasa a 0 tras dos lecturas fallidas seguidas: un reinicio de
+authentik pasa desapercibido. Los contadores pueden disparar escenas como
+cualquier sensor (p. ej. «Inicios de sesión fallidos (1 h)» por encima de 20).
+
+## Panel
+
+El widget **Seguridad authentik** muestra los fallos e inicios de sesión de las
+últimas 24 horas, los outposts en línea y luego los últimos eventos de
+seguridad (usuario, lo que pasó, país, hora). **Actualizar** vuelve a leer
+authentik.
+
+## Escenas
+
+### Disparadores
+
+- **Inicio de sesión fallido**: alguien ha escrito una contraseña incorrecta o
+  un nombre de usuario desconocido. Filtro: el nombre de usuario. Variables:
+  nombre de usuario escrito, dirección, país, ciudad.
+- **Serie de inicios de sesión fallidos**: los fallos alcanzan el número fijado
+  en la configuración, dentro de su ventana. Una vez por serie, y de nuevo solo
+  cuando el recuento ha bajado del umbral. Variables: número de fallos,
+  ventana, nombres de usuario y direcciones distintos, último nombre de
+  usuario, dirección y país.
+- **Inicio de sesión desde un país inusual**: un inicio de sesión correcto desde
+  un país fuera de los habituales. Con el campo «Países habituales» vacío, la
+  integración aprende los países de los inicios de sesión correctos (el primero
+  en silencio, las últimas 24 horas en el primer arranque): el primer inicio de
+  sesión desde un país nuevo dispara, los siguientes no. Filtro: el nombre de
+  usuario. Variables: nombre de usuario, dirección, país, ciudad.
+- **Outpost fuera de línea**: un outpost (proxy, LDAP, RADIUS…) no tiene
+  ninguna instancia conectada durante dos lecturas seguidas. Una vez, hasta su
+  vuelta. Filtro: el nombre del outpost. Variables: nombre, tipo.
+- **Evento de seguridad**: una petición sospechosa, un cambio de contraseña o
+  una suplantación por un administrador. Filtro: el evento. Variables: evento,
+  nombre de usuario, dirección, país, ciudad, mensaje de authentik.
+
+Los nombres de usuario y las direcciones son datos personales: se pasan a sus
+escenas (para escribir una notificación) y se muestran en el widget, nunca se
+escriben en los registros de la integración en el nivel info.
+
+### Acciones
+
+- **Estado de authentik**: resume authentik para un mensaje: fallos en 1 hora y
+  24 horas, inicios de sesión, outposts en línea y en total, versión, último
+  nombre de usuario y última dirección fallidos, y una frase lista («authentik:
+  3 inicio(s) de sesión fallido(s) en 1 h, 3 en 24 h, 2 inicio(s) de sesión en
+  24 h, outposts en línea: 1/2, 2 usuario(s)»).
+
+### Ideas de escenas
+
+- **Inicio de sesión fallido** con el nombre de usuario `admin` → una
+  notificación «Alguien prueba la cuenta admin desde
+  \{\{triggerEvent.data.country\}\} (\{\{triggerEvent.data.ip\}\})».
+- **Serie de inicios de sesión fallidos** → una notificación, y la luz de la
+  entrada parpadea en rojo si no hay nadie en casa.
+- **Outpost fuera de línea** → una notificación: los servicios web detrás del
+  proxy ya no autentican.
+- Cada noche, **Estado de authentik** → la frase en un mensaje.
+
+## Solución de problemas
+
+- **«token de API rechazado»**: el token es incorrecto, ha caducado, o es la
+  contraseña de aplicación de la cuenta de servicio: cree un token con la
+  finalidad **API**.
+- **«falta un permiso al token»**: el rol no tiene `view_event`, o la cuenta no
+  está en el rol. «outposts ilegibles» o «usuarios ilegibles» en la prueba:
+  falta `view_outpost` o `view_user`.
+- **«TLS rechazado»**: authentik usa un certificado autofirmado, o se escribió `https://` para el puerto HTTP 9000. Use su
+  dirección local en `http://…:9000`, o un certificado reconocido.
+- **«no hay API de authentik en esta dirección»**: compruebe la dirección (la de
+  la interfaz de administración, sin `/if/admin`).
+- **Ningún país en los eventos**: GeoIP no está configurado en authentik.
+- Registros detallados: `LOG_LEVEL=debug` en el contenedor.
+
+## Límites
+
+- authentik no tiene filtro por fecha en sus eventos: la integración lee las
+  últimas páginas hasta un evento ya visto, 1000 eventos como máximo por
+  lectura, 3000 en la primera. Más allá (un ataque masivo), los contadores son
+  mínimos.
+- Como máximo 10 eventos de escena por disparador y por lectura: un ataque
+  nunca envía cientos de notificaciones.
+- Lo que pasó mientras la integración estaba parada se anuncia en el siguiente
+  arranque (dentro de las últimas 24 horas; la fecha del último evento se
+  guarda en `/data`); el primer arranque no anuncia nada.
+- Los eventos guardados por authentik caducan según la retención fijada en
+  authentik.
+- Solo se siguen los inicios de sesión y los eventos de seguridad citados, no
+  las autorizaciones de aplicaciones ni los cambios de configuración.
+
+Sin relación con Authentik Security Inc.
+
+## Parámetros de configuración
+
+Estos son los parámetros que authentik te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Su servidor authentik | `section` | No | En authentik, cree una cuenta de servicio, un rol con los permisos view_event, view_user y view_outpost, y un token con la finalidad API. La guía muestra cada paso. |
+| Dirección de authentik | `string` | No | La dirección con la que abre authentik, o su dirección local (puerto 9000 o 9443). |
+| Token de API | `secret` | No | Token de la cuenta de servicio, finalidad API. Solo lectura: Gladys no modifica nada en authentik. |
+| Alertas | `section` | No | Una serie de fallos se dispara una vez cuando ocurren tantos fallos en la ventana elegida. Países habituales: códigos ISO (ES, FR…); vacío, se aprenden los países de los inicios de sesión pasados. |
+| Fallos para una serie | `number` | No |  |
+| Ventana de la serie | `select` | No |  |
+| Países habituales | `string` | No | Requiere GeoIP en authentik. Vacío: aprendido de los inicios de sesión. |
+| Opciones | `section` | No |  |
+| Intervalo de actualización | `select` | No | Frecuencia de lectura de authentik: solo los eventos nuevos. |
+| Idioma de los nombres | `select` | No | Idioma de los nombres de funciones (fijados al añadir el dispositivo) y de los resultados de escena. |
+
+## Cómo instalar authentik en Gladys
+
+1. En Gladys, abre **Integraciones**: authentik aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-authentik:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-authentik](https://github.com/guim31/gladys-authentik).
+
+authentik requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+authentik es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-authentik) — [fuente de esta documentación](https://github.com/guim31/gladys-authentik/blob/HEAD/docs/es.md)

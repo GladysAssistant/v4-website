@@ -1,0 +1,178 @@
+---
+title: "Epson Projector Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Epson Projector"
+description: "Epson projectors on the local network: power, source, color mode, A/V mute, lamp hours. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-epson-projector.png"
+keywords:
+  - "epson projector"
+  - "epson projector smart home"
+  - "gladys epson projector"
+  - "epson projector gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-epson-projector instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Epson Projector","description":"Epson projectors on the local network: power, source, color mode, A/V mute, lamp hours.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-epson-projector","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-epson-projector.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T10:09:09Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+Control your **Epson projectors** (home cinema EH-TW / EH-LS, business EB…)
+from Gladys, locally, without any cloud: power on, standby, source, color
+mode, A/V mute, and the lamp (or light source) hours.
+
+> **Important.** This integration has never been tested with a real device:
+> it was written from the `epson-projector` library (the one Home Assistant
+> uses) and the protocol Epson publishes, and tested against a fake projector
+> only. Your feedback is welcome.
+> Unofficial integration, not affiliated with Epson.
+
+## Setup
+
+1. On the projector, enable the **network standby**: depending on the model,
+   _Settings_ or _ECO_ > **Standby Mode: Communication On** (or _Network
+   Standby_). Without it, the projector leaves the network in standby and
+   cannot be turned on from Gladys.
+2. Give each projector a **fixed IP address** in your router (reserved DHCP
+   lease).
+3. In Gladys, install the **Epson Projector** integration, then open its
+   configuration.
+4. Type the IP addresses, separated by commas (for example
+   `192.168.1.50, 192.168.1.51`). The **Find the projectors** button can also
+   look for them on the network (optional: the search cannot cross every
+   network).
+5. If a password protects the network control of your projectors, type it
+   (16 characters at most, the same for all of them).
+6. The projectors appear in the **Discovery** tab: create them.
+
+The integration talks to the projector with **ESC/VP.net** (TCP port 3629),
+the network control protocol Epson publishes, and reads its state at the
+refresh interval of the configuration (30 s by default). It does not use the
+web remote of the projector.
+
+## What you get
+
+| Feature    | Gladys type              | Note                                                        |
+| ---------- | ------------------------ | ----------------------------------------------------------- |
+| Power      | binary state (read only) | 1 on or warming up, 0 in standby, cooling down, unreachable |
+| Power on   | button                   | sent only from standby                                      |
+| Standby    | button                   | sent only when on                                           |
+| Status     | text (read only)         | Standby, Warming up, On, Cooling down, Abnormal standby…    |
+| Source     | dropdown                 | HDMI1, HDMI2, Computer, Video, USB, LAN, Screen mirroring…  |
+| Color mode | dropdown                 | Cinema, Natural, Dynamic, Bright Cinema, Game…              |
+| A/V mute   | button (mute)            | each press reads the state, then sets the opposite          |
+| Lamp hours | duration in hours        | the light source hours on laser models                      |
+
+On purpose, no **switch**: an "everything off" or "everything on" from a
+voice assistant or a scene neither turns your projector on nor cuts it.
+
+Source, color mode and A/V mute are only read and set while the projector is
+on. Which sources and color modes a projector offers depends on its model: a
+value the model refuses is reported "refused by the projector". A source or a
+color mode the projector shows that the list does not know yet is added to
+the dropdown by itself (use "Update" in Gladys to see it).
+
+## Commands
+
+Every command first reads the power state of the projector, and is decided on
+it:
+
+- **Power on** is sent only from standby; already on or warming up, nothing is
+  sent. While the projector cools down (or in abnormal standby), nothing is
+  sent and the reason is given.
+- **Standby** is sent only when the projector is on.
+- The projector confirms a power command only once its warm-up or cool-down is
+  over (up to 40 s). When that takes longer than Gladys waits, Gladys shows
+  "Sent; … confirms it after warming up (up to 40 s): without confirmation
+  yet" (an error message in Gladys, though the command left), and the Power
+  and Status states are updated once the projector confirms. Meanwhile, any
+  other command to that projector is refused at once, "nothing sent".
+- After an absence (unreachable, or a restart of the integration), the serial
+  number of the projector is read again before a command or a publication: a
+  projector that answers another serial at that address is never taken for
+  yours. Many models give no serial number in standby: that is accepted
+  (state shown, Power on works), and checked again once the projector is on.
+  A projector that is on and gives no serial number shows "Identity not
+  confirmed" in its Status and in the integration status, and receives
+  nothing ("identity not confirmed, nothing sent") until it answers yours.
+
+Every command is answered within 4 seconds (Gladys waits 5 seconds), and never
+waits for Gladys to record the states. A command that left for the projector
+without confirmation is reported "sent, without confirmation"; one that could
+not leave is reported "nothing sent", and is then never sent later. A state
+that could not be read before a command gives "… not read in time, nothing
+sent".
+
+"Check the projectors", and an update of the device in Gladys, never ask a
+projector sooner than the refresh interval: the last reading is shown.
+
+## Password
+
+ESC/VP.net can be protected by a password on the projector. A password
+missing or refused stops the integration for that projector (the integration
+status says so): it is tried again every 30 minutes, or as soon as you save
+the configuration, never in a loop. The password is kept by Gladys in its
+database, never shown again, sent only to your projectors over your local
+network (ESC/VP.net sends it as plain text), and never written in the logs
+nor in the data folder of the integration.
+
+## Configuration buttons
+
+- **Find the projectors**: a HELLO broadcast on the network through Gladys
+  (UDP port 3629), then the typed addresses.
+- **Check the projectors**: the state and the lamp hours of each projector.
+
+## Data and privacy
+
+The integration keeps in `/data/epson-projector.json` the list of the known
+projectors (id, address, name, codes seen) and the password blocks (address
+and time of the next try, never the password). Nothing leaves your local
+network.
+
+## Known limits
+
+- One password for all the projectors.
+- A projector that gives no serial number is identified by its address: if
+  its address changes, it becomes a new device.
+- No lens, keystone, volume, freeze or picture settings yet.
+- Never tested with a real device: the real answers may differ.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Epson Projector in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Your Epson projectors, on your local network | `section` | Nein | Power on, standby, source, color mode, A/V mute and lamp hours, through ESC/VP.net, the network control protocol Epson publishes (TCP port 3629), without any cloud. On the projector, enable the network standby (Settings > ECO or Network: "Standby Mode: Communication On"), otherwise it leaves the network in standby. Give each projector a fixed IP address in your router, then type the addresses below, or use "Find the projectors". The projectors then appear in the Discovery tab. Unofficial integration, not affiliated with Epson. |
+| IP addresses of the projectors | `string` | Nein | Separated by commas, for example 192.168.1.50, 192.168.1.51. Projectors found by the search are kept without being typed here. |
+| Network control password (optional) | `secret` | Nein | Only if a password protects the network control of your projectors (16 characters at most, the same for all of them). Kept by Gladys in its database, never shown again, sent only to the projectors over your local network (ESC/VP.net sends it as plain text), never written in the logs. A refused password is tried again every 30 minutes, or when you save this form. |
+| Refresh interval (s) | `number` | Nein | How often the state of the projectors is read, in seconds. |
+
+## So installierst du Epson Projector in Gladys
+
+1. Öffne in Gladys **Integrationen**: Epson Projector erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-epson-projector:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-epson-projector](https://github.com/LM1LC3N7/gladys-epson-projector).
+
+Epson Projector benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Epson Projector ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-epson-projector) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-epson-projector/blob/HEAD/docs/en.md)

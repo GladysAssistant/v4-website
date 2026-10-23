@@ -1,0 +1,217 @@
+---
+title: "Integración domótica homee, gratuita y de código abierto"
+sidebar_label: "homee"
+description: "Your homee box devices in Gladys: lights, plugs, shutters, sensors, thermostats. Unofficial. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-homee.png"
+keywords:
+  - "homee"
+  - "domótica homee"
+  - "gladys homee"
+  - "homee gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-homee instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"homee","description":"Your homee box devices in Gladys: lights, plugs, shutters, sensors, thermostats. Unofficial.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-homee","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-homee.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T10:09:59Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+This integration connects your **homee** box (Z-Wave, Zigbee, EnOcean,
+depending on its cubes) to Gladys Assistant, locally: the devices paired with
+the box become Gladys devices, their states follow the box live and Gladys
+controls them through it.
+
+> Unofficial integration, not affiliated with homee GmbH. It has **never been
+> tested with a real homee**: it was written from the pyHomee library and the
+> homee integration of Home Assistant, and tested against a simulated box.
+> Your feedback is welcome.
+
+## What is supported
+
+- **Lights**: on/off, brightness, colour temperature.
+- **Plain wall switches** (the "on/off switch" profiles, double, with input,
+  Wi-Fi): on/off, dimmer.
+- **Plugs, metering relays and any other device**: state, power, energy
+  (cumulative index), and "Turn on" / "Turn off" buttons behind an option
+  (see below).
+- **Roller shutters**: open, close, stop, position.
+- **Thermostats and radiator heads**: temperature, setpoint, valve opening,
+  battery, heating mode (read).
+- **Hot water**: temperature, setpoint (capped).
+- **Sensors**: opening, window, motion, presence, leak and flood, smoke,
+  carbon monoxide, tamper, low battery, temperature, humidity, illuminance,
+  CO2, UV, wind, rain, current, voltage.
+- **Locks, garage doors, gates, impulse relays, water valves, sirens, the
+  homee mode**: read-only state, and buttons (or a list for the mode) that
+  work only when you allow them. In v1, the Open / Close / Stop buttons exist
+  for motorised garage doors and entrance gates only; other doors and window
+  motors show their state, their impulse buttons stay.
+- Remotes and wall buttons (presses), homeegrams and the INOVA alarm (always
+  read-only) are not handled yet.
+
+## Configuration
+
+1. In the homee app, preferably create a **user of its own** for Gladys.
+2. Note the **local IP address** of the box (Settings → homee, or your
+   router). Give it a fixed address.
+3. In Gladys, Integrations → homee: type the IP address, the user name and the
+   password, then **Test the connection**.
+4. In the **Discovery** tab, add the devices you want.
+
+The password is a secret field: it is kept by Gladys in its database, never
+shown again, and sent only to your homee (as its SHA-512 fingerprint, like the
+homee apps do). The integration only uses the local connection of the box
+(port 7681), never my.hom.ee.
+
+## Safety: what stays read-only
+
+A "turn everything off" (Google Home, Alexa, HomeKit, MCP, a scene) must never
+reach a valve, a lock, a siren, a heating or an unknown load. Only lights and
+plain wall switches therefore get a switch in Gladys; every other device has
+a read-only state and buttons, refused while the matching option is off (all
+are off by default):
+
+| Option                        | What it allows                                                         |
+| ----------------------------- | ---------------------------------------------------------------------- |
+| Allow plug control            | Turn on / Turn off buttons of plugs, metering relays and other devices |
+| Allow heating control         | Thermostat and hot water setpoints, on/off of electric heaters         |
+| Allow lock control            | Lock, Unlock, Unlatch                                                  |
+| Allow door and gate control   | Open, Close, Stop (garage doors, entrance gates), impulses             |
+| Allow valve control           | Open / Close water valves                                              |
+| Allow siren control           | Sound / Stop the siren                                                 |
+| Allow changing the homee mode | Home, Sleeping, Away, Vacation (a list)                                |
+
+For each of these commands, the integration reads the state of the device just
+before, refuses when that state is unknown or moving (a door whose target
+differs from its position is moving), checks the option one last time just
+before sending, and waits for the box to confirm. Without a confirmation in
+time, Gladys shows "Command sent, without confirmation from the homee": check
+the device.
+
+The **protective** commands — lock, close the valve, stop a door, turn off,
+stop the siren — are never refused because of the state of the device and
+are always sent (a leak while a valve opens must be able to close it). No
+command waits behind the confirmation of another. A lock, a door or a valve
+that does not report the state asked for in time (30 s, 90 s, 60 s) shows
+"State not confirmed" on its badge, until it reports a state. Two presses of
+an impulse button less than 2 s apart count as one. A door whose direction
+(reversed or not in homee) is unknown or changed since it was added refuses
+Open / Close. A command that cannot leave within 3.5 s is refused, never sent
+late.
+
+The hot water setpoint is capped at **55 °C** by default (scalding risk),
+adjustable up to **60 °C** at most, the setpoint of a warm water circuit
+included. Any setpoint outside the range shown in Gladys is refused. The
+valves of radiator heads are never controlled directly: they follow their
+setpoint. On an on/off water valve, the meaning of "on" (open or closed) is
+still to be checked on a real box: the buttons are therefore named "Turn on"
+/ "Turn off".
+
+## Energy
+
+The cumulative energy of a plug or a meter is an index Gladys bills: every
+rise is counted in full. The integration guards it like the P1 Monitor
+integration does:
+
+- never 0; a drop or an implausible jump (more than 25 kW on average since
+  the last reading) is **held**: the last accepted value is sent again, the
+  badge of the device shows the kWh waiting, and the log says so; the hold is
+  kept in `/data`, even across a restart;
+- it is never confirmed by repetition nor by time: only the **"Accept the
+  held index"** action of the configuration takes it, **in two clicks**. The
+  first click takes nothing: it lists every index held on the device chosen
+  (feature, drop or jump, from → to, kWh). A second click within 60 s takes
+  exactly that list — each value shown, plus what the device may draw until
+  its next reading — and answers with the kWh counted; if the list changed
+  meanwhile, it is listed again. The badge of the device sums up all its
+  holds (how many, the kWh at stake). Saving the configuration or a
+  reconnection never accepts anything;
+- a device added again starts from a fresh guard;
+- the **total** of an energy meter (which may also count the plugs of the
+  box) is a plain value, never an index: the energy of the plugs is not
+  counted twice.
+
+## Connection and errors
+
+- A token is asked from the box when connecting and kept in memory only; it is
+  renewed before its end, never in a loop. When the box refuses the live
+  connection while its port answers, a new token is asked at the next try; a
+  network failure keeps the token.
+- A lost live connection is opened again after 5 s, then 10 s, 20 s… up to
+  5 minutes between two tries. The whole box is read again every 10 minutes;
+  without an answer within 30 s, the connection is opened again.
+- **Refused credentials**: the integration stops and notes it in `/data`
+  (without the user name or the password, only a salted fingerprint). Next
+  automatic try after 1 h, then 2 h, 4 h… up to 24 h; "Test the connection"
+  or saving the configuration tries at once (the same credentials refused
+  again wait longer).
+- If the box asks to slow down (HTTP 429), the integration pauses (1 minute to
+  6 hours), kept even across a restart.
+- "Test the connection" reuses the connection in use when there is one.
+
+## Known limits
+
+- Never tested with a real homee (see above): the profiles and the meaning of
+  some values come from pyHomee and Home Assistant.
+- Feature names are set when the device is added.
+- Remote presses, homeegrams, groups and the INOVA alarm are not handled yet.
+
+## Credits
+
+- [pyHomee](https://github.com/Taraman17/pyHomee) (MIT), the library of the
+  homee integration of Home Assistant, whose protocol is ported.
+- The homee integration of [Home Assistant](https://github.com/home-assistant/core)
+  (Apache-2.0), for the meaning of the profiles and values.
+- The energy index guard comes from the Gladys P1 Monitor integration
+  ([LM1LC3N7/gladys-p1-monitor](https://github.com/LM1LC3N7/gladys-p1-monitor)).
+
+## Parámetros de configuración
+
+Estos son los parámetros que homee te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Your homee devices in Gladys | `section` | No | The devices paired with your homee box (Z-Wave, Zigbee, EnOcean) are offered in the Discovery tab: lights, switches, plugs, shutters, thermostats, contact, motion, leak, smoke sensors, temperature, humidity, consumption. The states follow the box live, through its local connection only. Plugs, heating, locks, doors and gates, valves, sirens and the homee mode stay read-only until you allow them below, and they are never switches. Never tested with a real box yet. Unofficial, not affiliated with homee. |
+| Address of the homee | `string` | Sí | The local IP address of your homee box, like 192.168.1.60 (shown in the homee app, Settings → homee). Local only: not my.hom.ee. |
+| homee user name | `string` | Sí | A user of the homee box, the one you log in with in the homee app. A user of its own for Gladys is best. |
+| Password | `secret` | Sí | The password of this homee user. Kept by Gladys in its database, never shown again, and sent only to your homee. |
+| Language of the feature names | `select` | No | Used for the names of the features of the devices added from now on. |
+| Minimum interval between two readings of a sensor (s) | `number` | No | Some devices report every second (power meters): Gladys keeps the last reading at this pace. Switches, lights, contact and motion sensors are never delayed. |
+| Allow plug control from Gladys | `boolean` | No | Off by default: the load behind a plug, a metering relay or any device that is not a light nor a plain wall switch is unknown (a heater, a freezer…), so it is never a switch: its state is read-only and it has "Turn on" and "Turn off" buttons, which work only when this option is on. |
+| Allow heating control from Gladys | `boolean` | No | Off by default: setpoints of thermostats and hot water, and the on/off buttons of electric heaters, are read-only. On, Gladys can change them, from the dashboard and scenes. |
+| Highest hot water setpoint (°C) | `number` | No | A hot water setpoint above it is refused (scalding risk): 55 °C by default, 60 °C at most. |
+| Allow lock control from Gladys | `boolean` | No | Off by default: locks are read-only. On, their "Lock", "Unlock" and "Unlatch" buttons work, from the dashboard and scenes. |
+| Allow door and gate control from Gladys | `boolean` | No | Off by default: garage doors, gates, doors, window motors and impulse relays are read-only. On, their "Open", "Close", "Stop" and impulse buttons work. |
+| Allow valve control from Gladys | `boolean` | No | Off by default: water valves are read-only. On, their open and close buttons work. Radiator valves always follow their thermostat. |
+| Allow siren control from Gladys | `boolean` | No | Off by default: sirens are read-only. On, their "Sound the siren" and "Stop the siren" buttons work. |
+| Allow changing the homee mode from Gladys | `boolean` | No | Off by default: the mode of the box (home, sleeping, away, vacation), which your homeegrams may use to arm an alarm, is read-only. On, it can be chosen from a list. The INOVA alarm is always read-only. |
+
+## Cómo instalar homee en Gladys
+
+1. En Gladys, abre **Integraciones**: homee aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-homee:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-homee](https://github.com/LM1LC3N7/gladys-homee).
+
+homee requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+homee es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-homee) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-homee/blob/HEAD/docs/en.md)

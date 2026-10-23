@@ -19,7 +19,7 @@ https://github.com/LM1LC3N7/gladys-netbird instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"NetBird","description":"The peers of your NetBird network: connected, last seen, IP, version, login expiry.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-netbird","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-netbird.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-17T17:39:13Z"}} />
+<ExternalIntegrationHeader integration={{"name":"NetBird","description":"The peers of your NetBird network: connected, last seen, IP, version, login expiry.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-netbird","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-netbird.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-20T00:00:06Z"}} />
 
 The peers of your [NetBird](https://netbird.io) network in Gladys, through
 the REST API of its management server (NetBird Cloud or your own server):
@@ -30,7 +30,9 @@ the REST API of its management server (NetBird Cloud or your own server):
 - the network becomes a device with its **peers connected** and its
   **peers** in total;
 - three scene triggers: **Peer connected**, **Peer disconnected** and
-  **Peer login expired**.
+  **Peer login expired**;
+- a dashboard widget, **NetBird peers**: the connected peers with their
+  NetBird IP, the disconnected ones with their last connection.
 
 Read only: Gladys never changes anything in NetBird (no peer deleted, no
 rule or group changed).
@@ -133,6 +135,93 @@ a start of the integration, nor at the first reading after an outage (when
 NetBird could not be read, the changes in between are unknown). A new peer
 fires nothing. At most 30 events per reading.
 
+## Dashboard widget "NetBird peers"
+
+On the dashboard, edit, add a box, pick **NetBird peers** (it needs Gladys
+5.1.0 or later). It shows, from the last reading of the integration (it
+sends no request of its own):
+
+- **tiles**: peers connected, disconnected, in total, and, when there are
+  some, peers whose state NetBird does not give (**Unknown**, never red) and
+  peers whose login expired;
+- **a list** (8 rows at most), one row per peer: its name, a badge
+  _online_ / _offline_ / _login expired_ / _unknown_, and its NetBird IP and
+  DNS name, or, for a disconnected peer, the date of its last connection
+  (shown by the dashboard in your time zone). Tap a row for the details: IP
+  and DNS name, last connection, system, NetBird version, groups, login
+  expiry. The connected peers come first, by name, then the disconnected
+  ones, the most recently seen first, then the unknown ones;
+- **a status**: whether NetBird answers, the time of the last reading (in
+  UTC), the watched peers that are offline or not found;
+- **"+N more"** when the list does not hold every peer.
+
+Settings of the box:
+
+- **Peers listed**: all (default), connected, or disconnected (a peer
+  without a state is listed only under "all"). The counts always cover
+  every peer of the groups of the box.
+- **Groups** (optional): names or ids of NetBird groups, separated by
+  commas, within the peers the integration follows. 100 characters at most
+  (a limit of Gladys for widget settings).
+- **Peers to watch** (optional): peers that should stay connected (a
+  server, a NAS). When one is disconnected, the "Disconnected" tile and its
+  badge turn red and the status names it ("Watched, offline"). A watched
+  peer missing from the reading (deleted in NetBird, registered again under
+  a new id, out of the group filter of the integration) is named in red
+  too ("Watched, not found"). Only peers created as devices can be picked.
+  **If you delete the Gladys device of a watched peer, the box shows an
+  error** (Gladys refuses a setting that names a device that no longer
+  exists): edit the box and save it again without that peer.
+- **Rows shown**: 3, 5 or 8.
+- **Page**: 1 by default. More than 8 peers? Add a second box on page 2.
+
+Example (text capture, English dashboard, times in Paris):
+
+```
+[ Connected 2 ]  [ Disconnected 1 ]  [ Total 3 ]
+NAS      100.92.10.1 · nas.netbird.cloud        (online)
+Phone    100.92.10.3 · phone.netbird.cloud      (online)
+Laptop   10/16/2026 11:30 PM                    (offline)
+  ● NetBird: answers
+  ● Last reading: 2026-10-17 08:00 UTC
+```
+
+With **Peers to watch** = NAS, while it is disconnected:
+
+```
+[ Connected 1 ]  [ Disconnected 2 (red) ]  [ Total 3 ]
+...
+  ● Watched, offline: NAS (red)
+```
+
+NetBird answers but no peer is in the view (groups of the box or of the
+integration):
+
+```
+[ Connected 0 ]  [ Disconnected 0 ]  [ Total 0 ]
+NetBird answers, but no peer is in this view (groups of the widget or of the integration).
+  ● NetBird: answers
+  ● Last reading: 2026-10-17 08:00 UTC
+```
+
+While NetBird does not answer (or a pause, or the first reading after a
+restart), the same empty view says "No peer in this view (last reading)."
+
+Once something was read, the widget keeps showing the last reading (NetBird
+IPs rarely change), and its colors say how fresh it is: tiles and status in
+red when NetBird does not answer ("no answer"), in orange during a pause
+asked by NetBird (HTTP 429 or a 5xx server error), in blue while the first
+reading after a restart is pending; the badges of the rows turn grey then
+(they are what was last read). With a refused token or a configuration to
+fix, or before anything was ever read with this server, groups and token, it
+shows a short text instead of the peers: a new token (another account) never
+shows the peers of the previous one. It is pulled again at the refresh
+interval, and at once when a peer connects, disconnects, expires, logs in
+again, is added, renamed or removed, or when NetBird fails or answers again
+(one nudge per 10 seconds at most). It never shows
+the token, the address of the server, the public IP or the location of a
+peer.
+
 ## Connection problems
 
 - **Token refused** (HTTP 401, or a 403 answered by the NetBird API itself,
@@ -160,7 +249,8 @@ fires nothing. At most 30 events per reading.
 ## Limits
 
 - One NetBird account per integration; 500 peers at most become devices
-  (narrow the group filter beyond; the counts include them all).
+  (narrow the group filter beyond; the counts include them all, but not
+  those of the widget, which sees only the 500 followed).
 - A peer deleted in NetBird and registered again gets a new NetBird id: it
   becomes a new device (the old one stays without values).
 - The network device is one per integration (`network:main`): pointing the
@@ -186,7 +276,7 @@ These are the settings NetBird asks for in its configuration screen in Gladys.
 ## How to install NetBird in Gladys
 
 1. In Gladys, open **Integrations**: NetBird appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-netbird:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-netbird:0.1.2`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-netbird](https://github.com/LM1LC3N7/gladys-netbird).
 

@@ -1,0 +1,162 @@
+---
+title: "Zeversolar Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Zeversolar"
+description: "Unofficial: Zeversolar solar inverters on your network: power, energy of the day, energy index. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-zeversolar.png"
+keywords:
+  - "zeversolar"
+  - "zeversolar smart home"
+  - "gladys zeversolar"
+  - "zeversolar gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-zeversolar instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Zeversolar","description":"Unofficial: Zeversolar solar inverters on your network: power, energy of the day, energy index.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-zeversolar","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-zeversolar.png","type":"device","version":"0.1.4","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-22T04:24:25Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+Unofficial connector, not affiliated with Zeversolar. It reads your Zeversolar
+solar inverter on your home network, through the status page of its Wi-Fi
+board, without any cloud and without any account.
+
+**Never tested with a real Zeversolar inverter**: it was built from the
+zeversolar library (the one Home Assistant uses) and the examples of its
+documentation. Please report what you see (see "Feedback" below).
+
+## What you get
+
+One Gladys device per inverter, named after its serial number:
+
+| Feature                       | What it is                                                                              |
+| ----------------------------- | --------------------------------------------------------------------------------------- |
+| Solar production (W)          | the power the inverter produces now; 0 at night                                         |
+| Solar energy of the day (kWh) | the counter of the day of the inverter, as it gives it                                  |
+| Solar production index (kWh)  | a cumulative index for the Gladys energy monitoring (production per half hour, revenue) |
+| Inverter awake                | 1 while the inverter produces or is ready, 0 asleep (the night)                         |
+| Inverter fault                | 1 when the inverter reports an error                                                    |
+| Link to the Zeversolar cloud  | 1 when the Wi-Fi board is connected to the maker's cloud                                |
+
+Read-only: the integration never sends a command to the inverter (no on/off,
+no power limit).
+
+## Setting it up
+
+1. Find the IP address of the inverter in your router (its Wi-Fi board shows
+   up as a device of your network). Give it a fixed address if you can.
+2. In Gladys, open the integration, enter the address (by day: at night the
+   inverter sleeps and does not answer), and save.
+3. Open the "Discover" tab and create the device. Its values come at the next
+   read (within a minute by day).
+4. Optional but recommended: enter the peak power of your panels (kWp, on the
+   installer's invoice). It bounds what the energy index may take between two
+   reads. Left empty, it is learned from the power the inverter reaches over a
+   week (30 kW until then, which lets more odd readings through). Never enter
+   less than the real peak power (a long silence at noon could then lose the
+   rest of the day): in doubt, leave it empty.
+
+The "Test the connection" button reads the inverter if a read is due, and
+otherwise tells the last read: the integration never reads more than once a
+minute, whatever asks.
+
+## The night
+
+A Zeversolar inverter is powered by its panels: at sunset it stops, and its
+Wi-Fi board either answers without production or goes silent. That is not an
+error: after three silent reads (or at once when the board says so), the
+inverter is "asleep", its power goes to 0, the status stays green and says so,
+and it is read every 5 minutes until it wakes up. The status turns red if the
+inverter vanishes (or its board answers without it) while producing 50 W or
+more, if another Wi-Fi board answers at the address, if the answer is not its
+status page, or if there is no reading for more than a day; after an hour of
+silence it is considered asleep anyway.
+
+## The energy index
+
+The inverter only gives a counter of the day (it starts again every morning),
+never a lifetime counter, while the Gladys energy monitoring counts the rises
+of a cumulative index. So the integration builds one: the index goes on from
+its last value and adds what the counter of the day adds. It never goes back
+to 0 and never drops: a new day (the counter back to 0 in the morning) leaves
+it where it was. When the inverter shows the counter of the day before again
+(at sunrise, or after a restart during the day), that value is kept out of the
+index and out of the energy of the day. Doubts are settled on the side of
+counting less: a reboot of the inverter that really resets its counter during
+the day, a counter that jumps (the rest of that day may then be lost), hours
+without reads around the change of day, a wall clock set wrong.
+
+Risk left (it would count too much): a value of the day before shown again
+more than 0.1 kWh from the last value read, above or below, or any wrong reading that fits
+within the peak power of the installation since the last read. Entering the
+peak power keeps that margin small. And the day before shown again less
+than 0.1 kWh above today's counter may be taken: 0.1 kWh at most.
+
+The index also goes through a guard: a jump of the index itself is held back,
+shown in the integration status, and only taken when you click "Accept the
+held index" in the configuration (it is then counted at once). A drop of the
+index is never accepted: it corrects itself, the index goes on once the
+counter is back above it. Saving the configuration never accepts anything.
+
+## Limits
+
+- Only the first inverter is read when the Wi-Fi board reports several.
+- The energy of the day comes as the library reads it: one decimal digit is
+  a missing zero ("14.9" means 14.09 kWh).
+- Production after the local midnight (far north in June, or a Gladys time
+  zone east of the house): the reset of the counter falls on the same local
+  day and that day is undercounted.
+- The integration needs Gladys 5.2.0 or later.
+
+## Privacy
+
+Nothing leaves your network: the integration only talks to the address you
+entered, with one small GET a minute (every 5 minutes at night). The registry
+key of the Wi-Fi board (its key for the maker's cloud) is never kept, logged
+or shown; of its registry id only a short fingerprint is kept (to tell one
+board from another).
+
+## Feedback
+
+Issues and pull requests: [https://github.com/LM1LC3N7/gladys-zeversolar](https://github.com/LM1LC3N7/gladys-zeversolar). If
+you own a Zeversolar inverter, the text of `http://<address>/home.cgi` (by day
+and at night, with the registry key and serial numbers hidden) helps a lot.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Zeversolar in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Zeversolar inverter | `section` | Nein | Unofficial connector, not affiliated with Zeversolar. It reads the local status page of your Zeversolar inverter (its Wi-Fi board), without any cloud, once a minute: solar power, energy of the day, and a solar production index for the Gladys energy monitoring, built from the counter of the day. At night the inverter sleeps: the power goes to 0, the index waits for the morning. Read-only: it never sends a command to the inverter. Never tested with a real Zeversolar inverter. |
+| Inverter address | `string` | Ja | The IP address of the inverter on your network (shown by your router), with a port only if it is not 80. Enter it by day: at night the inverter sleeps and does not answer. Preferably give it a fixed address in your router; if it changes, enter the new one: the device and its history are kept. |
+| Peak power of the installation (kWp, optional) | `number` | Nein | The peak power of your panels (on the installer's invoice). It bounds what the energy index may take between two reads (an odd reading is held back instead). Empty: learned from the power the inverter reaches over a week (30 kW until then). Never enter less than the real peak power: in doubt, leave it empty. |
+
+## So installierst du Zeversolar in Gladys
+
+1. Öffne in Gladys **Integrationen**: Zeversolar erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-zeversolar:0.1.4`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-zeversolar](https://github.com/LM1LC3N7/gladys-zeversolar).
+
+Zeversolar benötigt Gladys `>=5.2.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Zeversolar ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-zeversolar) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-zeversolar/blob/HEAD/docs/en.md)
