@@ -202,6 +202,7 @@ function Plus() {
 
   const [isUnavailable, setIsUnavailable] = useState(null);
   const [unavailableMessage, setUnavailableMessage] = useState(null);
+  const [unavailableDetails, setUnavailableDetails] = useState(null);
   const [price, setPrice] = useState(null);
   const [priceCheaperKit, setPriceCheaperKit] = useState(null);
   const [kitsRemaining, setKitsRemaining] = useState(null);
@@ -233,6 +234,7 @@ function Plus() {
     if (data.unavailable === true) {
       setIsUnavailable(true);
       setUnavailableMessage(data.message);
+      setUnavailableDetails(data.details || null);
     } else {
       if (data.beelink_s13) {
         setPriceS13(data.beelink_s13.price);
@@ -389,6 +391,53 @@ function Plus() {
   return (
     <main>
       <JsonLd data={getStarterKitPageSchema(language)} />
+      {isUnavailable && unavailableDetails && (
+        <div
+          style={{
+            background: "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)",
+            color: "#78350f",
+            padding: "1.25rem 1rem",
+            textAlign: "center",
+            borderBottom: "1px solid #fcd34d",
+          }}
+        >
+          <div className="container" style={{ maxWidth: "900px" }}>
+            <p
+              style={{
+                fontSize: "1.1rem",
+                fontWeight: "bold",
+                margin: "0 0 0.5rem 0",
+                color: "#78350f",
+              }}
+            >
+              {unavailableMessage || "Kits actuellement indisponibles"}
+            </p>
+            {unavailableDetails.split("\n").map((paragraph, index) => (
+              <p
+                key={index}
+                style={{
+                  fontSize: "1rem",
+                  margin: "0 0 0.5rem 0",
+                  color: "#78350f",
+                }}
+              >
+                {paragraph}
+              </p>
+            ))}
+            <p style={{ fontSize: "1rem", margin: 0, color: "#78350f" }}>
+              En attendant, Gladys reste gratuit et open-source&nbsp;: tu peux
+              l'installer toi-même grâce à{" "}
+              <Link
+                to="/docs/"
+                style={{ color: "#78350f", fontWeight: "bold" }}
+              >
+                la documentation
+              </Link>
+              .
+            </p>
+          </div>
+        </div>
+      )}
       {IS_IN_HOLIDAY && (
         <div
           style={{
