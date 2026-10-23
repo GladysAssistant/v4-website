@@ -13,9 +13,9 @@ Modèles, caractéristiques, consommation et budget : [Quel mini-PC pour la domo
 
 ## Quel matériel choisir ?
 
-La meilleure façon de débuter avec Gladys est d’opter pour [le kit de démarrage](/fr/starter-kit/). C'est une box domotique avec Gladys Assistant déjà installé.
+Le Beelink Mini S13 est une très bonne option pour débuter avec Gladys. Vous pouvez le trouver sur [Amazon](https://amzn.to/4hRtIE3).
 
-Si vous préférez acheter un mini-PC par vous-même, le Beelink Mini S13 est une très bonne option. Vous pouvez le trouver sur [Amazon](https://amzn.to/4hRtIE3).
+Si vous préférez ne pas vous occuper de l'installation, le [kit de démarrage](/fr/starter-kit/) est une box domotique avec Gladys Assistant déjà installé.
 
 ## Installation d’Ubuntu Server sur le mini-PC
 
