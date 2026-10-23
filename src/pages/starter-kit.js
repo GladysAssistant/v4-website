@@ -234,7 +234,9 @@ function Plus() {
     if (data.unavailable === true) {
       setIsUnavailable(true);
       setUnavailableMessage(data.message);
-      setUnavailableDetails(data.details || null);
+      setUnavailableDetails(
+        typeof data.details === "string" && data.details ? data.details : null,
+      );
     } else {
       if (data.beelink_s13) {
         setPriceS13(data.beelink_s13.price);
@@ -634,7 +636,7 @@ function Plus() {
                 className="button button--primary button--lg"
                 style={{ fontSize: "1.2rem", padding: "14px 40px" }}
               >
-                Commander mon kit
+                {isUnavailable ? "Voir les kits" : "Commander mon kit"}
               </a>
             </div>
 
@@ -2009,7 +2011,7 @@ function Plus() {
               className="button button--primary button--lg"
               style={{ fontSize: "1.2rem", padding: "14px 40px" }}
             >
-              Commander mon kit
+              {isUnavailable ? "Voir les kits" : "Commander mon kit"}
             </a>
           </div>
           <div
