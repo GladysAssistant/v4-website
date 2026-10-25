@@ -108,7 +108,7 @@ Danke an [@cicoub13](https://github.com/cicoub13) für beides!
 - **Katalog**: zwei neue optionale Manifest-Felder, `keywords` (Begriffe nur für die Suche: Marken, Modelle, bediente Städte) und `countries` (ISO-Codes der Länder, in denen die Integration nutzbar ist, ohne Angabe weltweit), und die vier neuen Kategorien `transport`, `vehicles`, `servers` und `leisure`.
 - **Polling**: Ein gefundenes Gerät, das eine `poll_frequency` veröffentlicht, wird jetzt von Gladys abgefragt, ohne dass zusätzlich `should_poll` gesetzt werden muss.
 
-Das SDK kapselt diese neuen Nachrichten noch nicht: Bis dahin verarbeitet eine Integration sie über ihre WebSocket-Verbindung, wie in den Spezifikationen beschrieben.
+Das [SDK v0.16.0](https://github.com/GladysAssistant/integration-sdk-js) unterstützt all das: `onAiChat` für KI-Anbieter, `onTtsSynthesize` für die Sprachsynthese und `publishNowPlaying`, `artworkKey` sowie die `onMusic*`-Handler für Musikplayer.
 
 ## Korrekturen
 

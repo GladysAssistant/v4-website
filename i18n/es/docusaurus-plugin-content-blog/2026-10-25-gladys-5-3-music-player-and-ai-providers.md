@@ -108,7 +108,7 @@ Y cuando hay varias esperando, la vista **Para actualizar** se abre con un botó
 - **Catálogo**: dos nuevos campos opcionales en el manifiesto, `keywords` (términos solo para la búsqueda: marcas, modelos, ciudades atendidas) y `countries` (los códigos ISO de los países donde la integración se puede usar; si falta, significa en todo el mundo), y las cuatro nuevas categorías `transport`, `vehicles`, `servers` y `leisure`.
 - **Polling**: un dispositivo descubierto que publica una `poll_frequency` ahora lo consulta Gladys sin necesidad de poner también `should_poll`.
 
-El SDK todavía no encapsula estos nuevos mensajes: mientras tanto, una integración los gestiona en su conexión WebSocket, como se describe en las especificaciones.
+El [SDK v0.16.0](https://github.com/GladysAssistant/integration-sdk-js) lo soporta todo: `onAiChat` para los proveedores de IA, `onTtsSynthesize` para la síntesis de voz, y `publishNowPlaying`, `artworkKey` y los handlers `onMusic*` para los reproductores de música.
 
 ## Correcciones
 
