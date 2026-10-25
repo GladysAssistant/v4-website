@@ -1,6 +1,17 @@
 const fs = require("fs");
 const Promise = require("bluebird");
-const puppeteer = require("puppeteer");
+// puppeteer is not a dependency of the website: it downloads a whole Chrome
+// at install time, which every deploy build paid for while only this
+// maintenance script uses it. Install it on demand instead.
+let puppeteer;
+try {
+  puppeteer = require("puppeteer");
+} catch (error) {
+  console.error(
+    ">> puppeteer is not installed. Run `yarn add --dev puppeteer` (without committing it) and try again."
+  );
+  process.exit(1);
+}
 
 const LANGUAGES = ["fr", "en"];
 const INTEGRATIONS = [

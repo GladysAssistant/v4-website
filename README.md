@@ -2,7 +2,7 @@
 
 This is the repository of https://gladysassistant.com.
 
-This website is built with [Docusaurus v2](https://v2.docusaurus.io/).
+This website is built with [Docusaurus](https://docusaurus.io/) v3.
 
 ## How to contribute?
 
@@ -15,7 +15,12 @@ cd v4-website
 
 ### Install the dependencies
 
+The project uses Yarn 4, installed through [Corepack](https://nodejs.org/api/corepack.html),
+which ships with Node and reads the exact version from the `packageManager`
+field of `package.json`:
+
 ```
+corepack enable
 yarn
 ```
 
@@ -55,6 +60,53 @@ and comparison pages carry an `es` object in their `src/data/*Data.js` file,
 and `yarn load-external-integrations` also generates the external integration
 pages in Spanish (with the author's English documentation when there is no
 Spanish one). The France/Québec/Ontario-specific pages fall back to English.
+
+## Build time on Cloudflare Pages
+
+A cold build of the four locales takes a bit over three minutes, almost all of
+it in the Rspack bundling step. Docusaurus already runs with every `faster`
+option enabled (see `future` in `docusaurus.config.js`), so the only lever left
+is to keep the Rspack persistent cache between deploys: with the cache warm the
+same build takes about a minute and a half.
+
+That cache lives in `node_modules/.cache`, which Cloudflare Pages restores for
+Docusaurus projects once **build caching** is enabled on the project
+(Settings > Build > Build cache > Enable). The build log then opens with a
+"Restoring from build cache" line; without it every deploy starts cold. The
+cache is purged after seven days without a build, which the daily
+`refresh-dev-activity` workflow prevents.
+
+Yarn's download cache is restored as well (`.cache/yarn` in the home folder),
+which is why `.yarnrc.yml` points Yarn 4's `globalFolder` there instead of its
+default `~/.yarn/berry`.
+
+Two other things keep the install step short:
+
+- `puppeteer` is not a dependency any more: it downloaded a whole Chrome at
+  every install while only `scripts/clean_integrations.js` uses it. Install it
+  locally with `yarn add --dev puppeteer` when running that script, without
+  committing the change.
+- `DEV_ACTIVITY_GITHUB_TOKEN` (see below) also spares the build the wait on
+  the anonymous GitHub rate limit, up to 30 seconds per deploy.
+
+### Cloudflare Pages build system v3
+
+The project builds on the v2 build system; Cloudflare moves v2 projects to v3
+on February 23, 2027 and already offers the switch in the project settings.
+v3 only updates the preinstalled tools (Node 22, Yarn 4, Python 3.13), it is
+not a build speed lever, but two of its changes matter here:
+
+- v3 no longer reads `engines` in `package.json` to pick the Node version.
+  The Pages project already sets `NODE_VERSION` to 24, so nothing changes
+  there; the `.node-version` file at the root mirrors that choice so that
+  local installs and the GitHub workflows build with the same Node as
+  production.
+- v3 no longer detects the Yarn version from `yarn.lock` and defaults to
+  Yarn 4. The project is on Yarn 4 (see `packageManager` in `package.json`),
+  so it builds on v3 as is. Set the `YARN_VERSION` environment variable on
+  the Pages project to the same version as `packageManager`, for production
+  and preview builds alike: it is required on v2, whose default is Yarn 3,
+  and keeps v3 from switching Yarn under the project when its default moves.
 
 ## How to refresh the development activity page?
 
