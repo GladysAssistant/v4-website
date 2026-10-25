@@ -88,8 +88,10 @@ v3 only updates the preinstalled tools (Node 22, Yarn 4, Python 3.13), it is
 not a build speed lever, but two of its changes matter here:
 
 - v3 no longer reads `engines` in `package.json` to pick the Node version.
-  The `.node-version` file at the root pins Node 22, which works on v2, v3 and
-  in the GitHub workflows.
+  The Pages project already sets `NODE_VERSION` to 24, so nothing changes
+  there; the `.node-version` file at the root mirrors that choice so that
+  local installs and the GitHub workflows build with the same Node as
+  production.
 - v3 no longer detects the Yarn version from `yarn.lock` and defaults to
   Yarn 4, which does not understand the Yarn 1 lockfile the same way. Before
   switching, set the `YARN_VERSION` environment variable to `1.22.22` on the
