@@ -78,17 +78,17 @@ Una limitación, por ahora: con una voz local, las respuestas del asistente de v
 
 ## Un catálogo pensado para mil integraciones
 
-Cuando salió la versión 5 a finales de agosto, la tienda tenía unas setenta integraciones de la comunidad. Hoy tiene **785**, más las nativas. La página de integraciones no estaba pensada para eso: descargaba la tienda completa (22 MB) cada 30 minutos, y encontrar algo significaba desplazarse por todo.
+Cuando salió la versión 5 a finales de agosto, la tienda tenía unas setenta integraciones de la comunidad. Hoy tiene **856**, más las nativas. La página de integraciones no estaba pensada para eso: descargaba la tienda completa (25 MB) cada 30 minutos, y encontrar algo significaba desplazarse por todo.
 
 ![El catálogo: las nuevas categorías, y las integraciones de otros países ocultas](../../../static/img/articles/gladys-assistant-5-3/07-catalog-es.webp)
 
 Esto es lo que cambia:
 
-- **Un catálogo que carga rápido.** Gladys ahora descarga un índice ligero de 1,4 MB y solo va a buscar el archivo completo de una integración, unos pocos kilobytes, cuando la abres, la instalas o la actualizas. Mientras carga, la página lo dice, en lugar de mostrar las integraciones nativas como si fueran todo el catálogo. Las tarjetas aparecen página a página, con un botón «Mostrar más integraciones».
+- **Un catálogo que carga rápido.** Gladys ahora descarga un índice ligero de 1,5 MB y solo va a buscar el archivo completo de una integración, unas pocas decenas de kilobytes como mucho, cuando la abres, la instalas o la actualizas. Mientras carga, la página lo dice, en lugar de mostrar las integraciones nativas como si fueran todo el catálogo. Las tarjetas aparecen página a página, con un botón «Mostrar más integraciones».
 - **La búsqueda es el primer filtro.** Lee más que la tarjeta: todos los idiomas de la descripción, las palabras clave declaradas por el autor, el propio autor y los países. Los resultados están ordenados (primero los nombres que empiezan por lo que has escrito), y una búsqueda siempre recorre todo el catálogo, estés en la categoría que estés.
 - **El filtro de país que nadie tiene que configurar.** Redes de transporte, proveedores de electricidad, recogida de residuos, cines: muchas integraciones solo tienen sentido en un país. Gladys deduce tu país de la zona horaria con la que ya está configurada, y oculta en las categorías las integraciones de otros países. Una línea indica cuántas están ocultas, con un enlace «Ver todos los países», y la búsqueda las sigue encontrando.
 - **Cuatro categorías nuevas**: *Transporte y movilidad*, *Vehículos y recarga*, *Servidores y autoalojamiento* y *Ocio, deporte y juegos*. «Servicios» se había convertido en un cajón de sastre de 160 integraciones.
-- **Pequeñas cosas que cuentan**: una etiqueta «Instalada» en las tarjetas, un orden «Última actualización», un contador que siempre compara con el catálogo completo («21 de 823 integraciones») con un único enlace «Borrar filtros», y cuando vuelves de la página de una integración, estás exactamente donde estabas en la lista.
+- **Pequeñas cosas que cuentan**: una etiqueta «Instalada» en las tarjetas, un orden «Última actualización», un contador que siempre compara con el catálogo completo («21 de 894 integraciones») con un único enlace «Borrar filtros», y cuando vuelves de la página de una integración, estás exactamente donde estabas en la lista.
 
 ### Actualizar tus integraciones desde el catálogo
 

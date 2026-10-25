@@ -78,17 +78,17 @@ One limitation, for now: with a local voice, the replies of the voice assistant 
 
 ## A catalog built for a thousand integrations
 
-When version 5 launched at the end of August, the store had about seventy community integrations. Today it has **785**, plus the native ones. The integrations page wasn't designed for that: it downloaded the complete store (22 MB) every 30 minutes, and finding something meant scrolling through everything.
+When version 5 launched at the end of August, the store had about seventy community integrations. Today it has **856**, plus the native ones. The integrations page wasn't designed for that: it downloaded the complete store (25 MB) every 30 minutes, and finding something meant scrolling through everything.
 
 ![The catalog: the new categories, and the integrations of other countries hidden](../static/img/articles/gladys-assistant-5-3/07-catalog-en.webp)
 
 So here is what changes:
 
-- **A catalog that loads fast.** Gladys now downloads a light index of 1.4 MB, and fetches the complete file of an integration, a few kilobytes, only when you open it, install it or update it. While it loads, the page says so, instead of showing the native integrations as if they were the whole catalog. Cards are shown page by page, with a "Show more integrations" button.
+- **A catalog that loads fast.** Gladys now downloads a light index of 1.5 MB, and fetches the complete file of an integration, a few dozen kilobytes at most, only when you open it, install it or update it. While it loads, the page says so, instead of showing the native integrations as if they were the whole catalog. Cards are shown page by page, with a "Show more integrations" button.
 - **The search is the first filter.** It reads more than the card: every language of the description, the keywords declared by the author, the author themselves, and the countries. Results are ranked (the names that start with what you typed first), and a search always looks through the whole catalog, whatever the category you are in.
 - **The country filter nobody has to set.** Transit networks, electricity suppliers, waste collection, cinemas: a lot of integrations only make sense in one country. Gladys deduces your country from the timezone it is already configured with, and hides the integrations of other countries from the categories. One line says how many are hidden, with a "Show all countries" link, and the search still finds them.
 - **Four new categories**: *Transport & mobility*, *Vehicles & EV charging*, *Servers & self-hosting* and *Leisure, sport & games*. "Services" had become a 160-integration catch-all.
-- **Small things that count**: an "Installed" badge on the cards, a "Last updated" sort, a count that always compares to the whole catalog ("21 of 823 integrations") with a single "Clear filters" link, and when you come back from an integration page, you're back exactly where you were in the list.
+- **Small things that count**: an "Installed" badge on the cards, a "Last updated" sort, a count that always compares to the whole catalog ("21 of 894 integrations") with a single "Clear filters" link, and when you come back from an integration page, you're back exactly where you were in the list.
 
 ### Update your integrations from the catalog
 

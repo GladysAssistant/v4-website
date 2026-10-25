@@ -78,17 +78,17 @@ Eine Einschränkung gibt es vorerst: Mit einer lokalen Stimme kommen die Antwort
 
 ## Ein Katalog für tausend Integrationen
 
-Als Version 5 Ende August erschien, hatte der Store etwa siebzig Community-Integrationen. Heute sind es **785**, dazu die nativen. Die Integrationsseite war dafür nicht gedacht: Sie lud alle 30 Minuten den kompletten Store herunter (22 MB), und um etwas zu finden, musste man durch alles scrollen.
+Als Version 5 Ende August erschien, hatte der Store etwa siebzig Community-Integrationen. Heute sind es **856**, dazu die nativen. Die Integrationsseite war dafür nicht gedacht: Sie lud alle 30 Minuten den kompletten Store herunter (25 MB), und um etwas zu finden, musste man durch alles scrollen.
 
 ![Der Katalog: die neuen Kategorien, und die Integrationen anderer Länder ausgeblendet](../../../static/img/articles/gladys-assistant-5-3/07-catalog-de.webp)
 
 Das ändert sich:
 
-- **Ein Katalog, der schnell lädt.** Gladys lädt jetzt einen schlanken Index von 1,4 MB herunter und holt die vollständige Datei einer Integration, ein paar Kilobyte, erst, wenn du sie öffnest, installierst oder aktualisierst. Während des Ladens sagt die Seite das auch, statt die nativen Integrationen so anzuzeigen, als wären sie der ganze Katalog. Die Karten erscheinen seitenweise, mit einer Schaltfläche „Weitere Integrationen anzeigen“.
+- **Ein Katalog, der schnell lädt.** Gladys lädt jetzt einen schlanken Index von 1,5 MB herunter und holt die vollständige Datei einer Integration, höchstens ein paar Dutzend Kilobyte, erst, wenn du sie öffnest, installierst oder aktualisierst. Während des Ladens sagt die Seite das auch, statt die nativen Integrationen so anzuzeigen, als wären sie der ganze Katalog. Die Karten erscheinen seitenweise, mit einer Schaltfläche „Weitere Integrationen anzeigen“.
 - **Die Suche ist der erste Filter.** Sie liest mehr als die Karte: alle Sprachen der Beschreibung, die vom Autor angegebenen Schlüsselwörter, den Autor selbst und die Länder. Die Ergebnisse sind sortiert (Namen, die mit deiner Eingabe beginnen, zuerst), und eine Suche durchsucht immer den ganzen Katalog, egal in welcher Kategorie du gerade bist.
 - **Der Länderfilter, den niemand einstellen muss.** Verkehrsnetze, Stromanbieter, Müllabfuhr, Kinos: Viele Integrationen ergeben nur in einem Land Sinn. Gladys leitet dein Land aus der Zeitzone ab, mit der es bereits konfiguriert ist, und blendet die Integrationen anderer Länder in den Kategorien aus. Eine Zeile zeigt, wie viele ausgeblendet sind, mit einem Link „Alle Länder anzeigen“, und die Suche findet sie trotzdem.
 - **Vier neue Kategorien**: *Verkehr & Mobilität*, *Fahrzeuge & Laden*, *Server & Self-Hosting* und *Freizeit, Sport & Spiele*. „Dienste“ war zu einem Sammelbecken mit 160 Integrationen geworden.
-- **Kleine Dinge, die zählen**: ein „Installiert“-Badge auf den Karten, eine Sortierung „Zuletzt aktualisiert“, ein Zähler, der immer mit dem ganzen Katalog vergleicht („21 von 823 Integrationen“), mit einem einzigen Link „Filter zurücksetzen“, und wenn du von der Seite einer Integration zurückkommst, bist du genau dort, wo du in der Liste warst.
+- **Kleine Dinge, die zählen**: ein „Installiert“-Badge auf den Karten, eine Sortierung „Zuletzt aktualisiert“, ein Zähler, der immer mit dem ganzen Katalog vergleicht („21 von 894 Integrationen“), mit einem einzigen Link „Filter zurücksetzen“, und wenn du von der Seite einer Integration zurückkommst, bist du genau dort, wo du in der Liste warst.
 
 ### Deine Integrationen direkt im Katalog aktualisieren
 
