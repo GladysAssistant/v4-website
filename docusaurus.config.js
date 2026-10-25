@@ -392,12 +392,6 @@ module.exports = function createConfig() {
       },
     ],
   ],
-  plugins: [
-    [
-      require.resolve("@docusaurus/plugin-ideal-image"),
-      { min: 400, max: 2000, steps: 10 },
-    ],
-  ],
   clientModules: [require.resolve("./src/openpanel.js")],
   scripts: [],
   };
