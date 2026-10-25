@@ -84,7 +84,7 @@ Au lancement de la version 5 fin août, le store comptait environ soixante-dix i
 
 Voici ce qui change :
 
-- **Un catalogue qui charge vite.** Gladys télécharge maintenant un index léger de 1,4 Mo, et ne va chercher la description complète d'une intégration que quand vous l'ouvrez. Pendant le chargement, la page le dit, au lieu d'afficher les intégrations natives comme si c'était tout le catalogue. Les cartes s'affichent page par page, avec un bouton « Afficher plus d'intégrations ».
+- **Un catalogue qui charge vite.** Gladys télécharge maintenant un index léger de 1,4 Mo, et ne va chercher le fichier complet d'une intégration, quelques kilo-octets, que quand vous l'ouvrez, l'installez ou la mettez à jour. Pendant le chargement, la page le dit, au lieu d'afficher les intégrations natives comme si c'était tout le catalogue. Les cartes s'affichent page par page, avec un bouton « Afficher plus d'intégrations ».
 - **La recherche est le premier filtre.** Elle lit plus que la carte : toutes les langues de la description, les mots-clés déclarés par l'auteur, l'auteur lui-même, et les pays. Les résultats sont classés (les noms qui commencent par ce que vous avez tapé d'abord), et une recherche regarde toujours dans tout le catalogue, quelle que soit la catégorie où vous êtes.
 - **Le filtre de pays que personne n'a à régler.** Réseaux de transport, fournisseurs d'électricité, collecte des déchets, cinémas : beaucoup d'intégrations n'ont de sens que dans un pays. Gladys déduit votre pays du fuseau horaire avec lequel elle est déjà configurée, et masque des catégories les intégrations des autres pays. Une ligne indique combien sont masquées, avec un lien « Voir tous les pays », et la recherche les trouve toujours.
 - **Quatre nouvelles catégories** : *Transports & mobilité*, *Véhicules & recharge*, *Serveurs & auto-hébergement* et *Loisirs, sport & jeux*. « Services » était devenu un fourre-tout de 160 intégrations.
@@ -122,13 +122,19 @@ La 5.2.1 est sortie le lendemain de la 5.2. Voici ce qu'elle et cette version co
 - **Zigbee2MQTT** : le port série du dongle USB est toujours celui monté dans le conteneur, quel que soit son chemin sur l'hôte, ce qui pouvait empêcher Zigbee2MQTT de démarrer.
 - **Zigbee2MQTT** : les quatre boutons de l'interrupteur Philips Hue Tap sont reconnus.
 - **Tableau de bord** : sélectionner du texte ou faire glisser un curseur dans un panneau ou une fenêtre, puis relâcher la souris en dehors, ne la ferme plus.
+- **Appareils** : les listes d'appareils ne transportent plus l'image de chaque caméra (jusqu'à 150 ko chacune) : elles chargent plus vite, et enregistrer une caméra n'échoue plus parce que la requête est trop lourde.
+- **Énergie** : un nouveau contrat peut reprendre le nom d'un contrat existant, comme un contrat Tempo renouvelé. Merci [@cicoub13](https://github.com/cicoub13) !
+- **Paramètres** : un utilisateur qui n'est pas administrateur accède maintenant aux paramètres depuis le menu, et ne voit que les onglets qu'il peut utiliser. Merci [@cicoub13](https://github.com/cicoub13) !
+- **Scènes** : le résumé d'une action sur un volet affiche l'appareil et la valeur choisie, et l'éditeur met en évidence le bouton sélectionné. Merci [@cicoub13](https://github.com/cicoub13) !
+- **Widgets** : les boutons des widgets d'intégrations gardent la couleur de leurs icônes dans le thème Horizon. Merci à Stefan Bauer !
+- **HomeKit** : les préréglages d'un radiateur restent justes dans l'app Maison, et une requête qui échoue reçoit une réponse au lieu de laisser l'app Maison en attente. Merci [@Dreamthy](https://github.com/Dreamthy) !
 - **Sous le capot** : l'interface est maintenant construite avec Vite 8. Merci [@bertrandda](https://github.com/bertrandda) !
 
-Cela fait 21 pull requests depuis la version 5.2.
+Cela fait 30 pull requests depuis la version 5.2.
 
 ## Merci aux contributeurs
 
-Merci à [@cicoub13](https://github.com/cicoub13) pour le bouton de mise à jour des cartes du catalogue et les messages de batterie et de sauvegarde, à [@Terdious](https://github.com/Terdious) pour la correction de l'enregistrement des appareils, et à [@bertrandda](https://github.com/bertrandda) pour le passage à Vite 8. Et merci à tous ceux qui ont demandé ces fonctionnalités et remonté des bugs sur le forum !
+Merci à [@cicoub13](https://github.com/cicoub13) pour le bouton de mise à jour des cartes du catalogue, les messages de batterie et de sauvegarde, les paramètres des utilisateurs non administrateurs, les actions sur les volets dans les scènes et les contrats d'énergie qui partagent un nom, à [@Terdious](https://github.com/Terdious) pour la correction de l'enregistrement des appareils, à [@Dreamthy](https://github.com/Dreamthy) pour les radiateurs dans HomeKit, à Stefan Bauer pour les icônes des widgets dans le thème Horizon, à [@bertrandda](https://github.com/bertrandda) pour le passage à Vite 8, et à [@William-De71](https://github.com/William-De71) pour des tests qui restent verts au changement d'heure. Et merci à tous ceux qui ont demandé ces fonctionnalités et remonté des bugs sur le forum !
 
 On se retrouve sur [le forum](https://community.gladysassistant.com/) si vous voulez parler de cette version :)
 

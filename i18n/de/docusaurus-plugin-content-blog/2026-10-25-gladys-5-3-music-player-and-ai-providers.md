@@ -84,7 +84,7 @@ Als Version 5 Ende August erschien, hatte der Store etwa siebzig Community-Integ
 
 Das ändert sich:
 
-- **Ein Katalog, der schnell lädt.** Gladys lädt jetzt einen schlanken Index von 1,4 MB herunter und holt die vollständige Beschreibung einer Integration erst, wenn du sie öffnest. Während des Ladens sagt die Seite das auch, statt die nativen Integrationen so anzuzeigen, als wären sie der ganze Katalog. Die Karten erscheinen seitenweise, mit einer Schaltfläche „Weitere Integrationen anzeigen“.
+- **Ein Katalog, der schnell lädt.** Gladys lädt jetzt einen schlanken Index von 1,4 MB herunter und holt die vollständige Datei einer Integration, ein paar Kilobyte, erst, wenn du sie öffnest, installierst oder aktualisierst. Während des Ladens sagt die Seite das auch, statt die nativen Integrationen so anzuzeigen, als wären sie der ganze Katalog. Die Karten erscheinen seitenweise, mit einer Schaltfläche „Weitere Integrationen anzeigen“.
 - **Die Suche ist der erste Filter.** Sie liest mehr als die Karte: alle Sprachen der Beschreibung, die vom Autor angegebenen Schlüsselwörter, den Autor selbst und die Länder. Die Ergebnisse sind sortiert (Namen, die mit deiner Eingabe beginnen, zuerst), und eine Suche durchsucht immer den ganzen Katalog, egal in welcher Kategorie du gerade bist.
 - **Der Länderfilter, den niemand einstellen muss.** Verkehrsnetze, Stromanbieter, Müllabfuhr, Kinos: Viele Integrationen ergeben nur in einem Land Sinn. Gladys leitet dein Land aus der Zeitzone ab, mit der es bereits konfiguriert ist, und blendet die Integrationen anderer Länder in den Kategorien aus. Eine Zeile zeigt, wie viele ausgeblendet sind, mit einem Link „Alle Länder anzeigen“, und die Suche findet sie trotzdem.
 - **Vier neue Kategorien**: *Verkehr & Mobilität*, *Fahrzeuge & Laden*, *Server & Self-Hosting* und *Freizeit, Sport & Spiele*. „Dienste“ war zu einem Sammelbecken mit 160 Integrationen geworden.
@@ -122,13 +122,19 @@ Das SDK kapselt diese neuen Nachrichten noch nicht: Bis dahin verarbeitet eine I
 - **Zigbee2MQTT**: Der serielle Port des USB-Dongles ist immer der im Container eingebundene, egal welchen Pfad er auf dem Host hat. Das konnte den Start von Zigbee2MQTT verhindern.
 - **Zigbee2MQTT**: Die vier Tasten des Philips Hue Tap werden erkannt.
 - **Dashboard**: Text in einem Panel oder Dialog markieren oder einen Regler ziehen und die Maus außerhalb loslassen schließt ihn nicht mehr.
+- **Geräte**: Die Gerätelisten enthalten nicht mehr das Bild jeder Kamera (bis zu 150 kB pro Kamera): Sie laden schneller, und das Speichern einer Kamera schlägt nicht mehr fehl, weil die Anfrage zu groß ist.
+- **Energie**: Ein neuer Vertrag kann den Namen eines bestehenden übernehmen, etwa ein verlängerter Tempo-Vertrag. Danke [@cicoub13](https://github.com/cicoub13)!
+- **Einstellungen**: Ein Benutzer, der kein Administrator ist, erreicht die Einstellungen jetzt über das Menü und sieht nur die Tabs, die er nutzen kann. Danke [@cicoub13](https://github.com/cicoub13)!
+- **Szenen**: Die Zusammenfassung einer Rollladen-Aktion zeigt das Gerät und den gewählten Wert, und der Editor hebt die ausgewählte Schaltfläche hervor. Danke [@cicoub13](https://github.com/cicoub13)!
+- **Widgets**: Die Schaltflächen der Integrations-Widgets behalten im Horizon-Theme die Farben ihrer Icons. Danke an Stefan Bauer!
+- **HomeKit**: Die Voreinstellungen eines Heizkörpers bleiben in der Home-App korrekt, und eine fehlgeschlagene Anfrage bekommt eine Antwort, statt die Home-App warten zu lassen. Danke [@Dreamthy](https://github.com/Dreamthy)!
 - **Unter der Haube**: Die Oberfläche wird jetzt mit Vite 8 gebaut. Danke [@bertrandda](https://github.com/bertrandda)!
 
-Das sind 21 Pull Requests seit Version 5.2.
+Das sind 30 Pull Requests seit Version 5.2.
 
 ## Danke an die Mitwirkenden
 
-Danke an [@cicoub13](https://github.com/cicoub13) für die Aktualisieren-Schaltfläche der Katalogkarten und die Batterie- und Backup-Meldungen, an [@Terdious](https://github.com/Terdious) für die Korrektur beim Speichern von Geräten und an [@bertrandda](https://github.com/bertrandda) für den Umstieg auf Vite 8. Und danke an alle, die sich diese Funktionen gewünscht und im Forum Bugs gemeldet haben!
+Danke an [@cicoub13](https://github.com/cicoub13) für die Aktualisieren-Schaltfläche der Katalogkarten, die Batterie- und Backup-Meldungen, die Einstellungen für Benutzer ohne Administratorrechte, die Rollladen-Aktionen in Szenen und die Energieverträge mit gleichem Namen, an [@Terdious](https://github.com/Terdious) für die Korrektur beim Speichern von Geräten, an [@Dreamthy](https://github.com/Dreamthy) für die Heizkörper in HomeKit, an Stefan Bauer für die Widget-Icons im Horizon-Theme, an [@bertrandda](https://github.com/bertrandda) für den Umstieg auf Vite 8 und an [@William-De71](https://github.com/William-De71) für Tests, die auch bei der Zeitumstellung grün bleiben. Und danke an alle, die sich diese Funktionen gewünscht und im Forum Bugs gemeldet haben!
 
 Wir sehen uns im [Forum](https://community.gladysassistant.com/), wenn du über dieses Release sprechen möchtest :)
 

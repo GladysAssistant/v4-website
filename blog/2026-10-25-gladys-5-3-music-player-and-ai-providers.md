@@ -84,7 +84,7 @@ When version 5 launched at the end of August, the store had about seventy commun
 
 So here is what changes:
 
-- **A catalog that loads fast.** Gladys now downloads a light index of 1.4 MB and fetches the full description of an integration only when you open it. While it loads, the page says so, instead of showing the native integrations as if they were the whole catalog. Cards are shown page by page, with a "Show more integrations" button.
+- **A catalog that loads fast.** Gladys now downloads a light index of 1.4 MB, and fetches the complete file of an integration, a few kilobytes, only when you open it, install it or update it. While it loads, the page says so, instead of showing the native integrations as if they were the whole catalog. Cards are shown page by page, with a "Show more integrations" button.
 - **The search is the first filter.** It reads more than the card: every language of the description, the keywords declared by the author, the author themselves, and the countries. Results are ranked (the names that start with what you typed first), and a search always looks through the whole catalog, whatever the category you are in.
 - **The country filter nobody has to set.** Transit networks, electricity suppliers, waste collection, cinemas: a lot of integrations only make sense in one country. Gladys deduces your country from the timezone it is already configured with, and hides the integrations of other countries from the categories. One line says how many are hidden, with a "Show all countries" link, and the search still finds them.
 - **Four new categories**: *Transport & mobility*, *Vehicles & EV charging*, *Servers & self-hosting* and *Leisure, sport & games*. "Services" had become a 160-integration catch-all.
@@ -122,13 +122,19 @@ The SDK doesn't wrap these new messages yet: until it does, an integration handl
 - **Zigbee2MQTT**: the serial port of the USB dongle is always the one bound inside the container, whatever its path on the host, which could prevent Zigbee2MQTT from starting.
 - **Zigbee2MQTT**: the four buttons of the Philips Hue Tap switch are recognized.
 - **Dashboard**: selecting text or dragging a slider in a panel or a modal, then releasing the mouse outside of it, no longer closes it.
+- **Devices**: the device lists no longer carry the image of each camera (up to 150 kB each): they load faster, and saving a camera no longer fails because the request is too large.
+- **Energy**: a new contract can reuse the name of an existing one, like a renewed Tempo contract. Thanks [@cicoub13](https://github.com/cicoub13)!
+- **Settings**: a user who is not an administrator now reaches the settings from the menu, and only sees the tabs they can use. Thanks [@cicoub13](https://github.com/cicoub13)!
+- **Scenes**: the summary of a shutter action shows the device and the chosen value, and the editor highlights the selected button. Thanks [@cicoub13](https://github.com/cicoub13)!
+- **Widgets**: the buttons of integration widgets keep their icon colors in the Horizon theme. Thanks to Stefan Bauer!
+- **HomeKit**: the presets of a radiator stay accurate in the Home app, and a request that fails gets an answer instead of leaving the Home app waiting. Thanks [@Dreamthy](https://github.com/Dreamthy)!
 - **Under the hood**: the interface is now built with Vite 8. Thanks [@bertrandda](https://github.com/bertrandda)!
 
-That makes 21 pull requests since version 5.2.
+That makes 30 pull requests since version 5.2.
 
 ## Thanks to the contributors
 
-Thanks to [@cicoub13](https://github.com/cicoub13) for the update button of the catalog cards and the battery and backup messages, to [@Terdious](https://github.com/Terdious) for the device save fix, and to [@bertrandda](https://github.com/bertrandda) for the upgrade to Vite 8. And thanks to everyone who asked for these features and reported bugs on the forum!
+Thanks to [@cicoub13](https://github.com/cicoub13) for the update button of the catalog cards, the battery and backup messages, the settings of non-admin users, the shutter actions in scenes and the energy contracts sharing a name, to [@Terdious](https://github.com/Terdious) for the device save fix, to [@Dreamthy](https://github.com/Dreamthy) for the HomeKit radiators, to Stefan Bauer for the widget icons in the Horizon theme, to [@bertrandda](https://github.com/bertrandda) for the upgrade to Vite 8, and to [@William-De71](https://github.com/William-De71) for keeping the tests green when the clocks change. And thanks to everyone who asked for these features and reported bugs on the forum!
 
 See you on [the forum](https://community.gladysassistant.com/) if you want to talk about this release :)
 
