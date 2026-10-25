@@ -1,0 +1,173 @@
+---
+title: "Intégration domotique Tailwind, gratuite et open source"
+sidebar_label: "Tailwind"
+description: "Contrôleurs de porte de garage Tailwind, en local : état, ouvrir, fermer, voyant. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-tailwind.png"
+keywords:
+  - "tailwind"
+  - "domotique tailwind"
+  - "gladys tailwind"
+  - "tailwind gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-tailwind instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Tailwind","description":"Contrôleurs de porte de garage Tailwind, en local : état, ouvrir, fermer, voyant.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-tailwind","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-tailwind.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-23T18:56:52Z"}} />
+
+Intégration Gladys pour les contrôleurs de porte de garage **Tailwind** (iQ3,
+Light), sur votre réseau local : l'état de chaque porte de garage, des boutons
+Ouvrir et Fermer, et la luminosité du voyant, par l'API locale du contrôleur,
+sans le cloud Tailwind.
+
+> **Jamais testé avec un vrai appareil.** Cette première version a été écrite
+> à partir de la bibliothèque `gotailwind` (celle de l'intégration Home
+> Assistant) et testée seulement contre des contrôleurs simulés. Vos retours
+> sont les bienvenus.
+>
+> Intégration non officielle, sans lien avec Tailwind.
+
+## Ce qu'il faut
+
+- Un contrôleur Tailwind avec le micrologiciel **10.10 ou plus récent** (à
+  mettre à jour dans l'application Tailwind), sur le même réseau que Gladys.
+- Une **adresse IP fixe** pour chaque contrôleur (une réservation DHCP dans
+  votre box).
+- Votre **clé de contrôle local** : connectez-vous à l'application web
+  Tailwind (web.gotailwind.com) avec votre compte Tailwind, et copiez la
+  « Local Control Key » (six caractères, par exemple 123456). Elle est la même pour tous les
+  contrôleurs du compte. Gladys ne parle jamais au cloud Tailwind : vous y
+  lisez seulement la clé.
+
+## Configuration
+
+1. Dans Gladys, ouvrez la configuration de l'intégration.
+2. Saisissez les adresses IP de vos contrôleurs, séparées par des virgules.
+3. Collez la clé de contrôle local. Ce champ est gardé par Gladys dans sa
+   base, jamais réaffiché, et envoyé seulement à vos contrôleurs, en clair
+   sur votre réseau local (leur API locale n'a pas de https).
+4. Enregistrez, puis ajoutez les contrôleurs depuis l'onglet **Découverte**.
+
+La ligne d'état indique combien de contrôleurs répondent. **Vérifier les
+contrôleurs** affiche ce que chaque adresse a répondu.
+
+## Ce que vous obtenez
+
+Un appareil Gladys par contrôleur (identifié par son adresse MAC : une
+nouvelle adresse IP ne change rien), avec pour chaque porte qu'il gère (1 à 3) :
+
+| Fonctionnalité                | Type                | Remarques                                                   |
+| ----------------------------- | ------------------- | ----------------------------------------------------------- |
+| Porte de garage _n_           | capteur d'ouverture | ouverte ou fermée ; rien n'est publié si l'état est inconnu |
+| Ouvrir la porte de garage _n_ | bouton              | refusé tant que non autorisé (voir plus bas)                |
+| Fermer la porte de garage _n_ | bouton              | refusé tant que non autorisé (voir plus bas)                |
+
+et **Luminosité du voyant** (0 à 100), qui ne demande aucune autorisation. Un
+changement de luminosité n'est confirmé que lorsque le voyant est relu à la
+valeur demandée ; sinon Gladys répond « envoyée, sans confirmation ».
+
+## Sécurité des commandes
+
+Un contrôleur Tailwind ouvre et ferme une porte en envoyant une impulsion à
+l'entrée bouton mural de la motorisation. Sur la plupart des motorisations,
+cette entrée est une **bascule** : une impulsion donnée à une porte qui a
+bougé depuis sa lecture peut l'arrêter ou l'inverser. Donc :
+
+- **Ouvrir** et **Fermer** sont tous deux **refusés par défaut**. Activez
+  « Autoriser l’ouverture et la fermeture des portes de garage » pour les
+  utiliser (depuis le tableau de bord, les scènes et les assistants vocaux).
+  L'autorisation est vérifiée à l'arrivée de la commande, après la lecture de
+  la porte et juste avant le départ de la requête.
+- La porte n'est jamais un interrupteur : un « éteins tout » d'un assistant
+  vocal ou d'une scène ne peut jamais l'atteindre.
+- Gladys lit le contrôleur juste avant chaque commande et vérifie que c'est
+  bien le même (adresse MAC). **Ouvrir** n'est envoyé qu'à une porte lue
+  fermée, **Fermer** qu'à une porte lue ouverte ; déjà dans cet état : rien
+  n'est envoyé. Une porte dans un état inconnu, désactivée dans l'application
+  Tailwind ou bloquée par le contrôleur est refusée.
+- Après une commande, la suivante de cette porte attend que la porte soit lue
+  là où elle a été envoyée : **30 s au moins après une ouverture** (le capteur
+  lit « ouverte » dès que la porte quitte la position fermée, bien avant la
+  fin d'une course qui peut durer 30 s), 15 s après une fermeture (« fermée »
+  n'est lu qu'en fin de course), 45 s au plus. Cette garde est écrite dans
+  les fichiers de l'intégration avant le départ de la requête : un
+  redémarrage la conserve ; elle est mesurée sur une horloge qu'un changement
+  de l'heure du système ne déplace pas.
+- Un **Fermer** n'attend jamais derrière une autre commande, de sa porte ou
+  d'une autre : fermer trois portes à la fois envoie trois commandes. Il
+  annule les ouvertures de sa porte pas encore parties. Il n'est jamais
+  retenu par une pause demandée par le contrôleur (HTTP 429 ou 5xx) ni par une
+  clé refusée : il a un essai, jamais renouvelé. Les ouvertures d'une même
+  porte passent une à une.
+- **Ouvrir** pressé à nouveau sur la même porte dans les 5 s d'une ouverture
+  qui n'a rien envoyé (porte lue ouverte, ou refus) est refusé sans relire le
+  contrôleur (« réessayez dans quelques secondes ») : une scène en boucle ne
+  le submerge jamais. **Fermer** n'est jamais retenu ainsi : chaque fermeture
+  relit la porte et décide sur ce qu'elle lit. La luminosité du voyant change
+  au plus une fois toutes les 2 s.
+- Si l'intégration ne peut pas écrire dans ses fichiers, une commande part
+  quand même (sa garde tient en mémoire) et l'état le signale.
+- Une commande part dans les 3,5 s du clic ou est refusée sans rien envoyer.
+  Si elle a pu atteindre le contrôleur sans réponse, Gladys indique
+  « envoyée, sans confirmation » et relit la porte ; elle n'est jamais
+  renvoyée. Une réponse positive signifie que le contrôleur a accepté la
+  commande : la porte bouge ensuite pendant 10 à 30 s et son état suit dans
+  Gladys.
+
+## Limites
+
+- Lecture périodique seulement (toutes les 10 s par défaut, de 5 s à 300 s),
+  jamais plus souvent que l'intervalle, même après un redémarrage. HTTP 429 ou
+  5xx : une pause de 1 min à 6 h.
+- Une clé refusée par un contrôleur l'est définitivement pour ce contrôleur :
+  il n'est plus lu avec cette clé tant que vous n'en enregistrez pas une autre,
+  ou que vous n'appuyez pas sur « Vérifier les contrôleurs » une fois la clé
+  corrigée (une lecture, jamais plus souvent que l'intervalle). La clé n'est
+  jamais écrite dans les journaux ni dans les fichiers de l'intégration :
+  seuls 8 bits d'une empreinte salée d'une clé refusée sont gardés (on ne
+  peut pas en retrouver la clé), effacés au premier succès. Une entrée du
+  champ des adresses qui n'est pas une adresse n'est jamais affichée dans
+  l'état, seulement comptée.
+- Le mode nuit, les notifications envoyées par le contrôleur et la découverte
+  mDNS ne sont pas encore pris en charge.
+- La plupart des contrôleurs Tailwind sont vendus en Amérique du Nord :
+  l'intégration peut avoir peu d'utilité ailleurs.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Tailwind dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Vos contrôleurs Tailwind, sur votre réseau local | `section` | Non | L'état de chaque porte de garage de vos contrôleurs Tailwind (iQ3, Light), des boutons Ouvrir et Fermer, et la luminosité du voyant, par l'API locale du contrôleur, sans le cloud Tailwind. Donnez à chaque contrôleur une adresse IP fixe dans votre box, saisissez les adresses et votre clé de contrôle local ci-dessous, puis ajoutez-les depuis l'onglet Découverte. Jamais testé avec un vrai appareil. Intégration non officielle, sans lien avec Tailwind. |
+| Adresses IP des contrôleurs | `string` | Non | Séparées par des virgules, par exemple 192.168.1.60, 192.168.1.61 (ajoutez :port s'il n'est pas 80). |
+| Clé de contrôle local | `secret` | Non | La « Local Control Key » (six caractères, par exemple 123456) affichée dans l'application web Tailwind (web.gotailwind.com, connecté avec votre compte Tailwind). La même pour tous les contrôleurs du compte. Nécessaire pour tout : un contrôleur ne répond rien sans elle. Ce champ est gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement à vos contrôleurs Tailwind (en clair sur votre réseau local : leur API locale n'a pas de https). |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture de chaque contrôleur, en secondes. Jamais plus souvent, même après un redémarrage. |
+| Ouverture et fermeture | `section` | Non | Chaque porte a deux boutons, jamais un interrupteur. Le contrôleur envoie une impulsion à l'entrée bouton mural de la motorisation, une bascule sur la plupart des motorisations : une impulsion peut arrêter ou inverser une porte qui a bougé depuis sa lecture. Les deux boutons sont donc refusés tant que vous ne les autorisez pas ci-dessous. Gladys lit la porte juste avant chaque commande : « Ouvrir » seulement vers une porte lue fermée, « Fermer » seulement vers une porte lue ouverte ; inconnue, désactivée ou bloquée : refusé. Après une commande, la suivante de cette porte attend qu'elle soit lue là où elle a été envoyée : 30 s au moins après une ouverture (une porte est lue ouverte dès qu'elle quitte la position fermée), 15 s après une fermeture, 45 s au plus. Une fermeture n'attend jamais derrière une autre commande et n'est jamais retenue par une pause demandée par le contrôleur. Sans l'autorisation, une scène ou un assistant vocal « ferme le garage » est refusé aussi. |
+| Autoriser l’ouverture et la fermeture des portes de garage | `boolean` | Non | Désactivé par défaut : les portes sont seulement lues. Activé : le tableau de bord, les scènes et les assistants vocaux peuvent ouvrir ET fermer les portes de garage. |
+| Langue des noms des fonctionnalités | `select` | Non | Sert aux noms des fonctionnalités ajoutées désormais, et aux erreurs des commandes. |
+
+## Comment installer Tailwind dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Tailwind apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-tailwind:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-tailwind](https://github.com/LM1LC3N7/gladys-tailwind).
+
+Tailwind nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Tailwind est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-tailwind) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-tailwind/blob/HEAD/docs/fr.md)

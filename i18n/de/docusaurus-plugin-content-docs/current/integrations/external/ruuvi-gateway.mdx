@@ -1,0 +1,272 @@
+---
+title: "Ruuvi Gateway Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Ruuvi Gateway"
+description: "Unofficial connector: your RuuviTag sensors, through a Ruuvi Gateway on your network. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ruuvi-gateway.png"
+keywords:
+  - "ruuvi gateway"
+  - "ruuvi gateway smart home"
+  - "gladys ruuvi gateway"
+  - "ruuvi gateway gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-ruuvi-gateway instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Ruuvi Gateway","description":"Unofficial connector: your RuuviTag sensors, through a Ruuvi Gateway on your network.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-ruuvi-gateway","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ruuvi-gateway.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-24T21:41:50Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+**Unofficial connector, not affiliated with Ruuvi.** It brings into Gladys
+the **RuuviTag** sensors that your **Ruuvi Gateway** hears, read through the
+local HTTP API of the gateway, on your own network (no cloud).
+
+> **This integration has never been tested with a real gateway.** It follows
+> the official documentation of Ruuvi
+> ([docs.ruuvi.com](https://docs.ruuvi.com)) and its published test frames.
+> Please report what you see on the Gladys forum.
+
+## What you need
+
+- A **Ruuvi Gateway** on the same local network as Gladys, with a fixed
+  address (set it in your router). The gateway listens to the tags over
+  Bluetooth and relays them; this integration does not use Bluetooth (a
+  Gladys integration runs in a container without Bluetooth).
+- The **read-only access by API key** turned on: open the configuration
+  pages of the gateway in a browser (`http://<address of the gateway>`), go
+  to **Access settings**, turn on the read-only access with a bearer API key
+  and copy that key. This is the "polling mode" of the Ruuvi documentation
+  ([polling mode](https://docs.ruuvi.com/ruuvi-gateway-firmware/examples/polling-mode)).
+  A gateway that allows the LAN without a password works without a key.
+
+## What you get
+
+One Gladys device per tag, named "Ruuvi" and the last four digits of its MAC
+address (as in the Ruuvi apps; rename it when you create it):
+
+| Feature             | Unit               | Notes                                                     |
+| ------------------- | ------------------ | --------------------------------------------------------- |
+| Temperature         | °C                 |                                                           |
+| Humidity            | %                  |                                                           |
+| Pressure            | hPa                |                                                           |
+| Motion              | none (0 or 1)      | 1 when the tag felt a movement since its previous measure |
+| Battery voltage (V) | none (in the name) | about 3 V new; replace the battery below about 2.5 V      |
+| Signal (dBm)        | none (in the name) | the Bluetooth signal between the tag and the gateway      |
+
+- **Motion**: the tag counts the movements it feels (movement counter of the
+  frame). At each read, Motion is 1 when the counter moved since the
+  previous measurement of the tag, 0 otherwise. It needs two measurements in
+  a row, at most an hour apart: the first measurement after a start gives
+  no Motion value. A tag sends its counter only in the RAWv2 and Cut-RAWv2
+  formats.
+- Gladys has no unit for a voltage nor a signal in dBm in these categories:
+  these two are plain values, the unit is only written in their name.
+- A value the tag marks "not available" in its frame (0x8000, 0xFFFF and the
+  like in RAWv2 and Cut-RAWv2; in RAWv1, which has no such value, a humidity,
+  a raw pressure or a voltage of 0, and a temperature of 0 when the humidity and the raw pressure are 0 too), or outside the range of the feature, is left out, never
+  replaced by a guess.
+
+### Data formats
+
+The integration decodes the frames itself (`GET /history?decode=false`),
+after the format pages of Ruuvi:
+
+- **5 (RAWv2)**, the format of RuuviTags since 2019:
+  [data format 5](https://docs.ruuvi.com/communication/bluetooth-advertisements/data-format-5-rawv2);
+- **C5 (Cut-RAWv2)**, RAWv2 without the acceleration:
+  [data format C5](https://docs.ruuvi.com/communication/bluetooth-advertisements/data-format-c5-rawv2);
+- **3 (RAWv1)**, the old format (no measurement number, no movement
+  counter):
+  [data format 3](https://docs.ruuvi.com/communication/bluetooth-advertisements/data-format-3-rawv1).
+
+The formats of Ruuvi Air (6 and E1), format 8 and the URL
+formats are not decoded: the status counts them ("Ruuvi frame(s) not
+decoded"). Beacons of other brands relayed by the gateway are ignored.
+
+## Installation
+
+1. Install the integration from the Gladys catalog (Gladys 5.1 or newer).
+2. In the **Configuration** screen, enter the **address of the gateway**
+   (for example `192.168.1.50`, with `:port` if it is not 80) and the
+   **read-only API key**.
+3. Click **Test the gateway**: the message shows the main values of each
+   tag.
+4. Open the **Discovery** tab and add the devices. Their values arrive as
+   soon as they are created.
+
+## Configuration
+
+- **Address of the gateway**: an IP address or a host name, with an
+  optional port; `http://` in front is accepted, `https://` too if you put
+  the gateway behind a reverse proxy with a valid certificate. A path, a
+  user name, a space, a multicast or a broadcast address are refused at once
+  ("not valid") and nothing is sent.
+- **Read-only API key**: kept by Gladys in its database (in clear, like every
+  secret field of Gladys) and never shown again in the configuration
+  screen. It is sent only to the gateway, in the `Authorization: Bearer`
+  header of each read, never in a URL, a log, a status nor under `/data`.
+  **The gateway speaks plain HTTP on the local network**
+  ([open ports](https://docs.ruuvi.com/ruuvi-gateway-firmware/gw-open-ports-services)):
+  the key crosses your network as is, so use the read-only key (never the
+  read-write one), on a network you trust. A key holding a space or a
+  character that is not printable ASCII is refused at once and never sent
+  nor shown back.
+- **Read interval**: 2 minutes by default, 1 to 60.
+
+## How often the gateway is read
+
+- At each interval, **one request**: `GET /history?decode=false`, the last
+  frame of every tag the gateway heard. Nothing is ever written to the
+  gateway.
+- **Never faster than the interval**, counted from the last read: not by the
+  test button, a reconnection to Gladys, a saved configuration, the
+  Discovery tab nor a restart of the container. Another address or key is tried within about a minute (the state file is
+  written at most once a minute). Before the interval has passed, the test button shows
+  the last values and the time of the next possible read.
+- A gateway that does not answer is tried again at the next interval.
+- When the gateway answers **429 or a 5xx**, it is left alone for the
+  `Retry-After` delay given, else 5 minutes, then 10, 20...; always between
+  1 minute and 6 hours, also across a restart.
+- When the gateway **refuses the key** (401 or 403), or sends to its sign-in
+  page (a redirection: a key is needed), the reads stop **for good** and the
+  status says so: no new try on its own, even after a restart. Change the
+  address or the key (tried within about a minute), or press the test button once the
+  interval has passed (one try; the stop is lifted only if it works).
+  Saving the configuration unchanged never lifts the stop.
+
+## Which values reach Gladys
+
+- A measurement is recognised by its **measurement number** (the sequence
+  number of the frame, RAWv2 and Cut-RAWv2), else by the instant the
+  gateway heard it (RAWv1), else by the frame itself. The gateway hears the
+  same measurement many times: it is handed to Gladys **once**. The mark of
+  the last measurement handed over is kept under `/data` (written at once
+  by a clean stop), so a restart does not send it again.
+- So a tag that **stops measuring** (RAWv2, Cut-RAWv2: its measurement
+  number stops) sends nothing, even if the gateway still hears its last
+  frame: neither its measures nor its signal, which are only sent with a new
+  measurement. After an hour without a new measurement, the status lists it
+  as "no recent measurement". A RAWv1 tag has no measurement number: each
+  frame the gateway hears anew counts as a new measurement.
+- The age of a measurement is counted on the **clock of the gateway**: from
+  the instant it first heard that measurement to the instant of its answer
+  (both given by the gateway), so a Gladys clock that is off never makes it
+  look older or newer. Without these instants (a gateway set without timestamps, or whose
+  clock is not set: before 2020), the gateway returns every frame it ever
+  kept, old ones included: a measurement seen for the first time then gives
+  **no value** ("waiting for a new measurement"); only a measurement that
+  changed since the previous read of the integration is sent, as made since
+  that read.
+- A new measurement at most 5 minutes old (or the interval + 2 minutes) is
+  sent as the current value; older, up to one hour, it is sent **dated**
+  (Gladys records it at its real time and no scene fires); older than one
+  hour, never. A frame more than 5 minutes ahead of the clock of the gateway
+  is ignored, as is a frame whose MAC address is not the one the gateway
+  filed it under.
+- At most **250 values per minute** are sent to Gladys (the core accepts
+  300): with many tags, the rest follows in the next minute. A value that
+  waits (full budget, Gladys unreachable) is judged again when it leaves:
+  dated past 5 minutes (or the interval + 2 minutes), dropped past an
+  hour. Unchanged
+  values are not sent again (but every 30 minutes).
+
+## What is kept under `/data`
+
+The instant of the last read, the pause, the refusal, the MAC address of the
+gateway and the tags met (MAC address, names of their features, mark of the last measurement
+handed to Gladys, last time heard: nothing secret) survive a
+reconnection and a restart of the container. The instant of a read is
+written before its request leaves, and the file is written at most once per
+minute but for a pause, a refusal or a new tag (written at once). The key is
+never written: while it is refused, the file keeps only an 8-bit marker of
+a salted hash of the address and key (1 key in 256 gives the same marker:
+nothing that could find the key back), so that after a restart another key is tried without waiting for the
+interval.
+
+At most 50 tags are read, the tags created in Gladys first, then the tags
+already known; an answer larger than 1 MB, or slower than 10
+seconds, is abandoned. A tag neither heard for a week nor created in Gladys
+(a neighbour's tag that passed by) leaves the Discovery list.
+
+## External ids
+
+`ext:ruuvi-gateway:tag:<MAC>`, the MAC address of the tag as the gateway
+gives it, in 12 lowercase hexadecimal digits without separators
+(`C6:A5:B9:E0:AD:06` gives `c6a5b9e0ad06`), then `:<feature>`
+(`temperature`, `humidity`, `pressure`, `motion`, `battery_voltage`,
+`signal`). These ids never change.
+
+## Troubleshooting
+
+- **"access refused"**: check the read-only API key on the Access settings
+  page of the gateway, then change it in the configuration, or press the
+  test button.
+- **"not an answer of a Ruuvi Gateway"**: the address points to another
+  device, or the firmware of the gateway is too old for the polling mode
+  (update it from its configuration pages).
+- **"no recent measurement"**: the tag has not sent a new measurement for an
+  hour (out of range, empty battery, gateway filter).
+- **"waiting for a new measurement"**: the gateway gives no time (set
+  without timestamps, or its clock is not set): a tag is shown once its
+  measurement changes between two reads. Turn on the timestamps and the time
+  synchronisation of the gateway to get values at once.
+- **"Ruuvi frame(s) not decoded"**: a Ruuvi Air, a tag in a format this
+  integration does not decode, or a frame cut short or of the wrong length.
+- Logs: the level is set with the `LOG_LEVEL` variable.
+
+## Privacy
+
+The integration talks only to your gateway, on your network. Of its answers,
+it keeps only the MAC address and the measures of each tag, and the MAC
+address of the gateway; the GPS coordinates the gateway may send are never
+read.
+
+## Credits
+
+Written from the developer documentation of Ruuvi
+([docs.ruuvi.com](https://docs.ruuvi.com), repository
+[ruuvi/docs](https://github.com/ruuvi/docs)): the local API of the gateway
+and the data formats of the tags. No code of another project is ported; the
+pages used are listed in `THIRD_PARTY_NOTICES.md`. Ruuvi, RuuviTag and Ruuvi
+Gateway are trademarks of Ruuvi Innovations Ltd; this connector is free and
+unofficial.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Ruuvi Gateway in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Ruuvi Gateway in Gladys | `section` | Nein | Unofficial connector, not affiliated with Ruuvi. It reads the RuuviTag sensors your Ruuvi Gateway hears, through the local HTTP API of the gateway (polling mode): temperature, humidity, pressure, motion, battery voltage and signal. The gateway listens to the tags over Bluetooth; this integration does not use Bluetooth. On the Access settings page of the gateway, turn on the read-only access with an API key (bearer). Read only: nothing is ever changed on the gateway. Never tested with a real gateway yet. |
+| Address of the gateway | `string` | Nein | The IP address or the host name of the Ruuvi Gateway on your local network, with a port if it is not 80. Give it a fixed address in your router. |
+| Read-only API key | `secret` | Nein | The read-only API key (bearer) set on the Access settings page of the gateway. Kept by Gladys in its database, never shown again; sent only to the gateway, in the Authorization header of each read, never in a URL nor a log. The gateway speaks plain HTTP: the key crosses your local network as is. A refused key is never tried again on its own. |
+| Read interval (minutes) | `number` | Nein | Each read sends one request to the gateway for the last frame of every tag. Nothing reads sooner, not even the test button or a restart; only another address or key is tried without waiting for the interval (within about a minute). |
+
+## So installierst du Ruuvi Gateway in Gladys
+
+1. Öffne in Gladys **Integrationen**: Ruuvi Gateway erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-ruuvi-gateway:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-ruuvi-gateway](https://github.com/LM1LC3N7/gladys-ruuvi-gateway).
+
+Ruuvi Gateway benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Ruuvi Gateway ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-ruuvi-gateway) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-ruuvi-gateway/blob/HEAD/docs/en.md)

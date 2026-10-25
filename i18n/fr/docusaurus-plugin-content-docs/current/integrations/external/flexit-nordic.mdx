@@ -1,0 +1,174 @@
+---
+title: "Intégration domotique Flexit Nordic, gratuite et open source"
+sidebar_label: "Flexit Nordic"
+description: "Ventilation Flexit Nordic (BACnet local) : températures, humidité, filtre ; commandes en option. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-flexit.png"
+keywords:
+  - "flexit nordic"
+  - "domotique flexit nordic"
+  - "gladys flexit nordic"
+  - "flexit nordic gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-flexit instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Flexit Nordic","description":"Ventilation Flexit Nordic (BACnet local) : températures, humidité, filtre ; commandes en option.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-flexit","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-flexit.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-23T18:55:48Z"}} />
+
+Affiche une ventilation double flux **Flexit Nordic** (S2, S3, S4, CL2, CL3,
+CL4, KS3) dans Gladys par **BACnet/IP** (port UDP 47808) sur votre réseau
+local, sans cloud. Intégration non officielle, **sans lien avec Flexit**.
+**Jamais testé avec un vrai appareil** : elle suit les objets de la
+bibliothèque libre flexit_bacnet (celle de Home Assistant) et la liste BACnet
+publiée par Flexit ; merci de signaler ce que votre centrale affiche.
+
+## Ce que vous obtenez
+
+Un appareil Gladys, « Ventilation Flexit Nordic », avec :
+
+- températures : air extérieur, soufflé, extrait, rejeté, pièce (panneau
+  CI70), et les deux consignes de température d’air (Maison, Absence) ;
+- humidité : air extrait (certains modèles), pièces 1 à 3 (sondes CI77 ; une
+  sonde qui lit 0 % est considérée absente) ;
+- ventilateurs de soufflage et d’extraction (signal en %, vitesse en tr/min),
+  vitesse et rendement de l’échangeur, état et puissance (kW) de la batterie
+  électrique ;
+- mode de fonctionnement (`off`, `away`, `home`, `high`, `cooker-hood`,
+  `fireplace`, `temporary-high`), bouton confort, modes hotte et cheminée,
+  temps restant et durée du mode cheminée et de la ventilation rapide ;
+- filtre : durée d’utilisation, intervalle de changement, « filtre à
+  remplacer ».
+
+## Mise en place
+
+1. Vérifiez que BACnet est activé sur la centrale et donnez-lui une **adresse
+   IP fixe** dans votre routeur (réservation DHCP).
+2. Dans Gladys, ouvrez l’intégration, saisissez l’**adresse IP** de la
+   centrale et le **numéro d’appareil BACnet** (2 sauf modification),
+   enregistrez.
+3. Ajoutez la centrale depuis l’onglet **Découverte**.
+
+La centrale est lue toutes les 60 secondes par défaut (de 30 s à 1 h), jamais
+plus souvent : ni quand vous appuyez sur « Tester la connexion », ni après un
+redémarrage de Gladys ou de l’intégration. BACnet n’a **pas de mot de passe** :
+toute personne sur votre réseau peut lire et piloter la centrale, gardez-la
+donc sur un **réseau de confiance**.
+
+## Commandes (désactivées par défaut)
+
+Avec **Autoriser les commandes** désactivé, toutes les commandes ci-dessous
+sont refusées, sauf les trois commandes de « retour à la normale » décrites
+plus bas. Activez-le pour permettre à Gladys de :
+
+- choisir le **mode de ventilation** (Absence, Maison, Fort ; « Arrêt »
+  n’est jamais proposé ; seulement quand le bouton confort est activé, sinon
+  la centrale reste en Absence et la commande est refusée avec ce motif) ;
+- régler les **consignes de température d’air** Maison et Absence (de 10 à
+  30 °C par pas de 0,5) ;
+- démarrer la **ventilation rapide** ou le **mode cheminée** (pour la durée
+  réglée sur la centrale ; le mode cheminée crée une surpression qui aide le
+  tirage d’un poêle à bois) ;
+- activer le **mode hotte** ou la **batterie électrique** ;
+- activer ou désactiver le **bouton confort** (désactivé : la centrale passe
+  en Absence après son délai) ;
+- **remettre à zéro le compteur du filtre**.
+
+**Toujours permises** : couper la batterie électrique, désactiver le mode
+hotte, arrêter le mode cheminée. Couper la batterie supprime une source de
+chaleur ; les deux autres remettent la ventilation normale (ce n’est pas une
+action de sécurité : arrêter le mode cheminée ou hotte pendant qu’un poêle
+brûle ou que la hotte tourne supprime la compensation d’air). Elles ne sont
+jamais bloquées par l’option, une autre commande ou une pause, et ne sont
+refusées que si une autre centrale est identifiée à l’adresse. Couper la
+batterie et désactiver la hotte sont toujours écrits, sans relecture avant.
+L’arrêt du mode cheminée est une bascule : il n’est envoyé que si une
+relecture juste avant montre le mode actif ; si cette relecture échoue, il
+est refusé, et les lectures des deux minutes suivantes l’envoient dès
+qu’elles montrent le mode actif.
+
+Déroulement des autres commandes :
+
+- l’état de la centrale et son numéro de série sont relus juste avant ; la
+  commande est refusée s’ils ne peuvent pas être lus, si aucun numéro de série
+  n’a jamais pu être lu (vérifiez le numéro d’appareil BACnet), si la
+  centrale est **arrêtée** (Gladys ne la relance jamais : désactiver le
+  bouton confort est aussi refusé, car il outrepasse l’arrêt) ou si une autre
+  centrale répond à l’adresse ;
+- rien n’est envoyé quand la centrale est déjà dans l’état demandé ;
+- les déclenchements du mode cheminée et de la ventilation rapide sont des
+  **bascules** : un déclenchement n’est envoyé que si l’état relu montre
+  qu’il le faut, et jamais tant qu’un précédent n’est pas encore visible ;
+- la commande part dans les 3,5 secondes après le clic, sinon elle est
+  refusée sans être envoyée ; elle n’est confirmée que si la centrale relit la
+  valeur demandée ; sinon Gladys indique « envoyée, sans confirmation » et
+  relit la centrale 5 et 20 secondes après ;
+- une commande « toujours permise » non confirmée est renvoyée (deux fois au
+  plus) par les lectures des deux minutes suivantes tant que la centrale la
+  montre encore active.
+
+Des listes et des boutons seulement : ni interrupteur ni thermostat, donc un
+« éteins tout » d’un assistant vocal ou d’une scène n’atteint jamais la
+ventilation.
+
+## Identité de la centrale
+
+Le numéro de série de la centrale est retenu à la première lecture (objet
+Device BACnet, demandé par l’instance joker standard et par le numéro
+d’appareil saisi). Tant qu’il n’est pas lu, le statut l’indique et les
+commandes sont refusées, sauf les trois « toujours permises ». Si une autre
+centrale répond plus tard à la même adresse (centrale remplacée, ou échange
+d’adresses DHCP), rien n’en est affiché, toutes les commandes sont refusées
+(« toujours permises » comprises) et le statut l’indique. Si vous avez remplacé la
+centrale, appuyez une fois sur **Accepter la centrale à cette adresse** (le
+numéro de série trouvé s’affiche), puis une seconde fois dans les 2 minutes :
+le même appareil Gladys et son historique sont conservés.
+
+## Limites
+
+- Pas de découverte automatique : l’application Flexit trouve les centrales
+  par une diffusion propriétaire ; l’intégration ne l’imite pas, l’adresse est
+  saisie.
+- Les débits par mode, les durées du mode cheminée et de la ventilation
+  rapide et la puissance nominale de la batterie ne se changent pas depuis
+  Gladys (v1).
+- L’arrêt de la ventilation n’est pas proposé.
+- L’intégration ne garde dans `/data` que l’heure de sa dernière lecture et le
+  numéro de série de la centrale.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Flexit Nordic dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre centrale Flexit Nordic | `section` | Non | Affiche votre ventilation double flux Flexit Nordic (S2, S3, S4, CL2, CL3, CL4, KS3) dans Gladys par BACnet/IP (UDP 47808) sur votre réseau local, sans cloud : températures, humidité, ventilateurs, échangeur, batterie électrique, filtre, mode de fonctionnement, modes cheminée et hotte. Saisissez l’adresse IP de la centrale (donnez-lui une adresse fixe dans votre routeur), enregistrez, puis ajoutez-la depuis l’onglet Découverte. Les commandes (mode de ventilation, consignes, ventilation rapide, mode cheminée, hotte, batterie, bouton confort, remise à zéro du filtre) ne marchent que si vous les autorisez ci-dessous ; couper la batterie ou la hotte et arrêter le mode cheminée marchent toujours. BACnet n’a pas de mot de passe : gardez la centrale sur un réseau de confiance. Jamais testé avec un vrai appareil. Sans lien avec Flexit. |
+| Adresse IP de la centrale | `string` | Oui | Une adresse IPv4 (port 47808 sauf si vous en ajoutez un, par exemple 192.168.1.80:47808). |
+| Numéro d’appareil BACnet | `number` | Non | 2 sauf s’il a été modifié sur la centrale. |
+| Autoriser les commandes | `boolean` | Non | Désactivé par défaut. Activé : Gladys peut changer le mode de ventilation et les consignes de température d’air, démarrer la ventilation rapide ou le mode cheminée, activer le mode hotte ou la batterie électrique, activer ou désactiver le bouton confort et remettre à zéro le compteur du filtre. Désactivé : ces commandes sont refusées. Couper la batterie ou la hotte et arrêter le mode cheminée restent toujours possibles. |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture de la centrale, en secondes. |
+| Langue des noms des fonctionnalités | `select` | Non | Sert aux noms de l’appareil et des fonctionnalités ajoutés désormais, au statut et aux erreurs des commandes. |
+
+## Comment installer Flexit Nordic dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Flexit Nordic apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-flexit:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-flexit](https://github.com/LM1LC3N7/gladys-flexit).
+
+Flexit Nordic nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Flexit Nordic est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-flexit) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-flexit/blob/HEAD/docs/fr.md)

@@ -1,0 +1,135 @@
+---
+title: "Intégration domotique Automate Pulse Hub v2, gratuite et open source"
+sidebar_label: "Automate Pulse Hub v2"
+description: "Stores Rollease Acmeda Automate par le Pulse Hub v2, sur le réseau local. Non officiel. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-automate-pulse.png"
+keywords:
+  - "automate pulse hub v2"
+  - "domotique automate pulse hub v2"
+  - "gladys automate pulse hub v2"
+  - "automate pulse hub v2 gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-automate-pulse instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Automate Pulse Hub v2","description":"Stores Rollease Acmeda Automate par le Pulse Hub v2, sur le réseau local. Non officiel.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-automate-pulse","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-automate-pulse.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-24T11:36:51Z"}} />
+
+Cette intégration amène dans Gladys les stores **Rollease Acmeda Automate**
+appairés à un **Pulse Hub v2**. Chaque store devient un **volet** de l'onglet
+Découverte : ouverture, fermeture, arrêt, sa position, et le niveau de batterie
+des moteurs sur batterie. Tout reste sur votre réseau local ; le cloud de
+Rollease Acmeda n'est pas utilisé. Non officiel, sans lien avec Rollease Acmeda.
+
+> **Version de développement.** Cette intégration n'a **jamais été testée avec
+> un vrai hub** : seulement avec un hub simulé. Le protocole local du hub n'est
+> pas documenté par Rollease Acmeda ; il vient de la bibliothèque aiopulse2
+> (l'intégration Home Assistant). Vos retours sont bienvenus dans les
+> [issues GitHub](https://github.com/LM1LC3N7/gladys-automate-pulse/issues).
+
+## Avant de commencer
+
+1. Installez le hub et ses stores dans l'application **Automate Pulse 2**, et
+   nommez-y les stores : Gladys reprend leurs noms depuis le hub.
+2. Donnez au hub une adresse IP fixe dans votre box (réservation DHCP).
+3. Le Pulse Hub **v1** n'est pas pris en charge (autre protocole).
+
+## Configuration
+
+- **Adresse du hub** : son adresse IP, par exemple `192.168.1.50`.
+- **Empreinte du certificat** (facultatif) : le hub utilise un certificat TLS
+  auto-signé. Vide, le certificat rencontré à la première connexion est gardé ;
+  si un autre apparaît plus tard (nouveau hub, réinitialisation, ou autre
+  machine à cette adresse), tout s'arrête et le statut affiche son empreinte
+  SHA-256. Si c'est votre hub, appuyez deux fois sur **Faire confiance au
+  nouveau certificat** (dans les 60 s), ou saisissez cette empreinte dans ce
+  champ.
+- **Intervalle de lecture** : fréquence à laquelle l'état des stores est
+  demandé (10 s par défaut, de 5 à 300 s). Après une commande, le store est
+  aussi lu à 1,5, 4, 10, 25 et 50 s.
+- **Langue des noms des fonctionnalités**.
+
+Ouvrez ensuite l'onglet **Découverte** et ajoutez les stores.
+
+## Ce que vous obtenez
+
+| Fonctionnalité        | Gladys          | Remarques                                                                        |
+| --------------------- | --------------- | -------------------------------------------------------------------------------- |
+| Ouverture / fermeture | volet, état     | ouvrir, fermer, arrêter                                                          |
+| Position              | volet, position | 0 fermé .. 100 ouvert                                                            |
+| Batterie              | batterie, %     | moteurs sur batterie seulement, estimée d'après la tension (comme l'application) |
+
+Un store n'est jamais un interrupteur : un « éteins tout » ne le fait jamais
+bouger.
+
+## Comportement des commandes
+
+- Un mouvement part dans les 3,5 s qui suivent votre clic, sinon il est refusé
+  (rien n'est envoyé). Il est « accepté » seulement si le hub indique ensuite
+  un changement causé par l'ordre : un store immobile qui se met à bouger, une
+  position plus proche de celle demandée, ou cette position. Sinon (un store
+  qui bougeait déjà ne prouve rien), Gladys affiche **« envoyée, sans
+  confirmation »** et relit le store. La position n'est confirmée que quand le
+  hub la donne ; une position non atteinte à la fin s'affiche sur le badge.
+- **Arrêt** n'attend jamais une file ni une pause demandée par le hub. Sur une
+  connexion ouverte, il part tout de suite ; sans connexion, il en ouvre une
+  (un essai, au plus toutes les 5 s, dans ses 3,5 s). Il est refusé quand le
+  certificat du hub a changé. Il annule un mouvement pas encore envoyé, et
+  pendant une minute il est renvoyé tant que le hub montre le store en
+  mouvement (en premier sur la connexion suivante si la connexion est tombée).
+- La batterie et le type de moteur viennent rarement du hub : ils sont demandés
+  au plus une fois par heure et par store, la batterie peut donc apparaître
+  après l'ajout du store : appuyez alors sur **Mettre à jour** sur ce store
+  dans l'onglet Découverte.
+- L'état de tous les stores est demandé au hub au plus une fois par seconde,
+  quel que soit le nombre de stores qu'une scène fait bouger.
+
+## Limites
+
+- Un seul hub par intégration dans cette version.
+- Les noms des stores sont lus sur le second port du hub (TCP 1487) ; s'il ne
+  répond pas, un store est nommé d'après son identifiant (« Store ABC »). Ce
+  port est en TCP simple, sans TLS ni contrôle du certificat : seuls les noms y
+  passent, jamais une commande.
+- Un hub qui refuse les connexions (HTTP 429 ou 5xx) est laissé tranquille de
+  1 minute à 6 heures ; les autres échecs sont réessayés après 10 s, 30 s, 1, 2
+  et 5 minutes, jamais plus vite que l'intervalle de lecture, redémarrage
+  compris.
+- Rien n'est secret ici : le hub n'a pas de mot de passe.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Automate Pulse Hub v2 dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Vos stores Automate dans Gladys | `section` | Non | Chaque store appairé à votre Pulse Hub v2 devient un volet dans l'onglet Découverte : ouverture, fermeture, arrêt, position, et la batterie des moteurs sur batterie. Tout reste sur votre réseau local (le WebSocket du hub, non documenté par Rollease Acmeda) ; le cloud n'est pas utilisé. Installez d'abord le hub et ses stores dans l'application Automate Pulse 2. Jamais testée avec un vrai hub pour l'instant. Non officiel, sans lien avec Rollease Acmeda. |
+| Adresse du hub | `string` | Oui | L'adresse IP locale de votre Pulse Hub v2, par exemple 192.168.1.50. Donnez-lui une adresse fixe dans votre box (réservation DHCP). |
+| Empreinte du certificat (facultatif) | `string` | Non | Le hub utilise un certificat auto-signé. Vide : le certificat rencontré à la première connexion est gardé, et un autre plus tard arrête tout jusqu'à ce que vous le validiez (son empreinte s'affiche alors dans le statut). Ou saisissez ici son empreinte SHA-256. |
+| Intervalle de lecture (s) | `number` | Non | Fréquence à laquelle l'état des stores est demandé au hub (5 à 300 s). Après une commande, le store est aussi lu quelques fois pendant qu'il bouge. |
+| Langue des noms des fonctionnalités | `select` | Non | Sert aux noms des fonctionnalités des stores ajoutés désormais. |
+
+## Comment installer Automate Pulse Hub v2 dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Automate Pulse Hub v2 apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-automate-pulse:0.1.2`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-automate-pulse](https://github.com/LM1LC3N7/gladys-automate-pulse).
+
+Automate Pulse Hub v2 nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Automate Pulse Hub v2 est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-automate-pulse) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-automate-pulse/blob/HEAD/docs/fr.md)

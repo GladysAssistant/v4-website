@@ -1,0 +1,260 @@
+---
+title: "Integración domótica Graylog, gratuita y de código abierto"
+sidebar_label: "Graylog"
+description: "Su Graylog en Gladys: alertas y eventos en escenas, entradas con fallo, almacenamiento y widget. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-graylog.png"
+keywords:
+  - "graylog"
+  - "domótica graylog"
+  - "gladys graylog"
+  - "graylog gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-graylog instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Graylog","description":"Su Graylog en Gladys: alertas y eventos en escenas, entradas con fallo, almacenamiento y widget.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-graylog","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-graylog.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-25T10:31:32Z"}} />
+
+Lleve su servidor de logs [Graylog](https://graylog.org/) a Gladys: cada
+definición de evento se convierte en un dispositivo (sus eventos de las últimas
+24 horas, la fecha del último), un dispositivo «Graylog» vigila el propio
+servidor (mensajes por segundo, entradas con fallo, almacenamiento en rojo,
+retraso del diario, eventos y alertas del día), y sus escenas reaccionan cuando
+se dispara una alerta: una luz roja cuando se dispara «Disk failure», un
+mensaje cuando una entrada deja de recibir logs o cuando OpenSearch pasa a
+rojo. Una acción de escena lee las últimas alertas para un mensaje, y un widget
+del panel las muestra.
+
+La integración lee la API REST de Graylog (puerto 9000) en su red local, con un
+token de acceso. Solo lee: no se modifica nada en Graylog. Nada pasa por una
+nube.
+
+Probado con un Graylog 6.1 real (imagen Docker oficial `graylog/graylog:6.1`,
+MongoDB 6, OpenSearch 2.15): entradas GELF y Syslog, una entrada que no
+arranca, dos definiciones de evento alimentadas por mensajes GELF, una de ellas
+con notificación (una alerta), un usuario Reader con streams compartidos.
+Graylog 5 tiene la misma API pero no se ha probado. Sus comentarios son
+bienvenidos:
+[github.com/guim31/gladys-graylog/issues](https://github.com/guim31/gladys-graylog/issues).
+
+## Lo que necesita
+
+- Gladys Assistant 5.1.0 o posterior.
+- Graylog 6 (Open, Enterprise o Security), accesible desde la máquina de
+  Gladys, en el puerto 9000 o detrás de un proxy inverso.
+- Un usuario de Graylog para Gladys y su token de acceso. Evite la cuenta
+  `admin`: la integración solo necesita leer.
+
+## Primeros pasos
+
+### 1. Crear un usuario para Gladys
+
+En Graylog:
+
+1. **System → Users and Teams → Create user**: un usuario `gladys` con el rol
+   **Reader**.
+2. Comparta con él, como **Viewer** (botón **Share** de cada elemento):
+   - cada definición de evento que quiera seguir (**Alerts → Event
+     Definitions**);
+   - el stream **All events**, donde se guardan los eventos;
+   - los streams que consultan esas definiciones (a menudo **Default
+     Stream**): Graylog solo muestra un evento a un usuario que puede leer los
+     mensajes que lo originan.
+3. En el usuario `gladys`: **Edit tokens**, cree un token llamado `gladys` y
+   cópielo (solo se muestra una vez).
+
+El estado de las entradas, el caudal y la salud del almacenamiento no
+requieren compartir nada. Comprobado en Graylog 6.1: con el rol Reader solo,
+las definiciones no aparecen y solo se ven las notificaciones del sistema.
+
+### 2. Configurar la integración
+
+En Gladys, **Integraciones → Graylog → Configuración**:
+
+- **Dirección**: la dirección de la interfaz web de Graylog, por ejemplo
+  `192.168.1.2` (se añaden http:// y el puerto 9000), `graylog.lan:9000`, o
+  `https://logs.example.org` detrás de un proxy inverso. También sirve una
+  dirección copiada del navegador.
+- **Token de acceso**: el token del paso 1. Sin token, rellene en su lugar
+  **Usuario (sin token)** y **Contraseña (sin token)**.
+- **Intervalo de actualización**: con qué frecuencia se lee Graylog (1 minuto
+  por defecto; cinco o seis peticiones de API cada vez).
+- **Aceptar certificados autofirmados**: solo para una dirección `https://`
+  cuyo certificado su sistema no reconoce.
+- **Idioma de los nombres**: idioma de los nombres de las funciones (fijados al
+  añadir un dispositivo), de las fechas y de los resultados de escena.
+
+Guarde y luego **Probar la conexión**: la respuesta da la versión de Graylog,
+los mensajes por segundo, las entradas con fallo, el número de definiciones de
+evento y las alertas de las últimas 24 horas.
+
+### 3. Añadir los dispositivos
+
+En la pestaña **Descubrir**, añada el dispositivo «Graylog» y las definiciones
+de evento que quiera seguir. No se crea nada en su lugar. Los disparadores, la
+acción de escena y el widget valen para todas las definiciones, añadidas o no.
+
+## Los dispositivos
+
+**Graylog** (el servidor, o todo el clúster):
+
+| Función                     | Significado                                                                                                                          |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Mensajes por segundo        | Mensajes recibidos por segundo, todos los nodos juntos (el «In» de la cabecera de Graylog).                                          |
+| Entradas con fallo          | Entradas FAILED, FAILING o mal configuradas, en cualquier nodo. Una entrada detenida a propósito no cuenta.                          |
+| Almacenamiento en rojo      | 1 cuando el clúster OpenSearch / Elasticsearch está en rojo (los mensajes ya no se guardan). El amarillo, habitual en un nodo, da 0. |
+| Mensajes en espera (diario) | Mensajes escritos en el diario en disco y aún no procesados: un número que crece significa que Graylog no da abasto.                 |
+| Eventos (24 h)              | Eventos de las últimas 24 horas, todas las definiciones.                                                                             |
+| Alertas (24 h)              | Las alertas entre ellos (eventos de una definición con notificaciones).                                                              |
+
+**Un dispositivo por definición de evento**:
+
+| Función        | Significado                                                                        |
+| -------------- | ---------------------------------------------------------------------------------- |
+| Eventos (24 h) | Sus eventos de las últimas 24 horas.                                               |
+| Último evento  | Fecha y hora de su último evento, en la zona horaria de Gladys (últimas 24 horas). |
+
+El dispositivo de una definición lleva su título en Graylog. La definición
+«System notification events» (las notificaciones del propio Graylog: una
+entrada que no arranca, un disco lleno, una versión desactualizada…) también se
+propone.
+
+## Panel
+
+El widget **Alertas de Graylog** muestra de un vistazo:
+
+- tres cifras: las alertas de las últimas 24 horas, las entradas con fallo y
+  los mensajes por segundo;
+- los problemas del propio Graylog: cada entrada con fallo, el almacenamiento
+  cuando está amarillo o rojo;
+- las últimas alertas, la más reciente primero, con su hora.
+
+En sus ajustes, elija las definiciones de evento que mostrar (vacío: todas) y
+las **Filas**: **Solo alertas** (por defecto) o **Alertas y eventos**. El
+botón **Actualizar** vuelve a leer Graylog. El widget funciona antes de añadir
+cualquier dispositivo.
+
+## Escenas
+
+### Disparadores
+
+- **Se dispara un evento de Graylog**: un nuevo evento de una definición.
+  Filtros: las definiciones (vacío: cualquiera), el tipo (**Alerta**: una
+  definición con notificaciones, **Evento**: sin ellas) y la prioridad.
+  Variables: la definición, el mensaje, el tipo, la prioridad, el origen, la
+  clave del evento.
+- **Una entrada falla**: una entrada pasa a FAILED, FAILING o mal configurada;
+  sus mensajes se pierden. Variables: la entrada, su tipo, su estado, el error.
+- **Una entrada vuelve a funcionar**: una entrada notificada con fallo vuelve a
+  estar RUNNING. Variables: la entrada, su tipo, la duración en minutos.
+- **El almacenamiento pasa a rojo**: el clúster OpenSearch / Elasticsearch de
+  Graylog está en rojo.
+- **El almacenamiento ya no está en rojo**: vuelve a amarillo o verde.
+  Variables: el estado, la duración en minutos.
+- **Graylog ya no responde**: la API no ha respondido dos veces seguidas (con
+  unos 15 segundos de intervalo). Un token rechazado no lo dispara: lo indica
+  el estado de la integración.
+
+Cada evento se notifica una vez, incluso tras un reinicio de Gladys o de la
+integración (los identificadores ya notificados se guardan en `/data`). Los
+eventos ya presentes al arrancar la integración no se notifican.
+
+### Acción
+
+**Leer las últimas alertas** cuenta y enumera las alertas de las últimas
+24 horas, de una definición o de todas; ponga **Qué** en **Alertas y eventos**
+para incluir los eventos sin notificación. Salidas: el número, la definición y
+el mensaje de la última, hace cuántos minutos (-1 si no hay ninguna) y una
+lista («Disk failure (14:32), …», diez como máximo).
+
+### Ideas de escenas
+
+- **Se dispara un evento de Graylog** (definición «Disk failure», tipo
+  Alerta) → poner la luz del despacho en rojo y enviar un mensaje «Graylog:
+  \{\{message\}\}».
+- **Una entrada falla** → enviar un mensaje: «Graylog ya no recibe \{\{input\}\}:
+  \{\{message\}\}». Luego **Una entrada vuelve a funcionar** → «\{\{input\}\} ha vuelto
+  tras \{\{duration_minutes\}\} min».
+- Cada mañana a las 8:00 → **Leer las últimas alertas** → enviar «\{\{count\}\}
+  alerta(s) esta noche: \{\{names\}\}».
+- **El almacenamiento pasa a rojo** → avisar a todos: se están perdiendo logs.
+
+## Solución de problemas
+
+- **«token de acceso, usuario o contraseña rechazados»**: el token se ha
+  revocado o se copió mal. Cree otro (**Edit tokens**).
+- **«no hay ninguna API de Graylog en esta dirección»**: compruebe el puerto
+  (9000 por defecto) y la ruta de un proxy inverso
+  (`https://example.org/graylog`).
+- **«Graylog no responde»**: la máquina de Gladys no llega a Graylog
+  (cortafuegos, Graylog detenido, una red Docker). Pruebe `curl
+http://\<dirección>:9000/api/system/lbstatus` desde la máquina de Gladys.
+- **«certificado rechazado»**: marque **Aceptar certificados autofirmados**, o
+  use un certificado de confianza.
+- **Ninguna definición de evento en la pestaña Descubrir, o 0 eventos aunque
+  Graylog muestra algunos**: el usuario no los ve. Comparta con él las
+  definiciones, el stream **All events** y los streams que consultan las
+  definiciones (paso 1).
+- **«falta un permiso de este usuario»**: al usuario le falta un permiso en las
+  páginas del sistema; el rol Reader las cubre.
+- Para ver lo que hace la integración, ponga `LOG_LEVEL=debug` en su
+  contenedor.
+
+## Límites
+
+- Solo lectura: la integración no modifica Graylog ni reconoce eventos
+  (Graylog Open no tiene reconocimiento).
+- Un evento se ve en la lectura siguiente (1 minuto por defecto), y el propio
+  Graylog ejecuta una definición cada minuto o más: cuente hasta unos minutos
+  entre una línea de log y la escena.
+- En cada ciclo se leen los 200 eventos más recientes de las últimas 24 horas:
+  los contadores siguen siendo exactos más allá (Graylog los cuenta), pero una
+  ráfaga de más de 200 eventos entre dos lecturas solo notifica los 200 más
+  recientes. Como máximo salen 30 eventos de escena por lectura; el resto sale
+  en las siguientes.
+- El mensaje de un evento es el que escribe Graylog: para una agregación (la
+  definición «Filter & Aggregation» habitual), su título.
+- El estado de las entradas y la salud del almacenamiento pasan por la API del
+  propio Graylog: un usuario sin el rol Reader no ve nada ahí.
+- Graylog 5 debería funcionar (misma API) pero no se ha probado.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Graylog te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Su Graylog | `section` | No | En Graylog, cree un usuario Reader para Gladys y su token de acceso. Comparta con él (Viewer) las definiciones de evento, el stream All events y los streams que consultan. Después añada las definiciones desde la pestaña Descubrir. |
+| Dirección | `string` | Sí | La dirección de la interfaz web de Graylog; http:\/\/ y puerto 9000 salvo que introduzca otros. |
+| Token de acceso | `secret` | No | Recomendado. Users → el usuario Gladys → Edit tokens. Vacío: usuario y contraseña de abajo. |
+| Usuario (sin token) | `string` | No |  |
+| Contraseña (sin token) | `secret` | No | Nunca la cuenta admin: el usuario Reader de arriba. |
+| Opciones | `section` | No |  |
+| Intervalo de actualización | `select` | No | Con qué frecuencia se lee Graylog: cinco o seis peticiones de API cada vez. |
+| Aceptar certificados autofirmados | `boolean` | No | Solo para una dirección https:\/\/ cuyo certificado no es de confianza (su propia CA, autofirmado). |
+| Idioma de los nombres | `select` | No | Idioma de los nombres de las funciones (fijados al añadir un dispositivo), de las fechas y de los resultados de escena. |
+
+## Cómo instalar Graylog en Gladys
+
+1. En Gladys, abre **Integraciones**: Graylog aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-graylog:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-graylog](https://github.com/guim31/gladys-graylog).
+
+Graylog requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Graylog es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-graylog) — [fuente de esta documentación](https://github.com/guim31/gladys-graylog/blob/HEAD/docs/es.md)

@@ -1,0 +1,248 @@
+---
+title: "Integración domótica Unbound, gratuita y de código abierto"
+sidebar_label: "Unbound"
+description: "Resolutor DNS Unbound: consultas, caché, tiempo de recursión, SERVFAIL, alertas, vaciar caché. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-unbound.png"
+keywords:
+  - "unbound"
+  - "domótica unbound"
+  - "gladys unbound"
+  - "unbound gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-unbound instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Unbound","description":"Resolutor DNS Unbound: consultas, caché, tiempo de recursión, SERVFAIL, alertas, vaciar caché.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-unbound","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-unbound.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-25T10:36:32Z"}} />
+
+Siga su resolutor DNS [Unbound](https://nlnetlabs.nl/projects/unbound/about/)
+desde Gladys, en su red local: consultas por minuto, tasa de aciertos de
+caché, tiempo medio de recursión, respuestas SERVFAIL y NXDOMAIN, tiempo de
+funcionamiento, y una alerta cuando deja de responder, falla demasiado o
+recibe una avalancha de consultas. Unbound suele ser el resolutor recursivo
+situado detrás de Pi-hole, AdGuard Home o Blocky: ellos bloquean la
+publicidad, Unbound responde al resto. Esta integración vigila el resolutor,
+no el bloqueo.
+
+> **Probada con un Unbound 1.25.2 real** (paquete Alpine, en Docker, con los
+> certificados de `unbound-control-setup` y consultas `dig` reales), aún no con
+> una instalación real de Gladys: sus comentarios son bienvenidos. Si algo no
+> funciona como se describe, dígalo en el
+> [foro de Gladys](https://community.gladysassistant.com) o en las
+> [issues](https://github.com/guim31/gladys-unbound/issues).
+
+## Lo que necesita
+
+- Gladys Assistant 5.1.0 o posterior.
+- **Unbound** con su **control remoto** activado, el canal que usa
+  `unbound-control`. Gladys envía los mismos comandos que `unbound-control
+stats_noreset` y `unbound-control status`: solo lee, y nunca ejecuta `stats`,
+  que pone los contadores a cero.
+- Para las cifras SERVFAIL y NXDOMAIN, las **estadísticas ampliadas**.
+
+En `unbound.conf`:
+
+```yaml
+server:
+  extended-statistics: yes
+
+remote-control:
+  control-enable: yes
+  # Una dirección de la máquina Unbound que Gladys pueda alcanzar (no
+  # 127.0.0.1: Gladys ejecuta la integración en su propio contenedor).
+  control-interface: 192.168.1.2
+  control-port: 8953
+```
+
+Cree después los certificados una vez, en la máquina Unbound, y reinicie
+Unbound:
+
+```bash
+sudo unbound-control-setup
+sudo systemctl restart unbound
+```
+
+`unbound-control-setup` escribe tres archivos, normalmente en `/etc/unbound`:
+`unbound_server.pem`, `unbound_control.pem` y `unbound_control.key` (más la
+clave del servidor, que se queda allí). Compruebe que `sudo unbound-control
+status` funciona en la máquina antes de continuar.
+
+Si `statistics-interval` está configurado en `unbound.conf`, configure también
+`statistics-cumulative: yes`: si no, Unbound pone sus contadores a cero en cada
+intervalo y las tasas son erróneas.
+
+## Configuración
+
+En Gladys, **Integraciones → Unbound → Configuración**:
+
+1. **Dirección**: la dirección IP o el nombre de la máquina Unbound, con
+   `:puerto` si el puerto de control no es 8953.
+2. **Nombre**: el nombre del dispositivo en Gladys (opcional).
+3. **Conexión**: _TLS con certificados_ (por defecto en Unbound), o _TCP
+   simple_ si `unbound.conf` indica `control-use-cert: no`. El TCP simple no
+   tiene ninguna contraseña: cualquiera que alcance el puerto puede detener
+   Unbound. Úselo solo con un puerto cerrado al resto de la red.
+4. **Certificados**: abra cada archivo con un editor de texto (`sudo cat
+/etc/unbound/unbound_control.pem`) y pegue todo su contenido, de
+   `-----BEGIN` a `-----END`, en _Certificado del servidor_
+   (`unbound_server.pem`), _Certificado de cliente_ (`unbound_control.pem`) y
+   _Clave de cliente_ (`unbound_control.key`). El campo solo conserva una
+   línea: es normal, la integración vuelve a poner los saltos de línea. La
+   clave se guarda como secreto, no se vuelve a mostrar ni se escribe en los
+   registros.
+5. **Opciones**: el intervalo de actualización (1 minuto por defecto), los dos
+   umbrales de alerta, _Permitir vaciar la caché_ (desactivado por defecto) y
+   el idioma de los nombres de funciones.
+6. Guarde y pulse **Probar la conexión**: muestra la versión de Unbound, la
+   conexión usada, su tiempo de funcionamiento y si las estadísticas ampliadas
+   están activas.
+7. En la pestaña **Descubrimiento**, añada el dispositivo.
+
+## El dispositivo
+
+Un dispositivo para el servidor, con estas funciones:
+
+| Función                   | Lo que muestra                                                         |
+| ------------------------- | ---------------------------------------------------------------------- |
+| Accesible                 | 1 cuando el control remoto responde, 0 si no                           |
+| Consultas DNS por minuto  | Consultas recibidas, entre las dos últimas lecturas                    |
+| Tasa de aciertos de caché | Parte de las consultas respondidas desde la caché, últimos 15 min (%)  |
+| Tiempo medio de recursión | Tiempo para resolver un nombre ausente de la caché, últimos 15 minutos |
+| SERVFAIL por minuto       | Resoluciones fallidas (estadísticas ampliadas)                         |
+| NXDOMAIN por minuto       | Nombres que no existen (estadísticas ampliadas)                        |
+| Tiempo de funcionamiento  | Horas desde el arranque de Unbound                                     |
+| Versión                   | Versión de Unbound                                                     |
+
+Sin las estadísticas ampliadas, el dispositivo no tiene SERVFAIL ni NXDOMAIN;
+actívelas y Gladys propone **Actualizar** en la pestaña Descubrimiento. Las
+tasas aparecen a partir de la segunda lectura. Tras un reinicio de Unbound,
+sus contadores vuelven a cero: las tasas regresan una lectura más tarde.
+
+## Panel de control
+
+El widget **Unbound** muestra tres mosaicos (consultas por minuto, tasa de
+caché, tiempo de recursión) y una lista: el estado del resolutor, SERVFAIL y
+NXDOMAIN por minuto (SERVFAIL en naranja por encima de su umbral de alerta),
+tiempo de funcionamiento y versión. Cuando _Permitir vaciar la caché_ está
+activado, también tiene un botón **Vaciar la caché**.
+
+## Escenas
+
+### Disparadores
+
+- **Unbound ya no responde**: dos lecturas seguidas sin respuesta (la segunda
+  15 segundos después de la primera). Variables: nombre del servidor,
+  dispositivo, error.
+- **Unbound vuelve a responder**: de vuelta tras una caída, con los minutos
+  sin respuesta.
+- **SERVFAIL de Unbound por encima del umbral**: las respuestas SERVFAIL por
+  minuto alcanzan _Alerta SERVFAIL_ de la configuración (20 por defecto, 0 la
+  desactiva). Se activa una vez, y de nuevo solo tras volver por debajo del
+  umbral. Requiere las estadísticas ampliadas.
+- **Consultas de Unbound desbocadas**: las consultas por minuto alcanzan
+  _Alerta de avalancha_ (2000 por defecto, 0 la desactiva), para un
+  dispositivo en bucle o un malware. Misma regla de una sola vez.
+
+### Acciones
+
+- **Leer las estadísticas de Unbound**: lee Unbound ahora. Da una frase
+  («Unbound: 120 consultas por minuto, 85 % respondidas desde la caché, 32 ms
+  por recursión.») para un mensaje o un anuncio de voz, y las cifras para una
+  condición.
+- **Vaciar la caché de Unbound**: vacía la caché, de un dominio y todo lo que
+  está debajo, o entera cuando el campo está vacío. Rechazada mientras
+  _Permitir vaciar la caché_ no esté activado. Útil tras modificar un registro
+  DNS en casa.
+
+### Ideas de escenas
+
+- _Unbound ya no responde_ → enviar un mensaje: «El DNS de la casa está
+  caído». Añada _Unbound vuelve a responder_ para la buena noticia.
+- _SERVFAIL de Unbound por encima del umbral_ → un mensaje con la tasa: el
+  enlace a Internet o los servidores superiores tienen un problema.
+- Cada mañana a las 8:00 → _Leer las estadísticas de Unbound_ → enviar la
+  frase.
+- _Consultas de Unbound desbocadas_ → una notificación, para buscar el
+  dispositivo desbocado.
+
+## Solución de problemas
+
+- **«no responde»**: dirección o puerto erróneos, Unbound detenido, o
+  `control-interface` todavía en `127.0.0.1` (por defecto). Gladys ejecuta la
+  integración en un contenedor: necesita una dirección de la red, y un
+  cortafuegos abierto en el puerto 8953 para la máquina de Gladys.
+- **«TLS rechazado»**: uno de los tres campos de certificados no corresponde a
+  los archivos de este Unbound (cambian con cada `unbound-control-setup -r`),
+  o Unbound está en modo simple (`control-use-cert: no`): elija _TCP simple_.
+- **«conexión cerrada: ¿se espera TLS?»**: _TCP simple_ está elegido pero
+  Unbound espera TLS: elija _TLS con certificados_.
+- **«pegue el archivo completo»**: un campo de certificado solo contiene una
+  parte del archivo; copie todo, líneas `-----BEGIN` y `-----END` incluidas.
+- **Ni SERVFAIL ni NXDOMAIN**: añada `extended-statistics: yes` bajo
+  `server:`, reinicie Unbound y después **actualice** el dispositivo en la
+  pestaña Descubrimiento.
+- **Tasas extrañas o ausentes**: otra herramienta ejecuta `unbound-control
+stats` (que pone los contadores a cero), o `statistics-interval` está
+  configurado sin `statistics-cumulative: yes`.
+- Registros: **Integraciones → Unbound → Registros**. Añada `LOG_LEVEL=debug`
+  para ver cada lectura.
+
+## Límites
+
+- Un solo servidor Unbound por instalación de la integración.
+- Desarrollada con un Unbound real en Docker, sin una instalación real de
+  Gladys: sus comentarios son bienvenidos.
+- Las tasas por minuto se miden entre dos lecturas: un pico más corto que el
+  intervalo de actualización se suaviza.
+- La tasa de caché y el tiempo de recursión cubren los últimos 15 minutos;
+  justo tras el arranque de la integración, cubren el tiempo desde el arranque
+  de Unbound.
+- Solo por un socket Unix (`control-interface: /run/unbound.ctl`), Unbound no
+  es accesible desde el contenedor de Gladys: use una dirección de red.
+- Sin relación con NLnet Labs.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Unbound te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Su servidor Unbound | `section` | No | Gladys lee Unbound mediante su control remoto (remote-control: en unbound.conf, puerto 8953): control-enable: yes, y control-interface en una dirección que Gladys alcance. |
+| Dirección | `string` | Sí | Dirección IP o nombre del servidor, con :puerto si no es 8953. |
+| Nombre | `string` | No | Nombre del dispositivo en Gladys. Vacío: «Unbound» seguido de la dirección. |
+| Conexión | `select` | No | TLS con los certificados de unbound-control-setup (por defecto en Unbound), o TCP simple si unbound.conf indica control-use-cert: no. |
+| Certificados (TLS) | `section` | No | Abra cada archivo creado por unbound-control-setup (a menudo en /etc/unbound) y pegue todo su contenido, de -----BEGIN a -----END. No es necesario en TCP simple. |
+| Certificado del servidor (unbound_server.pem) | `string` | No |  |
+| Certificado de cliente (unbound_control.pem) | `string` | No |  |
+| Clave de cliente (unbound_control.key) | `secret` | No | Gladys la guarda, no se vuelve a mostrar ni se escribe en los registros. |
+| Opciones | `section` | No |  |
+| Intervalo de actualización | `select` | No | Con qué frecuencia se lee Unbound. Las tasas por minuto se miden entre dos lecturas. |
+| Alerta SERVFAIL (por minuto) | `number` | No | El evento de escena se activa cuando las respuestas SERVFAIL alcanzan este ritmo (requiere extended-statistics: yes). 0: desactivado. |
+| Alerta de avalancha (consultas por minuto) | `number` | No | El evento de escena se activa cuando las consultas alcanzan este ritmo: un dispositivo desbocado, un bucle. 0: desactivado. |
+| Permitir vaciar la caché | `boolean` | No | Desactivado por defecto: Gladys solo lee Unbound. Activado: la acción de escena y el botón del widget pueden vaciar la caché (flush_zone). |
+| Idioma de los nombres de funciones | `select` | No | Nombres de las funciones al añadir el dispositivo y textos de los eventos y acciones de escena. |
+
+## Cómo instalar Unbound en Gladys
+
+1. En Gladys, abre **Integraciones**: Unbound aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-unbound:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-unbound](https://github.com/guim31/gladys-unbound).
+
+Unbound requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Unbound es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-unbound) — [fuente de esta documentación](https://github.com/guim31/gladys-unbound/blob/HEAD/docs/es.md)

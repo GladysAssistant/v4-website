@@ -19,7 +19,7 @@ https://github.com/LM1LC3N7/gladys-tado instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"tado°","description":"Unofficial connector: tado° thermostats, hot water, home presence, open windows, scenes and widgets.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-tado","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-tado.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-14T20:14:28Z"}} />
+<ExternalIntegrationHeader integration={{"name":"tado°","description":"Unofficial connector: tado° thermostats, hot water, home presence, open windows, scenes and widgets.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-tado","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-tado.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-24T21:35:05Z"}} />
 
 **Unofficial connector, not affiliated with tado.** It brings your tado°
 heating into Gladys: the thermostats and radiator valves of the V3+, V3 and V2
@@ -80,6 +80,33 @@ scene find them in their variable list (written `{{<step>.<action>.<key>}}`,
 for instance `{{0.0.temperature}}` when this action is the first of the
 scene).
 
+## tado's daily request limit
+
+tado limits the number of requests each account can make per day: **100 a
+day on a free account**, 20,000 with an Auto-Assist or AI-Assist
+subscription. The counter resets around 12:00 (Berlin time). Every request
+counts, including those of other apps and integrations using the same
+account.
+
+The integration reads the remaining budget tado sends back and paces itself:
+
+- it keeps about a fifth of the quota (20 requests on a free account) for
+  your **commands** (setpoints from a widget or a scene), which are never
+  delayed;
+- it spreads the rest of the budget over the day: on a free account with one
+  home, a reading about every **40 minutes** (about an hour with the phone
+  presence sensors); the weather every 3 hours, the battery list twice a day;
+- with a subscription, the **Refresh interval** option applies as set
+  (2 minutes by default), the weather every 15 minutes.
+
+If the quota is used up anyway (another app sharing the account, many
+commands), the status says **"tado° daily API quota used up"** with the time
+the readings resume; commands fail with a clear message until tado's reset,
+and everything resumes by itself afterwards. When tado only asks to slow down for a moment, the status says so ("for now") and the readings resume within minutes; a tado reset a little after noon is noticed within minutes too. Saving the configuration or a restart of Gladys does not
+spend requests: the readings keep their pace. When tado cannot be reached at
+all (network down), the integration retries after the refresh interval,
+then less and less often (at most every 30 minutes).
+
 ## Privacy
 
 The integration talks only to tado's servers (`login.tado.com`,
@@ -93,8 +120,13 @@ default: they expose where the household members are.
   again.
 - **The status says "waiting for your approval"**: finish the sign-in in the
   tab that opened; the link is valid 5 minutes.
-- **Values move slowly**: tado is read every 2 minutes by default (option
-  **Refresh interval**). A command refreshes its home right away.
+- **Values move slowly**: on a free tado account the readings are spread
+  over the day because of tado's daily limit (see above); with a
+  subscription tado is read every 2 minutes by default (option **Refresh
+  interval**). After a command, Gladys shows the value you set at once; the
+  home is read again right after when the budget allows, otherwise at the
+  next reading. **Schedule** is always followed by a reading: only tado
+  knows what the schedule applies.
 - **A hot water zone has no setpoint**: your installation only supports
   on/off (tado reports it).
 - **tado X**: built from the public documentation of the hops API without
@@ -111,13 +143,13 @@ These are the settings tado° asks for in its configuration screen in Gladys.
 | Options | `section` | No | How a manual setpoint sent from Gladys ends, and how often tado is read. tado answers every home from the cloud: reading faster than every minute brings nothing. |
 | A manual setpoint lasts | `select` | No |  |
 | Fixed duration (minutes) | `number` | No |  |
-| Refresh interval (s) | `number` | No |  |
+| Refresh interval (s) | `number` | No | The shortest delay between two readings. tado limits each account to 100 requests a day without a subscription: the integration then spreads its readings over the day, so the effective interval can be much longer (about 40 minutes for one home). |
 | One presence sensor per phone with geofencing | `boolean` | No | Creates a device per phone whose tado geofencing is on, with an "at home" sensor. Off by default: it is personal location data. |
 
 ## How to install tado° in Gladys
 
 1. In Gladys, open **Integrations**: tado° appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-tado:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-tado:0.1.2`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-tado](https://github.com/LM1LC3N7/gladys-tado).
 

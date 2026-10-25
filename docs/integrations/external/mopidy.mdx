@@ -1,0 +1,290 @@
+---
+title: "Mopidy smart home integration, free and open source"
+sidebar_label: "Mopidy"
+description: "Control your Mopidy servers: music, volume, playlists, web radios, search, notifications. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-mopidy.png"
+keywords:
+  - "mopidy"
+  - "mopidy smart home"
+  - "gladys mopidy"
+  - "mopidy gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-mopidy instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Mopidy","description":"Control your Mopidy servers: music, volume, playlists, web radios, search, notifications.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-mopidy","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-mopidy.png","type":"device","version":"1.0.0","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-25T10:34:02Z"}} />
+
+Control your [Mopidy](https://mopidy.com) music servers from Gladys: local
+files, web radios, and every source a Mopidy extension adds (Jellyfin,
+YouTube Music, TuneIn, Subsonic…). Play, pause, change the track, the volume
+and the mute, start a playlist or a search, play a doorbell sound or a web
+radio and then go back to the music, see what is playing on the dashboard.
+Everything stays on your local network: no cloud, no account.
+
+The integration talks to Mopidy through its native API (Mopidy-HTTP: JSON-RPC
+and the event WebSocket), so it sees changes the instant they happen and knows
+the Mopidy URIs. It was tested against real Mopidy servers, **Mopidy 3.4.2**
+(Debian package) and **4.0.5**. If your Mopidy only exposes MPD
+(Mopidy-MPD), use the [gladys-mpd](https://github.com/guim31/gladys-mpd)
+integration instead. Feedback welcome in the
+[issues](https://github.com/guim31/gladys-mopidy/issues).
+
+This integration is not affiliated with the Mopidy project.
+
+## What you need
+
+- Gladys Assistant **5.2.0** or later.
+- Mopidy 3 or 4 with its HTTP frontend (**Mopidy-HTTP**, enabled by default),
+  reachable from Gladys on the network: in `mopidy.conf`, section `[http]`,
+  set `hostname = 0.0.0.0` (the default `127.0.0.1` only answers the machine
+  itself). The port is **6680** by default.
+- Mopidy-HTTP has no password: keep it on your home network. A Mopidy behind
+  a reverse proxy in HTTPS works too (enter `https://…`), as long as the proxy
+  asks Gladys for no password.
+
+## Set up
+
+1. In Gladys, open **Integrations**, then **Install from GitHub**, and enter
+   `https://github.com/guim31/gladys-mopidy` (or install **Mopidy** from the
+   catalog once it is listed).
+2. In **Configuration**, enter the address of your server (`192.168.1.20`,
+   `mopidy.home`, `192.168.1.20:6681` for another port, or the address of
+   its web client copied from the browser, `http://192.168.1.20:6680/iris/`)
+   and a name (`Living room`). Up to three more servers below.
+3. Choose the **Language of the devices** (names of the features, messages)
+   and, if you want, the **Notification volume**. Save.
+4. Click **Test the connection**: one line per server, with the Mopidy
+   version, what it is doing, its volume and its playlists.
+5. Open the **Discover** tab and add the devices.
+
+Use fixed IP addresses (a DHCP reservation in your router) or names your DNS
+resolves: names ending in `.local` do not resolve inside the integration
+container.
+
+## The device of each server
+
+Each Mopidy server is one device. Gladys shows it as a music player: the
+**Music** dashboard box (play, pause, previous, next, volume) and the **Talk
+on a speaker** scene action work with it.
+
+| Feature (English names) | What it does                                                                                            |
+| ----------------------- | ------------------------------------------------------------------------------------------------------- |
+| Play                    | Plays the queue (a paused track resumes where it was).                                                  |
+| Pause                   | Pauses.                                                                                                 |
+| Previous track          | Goes to the previous track.                                                                             |
+| Next track              | Goes to the next track.                                                                                 |
+| Volume                  | 0 to 100 %, as Mopidy sees it. Absent when Mopidy has no mixer (`mixer = none`).                        |
+| Mute                    | On or off: the mute of Mopidy's mixer.                                                                  |
+| Playback state          | 1 while playing, 0 when paused or stopped. Kept in the history, usable as a scene trigger or condition. |
+| Now playing             | "Title — Artist", "Paused · …" or "Stopped". For a web radio, the song it announces.                    |
+| Playlist                | A list of the Mopidy playlists: picking one replaces the queue with it and plays it.                    |
+| Notification            | Receives an address to play, then puts back what was playing (see below).                               |
+
+The list of playlists follows Mopidy: a playlist created or deleted appears
+or disappears in the list.
+
+## Dashboard widget
+
+Add the **Mopidy player** widget to a dashboard. In its settings, pick a
+server (empty: the first one of the configuration). It shows:
+
+- the **title** of the track and, below, the artist and the album (or the
+  station of a web radio);
+- the **volume** as a gauge;
+- the state (playing, paused, stopped), the position in the queue, random and
+  repeat;
+- four buttons: **Previous**, **Play** or **Pause**, **Next** and
+  **Options…**. Options… opens a form filled with the current values: the
+  volume, a playlist to play, random play and repeat. Only what you change is
+  sent.
+
+The widget follows the server as it changes: it is refreshed within ten
+seconds when a track starts, the volume moves or a playlist is created. No
+cover art (see Limits).
+
+## Scenes
+
+### Triggers
+
+- **Mopidy track started**: Mopidy starts a track — play, next track, a
+  playlist, another client such as Iris or a phone app. Optionally limited to
+  one server. The scene gets the title, the artist, the album, the URI of the
+  track, and "artist · album". Notifications do not trigger it, nor the track
+  resumed after one.
+- **Mopidy server lost**: a server that answered stops answering (switched
+  off, crashed, off the network). Optionally limited to one server; the scene
+  gets its name.
+
+Whether music plays or not is the **Playback state** feature: use the core
+trigger on a device state for that.
+
+### Actions
+
+The server is chosen among the devices of the integration (empty: the first
+one of the configuration).
+
+- **Play a Mopidy playlist**: replaces the queue with a Mopidy playlist, by its
+  name (capitals and accents do not matter) or its URI, and plays it. The
+  number of tracks queued can be used in the next actions of the scene. An
+  unknown name fails the action with the list of the playlists. You can also
+  choose a playlist from a list with the core action **Control a device**, on
+  the **Playlist** feature.
+- **Play an address on Mopidy**: plays an address — a web radio (`http://…`,
+  `https://…`), a sound on a web server, or a Mopidy URI (`file:///music/doorbell.ogg`,
+  `local:track:…`, `tunein:station:…`) — at the volume you give (empty:
+  unchanged). _Then_: **Resume the previous music** (the address plays once,
+  then what was playing comes back, see below) or **Keep playing it
+  (replaces the queue)**. The action fails when Mopidy cannot play the address.
+- **Search and play on Mopidy**: searches the library of Mopidy (every backend
+  that can search: local files with Mopidy-Local, Jellyfin, YouTube Music…)
+  for an artist, an album or a title, and plays the first 50 tracks found in
+  place of the queue. The number of tracks can be used in the next actions.
+- **Clear the Mopidy queue**: stops the server and removes every track from
+  its queue.
+- **Mopidy random play**: on, off, or toggle. The result (on or off) can be
+  used in the next actions.
+- **Mopidy repeat**: off, the whole queue, or the current track.
+
+### Notifications and "Talk on a speaker"
+
+The **Notification** feature of a server, the **Play an address on Mopidy**
+action with _Resume the previous music_, and the **Talk on a speaker** action
+of Gladys (the voice comes from Gladys Plus) all work the same way:
+
+1. the address is added at the end of the queue (your queue is never
+   replaced) and played at once, with the **Notification volume** of the
+   configuration (or the volume of the action);
+2. Mopidy stops after it; it is then removed from the queue, and the volume
+   and the options (random, repeat, single, consume) come back;
+3. the track that was playing resumes at the second it was interrupted; a
+   paused track stays paused, a stopped server stays stopped.
+
+A second notification while the first one plays replaces it. If someone takes
+over the server meanwhile (another track, the next one), the notification
+ends without touching the music. A notification that still plays after five
+minutes is ended and the music comes back. A web radio sent as a notification
+is not a notification: it keeps playing (its address stays in the queue).
+
+The **Talk on a speaker** action has a volume slider, but Gladys does not pass
+it on to external integrations: use the **Notification volume** of the
+configuration.
+
+### Scene ideas
+
+- **Doorbell**: when the doorbell button is pressed, _Play an address on
+  Mopidy_ `file:///music/sounds/doorbell.ogg` on the living room server,
+  volume 70, then resume the previous music.
+- **Wake-up radio**: at 7:00 on weekdays, _Play an address on Mopidy_ with the
+  address of your favorite radio, _Keep playing it_, volume 25; at 7:45, the
+  **Pause** feature.
+- **Evening**: at sunset, _Search and play on Mopidy_ "jazz", then _Mopidy
+  random play_ on.
+- **Nobody home**: when the house becomes empty, the **Pause** feature of
+  every server.
+- **Server down**: on _Mopidy server lost_, send a message to the
+  family: the music server of the living room is down.
+
+## How it refreshes
+
+The integration keeps Mopidy's event WebSocket open on each server: what
+happens on Mopidy, from Gladys or from another client, is in Gladys within a
+second. On top of that, every server is read every 30 seconds (it also checks
+that it still answers, and opens the WebSocket again if a proxy dropped it),
+and an unchanged value is sent again every six hours so that Gladys never
+shows it as old. Only the changes are sent to Gladys.
+
+A server that stops answering is shown unreachable (transport badge of the
+device, connection status of the integration), and the integration tries
+again: after 2, 5, 15, 30 seconds, then every minute. Nothing else is needed
+when it comes back.
+
+Mopidy has no quota: the integration sends one batch of reads per change and
+one every 30 seconds per server.
+
+## Troubleshooting
+
+- **"does not answer"**: check the address and the port (6680, or the `port`
+  of the `[http]` section of `mopidy.conf`), that Mopidy listens on the
+  network (`hostname = 0.0.0.0`) and that no firewall blocks the port between
+  Gladys and the server.
+- **"no Mopidy-HTTP at this address and port"**: something else answers on
+  this port, or Mopidy-HTTP is disabled (`enabled = false` in `[http]`).
+- **"access refused (a proxy in front of Mopidy?)"**: a reverse proxy asks for
+  a password: let Gladys reach Mopidy directly on port 6680.
+- **"no live events" in Test the connection**: the WebSocket `/mopidy/ws`
+  cannot be opened (a proxy that does not pass WebSockets): the states are
+  then read every 30 seconds.
+- **The volume stays empty**: Mopidy has no mixer (`mixer = none` in the
+  `[audio]` section, for a fixed-volume output): change the volume on the
+  amplifier.
+- **A notification does not play**: the address must be reachable from the
+  Mopidy server itself (not from Gladys), and known to an installed backend:
+  `http(s)://` needs the Stream backend (built in), `file://` a folder of the
+  `[file]` section, `tunein:` the TuneIn extension. **No Mopidy extension can
+  play this address** means no backend knows its scheme.
+- **The Playlist list is empty**: Mopidy has no playlist yet (M3U playlists
+  live in `playlists_dir` of the `[m3u]` section).
+- **More details**: the logs of the integration (Integrations → Mopidy → Logs)
+  show the connections, the losses and the returns, and one line per command.
+  Restart the container with `LOG_LEVEL=debug` to see every event received.
+
+## Limits
+
+- Up to four servers. A server is known by its slot in the configuration:
+  changing its address keeps the device and its history.
+- No cover art in the widget: Mopidy gives image addresses on its own
+  network, which the dashboard may not reach.
+- No browsing of the library: playlists, searches, addresses and URIs.
+- The search queues at most 50 tracks, a playlist at most 500.
+- Mopidy cannot be found automatically on the network: enter the addresses.
+- The volume of the **Talk on a speaker** action is not passed on by Gladys
+  (the **Notification volume** applies).
+- Gladys 5.2.0 or later (the **Options…** form of the widget).
+
+## Configuration settings
+
+These are the settings Mopidy asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Mopidy servers | `section` | No | Mopidy with its HTTP frontend (Mopidy-HTTP, port 6680), reachable from Gladys: set hostname = 0.0.0.0 in the [http] section of mopidy.conf. Enter its IP address (add :port if it is not 6680). Up to four servers. |
+| Server address | `string` | No | IP address or name of the Mopidy server, with :port if it is not 6680. The address of its web client works too. |
+| Name | `string` | No | Name of the device in Gladys. Empty: "Mopidy" followed by the address. |
+| Second server | `section` | No | Same fields, for another Mopidy server of your network. |
+| Server address | `string` | No |  |
+| Name | `string` | No |  |
+| Third server | `section` | No | Same fields, for another Mopidy server of your network. |
+| Server address | `string` | No |  |
+| Name | `string` | No |  |
+| Fourth server | `section` | No | Same fields, for another Mopidy server of your network. |
+| Server address | `string` | No |  |
+| Name | `string` | No |  |
+| Options | `section` | No | The notification of a server plays an address (a doorbell sound, an announcement), then puts back what was playing. |
+| Notification volume | `select` | No | Volume during a notification, back to the previous one after. Gladys does not pass on the volume of its "Talk on a speaker" action. |
+| Language of the devices | `select` | No | Names given to the features when a device is added (Volume, Playlist…), and language of the messages. |
+
+## How to install Mopidy in Gladys
+
+1. In Gladys, open **Integrations**: Mopidy appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-mopidy:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-mopidy](https://github.com/guim31/gladys-mopidy).
+
+Mopidy requires Gladys `>=5.2.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Mopidy is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-mopidy) — [source of this documentation](https://github.com/guim31/gladys-mopidy/blob/HEAD/docs/en.md)

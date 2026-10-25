@@ -19,7 +19,7 @@ https://github.com/LM1LC3N7/gladys-tado instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"tado°","description":"Connecteur non officiel : thermostats tado°, eau chaude, présence, fenêtres, scènes et widgets.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-tado","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-tado.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-14T20:14:28Z"}} />
+<ExternalIntegrationHeader integration={{"name":"tado°","description":"Connecteur non officiel : thermostats tado°, eau chaude, présence, fenêtres, scènes et widgets.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-tado","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-tado.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-24T21:35:05Z"}} />
 
 **Connecteur non officiel, sans lien avec tado.** Il amène votre chauffage
 tado° dans Gladys : les thermostats et têtes thermostatiques des générations
@@ -87,6 +87,36 @@ suivantes de la scène les trouvent dans leur liste de variables (écrites
 `{{<étape>.<action>.<clé>}}`, par exemple `{{0.0.temperature}}` quand cette
 action est la première de la scène).
 
+## La limite quotidienne de requêtes de tado
+
+tado limite le nombre de requêtes de chaque compte par jour : **100 par jour
+sur un compte gratuit**, 20 000 avec un abonnement Auto-Assist ou AI-Assist.
+Le compteur repart à zéro vers 12 h (heure de Berlin). Toutes les requêtes
+comptent, y compris celles des autres applications et intégrations qui
+utilisent le même compte.
+
+L'intégration lit le budget restant que tado renvoie et règle son rythme :
+
+- elle garde environ un cinquième du quota (20 requêtes sur un compte
+  gratuit) pour vos **commandes** (consignes depuis un widget ou une scène),
+  qui ne sont jamais retardées ;
+- elle répartit le reste du budget sur la journée : sur un compte gratuit
+  avec une maison, une lecture environ toutes les **40 minutes** (environ une
+  heure avec les capteurs de présence des téléphones) ; la météo toutes les
+  3 heures, la liste des piles deux fois par jour ;
+- avec un abonnement, l'option **Intervalle de rafraîchissement** s'applique
+  telle quelle (2 minutes par défaut), la météo toutes les 15 minutes.
+
+Si le quota est malgré tout épuisé (une autre application sur le même
+compte, beaucoup de commandes), l'état indique **« Quota quotidien de l'API
+tado° épuisé »** avec l'heure de reprise des lectures ; les commandes
+échouent avec un message clair jusqu'à la remise à zéro de tado, puis tout
+reprend tout seul. Quand tado demande seulement de ralentir un moment, l'état l'indique (« pour le moment ») et les lectures reprennent après quelques minutes ; une remise à zéro de tado un peu après midi est elle aussi repérée en quelques minutes. Enregistrer la configuration ou redémarrer Gladys ne
+consomme pas de requêtes : les lectures gardent leur rythme. Si tado est
+injoignable (réseau coupé), l'intégration réessaie après l'intervalle de
+rafraîchissement, puis de moins en moins souvent (au plus toutes les
+30 minutes).
+
 ## Confidentialité
 
 L'intégration ne parle qu'aux serveurs de tado (`login.tado.com`,
@@ -101,9 +131,14 @@ foyer.
   nouveau sur **Lier mon compte tado°**.
 - **L'état dit « en attente de votre approbation »** : terminez la
   connexion dans l'onglet ouvert ; le lien est valable 5 minutes.
-- **Les valeurs bougent lentement** : tado est lu toutes les 2 minutes par
-  défaut (option **Intervalle de rafraîchissement**). Une commande rafraîchit
-  sa maison immédiatement.
+- **Les valeurs bougent lentement** : sur un compte tado gratuit, les
+  lectures sont réparties sur la journée à cause de la limite quotidienne de
+  tado (voir plus haut) ; avec un abonnement, tado est lu toutes les
+  2 minutes par défaut (option **Intervalle de rafraîchissement**). Après une
+  commande, Gladys affiche aussitôt la valeur demandée ; la maison est
+  relue juste après si le budget le permet, sinon à la lecture suivante.
+  **Programmation** est toujours suivie d'une lecture : seul tado sait ce
+  que le programme applique.
 - **Une zone eau chaude n'a pas de consigne** : votre installation ne gère
   que marche/arrêt (tado le signale).
 - **tado X** : construit d'après la documentation publique de l'API hops,
@@ -120,13 +155,13 @@ Voici les paramètres demandés par tado° dans son écran de configuration dans
 | Options | `section` | Non | Comment se termine une consigne manuelle envoyée depuis Gladys, et à quelle fréquence tado est lu. tado répond depuis le cloud : lire plus vite qu'une fois par minute n'apporte rien. |
 | Une consigne manuelle dure | `select` | Non |  |
 | Durée fixe (minutes) | `number` | Non |  |
-| Intervalle de rafraîchissement (s) | `number` | Non |  |
+| Intervalle de rafraîchissement (s) | `number` | Non | Le délai minimal entre deux lectures. tado limite chaque compte à 100 requêtes par jour sans abonnement : l'intégration répartit alors ses lectures sur la journée, l'intervalle réel peut donc être bien plus long (environ 40 minutes pour une maison). |
 | Un capteur de présence par téléphone géolocalisé | `boolean` | Non | Crée un appareil par téléphone dont la géolocalisation tado est active, avec un capteur « à la maison ». Désactivé par défaut : ce sont des données de localisation personnelles. |
 
 ## Comment installer tado° dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : tado° apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-tado:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-tado:0.1.2`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-tado](https://github.com/LM1LC3N7/gladys-tado).
 

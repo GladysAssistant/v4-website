@@ -1,0 +1,184 @@
+---
+title: "Insteon Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Insteon"
+description: "Insteon network through the Hub 2245: dimmers, switches, sensors and keypad buttons. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-insteon.png"
+keywords:
+  - "insteon"
+  - "insteon smart home"
+  - "gladys insteon"
+  - "insteon gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-insteon instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Insteon","description":"Insteon network through the Hub 2245: dimmers, switches, sensors and keypad buttons.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-insteon","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-insteon.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-23T18:55:05Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+This integration connects Gladys to an Insteon network through the **Insteon
+Hub 2245**, on your local network. It reads the devices linked to the hub and
+what they report, and drives the lights and switches you declare safe.
+
+> Unofficial integration, not affiliated with Insteon.
+>
+> **Never tested with a real device**: it was written from the pyinsteon
+> library (the one of Home Assistant) and tested against a simulated hub only.
+> Feedback welcome.
+
+## What you get
+
+| Insteon device                                                            | In Gladys                                                                                 |
+| ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Dimmer (SwitchLinc, LampLinc, KeypadLinc, FanLinc light...) declared safe | a light: on/off and brightness                                                            |
+| Switch, plug-in or in-line relay declared safe                            | a switch (or a light)                                                                     |
+| Dimmer or switch **not** declared safe                                    | its state (and level), read only, and "Turn on" / "Turn off" buttons, disabled by default |
+| Motion sensor                                                             | motion, low battery                                                                       |
+| Door sensor, open/close sensor                                            | opening, low battery (door sensors)                                                       |
+| Leak sensor                                                               | leak                                                                                      |
+| Smoke Bridge                                                              | smoke, carbon monoxide, low battery                                                       |
+| I/O Linc                                                                  | the sensor input and the relay, read only                                                 |
+| Keypad buttons, remotes, switch paddles                                   | the scene trigger "Insteon button"                                                        |
+
+Not supported yet: thermostats, locks (MorningLinc), the I/O Linc relay
+command (garage doors), dual outlets (On/Off Outlet), window coverings, load
+controllers, X10, the USB / serial modems (PowerLinc Modem) and the old Hub 2242. They are listed in the status of the integration.
+
+## Setting it up
+
+1. Give the hub a fixed IP address in your router.
+2. In Gladys, open the integration and enter:
+   - the **address of the hub** (its IP address);
+   - the **user name** and **password** printed on the label under the hub
+     (not your Insteon account). The password is kept by Gladys in its
+     database, never shown again, sent only to the hub, never written in the
+     logs. The hub only speaks plain HTTP: anyone who can read your local
+     network can read it;
+   - optionally the **Insteon address of the hub** (printed on it). Left
+     empty, the hub found at the first connection is remembered.
+3. Save, then click **Test the connection**.
+
+At the first connection the integration reads the database of the hub (the
+devices linked to it), then asks each device what it is. Battery devices
+(sensors, remotes) sleep and do not answer: **press their set button once**,
+or wait for their next message (motion, door opened...), and they appear.
+Then add the devices from the **Discovery** tab.
+
+## Lights and switches: declare them safe
+
+A light or a switch in Gladys obeys Google Home, Alexa, the MCP ("turn
+everything off") and every scene. An Insteon switch or dimmer may drive
+anything: a lamp, but also a pump, a heater, a freezer, a garage door. So a
+dimmer or a switch is a light or a switch **only if you list its address in
+"Devices declared safe"**, for example:
+
+```
+1A.2B.3C, 4D.5E.6F light
+```
+
+A dimmer is always a light; a switch is a switch, or a light when followed by
+`light`. The other ones show their state, and two buttons "Turn on" and "Turn
+off" that only work once **"Allow the Turn on / Turn off buttons"** is ticked.
+When you declare a device safe later, its new features appear in the
+Discovery; delete the old ones you no longer want (their history goes with
+them).
+
+## Commands
+
+A command leaves within 3.5 seconds or not at all ("nothing was sent"). It is
+confirmed only when the device answers the level asked; otherwise Gladys shows
+"sent, without confirmation" and the device is read again 2 seconds later.
+Every command is written in the integration logs.
+
+## Scene trigger "Insteon button"
+
+Each press of a keypad button, a remote button or a switch paddle (a device
+linked to the hub) fires the trigger with:
+
+- `address`: the address of the device, upper case with dots, as on its label
+  (`1A.2B.3C`): it is compared as written;
+- `button`: the button (Insteon group, 0 to 255): 1 for a paddle, 1 to 8 on a
+  keypad; a few devices send group 0;
+- `action`: `on`, `off`, `fast_on`, `fast_off` (double press), `dim_start`
+  (held), `dim_stop` (released).
+
+The variable `name` gives the model of the device (empty when its type is not
+known yet). 120 events per minute at most.
+
+## Readings and limits
+
+- The hub is read twice a second (as pyinsteon does); the devices tell their
+  changes as they happen. Every **status reading** interval (10 minutes by
+  default) the dimmers, switches and I/O Linc are read again. A restart of
+  the integration never reads sooner.
+- Messages that arrive in the hub just before a command is sent may be lost
+  (the hub buffer is cleared before each message). For dimmers, switches and
+  I/O Linc the next reading catches up. **Battery sensors (motion, door, leak)
+  and the Smoke Bridge are never read**: a lost message is only caught up by
+  the device's next message, its cleanup message or its heartbeat (up to 24 h
+  for a leak sensor). Do not rely on Gladys alone for smoke, CO or leak alarms.
+- The identity of the hub (its Insteon address) is read at every connection;
+  until then nothing is read nor sent. **Another hub** answering at the same
+  IP address (after a router change): nothing is read nor sent until you enter
+  its Insteon address.
+- A device's type, once known, never changes (a forged or damaged message
+  cannot turn an I/O Linc into a switch).
+- **Password refused**: the integration stops and never tries again by
+  itself. Correct the password, or click "Test the connection" once the hub
+  accepts it.
+- **Hub unreachable**: new tries after 10 s, 30 s, 1, 2, then every 5
+  minutes; the pause is kept across a restart.
+
+## Credits
+
+The protocol of the hub and the product database come from
+[pyinsteon](https://github.com/pyinsteon/pyinsteon) (MIT, Tom Harris), see
+`THIRD_PARTY_NOTICES.md`.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Insteon in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Your Insteon Hub | `section` | Nein | For the Insteon Hub 2245 on your local network (the USB or serial modems and the old Hub 2242 are not supported). The integration reads the devices linked to the hub: dimmers and switches, motion, door and leak sensors, Smoke Bridge, I/O Linc; keypad, remote and paddle presses become scene triggers. Thermostats, locks, I/O Linc relays and dual outlets are not supported yet. The hub only speaks plain HTTP: its password travels in clear on your network. Never tested with a real device. Unofficial, not affiliated with Insteon. |
+| Address of the hub | `string` | Ja | The IP address (or name) of the Hub 2245; give it a fixed address in your router. |
+| Port | `number` | Nein | 25105 unless you changed it. |
+| User name of the hub | `string` | Ja | Printed on the label under the hub (not your Insteon account). |
+| Password of the hub | `secret` | Ja | Printed on the label under the hub. Kept by Gladys in its database, never shown again, sent only to the hub, never written in the logs. The hub only speaks plain HTTP: anyone who can read your local network can read it. |
+| Insteon address of the hub | `string` | Nein | Optional: the Insteon ID printed on the hub (e.g. 1A.2B.3C). Empty: the hub found at the first connection is remembered. If another hub ever answers at the same IP address, nothing is read nor sent until you enter its address here. |
+| Devices declared safe (lights and switches) | `string` | Nein | Insteon addresses of the dimmers and switches that may be driven as a light or a switch, e.g. "1A.2B.3C, 4D.5E.6F light" (a dimmer is always a light; a switch is a switch, or a light with "light"). A light or a switch obeys Google, Alexa, the MCP ("turn everything off") and the scenes: list only the devices that drive lamps or harmless loads, never a pump, a heater, a freezer, a garage door. The other ones show their state, with "Turn on" / "Turn off" buttons (option below). |
+| Status reading (minutes) | `number` | Nein | The devices also report their changes as they happen; this reading catches what was missed. 2 to 60 minutes. |
+| Devices not declared safe | `section` | Nein | The "Turn on" and "Turn off" buttons of the dimmers and switches not declared safe are off by default: the load behind them is unknown. Once allowed, every Gladys user, every scene and the Gladys app can press them. Every command is written in the integration logs. |
+| Allow the "Turn on" / "Turn off" buttons | `boolean` | Nein |  |
+| Language of the names | `select` | Nein | Used for the names of the features added from now on. |
+
+## So installierst du Insteon in Gladys
+
+1. Öffne in Gladys **Integrationen**: Insteon erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-insteon:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-insteon](https://github.com/LM1LC3N7/gladys-insteon).
+
+Insteon benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Insteon ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-insteon) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-insteon/blob/HEAD/docs/en.md)

@@ -1,0 +1,206 @@
+---
+title: "Integración domótica Brevo, gratuita y de código abierto"
+sidebar_label: "Brevo"
+description: "Notificaciones de Gladys por email y SMS con Brevo, con seguimiento de entrega, escenas y widgets. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-brevo.jpg"
+keywords:
+  - "brevo"
+  - "domótica brevo"
+  - "gladys brevo"
+  - "brevo gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/William-De71/gladys-brevo instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Brevo","description":"Notificaciones de Gladys por email y SMS con Brevo, con seguimiento de entrega, escenas y widgets.","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-brevo","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-brevo.jpg","type":"communication","version":"0.1.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-25T13:06:12Z"}} />
+
+## Presentación
+
+Esta integración envía las notificaciones de Gladys **por email, por SMS o
+por ambos** mediante las API transaccionales de [Brevo](https://www.brevo.com)
+(antes Sendinblue). Cada usuario de Gladys elige su canal e introduce su
+propia dirección y/o número de móvil; el administrador introduce una sola vez
+la clave API de Brevo para la casa. Las capturas de cámara enviadas por una
+escena viajan como adjuntos del email.
+
+También aporta:
+
+- tres **disparadores de escena**: mensaje no enviado, entrega fallida, pocos
+  créditos SMS;
+- tres **acciones de escena**: enviar un email, enviar un SMS (a cualquiera,
+  incluso a alguien que no es usuario de Gladys), leer la cuenta de Brevo;
+- dos **widgets de panel**: la cuenta de Brevo y los últimos mensajes con su
+  estado de entrega.
+
+![Los dos widgets de la integración: la cuenta de Brevo con sus créditos y contadores, y los últimos mensajes con su estado de entrega (ilustración generada, no una captura de pantalla)](https://raw.githubusercontent.com/William-De71/gladys-brevo/main/docs/assets/widgets.es.png)
+
+Transporte: **nube**. Los textos, las imágenes, las direcciones y los números
+pasan por la API de Brevo (`api.brevo.com`) y después por los servidores de
+correo y los operadores móviles.
+
+## Requisitos previos
+
+- Gladys Assistant **5.1.0** o posterior.
+- Una **cuenta de Brevo**. El plan gratuito envía 300 emails al día; los SMS
+  se compran como créditos (una cuenta nueva no tiene ninguno).
+- Un **remitente de email**: una dirección verificada en Brevo, o una
+  dirección de un dominio autenticado en Brevo (Remitentes, dominios, IP).
+- La **dirección IP pública de su casa autorizada** en Brevo, cuando la
+  cuenta bloquea las direcciones IP desconocidas (activado por defecto en las
+  cuentas creadas desde 2024): Seguridad → IP autorizadas.
+
+## Configuración
+
+1. En Brevo, abra **SMTP & API → Claves API** y pulse **Generar una nueva
+   clave API**. Cópiela: empieza por `xkeysib-` y solo se muestra una vez.
+2. En Gladys, abra **Integraciones → Brevo → Configuración**, pegue la clave
+   y guarde.
+3. Pulse **Probar la conexión**: muestra la cuenta, los créditos de email y
+   SMS, los remitentes y el que se usa.
+4. Si la prueba responde que Brevo bloquea la dirección IP, abra
+   **Seguridad → IP autorizadas** en Brevo (enlace en la configuración) y
+   autorice la dirección que muestra Brevo, o la que aparece en el email que
+   Brevo le ha enviado.
+5. Pulse **Enviar una prueba** con su dirección y/o número para comprobar toda
+   la cadena.
+6. Cada usuario abre el bloque **Mi cuenta** de la misma pantalla, elige
+   **Email**, **SMS** o **Email y SMS**, e introduce su dirección y/o número
+   de móvil.
+
+| Campo                        | Uso                                                                                                |
+| ---------------------------- | -------------------------------------------------------------------------------------------------- |
+| Clave API                    | En SMTP & API → Claves API, guardada cifrada                                                       |
+| Dirección del remitente      | Opcional: un remitente verificado; vacío = el primer remitente activo de la cuenta                 |
+| Nombre del remitente         | El nombre que ven los destinatarios (`Gladys` por defecto)                                         |
+| Prefijo del asunto           | Antes de la primera línea de la notificación: `Gladys: Puerta abierta`                             |
+| Remitente de los SMS         | Hasta 11 letras y cifras, sin espacios (`Gladys` por defecto)                                      |
+| Prefijo de país por defecto  | Se añade a los números sin prefijo (`33` por defecto: 06… pasa a ser +336…)                        |
+| Alerta de pocos créditos SMS | Por debajo de este número de créditos SMS, «Pocos créditos SMS» se activa una vez; 0 = desactivada |
+| Seguir la entrega            | Lee los eventos de entrega de Brevo, para el widget y «Entrega fallida»                            |
+
+## Uso
+
+### Notificaciones
+
+Toda notificación de Gladys dirigida a un usuario que ha rellenado «Mi
+cuenta» sale por su canal: alarmas, acciones de escena «Enviar un mensaje»,
+respuestas de Gladys. El asunto del email es el prefijo y la primera línea del
+texto; una imagen de cámara va como adjunto. Un SMS solo lleva el texto,
+cortado a 1.000 caracteres: a partir de 160 caracteres (70 con caracteres como
+ê, ç o emojis) se envía en varias partes, y cada una consume créditos. Con
+**Email y SMS**, la notificación solo falla cuando ninguno de los dos canales
+ha salido.
+
+### Disparadores de escena
+
+| Disparador         | Cuándo se activa                                                                                                     | Variables                                                          |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| Mensaje no enviado | Brevo ha rechazado una notificación: una vez por canal, y de nuevo solo después de un mensaje de ese canal           | canal, motivo, código HTTP, error, destinatario enmascarado        |
+| Entrega fallida    | Brevo ha aceptado un mensaje y después ha señalado un rebote, un bloqueo, una denuncia de spam…; una vez por mensaje | canal, evento, destinatario enmascarado, asunto, motivo, id, fecha |
+| Pocos créditos SMS | Los créditos SMS han bajado del umbral; de nuevo solo después de una recarga por encima                              | créditos restantes, umbral                                         |
+
+«Mensaje no enviado» y «Entrega fallida» se pueden filtrar por canal, motivo o
+evento.
+
+### Acciones de escena
+
+- **Enviar un email**: una o varias direcciones separadas por comas (20 como
+  máximo, cada destinatario recibe su propio email), un asunto (vacío =
+  prefijo y primera línea) y un texto. Devuelve los emails enviados, las
+  direcciones rechazadas y el id del mensaje.
+- **Enviar un SMS**: uno o varios números separados por comas (20 como
+  máximo) y un texto. Devuelve los SMS enviados y los números rechazados.
+- **Leer la cuenta de Brevo**: devuelve los créditos de email y SMS, el plan,
+  y los emails y SMS enviados hoy y este mes.
+
+Las variables de escena se admiten en todos los campos.
+
+### Ejemplos de escenas
+
+- _Cuando salta la alarma_ → **Enviar un SMS** al vecino: «Alarma en casa,
+  ¿puedes echar un vistazo?».
+- _Cuando un SMS no se envía_ (canal SMS, motivo «Créditos insuficientes») →
+  enviar un mensaje por email al administrador: «A Brevo no le quedan créditos
+  SMS».
+- _Cuando falla una entrega_ (evento «Rebote duro») → notificar al
+  administrador: «\{\{triggerEvent.data.recipient\}\} no ha recibido
+  \{\{triggerEvent.data.subject\}\}».
+
+### Widgets del panel
+
+- **Brevo**: créditos de email, créditos SMS (en naranja cerca del umbral, en
+  rojo por debajo), el estado de la API, el remitente, los emails y SMS
+  enviados hoy y este mes, los fallos del mes y el último de ellos.
+- **Mensajes de Brevo**: los últimos emails y SMS enviados por Gladys, con su
+  estado (enviado, entregado, rebote duro, bloqueado…); toque uno para ver los
+  detalles.
+
+Los widgets nunca consultan a Brevo: muestran lo que la integración ya sabe.
+La cuenta se lee cada 15 minutos; los eventos de entrega cada 5 minutos, y
+solo mientras un mensaje de los dos últimos días espera su estado final.
+
+## Solución de problemas
+
+- **«Brevo rechaza la clave API»**: compruebe la clave (empieza por
+  `xkeysib-`) o genere una nueva. Una clave SMTP (`xsmtpsib-`) no funciona con
+  la API.
+- **«Brevo bloquea la dirección IP de su casa»**: autorícela en Seguridad →
+  IP autorizadas, o desactive el bloqueo de las direcciones IP desconocidas.
+  Con una dirección IP dinámica, el problema vuelve tras cada cambio: autorice
+  el rango, o elija la autorización automática.
+- **«Ningún remitente de email activo»**: añada un remitente en Brevo y
+  confírmelo desde el email que envía Brevo, o autentique su dominio.
+- **«Remitente rechazado»**: la dirección de la configuración no es un
+  remitente verificado, o el remitente de los SMS tiene más de 11 caracteres.
+- **«Cuenta sin permiso de envío»**: una cuenta nueva de Brevo puede quedar en
+  validación durante un tiempo, y los SMS necesitan créditos y a veces una
+  activación: consulte la aplicación de Brevo.
+- **SMS no recibido**: algunos países sustituyen el nombre del remitente por
+  un número; el widget «Mensajes de Brevo» muestra si Brevo lo ha entregado.
+- **Registros**: Integraciones → Brevo → pestaña Supervisión. Las direcciones
+  y los números aparecen enmascarados; la clave no aparece nunca.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Brevo te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Clave API de Brevo | `section` | No | Necesita una cuenta de Brevo (el plan gratuito envía 300 emails al día; los SMS se compran como créditos). En Brevo, abra SMTP y API, pestaña Claves API, y genere una clave: empieza por xkeysib- y solo se muestra una vez. Brevo bloquea las llamadas a la API desde direcciones IP desconocidas (activo por defecto en las cuentas recientes): autorice la dirección IP pública de su casa en Seguridad, IP autorizadas, o las llamadas serán rechazadas. |
+| Clave API | `secret` | Sí | Empieza por xkeysib-. Se guarda cifrada y no se vuelve a mostrar. |
+| Emails | `section` | No | Los emails salen de un remitente de su cuenta de Brevo: una dirección verificada, o cualquier dirección de un dominio autenticado (Remitentes, dominios, IP). Deje la dirección vacía para usar el primer remitente activo. El asunto es el prefijo seguido de la primera línea de la notificación. |
+| Dirección del remitente | `string` | No | Opcional. Un remitente verificado, por ejemplo gladys@mi-dominio.es. |
+| Nombre del remitente | `string` | No | El nombre que ven los destinatarios. |
+| Prefijo del asunto | `string` | No | Se coloca antes de la primera línea de la notificación: «Gladys: Puerta abierta». |
+| SMS | `section` | No | Los SMS consumen los créditos comprados en Brevo (ninguno en una cuenta nueva). El remitente es un nombre de hasta 11 letras y cifras, sin espacios; algunos países lo sustituyen por un número. Un texto de más de 160 caracteres (70 con acentos como ê o emojis) se envía en varias partes, y cada una consume créditos. |
+| Remitente de los SMS | `string` | No | Hasta 11 letras y cifras, por ejemplo Gladys o MiCasa. |
+| Prefijo de país por defecto | `string` | No | Se añade a los números escritos sin prefijo (612 34 56 78 no lo necesita; 06 12… pasa a +33 6 12…). Solo cifras: 34 España, 33 Francia, 32 Bélgica, 41 Suiza. |
+| Créditos y entrega | `section` | No | La cuenta se lee cada 15 minutos. El seguimiento de entrega lee los eventos de Brevo cada 5 minutos, solo mientras un mensaje de los dos últimos días espera su estado final, y activa «Entrega fallida» cuando uno no llegó. |
+| Alerta de pocos créditos SMS | `number` | No | Por debajo de este número de créditos SMS, el disparador de escena «Pocos créditos SMS» se activa una vez. 0 lo desactiva. |
+| Seguir la entrega | `boolean` | No | Muestra entregado o rebotado en el widget y activa «Entrega fallida». |
+
+## Cómo instalar Brevo en Gladys
+
+1. En Gladys, abre **Integraciones**: Brevo aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/william-de71/gladys-brevo:0.1.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/William-De71/gladys-brevo](https://github.com/William-De71/gladys-brevo).
+
+Brevo requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Brevo es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [William-De71](https://github.com/William-De71), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/William-De71/gladys-brevo) — [fuente de esta documentación](https://github.com/William-De71/gladys-brevo/blob/HEAD/docs/es.md)

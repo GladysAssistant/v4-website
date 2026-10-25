@@ -1,0 +1,190 @@
+---
+title: "Intégration domotique Iskra, gratuite et open source"
+sidebar_label: "Iskra"
+description: "Non officiel : compteurs Iskra derrière une Smart Gateway, en local : puissance et index. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-iskra.png"
+keywords:
+  - "iskra"
+  - "domotique iskra"
+  - "gladys iskra"
+  - "iskra gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-iskra instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Iskra","description":"Non officiel : compteurs Iskra derrière une Smart Gateway, en local : puissance et index.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-iskra","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-iskra.png","type":"device","version":"0.1.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-24T21:45:19Z"}} />
+
+Intégration non officielle, sans lien avec Iskra. Elle lit les compteurs
+d'énergie Iskra reliés à une passerelle **Iskra Smart Gateway (SG)**, par
+l'API REST locale de la passerelle : pas de cloud, pas de compte, rien
+d'envoyé à la passerelle que des requêtes de lecture (GET), une tournée toutes
+les 30 secondes au plus.
+
+**Jamais testé avec une vraie passerelle Iskra** : elle a été écrite à partir
+de la bibliothèque Python du fabricant (pyiskra, celle qu'utilise Home
+Assistant). Vos retours sont les bienvenus.
+
+## Compteurs pris en charge
+
+Les compteurs que la bibliothèque lit derrière une Smart Gateway : IE38,
+IE35, IE14 (IMPACT), WM3M4, WM3, WM1, MC, iMC, MT, iMT (Measuring Centres).
+Les autres modèles listés par la passerelle sont nommés dans l'état et ne
+sont pas lus. Au plus 16 compteurs sont lus (les autres sont comptés dans
+l'état). Un compteur joint directement en Modbus TCP, sans la
+passerelle, n'est pas encore pris en charge.
+
+L'index de consommation vient des registres d'énergie **non remettables à
+zéro** : les IE38, IE35, IE14, WM3 et WM3M4 en ont. Pour les MC, iMC, MT, iMT
+et WM1, pyiskra ne connaît que des registres remettables à zéro : ces
+compteurs ne donnent **pas d'index de consommation** (puissance et phases
+seulement), et l'état le dit.
+
+## Ce que vous obtenez
+
+Un appareil par compteur, nommé d'après son modèle et son numéro de série
+(`Iskra IE38MD 41000001`), avec les valeurs que le compteur donne :
+
+| Fonction                             | Nature                                      |
+| ------------------------------------ | ------------------------------------------- |
+| Puissance active (voir plus bas)     | capteur d'énergie, W                        |
+| Index de consommation                | index d'énergie, kWh                        |
+| Index d'injection (kWh)              | simple capteur                              |
+| Tension L1, L2, L3                   | capteur d'énergie, V, sans historique       |
+| Courant L1, L2, L3                   | capteur d'énergie, A, sans historique       |
+| Puissance L1, L2, L3 (W)             | simple capteur, sans historique             |
+| Facteur de puissance, fréquence (Hz) | simple capteur, sans historique             |
+| Température du compteur              | température d'appareil, °C, sans historique |
+
+- L'**index de consommation** alimente le suivi énergétique de Gladys :
+  Gladys en déduit la consommation et son coût. Il vient du premier registre
+  non remettable à zéro d'énergie active importée par le compteur (choisi à
+  la première lecture du compteur, puis gardé avec sa position et son nom).
+  Si un autre registre prend sa place, l'index attend (note dans l'état).
+  Supprimer puis recréer l'appareil choisit à nouveau le registre. Il est
+  publié au plus une fois par minute et vérifié d'abord : jamais 0 ; toute baisse, même de 1 Wh, ou
+  un saut plus grand que ce que le compteur a pu mesurer (la « puissance
+  plausible la plus haute » de la configuration, 100 kW par défaut, sur le
+  temps écoulé depuis la dernière valeur) est **retenu** (la dernière valeur
+  acceptée est renvoyée) et affiché dans l'état de l'intégration. S'il est
+  juste (un nouveau compteur, une longue coupure), cliquez deux fois sur
+  **Accepter l'index retenu** (voir Boutons). Enregistrer la configuration ne
+  l'accepte jamais.
+- L'**injection** (le premier registre non remettable à zéro d'énergie active
+  exportée) n'entre jamais dans le suivi énergétique (elle serait facturée
+  comme consommation) : simple capteur.
+- Les registres remettables à zéro (« resettable ») ne sont pas lus : un
+  registre qu'on peut remettre à zéro n'est jamais un index.
+- La **puissance active** est le total du compteur. Son signe quand le site
+  injecte est à confirmer sur un vrai compteur (sans doute négatif).
+- Les valeurs instantanées sont envoyées à chaque lecture, seulement quand
+  elles changent (et toutes les 10 minutes sinon). L'intervalle grandit avec
+  beaucoup de compteurs (8 secondes par compteur, soit 80 secondes avec 10
+  compteurs), pour que Gladys ne reçoive jamais plus qu'il n'accepte.
+- Quand toutes les valeurs instantanées d'un compteur (tensions au 0,1 V,
+  fréquence au 0,01 Hz, courants…) restent exactement les mêmes pendant 15
+  minutes, la passerelle sert sans doute une vieille copie : elles ne sont
+  plus envoyées et l'état le dit, y compris après un redémarrage. L'index
+  n'est pas concerné.
+
+## Installation
+
+1. Trouvez l'adresse IP de la Smart Gateway (dans votre box, ou les outils
+   Iskra) et donnez-lui de préférence une adresse fixe dans votre box.
+2. Dans Gladys, ouvrez l'intégration, saisissez cette adresse. Si
+   l'interface web de la passerelle demande des identifiants, saisissez aussi
+   son nom d'utilisateur et son mot de passe ; sinon laissez-les vides.
+   Enregistrez.
+3. Dans l'onglet **Découverte**, créez l'appareil de chaque compteur.
+
+## Les identifiants
+
+Le mot de passe est gardé par Gladys dans sa base, jamais réaffiché, jamais
+écrit dans les journaux. Il n'est envoyé qu'à l'adresse de la passerelle,
+comme la passerelle le demande : dans un cookie, en HTTP simple sur votre
+réseau (la passerelle ne propose rien d'autre). Si la passerelle refuse les
+identifiants, les lectures s'arrêtent et l'état le dit : corrigez le nom
+d'utilisateur ou le mot de passe et enregistrez, ou cliquez sur **Tester la
+connexion** pour réessayer une fois. L'intégration ne réessaie jamais
+d'elle-même des identifiants refusés, même après un redémarrage. Pour
+reconnaître « les mêmes identifiants » après un redémarrage, elle ne garde
+dans `/data` que 8 bits d'une empreinte salée du mot de passe refusé (jamais
+le mot de passe lui-même).
+
+## Boutons
+
+- **Tester la connexion** : lit la passerelle une fois quand une lecture est
+  due (jamais plus d'une toutes les 30 secondes), sinon donne la dernière
+  lecture : la passerelle, ses compteurs, leur puissance et leur index. Après
+  des identifiants refusés, il réessaie une fois ; seul un succès lève le
+  refus.
+- **Accepter l'index retenu**, en deux clics. Le premier clic liste les
+  index retenus, par compteur, et ne prend rien. Le second clic, de quelques
+  secondes à 5 minutes plus tard, prend exactement ce que le premier a listé,
+  et pour chaque compteur seulement si sa valeur retenue n'a pas changé
+  depuis (au-delà de ce que le compteur a pu mesurer entre-temps) ; un
+  compteur retenu après le premier clic n'est jamais pris. Un saut est compté
+  d'un coup comme consommation ; une baisse ne facture rien.
+
+## En cas de problème
+
+- **Injoignable ou réponse inattendue** : nouvel essai après 30 secondes,
+  puis doublé jusqu'à 10 minutes.
+- **La passerelle demande d'attendre (429) ou échoue (5xx)** : lectures en
+  pause de 1 minute à 6 heures, y compris après un redémarrage.
+- **Un compteur ne peut pas être lu** (sa page refusée, en erreur ou sans
+  réponse) : les autres continuent, et l'état le nomme. Une tournée cesse
+  d'interroger de nouveaux compteurs après environ une minute : les compteurs
+  restants passent en premier la fois suivante.
+- **La liste des compteurs change pendant une lecture** : le compteur dont
+  le port a changé ne reçoit rien de cette lecture. Chaque compteur est
+  repéré par son numéro de série : ses valeurs ne vont jamais à l'appareil
+  d'un autre compteur.
+- **Le même numéro de série sur deux ports** (un compteur vu par deux
+  interfaces, ou deux compteurs au numéro par défaut) : ces ports ne sont ni
+  lus ni proposés en Découverte ; l'état les nomme.
+- **Le registre de l'index a changé** (un autre registre à sa place, après
+  une reconfiguration des registres) : l'index attend, l'état le dit ;
+  supprimez puis recréez l'appareil pour choisir à nouveau le registre.
+
+## Vie privée
+
+Tout reste sur votre réseau. L'intégration n'envoie que des requêtes GET à
+l'adresse saisie, avec les identifiants quand vous en avez donné.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Iskra dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Iskra Smart Gateway | `section` | Non | Connecteur non officiel, sans lien avec Iskra. Il lit les compteurs Iskra (IE38, IE35, IE14, WM, MC, iMC, MT, iMT) reliés à une passerelle Iskra Smart Gateway (SG), par l'API REST locale de la passerelle, sans cloud : un appareil par compteur avec sa puissance active, la tension, le courant et la puissance de chaque phase, la fréquence, le facteur de puissance et la température, et, pour les compteurs à registres d'énergie non remettables à zéro (IE38, IE35, IE14, WM3, WM3M4), son index de consommation pour le suivi énergétique de Gladys (l'injection en simple capteur) ; les compteurs MC, iMC, MT, iMT et WM1 ne donnent pas d'index. Lecture seule. Un compteur joint directement en Modbus TCP n'est pas encore pris en charge. Jamais testé avec une vraie passerelle Iskra. |
+| Adresse de la passerelle | `string` | Oui | L'adresse IP de la Smart Gateway sur votre réseau (visible dans votre box), avec un port seulement s'il n'est pas 80. Donnez-lui de préférence une adresse fixe dans votre box ; si elle change, saisissez la nouvelle : chaque compteur garde son appareil et son historique (ils sont repérés par leur numéro de série). |
+| Nom d'utilisateur (facultatif) | `string` | Non | Seulement si l'interface web de la passerelle demande des identifiants : son nom d'utilisateur. Sinon, laissez vide. |
+| Mot de passe (facultatif) | `secret` | Non | Le mot de passe de ces identifiants. Gardé par Gladys dans sa base, jamais réaffiché, jamais écrit dans les journaux, envoyé seulement à l'adresse de la passerelle ci-dessus (en HTTP simple sur votre réseau, comme la passerelle le demande). Si la passerelle le refuse, les lectures s'arrêtent jusqu'à ce que vous le changiez ou cliquiez sur « Tester la connexion ». |
+| Puissance plausible la plus haute d'un compteur (kW) | `number` | Non | La garde de l'index de consommation retient une hausse plus grande que cette puissance sur le temps écoulé depuis la dernière valeur (100 kW par défaut). Ne l'augmentez que pour un compteur d'une grosse installation. |
+
+## Comment installer Iskra dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Iskra apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-iskra:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-iskra](https://github.com/LM1LC3N7/gladys-iskra).
+
+Iskra nécessite Gladys `>=5.2.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Iskra est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-iskra) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-iskra/blob/HEAD/docs/fr.md)

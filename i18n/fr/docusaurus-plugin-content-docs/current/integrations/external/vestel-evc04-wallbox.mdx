@@ -1,0 +1,128 @@
+---
+title: "Intégration domotique Vestel EVC04 Wallbox, gratuite et open source"
+sidebar_label: "Vestel EVC04 Wallbox"
+description: "Pilote et surveille la borne Vestel EVC04 en Modbus TCP. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/placeholder.png"
+keywords:
+  - "vestel evc04 wallbox"
+  - "domotique vestel evc04 wallbox"
+  - "gladys vestel evc04 wallbox"
+  - "vestel evc04 wallbox gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/tomgermany/gladys-vestel-evc04 instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Vestel EVC04 Wallbox","description":"Pilote et surveille la borne Vestel EVC04 en Modbus TCP.","owner":"tomgermany","owner_avatar_url":"https://avatars.githubusercontent.com/u/535105?v=4","repo_url":"https://github.com/tomgermany/gladys-vestel-evc04","cover_url":"https://integration-store-storage.gladysassistant.com/covers/placeholder.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-24T21:05:42Z"}} />
+
+Cette intégration communautaire connecte une borne Vestel EVC04 Home à [Gladys Assistant](https://gladysassistant.com/) via **Modbus TCP**. Elle lit les mesures de charge et contrôle localement le courant de charge autorisé. Elle ne nécessite ni cloud du fabricant, ni serveur OCPP, ni compte utilisateur.
+
+## Prérequis
+
+- Gladys Assistant **5.1.0 ou version ultérieure**.
+- Modbus TCP activé sur la borne.
+- La borne et l'hôte Gladys doivent être accessibles sur le même réseau.
+- Port Modbus TCP par défaut : **502**. Unit ID par défaut : **255**.
+
+L'EVC04 n'accepte qu'**un seul maître Modbus à la fois**. Cette intégration utilise une connexion unique pour les mesures, les tests de connexion et les commandes. Ne connectez pas un autre client Modbus à la borne en parallèle.
+
+## Installation et configuration
+
+Installez l'intégration depuis le système d'intégrations de Gladys. L'image du conteneur est publiée à l'adresse suivante :
+
+`ghcr.io/tomgermany/gladys-vestel-evc04:latest`
+
+Configurez l'adresse IP ou le nom mDNS de la borne (sans `http://`), le port Modbus, l'Unit ID, l'intervalle de lecture des mesures et le délai du heartbeat. Une réservation DHCP est recommandée afin de conserver une adresse stable.
+
+| Paramètre | Valeur par défaut | Description |
+| --- | --- | --- |
+| Adresse de la borne | — | Adresse IP ou nom mDNS |
+| Port Modbus | `502` | À modifier uniquement si la borne utilise un autre port |
+| Unit ID Modbus | `255` | Unit ID par défaut de l'EVC04 |
+| Intervalle de lecture | 5 minutes | Valeurs disponibles : 1, 5, 15, 30 ou 60 minutes |
+| Délai du heartbeat | 20 secondes | Utilisé lorsque le contrôle du courant est actif |
+
+Après avoir enregistré la configuration, utilisez **Vérifier la connexion** pour tester la communication via la connexion existante.
+
+## Mesures et actualisation
+
+L'intégration transmet à Gladys l'état de charge, la puissance, le courant, la tension et l'énergie. L'intervalle choisi détermine la fréquence d'actualisation de ces mesures. En cas d'échec de lecture, l'erreur est enregistrée et l'intégration tente une reconnexion avec un nouveau socket. Avec un intervalle de cinq minutes, un problème de connexion peut attendre la prochaine lecture programmée avant d'être détecté par le polling normal.
+
+## Contrôle du courant de charge et heartbeat
+
+L'intégration règle le courant autorisé via le registre Modbus `5004`. La borne ne dispose pas d'une commande distincte de démarrage/arrêt : la charge commence ou s'arrête selon que le véhicule consomme du courant.
+
+- Le courant demandé est limité à **6 A minimum** et au maximum autorisé par la borne et le câble.
+- Le widget du tableau de bord permet d'augmenter ou de diminuer le courant, par pas de **1, 2 ou 5 A** configurables pour chaque widget.
+- Les scènes Gladys peuvent définir une valeur avec l'action **Définir le courant de charge**.
+- Tant que le contrôle du courant est maintenu, l'intégration envoie un heartbeat via le registre `6000`. Avec le délai par défaut de 20 secondes, l'envoi a lieu environ toutes les 10 secondes, avec un intervalle minimal de 3 secondes.
+- Si le heartbeat s'arrête, la borne revient à son courant de sécurité. Ce mécanisme est indépendant de l'intervalle de lecture et ne peut pas redémarrer une borne dont le firmware est bloqué.
+
+## Scènes Gladys
+
+L'intégration propose **deux déclencheurs de scène** et **une action de scène**.
+
+### Déclencheurs de scène
+
+- **La borne charge** — déclenché lors du passage à l'état de charge.
+- **Fin de charge de la borne** — déclenché lors de la sortie de cet état.
+
+Selon le déclencheur, des variables telles que la puissance, le courant de charge, l'index du compteur, l'énergie de la session et sa durée sont disponibles.
+
+### Action de scène
+
+- **Définir le courant de charge** — cette action permet à une scène de définir le courant souhaité en ampères. La valeur est limitée à **6 A minimum** et au maximum autorisé par la borne et le câble.
+
+## Dépannage
+
+- **Aucune réponse :** vérifiez l'adresse de la borne, le réseau et l'activation de Modbus TCP.
+- **Unit ID incorrect :** la valeur par défaut est `255`, et non `1`.
+- **Connexion occupée :** assurez-vous qu'aucun autre client Modbus n'est connecté à l'EVC04.
+- **Mesures anciennes :** vérifiez l'intervalle de lecture ou lancez **Vérifier la connexion**.
+- **Borne bloquée :** le heartbeat peut déclencher le courant de sécurité, mais l'intégration ne peut pas couper puis rétablir l'alimentation ni réparer un blocage du firmware.
+
+## Marques et fabricant
+
+Il s'agit d'une intégration communautaire indépendante pour Gladys Assistant. Elle n'est ni développée, ni approuvée, ni officiellement prise en charge par Vestel. **Vestel** et **EVC04** sont des désignations du fabricant. Les marques, logos et représentations de produits appartiennent à leurs propriétaires respectifs et servent uniquement à identifier le produit pris en charge.
+
+## Licence
+
+Apache-2.0.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Vestel EVC04 Wallbox dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Adresse de la borne | `string` | Oui | Adresse IP ou nom mDNS, sans http:\/\/ et sans barre oblique. Une IP fixe par réservation DHCP est plus robuste qu'un nom. |
+| Port Modbus | `number` | Non | Par défaut 502. À modifier seulement si le port a été changé. |
+| Unit ID Modbus | `number` | Non | L'EVC04 répond sur l'unit id 255. À modifier seulement si votre appareil est configuré autrement. |
+| Intervalle d’actualisation en minutes | `select` | Non | Fréquence de lecture et de publication des mesures dans Gladys. Choisissez un intervalle en minutes. |
+| Courant de charge | `section` | Non | La borne n'a ni marche ni arrêt : une charge commence quand le véhicule accepte le courant et se termine quand il cesse de tirer. Ce qui se règle, c'est le courant autorisé dans le registre 5004 — entre 6 A, comme dans l'app du fabricant, et le maximum que la borne annonce. Tant qu'une valeur tient, l'intégration entretient le registre alive (6000). |
+| Délai de pulsation en secondes | `number` | Non | N'est PAS écrit sur la borne. Il détermine seulement la fréquence d'entretien du registre alive (6000) : la moitié, jamais moins de 3 secondes. Le réglage d'usine est de 20 secondes. |
+
+## Comment installer Vestel EVC04 Wallbox dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Vestel EVC04 Wallbox apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/tomgermany/gladys-vestel-evc04:latest`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/tomgermany/gladys-vestel-evc04](https://github.com/tomgermany/gladys-vestel-evc04).
+
+Vestel EVC04 Wallbox nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Vestel EVC04 Wallbox est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [tomgermany](https://github.com/tomgermany), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/tomgermany/gladys-vestel-evc04) — [source de cette documentation](https://github.com/tomgermany/gladys-vestel-evc04/blob/HEAD/docs/fr.md)

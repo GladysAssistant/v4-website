@@ -1,0 +1,269 @@
+---
+title: "Intégration domotique TOLO, gratuite et open source"
+sidebar_label: "TOLO"
+description: "Générateurs de vapeur et saunas TOLO (App Box) en local : température, humidité, marche/arrêt. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-tolo.png"
+keywords:
+  - "tolo"
+  - "domotique tolo"
+  - "gladys tolo"
+  - "tolo gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-tolo instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"TOLO","description":"Générateurs de vapeur et saunas TOLO (App Box) en local : température, humidité, marche/arrêt.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-tolo","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-tolo.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-24T21:40:30Z"}} />
+
+Cette intégration affiche dans Gladys un **générateur de vapeur ou un sauna
+TOLO avec son App Box**, en réseau local (UDP, port 51500), sans compte ni
+cloud. **Jamais testé avec un vrai appareil.** Sans lien avec TOLO.
+
+> **Sécurité.** Un hammam ou un sauna chauffe. Ne lancez jamais la chauffe à
+> distance sans vous assurer que personne n'est dedans. L'allumage depuis
+> Gladys est **désactivé par défaut** ; l'extinction n'est retenue par aucune
+> option ni commande en cours (elle peut quand même échouer si l'App Box est
+> injoignable).
+
+## Ce que vous obtenez
+
+Un appareil dans l'onglet Découverte, avec :
+
+- **Chauffe en marche** (oui/non, en lecture seule) et le **statut** en texte
+  (« Éteint », « En chauffe », « Maintien en température », « En marche, sans
+  chauffe ») ;
+- **température** et **humidité** mesurées, **consigne** ;
+- **temps restant** (minutes) de la minuterie ;
+- **niveau d'eau** (0, 33, 66 ou 100 %) et **température du réservoir** ;
+- **lampe** (marche/arrêt) et **ventilateur** (marche/arrêt) ;
+- deux boutons : **Allumer (chauffer)** et **Éteindre**.
+
+La chauffe n'a pas d'interrupteur : un « tout allumer » de Google Home,
+Alexa, HomeKit, MCP ou d'une scène ne peut pas la lancer. Il peut allumer la
+lampe ou le ventilateur.
+
+## Configuration
+
+1. Donnez une **adresse fixe** à l'App Box dans votre box (bail DHCP fixe).
+2. Dans Gladys, ouvrez l'intégration TOLO et saisissez cette **adresse IP**
+   (IPv4, par exemple 192.168.1.50). Sont refusées : un nom, les adresses de
+   diffusion (dont toute adresse finissant par .255), de multidiffusion, de
+   bouclage, 0.x.x.x et 169.254.x.x.
+3. Enregistrez, puis ajoutez l'appareil depuis l'onglet **Découverte** (il y
+   apparaît après la première lecture réussie).
+4. Si vous voulez lancer la chauffe depuis Gladys, activez **Autoriser le
+   chauffage depuis Gladys**, et réglez la **durée de séance** (30 min par
+   défaut, de 1 à 60 min, la limite de l'App Box) et la **consigne la plus
+   haute** (50 °C par défaut, de 35 à 60 °C, la plage de l'App Box).
+
+L'App Box est lue toutes les 30 s (réglable de 10 s à 1 h). Les lectures
+périodiques ne sont jamais plus rapprochées que l'intervalle, même après un redémarrage de l'intégration, une reconnexion à
+Gladys, le bouton « Tester la connexion » ou un scan de la Découverte. Une
+commande ajoute ses propres lectures (lecture fraîche, relecture), puis deux
+lectures de suivi 5 s et 20 s plus tard.
+
+Le protocole ne donne ni numéro de série ni adresse MAC : l'appareil est
+« l'App Box qui répond à l'adresse configurée ». Changer d'adresse garde le
+même appareil dans Gladys.
+
+## Les commandes
+
+### Éteindre
+
+N'importe quelle valeur reçue vaut appui (0, 1, vrai…). L'extinction n'est
+retenue ni par l'option de chauffage, ni par une commande en cours, ni par
+une lecture en cours, ni par une App Box qui ne répond plus. Juste après un
+redémarrage, avant que la configuration soit relue, elle part vers l'adresse
+gardée par Gladys (ou celle d'une garde gardée dans `/data`). Elle est
+envoyée sans lecture préalable (jamais « déjà éteint ») : **4 paquets au
+plus**, 400 ms d'écart, tant que l'App Box se tait ou qu'une erreur réseau
+(port fermé, hôte injoignable) arrête une tentative ; chaque tentative part
+d'une socket neuve. Elle annule un allumage qui n'est pas encore parti ; si
+un allumage était déjà parti, elle est renvoyée quand il se termine.
+
+Elle est confirmée seulement par une relecture qui montre l'App Box éteinte
+(même si l'App Box a répondu par un refus : c'est l'état relu qui compte).
+Réponses possibles :
+
+- succès : relue éteinte ;
+- « Envoyée, sans confirmation » : pas de réponse, pas de relecture, ou
+  relue encore en marche ;
+- « L'App Box a répondu par un refus, mais indique : … » : refus et relue
+  encore en marche ;
+- « Non envoyée » : aucun paquet n'a pu partir ;
+- « Aucune adresse d'App Box configurée » : aucune adresse connue.
+
+Sans confirmation, une garde de 2 minutes est posée (gardée dans `/data`,
+elle survit à un redémarrage : une lecture part alors 5 s après le
+démarrage, quel que soit l'intervalle). Pendant la garde, une lecture
+périodique ou de suivi qui voit l'App Box en marche renvoie l'extinction
+(3 fois au plus) ; les relectures faites par une commande, et les lectures
+faites pendant une extinction ou un allumage en cours, ne renvoient rien.
+Cela peut aussi éteindre une chauffe lancée depuis l'App Box ou
+l'application TOLO dans ces 2 minutes : c'est voulu. Pendant la garde, un
+allumage depuis Gladys est refusé et seule une baisse de consigne est
+acceptée.
+
+### Allumer (chauffer)
+
+Il faut envoyer exactement 1. Refusé, sans mise en marche envoyée, dans ces
+cas :
+
+- valeur autre que 1, ou aucune adresse configurée ;
+- « Autoriser le chauffage depuis Gladys » est désactivé (vérifié à
+  l'arrivée, après la lecture, puis juste avant chaque paquet) ;
+- une extinction est en cours, n'est pas encore confirmée (sa garde), ou est
+  demandée pendant l'allumage ;
+- un autre allumage est en cours, ou le précédent n'est pas encore confirmé
+  (2 minutes au plus) ;
+- l'App Box ne répond pas à la lecture fraîche (état et réglages) en 1,5 s,
+  ou son état de marche y est illisible ;
+- la minuterie ou la consigne n'a pas pu être réglée puis relue (elle a pu
+  être écrite : cela ne chauffe pas) ;
+- la configuration (adresse) a changé entre-temps ;
+- l'allumage ne peut pas partir dans les 3,5 s après le clic.
+
+Déroulé : lecture fraîche de l'état et des réglages (jamais l'état en
+mémoire) ; déjà en marche : rien n'est envoyé ; sinon la **minuterie** de
+l'App Box est réglée sur la durée de séance (jamais « sans minuterie ») et
+une consigne au-dessus de la consigne la plus haute est **ramenée** à
+celle-ci, puis relues ; ensuite seulement la mise en marche part. Une
+relecture de moins de 10 s qui montre l'App Box déjà en marche suffit pour
+ne rien envoyer.
+
+Réponses après la mise en marche (toujours suivie d'une relecture) :
+
+- succès : relue en marche, avec une minuterie de 1 minute à la durée de
+  séance ;
+- « Allumée, minuterie non confirmée » : relue en marche sans cette
+  minuterie. L'intégration réécrit alors la minuterie en arrière-plan et
+  relit ; si elle manque toujours, elle **éteint** l'App Box, le journalise
+  et l'indique dans le statut ;
+- « Allumage parti avant l'extinction demandée ensuite » : une extinction
+  est arrivée pendant l'allumage ; elle est renvoyée ;
+- « L'App Box a répondu par un refus, mais indique : … » ou « L'App Box a
+  refusé la commande » : selon l'état relu ;
+- « Envoyée, sans confirmation » : pas de réponse, pas de relecture, ou
+  relue éteinte.
+
+**Minuterie (non vérifié sur un vrai appareil).** D'après tololib, l'App Box
+s'arrête d'elle-même à la fin de sa minuterie. Une séance lancée depuis
+Gladys est tenue à sa durée, y compris quand la minuterie est changée ou
+retirée au panneau ; **l'intégration ne prolonge jamais elle-même une
+séance** :
+
+- chaque lecture de la séance vérifie qu'une minuterie de 1 minute à ce
+  qui reste de la séance tourne (0 n'est accepté que dans sa dernière
+  minute) ;
+- sinon la minuterie est réécrite avec **ce qui reste** de la séance (au
+  moins 1 min ; fin prévue passée : extinction directe), puis relue
+  strictement (de 1 minute à la valeur écrite) ; sinon l'App Box est
+  éteinte ;
+- une lecture dédiée part à la fin prévue + 2 minutes : encore en marche
+  (ou lecture impossible), l'App Box est éteinte, avec garde, journal et
+  message dans le statut ;
+- cette surveillance est gardée dans `/data` : après un redémarrage, elle
+  reprend et sa lecture de fin est reprogrammée.
+
+Une séance lancée ailleurs (App Box, application TOLO) n'est pas
+surveillée, sauf dans ces fenêtres.
+
+Limite : la surveillance ne s'arrête que sur une lecture qui montre l'App
+Box éteinte. Une séance relancée au panneau (ou depuis l'application TOLO)
+avant que l'intégration ait lu la fin de la séance Gladys (au plus un
+intervalle de lecture, et jusqu'à 2 minutes après la fin prévue), ou, après
+un redémarrage de l'intégration, dans les 10 minutes qui suivent la fin
+prévue, est traitée comme la séance Gladys : elle peut être éteinte.
+
+### Consigne
+
+Refusée si l'option est désactivée, si la valeur n'est pas un nombre entier
+de 35 °C à la consigne la plus haute (revérifié juste avant le paquet), si
+une autre consigne est en cours, si la configuration a changé entre-temps,
+si elle ne peut pas partir dans les 3,5 s, ou, pendant une extinction en
+cours ou non confirmée, si elle n'est pas plus basse que la consigne connue.
+D'après tololib, changer la consigne n'allume pas l'App Box ; l'état de
+marche est relu après elle, et si l'App Box est passée d'éteinte à en marche
+(sans allumage Gladys en cours), elle est éteinte aussitôt et la consigne
+refusée. Confirmée par une relecture des réglages.
+
+### Lampe et ventilateur
+
+Marche/arrêt simples (0 ou 1), une commande à la fois pour chacun,
+confirmés par une relecture. D'après tololib, la lampe et le ventilateur ne
+commandent que leur sortie (non vérifié sur une vraie App Box) ; si une
+commande lampe ou ventilateur met l'App Box en marche (éteinte d'après une
+lecture de moins de 10 s, faite juste avant si besoin, et en marche juste
+après), l'intégration l'éteint aussitôt et refuse la commande.
+
+## Quand ça ne va pas
+
+- **L'App Box ne répond pas** : le statut le dit, l'appareil est montré
+  injoignable, nouvel essai après 30 s, 1, 2 puis 5 min (jamais plus vite
+  que l'intervalle). Une extinction part quand même.
+- Seules les réponses venant de **l'adresse et du port de l'App Box**, bien
+  formées (préfixe, suffixe, somme de contrôle, longueur) et de la commande
+  envoyée sont prises en compte ; chaque échange a sa propre socket, donc la
+  réponse tardive d'un échange précédent n'est jamais prise pour celle d'un
+  autre.
+- Le conteneur doit pouvoir joindre l'App Box en UDP (réseau en pont de
+  Docker : le trafic unicast sort normalement vers le réseau local).
+
+## Limites
+
+- **Protocole non documenté** par TOLO : l'intégration suit la bibliothèque
+  libre tololib, écrite en observant l'App Box. Il peut changer avec un
+  micrologiciel.
+- Pas de découverte automatique : l'adresse se saisit à la main.
+- Pas encore d'humidité de consigne, d'aromathérapie, de bain salin, de
+  balayage ni de minuterie du ventilateur.
+- Une seule App Box par intégration.
+
+## Données
+
+`/data/tolo-state.json` contient seulement l'heure de la dernière lecture et
+la garde d'une extinction en cours (adresse de l'App Box, échéance, nombre de
+renvois), et la surveillance d'une séance lancée depuis Gladys (adresse de
+l'App Box, durée, fin prévue). Aucun secret n'existe dans cette intégration.
+
+Basée sur la bibliothèque Python tololib (MIT, Matthias Lohr), portée en
+JavaScript : voir `THIRD_PARTY_NOTICES.md`.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par TOLO dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre App Box TOLO | `section` | Non | Affiche un générateur de vapeur ou un sauna TOLO avec son App Box dans Gladys, en réseau local (UDP, port 51500, sans compte ni cloud) : statut, température, humidité, consigne, temps restant, niveau d'eau, lampe, ventilateur. L'extinction n'est jamais retenue par l'option de chauffage ; le chauffage depuis Gladys (allumage et consigne) reste désactivé tant que vous ne l'autorisez pas ci-dessous. Le protocole de l'App Box n'est pas publié par TOLO : cette intégration suit la bibliothèque libre tololib. Donnez une adresse fixe à l'App Box dans votre box, saisissez-la ci-dessous, enregistrez, puis ajoutez l'appareil depuis l'onglet Découverte. Un hammam ou un sauna chauffe : ne le lancez jamais à distance sans vous assurer que personne n'est dedans. Jamais testé avec un vrai appareil. Sans lien avec TOLO. |
+| Adresse IP de l'App Box | `string` | Oui | Une adresse IPv4 de votre réseau local, comme 192.168.1.50 (visible dans la liste des appareils de votre box). Fixez-la dans la box : le protocole n'a pas de numéro de série, Gladys fait donc confiance à l'App Box qui répond à cette adresse. |
+| Autoriser le chauffage depuis Gladys | `boolean` | Non | Désactivé par défaut. Activé : le bouton « Allumer (chauffer) » et la consigne peuvent lancer ou modifier la chauffe ; chaque allumage règle d'abord la minuterie de l'App Box sur la durée de séance ci-dessous. Désactivé : ils refusent toute demande. L'extinction n'est jamais retenue par cette option. |
+| Durée de séance (min) | `number` | Non | La minuterie réglée sur l'App Box avant chaque allumage depuis Gladys (30 min par défaut ; 60 min, la limite de l'App Box, au plus ; jamais « sans minuterie »). D'après tololib, l'App Box devrait s'arrêter d'elle-même après cette durée (non vérifié sur un vrai appareil) : un allumage n'est confirmé que si une lecture montre cette minuterie en cours, et une séance lancée depuis Gladys trouvée sans elle reçoit à nouveau la minuterie, puis est éteinte. |
+| Consigne la plus haute (°C) | `number` | Non | Gladys ne demande jamais plus (50 °C par défaut ; de 35 à 60 °C, la plage de l'App Box). Une consigne plus haute sur l'App Box est ramenée à cette valeur avant un allumage depuis Gladys. |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture de l'App Box, en secondes. Les lectures périodiques ne sont jamais plus rapprochées que cet intervalle, même après un redémarrage ; une commande ajoute ses propres lectures. |
+| Langue des noms des fonctionnalités | `select` | Non | Sert aux noms des fonctionnalités des appareils ajoutés désormais, aux textes d'état et aux erreurs des commandes. |
+
+## Comment installer TOLO dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : TOLO apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-tolo:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-tolo](https://github.com/LM1LC3N7/gladys-tolo).
+
+TOLO nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+TOLO est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-tolo) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-tolo/blob/HEAD/docs/fr.md)

@@ -1,0 +1,151 @@
+---
+title: "Integración domótica FYTA, gratuita y de código abierto"
+sidebar_label: "FYTA"
+description: "Sensores de plantas FYTA Beam: humedad del suelo, luz, temperatura y avisos. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-fyta.jpg"
+keywords:
+  - "fyta"
+  - "domótica fyta"
+  - "gladys fyta"
+  - "fyta gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/William-De71/gladys-fyta instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"FYTA","description":"Sensores de plantas FYTA Beam: humedad del suelo, luz, temperatura y avisos.","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-fyta","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-fyta.jpg","type":"device","version":"0.1.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-25T01:09:24Z"}} />
+
+## Presentación
+
+Esta integración trae las plantas de su cuenta FYTA a Gladys: las mediciones de sus sensores de plantas **FYTA Beam** (humedad del suelo, luz, temperatura, batería) y lo que FYTA opina de ellas (demasiado bajo, perfecto, demasiado alto), mediante la [API pública oficial de FYTA](https://fyta-io.notion.site/FYTA-Public-API-d2f4c30306f74504924c9a40402a3afd) con la dirección de correo y la contraseña de su cuenta FYTA. Solo lee. No está afiliada a FYTA.
+
+- Un dispositivo por planta con sensor: humedad del suelo, luz, temperatura, batería del sensor y su indicador de batería baja, el pH cuando FYTA lo da, y los estados que da FYTA (planta, humedad del suelo, luz, temperatura, salinidad, nutrientes).
+- Dos widgets del panel: las plantas por cuidar, las peores primero; una planta con su foto.
+- Disparadores de escena: planta necesita atención, planta con sed, medida fuera de rango, medida de nuevo en rango, batería del sensor baja, sensor sin señal, sensor de vuelta, toca abonar, acceso rechazado.
+- Acciones de escena: actualizar ahora, los valores de una planta, el resumen de las plantas por cuidar.
+
+Transporte: nube. La dirección de correo y la contraseña van a FYTA (`web.fyta.de`) para iniciar sesión; las mediciones de sus plantas vienen de la nube de FYTA, que las recibe de sus Beam a través del FYTA Hub o de la aplicación FYTA.
+
+## Requisitos previos
+
+- Gladys Assistant 5.1.0 o posterior.
+- Una cuenta FYTA (la de la aplicación FYTA) con al menos una planta asociada a un sensor **FYTA Beam**. Las plantas sin sensor no se ofrecen.
+- Las mediciones deben llegar a la nube de FYTA: a través de un **FYTA Hub**, o de la aplicación FYTA cuando su teléfono está cerca del Beam. Sin hub, los valores solo cambian cuando la aplicación se sincroniza.
+- La API solo inicia sesión con una dirección de correo y una contraseña: use las que utiliza en la aplicación FYTA.
+
+Frescura de los datos: un Beam envía sus mediciones aproximadamente una vez por hora. Leer FYTA más a menudo no aporta nada nuevo; FYTA considera un sensor en error tras 1,5 horas sin medición.
+
+## Configuración
+
+| Campo                       | Significado                                                                                                                   |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| Dirección de correo         | El correo de su cuenta FYTA                                                                                                   |
+| Contraseña                  | Su contraseña (un secreto: nunca se vuelve a mostrar ni se escribe en los registros ni en `/data`)                            |
+| Lectura de las plantas      | Cada 10, 15 (por defecto), 30 o 60 minutos; el detalle de una planta solo se lee si FYTA muestra novedades                    |
+| Sensor sin datos después de | 2, 3 (por defecto), 6, 12 o 24 horas sin una nueva medición                                                                   |
+| Idioma de los textos        | Nombres de las funciones, estados (demasiado bajo, perfecto…), textos de escenas y errores; automático sigue el último widget |
+
+Botones:
+
+- **Probar la conexión** inicia sesión en FYTA y enumera las plantas con sensor (y cuántas no tienen).
+- **Diagnóstico** escribe el estado de la integración en sus registros, sin la contraseña ni el token.
+
+La integración guarda en `/data` (legible solo por ella) el token de acceso que FYTA da al iniciar sesión, hasta que caduca (60 días según la documentación de FYTA), para no volver a iniciar sesión en cada reinicio.
+
+## Uso
+
+### Dispositivos
+
+Tras la configuración, abra **Descubrir**: cada planta con sensor se ofrece como un dispositivo con el apodo que tiene en la aplicación FYTA. Añada las que quiera.
+
+| Función                                                                     | Categoría / tipo                   | Unidad    |
+| --------------------------------------------------------------------------- | ---------------------------------- | --------- |
+| Humedad del suelo                                                           | `soil-moisture-sensor` / `decimal` | %         |
+| Luz (flujo de fotones, como lo mide FYTA)                                   | `light-sensor` / `decimal`         | µmol/m²/s |
+| Temperatura                                                                 | `temperature-sensor` / `decimal`   | °C        |
+| pH del suelo (solo si FYTA lo da)                                           | `ph-sensor` / `decimal`            | pH        |
+| Batería del sensor                                                          | `battery` / `integer`              | %         |
+| Batería del sensor baja                                                     | `battery-low` / `binary`           | —         |
+| Estados: planta, humedad del suelo, luz, temperatura, salinidad, nutrientes | `text` / `text`                    | —         |
+
+La luz es un flujo de fotones (PPFD, µmol/m²/s), no lux: Gladys no tiene unidad para ella, así que el valor se muestra sin unidad y su nombre lo indica. La salinidad (abono, mS/cm) no tiene una categoría adecuada en Gladys: su estado es una función, su valor está en el widget y en las escenas.
+
+### Widgets del panel
+
+![Los dos widgets: las plantas por cuidar (una Monstera con sed, un Ficus sin datos) y una planta con su foto, sus medidas y sus estados (ilustración generada, no una captura de pantalla)](https://raw.githubusercontent.com/William-De71/gladys-fyta/main/docs/assets/widgets.es.png)
+
+- **Plantas por cuidar**: cuántas plantas necesitan cuidados, están perfectas, no envían datos; luego las plantas por cuidar, las peores primero (con sed, muy fuera de rango, fuera de rango, sensor sin señal, batería baja). Toque una planta para ver los valores y su rango ideal. El botón **Actualizar** lee FYTA en ese momento (como mucho una vez por minuto).
+- **Planta FYTA**: una planta (elíjala en los ajustes del widget; la primera por defecto): su foto de la aplicación FYTA, la humedad del suelo, la luz, la temperatura, la salinidad y la batería coloreadas según su estado, el estado de la planta y de sus nutrientes, la última medición y la fecha del próximo abonado.
+
+### Escenas
+
+Disparadores (una vez por cambio, nunca en la primera lectura, nunca por una acción de escena), filtrables por planta:
+
+- **Planta necesita atención**: el estado FYTA de la planta pasa de «en perfecto estado» a «necesita atención».
+- **Planta con sed**: la humedad del suelo entra en el rango bajo o demasiado bajo de la planta.
+- **Medida fuera de rango**: la humedad del suelo, la luz, la temperatura, la salinidad o los nutrientes pasan a bajo, demasiado bajo, alto o demasiado alto (filtros: medidas, niveles).
+- **Medida de nuevo en rango**: una medida vuelve a perfecto.
+- **Batería del sensor baja**: FYTA marca la batería del sensor.
+- **Sensor sin señal** / **Sensor de vuelta**: ninguna medición durante el plazo de la configuración, luego mediciones de nuevo.
+- **Toca abonar**: se alcanza la fecha prevista por FYTA, a las 9:00.
+- **Acceso rechazado**: FYTA rechaza la dirección de correo, la contraseña o la cuenta.
+
+Acciones:
+
+- **Actualizar ahora**: lee todas las plantas (como mucho una vez por minuto); devuelve el número de plantas y de plantas por cuidar.
+- **Valores de una planta**: humedad del suelo, luz, temperatura, salinidad, batería, sus estados y una frase, según la última lectura.
+- **Plantas por cuidar**: cuántas, cuáles y por qué, en una frase, para un mensaje diario.
+
+Ejemplos:
+
+- Cuando **FYTA: planta con sed** → enviar «\{\{triggerEvent.data.plant_name\}\} tiene sed (\{\{triggerEvent.data.moisture\}\} %)».
+- Cada día a las 8:00 → **FYTA: plantas por cuidar**; si el número es mayor que 0 → enviar su resumen.
+- Cuando **FYTA: sensor sin señal** → enviar «Sin noticias de \{\{triggerEvent.data.plant_name\}\} desde hace \{\{triggerEvent.data.hours_without_data\}\} h: ¿está encendido el hub?».
+
+## Solución de problemas
+
+- **«FYTA no conoce esta dirección de correo»** o **«rechazó la contraseña»**: compruébelas iniciando sesión en la aplicación FYTA con la misma dirección y la misma contraseña.
+- **Ningún dispositivo ofrecido**: solo se ofrecen las plantas asociadas a un Beam; pulse **Probar la conexión** para ver lo que devuelve FYTA.
+- **Valores que no cambian**: el Beam necesita un FYTA Hub, o la aplicación FYTA abierta cerca, para enviar sus mediciones; la fila «Última medición» del widget de la planta indica cuándo FYTA recibió una.
+- **Luz sin unidad**: es intencionado, vea Dispositivos.
+- **Una temperatura en °F** en la aplicación FYTA: la integración la convierte a °C cuando FYTA lo indica (no probado con una cuenta real).
+- Para una incidencia, indique las versiones de Gladys y de la integración, el mensaje de **Probar la conexión** y las líneas «FYTA diagnostic» que **Diagnóstico** escribe en los registros de la integración. No pegue nunca su contraseña.
+
+## Parámetros de configuración
+
+Estos son los parámetros que FYTA te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Cuenta FYTA | `section` | No | Introduzca la dirección de correo y la contraseña que usa en la aplicación FYTA. La integración se conecta a la API oficial de FYTA (web.fyta.de) y solo lee sus plantas: las mediciones pasan por la nube de FYTA, enviadas por el FYTA Hub o la aplicación. Las plantas sin sensor FYTA Beam no se ofrecen. Esta integración no está afiliada a FYTA. |
+| Dirección de correo | `string` | Sí |  |
+| Contraseña | `secret` | Sí |  |
+| Lecturas y disparadores | `section` | No | Un FYTA Beam envía sus mediciones aproximadamente una vez por hora (a través del FYTA Hub, o de la aplicación cuando el teléfono está cerca): leer más a menudo no aporta nada nuevo. El detalle de una planta solo se lee cuando FYTA muestra algo nuevo para ella. |
+| Lectura de las plantas | `select` | No | Frecuencia de lectura de la lista de plantas (una sola petición). |
+| Sensor sin datos después de | `select` | No | Tiempo sin una nueva medición antes de que un sensor se muestre sin datos y se active el disparador «sensor sin señal». |
+| Idioma de los textos | `select` | No | Nombres de las funciones, estados (demasiado bajo, perfecto…), textos de escenas y errores. Automático: el idioma del último widget mostrado. |
+
+## Cómo instalar FYTA en Gladys
+
+1. En Gladys, abre **Integraciones**: FYTA aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/william-de71/gladys-fyta:0.1.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/William-De71/gladys-fyta](https://github.com/William-De71/gladys-fyta).
+
+FYTA requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+FYTA es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [William-De71](https://github.com/William-De71), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/William-De71/gladys-fyta) — [fuente de esta documentación](https://github.com/William-De71/gladys-fyta/blob/HEAD/docs/es.md)

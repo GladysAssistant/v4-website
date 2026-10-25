@@ -1,0 +1,197 @@
+---
+title: "Slack Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Slack"
+description: "Mit Gladys auf Slack chatten: ein Bot in deinem Workspace, Szenen, ohne öffentliche URL. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-slack.jpg"
+keywords:
+  - "slack"
+  - "slack smart home"
+  - "gladys slack"
+  - "slack gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/William-De71/gladys-slack instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Slack","description":"Mit Gladys auf Slack chatten: ein Bot in deinem Workspace, Szenen, ohne öffentliche URL.","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-slack","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-slack.jpg","type":"communication","version":"0.1.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-24T12:27:53Z"}} />
+
+## Überblick
+
+Schreib mit Gladys auf **Slack**, per Direktnachricht an einen Bot deines eigenen Workspace: Gladys antwortet dort und schickt dorthin auch ihre Benachrichtigungen und Kamerabilder. Deine Szenen können reagieren, wenn ein verknüpftes Mitglied dem Bot schreibt, `@gladys` in einem Kanal erwähnt oder `/gladys` eingibt, und selbst Slack-Nachrichten posten.
+
+Die Integration nutzt den **Socket Mode**: Sie öffnet die Verbindung zu Slack selbst, Gladys braucht also keine öffentliche URL, keinen offenen Port und kein Gladys Plus. Die Nachrichten laufen über die Server von Slack (Cloud-Transport). Inoffizielle Integration, ohne Verbindung zu Slack Technologies; noch nicht in einem echten Workspace getestet.
+
+## Voraussetzungen
+
+- Gladys Assistant 5.1.0 oder neuer.
+- Ein Slack-Workspace, in dem du eine App installieren darfst (in manchen Workspaces muss ein Admin sie genehmigen).
+- Internetzugang von Gladys aus (nur ausgehend).
+
+### Slack-App erstellen
+
+1. Öffne unter **Integrationen → Slack → Konfiguration** den Link **Gladys-App in Slack erstellen**: Slack öffnet seine App-Erstellungsseite mit dem Manifest unten bereits ausgefüllt. Wähle deinen Workspace, prüfe und klicke auf **Create**.
+2. In der App: **Basic Information → App-Level Tokens → Generate Token and Scopes**: Gib einen Namen ein, füge den Scope `connections:write` hinzu, erzeuge das Token und kopiere es (es beginnt mit `xapp-`).
+3. **Install App → Install to Workspace**, erlauben, dann das **Bot User OAuth Token** kopieren, das mit `xoxb-` beginnt.
+
+Ohne den Link: Öffne [api.slack.com/apps](https://api.slack.com/apps), **Create New App → From a manifest**, wähle den Workspace und füge dieses Manifest ein (auch in [slack-app-manifest.json](https://github.com/William-De71/gladys-slack/blob/main/slack-app-manifest.json)):
+
+```json
+{
+  "_metadata": {
+    "major_version": 1
+  },
+  "display_information": {
+    "name": "Gladys",
+    "description": "Gladys Assistant, the home automation assistant of the house.",
+    "background_color": "#2f6fb5"
+  },
+  "features": {
+    "app_home": {
+      "home_tab_enabled": false,
+      "messages_tab_enabled": true,
+      "messages_tab_read_only_enabled": false
+    },
+    "bot_user": {
+      "display_name": "gladys",
+      "always_online": true
+    },
+    "slash_commands": [
+      {
+        "command": "/gladys",
+        "description": "Talk to Gladys, or send a link code",
+        "usage_hint": "turn on the kitchen light",
+        "should_escape": false
+      }
+    ]
+  },
+  "oauth_config": {
+    "scopes": {
+      "bot": [
+        "app_mentions:read",
+        "channels:history",
+        "channels:read",
+        "chat:write",
+        "commands",
+        "files:write",
+        "groups:history",
+        "groups:read",
+        "im:history",
+        "im:write",
+        "users:read"
+      ]
+    }
+  },
+  "settings": {
+    "event_subscriptions": {
+      "bot_events": ["app_mention", "message.channels", "message.groups", "message.im"]
+    },
+    "org_deploy_enabled": false,
+    "socket_mode_enabled": true,
+    "token_rotation_enabled": false
+  }
+}
+```
+
+Die App bleibt eine interne App deines Workspace. Sie verlangt die kleinste Menge an Berechtigungen, die die Integration nutzt: kein Benutzer-Token, kein Zugriff auf E-Mail-Adressen und kein Lesen des Verlaufs (Nachrichten kommen als Ereignisse).
+
+## Konfiguration
+
+| Feld                               | Bedeutung                                                                                                                                                                                              |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Bot-Token                          | `xoxb-…`, OAuth & Permissions → Bot User OAuth Token. Verschlüsselt gespeichert.                                                                                                                       |
+| App-Level-Token                    | `xapp-…` mit dem Scope `connections:write`, Basic Information → App-Level Tokens. Verschlüsselt gespeichert.                                                                                           |
+| Direktnachrichten an Gladys senden | Standardmäßig an. Aus: Nachrichten verknüpfter Mitglieder erreichen nur die Szenen.                                                                                                                    |
+| Standardkanal                      | Optional. Eine Kanal-ID (`C…`, ganz unten in den Kanaldetails) oder eine Mitglieds-ID (`U…`) für die Szenenaktion und die Test-Schaltfläche. Lade den Bot zuerst in den Kanal ein (`/invite @gladys`). |
+| Sprache des Bots                   | Die wenigen Texte, die der Bot selbst an Mitglieder schreibt, die Gladys noch nicht kennt (Einladung, abgelehnter Code).                                                                               |
+
+Speichere und drücke dann **Verbindung testen**: Es zeigt den Workspace, den Bot, den Zustand des Socket Mode, den Standardkanal (und ob der Bot darin ist) und die Anzahl verknüpfter Mitglieder.
+
+### Dein Slack-Konto verknüpfen
+
+Jeder Benutzer macht es einmal: Klicke unter **Integrationen → Slack → Konfiguration** im Block **Mein Konto verknüpfen** auf **Verknüpfungscode generieren** und sende den Code dann in Slack per Direktnachricht an `@gladys` (Apps → Gladys → Nachrichten) oder gib irgendwo `/gladys` gefolgt vom Code ein. Der Bot antwortet, dass das Konto verknüpft ist. Der Code gilt 15 Minuten, einmal.
+
+Ein nicht verknüpftes Mitglied erhält nur eine Einladung zum Verknüpfen (einmal am Tag): Es erreicht nie Gladys oder die Szenen. Verknüpfe nur Personen, denen du vertraust: Ein verknüpftes Mitglied spricht mit den Befugnissen seines Gladys-Benutzers.
+
+## Verwendung
+
+### Mit Gladys schreiben
+
+Schreib `@gladys` per Direktnachricht wie im Chat von Gladys: „mach das Licht in der Küche an“, „wie warm ist es im Wohnzimmer?“. Gladys antwortet in derselben Unterhaltung. `/gladys <Bitte>` funktioniert aus jedem Kanal; die Antwort kommt per Direktnachricht, und nur du siehst die Bestätigung. Gladys schickt dorthin auch die Benachrichtigungen deiner Szenen („Nachricht senden“ an einen Benutzer) und Kamerabilder („Kamerabild senden“).
+
+Nachrichten anderer Bots, Bearbeitungen, von Slack erneut zugestellte Nachrichten und Nachrichten, die älter als 5 Minuten sind (nach einem Ausfall), werden ignoriert.
+
+### Dashboard-Widget
+
+![Das Slack-Widget: Nachrichten des Tages, verknüpfte Mitglieder, letzte Nachrichten, Verbindung und Test-Schaltfläche (generierte Illustration, kein Screenshot)](https://raw.githubusercontent.com/William-De71/gladys-slack/main/docs/assets/widgets.de.png)
+
+Generierte Illustration, kein Screenshot. Das Widget **Slack** zeigt die heute empfangenen und gesendeten Nachrichten, die verknüpften Mitglieder, die letzten Nachrichten verknüpfter Mitglieder, die Verbindung, den Workspace, den Bot und den Standardkanal, mit einer Schaltfläche **Test senden**. Der Text der Nachrichten erscheint nur, wenn die Widget-Einstellung **Text der Nachrichten anzeigen** an ist (standardmäßig aus: Ein Dashboard kann geteilt sein).
+
+### Szenen
+
+Auslöser, nur für verknüpfte Mitglieder:
+
+- **Slack-Nachricht empfangen**: eine Direktnachricht an den Bot oder eine Nachricht in einem Kanal, in den der Bot eingeladen wurde. Filter: wo, Kanal, Mitglied, Gladys-Benutzer, genauer Text.
+- **Gladys auf Slack erwähnt**: `@gladys` in einem Kanal; der Text ohne die Erwähnung. Dieselben Filter.
+- **/gladys-Befehl eingegeben**: Filter Kanal, Mitglied, Gladys-Benutzer, genauer Text.
+- **Slack-Nachricht nicht gesendet**: Eine Nachricht von Gladys wurde abgelehnt; einmal pro Mitglied, bis wieder eine Nachricht durchgeht.
+
+Jeder Auslöser liefert seine Details als Variablen, z. B. `{{triggerEvent.data.text}}`, `{{triggerEvent.data.first_name}}`, `{{triggerEvent.data.ts}}`.
+
+Aktion **Slack-Nachricht senden**: eine Kanal-ID oder eine Mitglieds-ID (leer: der Standardkanal), der Text mit Slack-Formatierung (`*fett*`, `<@U0123456789>`, `<https://example.com|ein Link>`) und ein optionaler Thread. Ausgaben: `ts`, `channel_id`, `link`.
+
+Beispiele:
+
+- `@gladys Licht aus` in `#zuhause` → die Lichter ausschalten, dann „Erledigt ✅“ im Thread `{{triggerEvent.data.ts}}` senden.
+- `/gladys gute Nacht` → die Nachtszene starten.
+- Die Haustür geht auf, während niemand zu Hause ist → eine Nachricht an `#zuhause` und ein Kamerabild an die verknüpften Benutzer senden.
+
+## Fehlerbehebung
+
+- **„Gib das Bot-Token… ein“ / „muss mit xoxb- beginnen“**: Das Bot-Token ist das Bot User OAuth Token (`xoxb-`), kein Benutzer-Token (`xoxp-`); das App-Level-Token beginnt mit `xapp-`, nicht mit `xoxe.xapp-` (lass die Token-Rotation aus).
+- **„Slack lehnt das Bot-Token ab“**: Kopiere es erneut unter OAuth & Permissions; installiere die App nach einer Änderung der Scopes neu.
+- **„Slack lehnt das App-Level-Token ab“**: Es braucht den Scope `connections:write`.
+- **„Der Socket Mode ist ausgeschaltet“**: Settings → Socket Mode in der Slack-App.
+- **Der Bot antwortet nicht auf eine Direktnachricht**: Ist das Konto verknüpft? Ist „Direktnachrichten an Gladys senden“ an? In der App muss unter App Home „Allow users to send Slash commands and messages from the messages tab“ angehakt sein (im Manifest der Fall).
+- **Kein Auslöser aus einem Kanal**: Lade den Bot mit `/invite @gladys` ein; nur verknüpfte Mitglieder lösen Szenen aus.
+- **„not_in_channel“** bei der Szenenaktion: Lade den Bot in den Kanal ein. Ein Kanalname funktioniert nicht: Nutze seine ID.
+- Melde ein Problem auf [GitHub](https://github.com/William-De71/gladys-slack/issues) mit den Versionen von Gladys und der Integration, der Meldung von **Verbindung testen** und den Protokollen (`DEBUG=gladys-integration-sdk`). Füge nie ein Token ein.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Slack in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Slack-App erstellen | `section` | Nein | Inoffizielle Integration, ohne Verbindung zu Slack Technologies. 1. Öffne unten „Gladys-App in Slack erstellen“, wähle deinen Workspace und bestätige: Die App nutzt den Socket Mode, Gladys braucht also keine öffentliche URL. 2. Basic Information → App-Level Tokens → Generate Token and Scopes, füge den Scope connections:write hinzu und kopiere das xapp-Token. 3. Install App → Install to Workspace, dann das Bot User OAuth Token (xoxb-) kopieren. 4. Beide Tokens unten einfügen und speichern. |
+| Bot-Token | `secret` | Ja | OAuth & Permissions → Bot User OAuth Token. Wird verschlüsselt gespeichert und nie wieder angezeigt. |
+| App-Level-Token | `secret` | Ja | Basic Information → App-Level Tokens, mit dem Scope connections:write: Es öffnet die Socket-Mode-Verbindung. |
+| Mit Gladys schreiben | `section` | Nein | Jeder Benutzer verknüpft sein Slack-Konto einmal: „Mein Konto verknüpfen“ unten → „Verknüpfungscode generieren“, dann den Code per Direktnachricht an @gladys senden (Slack → Apps → Gladys → Nachrichten) oder /gladys gefolgt vom Code eingeben. Danach geht alles, was er @gladys schreibt, an Gladys, die dort antwortet. Nicht verknüpfte Mitglieder erhalten nur eine Einladung zum Verknüpfen. |
+| Direktnachrichten an Gladys senden | `boolean` | Nein | Aus: Nachrichten und /gladys-Befehle verknüpfter Mitglieder erreichen nur die Szenen, Gladys antwortet nicht darauf. |
+| Kanäle und Szenen | `section` | Nein | Der Bot sieht nur die Kanäle, in die er eingeladen wurde: Gib /invite @gladys in einem Kanal ein. Dessen Nachrichten, Erwähnungen von @gladys und /gladys lösen dann Szenen aus, nur für verknüpfte Mitglieder. Die ID eines Kanals steht ganz unten in seinen Details (Tab Info): C… für einen öffentlichen Kanal, G… oder C… für einen privaten. |
+| Standardkanal | `string` | Nein | Optional. Wohin die Szenenaktion „Slack-Nachricht senden“ und die Test-Schaltfläche ohne angegebenes Ziel posten: eine Kanal-ID (lade den Bot zuerst ein) oder eine Mitglieds-ID. |
+| Sprache des Bots | `select` | Nein | Sprache der wenigen Texte, die der Bot selbst an Mitglieder schreibt, die Gladys noch nicht kennt (Einladung, abgelehnter Code), und der Testnachricht. |
+
+## So installierst du Slack in Gladys
+
+1. Öffne in Gladys **Integrationen**: Slack erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/william-de71/gladys-slack:0.1.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/William-De71/gladys-slack](https://github.com/William-De71/gladys-slack).
+
+Slack benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Slack ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [William-De71](https://github.com/William-De71) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/William-De71/gladys-slack) — [Quelle dieser Dokumentation](https://github.com/William-De71/gladys-slack/blob/HEAD/docs/de.md)

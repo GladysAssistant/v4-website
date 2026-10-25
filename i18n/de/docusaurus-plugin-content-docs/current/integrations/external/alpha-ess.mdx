@@ -1,0 +1,157 @@
+---
+title: "Alpha ESS Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Alpha ESS"
+description: "Alpha-ESS-Wechselrichter und Batterien: Solar, Batterie, Netz, Energie und Szenen. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-alpha-ess.jpg"
+keywords:
+  - "alpha ess"
+  - "alpha ess smart home"
+  - "gladys alpha ess"
+  - "alpha ess gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/William-De71/gladys-alpha-ess instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Alpha ESS","description":"Alpha-ESS-Wechselrichter und Batterien: Solar, Batterie, Netz, Energie und Szenen.","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-alpha-ess","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-alpha-ess.jpg","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-24T06:09:28Z"}} />
+
+## Überblick
+
+Diese Integration bringt die Alpha-ESS-Hybridwechselrichter, Batterien und Wallboxen deines Kontos in Gladys, über die offizielle [Alpha ESS Open API](https://open.alphaess.com) und dein eigenes Entwicklerkonto. Sie ist nicht mit Alpha ESS verbunden.
+
+- Ein Gerät pro System: Solarleistung, Batteriestand, Lade- und Entladeleistung, Netzleistung (Bezug +, Einspeisung −), Hausverbrauch, Energien des Tages und Zählerstände.
+- Ein Gerät pro Alpha-ESS-Wallbox: Steckerstatus, Ladezustand, Leistung.
+- Drei Dashboard-Widgets: Energiefluss jetzt, heute (mit der Leistungskurve des Tages), Batteriezeitplan.
+- Szenen-Auslöser: Batterie voll, Batterie an der Entladegrenze, Einspeisung oder Netzbezug beginnt, System offline oder wieder da, Wallbox-Status, Zugriff verweigert.
+- Szenen-Aktionen: Laden aus dem Netz, Zeitsteuerung der Entladung, Wallbox starten oder stoppen (aus, bis du sie erlaubst), Energien von heute.
+
+Transport: Cloud. Deine AppID, die Seriennummern deiner Systeme und die Einstellungen, die deine Szenen ändern, gehen an die Alpha-ESS-Cloud (`openapi.alphaess.com`); das AppSecret verlässt Gladys nie (nur eine Signatur jeder Anfrage).
+
+## Voraussetzungen
+
+- Gladys Assistant 5.1.0 oder neuer.
+- Ein Alpha-ESS-System, das seine Daten an die Alpha-ESS-Cloud sendet (es erscheint in der Alpha-ESS-App).
+- **Ein Entwicklerkonto** (kostenlos) auf [open.alphaess.com](https://open.alphaess.com). Unter **Development Management → Developer Information** kopierst du die **Developer ID (AppID)** und das **Developer Secret (AppSecret)**.
+- **Dein System mit der AppID verknüpft**: Füge das System im Portal mit seiner **Seriennummer (SN)** und seinem **CheckCode** hinzu, beide auf dem Etikett des Wechselrichters (oder von deinem Installateur). Wenn das Portal nie die Bestätigungs-E-Mail schickt, nutze die Verknüpfungs-Schaltflächen der Konfiguration (siehe unten).
+
+Das Tempo: Alpha ESS verlangt **mindestens 10 Sekunden zwischen zwei Anfragen** und antwortet sonst „zu schnell“ (6053). Die Integration sendet eine Anfrage nach der anderen, 10 Sekunden auseinander, und wird von selbst langsamer, wenn Alpha ESS darum bittet.
+
+## Konfiguration
+
+| Feld                                     | Bedeutung                                                                                     |
+| ---------------------------------------- | --------------------------------------------------------------------------------------------- |
+| AppID (Developer ID)                     | Die Developer ID des Portals, beginnt mit `alpha`                                             |
+| AppSecret (Developer Secret)             | Das Developer Secret des Portals (ein Secret, nie wieder angezeigt und nie in den Logs)       |
+| Szenen dürfen den Wechselrichter steuern | Standardmäßig aus; an, dürfen Szenenaktionen die Batterieeinstellungen und die Wallbox ändern |
+| Abfrage der Leistung                     | Alle 30 s, 1 min (Standard), 2 min oder 5 min; bei mehreren Systemen seltener                 |
+| Sprache der Texte                        | Namen der Funktionen, Szenentexte und Fehler; automatisch folgt dem zuletzt gezeigten Widget  |
+
+Schaltflächen:
+
+- **Verbindung testen** listet die mit der AppID verknüpften Systeme (Seriennummer, Modell, Solarleistung, Batteriegröße).
+- **Verknüpfungscode anfordern** (Seriennummer + CheckCode): Alpha ESS schickt dem Besitzer des Systems einen Bestätigungscode per E-Mail. **System verknüpfen** (Seriennummer + Code) verknüpft es mit deiner AppID. Sein Gerät erscheint dann in der Suche.
+- **Diagnose** schreibt den Zustand der Integration in ihre Logs, ohne das Secret.
+
+## Verwendung
+
+### Geräte
+
+Öffne **Entdecken** und füge deine Systeme hinzu. Ein System-Gerät hat:
+
+- **Solarerzeugung** (W), **Hausverbrauch** (W), **Netzleistung** (W, positiv bei Bezug, negativ bei Einspeisung);
+- mit Batterie: **Batteriestand** (%), **Ladeleistung** und **Entladeleistung** (W, beide positiv);
+- **Solarerzeugung heute** und **Hausverbrauch heute** (kWh);
+- **Zählerstände** (kWh): Solarerzeugung, Netzbezug, Netzeinspeisung und, mit Batterie, Batterieladung und -entladung.
+
+Die Open API liefert die Energien jedes Tages, nicht den Zähler des Wechselrichters: Die Integration addiert die Tage selbst. Die Zählerstände beginnen am ersten Tag der Integration bei 0, sinken nie und werden nach Mitternacht mit dem Ende des Vortags korrigiert. Es sind Verlaufszähler: Keiner zählt als Verbrauch deines Hauses, ein Smart Meter speist das Energie-Dashboard also weiterhin allein, ohne Doppelzählung.
+
+Ein Wallbox-Gerät hat seinen **Steckerstatus**, seinen **Ladezustand** und seine **Ladeleistung** (W).
+
+### Dashboard-Widgets
+
+![Die drei Widgets: Energiefluss jetzt, heute mit der Leistungskurve, Batteriezeitplan (generierte Illustration, kein Screenshot)](https://raw.githubusercontent.com/William-De71/gladys-alpha-ess/main/docs/assets/widgets.de.png)
+
+- **Alpha ESS jetzt**: Batteriestand, Solar, Haus, Netz (ins oder aus dem Netz), Batterie (lädt oder entlädt), Zeit der Abfrage und Autarkie des Tages; „offline seit…“ in Rot, wenn Alpha ESS das System als offline meldet.
+- **Alpha ESS heute**: Solar, Haus, Netzbezug und Einspeisung des Tages, Autarkie, die Leistungskurve des Tages (nur gelesen, solange das Widget angezeigt wird), geladene und entladene Batterieenergie.
+- **Batteriezeitplan**: Laden aus dem Netz (an oder aus, Zeiträume, bis zu welchem SOC) und Zeitsteuerung der Entladung (an oder aus, Zeiträume, Entladegrenze) in der Cloud, und ob deine Szenen sie ändern dürfen.
+
+Wähle das System in den Einstellungen des Widgets (leer: das erste).
+
+### Szenen
+
+Auslöser (einmal pro Änderung, nie bei der ersten Abfrage):
+
+- **Alpha ESS: Batterie voll**: Die Batterie erreicht 100 % (erneut, nachdem sie unter 95 % fiel).
+- **Alpha ESS: Batterie an der Entladegrenze**: Die Batterie erreicht die Entladegrenze (+1 Punkt).
+- **Alpha ESS: Einspeisung beginnt** / **Netzbezug beginnt**: 200 W oder mehr, zwei Abfragen hintereinander.
+- **Alpha ESS: System offline** (10 Minuten) / **System wieder online**.
+- **Alpha ESS: Wallbox-Status geändert**: eingesteckt, lädt, pausiert, beendet, Störung; Filter auf den neuen Status.
+- **Alpha ESS: Zugriff verweigert**: AppID oder AppSecret abgelehnt, Uhr des Rechners falsch, IP nicht erlaubt oder System nicht verknüpft.
+
+Aktionen (die ersten drei brauchen **Szenen dürfen den Wechselrichter steuern**):
+
+- **Alpha ESS: Laden aus dem Netz**: an, aus oder unverändert, zwei Zeiträume wie `01:00-05:00` (Viertelstunden, `off` leert einen), der SOC, bei dem es stoppt (10 bis 100). Leere Felder behalten ihren Wert. Die aktuelle Einstellung wird zuerst gelesen und die ganze Einstellung geschrieben; nichts wird gesendet, wenn sich nichts ändert.
+- **Alpha ESS: Zeitsteuerung der Entladung**: dasselbe für die Entladung, mit ihrer Entladegrenze.
+- **Alpha ESS: Wallbox starten oder stoppen**.
+- **Alpha ESS: Energien von heute**: Solar, Haus, Bezug, Einspeisung, geladene und entladene Batterie, Autarkie, Batteriestand und ein Satz, ohne Anfrage.
+
+Alpha ESS dokumentiert die beiden Batterieeinstellungen als **etwa einmal pro Tag** änderbar: Eine zweite Änderung am selben Tag kann abgelehnt werden. Bei einigen neueren Wechselrichtern (SMILE-G3) liegt der Zeitplan der App woanders und diese Einstellungen werden eventuell ignoriert: Prüfe das Ergebnis in der Alpha-ESS-App, bevor du dich darauf verlässt.
+
+Beispiele:
+
+1. Jeden Tag um 22:00, wenn die Batterie unter 40 % ist → **Alpha ESS: Laden aus dem Netz** an, Zeitraum `01:00-05:00`, bis 80 %; um 06:00 → aus.
+2. Bei **Alpha ESS: Einspeisung beginnt** → den Warmwasserspeicher einschalten; bei **Netzbezug beginnt** → ausschalten.
+3. Bei **Alpha ESS: System offline** → eine Benachrichtigung senden „Der Wechselrichter ist seit \{\{triggerEvent.data.minutes_offline\}\} min offline“.
+4. Jeden Abend um 21:00 → **Alpha ESS: Energien von heute** → eine Nachricht mit ihrer Ausgabe `summary` senden.
+
+## Fehlerbehebung
+
+- **„Alpha ESS lehnt die AppID oder das AppSecret ab“** (6007): Kopiere beide erneut aus Developer Information, ohne Leerzeichen davor oder danach.
+- **„Das System … ist nicht mit dieser AppID verbunden“** (6005): Verknüpfe es im Portal oder mit **Verknüpfungscode anfordern** und dann **System verknüpfen**.
+- **„Die Uhr des Gladys-Rechners weicht um mehr als 5 Minuten ab“** (6006): Stelle die Uhr des Rechners (NTP).
+- **„Die IP-Whitelist des Entwicklerkontos ist aktiv“** (6009): Füge die öffentliche Adresse deines Gladys hinzu oder schalte die Liste aus.
+- **„Alpha ESS bittet um weniger Anfragen“** (6053): Vielleicht nutzt eine andere App (Home Assistant…) dieselbe AppID; die Abfragen laufen nach einer Minute weiter.
+- **„Die Steuerung ist aus“**: Aktiviere **Szenen dürfen den Wechselrichter steuern**.
+- **Eine Einstellung geändert, aber der Wechselrichter tut nichts**: Alpha ESS hat sie in der Cloud angenommen; bei manchen Modellen gewinnt der Zeitplan der App. Prüfe es in der Alpha-ESS-App.
+- **„Alpha ESS liefert die Batterieeinstellungen dieses Systems nicht“** (6017): Dein Modell oder Konto hat über die Open API keinen Zugriff darauf.
+- Melde ein Problem auf GitHub mit den Versionen von Gladys und der Integration, dem Modell des Wechselrichters, der Meldung von **Verbindung testen** und den Zeilen von **Diagnose**. Füge nie dein AppSecret ein.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Alpha ESS in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Alpha ESS Open API | `section` | Nein | Lege ein kostenloses Entwicklerkonto auf open.alphaess.com an. Unter Development Management → Developer Information kopierst du die Developer ID (AppID) und das Developer Secret (AppSecret). Die Daten laufen über die Alpha-ESS-Cloud. Diese Integration ist nicht mit Alpha ESS verbunden. |
+| AppID (Developer ID) | `string` | Ja |  |
+| AppSecret (Developer Secret) | `secret` | Ja |  |
+| Dein System mit der AppID verknüpfen | `section` | Nein | Nur die mit der AppID verknüpften Systeme sind sichtbar. Füge das System im Portal mit seiner Seriennummer (SN) und seinem CheckCode hinzu, beide auf dem Etikett des Wechselrichters (oder vom Installateur). Wenn das Portal nie die E-Mail schickt, nutze die Schaltflächen unten: „Verknüpfungscode anfordern“ schickt dem Besitzer des Systems einen Code per E-Mail, „System verknüpfen“ verwendet ihn. |
+| Steuerung des Wechselrichters | `section` | Nein | Standardmäßig aus. Wenn erlaubt, können Szenenaktionen das Laden aus dem Netz und die Zeitsteuerung der Entladung der Batterie ändern und eine Alpha-ESS-Wallbox starten oder stoppen. Alpha ESS dokumentiert diese Batterieeinstellungen als etwa einmal pro Tag änderbar, und bei einigen neueren Modellen (SMILE-G3) liegt der Zeitplan woanders und diese Einstellungen werden eventuell ignoriert: Prüfe das Ergebnis in der Alpha-ESS-App. |
+| Szenen dürfen den Wechselrichter steuern | `boolean` | Nein | Schreibt in die Batterieeinstellungen und die Wallbox. Aus: nur lesen. |
+| Abfrage der Leistung | `select` | Nein | Wie oft die aktuelle Leistung gelesen wird. Alpha ESS verlangt mindestens 10 Sekunden zwischen zwei Anfragen: Bei mehreren Systemen wird seltener gelesen. |
+| Sprache der Texte | `select` | Nein | Namen der Funktionen, Szenentexte und Fehler. Automatisch: die Sprache des zuletzt angezeigten Widgets. |
+
+## So installierst du Alpha ESS in Gladys
+
+1. Öffne in Gladys **Integrationen**: Alpha ESS erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/william-de71/gladys-alpha-ess:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/William-De71/gladys-alpha-ess](https://github.com/William-De71/gladys-alpha-ess).
+
+Alpha ESS benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Alpha ESS ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [William-De71](https://github.com/William-De71) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/William-De71/gladys-alpha-ess) — [Quelle dieser Dokumentation](https://github.com/William-De71/gladys-alpha-ess/blob/HEAD/docs/de.md)

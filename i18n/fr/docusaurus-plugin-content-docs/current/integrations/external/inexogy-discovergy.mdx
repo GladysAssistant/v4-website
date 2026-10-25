@@ -1,0 +1,167 @@
+---
+title: "Intégration domotique inexogy (Discovergy), gratuite et open source"
+sidebar_label: "inexogy (Discovergy)"
+description: "Non officiel : compteurs inexogy (Discovergy) : puissance, index d'électricité, gaz, eau. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-inexogy.png"
+keywords:
+  - "inexogy (discovergy)"
+  - "domotique inexogy (discovergy)"
+  - "gladys inexogy (discovergy)"
+  - "inexogy (discovergy) gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-inexogy instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"inexogy (Discovergy)","description":"Non officiel : compteurs inexogy (Discovergy) : puissance, index d'électricité, gaz, eau.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-inexogy","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-inexogy.png","type":"device","version":"0.1.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-23T18:41:59Z"}} />
+
+Intégration non officielle, sans lien avec inexogy. Elle lit les compteurs
+communicants d'un **compte client inexogy** (anciennement Discovergy,
+Allemagne) par l'**API officielle d'inexogy** (`api.inexogy.com`), avec
+l'e-mail et le mot de passe du portail web inexogy. Lecture seule : rien
+n'est jamais commandé.
+
+> **Jamais testé avec un vrai appareil** ni un vrai compte inexogy : elle a
+> été construite à partir de la bibliothèque pydiscovergy (utilisée par Home
+> Assistant) et de ses réponses de test. Vos retours sont les bienvenus.
+
+## Ce que vous obtenez
+
+Un appareil Gladys par compteur du compte :
+
+| Compteur    | Fonctions                                                                                                                                                                                                                                                       |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Électricité | puissance (W, telle qu'inexogy la donne : négative pendant l'injection sur un compteur bidirectionnel), **index de consommation** (kWh, envoyé au suivi énergétique de Gladys), registres tarif 1 et 2, index d'injection, puissance et tension de chaque phase |
+| Gaz         | index de gaz (m³), simple capteur                                                                                                                                                                                                                               |
+| Eau         | index d'eau (m³), simple capteur                                                                                                                                                                                                                                |
+
+Une fonction n'existe qu'une fois sa valeur donnée par inexogy (un compteur :
+une fois au-dessus de 0). Les autres types de compteurs (chaleur…) sont
+signalés dans l'état, pas lus.
+
+- L'**index de consommation** est le registre total du compteur lui-même
+  (`energy`) : le cœur de Gladys en déduit seul la consommation et son coût.
+  Ce n'est jamais une somme des tarifs et il ne contient jamais l'injection.
+- **Le gaz et l'eau restent hors du suivi énergétique** (Gladys les
+  facturerait au tarif de l'électricité) : simples capteurs de volume.
+- Les registres par tarif et l'injection sont de simples capteurs (kWh dans
+  leur nom) : en index, ils seraient comptés deux fois, ou facturés.
+
+## Installation
+
+1. Dans Gladys, ouvrez l'intégration et saisissez l'**e-mail** et le **mot
+   de passe** de votre compte client inexogy (ceux de
+   [https://my.inexogy.com/](https://my.inexogy.com/)). Le mot de passe est gardé par Gladys dans sa
+   base, jamais réaffiché, et envoyé seulement à inexogy (`api.inexogy.com`,
+   en HTTPS) à chaque requête (HTTP Basic, l'authentification de l'API
+   officielle).
+2. Choisissez si besoin les **minutes entre deux lectures** (1 par défaut,
+   60 au plus).
+3. Enregistrez, puis ouvrez l'onglet **Découverte** et créez les appareils
+   voulus.
+
+## Fonctionnement
+
+- **Rythme** : une lecture par intervalle (le dernier relevé de chaque
+  compteur, et la liste des compteurs une fois par heure), jamais plus
+  souvent : ni après un redémarrage du conteneur (l'heure de la dernière
+  lecture est gardée dans `/data`), ni à une reconnexion, un enregistrement
+  du formulaire, l'onglet Découverte ou le bouton de test.
+- **Connexion refusée** (HTTP 401 ou 403 sur la liste des compteurs) :
+  l'intégration s'arrête et le dit ; plus rien n'est envoyé avec ces
+  identifiants, même après un redémarrage. Enregistrez les bons, ou cliquez
+  sur « Tester la connexion » pour un nouvel essai (jamais avant
+  l'intervalle).
+- **inexogy demande d'attendre** (HTTP 429, ou 5xx sur la liste des
+  compteurs ou sur tous les compteurs) : toutes les lectures se mettent en
+  pause, de 1 minute à 6 heures (son `Retry-After` est suivi dans ces
+  bornes), y compris après un redémarrage. Un 5xx sur un seul compteur
+  laisse les autres continuer.
+- **Relevé périmé** : quand le dernier relevé d'un compteur d'électricité
+  date de plus de 15 minutes selon l'horloge d'inexogy, sa puissance et ses
+  tensions ne sont pas envoyées (jamais une vieille valeur comme neuve) ; les
+  compteurs, si.
+- Au plus 280 valeurs par minute sont envoyées à Gladys (sa limite est 300).
+
+## L'index de consommation est protégé
+
+Gladys compte chaque hausse d'un index en entier. Un raté (un registre à 0,
+une valeur fausse) deviendrait des milliers de kWh. Donc :
+
+- 0 n'est jamais envoyé ;
+- une valeur plus basse que la précédente (une baisse) est retenue, et
+  jamais acceptée : l'index reprend seul quand le registre revient. Un
+  compteur vraiment remplacé ou remis à zéro : supprimez son appareil et
+  recréez-le ;
+- une hausse plus rapide que 100 kW en moyenne depuis la dernière valeur (un
+  saut) est retenue, jamais confirmée par le temps, la répétition ou un
+  redémarrage (gardée dans `/data`) ; pendant ce temps, la dernière valeur
+  acceptée est renvoyée et l'état le signale. Si cette énergie a vraiment été
+  consommée, cliquez deux fois sur **« Accepter l'index retenu »** : le
+  premier clic liste les sauts, le second (dans les 5 minutes) prend
+  exactement ces valeurs. Enregistrer la configuration n'accepte jamais rien.
+
+Après 24 heures sans relevé, jusqu'à 2 400 kWh peuvent passer d'un coup (la
+marge grandit avec le temps écoulé depuis la dernière valeur).
+
+## Vie privée
+
+`/data/inexogy-state.json` garde l'heure de la dernière lecture, une pause,
+l'empreinte (salée) des identifiants refusés seulement (effacée au premier
+succès) et la référence de chaque index de consommation. Jamais le mot de
+passe, l'e-mail, un numéro de série ni une adresse : l'adresse qu'inexogy
+garde pour un compteur n'est jamais lue. Les journaux et l'état ne
+contiennent que nos propres mots. Dans Gladys même, le numéro de série d'un
+compteur sert au nom de son appareil, et son numéro de série complet et sa
+marque sont des paramètres de l'appareil (gardés dans la base de Gladys).
+
+## Limites
+
+- Seuls les 10 premiers compteurs d'un compte sont lus.
+- Les échelles des valeurs sont celles de Home Assistant (puissance en mW,
+  énergie en 1e-10 kWh, volume en 1e-3 m³) ; les compteurs d'eau n'ont
+  jamais été vus.
+- Pas d'import d'historique, pas de désagrégation, pas de statistiques.
+- Ce n'est pas l'intégration P1 Monitor, YouLess ni Tibber.
+
+## Crédits
+
+Les appels à l'API et le sens des valeurs sont portés de
+[pydiscovergy](https://github.com/jpbede/pydiscovergy) (MIT, Jan-Philipp
+Benecke) ; voir `THIRD_PARTY_NOTICES.md`.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par inexogy (Discovergy) dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Compte client inexogy | `section` | Non | Connecteur non officiel, sans lien avec inexogy. Il lit les compteurs communicants de votre compte inexogy (anciennement Discovergy, Allemagne) par l'API officielle d'inexogy, avec l'e-mail et le mot de passe du portail web inexogy : la puissance et l'index d'électricité chaque minute (l'index alimente le suivi énergétique de Gladys) et, quand le compteur les donne, les registres par tarif, l'injection, la puissance et la tension de chaque phase, et les compteurs de gaz et d'eau. Le gaz et l'eau sont de simples capteurs en m³ : ils restent hors du suivi énergétique. Lecture seule : rien n'est jamais commandé. Jamais testé avec un vrai appareil. |
+| E-mail inexogy | `string` | Oui | L'e-mail de votre compte client inexogy (celui du portail web). |
+| Mot de passe inexogy | `secret` | Oui | Gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement à inexogy (api.inexogy.com, en HTTPS) à chaque requête. |
+| Minutes entre deux lectures | `number` | Non | Chaque lecture demande à inexogy le dernier relevé de chaque compteur (et la liste des compteurs une fois par heure). Jamais plus souvent, quoi qu'il arrive (un redémarrage, le bouton de test). |
+
+## Comment installer inexogy (Discovergy) dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : inexogy (Discovergy) apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-inexogy:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-inexogy](https://github.com/LM1LC3N7/gladys-inexogy).
+
+inexogy (Discovergy) nécessite Gladys `>=5.2.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+inexogy (Discovergy) est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-inexogy) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-inexogy/blob/HEAD/docs/fr.md)

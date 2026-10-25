@@ -1,0 +1,232 @@
+---
+title: "Huginn smart home integration, free and open source"
+sidebar_label: "Huginn"
+description: "Your Huginn agents in Gladys: their events start scenes, Gladys feeds or runs them. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-huginn.png"
+keywords:
+  - "huginn"
+  - "huginn smart home"
+  - "gladys huginn"
+  - "huginn gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-huginn instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Huginn","description":"Your Huginn agents in Gladys: their events start scenes, Gladys feeds or runs them.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-huginn","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-huginn.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-25T10:32:03Z"}} />
+
+[Huginn](https://github.com/huginn/huginn) is a free, self-hosted system of
+agents that watch the web for you and act on what they find: a page that
+changes, an RSS feed, a price, the weather, an email, a webhook. Each agent
+creates **events** that other agents pass on. This integration brings your
+agents into Gladys: each one becomes a device (working, last event, events
+kept, error message), scenes react when **any** agent creates an event or
+falls in error, Gladys can send an event to a Webhook Agent or run an agent,
+and a dashboard widget lists the latest events.
+
+Tested against a real Huginn (Docker image `ghcr.io/huginn/huginn`); not yet
+on every setup: feedback welcome on
+[the issues](https://github.com/guim31/gladys-huginn/issues).
+
+## What you need
+
+- Gladys Assistant 5.1.0 or later.
+- Huginn, reachable from the Gladys machine (on the local network, or on the
+  Internet in HTTPS).
+- A Huginn account: its username (or email) and password.
+
+Huginn has no API key: the integration signs in with the account, like your
+browser, and reads the pages of the interface in JSON. It sees the agents of
+this account only. A dedicated account works, as long as the agents to follow
+belong to it.
+
+## Getting started
+
+### 1. Choose the account
+
+Use your own Huginn account, or create one for Gladys (its agents are the ones
+Gladys sees). The integration never changes an agent, except running it when
+a scene asks for it.
+
+### 2. Configure the integration
+
+In Gladys, open the integration, then its **Configuration** tab:
+
+- **Huginn address**: the address you open Huginn with, port included, for
+  example `http://192.168.1.2:3000`. An address copied from the browser works
+  too.
+- **Username or email** and **Password**: the account above.
+- **Refresh interval**: how often Gladys reads Huginn (1 minute by default).
+  Three requests per read when nothing happened, a few more after new events.
+- **Accept self-signed certificates**: only for an `https://` address whose
+  certificate your browser does not trust either.
+- **Language of the names**: the language of the feature names, of the dates
+  and of the scene results (French by default).
+
+Save, then click **Test the connection**: it shows the number of agents, those
+in error and the events of the last 24 hours.
+
+A refused password is tried **once**: Huginn locks an account after 10 failed
+sign-ins. The integration tries again when you save the configuration or click
+**Test the connection**.
+
+### 3. Add the agents
+
+The **Discover** tab lists a **Huginn** device and one device per agent. Add
+the ones you want to see in Gladys. The scene triggers work for every agent,
+added or not.
+
+## The devices
+
+Each agent has:
+
+- **Working**: on while the agent has no recent error (an error logged after
+  its last event, or less than 2 minutes before it, as Huginn counts it).
+- **Last event**: a short excerpt of its last event (its title, message or
+  text, otherwise its content in JSON).
+- **Last event date**: the date and time of its last event.
+- **Events kept**: the events Huginn keeps for this agent (they expire after
+  the time set on the agent).
+- **Error message**: the first line of its newest error log while it is in
+  error, "None" otherwise.
+
+The **Huginn** device counts the **Agents**, the **Agents in error**, the
+**Disabled agents**, the **Events in 24 h** and the **Failed jobs (5 days)**
+(the background jobs of Huginn that failed, every account included).
+
+## Dashboard
+
+The **Huginn events** widget shows the events of the last 24 hours and the
+agents in error, then one row per agent, newest event first: name, excerpt of
+its last event (or its error), date, and an "Error" badge. The agents in error
+come first. A tap on a row opens the detail.
+
+In its settings, **Agents** narrows it to the devices you choose (only devices
+added to Gladys can be chosen); the 24-hour tile then disappears, it counts the
+whole instance.
+
+## Scenes
+
+### Triggers
+
+They fire for every agent, added to Gladys or not. Leave **Agents** empty to
+react to any of them, or choose some.
+
+- **An agent creates an event**: a Huginn agent created an event. Variables:
+  agent name, excerpt (500 characters at most), content (the event in JSON,
+  1000 characters at most), event number. 20 events per read at most, the
+  newest: an agent that creates hundreds at once does not flood Gladys.
+- **An agent falls in error**: an agent logged an error and created no event
+  since. Once, until it works again. Variables: agent name, error message.
+- **Huginn is unreachable**: Huginn stops answering (two failed reads in a
+  row). Variable: the reason.
+- **Huginn answers again**: Huginn answers again, with the length of the
+  outage in minutes.
+
+An event created while Gladys or the integration restarts is still announced,
+once. Nothing is announced at the very first read.
+
+### Actions
+
+- **Send an event to Huginn**: posts a text to a **Webhook Agent**, which
+  creates a Huginn event from it. A JSON object is sent as is
+  (`{"room": "living room"}`), any other text as `{"text": "…"}`. Scene values
+  can be inserted. Outputs: accepted, HTTP status, answer of Huginn. The agent
+  must accept `post` in its `verbs` (the default). The address of the webhook,
+  with its secret, is read from the agent: nothing to copy.
+- **Run a Huginn agent**: Huginn checks the agent now (a page, a feed, a
+  digest) instead of waiting for its schedule. Its events then fire the
+  triggers above, at the next read.
+- **Last event of an agent**: reads the last event of an agent for the next
+  actions. Outputs: excerpt, content (JSON), date (ISO 8601), working, error
+  message, and a ready-made sentence ("Agent: excerpt").
+
+### Scene ideas
+
+- **Price watch**: trigger "An agent creates an event" on a Website Agent that
+  follows a price → send a message "💶 …" with the "Excerpt".
+- **Gladys feeds Huginn**: when the alarm turns on → "Send an event to Huginn"
+  with `{"alarm": "on", "at": "…"}`; a Huginn scenario logs it or adds it to
+  the evening digest.
+- **Broken agent**: trigger "An agent falls in error" → send a message
+  "⚠️ Huginn: … (…)" with "Agent name" and "Error message".
+- **Morning briefing**: every day at 7:30 → "Run a Huginn agent" on the
+  weather agent, then a minute later "Last event of an agent" → say the
+  "Sentence".
+
+## Troubleshooting
+
+- **"Sign-in refused"**: check the username (or email) and the password, then
+  save. "Your account is locked" in the logs of the integration: Huginn locked
+  the account after too many failures; unlock it (by email, or wait an hour),
+  then save.
+- **"Huginn does not answer"**: check the address and the port (3000 by
+  default) from the Gladys machine. `localhost` is the integration container
+  itself: use the IP address of the machine running Huginn.
+- **"Certificate refused"**: the HTTPS certificate is self-signed or expired;
+  tick "Accept self-signed certificates", or use the `http://` address on the
+  local network.
+- **"No Huginn at this address"**: the address points at another service, or
+  at a sub-path that is not the one of Huginn.
+- **"The address redirects"**: enter the `https://` address.
+- **"This agent is not a Webhook Agent"**: "Send an event to Huginn" needs a
+  Webhook Agent (an agent with a `secret` option written as plain text, not a Liquid credential).
+- **"Huginn refused the event (HTTP 401)"**: the secret of the Webhook Agent
+  changed; the integration reads it again at the next read, try again.
+- **"Working" stays off**: the agent logged an error after its last event.
+  Open its logs in Huginn; it turns on again at its next event.
+
+## Limits
+
+- Huginn has no REST API: the integration reads the JSON pages of the web
+  interface with a session. A future version of Huginn could change them.
+- An agent of another account is not seen; the failed jobs are counted for the
+  whole instance.
+- "Working" follows the error logs only; the "Working?" column of Huginn also
+  checks, for some agent types, that events arrive often enough.
+- At most 8 pages of 25 new events are read per refresh: beyond, the events
+  are counted but neither announced nor excerpted.
+- The events of the last 24 hours are counted by hour (the oldest hour counts
+  whole).
+- Agents are created, edited and deleted in Huginn; Gladys only sends events
+  to Webhook Agents and runs agents.
+
+## Configuration settings
+
+These are the settings Huginn asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Huginn | `section` | No | Huginn has no API key: the integration signs in like your browser. Enter its address and an account, then add the agents to follow from the Discover tab. |
+| Huginn address | `string` | No | The address you open Huginn with. |
+| Username or email | `string` | No | The account whose agents are read. A dedicated account only sees its own agents. |
+| Password | `secret` | No | A refused password is not tried again until you save the configuration: Huginn locks an account after 10 failures. |
+| Options | `section` | No |  |
+| Refresh interval | `select` | No | How often Huginn is read: three requests or more each time. |
+| Accept self-signed certificates | `boolean` | No | Only for an https:\/\/ address whose certificate your browser does not trust either. |
+| Language of the names | `select` | No | Language of the feature names (set when a device is added), of the states and of the scene results. |
+
+## How to install Huginn in Gladys
+
+1. In Gladys, open **Integrations**: Huginn appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-huginn:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-huginn](https://github.com/guim31/gladys-huginn).
+
+Huginn requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Huginn is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-huginn) — [source of this documentation](https://github.com/guim31/gladys-huginn/blob/HEAD/docs/en.md)

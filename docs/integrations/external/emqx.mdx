@@ -1,0 +1,196 @@
+---
+title: "EMQX smart home integration, free and open source"
+sidebar_label: "EMQX"
+description: "The health of your EMQX MQTT broker in Gladys: clients, message rates, alarms, outages. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-emqx.png"
+keywords:
+  - "emqx"
+  - "emqx smart home"
+  - "gladys emqx"
+  - "emqx gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-emqx instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"EMQX","description":"The health of your EMQX MQTT broker in Gladys: clients, message rates, alarms, outages.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-emqx","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-emqx.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-25T12:00:57Z"}} />
+
+Watches the health of your **EMQX** MQTT broker in Gladys: connected clients, subscriptions, message
+rates, dropped messages, alarms in progress, running nodes, uptime and outages, plus the MQTT clients
+you choose to follow (Zigbee2MQTT, a Shelly, a bridge…).
+
+This integration is not affiliated with EMQ Technologies.
+
+## Overview
+
+Gladys already speaks MQTT: its **MQTT** integration connects to a broker to drive your devices. It
+shows nothing about the broker itself. This integration does: every 30 seconds it reads the REST API
+of EMQX (version 5 or 6) with an API key and turns what EMQX says into Gladys devices, nine scene
+triggers, a scene action and a dashboard widget.
+
+It only reads: it never publishes a message, never connects as an MQTT client and never changes the
+configuration of EMQX. Everything stays on your local network.
+
+For an **Eclipse Mosquitto** broker, install the Mosquitto integration instead: EMQX publishes other
+statistics.
+
+## Requirements
+
+- Gladys 5.1 or later.
+- EMQX 5 or 6 (tested with 5.8.6 and 6.3.2), its dashboard port (**18083** by default) reachable from
+  Gladys.
+- An API key of EMQX and its secret key.
+
+EMQX 4 is not supported: its API is different.
+
+### Create an API key
+
+1. Open the EMQX dashboard (`http://<address>:18083`).
+2. Go to **System → API Key**, then **Create**.
+3. Give it a name (for instance `gladys`). If EMQX offers a role, pick **Viewer**: read access is
+   enough.
+4. Copy the **API Key** and the **Secret Key**: EMQX shows the secret only once.
+
+## Configuration
+
+| Field                            | Description                                                                                               |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Address of EMQX                  | The address of the dashboard: `http://192.168.1.20:18083`, or a bare host (port 18083 is added).          |
+| API key                          | The API Key created above.                                                                                |
+| Secret key                       | Its Secret Key.                                                                                           |
+| Accept a self-signed certificate | For an `https://` address whose certificate Gladys cannot check.                                          |
+| MQTT clients to follow           | Client ids, separated by commas, 20 at most. Each becomes a device. Leave empty to follow none.           |
+| Language of the texts            | Feature names of the devices when added, scene sentences and messages of the actions (French by default). |
+
+The **Check the connection** button reads EMQX at once and tells its version, its key numbers, its
+alarms in progress and how many followed clients are connected.
+
+Then open the **Discovery** tab of the integration and add the broker and the clients you want.
+
+## The broker device
+
+| Feature                  | Meaning                                                                       |
+| ------------------------ | ----------------------------------------------------------------------------- |
+| Reachable                | 1 while the API answers, 0 during an outage.                                  |
+| Connected clients        | MQTT clients connected right now.                                             |
+| Subscriptions            | Subscriptions of all the clients.                                             |
+| Topics                   | Topics with at least one subscriber.                                          |
+| Messages received (/min) | Messages published to the broker, per minute.                                 |
+| Messages sent (/min)     | Messages delivered to subscribers, per minute.                                |
+| Messages dropped (/min)  | Messages EMQX threw away (often: nobody subscribed to the topic), per minute. |
+| Retained messages        | Messages kept by the broker for new subscribers.                              |
+| Active alarms            | Alarms of EMQX in progress (memory, CPU, congestion…).                        |
+| Running nodes            | Nodes of the cluster running (1 for a single broker).                         |
+| Uptime                   | In days, since the youngest node started.                                     |
+| Version                  | Version of EMQX.                                                              |
+
+The rates come from EMQX itself, which samples them every 10 seconds. During an outage only
+**Reachable** changes: the other values keep their last reading.
+
+## Followed clients
+
+Each client id of the **MQTT clients to follow** field becomes a device named after it, with two
+features:
+
+- **Connected**: 1 when the client is connected to EMQX, 0 otherwise (including when EMQX no longer
+  knows it).
+- **Last connection**: date and time of its latest connection, in the time zone of Gladys.
+
+The client ids are listed on the **Clients** page of the dashboard. Zigbee2MQTT, for instance, uses
+the `client_id` of its configuration (`mqttjs_…` when none is set: give it a fixed one first).
+
+## Dashboard widget
+
+The **EMQX broker** widget shows the state of the broker, its version, its uptime, the nodes of a
+cluster, the alarms in progress (up to three by name), and four live tiles: clients, messages
+received, sent and dropped per minute. Pick the broker in its settings.
+
+## Scene triggers
+
+| Trigger                 | When                                                                                |
+| ----------------------- | ----------------------------------------------------------------------------------- |
+| Broker unreachable      | The API has not answered for 1, 5, 15, 30 or 60 minutes (your choice).              |
+| Broker back             | The API answers again after an outage of at least one minute.                       |
+| Broker restarted        | The uptime of a node went back to zero, even without a visible outage.              |
+| Alarm raised            | EMQX raised an alarm. Variables: alarm name, message, node.                         |
+| Alarm cleared           | An alarm is no longer in progress. Variable: its duration in minutes.               |
+| Client disconnected     | A followed client is no longer connected.                                           |
+| Client reconnected      | A followed client is connected again. Variable: minutes disconnected.               |
+| Fewer connected clients | Fewer clients than the chosen number for a minute.                                  |
+| Message spike           | More messages received per minute than the chosen number; at most every 30 minutes. |
+
+After a restart of the integration, the first reading is a reference: an alarm already in progress or
+a client already away fires nothing.
+
+## Scene action
+
+**Broker summary** gives a sentence ready for a message ("EMQX 5.8.6 has been running for 3 days, 12
+clients connected, 64 messages received and 87 sent per minute, no alarm.") and its numbers: reachable,
+connected clients, messages received, sent and dropped per minute, alarms in progress and their names,
+uptime in hours, version.
+
+## Scene ideas
+
+- **Alarm raised** → send yourself a message "EMQX alarm: \{\{message\}\} on \{\{node\}\}".
+- **Client disconnected** on Zigbee2MQTT → warn that the Zigbee devices no longer answer.
+- Every morning, **Broker summary** → send the summary sentence to Telegram.
+- **Broker unreachable** for 5 minutes → turn a light red.
+
+## Troubleshooting
+
+- **EMQX cannot be reached**: check the address and the port (18083 by default, not the MQTT port
+  1883), and that Gladys reaches it (firewall, Docker network).
+- **EMQX refused the API key**: check the key and the secret, that the key is enabled and not
+  expired. A key deleted in the dashboard must be created again.
+- **No EMQX 5 API at this address**: the address points to something else (MQTT port, another
+  service) or to EMQX 4.
+- **A client stays disconnected**: check its exact client id on the **Clients** page of the dashboard
+  (it is case-sensitive).
+- More details: set `LOG_LEVEL=debug` and read the logs of the integration.
+
+## Limits
+
+- Read every 30 seconds: a disconnection shorter than that may go unnoticed.
+- Rates are averages computed by EMQX over 10 seconds, shown per minute.
+- 20 followed clients at most; a client id containing a space cannot be followed.
+- Only the alarms of EMQX are read, not the rules, bridges or plugins themselves.
+- EMQX 4 is not supported.
+
+## Configuration settings
+
+These are the settings EMQX asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Connect EMQX | `section` | No | The integration reads the REST API of EMQX 5 or 6 with an API key, every 30 seconds. It never changes anything. Create the key in the dashboard: System → API Key. |
+| Address of EMQX | `string` | Yes | The address of the dashboard, port 18083 by default (http:\/\/ or https:\/\/). |
+| API key | `string` | Yes | Read access is enough: the Viewer role when EMQX offers one. |
+| Secret key | `secret` | Yes | Shown once by EMQX when the key is created. |
+| Accept a self-signed certificate | `boolean` | No | https:\/\/ only: the certificate of EMQX is then not checked. |
+| MQTT clients to follow | `string` | No | Client ids separated by commas, 20 at most: each one becomes a device (connected, last connection). They are listed on the Clients page of the dashboard. |
+| Language of the texts | `select` | No | Feature names of the devices when they are added, scene sentences and action messages. |
+
+## How to install EMQX in Gladys
+
+1. In Gladys, open **Integrations**: EMQX appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-emqx:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-emqx](https://github.com/guim31/gladys-emqx).
+
+EMQX requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+EMQX is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-emqx) — [source of this documentation](https://github.com/guim31/gladys-emqx/blob/HEAD/docs/en.md)

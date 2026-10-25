@@ -1,0 +1,200 @@
+---
+title: "Pterodactyl / Pelican smart home integration, free and open source"
+sidebar_label: "Pterodactyl / Pelican"
+description: "Pterodactyl and Pelican game servers: state, CPU, memory, start and stop, crash alerts. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-pterodactyl.png"
+keywords:
+  - "pterodactyl / pelican"
+  - "pterodactyl / pelican smart home"
+  - "gladys pterodactyl / pelican"
+  - "pterodactyl / pelican gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-pterodactyl instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Pterodactyl / Pelican","description":"Pterodactyl and Pelican game servers: state, CPU, memory, start and stop, crash alerts.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-pterodactyl","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-pterodactyl.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-25T13:17:59Z"}} />
+
+Your game servers of a [Pterodactyl](https://pterodactyl.io/) panel (or of its fork
+[Pelican](https://pelican.dev/)) in Gladys: their state, CPU, memory, disk and uptime, a switch to
+start and stop them, scene events when a server starts, stops or crashes, scene actions and a
+dashboard widget. At home or at a game host that sells Pterodactyl servers: the API is the same.
+
+Tested against a real Pterodactyl 1.15 panel and Wings (start, stop, restart, console, a real crash
+restarted by Wings). Pelican keeps the same client API but was not tested: feedback welcome on
+[GitHub](https://github.com/guim31/gladys-pterodactyl/issues).
+
+## Requirements
+
+- Gladys Assistant 5.1 or later.
+- A Pterodactyl (1.8 or later) or Pelican panel that Gladys can reach.
+- A **client API key** of your account on the panel: **Account → API Credentials → Create**. It
+  starts with `ptlc_`. An application key (`ptla_`, admin area) does not work. The key sees the
+  servers you own and the ones shared with you; a subuser needs the permissions of what Gladys does
+  (reading the server, power, console, activity).
+
+## Configuration
+
+### Panel and key
+
+- **Panel address**: the address you open in your browser, e.g. `https://panel.example.com` or
+  `http://192.168.1.20:8080`.
+- **Client API key (ptlc\_…)**: the key created above.
+- **Accept a self-signed certificate**: only for a panel at home in HTTPS without a public
+  certificate.
+
+Save: each server of your account appears in the **Discovery** tab, ready to be added. Use **Test
+the connection** to list your servers and their state.
+
+### Control
+
+Start, stop and restart are always allowed, as on the panel. Two risky orders are off by default:
+
+- **Allow killing a server**: kills the process at once, the game loses what it did not save.
+- **Allow console commands**: a scene can then type any command in the console of a server, as an
+  admin would.
+
+### Readings
+
+- **Reading interval**: 30 seconds by default. The panel refreshes the figures of a server about
+  every 20 seconds: reading faster would show nothing new. Each reading costs one request for the
+  list and one per server, far below the limit of the panel (720 requests a minute by default).
+- **Language of the names**: of the device features and of the texts the integration writes.
+
+## Devices
+
+One device per server, with:
+
+- **Power**: a switch. On while the server runs or starts; turning it on starts the server,
+  turning it off stops it cleanly (never a kill). After an order, the switch and the state show it
+  at once, until the panel confirms it.
+- **State**: Running, Starting, Stopping, Stopped, Suspended, Installing, Unreachable (the panel
+  cannot reach the node).
+- **CPU**: as the panel counts it, 100 % being one core. The gauge goes up to the CPU limit of the
+  server, or 400 % without a limit.
+- **Memory** and **Disk**: in megabytes.
+- **Uptime**: in hours, 0 when stopped.
+
+CPU and memory are sent to Gladys at most once a minute. The limits of the server (memory, disk,
+CPU) and its node are in the parameters of the device. The badge of the device tells a panel at
+home from a panel on the Internet, and shows a red dot when the panel or the node does not answer.
+
+## Dashboard widget
+
+**Game servers**: without a server chosen, a tile with the servers running and a list of your
+servers with their state, CPU and memory (nine of them, then a count). With one server chosen in
+the widget settings: its state, CPU, memory and uptime, its limits, and the buttons that fit its
+state: **Start**, or **Restart** and **Stop** (confirmed). **Kill** appears when allowed in the
+configuration and the server is stuck stopping.
+
+## Scene triggers
+
+Each one can be limited to one server, and gives the name of the server, its node and its device.
+
+- **A game server started**: it runs, after a start, a restart or a crash.
+- **A game server stopped**: on an order, from Gladys, the panel or its console (`stop`, `quit`,
+  `exit`...). With the minutes it had run.
+- **A game server crashed**: it stopped without any order. Wings usually restarts it at once:
+  this event then comes first, then **A game server started**. With the minutes it had run.
+
+How a crash is recognized: the server is stopped, or its uptime started again from zero, and
+neither Gladys nor the activity log of the panel shows a stop, kill or restart since the previous
+reading. A server shut down from inside the game (a mod, a plugin) counts as a crash. If the key
+cannot read the activity log (a subuser without that permission), a stop made from the panel counts
+as a crash too: **Test the connection** says which case you are in.
+
+## Scene actions
+
+- **Start a game server**, **Stop a game server** (clean stop), **Restart a game server**.
+- **Kill a game server**: only if allowed in the configuration.
+- **Send a console command**: only if allowed in the configuration, to a running server, e.g.
+  `say Dinner is ready!`.
+- **Read a game server**: reads it now and gives the next steps whether it runs, its state, CPU,
+  memory, disk and uptime, e.g. for a message or a "Continue only if" on running.
+
+The players are not in the API of the panel: the
+[Game Servers (GameDig)](https://github.com/guim31/gladys-gamedig) integration (gladys-gamedig)
+reads who is playing, joins and leaves, for Minecraft, Valheim and 300 more games.
+
+## Scene examples
+
+- **The kids' server at bedtime**: at 9 pm on school days, **Send a console command**
+  `say The server stops in 5 minutes!`, wait 5 minutes, **Stop a game server**.
+- **Crash alert**: trigger **A game server crashed** → send me a message with the name of the
+  server and the minutes it had run.
+- **Ready to play**: a button on the dashboard starts the server; trigger **A game server
+  started** → turn the desk lights green and send a message with the name of the server.
+
+## Troubleshooting
+
+- **"API key refused"**: the key was deleted, or it is an application key (`ptla_`): create a
+  client key in **Account → API Credentials**.
+- **"panel unreachable"**: check the address and the port from the Gladys machine; a panel behind
+  Cloudflare Access or a login page cannot be read.
+- **"certificate not trusted"**: turn on **Accept a self-signed certificate**, or use the public
+  address of the panel.
+- **State "Unreachable"**: the panel answers but cannot reach the node (Wings) of the server.
+- **No server in the Discovery tab**: the key sees no server; a subuser key only sees the servers
+  shared with it.
+- A server shows **Starting** after a start order for up to 90 seconds before the panel confirms
+  it: that is the cache of the panel.
+- The logs of the integration (Integrations → Pterodactyl / Pelican → Logs) say what failed;
+  `LOG_LEVEL=debug` shows every reading.
+
+## Limits
+
+- Readings every 30 seconds at best: a crash and its restart by Wings within one reading is seen
+  through the uptime; two crashes within one reading count as one.
+- Up to 200 servers per key.
+- No players (see gladys-gamedig), no files, backups, databases or schedules.
+- The console output is not read: only commands are sent.
+- Not affiliated with Pterodactyl or Pelican.
+
+## Credits
+
+Pterodactyl and Pelican are the work of their own teams. The API was read from their documentation
+and checked against a real panel. Code
+under the Apache 2.0 license, in the
+[repository of the integration](https://github.com/guim31/gladys-pterodactyl).
+
+## Configuration settings
+
+These are the settings Pterodactyl / Pelican asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your game panel | `section` | No | Pterodactyl or Pelican, at home or at a game host. Each server of your account becomes a device: create a client API key in Account → API Credentials of the panel. |
+| Panel address | `string` | Yes | The address you open in your browser. |
+| Client API key (ptlc_…) | `secret` | Yes | Account → API Credentials. Not an application key (ptla_) of the admin area. |
+| Accept a self-signed certificate | `boolean` | No | Only for a panel at home in HTTPS without a public certificate. |
+| Control | `section` | No | Start, stop and restart are always allowed, like on the panel. The two risky orders below are off by default. |
+| Allow killing a server | `boolean` | No | Kills the process at once: the game loses what it did not save. |
+| Allow console commands | `boolean` | No | A scene can then type any command in the console of a server, like an admin. |
+| Readings | `section` | No |  |
+| Reading interval | `select` | No | The panel refreshes the figures of a server about every 20 s. |
+| Language of the names | `select` | No | Of the device features and of the texts the integration writes. |
+
+## How to install Pterodactyl / Pelican in Gladys
+
+1. In Gladys, open **Integrations**: Pterodactyl / Pelican appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-pterodactyl:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-pterodactyl](https://github.com/guim31/gladys-pterodactyl).
+
+Pterodactyl / Pelican requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Pterodactyl / Pelican is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-pterodactyl) — [source of this documentation](https://github.com/guim31/gladys-pterodactyl/blob/HEAD/docs/en.md)

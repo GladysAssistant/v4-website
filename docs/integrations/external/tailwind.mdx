@@ -1,0 +1,164 @@
+---
+title: "Tailwind smart home integration, free and open source"
+sidebar_label: "Tailwind"
+description: "Tailwind garage door controllers, locally: door state, open, close, status LED. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-tailwind.png"
+keywords:
+  - "tailwind"
+  - "tailwind smart home"
+  - "gladys tailwind"
+  - "tailwind gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-tailwind instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Tailwind","description":"Tailwind garage door controllers, locally: door state, open, close, status LED.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-tailwind","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-tailwind.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-23T18:56:52Z"}} />
+
+Gladys integration for **Tailwind** garage door controllers (iQ3, Light), on
+your local network: the state of each garage door, Open and Close buttons, and
+the brightness of the status LED, through the local API of the controller,
+without the Tailwind cloud.
+
+> **Never tested with a real device.** This first version was built from the
+> `gotailwind` library (the one of the Home Assistant integration) and tested
+> against simulated controllers only. Feedback welcome.
+>
+> Unofficial integration, not affiliated with Tailwind.
+
+## What you need
+
+- A Tailwind controller with firmware **10.10 or later** (update it in the
+  Tailwind app), on the same network as Gladys.
+- A **fixed IP address** for each controller (a DHCP reservation in your
+  router).
+- Your **local control key**: sign in to the Tailwind web app
+  (web.gotailwind.com) with your Tailwind account, and copy the six-digit
+  "Local Control Key". It is the same for every controller of the account.
+  Gladys never talks to the Tailwind cloud: you only read the key there.
+
+## Setup
+
+1. In Gladys, open the integration configuration.
+2. Type the IP addresses of your controllers, separated by commas.
+3. Paste the local control key. This field is kept by Gladys in its database,
+   never shown again, and sent only to your controllers, in clear on your
+   local network (their local API has no https).
+4. Save, then add the controllers from the **Discovery** tab.
+
+The status line says how many controllers answer. **Check the controllers**
+shows what each address answered.
+
+## What you get
+
+One Gladys device per controller (identified by its MAC address: a new IP
+address changes nothing), with for each door it manages (1 to 3):
+
+| Feature               | Type           | Notes                                          |
+| --------------------- | -------------- | ---------------------------------------------- |
+| Garage door _n_       | opening sensor | open or closed; nothing published when unknown |
+| Open garage door _n_  | button         | refused until allowed (see below)              |
+| Close garage door _n_ | button         | refused until allowed (see below)              |
+
+and **Status LED brightness** (0 to 100), which needs no permission. A
+brightness change is confirmed only when the LED is read back at the value
+asked; otherwise Gladys answers "sent, without confirmation".
+
+## Command safety
+
+A Tailwind controller opens and closes a door by pulsing the wall-button input
+of the opener. On most openers that input is a **toggle**: a pulse given to a
+door that moved since it was read can stop or reverse it. So:
+
+- **Open** and **Close** are both **refused by default**. Turn on "Allow
+  opening and closing the garage doors" to use them (from the dashboard, the
+  scenes and the voice assistants alike). The permission is checked when the
+  command arrives, after the door is read and right before the request leaves.
+- The door is never a switch: a "turn everything off" from a voice assistant
+  or a scene can never reach it.
+- Gladys reads the controller just before each command and checks that it is
+  the same controller (MAC). **Open** is sent only to a door read closed,
+  **Close** only to a door read open; already there: nothing is sent. A door
+  in an unknown state, disabled in the Tailwind app or locked out by the
+  controller is refused.
+- After a command, the next one of that door waits until the door is read
+  where it was sent: at least **30 s after an opening** (the sensor reads
+  "open" as soon as the door leaves closed, long before the end of a travel
+  of up to 30 s), 15 s after a closing ("closed" is only read at the end of
+  travel), 45 s at most. This guard is written to the integration files
+  before the request leaves, so a restart keeps it, and it is timed on a
+  clock that a change of the system time does not move.
+- A **Close** never waits behind another command, of its door or of another
+  door: closing three doors at once sends three commands. It cancels the
+  openings of its door that have not left yet. It is never held by a pause
+  asked by the controller (HTTP 429 or 5xx) nor by a refused key: it gets one
+  try, never retried. Openings of a same door go one at a time.
+- **Open** pressed again on the same door within 5 s of an opening that sent
+  nothing (door read open, or refused) is refused without reading the
+  controller again ("try again in a few seconds"): a scene in a loop never
+  floods it. **Close** is never held this way: every close reads the door
+  again and decides on what it reads. The LED brightness can change once
+  every 2 s at most.
+- If the integration cannot write to its files, a command still leaves (its
+  guard holds in memory) and the status says so.
+- A command leaves within 3.5 s of the click or is refused without sending
+  anything. If it may have reached the controller without an answer, Gladys
+  says "sent, without confirmation" and reads the door again; it is never
+  retried. A successful answer means the controller accepted the command: the
+  door then moves for 10 to 30 s and its state follows in Gladys.
+
+## Limits
+
+- Polling only (every 10 s by default, 5 s to 300 s), never sooner than the
+  interval, even after a restart. HTTP 429 or 5xx: a pause of 1 min to 6 h.
+- A key refused by a controller is final for that controller: it is not read
+  again with that key until you save another key, or press "Check the
+  controllers" once the key is fixed (one read, never sooner than the
+  interval). The key is never written in the logs nor in the integration
+  files: only 8 bits of a salted fingerprint of a refused key are kept (the
+  key cannot be found back from them), removed at the first success. An entry
+  of the addresses field that is not an address is never shown in the
+  status, only counted.
+- The night mode, the notifications pushed by the controller and the mDNS
+  discovery are not handled yet.
+- Most Tailwind controllers are sold in North America: the integration may
+  be of little use elsewhere.
+
+## Configuration settings
+
+These are the settings Tailwind asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Tailwind controllers, on your local network | `section` | No | The state of each garage door of your Tailwind controllers (iQ3, Light), Open and Close buttons, and the brightness of the status LED, through the local API of the controller, without the Tailwind cloud. Give each controller a fixed IP address in your router, type the addresses and your local control key below, then add them from the Discovery tab. Never tested with a real device. Unofficial integration, not affiliated with Tailwind. |
+| IP addresses of the controllers | `string` | No | Separated by commas, for example 192.168.1.60, 192.168.1.61 (add :port if it is not 80). |
+| Local control key | `secret` | No | The six-digit "Local Control Key" shown in the Tailwind web app (web.gotailwind.com, signed in with your Tailwind account). The same for every controller of the account. Needed for everything: a controller answers nothing without it. Kept by Gladys in its database, never shown again, sent only to your Tailwind controllers (in clear on your local network: their local API has no https). |
+| Refresh interval (s) | `number` | No | How often each controller is read, in seconds. Never sooner, even after a restart. |
+| Opening and closing | `section` | No | Each door has two buttons, never a switch. The controller pulses the wall-button input of the opener, a toggle on most openers: a pulse can stop or reverse a door that moved since it was read. Both buttons are therefore refused until you allow them below. Gladys reads the door just before each command: "Open" only to a door read closed, "Close" only to a door read open; unknown, disabled or locked out: refused. After a command, the next one of that door waits until it is read where it was sent: at least 30 s after an opening (a door is read open as soon as it leaves closed), 15 s after a closing, 45 s at most. A close never waits behind another command and is never held by a pause asked by the controller. Without the permission, a scene or a voice assistant "close the garage" is refused too. |
+| Allow opening and closing the garage doors | `boolean` | No | Off by default: the doors are only read. On: the dashboard, the scenes and the voice assistants can open AND close the garage doors. |
+| Language of the feature names | `select` | No | Used for the names of the features added from now on, and for the command errors. |
+
+## How to install Tailwind in Gladys
+
+1. In Gladys, open **Integrations**: Tailwind appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-tailwind:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-tailwind](https://github.com/LM1LC3N7/gladys-tailwind).
+
+Tailwind requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Tailwind is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-tailwind) — [source of this documentation](https://github.com/LM1LC3N7/gladys-tailwind/blob/HEAD/docs/en.md)
