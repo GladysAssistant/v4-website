@@ -78,17 +78,17 @@ Une limite, pour l'instant : avec une voix locale, les réponses de l'assistant 
 
 ## Un catalogue taillé pour un millier d'intégrations
 
-Au lancement de la version 5 fin août, le store comptait environ soixante-dix intégrations de la communauté. Aujourd'hui, il en compte **785**, plus les intégrations natives. La page des intégrations n'était pas pensée pour ça : elle téléchargeait le store complet (22 Mo) toutes les 30 minutes, et trouver quelque chose voulait dire tout faire défiler.
+Au lancement de la version 5 fin août, le store comptait environ soixante-dix intégrations de la communauté. Aujourd'hui, il en compte **856**, plus les intégrations natives. La page des intégrations n'était pas pensée pour ça : elle téléchargeait le store complet (25 Mo) toutes les 30 minutes, et trouver quelque chose voulait dire tout faire défiler.
 
 ![Le catalogue : les nouvelles catégories, et les intégrations des autres pays masquées](../../../static/img/articles/gladys-assistant-5-3/07-catalog-fr.webp)
 
 Voici ce qui change :
 
-- **Un catalogue qui charge vite.** Gladys télécharge maintenant un index léger de 1,4 Mo, et ne va chercher le fichier complet d'une intégration, quelques kilo-octets, que quand vous l'ouvrez, l'installez ou la mettez à jour. Pendant le chargement, la page le dit, au lieu d'afficher les intégrations natives comme si c'était tout le catalogue. Les cartes s'affichent page par page, avec un bouton « Afficher plus d'intégrations ».
+- **Un catalogue qui charge vite.** Gladys télécharge maintenant un index léger de 1,5 Mo, et ne va chercher le fichier complet d'une intégration, quelques dizaines de kilo-octets au plus, que quand vous l'ouvrez, l'installez ou la mettez à jour. Pendant le chargement, la page le dit, au lieu d'afficher les intégrations natives comme si c'était tout le catalogue. Les cartes s'affichent page par page, avec un bouton « Afficher plus d'intégrations ».
 - **La recherche est le premier filtre.** Elle lit plus que la carte : toutes les langues de la description, les mots-clés déclarés par l'auteur, l'auteur lui-même, et les pays. Les résultats sont classés (les noms qui commencent par ce que vous avez tapé d'abord), et une recherche regarde toujours dans tout le catalogue, quelle que soit la catégorie où vous êtes.
 - **Le filtre de pays que personne n'a à régler.** Réseaux de transport, fournisseurs d'électricité, collecte des déchets, cinémas : beaucoup d'intégrations n'ont de sens que dans un pays. Gladys déduit votre pays du fuseau horaire avec lequel elle est déjà configurée, et masque des catégories les intégrations des autres pays. Une ligne indique combien sont masquées, avec un lien « Voir tous les pays », et la recherche les trouve toujours.
 - **Quatre nouvelles catégories** : *Transports & mobilité*, *Véhicules & recharge*, *Serveurs & auto-hébergement* et *Loisirs, sport & jeux*. « Services » était devenu un fourre-tout de 160 intégrations.
-- **Les petites choses qui comptent** : un badge « Installée » sur les cartes, un tri « Dernière mise à jour », un compteur toujours comparé au catalogue entier (« 21 sur 823 intégrations ») avec un seul lien « Effacer les filtres », et quand vous revenez de la page d'une intégration, vous êtes exactement là où vous étiez dans la liste.
+- **Les petites choses qui comptent** : un badge « Installée » sur les cartes, un tri « Dernière mise à jour », un compteur toujours comparé au catalogue entier (« 21 sur 894 intégrations ») avec un seul lien « Effacer les filtres », et quand vous revenez de la page d'une intégration, vous êtes exactement là où vous étiez dans la liste.
 
 ### Mettre à jour vos intégrations depuis le catalogue
 
@@ -108,7 +108,7 @@ Merci à [@cicoub13](https://github.com/cicoub13) pour les deux !
 - **Catalogue** : deux nouveaux champs optionnels dans le manifest, `keywords` (des termes utilisés seulement par la recherche : marques, modèles, villes desservies) et `countries` (les codes ISO des pays où l'intégration est utilisable, absent veut dire partout dans le monde), et les quatre nouvelles catégories `transport`, `vehicles`, `servers` et `leisure`.
 - **Polling** : un appareil découvert qui publie une `poll_frequency` est maintenant interrogé par Gladys sans avoir à mettre aussi `should_poll`.
 
-Le SDK n'encapsule pas encore ces nouveaux messages : en attendant, une intégration les gère sur sa connexion WebSocket, comme décrit dans les specs.
+Le [SDK v0.16.0](https://github.com/GladysAssistant/integration-sdk-js) gère tout cela : `onAiChat` pour les fournisseurs d'IA, `onTtsSynthesize` pour la synthèse vocale, et `publishNowPlaying`, `artworkKey` et les handlers `onMusic*` pour les lecteurs de musique.
 
 ## Correctifs
 
