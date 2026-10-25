@@ -90,13 +90,15 @@ Esto es lo que cambia:
 - **Cuatro categorías nuevas**: *Transporte y movilidad*, *Vehículos y recarga*, *Servidores y autoalojamiento* y *Ocio, deporte y juegos*. «Servicios» se había convertido en un cajón de sastre de 160 integraciones.
 - **Pequeñas cosas que cuentan**: una etiqueta «Instalada» en las tarjetas, un orden «Última actualización», un contador que siempre compara con el catálogo completo («21 de 823 integraciones») con un único enlace «Borrar filtros», y cuando vuelves de la página de una integración, estás exactamente donde estabas en la lista.
 
-### Actualizar una integración desde su tarjeta
+### Actualizar tus integraciones desde el catálogo
 
 Cuando una integración de la comunidad tiene una versión nueva, su tarjeta muestra ahora la versión instalada, la nueva y un botón **Actualizar**. Ya no hace falta abrir la integración.
 
-![La tarjeta de una integración instalada, con su botón de actualización](../../../static/img/articles/gladys-assistant-5-3/08-update-card-es.webp)
+Y cuando hay varias esperando, la vista **Para actualizar** se abre con un botón **Actualizar todo**. Las integraciones se actualizan una tras otra, no todas a la vez, lo que cuida una Raspberry Pi o un NAS, y el panel sigue el progreso. Si una falla, aparece en una lista con un enlace a su página, y las demás continúan.
 
-¡Gracias a [@cicoub13](https://github.com/cicoub13) por esta!
+![La vista «Para actualizar»: el botón «Actualizar todo» y el botón de actualización de cada tarjeta](../../../static/img/articles/gladys-assistant-5-3/08-update-all-es.webp)
+
+¡Gracias a [@cicoub13](https://github.com/cicoub13) por las dos!
 
 ## Para los desarrolladores de integraciones
 
@@ -130,11 +132,11 @@ La 5.2.1 salió al día siguiente de la 5.2. Esto es lo que corrigen ella y esta
 - **HomeKit**: los modos predefinidos de un radiador se mantienen correctos en la app Casa, y una petición que falla recibe una respuesta en lugar de dejar la app Casa esperando. ¡Gracias [@Dreamthy](https://github.com/Dreamthy)!
 - **Bajo el capó**: la interfaz ahora se construye con Vite 8. ¡Gracias [@bertrandda](https://github.com/bertrandda)!
 
-En total, 30 pull requests desde la versión 5.2.
+En total, 32 pull requests desde la versión 5.2.
 
 ## Gracias a los colaboradores
 
-Gracias a [@cicoub13](https://github.com/cicoub13) por el botón de actualización de las tarjetas del catálogo, los mensajes de batería y de copia de seguridad, los ajustes de los usuarios que no son administradores, las acciones sobre persianas en las escenas y los contratos de energía que comparten nombre, a [@Terdious](https://github.com/Terdious) por la corrección al guardar dispositivos, a [@Dreamthy](https://github.com/Dreamthy) por los radiadores en HomeKit, a Stefan Bauer por los iconos de los widgets en el tema Horizon, a [@bertrandda](https://github.com/bertrandda) por el paso a Vite 8, y a [@William-De71](https://github.com/William-De71) por unos tests que siguen en verde con el cambio de hora. ¡Y gracias a todos los que habéis pedido estas funcionalidades y reportado bugs en el foro!
+Gracias a [@cicoub13](https://github.com/cicoub13) por los botones de actualización del catálogo, «Actualizar todo» incluido, los mensajes de batería y de copia de seguridad, los ajustes de los usuarios que no son administradores, las acciones sobre persianas en las escenas y los contratos de energía que comparten nombre, a [@Terdious](https://github.com/Terdious) por la corrección al guardar dispositivos, a [@Dreamthy](https://github.com/Dreamthy) por los radiadores en HomeKit, a Stefan Bauer por los iconos de los widgets en el tema Horizon, a [@bertrandda](https://github.com/bertrandda) por el paso a Vite 8, y a [@William-De71](https://github.com/William-De71) por unos tests que siguen en verde con el cambio de hora. ¡Y gracias a todos los que habéis pedido estas funcionalidades y reportado bugs en el foro!
 
 Nos vemos en [el foro](https://community.gladysassistant.com/) si quieres hablar de esta versión :)
 

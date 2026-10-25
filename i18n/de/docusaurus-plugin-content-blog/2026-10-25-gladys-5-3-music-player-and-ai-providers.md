@@ -90,13 +90,15 @@ Das ändert sich:
 - **Vier neue Kategorien**: *Verkehr & Mobilität*, *Fahrzeuge & Laden*, *Server & Self-Hosting* und *Freizeit, Sport & Spiele*. „Dienste“ war zu einem Sammelbecken mit 160 Integrationen geworden.
 - **Kleine Dinge, die zählen**: ein „Installiert“-Badge auf den Karten, eine Sortierung „Zuletzt aktualisiert“, ein Zähler, der immer mit dem ganzen Katalog vergleicht („21 von 823 Integrationen“), mit einem einzigen Link „Filter zurücksetzen“, und wenn du von der Seite einer Integration zurückkommst, bist du genau dort, wo du in der Liste warst.
 
-### Eine Integration direkt aus ihrer Karte aktualisieren
+### Deine Integrationen direkt im Katalog aktualisieren
 
 Wenn eine Community-Integration eine neue Version hat, zeigt ihre Karte jetzt die installierte Version, die neue und eine Schaltfläche **Aktualisieren**. Du musst die Integration nicht mehr öffnen.
 
-![Die Karte einer installierten Integration mit ihrer Schaltfläche zum Aktualisieren](../../../static/img/articles/gladys-assistant-5-3/08-update-card-de.webp)
+Und wenn mehrere warten, öffnet sich die Ansicht **Zu aktualisieren** mit einer Schaltfläche **Alle aktualisieren**. Die Integrationen werden nacheinander aktualisiert, nicht alle gleichzeitig, was einen Raspberry Pi oder ein NAS schont, und das Panel zeigt den Fortschritt. Schlägt eine fehl, wird sie mit einem Link zu ihrer Seite aufgelistet, und die anderen laufen weiter.
 
-Danke an [@cicoub13](https://github.com/cicoub13) dafür!
+![Die Ansicht „Zu aktualisieren“: die Schaltfläche „Alle aktualisieren“ und die Aktualisieren-Schaltfläche jeder Karte](../../../static/img/articles/gladys-assistant-5-3/08-update-all-de.webp)
+
+Danke an [@cicoub13](https://github.com/cicoub13) für beides!
 
 ## Für Entwickler von Integrationen
 
@@ -130,11 +132,11 @@ Das SDK kapselt diese neuen Nachrichten noch nicht: Bis dahin verarbeitet eine I
 - **HomeKit**: Die Voreinstellungen eines Heizkörpers bleiben in der Home-App korrekt, und eine fehlgeschlagene Anfrage bekommt eine Antwort, statt die Home-App warten zu lassen. Danke [@Dreamthy](https://github.com/Dreamthy)!
 - **Unter der Haube**: Die Oberfläche wird jetzt mit Vite 8 gebaut. Danke [@bertrandda](https://github.com/bertrandda)!
 
-Das sind 30 Pull Requests seit Version 5.2.
+Das sind 32 Pull Requests seit Version 5.2.
 
 ## Danke an die Mitwirkenden
 
-Danke an [@cicoub13](https://github.com/cicoub13) für die Aktualisieren-Schaltfläche der Katalogkarten, die Batterie- und Backup-Meldungen, die Einstellungen für Benutzer ohne Administratorrechte, die Rollladen-Aktionen in Szenen und die Energieverträge mit gleichem Namen, an [@Terdious](https://github.com/Terdious) für die Korrektur beim Speichern von Geräten, an [@Dreamthy](https://github.com/Dreamthy) für die Heizkörper in HomeKit, an Stefan Bauer für die Widget-Icons im Horizon-Theme, an [@bertrandda](https://github.com/bertrandda) für den Umstieg auf Vite 8 und an [@William-De71](https://github.com/William-De71) für Tests, die auch bei der Zeitumstellung grün bleiben. Und danke an alle, die sich diese Funktionen gewünscht und im Forum Bugs gemeldet haben!
+Danke an [@cicoub13](https://github.com/cicoub13) für die Aktualisieren-Schaltflächen des Katalogs, „Alle aktualisieren“ inklusive, die Batterie- und Backup-Meldungen, die Einstellungen für Benutzer ohne Administratorrechte, die Rollladen-Aktionen in Szenen und die Energieverträge mit gleichem Namen, an [@Terdious](https://github.com/Terdious) für die Korrektur beim Speichern von Geräten, an [@Dreamthy](https://github.com/Dreamthy) für die Heizkörper in HomeKit, an Stefan Bauer für die Widget-Icons im Horizon-Theme, an [@bertrandda](https://github.com/bertrandda) für den Umstieg auf Vite 8 und an [@William-De71](https://github.com/William-De71) für Tests, die auch bei der Zeitumstellung grün bleiben. Und danke an alle, die sich diese Funktionen gewünscht und im Forum Bugs gemeldet haben!
 
 Wir sehen uns im [Forum](https://community.gladysassistant.com/), wenn du über dieses Release sprechen möchtest :)
 

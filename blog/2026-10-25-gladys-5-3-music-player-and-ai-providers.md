@@ -90,13 +90,15 @@ So here is what changes:
 - **Four new categories**: *Transport & mobility*, *Vehicles & EV charging*, *Servers & self-hosting* and *Leisure, sport & games*. "Services" had become a 160-integration catch-all.
 - **Small things that count**: an "Installed" badge on the cards, a "Last updated" sort, a count that always compares to the whole catalog ("21 of 823 integrations") with a single "Clear filters" link, and when you come back from an integration page, you're back exactly where you were in the list.
 
-### Update an integration from its card
+### Update your integrations from the catalog
 
 When a community integration has a new version, its card now shows the installed version, the new one, and an **Update** button. No need to open the integration anymore.
 
-![The card of an installed integration, with its update button](../static/img/articles/gladys-assistant-5-3/08-update-card-en.webp)
+And when several are waiting, the **To update** view opens on an **Update all** button. The integrations are updated one after the other, not all at once, which spares a Raspberry Pi or a NAS, and the panel follows the progress. If one fails, it lists it with a link to its page, and the others carry on.
 
-Thanks to [@cicoub13](https://github.com/cicoub13) for this one!
+![The "To update" view: the "Update all" button, and the update button of each card](../static/img/articles/gladys-assistant-5-3/08-update-all-en.webp)
+
+Thanks to [@cicoub13](https://github.com/cicoub13) for both!
 
 ## For integration developers
 
@@ -130,11 +132,11 @@ The SDK doesn't wrap these new messages yet: until it does, an integration handl
 - **HomeKit**: the presets of a radiator stay accurate in the Home app, and a request that fails gets an answer instead of leaving the Home app waiting. Thanks [@Dreamthy](https://github.com/Dreamthy)!
 - **Under the hood**: the interface is now built with Vite 8. Thanks [@bertrandda](https://github.com/bertrandda)!
 
-That makes 30 pull requests since version 5.2.
+That makes 32 pull requests since version 5.2.
 
 ## Thanks to the contributors
 
-Thanks to [@cicoub13](https://github.com/cicoub13) for the update button of the catalog cards, the battery and backup messages, the settings of non-admin users, the shutter actions in scenes and the energy contracts sharing a name, to [@Terdious](https://github.com/Terdious) for the device save fix, to [@Dreamthy](https://github.com/Dreamthy) for the HomeKit radiators, to Stefan Bauer for the widget icons in the Horizon theme, to [@bertrandda](https://github.com/bertrandda) for the upgrade to Vite 8, and to [@William-De71](https://github.com/William-De71) for keeping the tests green when the clocks change. And thanks to everyone who asked for these features and reported bugs on the forum!
+Thanks to [@cicoub13](https://github.com/cicoub13) for the update buttons of the catalog, "Update all" included, the battery and backup messages, the settings of non-admin users, the shutter actions in scenes and the energy contracts sharing a name, to [@Terdious](https://github.com/Terdious) for the device save fix, to [@Dreamthy](https://github.com/Dreamthy) for the HomeKit radiators, to Stefan Bauer for the widget icons in the Horizon theme, to [@bertrandda](https://github.com/bertrandda) for the upgrade to Vite 8, and to [@William-De71](https://github.com/William-De71) for keeping the tests green when the clocks change. And thanks to everyone who asked for these features and reported bugs on the forum!
 
 See you on [the forum](https://community.gladysassistant.com/) if you want to talk about this release :)
 
