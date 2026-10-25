@@ -1,0 +1,159 @@
+---
+title: "inexogy (Discovergy) smart home integration, free and open source"
+sidebar_label: "inexogy (Discovergy)"
+description: "Unofficial: inexogy (Discovergy) smart meters: power, electricity index, gas, water. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-inexogy.png"
+keywords:
+  - "inexogy (discovergy)"
+  - "inexogy (discovergy) smart home"
+  - "gladys inexogy (discovergy)"
+  - "inexogy (discovergy) gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-inexogy instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"inexogy (Discovergy)","description":"Unofficial: inexogy (Discovergy) smart meters: power, electricity index, gas, water.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-inexogy","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-inexogy.png","type":"device","version":"0.1.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-23T18:41:59Z"}} />
+
+Unofficial integration, not affiliated with inexogy. It reads the smart
+meters of an **inexogy customer account** (formerly Discovergy, Germany)
+through the **official inexogy API** (`api.inexogy.com`), with the e-mail and
+the password of the inexogy web portal. Read-only: nothing is ever
+commanded.
+
+> **Never tested with a real device** nor a real inexogy account: it was
+> built from the pydiscovergy library (used by Home Assistant) and its test
+> answers. Feedback welcome.
+
+## What you get
+
+One Gladys device per meter of the account:
+
+| Meter       | Features                                                                                                                                                                                                                  |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Electricity | power (W, as inexogy gives it: negative while injecting on a two-way meter), **consumption index** (kWh, fed to the Gladys energy monitoring), tariff 1 and 2 registers, injection index, power and voltage of each phase |
+| Gas         | gas index (m³), a plain sensor                                                                                                                                                                                            |
+| Water       | water index (m³), a plain sensor                                                                                                                                                                                          |
+
+A feature exists only once inexogy gives its value (a counter: once above 0).
+Other kinds of meters (heat...) are listed in the status, not read.
+
+- The **consumption index** is the meter's own total register (`energy`):
+  the Gladys core derives the consumption and its cost from it. It is never
+  a sum of the tariffs and never holds the injection.
+- **Gas and water stay out of the energy monitoring** (Gladys would price
+  them at the electricity tariff): plain volume sensors.
+- The tariff registers and the injection are plain sensors (kWh in their
+  name): as indexes they would be counted twice, or billed.
+
+## Setup
+
+1. In Gladys, open the integration and enter the **e-mail** and the
+   **password** of your inexogy customer account (the ones of
+   [https://my.inexogy.com/](https://my.inexogy.com/)). The password is kept by Gladys in its
+   database, never shown again, and only sent to inexogy
+   (`api.inexogy.com`, HTTPS) with each request (HTTP Basic, the
+   authentication of the official API).
+2. Optionally choose the **minutes between two reads** (1 by default, 60 at
+   most).
+3. Save, then open the **Discover** tab and create the devices you want.
+
+## How it behaves
+
+- **Pace**: one read every interval (the last reading of each meter, and the
+  meter list once an hour), never more often: not after a restart of the
+  container (the time of the last read is kept in `/data`), a reconnection,
+  a save of the form, the Discover tab nor the test button.
+- **Refused login** (HTTP 401 or 403 on the meter list): the integration
+  stops and says so; nothing more is sent with these credentials, even after
+  a restart. Save the right ones, or click "Test the connection" for one more
+  try (never sooner than the interval).
+- **inexogy asks to wait** (HTTP 429, or 5xx on the meter list or on every
+  meter): every read pauses, from 1 minute to 6 hours (its `Retry-After` is
+  followed within those bounds), kept across restarts. A 5xx on one meter
+  only leaves the others going.
+- **Stale reading**: when the last reading of an electricity meter is more
+  than 15 minutes old on the clock of inexogy, its power and voltages are not
+  sent (never an old value as a new one); the counters still are.
+- At most 280 values a minute are sent to Gladys (its limit is 300).
+
+## The consumption index is protected
+
+Gladys counts every rise of an index in full. A glitch (a register at 0, a
+wrong value) would become thousands of kWh. So:
+
+- 0 is never sent;
+- a value lower than the last one (a drop) is held, and never accepted: the
+  index goes on by itself when the register comes back. A meter really
+  replaced or reset: delete its device and create it again;
+- a rise faster than 100 kW on average since the last value (a jump) is
+  held, never confirmed by time, repetition or a restart (kept in `/data`);
+  while held, the last accepted value is sent again and the status says so.
+  If that energy was really consumed, click **"Accept the held index"**
+  twice: the first click lists the jumps, the second (within 5 minutes)
+  takes exactly those values. Saving the configuration never accepts
+  anything.
+
+After 24 hours without any reading, up to 2,400 kWh may pass at once (the
+margin grows with the time since the last value).
+
+## Privacy
+
+`/data/inexogy-state.json` keeps the time of the last read, a pause, the
+fingerprint (salted) of refused credentials only (erased at the first
+success), and the reference of each consumption index. Never the password,
+the e-mail, a serial number nor an address: the location inexogy keeps for a
+meter is never read. The logs and the status hold our own words only. In
+Gladys itself, the serial number of a meter names its device, and its full
+serial number and make are parameters of the device (kept in the Gladys
+database).
+
+## Limits
+
+- Only the first 10 meters of an account are read.
+- The scales of the values are the ones of Home Assistant (power in mW,
+  energy in 1e-10 kWh, volume in 1e-3 m³); the water meters were never seen.
+- No history import, no load disaggregation, no statistics.
+- Not the P1 Monitor, YouLess or Tibber integrations.
+
+## Credits
+
+The API calls and the meaning of the values are ported from
+[pydiscovergy](https://github.com/jpbede/pydiscovergy) (MIT, Jan-Philipp
+Benecke); see `THIRD_PARTY_NOTICES.md`.
+
+## Configuration settings
+
+These are the settings inexogy (Discovergy) asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| inexogy customer account | `section` | No | Unofficial connector, not affiliated with inexogy. It reads the smart meters of your inexogy account (formerly Discovergy, Germany) through the official inexogy API, with the e-mail and password of the inexogy web portal: the power and the electricity index every minute (the index is fed to the Gladys energy monitoring), and, when the meter gives them, the tariff registers, the injection, the power and voltage of each phase, and the gas and water meters. Gas and water are plain sensors in m³: they stay out of the energy monitoring. Read-only: nothing is ever commanded. Never tested with a real device. |
+| inexogy e-mail | `string` | Yes | The e-mail of your inexogy customer account (the one of the web portal). |
+| inexogy password | `secret` | Yes | Kept by Gladys in its database, never shown again, only sent to inexogy (api.inexogy.com, HTTPS) with each request. |
+| Minutes between two reads | `number` | No | Each read asks inexogy for the last reading of every meter (and for the meter list once an hour). Never more often, whatever happens (a restart, the test button). |
+
+## How to install inexogy (Discovergy) in Gladys
+
+1. In Gladys, open **Integrations**: inexogy (Discovergy) appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-inexogy:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-inexogy](https://github.com/LM1LC3N7/gladys-inexogy).
+
+inexogy (Discovergy) requires Gladys `>=5.2.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+inexogy (Discovergy) is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-inexogy) — [source of this documentation](https://github.com/LM1LC3N7/gladys-inexogy/blob/HEAD/docs/en.md)

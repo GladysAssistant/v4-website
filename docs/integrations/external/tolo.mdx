@@ -1,0 +1,253 @@
+---
+title: "TOLO smart home integration, free and open source"
+sidebar_label: "TOLO"
+description: "TOLO steam generators and saunas (App Box) on the local network: temperature, humidity, on/off. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-tolo.png"
+keywords:
+  - "tolo"
+  - "tolo smart home"
+  - "gladys tolo"
+  - "tolo gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-tolo instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"TOLO","description":"TOLO steam generators and saunas (App Box) on the local network: temperature, humidity, on/off.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-tolo","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-tolo.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-24T21:40:30Z"}} />
+
+This integration shows a **TOLO steam generator or sauna with its App Box** in
+Gladys, on the local network (UDP, port 51500), with no account and no
+cloud. **Never tested with a real device.** Not affiliated with TOLO.
+
+> **Safety.** A steam room or a sauna heats. Never start heating from afar
+> without making sure nobody is inside. Turning on from Gladys is **off by
+> default**; turning off is held back by no option and no command in
+> progress (it may still fail if the App Box is unreachable).
+
+## What you get
+
+One device in the Discovery tab, with:
+
+- **Heating on** (yes/no, read only) and the **status** as text ("Off",
+  "Heating", "Keeping warm", "On, not heating");
+- measured **temperature** and **humidity**, the **setpoint**;
+- **time left** (minutes) on the timer;
+- **water level** (0, 33, 66 or 100 %) and **tank temperature**;
+- **lamp** (on/off) and **fan** (on/off);
+- two buttons: **Turn on (heat)** and **Turn off**.
+
+Heating has no switch: an "everything on" from Google Home, Alexa, HomeKit,
+MCP or a scene cannot start it. It may turn the lamp or the fan on.
+
+## Setup
+
+1. Give the App Box a **fixed address** in your router (a fixed DHCP lease).
+2. In Gladys, open the TOLO integration and enter that **IP address** (IPv4,
+   for instance 192.168.1.50). Refused: a name, broadcast addresses
+   (including any address ending in .255), multicast, loopback, 0.x.x.x and
+   169.254.x.x.
+3. Save, then add the device from the **Discovery** tab (it shows up after
+   the first successful read).
+4. To start heating from Gladys, turn on **Allow heating from Gladys**, and
+   set the **session duration** (30 min by default, 1 to 60 min, the limit
+   of the App Box) and the **highest setpoint** (50 °C by default, 35 to
+   60 °C, the range of the App Box).
+
+The App Box is read every 30 s (10 s to 1 h). The periodic reads are never
+closer than the interval, even after a restart of the integration, a reconnection to Gladys, the "Test the
+connection" button or a Discovery scan. A command adds its own reads (fresh
+read, read back), then two follow-up reads 5 s and 20 s later.
+
+The protocol gives no serial number nor MAC address: the device is "the App
+Box answering at the configured address". Changing the address keeps the
+same device in Gladys.
+
+## The commands
+
+### Turn off
+
+Any value received presses it (0, 1, true…). Turning off is held back
+neither by the heating option, nor by a command in progress, nor by a read
+in progress, nor by an App Box that stopped answering. Right after a
+restart, before the configuration is read again, it goes to the address
+cached by Gladys (or the one of a guard kept in `/data`). It is sent with no
+read before it (never "already off"): **4 datagrams at most**, 400 ms apart,
+while the App Box stays silent or a network error (closed port, unreachable
+host) ends an attempt; each attempt goes from a fresh socket. It cancels a
+turn on that has not left yet; if a turn on had already left, it is sent
+again when that turn on settles.
+
+It is confirmed only by a read showing the App Box off (also after an answer
+saying "refused": the state read is what counts). Possible answers:
+
+- success: read off;
+- "Sent, without confirmation": no answer, no read back, or read still on;
+- "The App Box answered with a refusal, but reads: …": refused and read
+  still on;
+- "Not sent": no datagram could leave;
+- "No App Box address configured": no address known.
+
+Without confirmation, a guard of 2 minutes is set (kept in `/data`, it
+survives a restart: a read then goes 5 s after the start, whatever the
+interval). During the guard, a periodic or follow-up read that sees the App
+Box on sends the turn off again (3 times at most); the read back of a
+command, and reads made while a turn off or a turn on is in flight, send
+nothing. It may also turn off heating started from the App Box or the TOLO
+app within those 2 minutes: on purpose. During the guard, a turn on from
+Gladys is refused and only a lower setpoint is accepted.
+
+### Turn on (heat)
+
+It takes exactly 1. Refused, no power on sent, in these cases:
+
+- a value other than 1, or no address configured;
+- "Allow heating from Gladys" is off (checked on arrival, after the read,
+  then right before every datagram);
+- a turn off is in flight, not confirmed yet (its guard), or asked during
+  the turn on;
+- another turn on is in progress, or the previous one is not confirmed yet
+  (2 minutes at most);
+- the App Box does not answer the fresh read (status and settings) within
+  1.5 s, or its power state is unreadable;
+- the timer or the setpoint could not be set and read back (it may have
+  been written: that heats nothing);
+- the configuration (address) changed meanwhile;
+- the power on cannot leave within 3.5 s of the click.
+
+Steps: a fresh read of the status and the settings (never the state in
+memory); already on: nothing sent; otherwise the **timer** of the App Box is
+set to the session duration (never "no timer") and a setpoint above the
+highest one is **lowered** to it, both read back; only then does the power
+on leave. A read of less than 10 s showing the App Box already on is enough
+to send nothing.
+
+Answers after the power on (always followed by a read):
+
+- success: read on, with a timer of 1 minute to the session duration;
+- "Turned on, timer not confirmed": read on without that timer. The
+  integration then writes the timer again in the background and reads; if
+  it is still missing, it **turns the App Box off**, logs it and says it in
+  the status;
+- "Turned on, but a turn off was asked after it had left": the turn off is
+  sent again;
+- "The App Box answered with a refusal, but reads: …" or "The App Box
+  refused the command": depending on the state read;
+- "Sent, without confirmation": no answer, no read back, or read off.
+
+**Timer (not checked on a real device).** According to tololib, the App Box
+stops by itself at the end of its timer. A session started from Gladys is
+held to its duration, also when the timer is changed or removed at the
+panel; **the integration never extends a session itself**:
+
+- every read of the session checks that a timer of 1 minute to what is
+  left of the session runs (0 is accepted only in its last minute);
+- otherwise the timer is written again with **what is left** of the
+  session (1 min at least; planned end passed: turned off directly), then
+  read strictly (1 minute to the value written); otherwise the App Box is
+  turned off;
+- a dedicated read goes at the planned end + 2 minutes: still on (or no
+  read), the App Box is turned off, with a guard, a log line and a message
+  in the status;
+- this watch is kept in `/data`: after a restart it goes on and its end
+  read is scheduled again.
+
+A session started elsewhere (App Box, TOLO app) is not watched, except in
+these windows.
+
+Limit: the watch ends only on a read showing the App Box off. A session
+started again at the panel (or from the TOLO app) before the integration
+has read the end of the Gladys session (one read interval at most, and up
+to 2 minutes after the planned end), or, after a restart of the
+integration, within 10 minutes after the planned end, is taken for the
+Gladys session: it may be turned off.
+
+### Setpoint
+
+Refused when the option is off, when the value is not a whole number from
+35 °C to the highest setpoint (checked again right before the datagram),
+when another setpoint is in progress, when the configuration changed
+meanwhile, when it cannot leave within 3.5 s, or, while a turn off is in
+flight or not confirmed, when it is not lower than the setpoint known.
+According to tololib, changing the setpoint does not turn the App Box on;
+the power state is read after it, and should the App Box have gone from off
+to on (no turn on from Gladys in progress), it is turned off at once and the
+setpoint refused. Confirmed by a read of the settings.
+
+### Lamp and fan
+
+Plain on/off (0 or 1), one command at a time each, confirmed by a read.
+According to tololib, the lamp and the fan only drive their output (not
+checked on a real App Box); should a lamp or fan command turn the App Box
+on (off on a read of less than 10 s, made right before when needed, and on
+right after), the integration turns it off at once and refuses the
+command.
+
+## Troubleshooting
+
+- **The App Box does not answer**: the status says so, the device is shown
+  unreachable, next try after 30 s, 1, 2 then 5 min (never faster than the
+  interval). A turn off is still sent.
+- Only answers from **the address and port of the App Box**, well formed
+  (prefix, suffix, checksum, length) and of the command sent are taken;
+  every exchange has its own socket, so a late answer of an earlier exchange
+  is never taken for another one's.
+- The container must reach the App Box in UDP (Docker bridge network:
+  unicast traffic normally goes out to the local network).
+
+## Limits
+
+- **Protocol not documented** by TOLO: the integration follows the
+  open-source tololib library, written by observing the App Box. A firmware
+  may change it.
+- No automatic discovery: the address is typed by hand.
+- No humidity setpoint, aroma therapy, salt bath, sweep nor fan timer yet.
+- One App Box per integration.
+
+## Data
+
+`/data/tolo-state.json` holds only the time of the last read and the guard
+of a turn off in progress (App Box address, end time, number of resends),
+and the watch of a session started from Gladys (App Box address, duration,
+planned end). No secret exists in this integration.
+
+Based on the tololib Python library (MIT, Matthias Lohr), ported to
+JavaScript: see `THIRD_PARTY_NOTICES.md`.
+
+## Configuration settings
+
+These are the settings TOLO asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your TOLO App Box | `section` | No | Shows a TOLO steam generator or sauna with its App Box in Gladys, on the local network (UDP port 51500, no account, no cloud): status, temperature, humidity, setpoint, time left, water level, lamp, fan. Turning off is never held back by the heating option; heating from Gladys (turning on and the setpoint) is off until you allow it below. The App Box protocol is not published by TOLO: this integration follows the open-source tololib library. Give the App Box a fixed address in your router, enter it below, save, then add the device from the Discovery tab. A steam room or a sauna heats: never start it from afar without making sure nobody is inside. Never tested with a real device. Not affiliated with TOLO. |
+| IP address of the App Box | `string` | Yes | An IPv4 address of your local network, such as 192.168.1.50 (shown in your router's list of devices). Give it a fixed lease: the protocol has no serial number, so Gladys trusts the App Box answering at this address. |
+| Allow heating from Gladys | `boolean` | No | Off by default. On: the "Turn on (heat)" button and the setpoint may start or change heating; each turn on first sets the timer of the App Box to the session duration below. Off: they refuse every request. Turning off is never held back by this option. |
+| Session duration (min) | `number` | No | The timer set on the App Box before every turn on from Gladys (30 min by default; 60 min, the limit of the App Box, at most; never "no timer"). According to tololib, the App Box should stop by itself after this time (not checked on a real device): a turn on is confirmed only when a read shows this timer running, and a session from Gladys found without it gets the timer again, then is turned off. |
+| Highest setpoint (°C) | `number` | No | Gladys never asks for more (50 °C by default; 35 to 60 °C, the range of the App Box). A setpoint above it on the App Box is lowered to it before a turn on from Gladys. |
+| Refresh interval (s) | `number` | No | How often the App Box is read, in seconds. The periodic reads are never closer than this interval, even after a restart; a command adds its own reads. |
+| Language of the feature names | `select` | No | Used for the feature names of the devices added from now on, for the status texts and for the command errors. |
+
+## How to install TOLO in Gladys
+
+1. In Gladys, open **Integrations**: TOLO appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-tolo:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-tolo](https://github.com/LM1LC3N7/gladys-tolo).
+
+TOLO requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+TOLO is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-tolo) — [source of this documentation](https://github.com/LM1LC3N7/gladys-tolo/blob/HEAD/docs/en.md)

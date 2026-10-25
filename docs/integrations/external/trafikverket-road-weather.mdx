@@ -1,0 +1,175 @@
+---
+title: "Trafikverket road weather smart home integration, free and open source"
+sidebar_label: "Trafikverket road weather"
+description: "Unofficial connector: road weather stations of Trafikverket (Sweden), read only. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-trafikverket.png"
+keywords:
+  - "trafikverket road weather"
+  - "trafikverket road weather smart home"
+  - "gladys trafikverket road weather"
+  - "trafikverket road weather gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-trafikverket instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Trafikverket road weather","description":"Unofficial connector: road weather stations of Trafikverket (Sweden), read only.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-trafikverket","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-trafikverket.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-24T21:41:53Z"}} />
+
+**Unofficial connector, not affiliated with Trafikverket** (the Swedish
+Transport Administration). It brings into Gladys the measurements of the
+**road weather stations** you choose along the Swedish roads (air and road
+surface temperature, dew point, humidity, wind, precipitation, ice, snow and
+water on the road), read through the **official open API of Trafikverket**
+with a free API key of your own.
+
+> **This integration has never been tested with a real key.** It follows
+> pytrafikverket, the library of the Home Assistant integration, and the
+> documentation of the API. Please report what you see on the Gladys forum.
+
+## What you get
+
+One Gladys device per station, named "Trafikverket \<station>", with the
+sensors the station has:
+
+| Sensor                             | Unit   | Notes                                  |
+| ---------------------------------- | ------ | -------------------------------------- |
+| Air temperature                    | °C     |                                        |
+| Road temperature                   | °C     | probe (kept out of the room average)   |
+| Dew point                          | °C     | probe (kept out of the room average)   |
+| Humidity                           | %      |                                        |
+| Visibility                         | m      | not every station measures it          |
+| Wind speed, wind gust (30 min)     | m/s    | 10 minute average; highest 3 s gust    |
+| Wind direction                     | degree |                                        |
+| Precipitation                      | mm/h   | water of the last 30 minutes, times 2  |
+| Rain (30 min)                      | yes/no | rain seen in the last 30 minutes       |
+| Snowfall (30 min)                  | yes/no | snow seen in the last 30 minutes       |
+| Ice, snow, water on the road       | yes/no | what the road sensor sees (frost, ice) |
+| Ice depth, snow depth, water depth | mm     | on the road surface                    |
+
+- Only what the station sends is created; a sensor once created is never
+  removed from the device.
+- The units are those Gladys lists for each kind of sensor; the API already
+  sends them, only the precipitation is converted (mm per 30 minutes to
+  mm/h). The yes/no sensors are read only: nothing can switch them.
+- The names of the sensors are in English; rename them when you create them
+  if you wish.
+- Trains, ferries and traffic cameras of Trafikverket are not part of this
+  integration.
+
+## Installation
+
+1. Create a free account on **data.trafikverket.se** and get an **API key**
+   there.
+2. Install the integration from the Gladys catalog (Gladys 5.1 or newer).
+3. In the **Configuration** screen, paste the key and enter up to five
+   stations: the name exactly as Trafikverket writes it on the map of its
+   road weather stations ("Kungälv"), or the id of the station (it starts
+   with "SE_STA_VVIS"). Upper and lower case do not matter.
+4. Click **Test Trafikverket**: the message shows the last measurement of
+   each station and its age.
+5. Open the **Discovery** tab and add the devices. Their values arrive as
+   soon as they are created, if the last measurement is recent.
+
+## Configuration
+
+| Field         | Default | What it does                                                |
+| ------------- | ------- | ----------------------------------------------------------- |
+| API key       |         | your key of the open API                                    |
+| Station 1 – 5 |         | a station name or id                                        |
+| Read interval | 10 min  | 5 to 60 minutes; one request for all the stations each time |
+
+The **API key** is kept by Gladys in its database, never shown again; it is
+sent only to Trafikverket (api.trafikinfo.trafikverket.se), in the body of
+the query, never in a URL nor a log, and never written under `/data`.
+
+A name shared by several stations is refused: the status then lists their
+ids, enter one of them. A station not found is named by its number in the
+status ("Station 3 not found"): what you typed is never shown again there.
+
+## How it works
+
+- **One request** for all your stations at each interval. **Nothing reads
+  sooner**: neither the test button, nor a reconnection to Gladys, nor a
+  saved configuration, nor a restart of the container (the instant of the
+  last request is kept under `/data`). A new key is tried a minute after the
+  last request.
+- **Fresh measurements only.** Each measurement carries the instant the
+  station made it. A measurement is published only when it is **newer than
+  the last one published** for that station (its raw time and instant are
+  kept under `/data`, so a clean restart does not publish it again) and
+  **recent**: at most one hour old (two intervals if longer, never more than
+  two hours), measured on the clock of Trafikverket. A hard stop (power cut,
+  `docker kill`) within the minute after a read may publish the last
+  measurement once more after the restart, never past that age limit. A station that stopped measuring shows "no recent
+  measurement" in the status and publishes nothing.
+- **Key refused** (HTTP 401 or 403): the integration stops asking; the
+  status says "API key refused" as long as the refusal holds. The
+  refusal is kept under `/data` (only a salted fingerprint of the refused
+  key, never the key) and survives a restart. It is lifted when you enter
+  another key, or when the test button succeeds (it tries once, when the
+  interval has passed).
+- **Too many requests (429) or the service down (5xx)**: a pause, from the
+  `Retry-After` of the answer, else 5 minutes doubling at each new failure,
+  between 1 minute and 6 hours, kept under `/data`.
+- Other failures: tried again at the next interval. The status tells "query
+  refused by Trafikverket" (another HTTP 4xx, or an error in the answer) from
+  "no answer" (network, timeout); "(pause)" is shown only while a pause
+  runs.
+- A station name holding a control character, a bidirectional control, a
+  line separator or a character XML forbids is refused, named by its
+  number; such characters are also removed from the names Trafikverket
+  sends.
+- The answer is bounded (256 KB) and read as JSON; the stations are matched
+  to your entries by their id or name.
+
+## Read only
+
+The integration only sends the query of the open API. It has no command and
+changes nothing anywhere.
+
+## Credits
+
+The query and the fields read come from **pytrafikverket**
+(https://github.com/gjohansson-ST/pytrafikverket, MIT license), ported to
+JavaScript; see `THIRD_PARTY_NOTICES.md`.
+
+## Configuration settings
+
+These are the settings Trafikverket road weather asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Trafikverket in Gladys | `section` | No | Unofficial connector, not affiliated with Trafikverket (the Swedish Transport Administration). It reads the road weather stations you choose through the official open API of Trafikverket: air and road surface temperature, dew point, humidity, wind, precipitation, ice, snow and water on the road. You need a free API key of your own (data.trafikverket.se). Read only: nothing is ever sent but the query. Trains, ferries and traffic cameras are not part of this integration. Never tested with a real key yet. |
+| API key | `secret` | No | Your key of the Trafikverket open API (data.trafikverket.se, free account). Kept by Gladys in its database, never shown again; sent only to Trafikverket (api.trafikinfo.trafikverket.se), in the body of the query, never in a URL nor a log. |
+| Road weather stations | `section` | No | Up to five stations: the name exactly as Trafikverket writes it on its map ("Kungälv"), or the id of the station (it starts with "SE_STA_VVIS"). A name shared by several stations is refused: the status then lists their ids. |
+| Station 1 | `string` | No |  |
+| Station 2 | `string` | No |  |
+| Station 3 | `string` | No |  |
+| Station 4 | `string` | No |  |
+| Station 5 | `string` | No |  |
+| Read interval (minutes) | `number` | No | One request for all the stations each time. Nothing reads sooner, not even the test button or a restart. The stations measure every 10 to 30 minutes. |
+
+## How to install Trafikverket road weather in Gladys
+
+1. In Gladys, open **Integrations**: Trafikverket road weather appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-trafikverket:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-trafikverket](https://github.com/LM1LC3N7/gladys-trafikverket).
+
+Trafikverket road weather requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Trafikverket road weather is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-trafikverket) — [source of this documentation](https://github.com/LM1LC3N7/gladys-trafikverket/blob/HEAD/docs/en.md)

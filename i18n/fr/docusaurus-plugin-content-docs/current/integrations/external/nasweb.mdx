@@ -1,0 +1,238 @@
+---
+title: "Intégration domotique NASweb, gratuite et open source"
+sidebar_label: "NASweb"
+description: "Modules NASweb (nasWebio) : sorties relais, entrées et température, en local. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-nasweb.png"
+keywords:
+  - "nasweb"
+  - "domotique nasweb"
+  - "gladys nasweb"
+  - "nasweb gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-nasweb instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"NASweb","description":"Modules NASweb (nasWebio) : sorties relais, entrées et température, en local.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-nasweb","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-nasweb.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-24T21:41:16Z"}} />
+
+Cette intégration amène un **module NASweb** (nasWebio, Chomtech) dans
+Gladys, sur votre réseau local, sans cloud : ses **sorties relais**, ses
+**entrées** et sa **sonde de température**.
+
+Intégration non officielle, sans lien avec nasWebio. **Jamais testé avec un
+vrai module** : elle suit l’API locale utilisée par la bibliothèque du
+fabricant (webio-api, celle de l’intégration NASweb de Home Assistant).
+Merci de dire sur le forum de Gladys si elle fonctionne avec le vôtre.
+
+## Ce que vous obtenez
+
+| Sur le module               | Dans Gladys                                                                 |
+| --------------------------- | --------------------------------------------------------------------------- |
+| Sortie relais déclarée sûre | Un interrupteur (marche / arrêt), seulement si vous autorisez les commandes |
+| Autre sortie relais         | Son état, en lecture seule (aucune commande)                                |
+| Entrée                      | « Entrée active » (1 active, 0 normale) et « Défaut ou sabotage » (1 ou 0)  |
+| Sonde de température        | Température en °C, dès que le module a donné une valeur                     |
+
+Les sorties et entrées apparaissent dans l’onglet **Découverte** dès que le
+module a envoyé son premier état. Les zones d’alarme et le thermostat du
+module ne sont pas proposés (ils arment, désarment ou chauffent : hors de
+cette première version). L’API du module ne donne pas d’humidité : aucune
+n’est proposée.
+
+## Comment arrivent les états
+
+Le module **pousse** ses états : il les envoie à une adresse qu’on lui a
+donnée (un « abonnement aux états »). Le conteneur de l’intégration ne peut
+rien recevoir du réseau : Gladys lance donc à côté un petit **récepteur**
+(le conteneur `nasweb-push`, même image) et lui publie un port, choisi par
+Gladys. Le récepteur démarre, et son port n’existe, qu’une fois
+enregistrés l’adresse du module, l’identifiant et le mot de passe : avant,
+l’écran de configuration affiche `{{port:nasweb_push}}` tel quel ;
+enregistrez d’abord, puis rechargez l’écran. L’intégration abonne elle-même
+le module à `http://<adresse de Gladys>:<ce port>/nasweb/<secret>` :
+
+- la partie secrète est aléatoire, générée une fois pour votre installation,
+  gardée dans la configuration de Gladys (jamais affichée), et jamais écrite
+  dans les journaux. Elle circule **en clair** (HTTP, le module n’envoie pas
+  autrement) à chaque envoi : qui peut voir ce trafic sur votre réseau
+  (Wi-Fi ouvert, port miroir, usurpation ARP) peut la lire et envoyer ;
+- le récepteur n’accepte que cette adresse et la méthode POST, 32 Ko au
+  plus. Avec l’expéditeur vérifié, le module peut envoyer 240 fois par
+  minute et tout autre expéditeur est refusé (403) ; sinon chaque expéditeur
+  peut envoyer 60 fois par minute (240 en tout), et au-delà son dernier envoi
+  est gardé puis transmis dès que sa minute se libère. 32 connexions au
+  plus, 4 par expéditeur, 4 gardées pour le module : au-delà, la plus
+  ancienne connexion dont la requête n’est pas complète est fermée (d’abord
+  une qui n’a rien envoyé), pas la nouvelle.
+  Une connexion qui n’envoie rien est fermée en 10 s au plus (5 s environ),
+  et une requête doit arriver entière en 11 s environ ; tout le reste est
+  refusé ;
+- avec **Vérifier l’expéditeur des états** (activé par défaut), seule
+  l’adresse du module peut envoyer : le récepteur refuse les autres avant
+  tout, et l’intégration vérifie de nouveau ;
+- l’intégration n’accepte ensuite un état que s’il porte le **numéro de
+  série** du module. Ce numéro n’est pas un secret (il figure dans l’état et
+  dans le paramètre NASWEB_SERIAL) : il distingue un autre module, pas un
+  attaquant.
+
+Si Docker masque la vraie adresse de l’expéditeur sur votre machine (tous
+les états semblent alors venir d’une adresse du type 172.x.x.1, et l’état
+le dit), vous pouvez désactiver « Vérifier l’expéditeur des états ». Sachez
+ce que cela laisse passer : quiconque a lu l’adresse secrète peut alors
+envoyer de faux états (relais, entrées, température), et donc lancer vos
+scènes.
+
+Il n’y a pas d’autre moyen de lire les états : si aucun état n’arrive
+pendant 90 secondes, les appareils sont affichés **injoignables**, le module
+est relu (identité, abonnement) au plus une fois par minute, et l’abonnement
+est renouvelé toutes les 10 minutes.
+
+## Configuration
+
+1. Donnez au module une **adresse IP fixe** dans votre box.
+2. Dans Gladys, Intégrations → NASweb → Configuration :
+   - **Adresse du module** : son adresse IP (celle de sa page web),
+     éventuellement avec son port HTTPS, par exemple `192.168.1.50` ;
+   - **Identifiant** et **Mot de passe** de la page web du module. Le mot de
+     passe est gardé par Gladys dans sa base, jamais réaffiché, et envoyé
+     seulement au module, comme il l’attend (une empreinte SHA-1, qui vaut le
+     mot de passe pour le module : traitez-la comme tel) ;
+   - **Adresse de Gladys** : l’adresse IP de la machine qui fait tourner
+     Gladys, telle que le module la joint, par exemple `192.168.1.10` (sans
+     port) ;
+   - enregistrez.
+3. Si la machine Gladys a un pare-feu, autorisez le port affiché dans
+   l’écran de configuration (bloc du récepteur).
+4. L’état indique « Connecté » dès que le premier état est arrivé. Les
+   sorties et entrées sont alors dans l’onglet Découverte.
+
+### Sorties relais : des interrupteurs seulement si elles sont déclarées sûres
+
+Un relais peut commander une lampe, mais aussi une pompe, une chaudière, un
+chauffage ou un portail. Un interrupteur est atteint par « tout éteindre »
+des assistants vocaux, des scènes et du tableau de bord. Donc :
+
+- seules les sorties listées dans **Sorties déclarées sûres** (leurs
+  numéros, le paramètre NASWEB_OUTPUT de l’onglet Découverte, par exemple
+  `1, 2, 5`) deviennent des interrupteurs ; ne listez que des charges qu’on
+  peut couper ou allumer à tout moment ;
+- toute autre sortie est son **état, en lecture seule** : aucune commande ne
+  peut l’atteindre depuis Gladys ;
+- **Autoriser les commandes** est désactivé par défaut : tant que vous ne
+  l’activez pas, toute commande est refusée, même sur un interrupteur.
+
+Une sortie retirée de la liste garde l’interrupteur déjà créé dans Gladys
+(son historique est conservé), mais toute commande dessus est refusée.
+
+### Quand une commande est acceptée
+
+Une commande sur un interrupteur est refusée (rien n’est envoyé au module)
+quand :
+
+- « Autoriser les commandes » est désactivé, ou la sortie n’est pas
+  déclarée sûre ;
+- la valeur n’est pas exactement marche (1) ou arrêt (0) ;
+- le module n’a jamais été identifié, ou ne signale plus cette sortie ;
+- le dernier état du module a été envoyé il y a plus de 90 secondes (le
+  résultat ne pourrait pas être confirmé) ;
+- le module a refusé l’identifiant, son certificat a changé, ou un autre
+  numéro de série répond à son adresse ;
+- l’état enregistré de l’intégration (`/data`) est illisible ;
+- le module ne répond pas, ou répond par une erreur, pendant la relecture de
+  son identité ;
+- la configuration a changé pendant la commande ;
+- le module répond trop lentement : la relecture de l’identité et la
+  commande doivent partir dans les 3,5 secondes après le clic (une commande
+  sur la même sortie attend d’abord l’écriture de la précédente).
+
+Avant chaque commande, l’intégration relit l’identité du module (son numéro
+de série). Une fois la commande partie, la réponse est l’une de :
+
+- succès : un état envoyé après l’écriture montre l’état demandé, dans les
+  4 secondes environ après le clic ;
+- « Envoyée, sans confirmation » : pas d’état de ce genre à temps, pas de
+  réponse du module, une réponse d’erreur (code HTTP) ou illisible ;
+- « le module a répondu que la commande a échoué » (sa réponse n’est pas
+  « OK ») ;
+- « le module a refusé la commande (identifiant refusé) » : l’intégration
+  s’arrête alors, comme pour un identifiant refusé ;
+- « remplacée par une commande plus récente » : une autre commande sur la
+  même sortie est partie avant que celle-ci soit confirmée.
+
+## Sécurité
+
+- Le module sert un certificat auto-signé. Son empreinte est **épinglée** à
+  la première connexion (gardée dans `/data` avant que l’identifiant ne
+  parte) ; un autre certificat est refusé avant tout envoi. Si vous avez
+  remplacé ou mis à jour le module, l’état montre la nouvelle empreinte :
+  appuyez deux fois en moins de 60 secondes sur **Faire confiance à
+  l’appareil qui répond** (le premier appui montre seulement ce qui répond).
+  Le même bouton accepte un nouveau numéro de série (module remplacé : ses
+  sorties deviennent de nouveaux appareils).
+- Un identifiant refusé arrête tout, même après un redémarrage : corrigez
+  les identifiants et enregistrez, ou utilisez **Tester la connexion**.
+  L’intégration ne réessaie jamais d’elle-même.
+- Aucun identifiant, adresse secrète ou jeton n’est écrit dans les journaux,
+  dans `/data` ou dans l’état.
+
+## Boutons
+
+- **Tester la connexion** : lit le module maintenant avec la configuration
+  enregistrée (même après un identifiant refusé), l’abonne aux états, et dit
+  ce qui a répondu. Au plus toutes les 10 secondes.
+- **Faire confiance à l’appareil qui répond** : voir Sécurité.
+
+## Dépannage
+
+- _« en attente de son premier état »_ : le module ne joint pas Gladys.
+  Vérifiez l’adresse de Gladys, le pare-feu de la machine Gladys, et que le
+  module et Gladys sont sur le même réseau (ou routés). Passer par Gladys
+  Plus ou un proxy pour ouvrir Gladys ne change rien : le module doit
+  joindre l’adresse locale de la machine Gladys.
+- _« état(s) refusé(s) : ils venaient de 172… »_ : voir « Comment arrivent
+  les états ».
+- _« Module injoignable »_ : vérifiez l’adresse du module et que sa page web
+  s’ouvre.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par NASweb dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre module NASweb, sur votre réseau local | `section` | Non | Sorties relais, entrées et sonde de température d’un module NASweb, par son API locale, sans cloud. Le module envoie lui-même ses états à Gladys (un petit récepteur lancé par Gladys à côté de cette intégration). Donnez au module une adresse IP fixe dans votre box. Jamais testé avec un vrai module. Intégration non officielle, sans lien avec nasWebio. |
+| Adresse du module | `string` | Oui | L’adresse IP du module (celle de sa page web), éventuellement avec son port HTTPS (443 par défaut). |
+| Identifiant du module | `string` | Oui | L’identifiant de la page web du module. |
+| Mot de passe du module | `secret` | Oui | Gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement au module (comme il l’attend, une empreinte SHA-1, par la connexion HTTPS dont le certificat est épinglé). |
+| Comment arrivent les états | `section` | Non | Le module envoie ses états à http:\/\/\<adresse de Gladys>:\{\{port:nasweb_push\}\}/ (port choisi par Gladys ; \{\{gladys_host\}\} est l’adresse par laquelle votre navigateur joint Gladys). Le port existe une fois enregistrés l’adresse du module, l’identifiant et le mot de passe : enregistrez, puis rechargez cet écran. Saisissez ci-dessous l’adresse IP de la machine Gladys telle que le module la joint : l’intégration abonne le module elle-même, avec une adresse secrète (envoyée en clair, en HTTP, par le module). Autorisez ce port dans le pare-feu de la machine Gladys s’il y en a un. |
+| Adresse de Gladys | `string` | Non | L’adresse IP de la machine qui fait tourner Gladys sur votre réseau local, sans port. |
+| Vérifier l’expéditeur des états | `boolean` | Non | N’accepter les états que de l’adresse du module. À désactiver seulement si l’état dit que les états viennent d’une autre adresse parce que Docker masque la vraie sur cette machine : quiconque a lu l’adresse secrète peut alors envoyer de faux états, et donc lancer vos scènes. |
+| Sorties relais | `section` | Non | Un relais peut commander une lampe, mais aussi une pompe, une chaudière, un chauffage ou un portail. Un interrupteur est atteint par « tout éteindre » des assistants vocaux et des scènes : seules les sorties que vous déclarez sûres deviennent des interrupteurs ; les autres restent en lecture seule. Les commandes restent désactivées tant que vous ne les autorisez pas. |
+| Sorties déclarées sûres | `string` | Non | Les numéros des sorties (paramètre NASWEB_OUTPUT dans l’onglet Découverte), séparés par des virgules. Seulement des charges qu’on peut couper ou allumer à tout moment (une lampe, une prise de lampe). |
+| Autoriser les commandes | `boolean` | Non | Désactivé : les sorties déclarées sûres apparaissent comme interrupteurs mais toute commande est refusée. |
+| Langue des messages | `select` | Non |  |
+
+## Comment installer NASweb dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : NASweb apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-nasweb:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-nasweb](https://github.com/LM1LC3N7/gladys-nasweb).
+
+NASweb nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+NASweb est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-nasweb) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-nasweb/blob/HEAD/docs/fr.md)

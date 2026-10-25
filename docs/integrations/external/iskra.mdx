@@ -1,0 +1,178 @@
+---
+title: "Iskra smart home integration, free and open source"
+sidebar_label: "Iskra"
+description: "Unofficial: Iskra meters behind a Smart Gateway, on your network: power and indexes. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-iskra.png"
+keywords:
+  - "iskra"
+  - "iskra smart home"
+  - "gladys iskra"
+  - "iskra gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-iskra instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Iskra","description":"Unofficial: Iskra meters behind a Smart Gateway, on your network: power and indexes.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-iskra","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-iskra.png","type":"device","version":"0.1.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-24T21:45:19Z"}} />
+
+Unofficial integration, not affiliated with Iskra. It reads the Iskra energy
+meters connected to an **Iskra Smart Gateway (SG)**, through the local REST
+API of the gateway: no cloud, no account, nothing sent to the gateway but
+read requests (GET), one round every 30 seconds at most.
+
+**Never tested with a real Iskra gateway**: it was built from the maker's own
+Python library (pyiskra, the one Home Assistant uses). Feedback welcome.
+
+## Supported meters
+
+The meters the library reads behind a Smart Gateway: IE38, IE35, IE14
+(IMPACT), WM3M4, WM3, WM1, MC, iMC, MT, iMT (Measuring Centres). Other models
+listed by the gateway are named in the status and not read. At most 16
+meters are read (the others are counted in the status). A meter reached
+directly over Modbus TCP, without the gateway, is not supported yet.
+
+The consumption index comes from the **non-resettable** energy registers:
+the IE38, IE35, IE14, WM3 and WM3M4 have them. For the MC, iMC, MT, iMT and
+WM1, pyiskra only knows resettable registers: these meters give **no
+consumption index** (power and phases only), and the status says so.
+
+## What you get
+
+One device per meter, named after its model and serial number
+(`Iskra IE38MD 41000001`), with the values the meter gives:
+
+| Feature                      | Kind                               |
+| ---------------------------- | ---------------------------------- |
+| Active power (see below)     | energy sensor, W                   |
+| Consumption index            | energy index, kWh                  |
+| Injection index (kWh)        | plain sensor                       |
+| Voltage L1, L2, L3           | energy sensor, V, no history       |
+| Current L1, L2, L3           | energy sensor, A, no history       |
+| Power L1, L2, L3 (W)         | plain sensor, no history           |
+| Power factor, frequency (Hz) | plain sensor, no history           |
+| Meter temperature            | device temperature, °C, no history |
+
+- The **consumption index** feeds the Gladys energy monitoring: Gladys
+  derives the consumption and its cost from it. It comes from the first
+  non-resettable register of active energy imported by the meter (chosen the
+  first time the meter is read, then kept with its position and its name).
+  If another register takes its place, the index waits (status note).
+  Deleting and creating the device again chooses the register again. It is
+  published once a minute at most and checked first: never 0; any drop, even of 1 Wh, or a jump larger
+  than the meter could have measured (the "highest plausible power" of the
+  configuration, 100 kW by default, over the time since the last value) is
+  **held back** (the last accepted value is sent again) and shown in the
+  integration status. If it is right (a new meter, a long outage), click
+  **Accept the held index** twice (see Buttons). Saving the configuration
+  never accepts it.
+- The **injection** (the first non-resettable register of active energy
+  exported) is never in the energy monitoring (it would be billed as
+  consumption): a plain sensor.
+- The resettable registers are not read: a register that can be reset is
+  never an index.
+- The **active power** is the total of the meter. Its sign when the site
+  injects is to be confirmed on a real meter (probably negative).
+- The live values are sent at each read, only when they change (and every
+  10 minutes otherwise). The interval grows with many meters (8 seconds per
+  meter, so 80 seconds with 10 meters), so that Gladys never receives more
+  than it accepts.
+- When all the live values of a meter (voltages to 0.1 V, frequency to
+  0.01 Hz, currents...) stay exactly the same for 15 minutes, the gateway is
+  probably serving an old copy: they are no longer sent and the status says
+  so, also after a restart. The index is not affected.
+
+## Setup
+
+1. Find the IP address of the Smart Gateway (in your router, or the Iskra
+   tools) and preferably give it a fixed address in your router.
+2. In Gladys, open the integration, enter this address. If the web interface
+   of the gateway asks for a login, enter its user name and password too;
+   otherwise leave them empty. Save.
+3. In the **Discover** tab, create the device of each meter.
+
+## The login
+
+The password is kept by Gladys in its database, never shown again, never
+written in the logs. It is sent only to the address of the gateway, as the
+gateway asks: in a cookie, over plain HTTP on your network (the gateway
+offers nothing else). If the gateway refuses the login, the reads stop and
+the status says so: correct the user name or the password and save, or click
+**Test the connection** to try once more. The integration never tries a
+refused login again by itself, even after a restart. To recognise "the same
+login" after a restart, it keeps in `/data` only 8 bits of a salted hash of
+the refused password (never the password itself).
+
+## Buttons
+
+- **Test the connection**: reads the gateway once when a read is due (never
+  more than one every 30 seconds), otherwise tells the last read: the
+  gateway, its meters, their power and index. After a refused login, it tries
+  once more; only a success lifts the refusal.
+- **Accept the held index**, in two clicks. The first click lists the
+  indexes held back, per meter, and takes nothing. The second click, a few
+  seconds to 5 minutes later, takes exactly what the first listed, and for
+  each meter only if its held value has not changed since (beyond what the
+  meter may have measured meanwhile); a meter held after the first click is
+  never taken. A jump is counted at once as consumption; a drop bills
+  nothing.
+
+## When something goes wrong
+
+- **Unreachable or wrong answer**: new try after 30 seconds, then doubled up
+  to 10 minutes.
+- **The gateway asks to wait (429) or fails (5xx)**: reads paused from 1
+  minute to 6 hours, also after a restart.
+- **One meter cannot be read** (its page refused, failing or not
+  answering): the others go on, and the status names it. A round stops starting
+  new meters after about a minute: the meters left go first the next time.
+- **The list of meters changes during a read**: the meter whose port changed
+  gets nothing from that read. Each meter is keyed by its serial number: its
+  values never go to another meter's device.
+- **The same serial number on two ports** (one meter seen through two
+  interfaces, or two meters with a default number): those ports are not
+  read, nor offered in Discovery; the status names them.
+- **The register of the index changed** (another register at its place,
+  after the registers were set up again): the index waits, the status says
+  so; delete and create the device again to choose the register again.
+
+## Privacy
+
+Everything stays on your network. The integration only sends GET requests to
+the address you entered, with the login when you gave one.
+
+## Configuration settings
+
+These are the settings Iskra asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Iskra Smart Gateway | `section` | No | Unofficial connector, not affiliated with Iskra. It reads the Iskra meters (IE38, IE35, IE14, WM, MC, iMC, MT, iMT) connected to an Iskra Smart Gateway (SG), through the local REST API of the gateway, without any cloud: one device per meter with its active power, the voltage, current and power of each phase, the frequency, the power factor and the temperature, and, for the meters with non-resettable energy registers (IE38, IE35, IE14, WM3, WM3M4), its consumption index for the Gladys energy monitoring (the injection as a plain sensor); MC, iMC, MT, iMT and WM1 meters give no index. Read-only. A meter reached directly by Modbus TCP is not supported yet. Never tested with a real Iskra gateway. |
+| Gateway address | `string` | Yes | The IP address of the Smart Gateway on your network (shown by your router), with a port only if it is not 80. Preferably give it a fixed address in your router; if it changes, enter the new one: each meter keeps its device and history (they are keyed by their serial number). |
+| User name (optional) | `string` | No | Only if the web interface of the gateway asks for a login: its user name. Leave empty otherwise. |
+| Password (optional) | `secret` | No | The password of that login. Kept by Gladys in its database, never shown again, never logged, sent only to the gateway address above (plain HTTP on your network, as the gateway asks). If the gateway refuses it, reads stop until you change it or click "Test the connection". |
+| Highest plausible power of a meter (kW) | `number` | No | The guard of the consumption index holds back a rise larger than this power over the time since the last value (100 kW by default). Raise it only for a meter of a large installation. |
+
+## How to install Iskra in Gladys
+
+1. In Gladys, open **Integrations**: Iskra appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-iskra:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-iskra](https://github.com/LM1LC3N7/gladys-iskra).
+
+Iskra requires Gladys `>=5.2.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Iskra is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-iskra) — [source of this documentation](https://github.com/LM1LC3N7/gladys-iskra/blob/HEAD/docs/en.md)

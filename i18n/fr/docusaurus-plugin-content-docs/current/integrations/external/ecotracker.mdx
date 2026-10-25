@@ -1,0 +1,204 @@
+---
+title: "Intégration domotique EcoTracker, gratuite et open source"
+sidebar_label: "EcoTracker"
+description: "Non officiel : lecteur de compteur EcoTracker (everHome) en local : puissance et index. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ecotracker.png"
+keywords:
+  - "ecotracker"
+  - "domotique ecotracker"
+  - "gladys ecotracker"
+  - "ecotracker gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-ecotracker instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"EcoTracker","description":"Non officiel : lecteur de compteur EcoTracker (everHome) en local : puissance et index.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-ecotracker","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ecotracker.png","type":"device","version":"0.1.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-24T21:42:00Z"}} />
+
+Intégration non officielle, sans lien avec everHome. Elle lit un
+**EcoTracker**, le lecteur optique everHome posé sur le port infrarouge d'un
+compteur d'électricité, par son API locale : pas de cloud, pas de compte,
+rien d'envoyé au lecteur sinon une lecture (`GET /v1/json`) toutes les
+10 secondes.
+
+**Jamais testé avec un vrai EcoTracker** : l'intégration a été écrite à partir
+de la bibliothèque Python du fabricant (everhome-gmbh/ecotracker) et de la
+description publiée de son API locale. Vos retours sont bienvenus.
+
+## Ce que vous obtenez
+
+Un appareil **EcoTracker** (ou **EcoTracker \<numéro de série>** si le lecteur
+en donne un), avec les valeurs que donne le compteur (un compteur n'en envoie
+qu'une partie) :
+
+| Fonction                                          | Nature                          | Champ du lecteur              |
+| ------------------------------------------------- | ------------------------------- | ----------------------------- |
+| Puissance nette (négative quand le foyer injecte) | capteur d'énergie, W            | `power`                       |
+| Index de consommation                             | index d'énergie, kWh            | `energyCounterIn`             |
+| Index de consommation, tarifs 1 et 2 (kWh)        | simple capteur                  | `energyCounterInT1`, `…T2`    |
+| Index d'injection (kWh)                           | simple capteur                  | `energyCounterOut`            |
+| Puissance nette, moyenne de la dernière minute    | simple capteur, W               | `powerAvg`                    |
+| Puissance L1, L2, L3 (W)                          | simple capteur, sans historique | `powerPhase1` à `powerPhase3` |
+| Signal Wi-Fi (dBm)                                | simple capteur, sans historique | `rssi` (s'il est donné)       |
+
+- L'**index de consommation** alimente le suivi énergétique de Gladys, qui en
+  tire la consommation et son coût. Il est publié chaque minute et vérifié
+  d'abord : jamais 0 ; toute baisse, même d'1 Wh, ou un saut que le foyer
+  n'a pas pu consommer (plus de 50 kW en moyenne) est **retenu** (la dernière
+  valeur acceptée est renvoyée), gardé après un redémarrage et affiché dans
+  l'état de l'intégration. Ni le temps ni la répétition ne le confirment.
+- L'**injection** et les **tarifs** n'entrent jamais dans le suivi
+  énergétique (l'injection serait facturée comme une consommation, les
+  tarifs comptés deux fois) : simples capteurs.
+- `energyCounterIn` et `energyCounterOut` sont en Wh selon la description
+  publiée de l'API et un relevé réel : ils sont convertis en kWh. Pour T1 et
+  T2, la description ne donne pas d'unité : Wh est une hypothèse (son exemple
+  fait In = T1 + T2). Le README de la bibliothèque du fabricant dit kWh :
+  l'intégration vérifie donc l'unité. Quand l'index ne suit pas la puissance
+  (sa hausse est hors de 1/20 à 20 fois l'énergie que donne la puissance,
+  sur au moins 1 kWh), ou quand T1 + T2 ne font pas l'index, l'état le dit
+  (« unité ? ») ; l'index est quand même envoyé.
+- Les puissances sont envoyées toutes les 10 secondes, seulement quand elles
+  changent (et toutes les 10 minutes sinon). Elles ne sont pas envoyées :
+  - quand le lecteur indique (champ `agePower`) que sa puissance a plus
+    d'une minute ;
+  - quand aucune valeur lue (puissances, compteurs) n'a bougé depuis
+    15 minutes : le lecteur sert peut-être un vieux relevé (tête optique
+    déplacée) ; un compteur au repos peut aussi le faire, l'état le dit ;
+  - après un démarrage, tant que le relevé n'a pas bougé (une dizaine de
+    secondes), sauf si `agePower` le dit récent : un relevé figé avant un
+    redémarrage n'est pas envoyé comme neuf.
+
+  L'index continue dans tous ces cas.
+
+- Quand le compteur donne plus tard de nouvelles valeurs (compteur débloqué
+  par son PIN), l'appareil reçoit de nouvelles fonctions : dans l'onglet
+  **Découverte**, cliquez sur **Mettre à jour** sur l'appareil pour les
+  ajouter (son historique est gardé).
+
+## Installation
+
+1. Installez l'EcoTracker sur votre compteur et connectez-le à votre Wi-Fi
+   avec l'application everHome, comme l'explique le fabricant. Si
+   l'application le propose, activez l'API locale du lecteur.
+2. Trouvez son adresse IP (dans votre box ou l'application) et donnez-lui
+   une adresse fixe dans votre box (réservation DHCP). C'est nécessaire si le
+   lecteur ne donne pas de numéro de série (voir plus bas).
+3. Dans Gladys, ouvrez l'intégration, saisissez cette adresse, enregistrez.
+4. Dans l'onglet **Découverte**, créez l'appareil.
+
+Si l'état indique que le compteur ne donne pas de puissance, il est sans
+doute verrouillé par PIN : saisissez sur le compteur le PIN donné par votre
+gestionnaire de réseau pour débloquer ses données étendues. Les index
+continuent en attendant. Si le lecteur ne donne pas de numéro de série et
+que vous le retirez du compteur pour saisir le PIN, le lecteur répond
+ensuite avec de nouveaux champs après une coupure : toutes ses valeurs,
+index compris, sont alors retenues (l'état le dit). Deux clics sur
+**Accepter l'index retenu** le lèvent.
+
+## Boutons
+
+- **Tester la connexion** : lit le lecteur quand une lecture est due (jamais
+  plus d'une toutes les 10 secondes), sinon donne la dernière lecture.
+- **Accepter l'index retenu**, en deux clics, seulement si la valeur retenue
+  est juste (nouveau compteur, longue coupure) :
+  - le premier clic affiche le mouvement retenu (saut ou baisse) et
+    n'accepte rien ;
+  - le second clic, de 3 secondes à 5 minutes plus tard, prend cette valeur,
+    plus ce que le compteur a pu mesurer entre les deux clics (au plus
+    4,667 kWh) ;
+  - si la valeur retenue a changé autrement entre les deux clics (autre
+    sens, autre point de départ, saut plus grand), rien n'est pris :
+    regardez l'état et recommencez.
+
+  Un saut accepté est compté d'un coup comme consommation ; une baisse
+  acceptée ne facture rien, la consommation repart de là. Enregistrer la
+  configuration n'accepte jamais rien.
+
+  Le même bouton, en deux clics, accepte aussi les **nouveaux champs** d'un
+  lecteur sans numéro de série après une coupure (voir « Identité du
+  lecteur ») : le premier clic les signale, le second les garde ; l'index
+  reste vérifié par sa garde.
+
+## Identité du lecteur
+
+- Le lecteur réel connu ne donne pas de numéro de série dans sa réponse
+  locale : l'appareil s'appelle alors **EcoTracker** (`ecotracker:reader`),
+  et un autre lecteur qui répondrait à la même adresse (un second EcoTracker
+  du foyer qui reprend son adresse) ne peut pas toujours en être distingué.
+  Une **adresse fixe est donc nécessaire**. Ce qui protège quand même :
+  - après une coupure (lecteur injoignable, redémarrage), une réponse dont
+    les champs du compteur diffèrent (puissances, phases, compteurs et
+    tarifs ; pas `agePower`, `rssi`, `firmwareVersion`, propres au lecteur)
+    n'est pas utilisée :
+    rien n'est envoyé tant que les champs ne reviennent pas, ou jusqu'à deux
+    clics sur **Accepter l'index retenu** si c'est bien le même lecteur ;
+  - avec les mêmes champs, la garde de l'index retient une baisse, ou une
+    hausse plus grande que ce que le foyer a pu consommer depuis la dernière
+    valeur acceptée (50 kW × heures sans valeurs) ; **une hausse plus petite
+    est prise comme une consommation** (après 2 h de coupure, jusqu'à
+    100 kWh).
+- Si le lecteur donne un numéro de série (champ `serial`, lu par la
+  bibliothèque du fabricant), l'appareil porte ce numéro et chaque réponse
+  est vérifiée : un autre numéro à la même adresse a son propre appareil, ses
+  valeurs ne vont jamais au précédent ; un numéro illisible n'est pas
+  utilisé (état rouge, nouvel essai espacé).
+- Une réponse sans numéro n'est pas utilisée tant qu'un appareil d'un
+  lecteur avec numéro existe dans Gladys : l'état le dit. Si vous avez
+  remplacé le lecteur par un modèle sans numéro, supprimez l'ancien appareil
+  dans Gladys : le nouveau lecteur aura son propre appareil.
+- Passer d'un lecteur sans numéro à un lecteur avec numéro (par exemple
+  après une mise à jour du lecteur) crée un nouvel appareil, sans
+  l'historique de l'ancien.
+
+## Limites
+
+- Un lecteur par intégration.
+- Un compteur illisible (texte, valeur négative, 0, hors bornes) n'est
+  jamais utilisé. L'état le dit pour le compteur de consommation
+  (`energyCounterIn`) ; les tarifs et l'injection illisibles sont simplement
+  ignorés.
+- Lecture seule : le lecteur ne reçoit aucune commande.
+
+## Dépannage
+
+L'état de l'intégration dit ce qui se passe : adresse manquante ou invalide,
+lecteur injoignable ou réponse inattendue (nouvel essai après 10 s, doublé
+jusqu'à 5 minutes), lecteur qui demande d'attendre (HTTP 429 ou 5xx :
+lectures en pause de 1 minute à 6 heures, gardée après un redémarrage),
+index retenu, valeurs anciennes. Pour regarder le lecteur vous-même, ouvrez
+`http://<adresse>/v1/json` dans un navigateur sur le même réseau.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par EcoTracker dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| EcoTracker | `section` | Non | Connecteur non officiel, sans lien avec everHome. Il lit votre EcoTracker, le lecteur optique posé sur le port infrarouge d'un compteur d'électricité, par son API locale (à activer dans l'application everHome si elle le propose), sans cloud : la puissance nette toutes les 10 secondes, l'index de consommation chaque minute pour le suivi énergétique de Gladys et, quand le lecteur les donne, les compteurs par tarif et l'injection en simples capteurs, la puissance moyenne, la puissance par phase. Lecture seule. Jamais testé avec un vrai EcoTracker. |
+| Adresse de l'EcoTracker | `string` | Oui | L'adresse IP de l'EcoTracker sur votre réseau (visible dans votre box ou l'application everHome), avec un port seulement s'il n'est pas 80. Donnez-lui une adresse fixe dans votre box (réservation DHCP) : c'est nécessaire quand le lecteur ne donne pas de numéro de série, car un autre appareil qui prendrait son adresse ne pourrait pas toujours en être distingué. Si l'adresse change, saisissez la nouvelle : l'appareil et son historique sont gardés. |
+
+## Comment installer EcoTracker dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : EcoTracker apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-ecotracker:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-ecotracker](https://github.com/LM1LC3N7/gladys-ecotracker).
+
+EcoTracker nécessite Gladys `>=5.2.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+EcoTracker est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-ecotracker) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-ecotracker/blob/HEAD/docs/fr.md)

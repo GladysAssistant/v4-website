@@ -1,0 +1,177 @@
+---
+title: "Intégration domotique LCN, gratuite et open source"
+sidebar_label: "LCN"
+description: "Domotique de bâtiment LCN (sorties, relais, capteurs, scènes) via LCN-PCHK. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-lcn.png"
+keywords:
+  - "lcn"
+  - "domotique lcn"
+  - "gladys lcn"
+  - "lcn gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-lcn instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"LCN","description":"Domotique de bâtiment LCN (sorties, relais, capteurs, scènes) via LCN-PCHK.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-lcn","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-lcn.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-23T18:42:09Z"}} />
+
+Cette intégration relie Gladys à une installation **LCN** (Local Control
+Network, domotique de bâtiment vendue surtout en Allemagne, en Autriche et
+en Suisse) par **LCN-PCHK**, le logiciel coupleur de LCN qui tourne sur un
+ordinateur de votre réseau (avec sa licence) et est relié au bus par un
+coupleur LCN-PKU ou LCN-PCK.
+
+> **Jamais testé avec un vrai appareil** ni une vraie installation : le
+> protocole est porté de pypck, la bibliothèque de l'intégration LCN de Home
+> Assistant. Non officiel, sans lien avec LCN (ISSENDORFF KG).
+
+## Ce qu'elle fait
+
+- Se connecte à PCHK avec son nom d'utilisateur et son mot de passe, trouve
+  les coupleurs de segments, puis chaque module du bus (la même recherche
+  que pypck), avec son numéro de série, son firmware, son type et le nom
+  défini dans LCN-PRO.
+- Un appareil Gladys par module. Ses fonctionnalités viennent du champ
+  **Ports** :
+  - **sorties A1 à A4** et **relais R1 à R8** : **en lecture seule par
+    défaut** (leur état, et le niveau d'une sortie) avec des boutons
+    « allumer » / « éteindre » **désactivés par défaut**. Déclarés `light`
+    (une sortie : une lumière avec sa luminosité ; un relais : une lumière
+    tout ou rien) ou `switch`, ils se commandent depuis Gladys ;
+  - **capteurs binaires B1 à B8** : une entrée, ou un détecteur de mouvement
+    (`motion`) ;
+  - **variables** TVAR, R1VAR, R2VAR, VAR1 à VAR12 : une température (°C, par
+    défaut), `humidity` (%), `lux` (capteur de lumière sur le port I), `co2`
+    (ppm) ou une valeur brute `value` ;
+  - **consignes** R1VARSETPOINT, R2VARSETPOINT des régulateurs : en lecture
+    seule, affichées comme des températures (jamais comme un thermostat
+    qu'un assistant vocal pourrait régler).
+    Un module absent de Ports montre A1 et A2, en lecture seule.
+- Les **touches qu'un module envoie à l'hôte** (programmées avec LCN-PRO)
+  deviennent un déclencheur de scène « Touche LCN envoyée à l'hôte » : module
+  (`M5`, ou `S12M5` sur le segment 12), table A à C, touche 1 à 8, appui court
+  (hit), appui long (make) ou relâchement (break).
+- Une action de scène « Activer une scène LCN » (registre 0-9, scène 0-9,
+  pour les sorties, les relais ou les deux), **désactivée par défaut**.
+
+## Configuration
+
+| Champ                                            | À saisir                                                                                                                                                                                                                                                                          |
+| ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Adresse de LCN-PCHK                              | L'adresse IP de l'ordinateur où tourne PCHK (donnez-lui une adresse fixe).                                                                                                                                                                                                        |
+| Port                                             | 4114 sauf changement dans PCHK.                                                                                                                                                                                                                                                   |
+| Nom d'utilisateur, mot de passe                  | Ceux de PCHK. Le mot de passe est un champ secret : gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement à PCHK, jamais écrit dans les journaux. PCHK le reçoit en clair sur votre réseau : son protocole n'est pas protégé, gardez PCHK sur un réseau de confiance. |
+| Mode de variation                                | 200 pas quand tous les modules ont un firmware de 2013 (170206) ou après, comme LCN-PRO le programme ; sinon 50 pas.                                                                                                                                                              |
+| Ports                                            | Voir ci-dessous.                                                                                                                                                                                                                                                                  |
+| Autoriser les boutons « allumer » / « éteindre » | Désactivé par défaut.                                                                                                                                                                                                                                                             |
+| Autoriser l'activation des scènes LCN            | Désactivé par défaut.                                                                                                                                                                                                                                                             |
+
+### Ports
+
+Des entrées séparées par des virgules : `module.port` ou `module.port:type`,
+le module numéroté comme dans LCN-PRO (`M5`, `5`, ou `S12M5` sur le segment
+12). Exemple :
+
+```
+M5.A1:light, M5.A2:switch, M5.R3:switch, M5.B1:motion, M7.TVAR, M7.VAR4:humidity, M7.R1VARSETPOINT
+```
+
+**Ne déclarez jamais en `light` ou `switch` un port qui commande une pompe,
+un chauffage, une demande de chaudière, une gâche, une vanne, un congélateur
+ou tout ce qu'un « éteindre » ou « allumer » soudain pourrait abîmer** : une
+lumière ou un interrupteur obéit à Google Home, Alexa, au MCP (« éteins
+tout ») et à toutes les scènes. Laissez ces ports en lecture seule.
+
+Un port qui change de type reçoit de nouvelles fonctionnalités ; celles déjà
+créées sont gardées avec leur historique (supprimez-les dans Gladys si vous
+n'en voulez plus). Une lumière ou un interrupteur gardé refuse les commandes
+dès que le port n'est plus déclaré ainsi.
+
+## Sécurité
+
+- Une commande est écrite en 3,5 s ou pas du tout (« rien n'a été envoyé ») ;
+  elle n'est confirmée que par un état du port, reçu après elle, égal à la
+  valeur demandée ; sinon Gladys affiche « envoyé, sans confirmation » et le
+  port est relu 2 s plus tard.
+- Un « éteindre » (0 %, relais coupé) a sa propre file, écrite avant toute
+  autre commande et toute lecture, sans attendre un bus calme : un « éteins
+  tout » de 40 lumières est écrit dans l'échéance. Il annule un « allumer » du
+  même port, et une scène LCN du même module, encore en attente. La relecture
+  qui suit une commande passe en arrière-plan (une par port, regroupée) ; les
+  modules envoient aussi leurs changements d'eux-mêmes.
+- Les options sont vérifiées à l'arrivée de la commande et de nouveau juste
+  avant son écriture.
+- Un nom d'utilisateur ou un mot de passe refusé par PCHK arrête la
+  connexion, de même qu'une session que PCHK ferme juste après le mot de
+  passe, sans réponse, deux fois de suite : aucun nouvel essai avec les mêmes identifiants, même après un
+  redémarrage (une empreinte salée des identifiants refusés est gardée dans
+  `/data`, jamais le mot de passe ; elle est effacée à la première connexion
+  réussie). Saisissez d'autres identifiants, ou cliquez sur « Tester la
+  connexion » une fois corrigé côté PCHK (un essai, jamais à moins de 10 s du
+  précédent).
+- Une erreur de licence de PCHK (toutes ses connexions prises) met en pause
+  5 min, puis 15 min, 30 min, 1 h ; la pause survit à un redémarrage, et
+  « Tester la connexion » indique le temps restant au lieu d'essayer.
+- Un nom d'utilisateur ou un mot de passe contenant un retour à la ligne
+  n'est jamais envoyé (un statut le dit). Une scène LCN ne va qu'à un module
+  de cette intégration (segment 0 ou 5 à 127, module 5 à 254) : jamais à PCHK
+  ni à une adresse de diffusion.
+- Les tentatives de connexion sont espacées (10 s, 30 s, 1 min, 2 min, puis
+  5 min) et un redémarrage garde l'espacement ; une lecture complète des
+  états a lieu au plus une fois par minute ; « Scanner » relance la recherche
+  au plus une fois par minute.
+
+## Limites
+
+- LCN-PCHK seulement : ni LCN-PKE (coupleur IP direct) ni USB.
+- Pas de volets (moteurs), seuils, LED, verrouillages de touches ou de
+  régulateurs, ni contrôle d'accès dans cette version ; les consignes sont en
+  lecture seule.
+- Les modules qui ne répondent pas à la recherche peuvent être listés dans
+  Ports.
+- Le bus ne dit pas quels ports sont câblés : listez-les dans Ports.
+- Docker n'est pas utilisé pendant le développement : l'image n'a jamais
+  tourné dans Gladys.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par LCN dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre installation LCN | `section` | Non | Pour les installations LCN joignables par LCN-PCHK (le logiciel coupleur de LCN, avec sa licence) sur un ordinateur de votre réseau. L'intégration se connecte à PCHK, recherche les modules sur le bus et lit leurs sorties, relais, capteurs binaires et variables ; les touches qu'un module envoie à l'hôte deviennent des déclencheurs de scène. Sorties et relais sont en lecture seule tant que vous ne les déclarez pas comme lumières ou interrupteurs dans « Ports ». Une connexion de PCHK est utilisée. Jamais testé avec une vraie installation. Non officiel, sans lien avec LCN. |
+| Adresse de LCN-PCHK | `string` | Oui | L'adresse IP (ou le nom) de l'ordinateur où tourne LCN-PCHK ; donnez-lui une adresse fixe dans votre box. |
+| Port | `number` | Non | 4114 sauf si PCHK en utilise un autre. |
+| Nom d'utilisateur de PCHK | `string` | Oui | Le nom d'utilisateur défini dans LCN-PCHK. |
+| Mot de passe de PCHK | `secret` | Non | Gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement à PCHK, jamais écrit dans les journaux. PCHK le reçoit en clair sur votre réseau (son protocole n'est pas protégé). Un mot de passe refusé par PCHK (ou une session fermée juste après lui, deux fois de suite) arrête la connexion : aucun nouvel essai avec lui. |
+| Mode de variation | `select` | Non | Comme programmé avec LCN-PRO : 200 pas quand tous les modules datent de 2013 (firmware 170206) ou après, sinon 50 pas. |
+| Ports | `string` | Non | Ce que montre chaque module, par ex. « M5.A1:light, M5.R3:switch, M5.B1:motion, M7.TVAR, M7.VAR4:humidity » (module comme dans LCN-PRO, S12M5 sur le segment 12). Sorties A1-A4 et relais R1-R8 : lecture seule par défaut, « light » ou « switch » pour les commander ; une lumière ou un interrupteur obéit à Google, Alexa, au MCP (« éteins tout ») et aux scènes : ne déclarez jamais une pompe, un chauffage, une gâche ou une vanne. Capteurs binaires B1-B8 (« motion » en option) ; variables TVAR, R1VAR, R2VAR, VAR1-VAR12 (température par défaut, ou humidity, lux, co2, value) ; consignes R1VARSETPOINT, R2VARSETPOINT (lecture seule, affichées comme des températures). Un module non listé montre A1 et A2, en lecture seule. |
+| Commandes des ports non déclarés | `section` | Non | Une sortie ou un relais en lecture seule a des boutons « allumer » et « éteindre », et des scènes LCN peuvent être activées depuis une scène Gladys : les deux commandent des charges que Gladys ne connaît pas (une pompe, un chauffage, une gâche…), donc les deux sont désactivés par défaut. Une fois autorisés, tout utilisateur de Gladys et toute scène peuvent s'en servir ; chaque commande est écrite dans les journaux de l'intégration. |
+| Autoriser les boutons « allumer » / « éteindre » des ports en lecture seule | `boolean` | Non |  |
+| Autoriser l'activation des scènes LCN depuis les scènes Gladys | `boolean` | Non |  |
+| Langue des noms | `select` | Non | Sert aux noms des appareils et fonctionnalités ajoutés désormais. |
+
+## Comment installer LCN dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : LCN apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-lcn:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-lcn](https://github.com/LM1LC3N7/gladys-lcn).
+
+LCN nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+LCN est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-lcn) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-lcn/blob/HEAD/docs/fr.md)

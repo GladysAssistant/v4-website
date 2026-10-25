@@ -1,0 +1,141 @@
+---
+title: "Yardian Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Yardian"
+description: "Yardian sprinkler controllers, locally: zones, watering, rain delay, start and stop. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-yardian.png"
+keywords:
+  - "yardian"
+  - "yardian smart home"
+  - "gladys yardian"
+  - "yardian gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-yardian instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Yardian","description":"Yardian sprinkler controllers, locally: zones, watering, rain delay, start and stop.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-yardian","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-yardian.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-23T18:55:46Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+Unofficial Gladys Assistant integration for the **Yardian** smart sprinkler
+controllers (Yardian, Yardian Pro, Yardian Pro C1), over their **local** HTTP
+API: no Yardian cloud, no account. Not affiliated with Aeon Matrix or Yardian.
+
+**Never tested with a real device**: it was built from the library of the
+manufacturer (pyyardian 1.4.2, the one of the Home Assistant integration).
+Please report what works and what does not.
+
+## What you get
+
+- **The controller**: watering now (yes/no), the zones watering now, the rain
+  delay left (minutes), the standby, and a **Stop all watering** button.
+- **Each enabled zone**: watering now (yes/no), a **Start watering** button and
+  a **Stop watering** button.
+
+Watering is never a switch: a "turn everything on/off" from a voice assistant,
+HomeKit or a scene on switches can never open a valve.
+
+## Setup
+
+1. Give the controller a fixed IP address in your router.
+2. Find its **access token** in the Yardian app (settings of the controller).
+3. In Gladys, open the integration, type the address and the token, save.
+4. Add the controller and its zones from the **Discovery** tab.
+
+The token is kept by Gladys in its database, never shown again, and sent only
+to your controller, in clear on your local network (the controller has no
+https).
+
+## Starting and stopping
+
+- **Starting a zone opens a valve: it is off by default.** Turn on **Allow
+  starting the zones** to use the Start buttons. Without it, the dashboard,
+  the scenes and the voice assistants can only read and stop.
+- Before each start, Gladys reads the controller: another controller at the
+  address, or zones watering it cannot read: refused; the zone already
+  watering: nothing sent. The zone waters for the configured length (10
+  minutes by default, **60 minutes at most**); the controller closes the valve
+  by itself at the end.
+- After a start, another start on the same controller is **refused at once**
+  ("try again in a minute") until the zone is read watering, or for 60 s.
+- **Stopping is never held** by the option, a pause asked by the controller,
+  a refused token or a recent start. It is refused, without sending anything,
+  only when: another controller answers at the address; the controller is no
+  longer at its address; no access token is set; on the C1 models, the
+  waterings running cannot be read (then Gladys watches for a minute and
+  sends the stop as soon as a read shows them). On a C1 with more than 32
+  waterings running, or some unreadable, the readable ones (32 at most) are
+  stopped.
+- A stop cancels the starts not sent yet. A start already sent before the
+  stop is watched too, for a minute after its answer (reads at 5, 15, 30
+  and 55 s): if it is applied after the stop within that minute, the stop
+  is sent again. If the zones are still read watering after a stop, it is
+  sent again (3 times at most, within a minute), unless a start the
+  controller took was sent after it.
+- On the Yardian and Yardian Pro without the C1 suffix, the controller only
+  stops **every zone at once**: the Stop button of a zone stops them all.
+- A command leaves within 3.5 s or is refused unsent. "Sent, without
+  confirmation" means the controller may have taken it but it was not read
+  back yet: check the zone a few seconds later.
+
+## Refresh
+
+The controller is read every 30 s by default (10 to 600 s), never sooner: not
+after a restart, a reconnection, a scan or the Check button. If it asks to
+wait (HTTP 429 or 5xx), reads pause for 1 minute to 6 hours. If it refuses the
+token, reads stop until you save another token or the **Check the
+controller** button succeeds (it tries once, never sooner than the interval).
+
+## Limits
+
+- One controller per integration.
+- The YC models (C1 suffix) and the rain delay and standby fields were not
+  seen on a real answer: see TODO.md in the repository.
+- A watering started by a schedule of the controller: nothing says the stop
+  of the Yardian API stops it (unknown). If it does not, you see "sent,
+  without confirmation", then 3 resends: stop it from the Yardian app.
+- No schedules, no scene actions or widget yet.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Yardian in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Your Yardian controller, on your local network | `section` | Nein | The zones of a Yardian smart sprinkler controller (Yardian, Yardian Pro), the zones watering now, the rain delay and the standby, through its local HTTP API, without the Yardian cloud. Give the controller a fixed IP address in your router, type it below with its access token, then add the controller and its zones from the Discovery tab. Never tested with a real device. Unofficial integration, not affiliated with Aeon Matrix or Yardian. |
+| IP address of the controller | `string` | Nein | For example 192.168.1.60 (the controller answers on its ports 880 and 80). |
+| Access token | `secret` | Nein | The access token of the controller, shown by the Yardian app in the settings of the controller. Kept by Gladys in its database, never shown again, sent only to your Yardian controller (in clear on your local network: it has no https). |
+| Refresh interval (s) | `number` | Nein | How often the controller is read, in seconds. Never sooner, even after a restart. |
+| Starting and stopping the zones | `section` | Nein | Each zone has a Start and a Stop button, never a switch; the controller has "Stop all watering". Starting opens a valve: refused until you allow it below, and decided on a read just before. A zone waters for the length below, 60 minutes at most. Stopping needs no permission and is never held by a pause, a refused token or a recent start; it cancels the starts not sent yet. It is refused unsent only when another controller answers at the address, the controller is no longer at its address, no token is set, or (C1 models) the waterings running cannot be read: then Gladys sends it as soon as a read shows them, within a minute. Without the C1 suffix, the controller only stops every zone at once. |
+| Allow starting the zones | `boolean` | Nein | Off by default: the zones are only read and stopped. On: the dashboard, the scenes and the voice assistants can start watering. |
+| Watering length of a zone started from Gladys (min) | `number` | Nein | From 1 to 60 minutes. The controller closes the valve by itself at the end. |
+| Language of the feature names | `select` | Nein | Used for the names of the features added from now on, and for the command errors. |
+
+## So installierst du Yardian in Gladys
+
+1. Öffne in Gladys **Integrationen**: Yardian erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-yardian:0.1.2`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-yardian](https://github.com/LM1LC3N7/gladys-yardian).
+
+Yardian benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Yardian ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-yardian) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-yardian/blob/HEAD/docs/en.md)

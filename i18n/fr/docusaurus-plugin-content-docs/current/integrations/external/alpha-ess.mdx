@@ -1,0 +1,157 @@
+---
+title: "Intégration domotique Alpha ESS, gratuite et open source"
+sidebar_label: "Alpha ESS"
+description: "Onduleurs et batteries Alpha ESS : solaire, batterie, réseau, énergie et scènes. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-alpha-ess.jpg"
+keywords:
+  - "alpha ess"
+  - "domotique alpha ess"
+  - "gladys alpha ess"
+  - "alpha ess gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/William-De71/gladys-alpha-ess instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Alpha ESS","description":"Onduleurs et batteries Alpha ESS : solaire, batterie, réseau, énergie et scènes.","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-alpha-ess","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-alpha-ess.jpg","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-24T06:09:28Z"}} />
+
+## Présentation
+
+Cette intégration amène dans Gladys les onduleurs hybrides, batteries et bornes de recharge Alpha ESS de votre compte, via l’[Open API officielle d’Alpha ESS](https://open.alphaess.com) et votre propre compte développeur. Elle n’est pas affiliée à Alpha ESS.
+
+- Un appareil par système : puissance solaire, niveau de batterie, puissances de charge et de décharge, puissance réseau (import +, export −), consommation de la maison, énergies du jour et index d’énergie.
+- Un appareil par borne de recharge Alpha ESS : état du connecteur, état de la charge, puissance.
+- Trois widgets de tableau de bord : flux d’énergie en direct, aujourd’hui (avec la courbe de puissance du jour), planning de la batterie.
+- Déclencheurs de scène : batterie pleine, batterie au seuil de coupure, début d’injection ou de soutirage, système hors ligne ou de retour, état de la borne, accès refusé.
+- Actions de scène : charge depuis le réseau, contrôle horaire de la décharge, démarrer ou arrêter la borne (désactivées tant que vous ne les autorisez pas), énergies du jour.
+
+Transport : cloud. Votre AppID, les numéros de série de vos systèmes et les réglages que vos scènes modifient partent vers le cloud d’Alpha ESS (`openapi.alphaess.com`) ; l’AppSecret ne quitte jamais Gladys (seule une signature de chaque requête part).
+
+## Prérequis
+
+- Gladys Assistant 5.1.0 ou plus récent.
+- Un système Alpha ESS qui envoie ses données au cloud d’Alpha ESS (il apparaît dans l’application Alpha ESS).
+- **Un compte développeur** (gratuit) sur [open.alphaess.com](https://open.alphaess.com). Dans **Development Management → Developer Information**, copiez le **Developer ID (AppID)** et le **Developer Secret (AppSecret)**.
+- **Votre système lié à l’AppID** : sur le portail, ajoutez le système avec son **numéro de série (SN)** et son **CheckCode**, tous deux sur l’étiquette de l’onduleur (ou donnés par votre installateur). Si le portail n’envoie jamais l’e-mail de confirmation, utilisez les boutons de liaison de la configuration (voir plus bas).
+
+Le rythme : Alpha ESS demande **au moins 10 secondes entre deux requêtes** et répond « trop rapide » (6053) sinon. L’intégration envoie une requête à la fois, espacées de 10 secondes, et ralentit d’elle-même quand Alpha ESS le demande.
+
+## Configuration
+
+| Champ                                     | Signification                                                                                         |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| AppID (Developer ID)                      | Le Developer ID du portail, commence par `alpha`                                                      |
+| AppSecret (Developer Secret)              | Le Developer Secret du portail (un secret, jamais réaffiché ni écrit dans les journaux)               |
+| Autoriser les scènes à piloter l’onduleur | Désactivé par défaut ; activé, les actions de scène peuvent modifier la batterie et la borne          |
+| Lecture de la puissance                   | Toutes les 30 s, 1 min (par défaut), 2 min ou 5 min ; espacée avec plusieurs systèmes                 |
+| Langue des textes                         | Noms des fonctionnalités, textes des scènes et erreurs ; automatique suit la langue du dernier widget |
+
+Boutons :
+
+- **Tester la connexion** liste les systèmes liés à l’AppID (numéro de série, modèle, puissance solaire, taille de la batterie).
+- **Demander un code de liaison** (numéro de série + CheckCode) : Alpha ESS envoie un code de vérification par e-mail au propriétaire du système. **Lier le système** (numéro de série + code) le lie à votre AppID. Son appareil arrive ensuite dans l’écran de découverte.
+- **Diagnostic** écrit l’état de l’intégration dans ses journaux, sans le secret.
+
+## Utilisation
+
+### Appareils
+
+Ouvrez **Découvrir** et ajoutez vos systèmes. Un appareil système a :
+
+- **Production solaire** (W), **Consommation de la maison** (W), **Réseau électrique** (W, positif en import, négatif en export) ;
+- avec une batterie : **Niveau de batterie** (%), **Puissance de charge** et **Puissance de décharge** (W, toutes deux positives) ;
+- **Production solaire du jour** et **Consommation de la maison du jour** (kWh) ;
+- des **index** (kWh) : production solaire, import réseau, export réseau et, avec une batterie, charge et décharge de la batterie.
+
+L’Open API donne les énergies de chaque jour, pas le compteur de l’onduleur : l’intégration additionne les jours elle-même. Les index partent de 0 le premier jour où l’intégration tourne, ne baissent jamais, et sont corrigés après minuit avec la fin de la veille. Ce sont des index d’historique : aucun n’est compté comme la consommation de votre maison, un Linky ou un autre compteur continue donc d’alimenter seul l’onglet énergie, sans double comptage.
+
+Un appareil borne a son **État du connecteur**, son **État de la charge** et sa **Puissance de recharge** (W).
+
+### Widgets du tableau de bord
+
+![Les trois widgets : flux d’énergie en direct, aujourd’hui avec la courbe de puissance, planning de la batterie (illustration générée, pas une capture d’écran)](https://raw.githubusercontent.com/William-De71/gladys-alpha-ess/main/docs/assets/widgets.fr.png)
+
+- **Alpha ESS en direct** : niveau de batterie, solaire, maison, réseau (vers ou depuis), batterie (en charge ou en décharge), l’heure de lecture et l’autonomie du jour ; « hors ligne depuis… » en rouge quand Alpha ESS indique le système hors ligne.
+- **Alpha ESS aujourd’hui** : solaire, maison, import et export réseau du jour, autonomie, la courbe de puissance du jour (lue seulement quand le widget est affiché), la batterie chargée et déchargée.
+- **Planning de la batterie** : la charge depuis le réseau (activée ou non, plages, jusqu’à quel SOC) et le contrôle horaire de la décharge (activé ou non, plages, SOC de coupure) enregistrés sur le cloud, et si vos scènes peuvent les modifier.
+
+Choisissez le système dans les réglages du widget (vide : le premier).
+
+### Scènes
+
+Déclencheurs (une fois par changement, jamais à la première lecture) :
+
+- **Alpha ESS : batterie pleine** : la batterie atteint 100 % (à nouveau après être repassée sous 95 %).
+- **Alpha ESS : batterie au seuil de coupure** : la batterie atteint le SOC de coupure de la décharge (+1 point).
+- **Alpha ESS : début d’injection sur le réseau** / **début de soutirage du réseau** : 200 W ou plus, deux lectures de suite.
+- **Alpha ESS : système hors ligne** (10 minutes) / **système de retour**.
+- **Alpha ESS : état de la borne changé** : branchée, en charge, en pause, terminée, en défaut ; filtre sur le nouvel état.
+- **Alpha ESS : accès refusé** : AppID ou AppSecret refusé, horloge de la machine décalée, IP non autorisée, ou système non lié.
+
+Actions (les trois premières demandent **Autoriser les scènes à piloter l’onduleur**) :
+
+- **Alpha ESS : charge depuis le réseau** : activée, désactivée ou inchangée, deux plages comme `01:00-05:00` (au quart d’heure, `off` pour en vider une), le SOC où elle s’arrête (10 à 100). Les champs vides gardent leur valeur. Le réglage actuel est lu d’abord et le réglage complet écrit ; rien n’est envoyé si rien ne change.
+- **Alpha ESS : contrôle horaire de la décharge** : la même chose pour la décharge, avec son SOC de coupure.
+- **Alpha ESS : démarrer ou arrêter la borne**.
+- **Alpha ESS : énergies du jour** : solaire, maison, import, export, batterie chargée et déchargée, autonomie, niveau de batterie et une phrase, sans aucune requête.
+
+Alpha ESS documente les deux réglages de batterie comme modifiables **environ une fois par jour** : un deuxième changement le même jour peut être refusé. Sur certains onduleurs récents (SMILE-G3), l’application garde son planning ailleurs et ces réglages peuvent être ignorés : vérifiez le résultat dans l’application Alpha ESS avant de vous y fier.
+
+Exemples :
+
+1. Chaque jour à 22:00, si la batterie est sous 40 % → **Alpha ESS : charge depuis le réseau** activée, plage `01:00-05:00`, jusqu’à 80 % ; à 06:00 → désactivée.
+2. Quand **Alpha ESS : début d’injection sur le réseau** → allumer le chauffe-eau ; quand **début de soutirage du réseau** → l’éteindre.
+3. Quand **Alpha ESS : système hors ligne** → envoyer une notification « L’onduleur est hors ligne depuis \{\{triggerEvent.data.minutes_offline\}\} min ».
+4. Chaque soir à 21:00 → **Alpha ESS : énergies du jour** → envoyer un message avec sa sortie `summary`.
+
+## Dépannage
+
+- **« Alpha ESS refuse l’AppID ou l’AppSecret »** (6007) : recopiez-les depuis Developer Information, sans espace avant ni après.
+- **« Le système … n’est pas lié à cet AppID »** (6005) : liez-le sur le portail, ou avec **Demander un code de liaison** puis **Lier le système**.
+- **« L’horloge de la machine Gladys a plus de 5 minutes d’écart »** (6006) : remettez la machine à l’heure (NTP).
+- **« La liste blanche d’IP du compte développeur est activée »** (6009) : ajoutez l’adresse publique de votre Gladys, ou désactivez la liste.
+- **« Alpha ESS demande de ralentir »** (6053) : une autre application (Home Assistant…) utilise peut-être le même AppID ; les lectures reprennent après une minute.
+- **« Le pilotage est désactivé »** : cochez **Autoriser les scènes à piloter l’onduleur**.
+- **Un réglage changé mais l’onduleur ne fait rien** : Alpha ESS l’a accepté sur le cloud ; sur certains modèles, le planning de l’application l’emporte. Vérifiez dans l’application Alpha ESS.
+- **« Alpha ESS ne donne pas les réglages de la batterie de ce système »** (6017) : votre modèle ou votre compte n’y a pas accès par l’Open API.
+- Signalez un problème sur GitHub avec les versions de Gladys et de l’intégration, le modèle de l’onduleur, le message de **Tester la connexion** et les lignes écrites par **Diagnostic**. Ne collez jamais votre AppSecret.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Alpha ESS dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Open API d’Alpha ESS | `section` | Non | Créez un compte développeur gratuit sur open.alphaess.com. Dans Development Management → Developer Information, copiez le Developer ID (AppID) et le Developer Secret (AppSecret). Les données passent par le cloud d’Alpha ESS. Cette intégration n’est pas affiliée à Alpha ESS. |
+| AppID (Developer ID) | `string` | Oui |  |
+| AppSecret (Developer Secret) | `secret` | Oui |  |
+| Lier votre système à l’AppID | `section` | Non | Seuls les systèmes liés à l’AppID sont visibles. Sur le portail, ajoutez le système avec son numéro de série (SN) et son CheckCode, tous deux sur l’étiquette de l’onduleur (ou donnés par l’installateur). Si le portail n’envoie jamais l’e-mail, utilisez les boutons ci-dessous : « Demander un code de liaison » envoie un code par e-mail au propriétaire du système, « Lier le système » l’utilise. |
+| Pilotage de l’onduleur | `section` | Non | Désactivé par défaut. Une fois autorisé, les actions de scène peuvent modifier la charge depuis le réseau et le contrôle horaire de la décharge de la batterie, et démarrer ou arrêter une borne de recharge Alpha ESS. Alpha ESS documente ces réglages de batterie comme modifiables environ une fois par jour, et sur certains modèles récents (SMILE-G3) le planning est ailleurs et ces réglages peuvent être ignorés : vérifiez le résultat dans l’application Alpha ESS. |
+| Autoriser les scènes à piloter l’onduleur | `boolean` | Non | Écritures dans les réglages de la batterie et la borne. Lecture seule si désactivé. |
+| Lecture de la puissance | `select` | Non | Fréquence de lecture de la puissance instantanée. Alpha ESS demande 10 secondes au moins entre deux requêtes : avec plusieurs systèmes, la lecture est espacée. |
+| Langue des textes | `select` | Non | Noms des fonctionnalités, textes des scènes et erreurs. Automatique : la langue du dernier widget affiché. |
+
+## Comment installer Alpha ESS dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Alpha ESS apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/william-de71/gladys-alpha-ess:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/William-De71/gladys-alpha-ess](https://github.com/William-De71/gladys-alpha-ess).
+
+Alpha ESS nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Alpha ESS est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [William-De71](https://github.com/William-De71), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/William-De71/gladys-alpha-ess) — [source de cette documentation](https://github.com/William-De71/gladys-alpha-ess/blob/HEAD/docs/fr.md)

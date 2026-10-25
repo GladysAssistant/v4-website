@@ -1,0 +1,197 @@
+---
+title: "Intégration domotique Slack, gratuite et open source"
+sidebar_label: "Slack"
+description: "Discutez avec Gladys sur Slack : un robot dans votre espace, des scènes, sans URL publique. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-slack.jpg"
+keywords:
+  - "slack"
+  - "domotique slack"
+  - "gladys slack"
+  - "slack gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/William-De71/gladys-slack instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Slack","description":"Discutez avec Gladys sur Slack : un robot dans votre espace, des scènes, sans URL publique.","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-slack","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-slack.jpg","type":"communication","version":"0.1.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-24T12:27:53Z"}} />
+
+## Présentation
+
+Discutez avec Gladys sur **Slack**, en message privé avec un robot de votre propre espace de travail : Gladys y répond, et y envoie aussi ses notifications et ses images de caméra. Vos scènes peuvent réagir quand un membre lié écrit au robot, mentionne `@gladys` dans un canal ou tape `/gladys`, et publier elles-mêmes des messages Slack.
+
+L’intégration utilise le **Socket Mode** : elle ouvre elle-même la connexion vers Slack, Gladys n’a donc besoin ni d’URL publique, ni de port ouvert, ni de Gladys Plus. Les messages passent par les serveurs de Slack (transport cloud). Intégration non officielle, sans lien avec Slack Technologies ; pas encore testée dans un vrai espace de travail.
+
+## Prérequis
+
+- Gladys Assistant 5.1.0 ou plus récent.
+- Un espace de travail Slack où vous pouvez installer une app (sur certains espaces, un administrateur doit l’approuver).
+- Un accès Internet depuis Gladys (sortant uniquement).
+
+### Créer l’app Slack
+
+1. Dans **Intégrations → Slack → Configuration**, ouvrez le lien **Créer l’app Gladys dans Slack** : Slack ouvre sa page de création d’app avec le manifeste ci-dessous déjà rempli. Choisissez votre espace de travail, vérifiez et cliquez sur **Create**.
+2. Dans l’app, **Basic Information → App-Level Tokens → Generate Token and Scopes** : donnez-lui un nom, ajoutez la portée `connections:write`, générez, et copiez le jeton qui commence par `xapp-`.
+3. **Install App → Install to Workspace**, autorisez, puis copiez le **Bot User OAuth Token**, qui commence par `xoxb-`.
+
+Sans le lien : ouvrez [api.slack.com/apps](https://api.slack.com/apps), **Create New App → From a manifest**, choisissez l’espace de travail et collez ce manifeste (aussi dans [slack-app-manifest.json](https://github.com/William-De71/gladys-slack/blob/main/slack-app-manifest.json)) :
+
+```json
+{
+  "_metadata": {
+    "major_version": 1
+  },
+  "display_information": {
+    "name": "Gladys",
+    "description": "Gladys Assistant, the home automation assistant of the house.",
+    "background_color": "#2f6fb5"
+  },
+  "features": {
+    "app_home": {
+      "home_tab_enabled": false,
+      "messages_tab_enabled": true,
+      "messages_tab_read_only_enabled": false
+    },
+    "bot_user": {
+      "display_name": "gladys",
+      "always_online": true
+    },
+    "slash_commands": [
+      {
+        "command": "/gladys",
+        "description": "Talk to Gladys, or send a link code",
+        "usage_hint": "turn on the kitchen light",
+        "should_escape": false
+      }
+    ]
+  },
+  "oauth_config": {
+    "scopes": {
+      "bot": [
+        "app_mentions:read",
+        "channels:history",
+        "channels:read",
+        "chat:write",
+        "commands",
+        "files:write",
+        "groups:history",
+        "groups:read",
+        "im:history",
+        "im:write",
+        "users:read"
+      ]
+    }
+  },
+  "settings": {
+    "event_subscriptions": {
+      "bot_events": ["app_mention", "message.channels", "message.groups", "message.im"]
+    },
+    "org_deploy_enabled": false,
+    "socket_mode_enabled": true,
+    "token_rotation_enabled": false
+  }
+}
+```
+
+L’app reste une app interne de votre espace de travail. Elle demande le plus petit ensemble d’autorisations dont l’intégration se sert : pas de jeton utilisateur, pas d’accès aux adresses e-mail, et aucune lecture de l’historique (les messages arrivent par événements).
+
+## Configuration
+
+| Champ                                | Rôle                                                                                                                                                                                                       |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Jeton du robot                       | `xoxb-…`, OAuth & Permissions → Bot User OAuth Token. Stocké chiffré.                                                                                                                                      |
+| Jeton d’application                  | `xapp-…` avec la portée `connections:write`, Basic Information → App-Level Tokens. Stocké chiffré.                                                                                                         |
+| Envoyer les messages privés à Gladys | Activé par défaut. Désactivé : les messages des membres liés n’atteignent que les scènes.                                                                                                                  |
+| Canal par défaut                     | Facultatif. Un identifiant de canal (`C…`, tout en bas des détails du canal) ou de membre (`U…`), pour l’action de scène et le bouton de test. Invitez d’abord le robot dans ce canal (`/invite @gladys`). |
+| Langue du robot                      | Les quelques textes que le robot écrit lui-même aux membres que Gladys ne connaît pas encore (invitation, code refusé).                                                                                    |
+
+Enregistrez, puis appuyez sur **Tester la connexion** : il affiche l’espace de travail, le robot, l’état du Socket Mode, le canal par défaut (et si le robot y est) et le nombre de membres liés.
+
+### Lier votre compte Slack
+
+Chaque utilisateur le fait une fois : dans **Intégrations → Slack → Configuration**, bloc **Lier mon compte**, cliquez sur **Générer un code de liaison**, puis dans Slack envoyez le code à `@gladys` en message privé (Apps → Gladys → Messages), ou tapez `/gladys` suivi du code n’importe où. Le robot répond que le compte est lié. Le code est valable 15 minutes, une seule fois.
+
+Un membre non lié reçoit seulement une invitation à se lier (une fois par jour) : il n’atteint jamais Gladys ni les scènes. Ne liez que des personnes de confiance : un membre lié parle avec l’autorité de son utilisateur Gladys.
+
+## Utilisation
+
+### Discuter avec Gladys
+
+Écrivez à `@gladys` en message privé, comme dans le chat de Gladys : « allume la lumière de la cuisine », « quelle température fait-il dans le salon ? ». Gladys répond dans la même conversation. `/gladys <demande>` fonctionne depuis n’importe quel canal ; la réponse arrive dans le message privé, et vous seul voyez l’accusé de réception. Gladys y envoie aussi les notifications de vos scènes (« Envoyer un message » à un utilisateur) et les images de caméra (« Envoyer une image de caméra »).
+
+Les messages des autres robots, les modifications, les messages renvoyés par Slack et les messages de plus de 5 minutes (après une coupure) sont ignorés.
+
+### Widget de tableau de bord
+
+![Le widget Slack : messages du jour, membres liés, derniers messages, connexion et bouton de test (illustration générée, pas une capture d’écran)](https://raw.githubusercontent.com/William-De71/gladys-slack/main/docs/assets/widgets.fr.png)
+
+Illustration générée, pas une capture d’écran. Le widget **Slack** affiche les messages reçus et envoyés aujourd’hui, les membres liés, les derniers messages des membres liés, la connexion, l’espace de travail, le robot et le canal par défaut, avec un bouton **Envoyer un test**. Le texte des messages n’apparaît que si le réglage du widget **Afficher le texte des messages** est activé (désactivé par défaut : un tableau de bord peut être partagé).
+
+### Scènes
+
+Déclencheurs, pour les membres liés uniquement :
+
+- **Message Slack reçu** : un message privé au robot, ou un message dans un canal où le robot a été invité. Filtres : où, canal, membre, utilisateur Gladys, texte exact.
+- **Gladys mentionnée sur Slack** : `@gladys` dans un canal ; le texte sans la mention. Mêmes filtres.
+- **Commande /gladys tapée** : filtres canal, membre, utilisateur Gladys, texte exact.
+- **Message Slack non envoyé** : un message de Gladys a été refusé ; une fois par membre, jusqu’à ce qu’un message repasse.
+
+Chaque déclencheur fournit ses détails en variables, par exemple `{{triggerEvent.data.text}}`, `{{triggerEvent.data.first_name}}`, `{{triggerEvent.data.ts}}`.
+
+Action **Envoyer un message Slack** : un identifiant de canal ou de membre (vide : le canal par défaut), le texte en mise en forme Slack (`*gras*`, `<@U0123456789>`, `<https://example.com|un lien>`), et un fil facultatif. Sorties : `ts`, `channel_id`, `link`.
+
+Exemples :
+
+- `@gladys éteins tout` dans `#maison` → éteindre les lumières, puis envoyer « C’est fait ✅ » dans le fil `{{triggerEvent.data.ts}}`.
+- `/gladys bonne nuit` → lancer la scène de nuit.
+- La porte d’entrée s’ouvre alors que personne n’est là → envoyer un message dans `#maison` et une image de caméra aux utilisateurs liés.
+
+## Dépannage
+
+- **« Saisissez le jeton du robot… » / « doit commencer par xoxb- »** : le jeton du robot est le Bot User OAuth Token (`xoxb-`), pas un jeton utilisateur (`xoxp-`) ; le jeton d’application commence par `xapp-`, pas par `xoxe.xapp-` (laissez la rotation des jetons désactivée).
+- **« Slack refuse le jeton du robot »** : recopiez-le depuis OAuth & Permissions ; réinstallez l’app après avoir changé ses portées.
+- **« Slack refuse le jeton d’application »** : il lui faut la portée `connections:write`.
+- **« Le Socket Mode est désactivé »** : Settings → Socket Mode dans l’app Slack.
+- **Le robot ne répond pas à un message privé** : le compte est-il lié ? « Envoyer les messages privés à Gladys » est-il activé ? Dans l’app, App Home → « Allow users to send Slash commands and messages from the messages tab » doit être coché (c’est le cas dans le manifeste).
+- **Aucun déclencheur depuis un canal** : invitez le robot avec `/invite @gladys` ; seuls les membres liés déclenchent des scènes.
+- **« not_in_channel »** sur l’action de scène : invitez le robot dans le canal. Un nom de canal ne fonctionne pas : utilisez son identifiant.
+- Signalez un problème sur [GitHub](https://github.com/William-De71/gladys-slack/issues) avec les versions de Gladys et de l’intégration, le message de **Tester la connexion** et les journaux (`DEBUG=gladys-integration-sdk`). Ne collez jamais un jeton.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Slack dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Créer l’app Slack | `section` | Non | Intégration non officielle, sans lien avec Slack Technologies. 1. Ouvrez « Créer l’app Gladys dans Slack » ci-dessous, choisissez votre espace de travail et confirmez : l’app utilise le Socket Mode, Gladys n’a donc besoin d’aucune URL publique. 2. Basic Information → App-Level Tokens → Generate Token and Scopes, ajoutez la portée connections:write, copiez le jeton xapp-. 3. Install App → Install to Workspace, puis copiez le Bot User OAuth Token (xoxb-). 4. Collez les deux jetons ci-dessous et enregistrez. |
+| Jeton du robot | `secret` | Oui | OAuth & Permissions → Bot User OAuth Token. Stocké chiffré, il n’est plus jamais affiché. |
+| Jeton d’application | `secret` | Oui | Basic Information → App-Level Tokens, avec la portée connections:write : il ouvre la connexion Socket Mode. |
+| Discuter avec Gladys | `section` | Non | Chaque utilisateur lie une fois son compte Slack : « Lier mon compte » ci-dessous → « Générer un code de liaison », puis envoyez le code à @gladys en message privé (Slack → Apps → Gladys → Messages), ou tapez /gladys suivi du code. Ensuite, tout ce qu’il écrit à @gladys va à Gladys, qui répond au même endroit. Les membres non liés reçoivent seulement une invitation à se lier. |
+| Envoyer les messages privés à Gladys | `boolean` | Non | Désactivé : les messages et les commandes /gladys des membres liés n’atteignent que les scènes, Gladys n’y répond pas. |
+| Canaux et scènes | `section` | Non | Le robot ne voit que les canaux où il a été invité : tapez /invite @gladys dans un canal. Ses messages, les mentions de @gladys et /gladys déclenchent alors des scènes, pour les membres liés uniquement. L’identifiant d’un canal est tout en bas de ses détails (onglet À propos) : C… pour un canal public, G… ou C… pour un canal privé. |
+| Canal par défaut | `string` | Non | Facultatif. Où l’action de scène « Envoyer un message Slack » et le bouton de test publient sans cible indiquée : un identifiant de canal (invitez d’abord le robot) ou de membre. |
+| Langue du robot | `select` | Non | Langue des quelques textes que le robot écrit lui-même aux membres que Gladys ne connaît pas encore (invitation, code refusé) et du message de test. |
+
+## Comment installer Slack dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Slack apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/william-de71/gladys-slack:0.1.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/William-De71/gladys-slack](https://github.com/William-De71/gladys-slack).
+
+Slack nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Slack est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [William-De71](https://github.com/William-De71), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/William-De71/gladys-slack) — [source de cette documentation](https://github.com/William-De71/gladys-slack/blob/HEAD/docs/fr.md)

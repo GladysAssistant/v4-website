@@ -1,0 +1,234 @@
+---
+title: "NASweb Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "NASweb"
+description: "NASweb modules (nasWebio): relay outputs, inputs and temperature, locally. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-nasweb.png"
+keywords:
+  - "nasweb"
+  - "nasweb smart home"
+  - "gladys nasweb"
+  - "nasweb gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-nasweb instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"NASweb","description":"NASweb modules (nasWebio): relay outputs, inputs and temperature, locally.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-nasweb","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-nasweb.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-24T21:41:16Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+This integration brings a **NASweb module** (nasWebio, Chomtech) into Gladys,
+on your local network, without any cloud: its **relay outputs**, its
+**inputs** and its **temperature probe**.
+
+Unofficial integration, not affiliated with nasWebio. **Never tested with a
+real module**: it follows the local API used by the manufacturer's own
+library (webio-api, the one of Home Assistant's NASweb integration). Please
+report on the Gladys forum whether it works with yours.
+
+## What you get
+
+| On the module              | In Gladys                                                                |
+| -------------------------- | ------------------------------------------------------------------------ |
+| Relay output declared safe | A switch (on / off), only if you allow the commands                      |
+| Other relay output         | Its state, read only (no command at all)                                 |
+| Input                      | "Input active" (1 active, 0 normal) and "Input fault or tamper" (1 or 0) |
+| Temperature probe          | Temperature in °C, once the module reported a value                      |
+
+The outputs and inputs appear in the **Discovery** tab once the module has
+sent its first status. Alarm zones and the thermostat of the module are not
+offered (they arm, disarm or heat: out of scope for this first version).
+The module API gives no humidity value: none is offered.
+
+## How the states arrive
+
+The module **pushes** its states: it posts them to an address it was given
+(a "status subscription"). The integration container cannot receive
+anything from the network, so Gladys starts a small **receiver** next to it
+(the `nasweb-push` container, same image) and publishes one port for it,
+chosen by Gladys. The receiver starts, and its port exists, only once the
+address of the module, the login and the password are saved: until then the
+configuration screen shows `{{port:nasweb_push}}` as is; save first, then
+reload the screen. The integration subscribes the module itself to
+`http://<address of Gladys>:<that port>/nasweb/<secret>`:
+
+- the secret part is random, generated once for your installation, kept in
+  the Gladys configuration (never shown), and never written to the logs. It
+  travels **in clear** (HTTP, the module posts no other way) at every post:
+  whoever can see this traffic on your network (open Wi-Fi, port mirroring,
+  ARP spoofing) can read it and post;
+- the receiver accepts exactly that address and the POST method, 32 KB at
+  most. With the sender checked, the module may post 240 times a minute and
+  any other sender is refused (403); otherwise each sender may post 60 times
+  a minute (240 in all), and beyond that its latest post is kept and sent
+  once its minute frees. 32 connections at most, 4 per sender, 4 kept for
+  the module: over a limit, the oldest connection whose request is not
+  complete is closed (one that sent nothing first), not the new one. A connection that sends nothing is closed
+  within 10 s (about 5 s), and a request must arrive whole within about
+  11 s; everything else is refused;
+- with **Check the sender of the states** (on by default), only the address
+  of the module may post: the receiver refuses the others before anything
+  else, and the integration checks again;
+- the integration then accepts a status only if it carries the **serial
+  number** of the module. That number is no secret (it is shown in the
+  status and in the NASWEB_SERIAL parameter): it only tells another module
+  apart, not an attacker.
+
+If Docker hides the real address of the sender on your machine (every
+status then seems to come from an address like 172.x.x.1, and the status
+says so), you may turn off "Check the sender of the states". Know what it
+lets through: anyone who has read the secret address can then post forged
+states (relays, inputs, temperature), and so start your scenes.
+
+There is no other way to read the states: if no status arrives for 90
+seconds, the devices are shown **unreachable**, the module is read again
+(identity, subscription) at most once a minute, and the subscription is
+renewed every 10 minutes.
+
+## Configuration
+
+1. Give the module a **fixed IP address** in your router.
+2. In Gladys, Integrations → NASweb → Configuration:
+   - **Address of the module**: its IP address (the one of its web page),
+     optionally with its HTTPS port, for example `192.168.1.50`;
+   - **Login** and **Password** of the web page of the module. The password
+     is kept by Gladys in its database, never shown again, and only sent to
+     the module, as the module expects it (a SHA-1 hash, which is as good as
+     the password for the module: treat it as such);
+   - **Address of Gladys**: the IP address of the machine running Gladys, as
+     the module reaches it, for example `192.168.1.10` (no port);
+   - save.
+3. If your Gladys machine has a firewall, allow the port shown in the
+   configuration screen (receiver block).
+4. The status says "Connected" once the first status arrived. The outputs
+   and inputs are then in the Discovery tab.
+
+### Relay outputs: switches only when declared safe
+
+A relay may drive a lamp, but also a pump, a boiler, a heater or a gate. A
+switch is reached by "turn everything off" of voice assistants, of scenes
+and of the dashboard. So:
+
+- only the outputs listed in **Outputs declared safe** (their numbers, the
+  NASWEB_OUTPUT parameter of the Discovery tab, for example `1, 2, 5`)
+  become switches; list only loads that may be switched off or on at any
+  time;
+- every other output is its **state, read only**: no command can reach it
+  from Gladys;
+- **Allow the commands** is off by default: until you turn it on, every
+  command is refused, even on a switch.
+
+An output removed from the list keeps the switch already created in Gladys
+(its history is kept), but every command on it is refused.
+
+### When a command is accepted
+
+A command on a switch is refused (nothing sent to the module) when:
+
+- "Allow the commands" is off, or the output is not declared safe;
+- the value is not exactly on (1) or off (0);
+- the module was never identified, or no longer reports this output;
+- the last status of the module was posted more than 90 seconds ago (the
+  result could not be confirmed);
+- the module refused the login, its certificate changed, or another serial
+  number answers at its address;
+- the saved state of the integration (`/data`) cannot be read;
+- the module does not answer, or answers with an error, while its identity
+  is read again;
+- the configuration changed during the command;
+- the module answers too slowly: the identity read and the command must
+  leave within 3.5 seconds of the click (a command on the same output first
+  waits for the write of the previous one).
+
+Before each command the integration reads the identity of the module again
+(its serial number). Once the command has left, the answer is one of:
+
+- success: a status posted after the write shows the requested state,
+  within about 4 seconds of the click;
+- "Sent, without confirmation": no such status in time, no answer from the
+  module, an error answer (HTTP code) or an unreadable one;
+- "the module answered that the command failed" (its answer is not "OK");
+- "the module refused the command (login refused)": the integration then
+  stops, as for a refused login;
+- "replaced by a newer command": another command on the same output left
+  before this one was confirmed.
+
+## Security
+
+- The module serves a self-signed certificate. Its fingerprint is **pinned**
+  at the first connection (kept in `/data` before the login ever leaves);
+  another certificate is refused before anything is sent. If you replaced or
+  updated the module, the status shows the new fingerprint: press **Trust
+  the device now answering** twice within 60 seconds (the first press only
+  shows what answers). The same button accepts a new serial number (a
+  replaced module: its outputs become new devices).
+- A refused login stops everything, even after a restart: correct the
+  credentials and save, or press **Test the connection**. The integration
+  never retries by itself.
+- No credential, secret address or token is ever written to the logs, to
+  `/data` or to the status.
+
+## Buttons
+
+- **Test the connection**: reads the module now with the saved
+  configuration (even after a refused login), subscribes it to the states,
+  and says what answered. At most every 10 seconds.
+- **Trust the device now answering**: see Security.
+
+## Troubleshooting
+
+- _"waiting for its first status"_: the module does not reach Gladys. Check
+  the address of Gladys, the firewall of the Gladys machine, and that the
+  module and Gladys are on the same network (or routed). Browsing Gladys
+  through Gladys Plus or a reverse proxy does not change anything: the
+  module must reach the LAN address of the Gladys machine.
+- _"status(es) refused: they came from 172…"_: see "How the states arrive".
+- _"Module unreachable"_: check the address of the module and that its web
+  page opens.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt NASweb in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Your NASweb module, on your local network | `section` | Nein | Relay outputs, inputs and the temperature probe of a NASweb module, through its local API, without any cloud. The module sends its states to Gladys by itself (a small receiver started by Gladys next to this integration). Give the module a fixed IP address in your router. Never tested with a real module. Unofficial integration, not affiliated with nasWebio. |
+| Address of the module | `string` | Ja | The IP address of the module (the one of its web page), optionally with its HTTPS port (443 by default). |
+| Login of the module | `string` | Ja | The login of the web page of the module. |
+| Password of the module | `secret` | Ja | Kept by Gladys in its database, never shown again, sent only to the module (as the module expects it, a SHA-1 hash, over the HTTPS connection whose certificate is pinned). |
+| How the states arrive | `section` | Nein | The module sends its states to http:\/\/\<address of Gladys>:\{\{port:nasweb_push\}\}/ (port chosen by Gladys; \{\{gladys_host\}\} is how your browser reaches Gladys). The port exists once the address of the module, the login and the password are saved: save, then reload this screen. Type below the IP address of the Gladys machine as the module reaches it: the integration subscribes the module itself, with a secret address (sent in clear over HTTP by the module). Allow this port in the firewall of the Gladys machine if it has one. |
+| Address of Gladys | `string` | Nein | The IP address of the machine running Gladys on your local network, without a port. |
+| Check the sender of the states | `boolean` | Nein | Accept states only from the address of the module. Turn it off only if the status says the states come from another address because Docker hides the real one on this machine: then anyone who has read the secret address can post forged states, and so start your scenes. |
+| Relay outputs | `section` | Nein | A relay may drive a lamp, but also a pump, a boiler, a heater or a gate. A switch is reached by "turn everything off" of voice assistants and scenes: so only the outputs you declare safe become switches; the others stay read only. Commands stay off until you allow them. |
+| Outputs declared safe | `string` | Nein | The numbers of the outputs (parameter NASWEB_OUTPUT in the Discovery tab), separated by commas. Only loads that may be switched off or on at any time (a lamp, a socket for a lamp). |
+| Allow the commands | `boolean` | Nein | Off: the outputs declared safe are shown as switches but every command is refused. |
+| Language of the messages | `select` | Nein |  |
+
+## So installierst du NASweb in Gladys
+
+1. Öffne in Gladys **Integrationen**: NASweb erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-nasweb:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-nasweb](https://github.com/LM1LC3N7/gladys-nasweb).
+
+NASweb benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+NASweb ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-nasweb) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-nasweb/blob/HEAD/docs/en.md)

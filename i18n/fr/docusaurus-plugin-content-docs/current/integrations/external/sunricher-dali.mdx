@@ -1,0 +1,233 @@
+---
+title: "Intégration domotique Sunricher DALI, gratuite et open source"
+sidebar_label: "Sunricher DALI"
+description: "Passerelles DALI Sunricher (DALI Center) : luminaires, groupes, scènes et capteurs, en local. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-sunricher-dali.png"
+keywords:
+  - "sunricher dali"
+  - "domotique sunricher dali"
+  - "gladys sunricher dali"
+  - "sunricher dali gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-sunricher-dali instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Sunricher DALI","description":"Passerelles DALI Sunricher (DALI Center) : luminaires, groupes, scènes et capteurs, en local.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-sunricher-dali","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-sunricher-dali.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-24T21:40:39Z"}} />
+
+Cette intégration relie Gladys aux **passerelles DALI Sunricher** (SR-GW-EDA,
+configurée avec l'application DALI Center) **en local**, par le serveur MQTT
+intégré à la passerelle : pas de cloud, pas d'autre broker à installer.
+
+> **Jamais testée avec une vraie passerelle.** Le protocole est repris de la
+> bibliothèque PySrDaliGateway (Sunricher, Apache-2.0), utilisée par Home
+> Assistant. Non officiel, sans lien avec Sunricher.
+
+## Ce que fait l'intégration
+
+À chaque connexion, et quand vous cliquez sur « Scanner » (une fois par minute
+au plus), elle lit la liste que la passerelle tient déjà (elle ne lance jamais
+de recherche sur le bus DALI) :
+
+- **Luminaires DALI** : allumage, luminosité, et selon le type DALI la
+  température de couleur (DT8 Tc) ou la couleur (DT8 RGB, XY, RGBW, RGBWA).
+- **Groupes DALI** : allumage et luminosité du groupe. La passerelle ne donne
+  pas d'état propre au groupe : Gladys affiche « allumé » si un membre est
+  allumé, « éteint » si tous le sont (inconnu tant qu'un membre est inconnu).
+- **Scènes** : un bouton « Activer la scène » par scène de la passerelle. Les
+  scènes se créent et se modifient dans DALI Center.
+- **Détecteurs de mouvement** : mouvement (instantané) et présence (reste
+  active jusqu'à « zone libre »).
+- **Capteurs de luminosité** : lux (valeurs de 0 à 1000 ; une valeur hors de
+  cette plage est ignorée).
+- **Boutons poussoirs DALI-2** : pas d'appareil, mais un **déclencheur de
+  scène** « Bouton poussoir DALI » (bouton, numéro de touche, événement :
+  appuyé, maintenu, appuyé deux fois, tourné, relâché).
+
+Les états arrivent en temps réel (la passerelle les envoie). Pas encore pris en
+charge : la consommation d'énergie des luminaires, l'identification
+(clignotement), les réglages des capteurs et des drivers.
+
+## 1. Appairage : obtenir les identifiants de la passerelle
+
+La passerelle ne donne son **nom d'utilisateur** et son **mot de passe** MQTT
+qu'après un appui sur son bouton, en réponse à une demande envoyée sur le
+réseau local en multidiffusion UDP. Le conteneur d'une intégration Gladys ne
+voit pas la multidiffusion du réseau (pont Docker) : l'appairage se fait donc
+**une fois**, par une petite commande sur la machine de Gladys (ou tout
+ordinateur du même réseau avec Node.js 22 ou plus) :
+
+```bash
+docker run --rm -it --network host --log-driver none --read-only \
+  --cap-drop ALL --security-opt no-new-privileges \
+  ghcr.io/lm1lc3n7/gladys-sunricher-dali:<version> node scripts/pair.mjs
+```
+
+(remplacez `<version>` par la version installée, affichée dans Gladys ; depuis
+une copie du dépôt : `node scripts/pair.mjs`).
+
+`--network host` sert seulement à recevoir la multidiffusion du réseau ; le
+conteneur est supprimé à la fin (`--rm`). `--log-driver none` empêche Docker de
+garder la sortie (donc le mot de passe) dans ses journaux ; les autres options
+retirent au conteneur tout droit dont il n'a pas besoin.
+
+1. Lancez la commande : elle cherche les passerelles pendant 3 minutes.
+2. Appuyez **une fois, brièvement**, sur le bouton **Reset** de la passerelle.
+3. La commande affiche l'**adresse**, le **port MQTT**, le **numéro de série**,
+   le **nom d'utilisateur**, le **mot de passe** et si la passerelle utilise
+   **TLS**.
+4. Recopiez ces valeurs dans la configuration de l'intégration, puis effacez
+   le terminal : le mot de passe n'est affiché que là (la commande ne l'écrit
+   dans aucun fichier ; avec `--log-driver none`, Docker ne le garde pas non
+   plus).
+
+Options : `--serial <numéro>` (seulement cette passerelle), `--timeout
+\<secondes>`. Si plusieurs passerelles répondent, la première avec des
+identifiants est affichée : relancez avec `--serial` pour les autres.
+
+Si la passerelle répond en multidiffusion, sa réponse (et donc ses
+identifiants, simplement brouillés) est lisible par tout appareil du réseau
+pendant l'appairage : c'est inhérent au protocole de la passerelle.
+
+La demande et la réponse sont brouillées avec une clé fixe publiée dans
+PySrDaliGateway : c'est une convention du protocole de la passerelle, pas une
+protection. Le champ `type: "HA"` de la demande est celui de la bibliothèque
+publiée par Sunricher pour Home Assistant ; aucune autre valeur n'est
+documentée.
+
+## 2. Configuration
+
+- **Adresse de la passerelle** : son adresse IP (donnez-lui une adresse fixe
+  dans votre box).
+- **Port MQTT** : celui affiché par l'appairage (1883 par défaut).
+- **Numéro de série** : tel qu'affiché (sur la SR-GW-EDA, l'adresse MAC sans
+  séparateurs ; `A1:B2:…` est accepté, et 12 chiffres hexadécimaux sont mis en
+  majuscules ; un autre format est gardé tel quel, majuscules comprises). Il fait partie des
+  sujets MQTT : l'intégration ne prend que les messages de **ce** numéro de
+  série, et ignore un message qui annonce un autre numéro.
+- **Nom d'utilisateur** et **mot de passe** : ceux de l'appairage. Le mot de
+  passe est gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement à
+  la passerelle, jamais écrit dans les journaux.
+- **TLS** : seulement si l'appairage indique `TLS: yes`.
+- **Empreinte du certificat** (TLS seulement, facultatif) : vide, le premier
+  certificat vu doit être signé par l'autorité racine de Sunricher (celle de
+  PySrDaliGateway, embarquée dans l'intégration) ; il est alors épinglé et
+  gardé dans `/data` **avant** l'envoi du mot de passe. Saisie, c'est elle qui
+  est attendue, signée par Sunricher ou non.
+- **Langue des noms** : pour les appareils sans nom dans la passerelle.
+
+Le bouton **Tester la connexion** tente une connexion (si aucune n'est en
+cours) et affiche ce qui a été lu.
+
+## Sécurité et limites
+
+- **Sans TLS** (fonctionnement par défaut de la passerelle), le nom
+  d'utilisateur et le mot de passe circulent **en clair** sur votre réseau
+  local : l'état de l'intégration le rappelle. Avec TLS, un premier certificat
+  qui n'est pas signé par Sunricher est refusé : **rien n'est envoyé**, arrêt
+  sans nouvel essai, l'état affiche son empreinte (à saisir seulement si vous
+  êtes sûr que c'est votre passerelle). Si `/data` ne peut pas garder
+  l'empreinte, rien n'est envoyé non plus. Ensuite le certificat est
+  épinglé ; s'il change, **rien n'est envoyé**, la connexion s'arrête sans
+  nouvel essai et l'état affiche les deux empreintes. Si vous avez remplacé ou
+  réinitialisé la passerelle, saisissez la nouvelle empreinte. Vider le champ
+  ne fait pas réapprendre un certificat.
+- **Identifiants refusés** (réponse 4 ou 5 de la passerelle, ou deux
+  connexions de suite fermées ou sans réponse dans les 15 s après l'envoi des
+  identifiants) : arrêt gardé dans `/data`, **aucun nouvel essai**, même après
+  un redémarrage. Il se lève en changeant la configuration (nouveaux
+  identifiants après un nouvel appairage, y compris saisis pendant que
+  l'intégration était arrêtée), ou par « Tester la connexion » une fois qu'une
+  connexion réussit. Pour reconnaître des identifiants changés, `/data` garde
+  8 bits d'une empreinte salée du couple refusé (jamais d'un couple accepté) :
+  inutilisable pour le retrouver ; dans 1 cas sur 256, des identifiants
+  nouveaux lui ressemblent et il faut cliquer sur « Tester la connexion ». Une
+  erreur de protocole de la passerelle est une coupure ordinaire (nouvel essai
+  espacé).
+- **Une seule session MQTT** à la fois ; reconnexions espacées de 10 s, 30 s,
+  1 min, 2 min puis 5 min ; un conteneur qui redémarre en boucle se connecte
+  au plus une fois par 10 s (heure de la tentative gardée dans `/data`).
+- **Messages bornés** : 512 Ko au plus par message, listes et noms bornés,
+  1 000 messages par 10 s au plus ; un message mal formé ou d'un autre numéro
+  de série est ignoré.
+- **Nombreux luminaires** : les commandes de même nature envoyées en moins de
+  100 ms partent dans un seul message MQTT (32 appareils par message) ; Gladys
+  reçoit au plus 240 états par minute, luminaires et détecteurs de mouvement
+  d'abord ; une valeur inchangée n'est renvoyée que toutes les 30 minutes.
+
+## Commandes
+
+Une commande est **acquittée quand elle est écrite vers la passerelle** ; le
+luminaire (ou les membres du groupe, ou les luminaires du bus après une scène)
+est relu 1,5 s plus tard et Gladys reçoit l'état réel. Une commande est
+**refusée, rien n'est envoyé**, exactement dans ces cas :
+
+- l'intégration n'est pas connectée à la passerelle, ou la connexion s'est
+  coupée avant l'écriture du message ;
+- la commande n'a pas pu partir dans les 3,5 s ;
+- l'appareil n'est pas (ou plus) dans la liste lue de la passerelle, ou
+  appartient à une autre passerelle ;
+- la valeur n'est pas comprise (allumage autre que 0 ou 1, luminosité hors de
+  0 à 100, température hors de 153 à 500 mired, couleur hors de 0 à 16777215,
+  scène autre que 1, valeur vide) ;
+- la fonctionnalité est en lecture seule (capteurs).
+
+Une luminosité au-dessus de 0 allume aussi le luminaire ; 0 l'éteint.
+
+## Identifiants externes
+
+Règle figée (elle fixe les appareils, leur historique et vos scènes) :
+`light:<série>-<bus>-<adresse>`, `motion:…`, `illuminance:…`,
+`group:<série>-<bus>-<groupe>`, `scene:<série>-<bus>-<scène>`, avec le numéro
+de série en minuscules, le bus DALI (canal) et l'adresse courte DALI. Changer
+l'adresse DALI d'un driver crée un nouvel appareil dans Gladys.
+
+## Dépannage
+
+- **« Connecté, mais la passerelle ne répond pas sur les sujets de ce numéro
+  de série »** : vérifiez le numéro de série (celui de l'appairage).
+- **Injoignable** : vérifiez l'adresse IP et le port ; un pare-feu de l'hôte
+  peut bloquer le trafic du pont Docker vers le réseau local.
+- **Un luminaire manque** : il doit être ajouté à la passerelle dans DALI
+  Center, puis « Scanner » dans l'onglet Découverte.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Sunricher DALI dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre passerelle DALI | `section` | Non | Pour les passerelles DALI Sunricher (SR-GW-EDA, application DALI Center). L'intégration dialogue avec la passerelle sur votre réseau par le serveur MQTT de la passerelle elle-même : pas de cloud, pas d'autre broker. Elle lit les appareils, groupes et scènes configurés sur la passerelle : luminaires DALI (allumage, luminosité, température de couleur ou couleur), groupes DALI, scènes (un bouton pour rappeler chacune), détecteurs de mouvement et capteurs de luminosité ; les touches des boutons poussoirs DALI-2 deviennent des déclencheurs de scène. La passerelle ne donne son nom d'utilisateur et son mot de passe qu'à l'appairage : suivez le guide (une commande sur un ordinateur de votre réseau, puis le bouton de la passerelle). Une seule connexion à la fois. Jamais testé avec une vraie passerelle. Non officiel, sans lien avec Sunricher. |
+| Adresse de la passerelle | `string` | Oui | Son adresse IP sur votre réseau, telle que l'appairage l'affiche ; donnez-lui une adresse fixe dans votre box. |
+| Port MQTT de la passerelle | `number` | Non | Tel que l'appairage l'affiche (1883 sauf indication contraire). |
+| Numéro de série de la passerelle | `string` | Oui | Tel que l'appairage l'affiche (sur la SR-GW-EDA, son adresse MAC sans séparateurs ; 12 chiffres hexadécimaux sont mis en majuscules). L'intégration ne prend que les messages de cette passerelle. |
+| Nom d'utilisateur (de l'appairage) | `string` | Oui |  |
+| Mot de passe (de l'appairage) | `secret` | Oui | Gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement à la passerelle, jamais écrit dans les journaux. En TLS, envoyé seulement une fois le certificat de la passerelle vérifié (signé par Sunricher à la première connexion, puis celui épinglé). |
+| TLS (si l'appairage indique que la passerelle l'utilise) | `boolean` | Non | Sans TLS, le nom d'utilisateur et le mot de passe circulent en clair sur votre réseau (MQTT simple, comme la passerelle fonctionne par défaut). Avec TLS, le certificat de la passerelle doit être signé par Sunricher à la première connexion, puis il est épinglé. |
+| Empreinte du certificat (TLS seulement) | `string` | Non | Facultatif : l'empreinte SHA-256 du certificat de la passerelle. Vide, le premier certificat vu est gardé s'il est signé par Sunricher ; saisissez une empreinte pour accepter un certificat que Sunricher n'a pas signé. Si le certificat change ensuite, rien n'est envoyé et l'état affiche la nouvelle empreinte : saisissez-la ici seulement si vous avez remplacé ou réinitialisé la passerelle. |
+| Langue des noms | `select` | Non | Sert aux noms des appareils et fonctionnalités ajoutés désormais, quand la passerelle ne donne pas de nom. |
+
+## Comment installer Sunricher DALI dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Sunricher DALI apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-sunricher-dali:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-sunricher-dali](https://github.com/LM1LC3N7/gladys-sunricher-dali).
+
+Sunricher DALI nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Sunricher DALI est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-sunricher-dali) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-sunricher-dali/blob/HEAD/docs/fr.md)

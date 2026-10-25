@@ -1,0 +1,128 @@
+---
+title: "Vestel EVC04 Wallbox Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Vestel EVC04 Wallbox"
+description: "Steuert und überwacht die Vestel EVC04 Wallbox im lokalen Netz über Modbus TCP. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/placeholder.png"
+keywords:
+  - "vestel evc04 wallbox"
+  - "vestel evc04 wallbox smart home"
+  - "gladys vestel evc04 wallbox"
+  - "vestel evc04 wallbox gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/tomgermany/gladys-vestel-evc04 instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Vestel EVC04 Wallbox","description":"Steuert und überwacht die Vestel EVC04 Wallbox im lokalen Netz über Modbus TCP.","owner":"tomgermany","owner_avatar_url":"https://avatars.githubusercontent.com/u/535105?v=4","repo_url":"https://github.com/tomgermany/gladys-vestel-evc04","cover_url":"https://integration-store-storage.gladysassistant.com/covers/placeholder.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-24T21:05:42Z"}} />
+
+Diese Community-Integration verbindet eine Vestel-EVC04-Home-Wallbox über **Modbus TCP** mit [Gladys Assistant](https://gladysassistant.com/). Sie liest Lademesswerte aus und steuert den erlaubten Ladestrom lokal. Eine Hersteller-Cloud, ein OCPP-Backend oder ein Benutzerkonto sind nicht erforderlich.
+
+## Voraussetzungen
+
+- Gladys Assistant **5.1.0 oder neuer**.
+- Modbus TCP ist an der Wallbox aktiviert.
+- Wallbox und Gladys-Host sind im selben Netzwerk erreichbar.
+- Standard-Modbus-Port: **502**; Standard-Unit-ID: **255**.
+
+Die EVC04 unterstützt nur **einen Modbus-Master gleichzeitig**. Die Integration nutzt deshalb eine gemeinsame Verbindung für Messwerte, Verbindungstests und Steuerbefehle. Es darf nicht gleichzeitig ein zweiter Modbus-Client mit der Wallbox verbunden sein.
+
+## Installation und Konfiguration
+
+Installiere die Integration über das Integrationssystem von Gladys. Das Container-Image wird hier veröffentlicht:
+
+`ghcr.io/tomgermany/gladys-vestel-evc04:latest`
+
+Konfiguriere die IP-Adresse oder den mDNS-Namen der Wallbox (ohne `http://`), den Modbus-Port, die Unit-ID, das Messwert-Aktualisierungsintervall und die Heartbeat-Frist. Für eine stabile Adresse empfiehlt sich eine DHCP-Reservierung.
+
+| Einstellung | Standard | Beschreibung |
+| --- | --- | --- |
+| Wallbox-Adresse | — | IP-Adresse oder mDNS-Name |
+| Modbus-Port | `502` | Nur ändern, wenn ein anderer Port verwendet wird |
+| Modbus-Unit-ID | `255` | Standardwert der EVC04 |
+| Aktualisierungsintervall | 5 Minuten | Möglich sind 1, 5, 15, 30 oder 60 Minuten |
+| Heartbeat-Frist | 20 Sekunden | Gilt bei aktiver Ladestromsteuerung |
+
+Nach dem Speichern kannst du mit **Verbindung prüfen** die Kommunikation über die bestehende Verbindung testen.
+
+## Messwerte und Aktualisierung
+
+Die Integration stellt Ladezustand, Leistung, Strom, Spannung und Energie in Gladys bereit. Das Aktualisierungsintervall bestimmt, wie oft diese Werte neu eingelesen werden. Ein fehlgeschlagener Lesevorgang wird protokolliert; anschließend versucht die Integration einmal, über einen neuen Socket wieder eine Verbindung herzustellen. Bei fünf Minuten Intervall kann ein Verbindungsproblem erst bei der nächsten regulären Abfrage auffallen.
+
+## Ladestromsteuerung und Heartbeat
+
+Der erlaubte Ladestrom wird über das Modbus-Register `5004` eingestellt. Die Wallbox besitzt keinen separaten Start-/Stopp-Befehl. Ob geladen wird, hängt davon ab, ob das Fahrzeug Strom aufnimmt.
+
+- Der Sollstrom wird auf mindestens **6 A** und höchstens auf den von Wallbox und Kabel erlaubten Wert begrenzt.
+- Das Dashboard-Widget bietet Tasten zum Erhöhen und Verringern des Ladestroms. Die Schrittweite kann je Widget auf **1, 2 oder 5 A** eingestellt werden.
+- Gladys-Szenen können mit der Aktion **Ladestrom setzen** einen Wert vorgeben.
+- Während eine Ladestromvorgabe aktiv aufrechterhalten wird, sendet die Integration über Register `6000` einen Heartbeat. Bei der Standardfrist von 20 Sekunden geschieht dies ungefähr alle 10 Sekunden, mindestens jedoch im Abstand von 3 Sekunden.
+- Bleibt der Heartbeat aus, fällt die Wallbox auf ihren Failsafe-Strom zurück. Der Heartbeat ist unabhängig vom Messwertintervall und kann eine festgefahrene Wallbox nicht neu starten.
+
+## Gladys-Szenen
+
+Die Integration stellt **zwei Szenen-Auslöser** und **eine Szenen-Aktion** bereit.
+
+### Szenen-Auslöser
+
+- **Wallbox lädt** – wird beim Wechsel in den Ladezustand ausgelöst.
+- **Wallbox beendet** – wird beim Wechsel aus dem Ladezustand ausgelöst.
+
+Je nach Auslöser stehen Variablen wie Leistung, Ladestrom, Zählerstand, Sitzungsenergie und Dauer zur Verfügung.
+
+### Szenen-Aktion
+
+- **Ladestrom setzen** – eine Szene kann damit den gewünschten Ladestrom in Ampere vorgeben. Der Wert wird auf mindestens **6 A** und höchstens auf den von Wallbox und Kabel erlaubten Maximalstrom begrenzt.
+
+## Fehlerbehebung
+
+- **Keine Antwort:** Prüfe die Adresse, die Netzwerkverbindung und die Aktivierung von Modbus TCP.
+- **Falsche Unit-ID:** Der Standardwert ist `255`, nicht `1`.
+- **Verbindung belegt:** Trenne andere Modbus-Clients von der EVC04.
+- **Messwerte sind veraltet:** Prüfe das Aktualisierungsintervall oder führe **Verbindung prüfen** aus.
+- **Wallbox reagiert nicht mehr:** Der Heartbeat kann den Failsafe-Strom aktivieren, aber die Integration kann die Wallbox nicht aus- und einschalten oder einen Firmware-Hänger beheben.
+
+## Hersteller- und Markenhinweis
+
+Dies ist eine unabhängige Community-Integration für Gladys Assistant. Sie wird weder von Vestel entwickelt noch unterstützt oder offiziell freigegeben. **Vestel** und **EVC04** sind Herstellerbezeichnungen. Marken, Logos und Produktdarstellungen gehören ihren jeweiligen Rechteinhabern und dienen ausschließlich der Identifikation des unterstützten Produkts.
+
+## Lizenz
+
+Apache-2.0.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Vestel EVC04 Wallbox in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Adresse der Wallbox | `string` | Ja | IP-Adresse oder mDNS-Name, ohne http:\/\/ und ohne Schrägstrich. Eine feste IP per DHCP-Reservierung ist robuster als ein Name. |
+| Modbus-Port | `number` | Nein | Standard 502. Nur ändern, wenn der Port in der Wallbox umgestellt wurde. |
+| Modbus Unit ID | `number` | Nein | Die EVC04 antwortet auf Unit ID 255. Nur ändern, wenn dein Gerät anders konfiguriert ist. |
+| Aktualisierungsintervall in Minuten | `select` | Nein | Wie oft die Messwerte gelesen und an Gladys übergeben werden. Wähle ein Intervall in Minuten. |
+| Ladestrom | `section` | Nein | Die Wallbox kennt kein Ein- und kein Ausschalten: ein Ladevorgang beginnt, wenn das Fahrzeug den Strom annimmt, und endet, wenn es aufhört zu ziehen. Was sich setzen lässt, ist der erlaubte Ladestrom in Register 5004 — zwischen 6 A, wie in der Hersteller-App, und dem Maximum, das die Wallbox selbst meldet. Solange ein Wert gilt, hält die Integration den Alive-Register (6000). |
+| Herzschlag-Frist in Sekunden | `number` | Nein | Wird NICHT auf die Wallbox geschrieben. Sie bestimmt nur, wie oft der Herzschlag (Register 6000) bedient wird: die halbe Frist, mindestens alle 3 Sekunden. Werkseitig sind es 20 Sekunden. |
+
+## So installierst du Vestel EVC04 Wallbox in Gladys
+
+1. Öffne in Gladys **Integrationen**: Vestel EVC04 Wallbox erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/tomgermany/gladys-vestel-evc04:latest`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/tomgermany/gladys-vestel-evc04](https://github.com/tomgermany/gladys-vestel-evc04).
+
+Vestel EVC04 Wallbox benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Vestel EVC04 Wallbox ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [tomgermany](https://github.com/tomgermany) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/tomgermany/gladys-vestel-evc04) — [Quelle dieser Dokumentation](https://github.com/tomgermany/gladys-vestel-evc04/blob/HEAD/docs/de.md)

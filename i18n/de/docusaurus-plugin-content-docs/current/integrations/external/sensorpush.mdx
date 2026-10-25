@@ -1,0 +1,254 @@
+---
+title: "SensorPush Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "SensorPush"
+description: "Unofficial connector: your SensorPush sensors, through the SensorPush cloud (G1 gateway). Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-sensorpush.png"
+keywords:
+  - "sensorpush"
+  - "sensorpush smart home"
+  - "gladys sensorpush"
+  - "sensorpush gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-sensorpush instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"SensorPush","description":"Unofficial connector: your SensorPush sensors, through the SensorPush cloud (G1 gateway).","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-sensorpush","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-sensorpush.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-23T18:49:01Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+**Unofficial connector, not affiliated with SensorPush.** It brings into
+Gladys the **SensorPush** sensors of your account (HT1, HT.w, HTP.xw...),
+read through the **official SensorPush Gateway Cloud API**.
+
+> **This integration has never been tested with a real sensor.** It follows
+> the official API description and the libraries of the SensorPush Cloud
+> integration of Home Assistant. Please report what you see on the Gladys
+> forum.
+
+## What you need
+
+- A **SensorPush G1 Wi-Fi gateway**: it relays the sensors to the SensorPush
+  cloud. The sensors themselves speak Bluetooth, which this integration does
+  not use (a Gladys integration runs in a container without Bluetooth).
+- The **API access** of your account activated: sign in once on
+  [dashboard.sensorpush.com](https://dashboard.sensorpush.com) with the
+  e-mail and the password of the SensorPush app, and accept the terms of the
+  API if asked.
+
+## What you get
+
+One Gladys device per sensor, named as in the SensorPush app:
+
+| Feature                 | Unit               | Notes                                                   |
+| ----------------------- | ------------------ | ------------------------------------------------------- |
+| Temperature             | °C                 | the room temperature of Gladys                          |
+| Humidity                | %                  |                                                         |
+| Pressure                | hPa                | HTP.xw only                                             |
+| Dew point               | °C                 | a probe: kept out of the room temperature average       |
+| Vapour pressure deficit | kPa                | useful for a greenhouse or a grow room                  |
+| Battery voltage (V)     | none (in the name) | about 3 V new; replace the battery below about 2.6 V    |
+| Signal (dB)             | none (in the name) | the Bluetooth signal between the sensor and its gateway |
+
+- Only what your sensor measures is created (an HT1 has no pressure).
+- SensorPush sends °F and inHg: converted to °C and hPa by the integration,
+  the units Gladys lists for each kind of sensor. Gladys has no unit for a
+  voltage nor a signal in dB: these two are plain values without unit in
+  Gladys, the unit is only written in their name.
+- The names of the features are in English; rename them when you create
+  them if you wish.
+
+## Installation
+
+1. Install the integration from the Gladys catalog (Gladys 5.1 or newer).
+2. In the **Configuration** screen, enter the **e-mail address** and the
+   **password** of your SensorPush account.
+3. Click **Test SensorPush**: the message shows the main values of each
+   sensor.
+4. Open the **Discovery** tab and add the devices. Their values arrive as
+   soon as they are created.
+
+## Configuration
+
+- **E-mail address** and **password**: the password is kept by Gladys in its
+  database (in clear, like every secret field of Gladys) and never shown
+  again in the configuration screen. It is sent only to SensorPush
+  (`api.sensorpush.com`), in the body of the sign-in request, never in a
+  URL, a log, a status nor under `/data`. Neither is the e-mail address, nor
+  the access token SensorPush gives back (kept in memory only).
+- **Read interval**: 5 minutes by default, 1 to 60. The official page of the
+  API ([sensorpush.com/gateway-cloud-api](https://www.sensorpush.com/gateway-cloud-api))
+  asks not to make requests more than once a minute; the gateway uploads
+  about once a minute.
+
+## How often SensorPush is read
+
+- At each interval, a read sends **one request** for the last sample of
+  every sensor (`POST /samples`, one sample each).
+- A **sign-in** (`POST /oauth/authorize`, then `POST /oauth/accesstoken`:
+  two requests) gives an access token. The swagger of the API and the Home
+  Assistant library give it one hour, the official page 12 hours: it is used
+  50 minutes at most. There is no refresh token in this flow: a new token
+  means the e-mail and the password again.
+- The **sensor list** (`POST /devices/sensors`: names, battery, signal, one
+  request) is read at the start, then every hour, and when a sample comes
+  from a sensor not known yet (at most every 30 minutes); once sensors are
+  known, not in a read that signs in, unless the list is more than 2 hours
+  old (with an interval of 50 minutes or more, every read signs in: the
+  list is then read every 2 hours or so). The battery and the signal of a
+  list more than 2 hours old are no longer published.
+- So a read sends 1 request most of the time, 3 when it signs in (every 50
+  minutes) or reads the list (every hour), and 4 for the very first read or
+  a late list: the limit of one request a minute is applied **per read**,
+  the requests of a read follow each other at once. With 2 minutes or more,
+  the integration stays **on average** under one request a minute; the
+  requests of one read still follow each other.
+- If a request refuses a token taken from memory, the integration signs in
+  **once** more and asks again. A token obtained in the same read and
+  refused (the API access of the account not activated, for example) is a
+  **final stop**, like a refused password: no more automatic sign-in, even
+  after a restart, until you change the e-mail or the password or press the
+  test button. Never more than one sign-in per read.
+- **Never faster than the interval**, counted from the last read: not by the
+  test button, a reconnection to Gladys, a saved configuration, the
+  Discovery tab nor a restart of the container. Only other credentials are
+  tried at once. Before the interval has passed, the test button shows the
+  last values and the time of the next possible read.
+- **Read only**: the integration never writes anything to a sensor, a
+  gateway nor the account.
+- When SensorPush answers **429 or a 5xx**, it is left alone for the
+  `Retry-After` delay given, else 5 minutes, then 10, 20...; always between
+  1 minute and 6 hours. A 429 on the sign-in is a pause too, never a refused
+  password.
+- When SensorPush **refuses the e-mail or the password**, the sign-ins stop
+  **for good** and the status says so: no new try on its own, even after a
+  restart, so that the account is never locked by repeated attempts. Change
+  the e-mail or the password (it is then tried at once), or press the test
+  button once the interval has passed (one try; the stop is lifted only if
+  it works). Clearing a field then typing it again, or saving the
+  configuration, never lifts the refusal.
+- An e-mail address without "@", or an e-mail or a password holding a line
+  break or a control character (a bad copy), is refused at once ("not
+  valid") and never sent.
+
+## Which values reach Gladys
+
+- A sample is recognised by its own instant (`observed`, as SensorPush gives
+  it): each sample is handed to Gladys **once**. The last `observed` handed
+  over is kept under `/data` (written at once by a clean stop), so a restart
+  does not send it again; only a brutal stop within the minute after a read
+  may send it once more. A sensor
+  that stops reporting therefore sends **nothing** until it reports again:
+  neither its measures nor its battery nor its signal, which are only sent
+  together with a new sample.
+- Its age is measured with the clock of SensorPush (the `Date` of its
+  answer), so a Gladys clock that is off never makes it look older or newer.
+  A new sample at most 10 minutes old (or the interval + 2 minutes) is sent
+  as the current value; older, up to one hour, it is sent **dated** (Gladys
+  records it at its real time and no scene fires); older than one hour, it
+  is never sent, whatever the interval. A sample more than 5 minutes ahead
+  of the clock of SensorPush is ignored.
+- A device created later gets the last sample dated, if it is less than an
+  hour old.
+- If the sensor list fails while sensors are known, their samples are still
+  read; the list is tried again 30 minutes later.
+
+## What is kept under `/data`
+
+The instant of the last read, the pause, the refusal and the sensors met
+(id, name, model, measures, `observed` of the last sample handed to Gladys:
+nothing secret, never the e-mail address nor the MAC address of a sensor)
+survive a reconnection and a restart of the container. The instant of a
+read is written before its requests leave, and the file is written at most
+once per minute but for a pause, a refusal or a new sensor (written at
+once). Only while the account is refused, the file keeps a salted
+fingerprint (scrypt) of the refused e-mail and password, so that after a
+restart other credentials are tried at once; it is erased by the first
+sign-in that works, so nothing in the file can confirm a password that
+works.
+
+At most 50 sensors are read; at most 250 values are sent to Gladys per
+minute; an answer larger than 1 MB, or slower than 15 seconds, is
+abandoned.
+
+## External ids
+
+`ext:sensorpush:sensor:<sensor id>`, the sensor id being the one of the
+SensorPush API, of the form `<digits>.<digits>`, its dot replaced by `-`
+(`16825929.17287013094063749210` gives `16825929-17287013094063749210`),
+then `:<feature>` (`temperature`, `humidity`, `pressure`, `dew_point`,
+`vpd`, `battery_voltage`, `signal`). Two sensor ids never give the same
+external id; an entry of another form is not taken as a sensor. These ids
+never change.
+
+## Troubleshooting
+
+- **"e-mail or password refused"**: check them in the SensorPush app, and
+  that the API access is activated on dashboard.sensorpush.com. Then change
+  them in the configuration, or press the test button.
+- **"data refused even with a new sign-in"**: the API access is probably not
+  activated for the account: sign in on dashboard.sensorpush.com and accept
+  the terms of the API, then press the test button (or change the
+  password).
+- **"no recent reading"**: the sensor has not been heard by a gateway for
+  more than an hour (out of range, empty battery, gateway offline).
+- Logs: the level is set with the `LOG_LEVEL` variable.
+
+## Privacy
+
+The integration talks only to `api.sensorpush.com`, over HTTPS, with your
+e-mail address and password (sign-in) and then the access token. Of the
+answers, it keeps only the id, name and model of each sensor and its
+measures.
+
+## Credits
+
+Built after [sstallion/sensorpush-api](https://github.com/sstallion/sensorpush-api)
+(BSD 2-Clause, Steven Stallion), the client of the SensorPush API generated
+from its official description, and
+[sstallion/sensorpush-ha](https://github.com/sstallion/sensorpush-ha) (BSD
+2-Clause, Steven Stallion), the library of the SensorPush Cloud integration
+of Home Assistant: the routes, the sign-in, the fields and their units are
+ported to JavaScript. Their notices are in `THIRD_PARTY_NOTICES.md`.
+SensorPush is a trademark of its owner; this connector is free and
+unofficial.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt SensorPush in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| SensorPush in Gladys | `section` | Nein | Unofficial connector, not affiliated with SensorPush. It reads the SensorPush sensors of your account (HT1, HT.w, HTP.xw...) through the official SensorPush Gateway Cloud API: temperature, humidity, pressure, dew point, vapour pressure deficit, battery voltage and radio signal. A SensorPush G1 Wi-Fi gateway is needed: the sensors themselves speak Bluetooth, which this integration does not use. The API access of your account must be activated once on dashboard.sensorpush.com. Read only: nothing is ever changed on a sensor, a gateway or the account. Never tested with a real sensor yet. |
+| E-mail address | `string` | Nein | The e-mail address of your SensorPush account (the one of the SensorPush app). |
+| Password | `secret` | Nein | The password of your SensorPush account. Kept by Gladys in its database, never shown again; sent only to SensorPush (api.sensorpush.com) to sign in, never in a URL nor a log. A refused password is never tried again on its own. |
+| Read interval (minutes) | `number` | Nein | Each read sends one request for the last values of every sensor; 2 more when it signs in (every 50 minutes) or 1 more when it reads the sensor list (every hour), one right after the other. Nothing reads sooner, not even the test button or a restart. The official API page asks for no more than one request a minute: with 2 minutes or more, the integration stays under it on average (the requests of one read still follow each other). |
+
+## So installierst du SensorPush in Gladys
+
+1. Öffne in Gladys **Integrationen**: SensorPush erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-sensorpush:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-sensorpush](https://github.com/LM1LC3N7/gladys-sensorpush).
+
+SensorPush benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+SensorPush ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-sensorpush) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-sensorpush/blob/HEAD/docs/en.md)

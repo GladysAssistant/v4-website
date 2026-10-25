@@ -1,0 +1,252 @@
+---
+title: "GeoJSON & GeoRSS feeds smart home integration, free and open source"
+sidebar_label: "GeoJSON & GeoRSS feeds"
+description: "Located events (earthquakes, fires, alerts) from GeoJSON or GeoRSS feeds, near your home. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-geofeeds.png"
+keywords:
+  - "geojson & georss feeds"
+  - "geojson & georss feeds smart home"
+  - "gladys geojson & georss feeds"
+  - "geojson & georss feeds gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-geofeeds instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"GeoJSON & GeoRSS feeds","description":"Located events (earthquakes, fires, alerts) from GeoJSON or GeoRSS feeds, near your home.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-geofeeds","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-geofeeds.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-24T06:11:20Z"}} />
+
+A generic reader of **located event feeds** for Gladys Assistant: paste the address of up to five
+feeds (USGS earthquakes, GDACS alerts, NSW Rural Fire Service fires, the feed of a local
+authority…), and Gladys follows the events within a radius of your house, shows them on the
+dashboard and starts a scene when one appears or disappears.
+
+Formats read: **GeoJSON** (`FeatureCollection`), **GeoRSS** (Simple and GML), **W3C geo**
+(`geo:lat` / `geo:long`), **RSS 2.0**, **RSS 1.0** and **Atom**.
+
+For worldwide disasters or European earthquakes, the dedicated integrations
+[GDACS](https://github.com/guim31/gladys-gdacs) and [EMSC](https://github.com/guim31/gladys-emsc)
+know their sources better (alert levels, magnitude revisions): this one is for any other feed.
+
+A complement, not a safety alert system: follow the instructions of your local authorities.
+
+## What you get
+
+- One **device per feed**: the number of events in the area, the distance and title of the
+  nearest one, the latest event in words, and a badge telling whether the feed can be read.
+- A **dashboard widget**: the current events of each feed, then the nearest ones.
+- Two **scene triggers**: a new event in the area, an event removed.
+- A **scene action** that reads the events of your area as one sentence.
+
+## Requirements
+
+- Gladys Assistant 5.1.0 or later.
+- Internet access from Gladys (the feeds are read by the integration container).
+- The location of your house in Gladys (Settings → Houses), or coordinates typed in the
+  configuration. Without either, only feeds with the radius "Whole feed" work.
+- The address of a public feed. A few that work:
+  - USGS earthquakes of the last day:
+    `https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson`
+  - GDACS disaster alerts: `https://www.gdacs.org/xml/rss.xml`
+  - NSW Rural Fire Service major incidents: `https://www.rfs.nsw.gov.au/feeds/majorIncidents.json`
+
+## Configuration
+
+### Settings
+
+For each of the five feeds:
+
+| Setting                     | Use                                                                                     |
+| --------------------------- | --------------------------------------------------------------------------------------- |
+| Feed address                | http or https, 5 MB at most. Empty: the slot is not used.                               |
+| Name                        | Shown in the widget and the scenes. Empty: "Geo feed 1 (host)".                         |
+| Radius                      | Distance from the centre to the event. "Whole feed": every event, for a local feed.     |
+| Categories (optional)       | Keep only the events whose category contains one of these words (commas between words). |
+| Numeric property (optional) | A numeric property of the events, `mag` for the USGS: sent to the scenes as `value`.    |
+| Minimum value (optional)    | Events whose property is lower, or missing, are ignored.                                |
+
+Then, for every feed:
+
+- **Centre latitude / longitude**: empty, the location of your house.
+- **Refresh interval**: 5 to 60 minutes.
+- **Maximum age of the events**: older events are ignored; events without a readable date are
+  kept.
+- **Language of the texts**: names of the devices and features at their creation, texts sent to
+  the scenes.
+
+Save, then open the **Discover** tab and create the devices.
+
+### Reading a feed
+
+- **GeoJSON**: a Point is used as it is; for a Polygon, MultiPolygon or line, the centre of its
+  points; for a GeometryCollection, its first Point (NSW RFS sends the fire point and its area).
+- The identifier is `id` or `guid`; without one, a digest of the title, link and position.
+- Title: `title`, `name`, `headline` or `place`. Date: `time`, `date`, `pubDate`, `published`,
+  `updated`. Category: `category` or `type`. Link: `url` or `link`.
+- **RSS and Atom**: `georss:point`, `georss:polygon`, `georss:box`, `gml:pos` or `geo:lat` /
+  `geo:long`; title, link, `guid` or `id`, `pubDate` or `updated`, `category`. Items without a
+  position are skipped.
+- Nothing of a feed is ever run: it is only read. The XML DOCTYPE is ignored.
+
+## Device
+
+One device per feed, refreshed by the integration itself (no Gladys polling):
+
+| Feature                | Type         | Value                                                                    |
+| ---------------------- | ------------ | ------------------------------------------------------------------------ |
+| Events in the area     | counter      | Followed events of the feed.                                             |
+| Nearest event distance | distance, km | The nearest followed event; 20,038 km (the farthest possible) when none. |
+| Nearest event          | text         | Its title.                                                               |
+| Latest event           | text         | The newest followed event, with its distance.                            |
+
+The device **badge** shows "Cloud" when the last reading worked, "Unreachable" otherwise; the
+reason (no answer, HTTP error, not a feed…) is in the integration status and the widget.
+
+## Dashboard widget
+
+**Geo feed events**: a heading with the number of events, one row per feed (its count, or why it
+cannot be read), the nearest events (8 at most) with their feed and distance, and the time of the
+last reading. Tap an event: its summary, its date and a link to it. The settings choose the feeds
+to show (empty: all).
+
+## Scene triggers
+
+**Geo feed: new event in the area**: an event enters the followed set of a feed (radius, age,
+categories and minimum value). **Geo feed: event removed**: a followed event leaves the feed, or
+no longer matches (too old, moved away).
+
+The first reading of a feed, and the first one after a configuration change, fire nothing: what
+is there is the starting point. A restart fires nothing either (the followed events are kept in
+`/data`). At most 20 events per feed and per reading.
+
+Filter: the feed (empty: any). Variables:
+
+| Variable      | Content                                                      |
+| ------------- | ------------------------------------------------------------ |
+| `feed_name`   | The name of the feed.                                        |
+| `title`       | The title of the event.                                      |
+| `category`    | Its categories, separated by commas.                         |
+| `distance_km` | Distance from the centre, empty without a centre.            |
+| `value`       | The numeric property chosen for the feed, empty without one. |
+| `time`        | The date of the event (ISO 8601), empty if unknown.          |
+| `url`         | The link of the event.                                       |
+| `summary`     | Title and distance, ready for a message.                     |
+| `latitude`    | Latitude of the event.                                       |
+| `longitude`   | Longitude of the event.                                      |
+| `properties`  | The simple properties of the event, as JSON.                 |
+
+## Scene action
+
+**Geo feed: read the events** reads the feeds again if needed and answers with `text` (the events
+as one sentence, nearest first), `count` and `nearest_km` (20038 when there is none). The feed
+filter limits it to one feed. The **Read the feeds now** button of the configuration tells, feed
+by feed, what was read.
+
+## Scene examples
+
+- **Earthquake nearby**: trigger "new event in the area" on the USGS feed (radius 250 km,
+  property `mag`, minimum 4) → send a message "\{\{summary\}\}, magnitude \{\{value\}\}".
+- **Bushfire warning**: NSW RFS feed, categories `Watch and Act, Emergency`, radius 50 km →
+  turn on a light in red and send the link `{{url}}`.
+- **Morning briefing**: every day at 7:30, action "read the events" → read `text` aloud.
+
+## Data sources, terms and quotas
+
+The data belong to the publisher of each feed: read and respect its terms of use, and credit it
+when you share them. The USGS feeds are in the public domain
+([earthquake.usgs.gov](https://earthquake.usgs.gov/earthquakes/feed/)), GDACS asks to be cited.
+The integration reads each feed at most every 5 minutes, with its own User-Agent, and reads 5 MB
+at most: enough for public feeds, which are mostly refreshed every 5 to 15 minutes.
+
+## Troubleshooting
+
+- **"not a GeoJSON, RSS or Atom feed"**: the address gives a web page. Look for the feed link
+  (GeoJSON, RSS, Atom) on the site of the publisher.
+- **No event while the feed has some**: check the radius and the location of your house, the
+  categories and the minimum value; a property that the events do not have excludes them all.
+- **"No centre"**: give your house a location in Gladys or type coordinates.
+- **The dates are missing** (NSW RFS): the feed gives local dates without a time zone; they are
+  not guessed. The maximum age keeps these events.
+- Logs: `docker logs` of the integration container; `LOG_LEVEL=debug` shows each reading.
+
+## Limits
+
+- Five feeds at most; one radius and filters per feed.
+- The distance is measured to the centre of an area, not to its edge: a large area around your
+  house can be farther than the radius.
+- No authentication: public feeds only (a token in the query string works, and is never logged).
+- Not affiliated with the USGS, GDACS, NSW RFS nor any feed publisher.
+
+## Configuration settings
+
+These are the settings GeoJSON & GeoRSS feeds asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your feeds | `section` | No | Paste the address of up to five feeds of located events: GeoJSON, GeoRSS, RSS or Atom (earthquakes, fires, alerts of a local service…). Each feed becomes a device: save, then create it in the Discover tab. |
+| Feed 1 | `section` | No | Example: the earthquakes of the last day from the USGS, https:\/\/earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson |
+| Feed address | `string` | No | http or https. GeoJSON, GeoRSS, RSS 2.0 or Atom, 5 MB at most. |
+| Name | `string` | No | Shown in the widget and the scenes. Empty: the host of the address. |
+| Radius | `select` | No | Distance from the centre to the event (the centre of an area). Whole feed: every event, for a local feed. |
+| Categories (optional) | `string` | No | Keep only the events whose category contains one of these words, separated by commas. |
+| Numeric property (optional) | `string` | No | Name of a numeric property of the events (mag for the USGS): sent to the scenes as value, and filtered by the minimum below. |
+| Minimum value (optional) | `string` | No | Events whose property is lower, or missing, are ignored. |
+| Feed 2 | `section` | No | Optional: leave the address empty if not used. |
+| Feed address | `string` | No | http or https. GeoJSON, GeoRSS, RSS 2.0 or Atom, 5 MB at most. |
+| Name | `string` | No | Shown in the widget and the scenes. Empty: the host of the address. |
+| Radius | `select` | No | Distance from the centre to the event (the centre of an area). Whole feed: every event, for a local feed. |
+| Categories (optional) | `string` | No | Keep only the events whose category contains one of these words, separated by commas. |
+| Numeric property (optional) | `string` | No | Name of a numeric property of the events (mag for the USGS): sent to the scenes as value, and filtered by the minimum below. |
+| Minimum value (optional) | `string` | No | Events whose property is lower, or missing, are ignored. |
+| Feed 3 | `section` | No | Optional: leave the address empty if not used. |
+| Feed address | `string` | No | http or https. GeoJSON, GeoRSS, RSS 2.0 or Atom, 5 MB at most. |
+| Name | `string` | No | Shown in the widget and the scenes. Empty: the host of the address. |
+| Radius | `select` | No | Distance from the centre to the event (the centre of an area). Whole feed: every event, for a local feed. |
+| Categories (optional) | `string` | No | Keep only the events whose category contains one of these words, separated by commas. |
+| Numeric property (optional) | `string` | No | Name of a numeric property of the events (mag for the USGS): sent to the scenes as value, and filtered by the minimum below. |
+| Minimum value (optional) | `string` | No | Events whose property is lower, or missing, are ignored. |
+| Feed 4 | `section` | No | Optional: leave the address empty if not used. |
+| Feed address | `string` | No | http or https. GeoJSON, GeoRSS, RSS 2.0 or Atom, 5 MB at most. |
+| Name | `string` | No | Shown in the widget and the scenes. Empty: the host of the address. |
+| Radius | `select` | No | Distance from the centre to the event (the centre of an area). Whole feed: every event, for a local feed. |
+| Categories (optional) | `string` | No | Keep only the events whose category contains one of these words, separated by commas. |
+| Numeric property (optional) | `string` | No | Name of a numeric property of the events (mag for the USGS): sent to the scenes as value, and filtered by the minimum below. |
+| Minimum value (optional) | `string` | No | Events whose property is lower, or missing, are ignored. |
+| Feed 5 | `section` | No | Optional: leave the address empty if not used. |
+| Feed address | `string` | No | http or https. GeoJSON, GeoRSS, RSS 2.0 or Atom, 5 MB at most. |
+| Name | `string` | No | Shown in the widget and the scenes. Empty: the host of the address. |
+| Radius | `select` | No | Distance from the centre to the event (the centre of an area). Whole feed: every event, for a local feed. |
+| Categories (optional) | `string` | No | Keep only the events whose category contains one of these words, separated by commas. |
+| Numeric property (optional) | `string` | No | Name of a numeric property of the events (mag for the USGS): sent to the scenes as value, and filtered by the minimum below. |
+| Minimum value (optional) | `string` | No | Events whose property is lower, or missing, are ignored. |
+| Options | `section` | No |  |
+| Centre latitude | `string` | No | Leave both coordinates empty to use the location of your house in Gladys. |
+| Centre longitude | `string` | No | Decimal degrees, east positive. |
+| Refresh interval | `select` | No | Every feed is read this often. 5 minutes at least: the feeds are public services. |
+| Maximum age of the events | `select` | No | Older events are ignored. Events without a readable date are kept. |
+| Language of the texts | `select` | No | Names of the devices and features (at their creation) and texts sent to the scenes. |
+| Sources and limits | `section` | No | The data belong to the publisher of each feed: respect its terms of use. A complement, not a safety alert system: follow the instructions of your local authorities. |
+
+## How to install GeoJSON & GeoRSS feeds in Gladys
+
+1. In Gladys, open **Integrations**: GeoJSON & GeoRSS feeds appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-geofeeds:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-geofeeds](https://github.com/guim31/gladys-geofeeds).
+
+GeoJSON & GeoRSS feeds requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+GeoJSON & GeoRSS feeds is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-geofeeds) — [source of this documentation](https://github.com/guim31/gladys-geofeeds/blob/HEAD/docs/en.md)

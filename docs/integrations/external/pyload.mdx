@@ -1,0 +1,210 @@
+---
+title: "pyLoad smart home integration, free and open source"
+sidebar_label: "pyLoad"
+description: "Follow and control pyLoad: speed, queue, free space, pause, failed files, new links. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-pyload.png"
+keywords:
+  - "pyload"
+  - "pyload smart home"
+  - "gladys pyload"
+  - "pyload gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-pyload instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"pyLoad","description":"Follow and control pyLoad: speed, queue, free space, pause, failed files, new links.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-pyload","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-pyload.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-23T16:14:21Z"}} />
+
+Follow and control [pyLoad](https://github.com/pyload/pyload) from Gladys: the free download
+manager for direct links and file hosts, often run on a NAS or a home server (Docker, Unraid,
+Synology…). The integration talks to the local API of pyLoad: the speed, the queue and the free
+space show on the dashboard, a scene can pause the downloads during a video call, and Gladys can
+tell you when a download is finished, when a file failed or when the queue is empty.
+
+Tested against real pyLoad 0.5.0b3.dev96 and dev101 installs, not yet in a real
+Gladys: feedback welcome on [GitHub](https://github.com/guim31/gladys-pyload/issues).
+
+## Requirements
+
+- Gladys 5.1.0 or later.
+- pyLoad **0.5** (the `pyload-ng` package, or the `linuxserver/pyload-ng` Docker image), reachable
+  from the Gladys server (same network). The old pyLoad 0.4 is not supported.
+- pyLoad **0.5.0b3.dev101 or later** (2025): an **API key**. Create it in pyLoad: **Settings →
+  Users**, the menu of your user, **Manage API Keys**. It starts with `pl_`.
+- Older pyLoad 0.5 (before dev101): the **user name and password** of the web interface
+  (`pyload` / `pyload` until you change them).
+- The user needs the pyLoad permissions **List** (read the queue), **Status** (pause, free space)
+  and, for the scene actions, **Modify** (restart the failed files) and **Add** (add links). An
+  administrator has them all.
+
+## Configuration
+
+Up to two servers, each with:
+
+- **Address**: the IP address or name, with the port: `192.168.1.10:8000`. Without port, 8000 is
+  added. Write `https://` for HTTPS, and the path if pyLoad sits behind a reverse proxy
+  (`https://nas.example.org/pyload`). The address copied from the browser works too.
+- **API key**, or **User name** and **Password** for the older versions.
+- **Name**: the name of the device in Gladys (empty: pyLoad followed by the address).
+
+Options:
+
+- **Accept self-signed certificates**: for an `https://` address with a certificate of its own.
+  Tick it for your own servers only.
+- **Refresh interval**: how often pyLoad is read, 30 seconds by default. It is also the delay of
+  the triggers.
+- **Allow adding links**: lets the scenes add links to download (off by default: whoever can edit
+  a scene could then start a download).
+- **Language of the device texts**: the names given to the features when a device is added, and
+  the status texts (French by default).
+
+The **Test the connection** button reads every server and says what it found: version, state,
+queue, failed files.
+
+## Devices
+
+One device per server, found in the Discovery tab. Its features:
+
+| Feature                | What it shows                                                                     |
+| ---------------------- | --------------------------------------------------------------------------------- |
+| Downloads paused       | switch: on pauses pyLoad until you turn it off, off resumes it.                   |
+| Automatic reconnection | switch: the reconnection of pyLoad (new IP address from the router) on or off.    |
+| Download speed         | in MB/s.                                                                          |
+| Active downloads       | the files downloading now.                                                        |
+| Files in the queue     | the files of the queue not finished, failed ones included (pyLoad's "queue").     |
+| Files in total         | every file of pyLoad, queue and collector (pyLoad's "total").                     |
+| Failed files           | the files that failed, or whose link is offline.                                  |
+| Free disk space        | in GB, of the download folder.                                                    |
+| Status                 | Downloading, Paused, Waiting (files queued, none downloading), Idle, Unreachable. |
+| Last download          | the name of the last package completed.                                           |
+
+Pausing pyLoad starts no new download: the files already downloading finish (it is pyLoad's own
+pause). Sizes and speeds are binary units, like pyLoad shows them (1 MB = 1024 × 1024 bytes). Only
+the changes are sent to Gladys, and every value again after 6 hours.
+
+## Widget
+
+The **pyLoad downloads** widget shows the speed, the queue and the time left of every server (or
+of the one chosen in its settings), and one line per server: its state (with the end of a timed
+pause), the files downloading with their percentage, the failed files, the free space and the last
+download. Four buttons:
+
+- **Pause**: pauses pyLoad until you resume it;
+- **Pause 30 min**: pauses it for 30 minutes;
+- **Resume**: resumes it;
+- **Retry failed**: tries the failed files again.
+
+The check mark shows the current state: on **Pause** when everything is paused, on **Resume**
+when everything runs.
+
+## Scene triggers
+
+- **Download completed**: every file of a package is downloaded. Filter: the server. Variables: package name, number of files, size in MB, server name.
+- **File failed**: a file failed to download, or its link is offline (dead link, 404). Filter: the
+  server. Variables: file name, package name, the reason given by pyLoad, server name.
+- **Queue empty**: nothing is left to download, the last file of the queue finished or failed.
+  Filter: the server. Variable: server name.
+
+Each package and each file fires once (a file restarted that fails again fires again). What
+happened while the integration was stopped (an update, a restart) fires when it starts again.
+
+There is no "low disk space" trigger: the **Free disk space** feature is a value, and the device
+trigger of Gladys already compares it with a threshold ("Free disk space below 20 GB").
+
+## Scene actions
+
+- **Pause downloads**: one server or all of them, for a number of minutes (0: until resumed). The
+  integration resumes pyLoad at the end (pyLoad has no timed pause of its own). Outputs: number of
+  servers paused, duration.
+- **Resume downloads**: one server or all of them.
+- **Restart failed files**: tries the failed files again, on one server or all of them.
+- **Add links to download**: http(s) or ftp links, separated by spaces (50 at most), as one
+  package, on the chosen server (empty: the first one). The package name is optional (empty: the
+  name of the first file). Only when **Allow adding links** is ticked. Output: the package id.
+
+The integration never deletes a file or a package, and never restarts pyLoad.
+
+## Scene examples
+
+- Video call: when the calendar event "Meeting" starts, **Pause downloads** for 60 minutes.
+- Night: at 1 am, **Resume downloads**; at 8 am, **Pause downloads** until resumed.
+- Notification: on **Download completed**, send "\{\{triggerEvent.data.name\}\} is downloaded" to
+  your phone.
+- Problem: on **File failed**, send the file name and the reason; then **Restart failed files**
+  after an hour.
+- Energy: on **Queue empty**, turn off the NAS plug a few minutes later.
+
+## Troubleshooting
+
+- "does not answer": check the address and the port (8000), and that the Gladys server can reach
+  pyLoad (firewall, Docker network).
+- "login refused": pyLoad 0.5.0b3.dev101 and later only accept an API key; the older versions a
+  user name and password. Correct, then save. The integration does not try again on its own: each
+  refused login writes an error in the pyLoad log.
+- "the pyLoad user lacks a permission": give the user the permissions listed in Requirements.
+- "no pyLoad 0.5 at this address": wrong port, or a pyLoad 0.4.
+- "certificate refused": tick "Accept self-signed certificates", or use `http://`.
+- "too many requests": pyLoad answers 100 API calls a minute per address at most; a refresh costs
+  3 or 4. Choose a longer refresh interval if other tools read pyLoad too.
+- A link added by a scene that fails at once with "Refusing to download from Server-Side host":
+  pyLoad refuses the addresses of your own network (a protection of pyLoad).
+- More details: the integration logs, with `LOG_LEVEL=debug` for every reading.
+
+## Limits
+
+- Each refresh reads the whole queue of pyLoad (every file): every 30 seconds by default.
+- The pause of pyLoad lets the files already downloading finish.
+- The **Automatic reconnection** switch shows the option of pyLoad within its time window: outside
+  the window set in pyLoad, it reads off.
+- A timed pause relies on the integration: if it is stopped at the end of the pause, pyLoad is
+  resumed as soon as it starts again.
+- Not affiliated with the pyLoad team.
+
+## Configuration settings
+
+These are the settings pyLoad asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your pyLoad | `section` | No | pyLoad (pyload-ng 0.5) on your network: an API key, or a user name and password for the versions before 0.5.0b3.dev101. Up to two servers. Never deletes a file. |
+| Address | `string` | Yes | IP address or name, with :port (8000 by default). https:\/\/ for HTTPS. |
+| API key | `secret` | No | pyLoad 0.5.0b3.dev101 or later: Settings, Users, Manage API Keys (pl_…). |
+| User name | `string` | No | Older pyLoad (before dev101), without API key: the login of the web interface. |
+| Password | `secret` | No | With the user name only. |
+| Name | `string` | No | Name of the device in Gladys. Empty: pyLoad followed by the address. |
+| Second server (optional) | `section` | No | Same fields, for another pyLoad. |
+| Address | `string` | No | IP address or name, with :port (8000 by default). https:\/\/ for HTTPS. |
+| API key | `secret` | No | pyLoad 0.5.0b3.dev101 or later: Settings, Users, Manage API Keys (pl_…). |
+| User name | `string` | No | Older pyLoad (before dev101), without API key: the login of the web interface. |
+| Password | `secret` | No | With the user name only. |
+| Name | `string` | No | Name of the device in Gladys. Empty: pyLoad followed by the address. |
+| Options | `section` | No |  |
+| Accept self-signed certificates | `boolean` | No | For a pyLoad served in HTTPS with its own certificate (common on a NAS). |
+| Refresh interval | `select` | No | How often pyLoad is read: also the delay of the triggers. |
+| Allow adding links | `boolean` | No | Lets the scenes add links to download. Off by default: whoever can edit a scene could then start a download. |
+| Language of the feature names | `select` | No | Names given to the features when a device is added, and the status texts. |
+
+## How to install pyLoad in Gladys
+
+1. In Gladys, open **Integrations**: pyLoad appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-pyload:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-pyload](https://github.com/guim31/gladys-pyload).
+
+pyLoad requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+pyLoad is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-pyload) — [source of this documentation](https://github.com/guim31/gladys-pyload/blob/HEAD/docs/en.md)

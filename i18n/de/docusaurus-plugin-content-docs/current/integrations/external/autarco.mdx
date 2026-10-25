@@ -1,0 +1,203 @@
+---
+title: "Autarco Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Autarco"
+description: "Unofficial: Autarco solar inverters and batteries: production, power, battery, read-only. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-autarco.png"
+keywords:
+  - "autarco"
+  - "autarco smart home"
+  - "gladys autarco"
+  - "autarco gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-autarco instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Autarco","description":"Unofficial: Autarco solar inverters and batteries: production, power, battery, read-only.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-autarco","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-autarco.png","type":"device","version":"0.1.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-24T21:41:41Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+**Unofficial** integration, not affiliated with Autarco. It reads the
+installations of your **Autarco** account (solar inverters, and batteries
+when there are some) through the public API of my.autarco.com, with the
+e-mail address and the password of the account. Internet is needed.
+
+**Never tested with a real device**: the integration was written from the
+[python-autarco](https://github.com/klaasnicolaas/python-autarco) library
+(the one Home Assistant uses) and its test answers, without an Autarco
+account at hand. Your feedback is welcome.
+
+## Read-only
+
+The integration **only reads** (GET requests of the public API). It changes
+nothing on your installation nor in your account.
+
+## What you get
+
+One device per **installation** (site) of the account, named after it:
+
+- solar power (W) and **the solar production index** (the total production of
+  the installation, in kWh), for the Gladys energy monitoring, with its
+  30-minute production computed by Gladys;
+- production of the day and of the month (kWh, plain sensors, never counted);
+- health of the installation (1 = OK, 0 = a problem reported by Autarco).
+
+With a battery (the values appear only when Autarco gives them):
+
+- state of charge (%);
+- battery power and net charge power (W), **as given by Autarco**: their sign
+  (charge or discharge) has not been confirmed on a real installation, so
+  they are plain signed sensors, never split into charge and discharge;
+- energy charged and discharged today and in total (kWh, plain sensors).
+
+With a meter (shown by a grid value; without one, Autarco repeats the
+production as consumption, which is then left out): grid net import and
+export (W, signs as given), grid import and export totals (kWh),
+consumption (W, today, total). All plain sensors.
+
+One device per **inverter**: power (W), total production (kWh, plain
+sensor), health, grid turned off (0/1). The power of an inverter whose last
+message is more than 2 hours old (by the clock of the service) is not sent.
+
+### No double count
+
+Only the **total solar production** of each installation feeds the Gladys
+energy monitoring, as an index. The counters of the day and of the month, the
+grid import (the main meter of your home, Linky..., already counts it), the
+injection and the battery counters are **plain sensors**: they are never
+counted nor billed by Gladys, and the integration never sends a daily
+consumption. If another integration already sends the same solar production
+to Gladys, create only one of the two production indexes.
+
+The API gives whole kWh: the index rises by steps of 1 kWh.
+
+## Requirements
+
+- Gladys 5.2.0 or later, with Internet access.
+- An Autarco account on my.autarco.com (the one of the Autarco app).
+
+## Configuration
+
+1. Install the integration from the Gladys store.
+2. **E-mail address** and **Password** of your Autarco account. The password
+   is kept by Gladys in its database, never shown again, sent only to
+   my.autarco.com (HTTPS, in the header of its requests), never logged.
+3. **Reading interval**: 300 s by default (the pace at which the portal
+   refreshes), 120 to 3600 s. Each read is one request for the account, then
+   three per installation.
+4. After the first read, create the devices from the **Discover** tab.
+
+The **Test the connection** button reads the account once if the interval has
+passed; otherwise it shows the last read and when the next one can be.
+
+Only the first 30 installations of the account are read (the first page of
+the API); the status says so when there are more.
+
+## Pace of the reads
+
+Nothing reads the account faster than the interval: not the test button, not
+the Discover tab, not a reconnection to Gladys, not a save of an unchanged
+configuration, not a restart of the container (the time of the last read is
+kept in `/data`, written at most once a minute and at a clean stop: after a
+restart, the first read waits the interval plus a minute). New credentials
+are tried at once.
+
+## Held index
+
+Gladys counts every rise of an index in full. So that no fictive energy is
+ever counted, the solar production index of each installation goes through a
+guard:
+
+- a value of 0 is never sent;
+- a drop, or a rise faster than 50 kW on average (plus 1.5 kWh), is **held
+  back**: the last accepted value is sent again, and the status of the
+  integration shows it. Neither time nor repetition confirms it; a drop that
+  comes back up is taken again as soon as it passes the last accepted value;
+- if it is right, click **Accept the held index** **twice**: the first click
+  lists what is held and accepts nothing, the second, 3 seconds to 5 minutes
+  later, accepts exactly what was listed (a jump is then counted at once, a
+  drop counts nothing). Saving the configuration accepts nothing.
+
+## Errors
+
+- **E-mail or password refused** (HTTP 401 of the account): the reads
+  **stop**, the status says so, and **no new try is ever made by itself**
+  (this stop is kept in `/data` across a restart). Check your credentials on
+  my.autarco.com and save the **corrected** credentials: new credentials are
+  tried at once. Saving unchanged credentials reads nothing; only the **Test
+  the connection** button tries them again (once per click, at the pace of
+  the reads), and only a success lifts the stop. To recognise the refused
+  credentials after a restart, `/data` keeps only an 8-bit marker of them (it
+  can confirm no password), erased by the first successful read.
+- **A password with accents** or other non-ASCII characters: the integration
+  sends it in UTF-8, while the library it comes from sends latin1; which one
+  Autarco expects is not confirmed. If such a password is refused while it
+  works on my.autarco.com, a password made of plain ASCII characters avoids
+  the doubt (and please tell us).
+- **HTTP 429** (too many requests), anywhere: the reads pause, for the delay
+  asked by Autarco, else 1 minute doubled at each new one, but never shorter
+  than the reading interval (at 300 s: 5, 5, 5, 8, 16... minutes), up to
+  6 hours, kept in `/data`. An **HTTP 5xx** or **403** of the account pauses
+  the same way.
+- An error of one installation (5xx, an odd answer) only leaves its values
+  out: the others are published. An installation that does not answer in
+  time ends there, and the read goes on with the next ones; only Autarco out
+  of reach, or two installations in a row without an answer, stop the rest
+  of the read. The first installation read changes at each read, so that
+  none is always left last. The status names the installations not read in
+  full, and says whether the others are up to date.
+- An installation that refuses access (401 or 403) while the account is
+  accepted is left out, tried again later (the interval doubled, up to once
+  an hour); the status lists it.
+- The solar power of an installation is not sent when all its inverters with
+  a known time have been silent for more than 2 hours (by the clock of the
+  service): it is not a current value.
+- Autarco unreachable: new try after the interval, doubled up to 30 minutes.
+
+## Privacy
+
+The integration talks only to my.autarco.com, over HTTPS, and follows no
+redirect: your credentials never go elsewhere. Neither the e-mail address nor
+the password is ever written to the logs, to the status or to `/data` (the
+account is kept there as a salted fingerprint only). The names of the
+installations are kept in memory only.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Autarco in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Autarco | `section` | Nein | Unofficial connector, not affiliated with Autarco. It reads the installations of your Autarco account through the public API of my.autarco.com (Internet needed), every 5 minutes by default: solar power, production of the day, of the month and in total, each inverter, and with a battery or a meter its state of charge, powers and counters. The total production of each installation becomes its solar production index for the Gladys energy monitoring. Read-only: it never changes anything on your installation. Never tested with a real device. |
+| E-mail address | `string` | Ja | The e-mail address you sign in with on my.autarco.com. |
+| Password | `secret` | Ja | The password of your Autarco account. Kept by Gladys in its database, never shown again; sent only to my.autarco.com (HTTPS), in the header of its read requests, never logged. |
+| Reading interval (s) | `number` | Nein | How often the account is read (one request, then three per installation): 300 s by default, the pace at which the portal itself refreshes. Nothing reads it faster, not even the test button, except new credentials, tried at once. |
+
+## So installierst du Autarco in Gladys
+
+1. Öffne in Gladys **Integrationen**: Autarco erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-autarco:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-autarco](https://github.com/LM1LC3N7/gladys-autarco).
+
+Autarco benötigt Gladys `>=5.2.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Autarco ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-autarco) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-autarco/blob/HEAD/docs/en.md)

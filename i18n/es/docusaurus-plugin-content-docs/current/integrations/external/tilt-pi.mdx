@@ -1,0 +1,220 @@
+---
+title: "Integración domótica Tilt Pi, gratuita y de código abierto"
+sidebar_label: "Tilt Pi"
+description: "Unofficial: your Tilt hydrometers via the Tilt Pi app, locally: gravity and temperature. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-tilt-pi.png"
+keywords:
+  - "tilt pi"
+  - "domótica tilt pi"
+  - "gladys tilt pi"
+  - "tilt pi gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-tilt-pi instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Tilt Pi","description":"Unofficial: your Tilt hydrometers via the Tilt Pi app, locally: gravity and temperature.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-tilt-pi","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-tilt-pi.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-24T21:42:02Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+**Unofficial connector, not affiliated with Tilt Hydrometer (Baron Brew
+Equipment).** It brings into Gladys the **Tilt** hydrometers floating in
+your fermenters (beer, wine, cider, mead...), read from the **Tilt Pi** app
+running on a Raspberry Pi on your network, through its local HTTP API,
+without any cloud.
+
+> **This integration has never been tested with a real Tilt Pi.** It follows
+> the `tilt-pi` library used by the Tilt Pi integration of Home Assistant.
+> Please report what you see on the Gladys forum.
+
+## What you need
+
+- One or more **Tilt** (or Tilt Pro, Tilt HD).
+- A **Raspberry Pi running the Tilt Pi app** (the official Tilt Pi image),
+  on the same network as Gladys, that shows your Tilts on its web page
+  (`http://<Raspberry Pi address>:1880/`). The Tilt Pi listens to the Tilts
+  over **Bluetooth**, on its Raspberry Pi: Gladys never uses Bluetooth (a
+  Gladys integration runs in a container without Bluetooth).
+
+## What you get
+
+One Gladys device per Tilt **colour** ("Tilt Red", "Tilt Blue"...):
+
+| Feature               | Unit                | Notes                                             |
+| --------------------- | ------------------- | ------------------------------------------------- |
+| Specific gravity (SG) | none ("SG" in name) | the gravity, about 1.000 for water                |
+| Temperature           | °C                  | a probe: kept out of the room temperature average |
+
+- Gladys has no category nor unit for a density: the gravity is an
+  "unknown" sensor without unit, its unit (SG) only written in its name. No
+  unit is invented.
+- The colour is the identity of a Tilt on a Tilt Pi: the device of a colour
+  stays the same, even when you swap the Tilt of that colour.
+- The feature names are in English; rename them at creation if you like.
+
+## Installation
+
+1. Install the integration from the Gladys catalog (Gladys 5.1 or later).
+2. On the **Configuration** screen, enter the **Tilt Pi address** (the IP
+   address of the Raspberry Pi, e.g. `192.168.1.30`, with `:port` only if it
+   is not 1880).
+3. Click **Test the Tilt Pi**: the message shows the gravity and the
+   temperature of each Tilt.
+4. Open the **Discovery** tab and add the devices.
+
+## Configuration
+
+- **Tilt Pi address**: an IP address or a host name, with a port if it is
+  not 1880; `http://` is accepted, not `https://` (the Tilt Pi page has
+  none), nor a path or a user. Give the Raspberry Pi a fixed address in
+  your router. A new address is read at once (one request a minute at
+  most).
+- **Read interval**: 5 minutes by default, 1 to 60.
+- No unit setting: the Tilt Pi API always gives the temperature in °F,
+  even when its page shows °C (that is what the official flow of the app
+  does). The integration converts it to °C, and Gladys shows it in the unit
+  of your profile. If the API temperature disagrees with what the Tilt Pi
+  page shows, it is not sent and the status says so.
+
+## How often the Tilt Pi is read
+
+- A read sends **one request**: `GET /macid/all` (every Tilt the Tilt Pi
+  hears).
+- **Never faster than the interval**, counted from the last read on a
+  monotonic clock (a clock change never reads sooner): not by the test
+  button, a reconnection to Gladys, an unchanged saved configuration, the
+  Discovery tab nor a restart of the container (the instant of the last
+  request is kept under `/data`, written before the request leaves). Before
+  the interval has passed, the test button shows the last values and when
+  the next read can happen.
+- **Read only**: the integration never writes anything to the Tilt Pi.
+- When the Tilt Pi answers **429 or a 5xx error**, it is left alone for the
+  `Retry-After` it gives, else 5 minutes, then 10, 20...; always between 1
+  minute and 6 hours, also across a restart.
+- **No Tilt heard** (between two brews, or right after the Tilt Pi cleared
+  its slots because a Tilt was silent more than 2 minutes) is normal: the
+  Tilt Pi answers `{}`, the status stays connected and the known Tilts show
+  "no recent reading".
+- No answer, a page that is not a Tilt Pi (404, an answer that is neither a
+  list nor `{}`) or a refused access: tried again at the next interval only.
+
+## Which values reach Gladys
+
+- Each reading is handed to Gladys **once**. A reading is told apart by its
+  time (`timeStamp`, always given by the Tilt Pi), else by its temperature,
+  gravity, MAC address and raw `timeStamp` (never by the signal nor the
+  clock fields the Tilt Pi rewrites without a new reading).
+- A reading at most 3 minutes old is sent as the current value; from 3 to
+  15 minutes, it is sent **dated** (Gladys stores it at its time and no
+  scene fires).
+- A **silent** Tilt (out of range, flat battery, out of the fermenter) is
+  **never shown alive**: when its reading no longer changes, nothing is
+  sent, and the status shows "no recent reading". A reading dated more than
+  15 minutes ago, measured with the Tilt Pi clock (the `Date` of its
+  answer; the age alone decides, so a Raspberry Pi set back to an old time
+  loses no reading), is never sent. Without a time, the first reading seen of a Tilt
+  is not sent: only a reading that changed since the previous read proves
+  the Tilt alive.
+- A value out of range (gravity outside 0.950 to 1.200, temperature outside
+  -10 to 60 °C, what a wort can reach) is never sent nor clamped; the status
+  reports it. The 0 °F the Tilt Pi gives when its calibration fails is thus
+  left out.
+- **Two Tilts of the same colour**: without the "ID by MAC" option of the
+  Tilt Pi, it has one entry per colour, filled in turn by both. The
+  integration keeps a fingerprint of the MAC address of each colour: when
+  it changes, nothing is sent for that colour and the status shows "MAC
+  changed: two Tilts of this colour, or a Tilt replaced". A replaced Tilt
+  (the old address never back) comes back when the same new address is read
+  twice in a row. If an address already replaced comes back within 24
+  hours (A, then B, then A again: two Tilts taking turns), the colour is
+  **locked**: nothing is sent for it, and the status shows "two Tilts of
+  this colour (MAC addresses taking turns): only one Tilt per colour is
+  supported", until a single address has been read alone for 24 hours, in
+  at least 12 reads (half the reads of a day at the chosen interval). The
+  lock is kept under `/data`: neither a restart nor a saved configuration
+  lifts it. **Only one Tilt per colour is supported.** The "ID by MAC"
+  option of the Tilt Pi gives each Tilt its own entry (`RED:aa:bb:...`),
+  read as the red colour; but if two entries have the same colour, neither
+  is sent either ("two Tilts of this colour").
+- A device created later gets the last reading, dated, if it is less than
+  15 minutes old.
+
+## What is kept under `/data`
+
+The address read, the instant of the last request, the pause, and for each
+colour met the key of the last reading seen (its time, or a short digest of
+the entry) and an 8-character fingerprint of the MAC address of the Tilt
+(never the address in clear), never the values. The file is
+written at most once per minute, but for a pause or a new colour.
+
+8 colours at most; 50 entries at most are read; an answer larger than 256
+KB, or slower than 15 seconds, is dropped.
+
+## External ids
+
+`ext:tilt-pi:tilt:<colour>` (`black`, `blue`, `green`, `orange`, `pink`,
+`purple`, `red`, `yellow`), then `:gravity` or `:temperature`. These ids
+never change.
+
+## Troubleshooting
+
+- **"no answer"**: check the address, and that the Tilt Pi page
+  `http://<address>:1880/` opens from your network.
+- **"no Tilt Pi at this address (404)"**: another service answers at this
+  address; check the port.
+- **"no recent reading"**: the Tilt Pi has not heard this Tilt lately
+  (Bluetooth range, battery, Tilt lying out of the liquid).
+- Logs: the level is set with the `LOG_LEVEL` variable.
+
+## Privacy
+
+The integration only talks to the Tilt Pi, on your local network, over
+HTTP. Of its answers it keeps only the colour, the gravity and the
+temperature.
+
+## Credits
+
+Built after [michaelheyman/tilt-pi](https://github.com/michaelheyman/tilt-pi)
+(MIT, Michael Heyman), the library of the Tilt Pi integration of Home
+Assistant: the route, the fields and their units are ported to JavaScript.
+Its notice is in `THIRD_PARTY_NOTICES.md`. Tilt is a trademark of its
+owner; this connector is free and unofficial.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Tilt Pi te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Tilt Pi in Gladys | `section` | No | Unofficial connector, not affiliated with Tilt Hydrometer (Baron Brew Equipment). It reads the Tilt hydrometers floating in your fermenters through the Tilt Pi app running on a Raspberry Pi on your network, by its local HTTP API, without any cloud: the specific gravity and the temperature of each Tilt, one Gladys device per Tilt colour. The Tilt Pi listens to the Tilts over Bluetooth on its Raspberry Pi; Gladys never uses Bluetooth. Read only: nothing is ever changed on the Tilt Pi. Never tested with a real Tilt Pi. |
+| Tilt Pi address | `string` | No | The IP address (or host name) of the Raspberry Pi running Tilt Pi, with a port only if it is not 1880 (the port of the Tilt Pi page). Preferably give it a fixed address in your router; if it changes, enter the new one: the devices and their history are kept. |
+| Read interval (minutes) | `number` | No | Each read sends one request to the Tilt Pi. Nothing reads sooner, not even the test button, a reconnection or a restart. |
+
+## Cómo instalar Tilt Pi en Gladys
+
+1. En Gladys, abre **Integraciones**: Tilt Pi aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-tilt-pi:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-tilt-pi](https://github.com/LM1LC3N7/gladys-tilt-pi).
+
+Tilt Pi requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Tilt Pi es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-tilt-pi) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-tilt-pi/blob/HEAD/docs/en.md)

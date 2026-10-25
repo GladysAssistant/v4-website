@@ -1,0 +1,238 @@
+---
+title: "Vogel's MotionMount smart home integration, free and open source"
+sidebar_label: "Vogel's MotionMount"
+description: "Vogel's MotionMount motorized TV mounts over their local network. Unofficial. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-motionmount.png"
+keywords:
+  - "vogel's motionmount"
+  - "vogel's motionmount smart home"
+  - "gladys vogel's motionmount"
+  - "vogel's motionmount gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-motionmount instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Vogel's MotionMount","description":"Vogel's MotionMount motorized TV mounts over their local network. Unofficial.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-motionmount","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-motionmount.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-24T21:40:15Z"}} />
+
+This integration connects Gladys to **your Vogel's MotionMount motorized TV
+mount** (Signature, TVM 7675 Pro) over its **local protocol** (TCP, port 23, on
+the Ethernet cable of the mount). The MotionMount becomes a device in the
+**Discovery** tab of Gladys: position, motion, errors, a list to go to a preset
+and a **Stop** button. Everything stays on your local network. Unofficial, not
+affiliated with Vogel's.
+
+> **Development version (0.1).** Written from the python-MotionMount library
+> published by Vogel's, and tested against a simulated MotionMount only: it has
+> **never been tested with a real MotionMount** yet. Feedback is welcome on the
+> GitHub repository.
+
+## Safety first
+
+A motorized mount can **pinch** a hand between the TV and the wall, or **hit**
+a person, a piece of furniture or an object. That is why:
+
+- **moves are off by default**: tick "Allow moves" first;
+- a move goes through a **list** ("Go to a preset"), never a switch: a "turn
+  everything off" scene or voice assistant does not trigger it;
+- a preset beyond the **bounds** you choose (extension, turn) is refused;
+- a move is refused while the mount reports an **obstruction**, a motor error,
+  an internal error or a TV width error;
+- the **Stop** button does not depend on the moves option.
+
+The protections of the mount itself (obstruction detection) come first: only
+automate a move when nobody can stand in its way.
+
+## What you get
+
+| Feature        | In Gladys                                                         |
+| -------------- | ----------------------------------------------------------------- |
+| Extension (%)  | 0 = against the wall, 100 = arm fully out (read only)             |
+| Turn (%)       | -100 to 100 (read only)                                           |
+| Moving         | the motors run (read only)                                        |
+| Status         | "OK" or the errors the mount reports (read only)                  |
+| Go to a preset | the wall, or a preset 1 to 7 set on the mount; **off by default** |
+| Stop           | stops the mount where it is                                       |
+
+Positions are those of the mount (percent of its travel), not centimetres nor
+degrees. Presets are set in the Vogel's app; the list follows their names at
+each read.
+
+## Requirements
+
+- A MotionMount Signature (TVM 7675 Pro) wired with an **Ethernet cable** to
+  the network of Gladys (the RS-232 link is not supported).
+- Its IP address, preferably fixed (reserved in your router). Names in
+  `.local` do not resolve in the integration container.
+- If a **PIN of the User level** is set on the mount: that PIN.
+- A firmware that gives the MAC address of the mount (`mac`): it is the
+  identity of the device in Gladys. An older mount without it is not added (the
+  status says so).
+
+## Setup
+
+1. In Gladys, open the **Vogel's MotionMount** integration, **Configuration**
+   tab.
+2. Type the **address** of the MotionMount, like `192.168.1.50` (or
+   `192.168.1.50:2323` for another port).
+3. Only when the mount has a PIN: type it in **PIN**. It is kept by Gladys in
+   its database, never shown again; it is sent only to the MotionMount, and only
+   when the mount asks for it, once per connection.
+4. Save, then click **Test the connection**: the state of the mount shows.
+5. Open the **Discovery** tab and add the MotionMount.
+6. To control the moves, tick **Allow moves** and set the bounds.
+
+## Options
+
+- **Allow moves** (off by default): "Go to a preset" moves the TV.
+- **Maximum extension** (100 % by default) and **Maximum turn** (100 % by
+  default, each side): a preset beyond them is refused. The wall (extension 0,
+  turn 0) is always within them.
+- **Read interval** (60 s by default, 30 to 600 s): how often the state is read
+  again. The mount also tells its changes on the connection, which stays open.
+  After a command, the state is read at 2, 8, 20 and 45 s.
+- **Language of the feature names**.
+
+## How the commands are handled
+
+**Go to a preset**: right before acting, the integration reads the errors of
+the mount and the preset asked (set? within the bounds?), then sends the
+command. One move at a time: the next one waits until the previous one is
+sent. The command is refused, **nothing sent**, when:
+
+- the value is not a preset from 0 to 7, or no address is configured;
+- the moves option is off (checked on arrival, after the reads and right
+  before sending);
+- the mount is not connected (or its first read is not finished), or its
+  identity (MAC address) is not the one of the device;
+- the mount asks for a PIN that is missing, refused, or asks to wait after
+  failed attempts, or the connection was cut twice in a row right after the
+  PIN was sent;
+- the previous move left without confirmation less than 30 s ago and the
+  mount has not reached it yet;
+- the mount could not be read before acting (no answer, connection lost,
+  value not readable);
+- the preset is not set, or is beyond the bounds;
+- the mount reports an error (obstruction, motor, internal, width);
+- a stop arrived meanwhile, or the configuration changed meanwhile;
+- the connection was lost before sending, or the command could not leave
+  within 3.5 s.
+
+Once the command is written:
+
+- the mount may **refuse** it itself (`#4xx`): nothing is done, the refusal is
+  reported;
+- without an answer of the mount, it is reported "sent, without
+  confirmation", and never sent again by itself.
+
+**Stop**: the MotionMount protocol has no stop command. The integration reads
+the current position and sends it back as the new target: the motors stop
+where they are. A position read up to 5 points outside the travel (mechanical
+play) is brought back to the bound; further, nothing is written.
+
+- The stop does not depend on the moves option and cancels the moves not sent
+  yet.
+- It goes before the other requests not sent yet, and waits 1 s at most for
+  the request on the wire, a previous stop included (then the connection is
+  cut and opened again).
+- Each read of the stop waits 1.5 s at most; when a read fails before sending
+  (a stale or cut connection), a new connection is opened and the stop tried
+  once more, within the deadline.
+- When the mount is not connected, the stop opens a connection at once, even
+  during the wait after a failure.
+- Several presses while a stop is not sent yet share that stop.
+- While the container starts, the stop waits for the configuration (2 s at
+  most).
+- When a PIN is typed and the mount asks for it, the stop sends it; a PIN the
+  mount refused is not sent again, but one held because of two cuts is (once
+  per press).
+
+1.5 s after a stop (answered, or sent without an answer), the integration reads
+the motion of the mount (opening a connection when needed). When it still
+moves, or cannot tell, the stop is sent again, and so on, 3 times at most; a
+re-send that fails does not end these rounds. They end when a move was sent
+after the stop, or when the configuration changes. They are not kept in
+`/data`: a restart of the container in the seconds after the stop loses them.
+
+The cases where the stop fails:
+
+- no address is configured (after the wait of the start);
+- the mount does not answer: no connection, or reads without an answer on the
+  first connection and then on the new one;
+- the current position cannot be read, or is not understood (too far outside
+  the travel): nothing is written;
+- the mount refuses the stop or a read (`#401`: PIN missing, refused or a wait
+  imposed; `#400`, `#403`, `#405`...);
+- the stop could not leave within 3.5 s;
+- it is written without an answer: "sent, without confirmation" (then checked
+  as above);
+- it went to another MotionMount than the one of the device (another MAC
+  address answers at the address): sent, but reported, since the mount of the
+  device may not be stopped.
+
+## Privacy and security
+
+- The PIN is written neither to the logs, nor to the connection status, nor to
+  `/data`. An address the integration does not understand is not shown back
+  either (only its length): a PIN pasted in the wrong field does not show.
+- When the mount refuses the PIN (or the connection is cut twice in a row
+  right after it), only an **8-bit mark** (a truncated salted hash, shared by
+  about 39 PINs out of 9999) is kept in `/data`, to see that the PIN typed
+  changed. The PIN is not sent again by itself until another PIN or a click on
+  **Test the connection** (one try); only the stop still sends it, once per
+  press, when the hold comes from cuts.
+- The MotionMount protocol travels in clear on your local network.
+- No cloud, no account, no Bluetooth.
+
+## Troubleshooting
+
+- **Unreachable**: check the IP address and the Ethernet cable; the mount
+  answers on port 23. After a failure, the integration tries again after 30 s,
+  1, 2 then 5 min, and at least the interval (the **Test the connection**
+  button too, restarts included: the time of the last attempt is kept in
+  `/data`). Exceptions: a stop and its checks, and the reads that follow a
+  command, may open a connection sooner.
+- **Identity cannot be read**: firmware too old (no MAC address); update the
+  mount with the Vogel's app.
+- **Preset not reached** (orange dot): an obstruction, a hand on the TV or a
+  stop interrupted the travel.
+
+## Configuration settings
+
+These are the settings Vogel's MotionMount asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your MotionMount in Gladys | `section` | No | The MotionMount (Signature, TVM 7675 Pro) becomes a device in the Discovery tab: extension, turn, motion, errors, a list to go to a preset and a Stop button. Everything stays on your local network (TCP port 23, Ethernet). Moves are off by default: a motorized mount can pinch or hit. Never tested with a real MotionMount yet. Unofficial, not affiliated with Vogel's. |
+| Address of the MotionMount | `string` | Yes | Its local IP address (port 23 by default, or address:port). Give it a fixed address in your router (DHCP reservation). One MotionMount per integration. |
+| PIN (optional) | `secret` | No | Only if a PIN of the User level is set on the mount (a number from 1 to 9999). Kept by Gladys in its database, never shown again; sent only to the MotionMount, and only when it asks for it. |
+| Allow moves | `boolean` | No | Off by default. On, "Go to a preset" moves the TV (the wall or a preset set on the mount), from Gladys, scenes or voice assistants. Make sure nobody and nothing stands in its way. Stop does not depend on this option. |
+| Maximum extension (%) | `number` | No | A preset whose extension goes beyond it is refused (0 to 100 %, 100 = the full arm). |
+| Maximum turn (%) | `number` | No | A preset turned further, on either side, is refused (0 to 100 %). |
+| Read interval (s) | `number` | No | How often the state is read again (30 to 600 s); the mount also tells its changes as they come. After a failure, the next connection waits at least this long. |
+| Language of the feature names | `select` | No | Used for the names of the features and presets of the mount added from now on. |
+
+## How to install Vogel's MotionMount in Gladys
+
+1. In Gladys, open **Integrations**: Vogel's MotionMount appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-motionmount:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-motionmount](https://github.com/LM1LC3N7/gladys-motionmount).
+
+Vogel's MotionMount requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Vogel's MotionMount is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-motionmount) — [source of this documentation](https://github.com/LM1LC3N7/gladys-motionmount/blob/HEAD/docs/en.md)

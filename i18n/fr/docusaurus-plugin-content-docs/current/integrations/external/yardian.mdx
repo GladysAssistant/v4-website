@@ -1,0 +1,147 @@
+---
+title: "Intégration domotique Yardian, gratuite et open source"
+sidebar_label: "Yardian"
+description: "Programmateurs d'arrosage Yardian, en local : zones, arrosage, report pluie, marche, arrêt. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-yardian.png"
+keywords:
+  - "yardian"
+  - "domotique yardian"
+  - "gladys yardian"
+  - "yardian gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-yardian instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Yardian","description":"Programmateurs d'arrosage Yardian, en local : zones, arrosage, report pluie, marche, arrêt.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-yardian","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-yardian.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-23T18:55:46Z"}} />
+
+Intégration Gladys Assistant non officielle pour les programmateurs
+d'arrosage connectés **Yardian** (Yardian, Yardian Pro, Yardian Pro C1), par
+leur API HTTP **locale** : pas de cloud Yardian, pas de compte. Sans lien avec
+Aeon Matrix ni Yardian.
+
+**Jamais testé avec un vrai appareil** : construite d'après la bibliothèque du
+fabricant (pyyardian 1.4.2, celle de l'intégration Home Assistant). Merci de
+signaler ce qui marche et ce qui ne marche pas.
+
+## Ce que vous obtenez
+
+- **Le programmateur** : arrosage en cours (oui/non), les zones arrosées en
+  ce moment, le report pour pluie restant (minutes), la veille, et un bouton
+  **Arrêter tout l'arrosage**.
+- **Chaque zone activée** : arrosage en cours (oui/non), un bouton
+  **Démarrer l'arrosage** et un bouton **Arrêter l'arrosage**.
+
+L'arrosage n'est jamais un interrupteur : un « allume/éteins tout » d'un
+assistant vocal, de HomeKit ou d'une scène sur les interrupteurs ne peut
+jamais ouvrir une vanne.
+
+## Mise en route
+
+1. Donnez au programmateur une adresse IP fixe dans votre box.
+2. Trouvez son **jeton d'accès** dans l'application Yardian (réglages du
+   programmateur).
+3. Dans Gladys, ouvrez l'intégration, saisissez l'adresse et le jeton,
+   enregistrez.
+4. Ajoutez le programmateur et ses zones depuis l'onglet **Découverte**.
+
+Le jeton est gardé par Gladys dans sa base, jamais réaffiché, et envoyé
+seulement à votre programmateur, en clair sur votre réseau local (le
+programmateur n'a pas de https).
+
+## Démarrer et arrêter
+
+- **Démarrer une zone ouvre une vanne : c'est désactivé par défaut.** Activez
+  **Autoriser le démarrage des zones** pour utiliser les boutons Démarrer.
+  Sans cela, le tableau de bord, les scènes et les assistants vocaux peuvent
+  seulement lire et arrêter.
+- Avant chaque démarrage, Gladys lit le programmateur : un autre programmateur
+  à l'adresse, ou des zones en arrosage illisibles : refusé ; la zone déjà en
+  arrosage : rien n'est envoyé. La zone arrose pendant la durée réglée (10
+  minutes par défaut, **60 minutes au plus**) ; le programmateur referme seul
+  la vanne à la fin.
+- Après un démarrage, un autre démarrage sur le même programmateur est
+  **refusé tout de suite** (« Réessayez dans une minute ») tant que la zone
+  n'est pas lue en arrosage, 60 s au plus.
+- **Arrêter n'est jamais bloqué** par l'option, une pause demandée par le
+  programmateur, un jeton refusé ni un démarrage récent. L'arrêt est refusé,
+  sans rien envoyer, seulement si : un autre programmateur répond à l'adresse ;
+  le programmateur n'est plus à son adresse ; aucun jeton d'accès n'est
+  saisi ; sur les modèles C1, les arrosages en cours ne peuvent pas être lus
+  (Gladys surveille alors pendant une minute et envoie l'arrêt dès qu'une
+  lecture les montre). Sur un C1 avec plus de 32 arrosages en cours, ou
+  certains illisibles, les arrosages lisibles (32 au plus) sont arrêtés.
+- Un arrêt annule les démarrages pas encore envoyés. Un démarrage déjà parti
+  avant l'arrêt est surveillé aussi, pendant une minute après sa réponse
+  (lectures à 5, 15, 30 et 55 s) : s'il est appliqué après l'arrêt dans
+  cette minute, l'arrêt est renvoyé. Si les zones sont encore lues en
+  arrosage après un arrêt, il est renvoyé (3 fois au plus, dans la minute),
+  sauf si un démarrage accepté par le programmateur est parti après lui.
+- Sur les Yardian et Yardian Pro sans le suffixe C1, le programmateur n'arrête
+  que **toutes les zones à la fois** : le bouton Arrêter d'une zone les arrête
+  toutes.
+- Une commande part dans les 3,5 s ou est refusée sans être envoyée.
+  « Envoyée, sans confirmation » veut dire que le programmateur l'a peut-être
+  prise mais qu'elle n'a pas encore été relue : vérifiez la zone quelques
+  secondes plus tard.
+
+## Rafraîchissement
+
+Le programmateur est lu toutes les 30 s par défaut (10 à 600 s), jamais plus
+souvent : ni après un redémarrage, ni après une reconnexion, une recherche ou
+le bouton Vérifier. S'il demande d'attendre (HTTP 429 ou 5xx), les lectures
+font une pause d'1 minute à 6 heures. S'il refuse le jeton, les lectures
+s'arrêtent jusqu'à ce que vous enregistriez un autre jeton ou que le bouton
+**Vérifier le programmateur** réussisse (il réessaie une fois, jamais plus
+vite que l'intervalle).
+
+## Limites
+
+- Un seul programmateur par intégration.
+- Les modèles YC (suffixe C1) et les champs du report pour pluie et de la
+  veille n'ont pas été vus sur une vraie réponse : voir TODO.md dans le dépôt.
+- Un arrosage lancé par un programme du programmateur : rien ne dit que
+  l'arrêt de l'API Yardian l'arrête (inconnu). Sinon, vous verrez « envoyée,
+  sans confirmation », puis 3 renvois : arrêtez-le depuis l'application
+  Yardian.
+- Pas encore de programmes, d'actions de scène ni de widget.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Yardian dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre programmateur Yardian, sur votre réseau local | `section` | Non | Les zones d'un programmateur d'arrosage connecté Yardian (Yardian, Yardian Pro), les zones en arrosage, le report pour pluie et la veille, par son API HTTP locale, sans le cloud Yardian. Donnez au programmateur une adresse IP fixe dans votre box, saisissez-la ci-dessous avec son jeton d'accès, puis ajoutez le programmateur et ses zones depuis l'onglet Découverte. Jamais testé avec un vrai appareil. Intégration non officielle, sans lien avec Aeon Matrix ni Yardian. |
+| Adresse IP du programmateur | `string` | Non | Par exemple 192.168.1.60 (le programmateur répond sur ses ports 880 et 80). |
+| Jeton d'accès | `secret` | Non | Le jeton d'accès du programmateur, affiché par l'application Yardian dans les réglages du programmateur. Ce champ est gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement à votre programmateur Yardian (en clair sur votre réseau local : il n'a pas de https). |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture du programmateur, en secondes. Jamais plus souvent, même après un redémarrage. |
+| Démarrage et arrêt des zones | `section` | Non | Chaque zone a un bouton Démarrer et un bouton Arrêter, jamais un interrupteur ; le programmateur a « Arrêter tout l'arrosage ». Démarrer ouvre une vanne : refusé tant que vous ne l'autorisez pas ci-dessous, et décidé sur une lecture juste avant. Une zone arrose pendant la durée ci-dessous, 60 minutes au plus. Arrêter ne demande aucune autorisation et n'est jamais bloqué par une pause, un jeton refusé ou un démarrage récent ; cela annule les démarrages pas encore envoyés. L'arrêt est refusé sans envoi seulement si un autre programmateur répond à l'adresse, si le programmateur n'est plus à son adresse, sans jeton, ou (modèles C1) si les arrosages en cours sont illisibles : Gladys l'envoie alors dès qu'une lecture les montre, dans la minute. Sans le suffixe C1, le programmateur n'arrête que toutes les zones à la fois. |
+| Autoriser le démarrage des zones | `boolean` | Non | Désactivé par défaut : les zones sont seulement lues et arrêtées. Activé : le tableau de bord, les scènes et les assistants vocaux peuvent démarrer l'arrosage. |
+| Durée d'arrosage d'une zone démarrée depuis Gladys (min) | `number` | Non | De 1 à 60 minutes. Le programmateur referme seul la vanne à la fin. |
+| Langue des noms des fonctionnalités | `select` | Non | Sert aux noms des fonctionnalités ajoutées désormais, et aux erreurs des commandes. |
+
+## Comment installer Yardian dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Yardian apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-yardian:0.1.2`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-yardian](https://github.com/LM1LC3N7/gladys-yardian).
+
+Yardian nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Yardian est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-yardian) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-yardian/blob/HEAD/docs/fr.md)

@@ -1,0 +1,194 @@
+---
+title: "Integración domótica Venstar, gratuita y de código abierto"
+sidebar_label: "Venstar"
+description: "Venstar ColorTouch and Explorer thermostats over their local API. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-venstar.png"
+keywords:
+  - "venstar"
+  - "domótica venstar"
+  - "gladys venstar"
+  - "venstar gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-venstar instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Venstar","description":"Venstar ColorTouch and Explorer thermostats over their local API.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-venstar","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-venstar.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-23T18:54:42Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+Unofficial integration for **Venstar ColorTouch and Explorer** Wi-Fi
+thermostats, through the documented local API of the thermostat, on your own
+network. No cloud, no account.
+
+**Never tested with a real device**: it follows the public API documentation
+and the venstarcolortouch library (used by Home Assistant). Not affiliated
+with Venstar.
+
+## What you get
+
+One Gladys device for the thermostat, with:
+
+- the room temperature, the indoor humidity (when the thermostat measures it)
+  and the outdoor temperature (when an outdoor sensor is wired);
+- the heating setpoint and the cooling setpoint;
+- the mode: off, heating, cooling, auto (only the modes the thermostat
+  offers);
+- the fan: auto or always on, and whether it runs;
+- the operating state (idle, heating, cooling) and a status text (also
+  lockout and error);
+- the alerts: the air filter alert as a 0/1 value, and the list of active
+  alerts (air filter, UV lamp, service).
+
+The temperatures are in the unit of the thermostat (°C or °F) when the device
+is added; values are always converted to the unit of each feature as it was
+created.
+
+## Configuration
+
+1. On the thermostat, turn on the **local API** in its Wi-Fi settings.
+2. In your router, give the thermostat a **fixed IP address**. The Gladys
+   device follows this address: if it changes, a new device appears.
+3. In the **Configuration** tab of the integration, enter the address and
+   save. The thermostat is read at once (then every minute by default), and
+   appears in the **Discovery** tab: add it.
+
+If the thermostat's **"Basic Auth"** is on, turn on **HTTPS** and enter its
+user name and password. The password is kept by Gladys in its database,
+never shown again, and sent only to the thermostat over HTTPS: never over
+plain HTTP. At the first HTTPS connection the certificate of the thermostat
+(self-signed) is pinned (its SHA-256 fingerprint kept in `/data`); if it
+changes later, nothing is sent any more and the status shows the new
+fingerprint. If you replaced or reset the thermostat, click **Accept the
+change** twice (the first click shows what will be accepted, the second one
+within 60 s accepts exactly that).
+
+If the thermostat's screen is locked by a **PIN**, enter it: it is sent with
+each command (in the body of the request, never in the address). Without
+HTTPS, the PIN travels **in clear** on your local network. A PIN refused by
+the thermostat is no longer sent for the start, setpoint and fan commands
+until you change it (a stop still tries it).
+
+## Commands
+
+**Off by default.** Turn on **Allow the commands** to let Gladys change the
+mode, the fan and the setpoints. Then:
+
+- a command is decided on a fresh read of the thermostat, never on a value in
+  memory, and refused if a value it needs is unknown;
+- the setpoints are refused (never brought into range) outside heating 5 to
+  30 °C (41 to 86 °F) and cooling 16 to 35 °C (61 to 95 °F), and outside the
+  limits of the thermostat; in auto mode the cooling setpoint must stay at
+  least the thermostat's deadband above the heating one; the other setpoint
+  is written back exactly as read;
+- a setpoint or mode command is refused while a previous setpoint command is
+  not confirmed yet (the API needs both setpoints: the old value would be
+  written back over it); try again a few seconds later;
+- a command is written within 3.5 s of the click, or refused without being
+  sent; it is confirmed only when the thermostat shows the value asked,
+  otherwise Gladys says "sent, without confirmation" and reads again 5 s
+  later;
+- **turning the thermostat off** (mode off) also needs **Allow the commands**:
+  read only means read only (turning the heating off is not harmless in
+  winter). Once allowed, it is never refused because another command runs,
+  because of a pause or a refusal kept in memory: it cancels a command not
+  yet written, writes back the setpoint a not yet confirmed command asked,
+  and is written even when the thermostat already shows off. Another start
+  command waits until it is done. After a start that was never confirmed,
+  the integration watches: if a read shows the thermostat on again within
+  90 s, the stop is written again;
+- like every command, the stop is refused when the certificate changed or
+  when another thermostat answers at the address. **Renaming the thermostat
+  on its screen is enough** to block the commands, the stop included, until
+  you click **Accept the change** twice.
+
+The mode is a thermostat mode, never a switch: a "turn everything off" of a
+voice assistant or a scene does not reach it.
+
+## Reading
+
+The thermostat is read every **refresh interval** (60 s by default, 30 s at
+least), never sooner: a restart, a reconnection, the Discovery tab, a saved
+configuration or the test button wait for the interval. When the thermostat
+does not answer, the next tries are spaced (1, 2, 5, then 10 minutes). When
+it answers "busy" (HTTP 429 or 5xx), every read pauses (1 minute to 6 hours,
+kept across restarts).
+
+With HTTPS, a 401 on a nonce reused from an earlier request is answered once
+with the new challenge; only a refused answer to a fresh challenge counts as
+refused credentials. Refused credentials stop the reads: no automatic retry.
+Change them, or click **Test the connection** (one try, at most once per
+interval). A user name holding a quote or a backslash cannot be sent: the
+status says so.
+
+Another thermostat answering at the address (another model, or another name)
+is shown in the status: its values are not shown and commands are refused.
+If it is the same one (renamed), click **Accept the change** twice. The name
+is what tells two thermostats of the same model apart: **give your
+thermostats distinct names**. Until the name of the thermostat has been read
+once, the commands other than the stop are refused.
+
+## Limits
+
+- One thermostat per installation of the integration.
+- The away mode, the schedule, the humidity setpoints and the runtimes are not
+  shown yet.
+- No discovery on the network: enter the address.
+- A read and a stop may open two connections at the same time.
+- Never tested with a real device.
+
+## Privacy
+
+Everything stays on your network. `/data` keeps the time of the last read,
+the certificate fingerprint, the model and name of the thermostat, the end of
+a pause, a salted fingerprint of a user name and password the thermostat
+refused (cleared at the first success), and a marker when a PIN was refused,
+with one hexadecimal character of a salted hash of it: enough to see that the
+PIN was changed while the integration was stopped, far too little to find a
+PIN back (no full fingerprint: a 4-digit PIN would be easy to find back from
+one). Never the password, the user name or the PIN themselves.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Venstar te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Your Venstar thermostat | `section` | No | Shows in Gladys a Venstar ColorTouch or Explorer thermostat through its local API, without any cloud: temperature, humidity, outdoor temperature, heating and cooling setpoints, mode, fan, operating state and alerts (air filter). Turn on the local API in the thermostat's Wi-Fi settings, give it a fixed address in your router, enter that address and save; then add the thermostat from the Discovery tab. Gladys controls it only if you allow the commands below. Never tested with a real device. Not affiliated with Venstar. |
+| IP address of the thermostat | `string` | Sí | IPv4 address or host name; port 80 (443 with HTTPS) unless you add one. The device follows this address: keep it fixed. |
+| HTTPS (thermostat with a password) | `boolean` | No | Turn on if the thermostat's "Basic Auth" is on. Its certificate is pinned at the first connection; the password is never sent over plain HTTP. |
+| User name (HTTPS only) | `string` | No |  |
+| Password (HTTPS only) | `secret` | No | Kept by Gladys in its database, never shown again; sent only to the thermostat, over its verified HTTPS connection. |
+| Screen lock PIN (optional) | `secret` | No | Only if the thermostat's screen is locked by a PIN: sent with each command, in clear on your network without HTTPS. Kept by Gladys in its database, never shown again. A PIN refused is not sent again (except by a stop) until you change it. |
+| Allow the commands | `boolean` | No | Off by default: read only, every command refused, turning off included. On: Gladys may change the mode (off, heating, cooling, auto), the fan and the setpoints (heating 5 to 30 °C, cooling 16 to 35 °C, within the thermostat's limits). |
+| Refresh interval (s) | `number` | No | How often the thermostat is read, in seconds. |
+| Language of the feature names | `select` | No | Used for the names of the device and features added from now on, for the options and for the command errors. |
+
+## Cómo instalar Venstar en Gladys
+
+1. En Gladys, abre **Integraciones**: Venstar aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-venstar:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-venstar](https://github.com/LM1LC3N7/gladys-venstar).
+
+Venstar requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Venstar es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-venstar) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-venstar/blob/HEAD/docs/en.md)

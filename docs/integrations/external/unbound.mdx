@@ -1,0 +1,243 @@
+---
+title: "Unbound smart home integration, free and open source"
+sidebar_label: "Unbound"
+description: "Unbound DNS resolver: queries, cache, recursion time, SERVFAIL, alerts and cache flush. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-unbound.png"
+keywords:
+  - "unbound"
+  - "unbound smart home"
+  - "gladys unbound"
+  - "unbound gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-unbound instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Unbound","description":"Unbound DNS resolver: queries, cache, recursion time, SERVFAIL, alerts and cache flush.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-unbound","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-unbound.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-25T10:36:32Z"}} />
+
+Follow your [Unbound](https://nlnetlabs.nl/projects/unbound/about/) DNS
+resolver from Gladys, over your local network: queries per minute, cache hit
+rate, average recursion time, SERVFAIL and NXDOMAIN answers, uptime, and an
+alert when it stops answering, fails too many lookups or gets flooded with
+queries. Unbound is often the recursive resolver behind Pi-hole, AdGuard Home
+or Blocky: those block the ads, Unbound answers the rest. This integration
+watches the resolver, not the blocking.
+
+> **Tested against a real Unbound 1.25.2** (Alpine package, in Docker, with the
+> certificates of `unbound-control-setup` and real `dig` queries), not yet with
+> a real Gladys installation: feedback welcome. If something does not work as
+> described, please say so on the
+> [Gladys forum](https://community.gladysassistant.com) or in the
+> [issues](https://github.com/guim31/gladys-unbound/issues).
+
+## What you need
+
+- Gladys Assistant 5.1.0 or later.
+- **Unbound** with its **remote control** turned on, the channel used by
+  `unbound-control`. Gladys sends the same commands as `unbound-control
+stats_noreset` and `unbound-control status`: it only reads, and never runs
+  `stats`, which resets the counters.
+- For the SERVFAIL and NXDOMAIN figures, the **extended statistics**.
+
+In `unbound.conf`:
+
+```yaml
+server:
+  extended-statistics: yes
+
+remote-control:
+  control-enable: yes
+  # An address of the Unbound machine that Gladys can reach (not 127.0.0.1:
+  # Gladys runs the integration in its own container).
+  control-interface: 192.168.1.2
+  control-port: 8953
+```
+
+Then create the certificates once, on the Unbound machine, and restart
+Unbound:
+
+```bash
+sudo unbound-control-setup
+sudo systemctl restart unbound
+```
+
+`unbound-control-setup` writes three files, usually in `/etc/unbound`:
+`unbound_server.pem`, `unbound_control.pem` and `unbound_control.key` (plus
+the server key, which stays there). Check that `sudo unbound-control status`
+works on the machine before going on.
+
+If `statistics-interval` is set in `unbound.conf`, also set
+`statistics-cumulative: yes`: otherwise Unbound resets its counters at each
+interval and the rates are wrong.
+
+## Set up
+
+In Gladys, **Integrations → Unbound → Configuration**:
+
+1. **Address**: the IP address or name of the Unbound machine, with `:port` if
+   the control port is not 8953.
+2. **Name**: the name of the device in Gladys (optional).
+3. **Connection**: _TLS with certificates_ (the default of Unbound), or _Plain
+   TCP_ if `unbound.conf` says `control-use-cert: no`. Plain TCP has no
+   password at all: anyone who reaches the port can stop Unbound. Keep it for
+   a port closed to the rest of the network.
+4. **Certificates**: open each file with a text editor (`sudo cat
+/etc/unbound/unbound_control.pem`) and paste the whole content, from
+   `-----BEGIN` to `-----END`, into _Server certificate_ (`unbound_server.pem`),
+   _Client certificate_ (`unbound_control.pem`) and _Client key_
+   (`unbound_control.key`). The field keeps only one line: that is expected,
+   the integration puts the line breaks back. The key is stored as a secret,
+   never shown again nor logged.
+5. **Options**: the refresh interval (1 minute by default), the two alert
+   thresholds, _Allow flushing the cache_ (off by default), and the language
+   of the feature names.
+6. Save, then **Test the connection**: it shows the version of Unbound, the
+   connection used, its uptime and whether the extended statistics are on.
+7. In the **Discovery** tab, add the device.
+
+## The device
+
+One device for the server, with these features:
+
+| Feature                | What it shows                                                     |
+| ---------------------- | ----------------------------------------------------------------- |
+| Reachable              | 1 when the remote control answers, 0 otherwise                    |
+| DNS queries per minute | Queries received, between the last two readings                   |
+| Cache hit rate         | Share of the queries answered from the cache, last 15 minutes (%) |
+| Average recursion time | Time to resolve a name absent from the cache, last 15 minutes     |
+| SERVFAIL per minute    | Failed resolutions (extended statistics)                          |
+| NXDOMAIN per minute    | Names that do not exist (extended statistics)                     |
+| Uptime                 | Hours since Unbound started                                       |
+| Version                | Version of Unbound                                                |
+
+Without the extended statistics, the device has no SERVFAIL nor NXDOMAIN;
+turn them on and Gladys proposes **Update** in the Discovery tab. The rates
+appear from the second reading. After a restart of Unbound its counters start
+again from zero: the rates come back one reading later.
+
+## Dashboard
+
+The **Unbound** widget shows three tiles (queries per minute, cache hit rate,
+recursion time) and a list: the state of the resolver, SERVFAIL and NXDOMAIN
+per minute (SERVFAIL in orange above its alert threshold), uptime and
+version. When _Allow flushing the cache_ is on, a button,
+**Flush the cache**, empties it.
+
+## Scenes
+
+### Triggers
+
+- **Unbound no longer answers**: two readings in a row without answer (the
+  second one 15 seconds after the first). Variables: server name, device,
+  error.
+- **Unbound answers again**: back after an outage, with the minutes without
+  answer.
+- **Unbound SERVFAIL above the threshold**: the SERVFAIL answers per minute
+  reach _SERVFAIL alert_ of the configuration (20 by default, 0 turns it off).
+  It fires once, then again only after the rate went back below. Needs the
+  extended statistics.
+- **Unbound queries surging**: the queries per minute reach _Query surge
+  alert_ (2000 by default, 0 turns it off), for a device stuck in a loop or a
+  malware. Same once-only rule.
+
+### Actions
+
+- **Read the Unbound statistics**: reads Unbound now. Gives a sentence
+  ("Unbound: 120 queries per minute, 85 % answered from the cache, 32 ms per
+  recursion.") for a message or a voice announcement, and the figures for a
+  condition.
+- **Flush the Unbound cache**: empties the cache, for one domain and
+  everything below it, or all of it when the field is empty. Refused unless
+  _Allow flushing the cache_ is on. Useful after changing a DNS record at
+  home.
+
+### Scene ideas
+
+- _Unbound no longer answers_ → send a message: "The DNS of the house is
+  down". Add _Unbound answers again_ for the good news.
+- _Unbound SERVFAIL above the threshold_ → a message with the rate: the
+  internet link or the upstream servers have a problem.
+- Every morning at 8:00 → _Read the Unbound statistics_ → send the sentence.
+- _Unbound queries surging_ → a notification, to look for the device gone
+  mad.
+
+## Troubleshooting
+
+- **"does not answer"**: wrong address or port, Unbound stopped, or
+  `control-interface` still on `127.0.0.1` (the default). Gladys runs the
+  integration in a container: it needs an address of the network, and a
+  firewall open on port 8953 for the Gladys machine.
+- **"TLS refused"**: one of the three certificate fields does not match the
+  files of this Unbound (they change each time `unbound-control-setup -r` is
+  run), or Unbound is in plain mode (`control-use-cert: no`): choose _Plain
+  TCP_.
+- **"connection closed: TLS expected?"**: _Plain TCP_ is chosen but Unbound
+  waits for TLS: choose _TLS with certificates_.
+- **"paste the whole file"**: a certificate field holds only a part of the
+  file; copy everything, the `-----BEGIN` and `-----END` lines included.
+- **No SERVFAIL nor NXDOMAIN**: add `extended-statistics: yes` under
+  `server:`, restart Unbound, then **Update** the device in the Discovery tab.
+- **Odd or missing rates**: another tool runs `unbound-control stats` (which
+  resets the counters), or `statistics-interval` is set without
+  `statistics-cumulative: yes`.
+- Logs: **Integrations → Unbound → Logs**. Add `LOG_LEVEL=debug` for every
+  reading.
+
+## Limits
+
+- One Unbound server per installation of the integration.
+- Developed with a real Unbound in Docker, without a real Gladys installation:
+  feedback welcome.
+- The rates per minute are measured between two readings: a burst shorter
+  than the refresh interval is averaged out.
+- The cache hit rate and the recursion time cover the last 15 minutes; right
+  after the integration starts, they cover the time since Unbound started.
+- Through a Unix socket only (`control-interface: /run/unbound.ctl`), Unbound
+  cannot be reached from the container of Gladys: use a network address.
+- Not affiliated with NLnet Labs.
+
+## Configuration settings
+
+These are the settings Unbound asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Unbound server | `section` | No | Gladys reads Unbound through its remote control (remote-control: in unbound.conf, port 8953): control-enable: yes, and control-interface on an address Gladys reaches. |
+| Address | `string` | Yes | IP address or name of the server, with :port if it is not 8953. |
+| Name | `string` | No | Name of the device in Gladys. Empty: "Unbound" followed by the address. |
+| Connection | `select` | No | TLS with the certificates of unbound-control-setup (Unbound's default), or plain TCP if unbound.conf says control-use-cert: no. |
+| Certificates (TLS) | `section` | No | Open each file made by unbound-control-setup (often in /etc/unbound) and paste its whole content, from -----BEGIN to -----END. Not needed in plain TCP. |
+| Server certificate (unbound_server.pem) | `string` | No |  |
+| Client certificate (unbound_control.pem) | `string` | No |  |
+| Client key (unbound_control.key) | `secret` | No | Kept by Gladys, never shown again nor written in the logs. |
+| Options | `section` | No |  |
+| Refresh interval | `select` | No | How often Unbound is read. The rates per minute are measured between two readings. |
+| SERVFAIL alert (per minute) | `number` | No | The scene event fires when SERVFAIL answers reach this rate (needs extended-statistics: yes). 0: off. |
+| Query surge alert (per minute) | `number` | No | The scene event fires when the queries reach this rate: a device gone mad, a loop. 0: off. |
+| Allow flushing the cache | `boolean` | No | Off by default: Gladys then only reads Unbound. On: the scene action and the widget button can empty the cache (flush_zone). |
+| Language of the feature names | `select` | No | Names given to the features when the device is added, and texts of the scene events and actions. |
+
+## How to install Unbound in Gladys
+
+1. In Gladys, open **Integrations**: Unbound appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-unbound:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-unbound](https://github.com/guim31/gladys-unbound).
+
+Unbound requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Unbound is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-unbound) — [source of this documentation](https://github.com/guim31/gladys-unbound/blob/HEAD/docs/en.md)

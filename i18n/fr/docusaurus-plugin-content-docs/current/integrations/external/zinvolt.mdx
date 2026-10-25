@@ -1,0 +1,146 @@
+---
+title: "Intégration domotique Zinvolt, gratuite et open source"
+sidebar_label: "Zinvolt"
+description: "Non officiel : batteries Zinvolt de votre compte : charge, puissances, mode, lecture seule. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-zinvolt.png"
+keywords:
+  - "zinvolt"
+  - "domotique zinvolt"
+  - "gladys zinvolt"
+  - "zinvolt gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-zinvolt instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Zinvolt","description":"Non officiel : batteries Zinvolt de votre compte : charge, puissances, mode, lecture seule.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-zinvolt","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-zinvolt.png","type":"device","version":"0.1.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-24T11:36:53Z"}} />
+
+Intégration non officielle, sans lien avec Zinvolt. Elle lit les **batteries
+Zinvolt** de votre compte par le service cloud de Zinvolt, avec l’e-mail et
+le mot de passe que vous utilisez dans l’application Zinvolt.
+
+**Jamais testé avec un vrai appareil** : l’intégration a été construite à
+partir de la bibliothèque
+[python-zinvolt](https://github.com/joostlek/python-zinvolt) (celle de Home
+Assistant) et de ses réponses de test. Merci de signaler ce que vous voyez
+sur une vraie batterie.
+
+## Ce que vous obtenez
+
+Un appareil par batterie du compte (10 au plus), avec :
+
+- le niveau de charge (%) ;
+- la puissance à la prise (W, signée) : ce que l’appareil échange avec la
+  maison par sa prise, solaire compris. Ce n’est **pas** la puissance de la
+  batterie elle-même : avec 500 W de solaire, 300 W vers la batterie et
+  200 W vers la maison, elle vaut +200 W pendant que la batterie charge.
+  Positive vers la maison, négative depuis la maison ; ce signe suit Home
+  Assistant (son capteur Zinvolt affiche l’opposé de la valeur `pso` de
+  l’API) et reste **à confirmer** sur une vraie batterie. Cette version n’a
+  pas de puissance de charge ou de décharge de la batterie : l’API ne la
+  donne pas avec un signe connu ;
+- la puissance solaire (W), et la puissance fournie à la maison par la prise
+  (W, la partie positive de la puissance à la prise, même signe à
+  confirmer) ;
+- les états en ligne, sur le réseau et en veille (1 = oui, 0 = non) ;
+- le mode intelligent (0 = défaut, 1 = autoconsommation, 2 = dynamique,
+  3 = chargé, 4 = performance, 5 = injection, 6 = personnalisé) ;
+- les réglages : sortie maximale, limites haute de charge et basse de
+  décharge, puissance de charge maximale, délai de veille, et la limite de
+  puissance du système.
+
+**Lecture seule** : l’intégration ne change jamais le mode, la sortie, les
+limites ni rien d’autre de la batterie.
+
+**Aucun compteur d’énergie** : l’API Zinvolt ne donne que des puissances,
+aucun kWh. L’intégration n’ajoute rien au suivi énergétique de Gladys et ne
+fabrique jamais d’énergie à partir d’une puissance.
+
+Une batterie hors ligne (ou dont l’état en ligne est inconnu ou
+contradictoire) ne reçoit que son état en ligne et ses réglages : ses
+dernières valeurs en direct ne sont jamais renvoyées comme nouvelles.
+
+## Configuration
+
+1. Dans Gladys, ouvrez l’intégration, onglet **Configuration**.
+2. Saisissez l’**e-mail** et le **mot de passe** de votre compte Zinvolt. Le
+   mot de passe est gardé par Gladys dans sa base, jamais réaffiché ; il est
+   envoyé seulement au service Zinvolt, dans sa requête de connexion, jamais
+   journalisé.
+3. Gardez l’**intervalle de lecture** à 60 s, ou plus. Une lecture, c’est une
+   requête pour la liste, une par batterie, et une connexion quand la session
+   en demande une.
+4. Enregistrez, puis créez les appareils depuis l’onglet **Découverte**.
+
+## Fonctionnement
+
+- Jamais de lecture plus rapide que l’intervalle : ni le bouton de test, ni la
+  Découverte, ni une reconnexion, ni l’enregistrement d’un formulaire
+  inchangé, ni un redémarrage (l’heure de la dernière requête est gardée dans
+  `/data`).
+- **E-mail ou mot de passe refusé** : les lectures s’arrêtent et restent
+  arrêtées, même après un redémarrage ; aucun nouvel essai automatique (un
+  compte pourrait être bloqué). Saisissez un autre mot de passe, ou cliquez
+  sur **Tester la connexion** pour un essai : réenregistrer le même mot de
+  passe ne relance rien.
+- **Compte accepté mais accès à l’API refusé** (le service refuse la session
+  qu’il vient d’ouvrir, par exemple un compte sans accès à l’API) : le même
+  arrêt définitif, gardé dans `/data`, jamais de connexion en boucle.
+  Vérifiez le compte dans l’application Zinvolt, puis cliquez sur **Tester la
+  connexion**, ou saisissez d’autres identifiants.
+- Une session expirée donne au plus une nouvelle connexion par lecture.
+- **Trop de requêtes ou erreur du service** : les lectures se mettent en pause
+  de 1 minute à 6 heures (gardée dans `/data`). Une batterie qui échoue seule
+  est seulement laissée de côté pour cette lecture.
+- `/data` ne garde jamais l’e-mail, le mot de passe ni la session : seulement
+  une empreinte salée du compte, et des identifiants refusés tant qu’ils le
+  sont.
+- Chaque réponse doit porter le numéro de série de la batterie demandée ; une
+  réponse au nom d’une autre est laissée de côté. Une batterie listée sans
+  identifiant lisible est aussi laissée de côté, et l’état le dit.
+
+## Dépannage
+
+- L’état de l’intégration dit ce qui s’est passé et l’heure de la prochaine
+  lecture.
+- La puissance à la prise semble inversée (négative alors que la maison
+  reçoit de la puissance de l’appareil, sans solaire) ? Son signe n’a pas
+  encore été vérifié sur une vraie batterie : merci de le signaler. Avec du
+  solaire, une puissance à la prise positive pendant que la batterie charge
+  est normale (voir plus haut).
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Zinvolt dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Zinvolt | `section` | Non | Connecteur non officiel, sans lien avec Zinvolt. Il lit les batteries de votre compte Zinvolt par le service cloud de Zinvolt, avec l’e-mail et le mot de passe de l’application Zinvolt, toutes les 60 secondes : niveau de charge, puissance à la prise (signée, signe à confirmer) et vers la maison, puissance solaire, état en ligne et réseau, mode intelligent et réglages. Lecture seule : il ne change jamais le mode, la sortie ni les limites de charge. Aucun compteur d’énergie : l’API ne donne que des puissances. Jamais testé avec un vrai appareil. |
+| E-mail du compte Zinvolt | `string` | Oui | L’e-mail avec lequel vous vous connectez à l’application Zinvolt. |
+| Mot de passe du compte Zinvolt | `secret` | Oui | Gardé par Gladys dans sa base, jamais réaffiché ; envoyé seulement au service Zinvolt, dans sa requête de connexion, jamais journalisé. Si Zinvolt le refuse, les lectures s’arrêtent sans nouvel essai automatique : saisissez un autre mot de passe (réenregistrer le même ne relance rien), ou cliquez sur le bouton de test pour un essai. |
+| Intervalle de lecture (s) | `number` | Non | Fréquence de lecture du compte (une requête plus une par batterie) : 60 s par défaut, plus si vous le souhaitez. Rien ne le lit plus vite, pas même le bouton de test. |
+
+## Comment installer Zinvolt dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Zinvolt apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-zinvolt:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-zinvolt](https://github.com/LM1LC3N7/gladys-zinvolt).
+
+Zinvolt nécessite Gladys `>=5.2.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Zinvolt est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-zinvolt) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-zinvolt/blob/HEAD/docs/fr.md)

@@ -1,0 +1,139 @@
+---
+title: "Integración domótica PVOutput, gratuita y de código abierto"
+sidebar_label: "PVOutput"
+description: "Sistemas solares PVOutput: producción, consumo y envío de estados desde escenas. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-pvoutput.jpg"
+keywords:
+  - "pvoutput"
+  - "domótica pvoutput"
+  - "gladys pvoutput"
+  - "pvoutput gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/William-De71/gladys-pvoutput instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"PVOutput","description":"Sistemas solares PVOutput: producción, consumo y envío de estados desde escenas.","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-pvoutput","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-pvoutput.jpg","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-24T06:18:12Z"}} />
+
+## Presentación
+
+Esta integración trae a Gladys las instalaciones solares de su cuenta [PVOutput](https://pvoutput.org), y permite que sus escenas envíen datos a PVOutput. PVOutput.org es un servicio gratuito donde los propietarios de instalaciones solares comparten y comparan su producción; la integración usa su API oficial con su propia clave, y no está afiliada a PVOutput.
+
+- Un dispositivo por sistema (hasta cinco): potencia producida, energía producida hoy, producción total y — cuando el sistema las publica — potencia y energía consumidas hoy, temperatura y tensión.
+- Dos widgets: el sistema hoy (con la curva del día) y sus últimos 30 días.
+- Activadores de escena: sistema en silencio de día, sistema de vuelta, balance del día tras la puesta de sol, día récord, clave rechazada.
+- Acciones de escena: enviar un estado en directo, enviar la producción de un día, leer el día de un sistema.
+
+Transporte: nube. Su clave de API, sus System Id y los valores que envían sus escenas van a `pvoutput.org`; nada más sale de Gladys.
+
+## Requisitos previos
+
+- Gladys Assistant 5.1.0 o posterior.
+- Una cuenta PVOutput (gratuita) con el acceso a la API activado.
+- **La clave de API**: en pvoutput.org, abra **Settings**, ponga **API Access** en **Enabled**, pulse **New Key** y luego **Save**. Una _clave de solo lectura_ (read only key) basta para leer sus sistemas; enviar estados o producciones desde las escenas requiere la _clave estándar_.
+- **El System Id** de cada sistema: al final de la página Settings, en **Registered Systems**.
+
+La cuota: PVOutput acepta **60 peticiones por hora y clave** (300 en modo donación), todos los sistemas y todas las aplicaciones que usan la clave juntos. La integración se mantiene por debajo por sí sola, reserva 15 peticiones por hora (60 en modo donación) para sus escenas, y se pausa hasta la hora siguiente cuando PVOutput indica que la cuota está agotada. Cada estado que envía una escena es una petición: una escena cada 5 minutos consume 12 peticiones por hora.
+
+## Configuración
+
+| Campo                | Significado                                                                                             |
+| -------------------- | ------------------------------------------------------------------------------------------------------- |
+| Clave de API         | La clave de Settings → API Access (secreta, nunca se vuelve a mostrar ni se escribe en los registros)   |
+| System Id(s)         | Un System Id, o varios separados por comas (cinco como máximo), de la misma cuenta                      |
+| Modo donación        | Márquelo si su cuenta está en modo donación (300 peticiones por hora)                                   |
+| Idioma de los textos | Nombres de las funciones, textos y errores de las escenas; automático sigue el idioma del último widget |
+
+Luego pulse **Probar la conexión**: muestra para cada sistema su nombre, su potencia, su intervalo de estado, su zona horaria y las peticiones restantes de la hora. **Diagnóstico** escribe el estado de la integración en sus registros, sin la clave.
+
+## Uso
+
+### Dispositivos
+
+Abra **Descubrir** y añada sus sistemas. Cada dispositivo tiene:
+
+- **Producción solar** (W): el último estado, 0 de noche; un sistema retrasado de día conserva su último valor;
+- **Producción de hoy** (kWh) y **Producción total** (kWh, un índice para el historial: nunca alimenta el consumo ni el coste en Gladys);
+- cuando el sistema las publica: **Consumo** (W), **Consumo de hoy** (kWh), **Temperatura** (°C, fuera de la media de la habitación), **Tensión** (V).
+
+Una función aparece la primera vez que PVOutput le da un valor, y nunca desaparece. Las lecturas siguen el intervalo de estado de cada sistema (5 a 15 minutos) de día y cada 30 minutos de noche, y se alargan cuando sigue varios sistemas.
+
+### Widgets del panel
+
+![Los dos widgets: un sistema hoy con su curva de potencia, y sus últimos 30 días en barras (ilustración generada, no una captura de pantalla)](https://raw.githubusercontent.com/William-De71/gladys-pvoutput/main/docs/assets/widgets.es.png)
+
+- **PVOutput hoy**: potencia actual, energía del día, consumo o exportación, rendimiento (kWh/kWp), curva del día con su pico, hora del último estado (o en silencio, o noche) y peticiones restantes de la hora. La curva solo se lee mientras se muestra el widget.
+- **PVOutput, 30 días**: los últimos 30 días en barras, el total del mes, el mejor día, la media, el récord de rendimiento y su fecha, la producción total.
+
+Elija el sistema en los ajustes del widget (vacío: el primero).
+
+### Escenas
+
+Activadores:
+
+- **PVOutput: sistema en silencio**: ningún estado nuevo durante 3 intervalos de estado (30 minutos como mínimo) con el sol salido en el sistema. Nunca de noche: los inversores no publican nada. **PVOutput: sistema de vuelta**: vuelve a publicar.
+- **PVOutput: balance del día**: una vez al día, una hora después de la puesta de sol en el sistema, con la producción, la exportación, el consumo, el pico, el rendimiento y una frase (`summary`).
+- **PVOutput: día récord**: el rendimiento del día es el récord de la vida del sistema.
+- **PVOutput: clave rechazada**: PVOutput rechaza la clave.
+
+Acciones:
+
+- **PVOutput: enviar un estado**: los valores son campos de texto que aceptan las variables `{{…}}` de las acciones anteriores (por ejemplo «obtener el último valor de un dispositivo»). Energías en kWh (o Wh, elegido en la acción o escrito tras el valor), potencias en W. «Valores acumulados» indica que una energía es un índice total; «Datos netos» envía las potencias de exportación e importación de un contador. Fecha y hora: ahora, en la zona horaria del sistema.
+- **PVOutput: enviar la producción de un día**: hoy o ayer; producción, exportación, consumo, importación en punta y en valle en kWh (o escritas en Wh, `6210 Wh`), temperaturas `mín / máx`, condición, comentario.
+- **PVOutput: leer el día de un sistema**: producción, exportación, consumo, pico, rendimiento, potencia actual, último estado y una frase, sin ninguna petición.
+
+Ejemplos:
+
+1. Cada 5 minutos → obtener el último valor de la potencia del inversor y de su índice de producción → **PVOutput: enviar un estado** con la potencia `{{…}}`, la energía `{{…}}` y «La producción es un índice».
+2. Cada noche a las 23:30 → obtener los valores del contador del día → **PVOutput: enviar la producción de un día** con la exportación y la importación.
+3. Cuando **PVOutput: sistema en silencio** → enviar una notificación «El inversor no responde desde las \{\{triggerEvent.data.last_status_time\}\}».
+4. Cuando **PVOutput: balance del día** → enviar el mensaje «Hoy: \{\{triggerEvent.data.production_kwh\}\} kWh».
+
+## Solución de problemas
+
+- **«PVOutput rechaza la clave de API»**: compruebe la clave en Settings → API Access, y que API Access está en _Enabled_. Una clave nueva sustituye a la anterior.
+- **«PVOutput no conoce el System Id»**: el System Id es un número en Registered Systems, de un sistema de la cuenta de la clave.
+- **«La clave es de solo lectura»**: la lectura funciona, el envío requiere la clave estándar.
+- **«Lecturas en pausa hasta…»**: las peticiones de la hora están agotadas, a menudo porque otra aplicación usa la misma clave. Se reanudan en la hora siguiente; sus escenas conservan una reserva.
+- **«Moon Powered»** al enviar: PVOutput cree que es de noche en el sistema: compruebe la zona horaria del sistema en PVOutput.
+- **Una energía «demasiado alta»**: el valor probablemente está en Wh mientras la acción espera kWh (o un índice sin «Valores acumulados»).
+- **Sin curva en el widget**: llega con la siguiente lectura una vez mostrado el widget (unos minutos).
+- Informe de un problema en GitHub con las versiones de Gladys y de la integración, el mensaje de **Probar la conexión** y las líneas escritas por **Diagnóstico**. Nunca pegue su clave.
+
+## Parámetros de configuración
+
+Estos son los parámetros que PVOutput te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Clave de API de PVOutput | `section` | No | PVOutput.org es un servicio gratuito para compartir y comparar la producción de las instalaciones solares. En pvoutput.org, abra Settings, ponga API Access en Enabled, pulse New Key y luego Save: la clave aparece ahí. Una clave de solo lectura basta para leer sus sistemas; enviar estados o producciones diarias desde sus escenas requiere la clave estándar. Los datos pasan por pvoutput.org (nube). Esta integración no está afiliada a PVOutput. |
+| Clave de API | `secret` | Sí |  |
+| System Id(s) | `string` | Sí | El System Id de cada sistema, en Registered Systems al final de la página Settings. Varios sistemas de la misma cuenta: sepárelos con comas (cinco como máximo). |
+| Peticiones y cuota | `section` | No | PVOutput acepta 60 peticiones por hora y clave (300 en modo donación), para todos los sistemas y todas las aplicaciones que usan la clave. La integración espacia sus lecturas para no superarlo y reserva una cuarta parte de la hora para sus escenas: una escena que envía un estado cada 5 minutos consume 12 peticiones por hora. |
+| Modo donación | `boolean` | No | La cuenta está en modo donación: 300 peticiones por hora en lugar de 60. PVOutput indica la cuota real en sus respuestas: una elección errónea solo ralentiza las lecturas. |
+| Idioma de los textos | `select` | No | Nombres de las funciones, textos y errores de las escenas. Automático: el idioma del último widget mostrado. |
+
+## Cómo instalar PVOutput en Gladys
+
+1. En Gladys, abre **Integraciones**: PVOutput aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/william-de71/gladys-pvoutput:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/William-De71/gladys-pvoutput](https://github.com/William-De71/gladys-pvoutput).
+
+PVOutput requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+PVOutput es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [William-De71](https://github.com/William-De71), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/William-De71/gladys-pvoutput) — [fuente de esta documentación](https://github.com/William-De71/gladys-pvoutput/blob/HEAD/docs/es.md)

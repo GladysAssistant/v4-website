@@ -1,0 +1,136 @@
+---
+title: "Zinvolt smart home integration, free and open source"
+sidebar_label: "Zinvolt"
+description: "Unofficial: Zinvolt batteries from your account: charge, powers, mode, read-only. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-zinvolt.png"
+keywords:
+  - "zinvolt"
+  - "zinvolt smart home"
+  - "gladys zinvolt"
+  - "zinvolt gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-zinvolt instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Zinvolt","description":"Unofficial: Zinvolt batteries from your account: charge, powers, mode, read-only.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-zinvolt","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-zinvolt.png","type":"device","version":"0.1.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-24T11:36:53Z"}} />
+
+Unofficial integration, not affiliated with Zinvolt. It reads the **Zinvolt
+batteries** of your account through the Zinvolt cloud service, with the
+e-mail and password you use in the Zinvolt app.
+
+**Never tested with a real device**: it was built from the
+[python-zinvolt](https://github.com/joostlek/python-zinvolt) library (the one
+of Home Assistant) and its test answers. Please report what you see on a real
+battery.
+
+## What you get
+
+One device per battery of the account (10 at most), with:
+
+- state of charge (%);
+- the socket power (W, signed): what the device exchanges with the home at
+  its socket, solar included. It is **not** the power of the battery
+  itself: with 500 W of solar, 300 W into the battery and 200 W to the home,
+  it reads +200 W while the battery charges. Positive towards the home,
+  negative from it; this sign follows Home Assistant (its Zinvolt sensor
+  shows the opposite of the `pso` value of the API) and is **still to be
+  confirmed** on a real battery. This version has no battery charge or
+  discharge power: the API does not give it with a known sign;
+- solar power (W), and the power given to the home through the socket (W,
+  the positive part of the socket power, same sign to confirm);
+- online, on grid and dormant states (1 = yes, 0 = no);
+- the smart mode (0 = default, 1 = self use, 2 = dynamic, 3 = charged,
+  4 = performance, 5 = feed, 6 = custom);
+- the settings: maximum output, charge upper and discharge lower limits,
+  maximum charge power, standby time, and the system power limit.
+
+**Read-only**: the integration never changes the mode, the output, the
+limits nor anything else of the battery.
+
+**No energy counter**: the Zinvolt API gives powers only, no kWh. The
+integration adds nothing to the energy monitoring of Gladys and never makes
+up an energy from a power.
+
+An offline battery (or one whose online state is unknown or contradictory)
+only gets its online state and its settings: its last live values are never
+sent again as new ones.
+
+## Configuration
+
+1. In Gladys, open the integration, **Configuration** tab.
+2. Enter the **e-mail** and the **password** of your Zinvolt account. The
+   password is kept by Gladys in its database, never shown again; it is
+   sent only to the Zinvolt service, in its login request, never logged.
+3. Keep the **reading interval** at 60 s, or more. One read is one request
+   for the list, one per battery, and a login when the session needs one.
+4. Save, then create the devices from the **Discover** tab.
+
+## Behaviour
+
+- Never a read faster than the interval: not the test button, not Discovery,
+  not a reconnection, not a save of an unchanged form, not a restart (the
+  time of the last request is kept in `/data`).
+- **Refused e-mail or password**: the reads stop and stay stopped, even after
+  a restart; there is no new automatic try (an account could get locked).
+  Enter another password, or click **Test the connection** to try once:
+  saving the same password again tries nothing.
+- **Account accepted but access to the API refused** (the service refuses
+  the session it has just opened, for instance an account without access to
+  the API): the same final stop, kept in `/data`, never a login in a loop.
+  Check the account in the Zinvolt app, then click **Test the connection**,
+  or enter other credentials.
+- An expired session gets one new login per read at most.
+- **Too many requests or an error of the service**: the reads pause from 1
+  minute to 6 hours (kept in `/data`). A battery that fails alone is only left
+  out of that read.
+- `/data` never keeps the e-mail, the password nor the session: only a salted
+  fingerprint of the account, and of refused credentials while they are
+  refused.
+- Each answer must name the serial number of the battery it was asked for;
+  an answer naming another one is left out. A battery listed without a
+  readable identifier is left out too, and the status says so.
+
+## Troubleshooting
+
+- The status of the integration says what happened and when the next read is.
+- The socket power looks inverted (negative while the home gets power from
+  the device, with no solar)? Its sign has not been checked on a real
+  battery yet: please report it. With solar, a positive socket power while
+  the battery charges is normal (see above).
+
+## Configuration settings
+
+These are the settings Zinvolt asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Zinvolt | `section` | No | Unofficial connector, not affiliated with Zinvolt. It reads the batteries of your Zinvolt account through the Zinvolt cloud service, with the e-mail and password of the Zinvolt app, every 60 seconds: state of charge, power at the socket (signed, sign to confirm) and to the home, solar power, online and grid state, smart mode and settings. Read-only: it never changes the mode, the output or the charge limits. No energy counter: the API gives powers only. Never tested with a real device. |
+| E-mail of the Zinvolt account | `string` | Yes | The e-mail you sign in with in the Zinvolt app. |
+| Password of the Zinvolt account | `secret` | Yes | Kept by Gladys in its database, never shown again; sent only to the Zinvolt service, in its login request, never logged. If Zinvolt refuses it, the reads stop with no automatic try: enter another password (saving the same one again tries nothing), or click the test button to try once. |
+| Reading interval (s) | `number` | No | How often the account is read (one request plus one per battery): 60 s by default, more if you wish. Nothing reads it faster, not even the test button. |
+
+## How to install Zinvolt in Gladys
+
+1. In Gladys, open **Integrations**: Zinvolt appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-zinvolt:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-zinvolt](https://github.com/LM1LC3N7/gladys-zinvolt).
+
+Zinvolt requires Gladys `>=5.2.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Zinvolt is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-zinvolt) — [source of this documentation](https://github.com/LM1LC3N7/gladys-zinvolt/blob/HEAD/docs/en.md)
