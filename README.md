@@ -15,7 +15,12 @@ cd v4-website
 
 ### Install the dependencies
 
+The project uses Yarn 4, installed through [Corepack](https://nodejs.org/api/corepack.html),
+which ships with Node and reads the exact version from the `packageManager`
+field of `package.json`:
+
 ```
+corepack enable
 yarn
 ```
 
@@ -71,6 +76,10 @@ Docusaurus projects once **build caching** is enabled on the project
 cache is purged after seven days without a build, which the daily
 `refresh-dev-activity` workflow prevents.
 
+Yarn's download cache is restored as well (`.cache/yarn` in the home folder),
+which is why `.yarnrc.yml` points Yarn 4's `globalFolder` there instead of its
+default `~/.yarn/berry`.
+
 Two other things keep the install step short:
 
 - `puppeteer` is not a dependency any more: it downloaded a whole Chrome at
@@ -93,9 +102,11 @@ not a build speed lever, but two of its changes matter here:
   local installs and the GitHub workflows build with the same Node as
   production.
 - v3 no longer detects the Yarn version from `yarn.lock` and defaults to
-  Yarn 4, which does not understand the Yarn 1 lockfile the same way. Before
-  switching, set the `YARN_VERSION` environment variable to `1.22.22` on the
-  Pages project, for production and preview builds alike.
+  Yarn 4. The project is on Yarn 4 (see `packageManager` in `package.json`),
+  so it builds on v3 as is. Set the `YARN_VERSION` environment variable on
+  the Pages project to the same version as `packageManager`, for production
+  and preview builds alike: it is required on v2, whose default is Yarn 3,
+  and keeps v3 from switching Yarn under the project when its default moves.
 
 ## How to refresh the development activity page?
 
