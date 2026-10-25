@@ -27,6 +27,10 @@ const DOCS_DIRS = {
   ),
 };
 const LOCALES = ["en", "fr", "de", "es"];
+// Downloading the documentation one file at a time takes about 30 minutes for
+// the whole store: the time is spent waiting on the network, so several
+// integrations are handled at once.
+const DOWNLOAD_CONCURRENCY = 16;
 
 // Every generated page starts with this marker, so the cleanup step only ever
 // removes files this script owns.
@@ -621,6 +625,18 @@ const downloadDoc = async (url) => {
   return response.text();
 };
 
+// Run `worker` on every item, with at most `concurrency` of them in flight.
+const forEachConcurrently = async (items, concurrency, worker) => {
+  let next = 0;
+  await Promise.all(
+    Array.from({ length: concurrency }, async () => {
+      while (next < items.length) {
+        await worker(items[next++]);
+      }
+    })
+  );
+};
+
 // Remove the pages of integrations that left the store, without touching
 // anything a human may have added in the same folder.
 const removeStalePages = (directory, keptFiles) => {
@@ -676,29 +692,39 @@ const removeStalePages = (directory, keptFiles) => {
   const written = Object.fromEntries(
     LOCALES.map((locale) => [locale, new Set()])
   );
-  for (const integration of index.integrations) {
-    const trimmed = integrations.find(
-      (item) => item.store_slug === integration.store_slug
-    );
-    for (const locale of LOCALES) {
+  const trimmedBySlug = new Map(
+    integrations.map((integration) => [integration.store_slug, integration])
+  );
+  await forEachConcurrently(
+    index.integrations,
+    DOWNLOAD_CONCURRENCY,
+    async (integration) => {
+      const trimmed = trimmedBySlug.get(integration.store_slug);
       // The store requires English and French documentation; other languages
-      // are optional and fall back to the English one.
+      // are optional and fall back to the English one, downloaded only once.
       const docs = integration.docs || {};
-      const docLocale = docs[locale] ? locale : "en";
-      const authorDoc = await downloadDoc(docs[docLocale]);
-      const page = buildPage(
-        trimmed,
-        authorDoc ? prepareAuthorDoc(authorDoc, trimmed) : null,
-        locale,
-        docLocale,
-        nativeSlugs.has(trimmed.slug)
+      const downloads = {};
+      await Promise.all(
+        LOCALES.map(async (locale) => {
+          const docLocale = docs[locale] ? locale : "en";
+          downloads[docLocale] =
+            downloads[docLocale] || downloadDoc(docs[docLocale]);
+          const authorDoc = await downloads[docLocale];
+          const page = buildPage(
+            trimmed,
+            authorDoc ? prepareAuthorDoc(authorDoc, trimmed) : null,
+            locale,
+            docLocale,
+            nativeSlugs.has(trimmed.slug)
+          );
+          const fileName = `${trimmed.slug}.mdx`;
+          fs.writeFileSync(path.join(DOCS_DIRS[locale], fileName), page);
+          written[locale].add(fileName);
+        })
       );
-      const fileName = `${trimmed.slug}.mdx`;
-      fs.writeFileSync(path.join(DOCS_DIRS[locale], fileName), page);
-      written[locale].add(fileName);
+      console.log(`  > ${trimmed.slug}`);
     }
-    console.log(`  > ${trimmed.slug}`);
-  }
+  );
 
   LOCALES.forEach((locale) =>
     removeStalePages(DOCS_DIRS[locale], written[locale])
