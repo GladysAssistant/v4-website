@@ -156,7 +156,7 @@ Sí, y los pasos son los mismos en ambos: instala Docker con el script oficial y
         name: "¿En qué sistemas puedo ejecutar Gladys con Docker?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "La instalación con Docker funciona en cualquier sistema que ejecute Docker: un mini-PC, un NAS como Synology o Unraid, un servidor Linux, una Raspberry Pi o una máquina virtual. El mismo comando único inicia Gladys en todos ellos.",
+          text: "La instalación con Docker funciona en cualquier sistema que ejecute Docker: un mini-PC, un NAS como Synology o Unraid, un servidor Linux, una Raspberry Pi o una máquina virtual. El mismo comando único inicia Gladys en todos ellos. En un servidor Proxmox, sigue la guía de Proxmox.",
         },
       },
       {

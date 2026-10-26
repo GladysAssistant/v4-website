@@ -31,6 +31,7 @@ Wenn du bereits kompatible Hardware hast:
 - **Synology-NAS, Intel NUC oder jeder Docker-fähige Linux-Server**
   - Nutze deine vorhandene Hardware weiter
   - Folge unseren Installationsanleitungen weiter unten
+- **Proxmox-VE-Server**: Betreibe Gladys in einer Debian-VM, siehe die [Anleitung zur Installation auf Proxmox](/de/docs/installation/proxmox/)
 
 ### Option 3: Raspberry Pi
 
@@ -46,6 +47,7 @@ Je nach gewählter Hardware kannst du einer der folgenden Anleitungen folgen:
 - [Gladys Assistant auf einem Mini-PC installieren](/de/docs/installation/mini-pc/)
 - [Gladys Assistant auf einem Synology-NAS installieren](/de/docs/installation/synology/)
 - [Gladys Assistant auf einem Unraid-NAS installieren](/de/docs/installation/unraid/)
+- [Gladys Assistant auf Proxmox VE installieren](/de/docs/installation/proxmox/)
 - [Gladys Assistant auf einem Raspberry Pi installieren](/de/docs/installation/raspberry-pi/)
 
 ## Plane dein Smart-Home-Projekt

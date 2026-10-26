@@ -27,39 +27,50 @@ In the Proxmox web interface, select your storage (usually **local**), open **IS
 
 Paste the link of the latest Debian "netinst" image for your architecture (amd64 for most mini-PCs and servers), available on the [Debian website](https://www.debian.org/distrib/netinst), click on **Query URL**, then on **Download**.
 
-Ubuntu Server works just as well if you prefer it: the rest of this guide is the same.
+Ubuntu Server works just as well if you prefer it: only the installation in step 3 is different.
 
 ## Step 2: Create the virtual machine
 
 Click on **Create VM** at the top right and go through the wizard:
 
 - **General**: name the VM `gladys`. Tick **Advanced**, then **Start at boot**, so Gladys starts again after a reboot of the server.
-- **OS**: select the Debian ISO you just downloaded.
+- **OS**: select the ISO you just downloaded.
 - **System**: tick **Qemu Agent**.
 - **Disks**: **32 GB** is enough to start. Gladys keeps the history of your sensors, so give it more if you have a lot of devices.
-- **CPU**: **2 cores**. Choose the **host** type for the best performance.
+- **CPU**: **2 cores**. Choose the **host** type for the best performance (in a cluster with different CPU models, see the FAQ below).
 - **Memory**: **4096 MB** (4 GB). Gladys runs with 2 GB, but Zigbee2MQTT and the other integrations will thank you for the margin.
 - **Network**: keep the default bridge (`vmbr0`) and the **VirtIO** model, so the VM gets an address on your home network like any other device.
 
 Confirm, then start the VM.
 
-## Step 3: Install Debian
+## Step 3: Install Debian or Ubuntu Server
 
-Open the **Console** of the VM and follow the Debian installer. At the **Software selection** step:
+Open the **Console** of the VM and follow the installer. On Debian, at the **Software selection** step:
 
 - untick the desktop environments (Gladys does not need one),
 - tick **SSH server** and **standard system utilities**.
 
-Once Debian is installed and the VM has rebooted, log in and install the Qemu guest agent, which lets Proxmox show the IP address of the VM and shut it down cleanly:
+:::tip[Set up `sudo` first on Debian]
+If you set a root password during the installation, Debian does not install `sudo`, and the commands of this guide need it. Log in as root with `su -`, then run:
+
+```bash
+apt update && apt install -y curl sudo
+usermod -aG sudo your-user
+```
+
+Replace `your-user` with your username, then log out and back in.
+:::
+
+:::note[On Ubuntu Server]
+The Ubuntu installer has no software selection step: just tick **Install OpenSSH server** when it asks. Ubuntu already comes with `sudo` and `curl`.
+:::
+
+Once the system is installed and the VM has rebooted, log in and install the Qemu guest agent, which lets Proxmox show the IP address of the VM and shut it down cleanly:
 
 ```bash
 sudo apt update && sudo apt install -y qemu-guest-agent
 sudo reboot
 ```
-
-:::tip
-If you set a root password during the installation, Debian does not install `sudo`. Follow the Debian tip at the top of the [Docker installation guide](/docs/installation/docker) to install `curl` and `sudo` first.
-:::
 
 We also recommend giving the VM a fixed IP address with a DHCP reservation in your router: the IP address of the VM is shown in its **Summary** tab once the guest agent runs.
 
@@ -97,7 +108,7 @@ Then open **`http://gladysassistant.local`** from a computer on the same network
 
 ## Step 6: Back up the VM
 
-If you use [Gladys Plus](/docs/plus/intro), it already backs up your Gladys every day, encrypted. On Proxmox you can add a backup of the whole VM: in **Datacenter** > **Backup**, schedule a regular backup of the `gladys` VM. You can also take a **Snapshot** of the VM before a big change.
+If you use [Gladys Plus](/docs/plus/intro), it already backs up your Gladys every day, encrypted. On Proxmox you can add a backup of the whole VM: in **Datacenter** > **Backup**, schedule a regular backup of the `gladys` VM. Before a big change, you can also take a snapshot from the **Snapshots** tab of the VM.
 
 ## Frequently asked questions
 
@@ -111,11 +122,11 @@ We recommend a VM. Gladys runs in Docker, and Docker inside an LXC container nee
 
 ### Does Matter work in a Proxmox VM?
 
-Yes. Matter relies on IPv6, so IPv6 must be enabled on your router and in the VM. Debian enables it by default: check that the VM has an IPv6 address with `ip -6 addr`. See the [Matter integration](/docs/integrations/matter) for the rest of the setup.
+Yes. Matter relies on IPv6, so IPv6 must be enabled on your router and in the VM. Debian enables it by default: check that the network interface of the VM (usually `ens18`, not the `lo` loopback) has an IPv6 address with `ip -6 addr show dev ens18`. See the [Matter integration](/docs/integrations/matter) for the rest of the setup.
 
 ### Can I move the Gladys VM to another Proxmox node?
 
-Yes, but a USB device passed through to the VM stays attached to the server it is plugged into: move the dongle with the VM, or use a network Zigbee coordinator, which works from any node.
+Yes, but a USB device passed through to the VM stays attached to the server it is plugged into: move the dongle with the VM, or use a network Zigbee coordinator, which works from any node. In a cluster whose nodes have different CPU models, also keep the default CPU type of the VM instead of **host**, otherwise live migration can fail.
 
 ### Can Gladys monitor my Proxmox server?
 
@@ -147,7 +158,7 @@ Yes. The community [Proxmox integration](/docs/integrations/external/proxmox) sh
         name: "Does Matter work in a Proxmox VM?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. Matter relies on IPv6, so IPv6 must be enabled on your router and in the VM. Debian enables it by default: check that the VM has an IPv6 address with ip -6 addr.",
+          text: "Yes. Matter relies on IPv6, so IPv6 must be enabled on your router and in the VM. Debian enables it by default: check that the network interface of the VM (usually ens18, not the lo loopback) has an IPv6 address with ip -6 addr show dev ens18.",
         },
       },
       {
@@ -155,7 +166,7 @@ Yes. The community [Proxmox integration](/docs/integrations/external/proxmox) sh
         name: "Can I move the Gladys VM to another Proxmox node?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes, but a USB device passed through to the VM stays attached to the server it is plugged into: move the dongle with the VM, or use a network Zigbee coordinator, which works from any node.",
+          text: "Yes, but a USB device passed through to the VM stays attached to the server it is plugged into: move the dongle with the VM, or use a network Zigbee coordinator, which works from any node. In a cluster whose nodes have different CPU models, also keep the default CPU type of the VM instead of host, otherwise live migration can fail.",
         },
       },
       {
