@@ -11,6 +11,10 @@ Nous recommandons l'utilisation de [Watchtower](https://github.com/nicholas-fedo
 
 Vous trouverez la commande exacte à lancer dans le [guide d'installation Docker](/fr/docs/installation/docker/#mise-à-jour-automatique-avec-watchtower).
 
+## Où sont les logs de Gladys ?
+
+Vous pouvez les télécharger en un clic depuis **Paramètres > Système > Télécharger les logs**, sans ligne de commande. Voir [comment télécharger les logs de Gladys](/fr/docs/installation/logs).
+
 ## Qui utilise Gladys Assistant 4 ?
 
 La version 4 de Gladys Assistant est sortie en [novembre 2020](/fr/blog/lancement-gladys-assistant-4/), et est développée activement depuis, avec une nouvelle version toutes les quelques semaines.

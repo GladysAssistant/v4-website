@@ -71,6 +71,7 @@ module.exports = {
         },
         "installation/raspberry-pi",
         "installation/phone",
+        "installation/logs",
         "installation/faq",
       ],
     },
