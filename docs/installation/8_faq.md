@@ -11,6 +11,10 @@ We recommend using [Watchtower](https://github.com/nicholas-fedor/watchtower), a
 
 See the [Docker installation guide](/docs/installation/docker#auto-upgrade-gladys-with-watchtower) for the exact command to run.
 
+### Where are the Gladys logs?
+
+You can download them in one click from **Settings > System > Download logs**, without the command line. See [how to download Gladys logs](/docs/installation/logs).
+
 ### Who uses Gladys Assistant 4?
 
 Gladys Assistant v4 was released in [November 2020](/blog/lancement-gladys-assistant-4) and has been actively developed ever since, with a new release every few weeks.
