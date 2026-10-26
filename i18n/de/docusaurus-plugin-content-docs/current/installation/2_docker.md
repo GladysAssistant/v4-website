@@ -1,10 +1,12 @@
 ---
 id: docker
-title: Gladys Assistant mit Docker installieren
-description: "Installiere Gladys Assistant mit einem einzigen Befehl per Docker auf jedem System (Mini-PC, NAS, Linux-Server, VM). Kostenlos, quelloffen und selbst gehostet."
+title: "Gladys mit Docker installieren: Debian, Ubuntu & Co."
+description: "Installiere Gladys Assistant mit einem einzigen Befehl per Docker auf Debian, Ubuntu oder jedem anderen System (Mini-PC, NAS, Linux-Server, VM). Kostenlos, quelloffen und selbst gehostet."
 sidebar_label: Installation mit Docker
 keywords:
   - gladys docker installieren
+  - gladys debian installieren
+  - gladys ubuntu installieren
   - gladys assistant docker
   - selbst gehostete hausautomation docker
   - gladys auf nas betreiben
@@ -13,9 +15,20 @@ keywords:
 
 import JsonLd from '@site/src/components/seo/JsonLd';
 
-In dieser Anleitung gehen wir die Schritte zur Installation von Gladys Assistant mit Docker durch. Sie funktioniert auf jedem System (Mini-PC, NAS, Linux-Server, VM …).
+In dieser Anleitung gehen wir die Schritte zur Installation von Gladys Assistant mit Docker durch. Sie funktioniert auf jedem System (Mini-PC, NAS, Linux-Server, VM …), und unter Debian und Ubuntu sind die Schritte identisch.
 
 ## Docker installieren
+
+:::tip[Unter Debian zuerst `curl` und `sudo` installieren]
+Ubuntu bringt `curl` und `sudo` mit, eine minimale Debian-Installation dagegen oft keines von beiden, und die folgenden Befehle brauchen beide. Melde dich mit `su -` als root an und führe aus:
+
+```bash
+apt update && apt install -y curl sudo
+usermod -aG sudo dein-benutzer
+```
+
+Ersetze `dein-benutzer` durch deinen Benutzernamen, melde dich ab und wieder an und mache dann unten weiter. Der Rest dieser Anleitung ist unter Debian und Ubuntu identisch.
+:::
 
 Um Docker zu installieren, führe einfach diesen Befehl aus:
 
@@ -122,6 +135,17 @@ Am einfachsten startest du den oben gezeigten Watchtower-Container. Er hält Aus
 
 Ja. Solange dein NAS Docker-Container ausführen kann, kannst du Gladys mit demselben Befehl darauf betreiben. Das ist eine beliebte Möglichkeit, Gladys auf Hardware selbst zu hosten, die du bereits besitzt.
 
+### Kann ich Gladys unter Debian oder Ubuntu installieren?
+
+Ja, und die Schritte sind auf beiden gleich: Installiere Docker mit dem offiziellen Skript und starte dann den Gladys-Container mit dem obigen Befehl. Jede von Docker unterstützte Debian- oder Ubuntu-Version funktioniert, auf einem Mini-PC, einem Server oder einer virtuellen Maschine. Auf einer minimalen Debian-Installation installierst du zuerst `curl` und `sudo` (siehe den Tipp oben auf dieser Seite).
+
+### Gladys öffnet sich nach der Installation nicht: Was sollte ich prüfen?
+
+1. **Läuft der Container?** `sudo docker ps` sollte `gladys` mit dem Status `Up` anzeigen. Fehlt er oder startet er ständig neu, lies seine Logs mit `sudo docker logs gladys --tail=100` (siehe [Gladys-Logs herunterladen](/de/docs/installation/logs)).
+2. **Ist Port 80 schon belegt?** Gladys lauscht auf Port 80 des Rechners. Nutzt bereits ein anderer Webserver (Apache, Nginx …) diesen Port, kann Gladys nicht starten: Stoppe diesen Server oder starte Gladys mit `-e SERVER_PORT=8080` auf einem anderen Port und öffne `http://IP-DES-RECHNERS:8080`.
+3. **Blockiert eine Firewall?** Wenn `ufw` aktiv ist, gib den Port mit `sudo ufw allow 80/tcp` frei.
+4. **Öffnet sich `gladysassistant.local` nicht?** Nutze stattdessen die IP-Adresse des Rechners, wie [oben](#wenn-gladysassistantlocal-sich-nicht-öffnet) beschrieben.
+
 <JsonLd
   data={{
     "@context": "https://schema.org",
@@ -149,6 +173,22 @@ Ja. Solange dein NAS Docker-Container ausführen kann, kannst du Gladys mit dems
         acceptedAnswer: {
           "@type": "Answer",
           text: "Ja. Solange dein NAS Docker-Container ausführen kann, kannst du Gladys mit demselben Befehl darauf betreiben. Das ist eine beliebte Möglichkeit, Gladys auf Hardware selbst zu hosten, die du bereits besitzt.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Kann ich Gladys unter Debian oder Ubuntu installieren?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Ja, und die Schritte sind auf beiden gleich: Installiere Docker mit dem offiziellen Skript und starte dann den Gladys-Container mit dem obigen Befehl. Jede von Docker unterstützte Debian- oder Ubuntu-Version funktioniert, auf einem Mini-PC, einem Server oder einer virtuellen Maschine. Auf einer minimalen Debian-Installation installierst du zuerst curl und sudo (siehe den Tipp oben auf dieser Seite).",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Gladys öffnet sich nach der Installation nicht: Was sollte ich prüfen?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Prüfe zuerst mit sudo docker ps, ob der Container läuft, und lies seine Logs mit sudo docker logs gladys, falls er fehlt oder ständig neu startet. Prüfe dann, ob kein anderer Webserver (Apache, Nginx) Port 80 belegt, oder starte Gladys mit -e SERVER_PORT=8080 auf einem anderen Port. Ist die Firewall ufw aktiv, gib den Port mit sudo ufw allow 80/tcp frei. Öffnet sich gladysassistant.local nicht, nutze die IP-Adresse des Rechners.",
         },
       },
     ],
