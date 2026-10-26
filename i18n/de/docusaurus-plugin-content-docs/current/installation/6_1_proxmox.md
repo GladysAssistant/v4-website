@@ -1,0 +1,171 @@
+---
+id: proxmox
+title: Gladys Assistant auf Proxmox VE installieren
+description: "Installiere Gladys Assistant auf Proxmox VE in einer Debian-VM: VM anlegen, Zigbee-Dongle und Bluetooth-Adapter per USB durchreichen und Gladys mit Docker starten."
+sidebar_label: Installation auf Proxmox
+keywords:
+  - gladys proxmox
+  - gladys assistant proxmox installieren
+  - hausautomation proxmox
+  - proxmox usb passthrough zigbee
+  - gladys lxc
+---
+
+import JsonLd from '@site/src/components/seo/JsonLd';
+
+Wenn du zu Hause schon einen [Proxmox VE](https://www.proxmox.com/en/products/proxmox-virtual-environment/overview)-Server betreibst, kannst du Gladys Assistant dort neben deinen anderen Diensten hosten.
+
+Wir empfehlen, Gladys in einer **virtuellen Maschine (VM) mit Debian** laufen zu lassen und es dann mit Docker genau wie auf jedem anderen Linux-Server zu installieren. Eine VM verhält sich wie ein echter Rechner: Der offizielle Installationsbefehl funktioniert unverändert, dein Zigbee-Dongle wird per USB durchgereicht und Gladys ist in deinem Netzwerk unter `gladysassistant.local` erreichbar.
+
+:::note
+Diese Anleitung verwendet die englischen Menünamen der Proxmox-Weboberfläche, unter Proxmox VE 8 und 9.
+:::
+
+## Schritt 1: Das Debian-ISO herunterladen
+
+Wähle in der Proxmox-Weboberfläche deinen Speicher (meist **local**), öffne **ISO Images** und klicke auf **Download from URL**.
+
+Füge den Link zum aktuellen Debian-„netinst“-Image für deine Architektur ein (amd64 für die meisten Mini-PCs und Server), zu finden auf der [Debian-Website](https://www.debian.org/distrib/netinst), klicke auf **Query URL** und dann auf **Download**.
+
+Ubuntu Server funktioniert genauso gut, wenn dir das lieber ist: Der Rest dieser Anleitung bleibt gleich.
+
+## Schritt 2: Die virtuelle Maschine anlegen
+
+Klicke oben rechts auf **Create VM** und gehe den Assistenten durch:
+
+- **General**: Nenne die VM `gladys`. Setze den Haken bei **Advanced** und dann bei **Start at boot**, damit Gladys nach einem Neustart des Servers wieder startet.
+- **OS**: Wähle das gerade heruntergeladene Debian-ISO.
+- **System**: Setze den Haken bei **Qemu Agent**.
+- **Disks**: **32 GB** reichen für den Anfang. Gladys speichert den Verlauf deiner Sensoren, gib also mehr, wenn du viele Geräte hast.
+- **CPU**: **2 Kerne**. Wähle den Typ **host** für die beste Leistung.
+- **Memory**: **4096 MB** (4 GB). Gladys läuft mit 2 GB, aber Zigbee2MQTT und die anderen Integrationen freuen sich über den Spielraum.
+- **Network**: Behalte die Standard-Bridge (`vmbr0`) und das Modell **VirtIO**, damit die VM wie jedes andere Gerät eine Adresse in deinem Heimnetz bekommt.
+
+Bestätige und starte die VM.
+
+## Schritt 3: Debian installieren
+
+Öffne die **Console** der VM und folge dem Debian-Installer. Beim Schritt **Softwareauswahl**:
+
+- entferne den Haken bei den Desktop-Umgebungen (Gladys braucht keine),
+- setze den Haken bei **SSH-Server** und **Standard-Systemwerkzeuge**.
+
+Wenn Debian installiert und die VM neu gestartet ist, melde dich an und installiere den Qemu-Gastagenten. Damit zeigt Proxmox die IP-Adresse der VM an und kann sie sauber herunterfahren:
+
+```bash
+sudo apt update && sudo apt install -y qemu-guest-agent
+sudo reboot
+```
+
+:::tip
+Wenn du bei der Installation ein root-Passwort gesetzt hast, installiert Debian kein `sudo`. Folge dem Debian-Tipp oben in der [Anleitung zur Docker-Installation](/de/docs/installation/docker), um zuerst `curl` und `sudo` zu installieren.
+:::
+
+Wir empfehlen außerdem, der VM per DHCP-Reservierung in deinem Router eine feste IP-Adresse zu geben: Die IP-Adresse der VM steht in ihrem Tab **Summary**, sobald der Gastagent läuft.
+
+## Schritt 4: Den Zigbee-Dongle (und Bluetooth) durchreichen
+
+Wenn du einen USB-Zigbee-Koordinator nutzt, stecke ihn in den Proxmox-Server und gib ihn dann an die VM weiter:
+
+1. Wähle die VM, öffne **Hardware** und klicke auf **Add** > **USB Device**.
+2. Wähle **Use USB Vendor/Device ID** und such deinen Dongle in der Liste aus (zum Beispiel einen SONOFF-Zigbee-Dongle).
+3. Klicke auf **Add** und starte die VM neu, damit sie das Gerät sieht.
+
+Wenn du den Dongle über seine Vendor/Device-ID statt über den USB-Port auswählst, findet die VM ihn auch dann wieder, wenn du ihn in einen anderen Port steckst. Das geht auch in der Shell des Proxmox-Hosts: Ermittle die ID mit `lsusb` und führe dann `qm set <VM-ID> -usb0 host=<vendor>:<device>` aus.
+
+Prüfe in der VM, ob der Dongle auftaucht:
+
+```bash
+ls /dev/serial/by-id/
+```
+
+Mach dasselbe mit einem **USB-Bluetooth-Adapter**, wenn du Bluetooth-Sensoren nutzen oder Matter-Geräte per Bluetooth koppeln willst, und installiere dann BlueZ in der VM:
+
+```bash
+sudo apt install -y bluez
+```
+
+:::tip[Ein Netzwerk-Koordinator erspart das USB-Durchreichen]
+Mit einem Ethernet-Zigbee-Koordinator (wie dem SMLIGHT SLZB-06) gibt es nichts durchzureichen: Gladys erreicht ihn über das Netzwerk, und du kannst die VM frei auf einen anderen Proxmox-Knoten verschieben. Siehe [Einen Netzwerk-Koordinator verwenden](/de/docs/integrations/zigbee2mqtt#use-a-network-coordinator).
+:::
+
+## Schritt 5: Gladys mit Docker installieren
+
+Die VM ist jetzt ein ganz normaler Debian-Server. Folge der [Anleitung zur Docker-Installation](/de/docs/installation/docker): Installiere Docker mit dem offiziellen Skript und starte Gladys dann mit dem Installationsbefehl, ohne etwas zu ändern.
+
+Öffne anschließend **`http://gladysassistant.local`** auf einem Rechner im selben Netzwerk. Wenn sich dieser Name nicht öffnet, nutze stattdessen die IP-Adresse der VM aus ihrem Tab **Summary**: `http://IP-DER-VM`.
+
+## Schritt 6: Die VM sichern
+
+Wenn du [Gladys Plus](/de/docs/plus/intro) nutzt, sichert es deine Gladys bereits jeden Tag verschlüsselt. Unter Proxmox kannst du zusätzlich die ganze VM sichern: Plane unter **Datacenter** > **Backup** eine regelmäßige Sicherung der VM `gladys`. Vor größeren Änderungen kannst du außerdem einen **Snapshot** der VM anlegen.
+
+## Häufig gestellte Fragen
+
+### Soll ich eine VM oder einen LXC-Container nutzen?
+
+Wir empfehlen eine VM. Gladys läuft in Docker, und Docker in einem LXC-Container braucht einen privilegierten Container mit aktiviertem Nesting. USB-Geräte lassen sich außerdem schwerer an einen Container durchreichen, und Matter braucht IPv6 auch im Container. Einige Community-Mitglieder betreiben Gladys in einem privilegierten „Docker“-LXC, und das funktioniert, aber eine VM gibt dir genau dieselbe Umgebung wie die offizielle Installation, für ein paar hundert MB RAM mehr.
+
+### Wie viel RAM und Speicher braucht die Gladys-VM?
+
+2 CPU-Kerne, 4 GB RAM und eine 32-GB-Disk sind für ein typisches Zuhause komfortabel. Gladys selbst läuft mit 2 GB RAM. Gib der VM mehr Speicher, wenn du für viele Sensoren einen langen Verlauf behältst.
+
+### Funktioniert Matter in einer Proxmox-VM?
+
+Ja. Matter basiert auf IPv6, deshalb muss IPv6 in deinem Router und in der VM aktiviert sein. Debian aktiviert es standardmäßig: Prüfe mit `ip -6 addr`, ob die VM eine IPv6-Adresse hat. Den Rest der Einrichtung findest du bei der [Matter-Integration](/de/docs/integrations/matter).
+
+### Kann ich die Gladys-VM auf einen anderen Proxmox-Knoten verschieben?
+
+Ja, aber ein an die VM durchgereichtes USB-Gerät bleibt an dem Server, in dem es steckt: Nimm den Dongle mit der VM mit oder nutze einen Netzwerk-Zigbee-Koordinator, der von jedem Knoten aus funktioniert.
+
+### Kann Gladys meinen Proxmox-Server überwachen?
+
+Ja. Die [Community-Integration Proxmox](/de/docs/integrations/external/proxmox) zeigt in Gladys den Zustand deiner VMs und Container und das Ergebnis deiner Backups an, damit du benachrichtigt wirst, wenn ein Backup fehlschlägt.
+
+<JsonLd
+  data={{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "Soll ich eine VM oder einen LXC-Container nutzen?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Wir empfehlen eine VM. Gladys läuft in Docker, und Docker in einem LXC-Container braucht einen privilegierten Container mit aktiviertem Nesting. USB-Geräte lassen sich außerdem schwerer an einen Container durchreichen, und Matter braucht IPv6 auch im Container. Einige Community-Mitglieder betreiben Gladys in einem privilegierten Docker-LXC, und das funktioniert, aber eine VM gibt dir genau dieselbe Umgebung wie die offizielle Installation, für ein paar hundert MB RAM mehr.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Wie viel RAM und Speicher braucht die Gladys-VM?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "2 CPU-Kerne, 4 GB RAM und eine 32-GB-Disk sind für ein typisches Zuhause komfortabel. Gladys selbst läuft mit 2 GB RAM. Gib der VM mehr Speicher, wenn du für viele Sensoren einen langen Verlauf behältst.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Funktioniert Matter in einer Proxmox-VM?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Ja. Matter basiert auf IPv6, deshalb muss IPv6 in deinem Router und in der VM aktiviert sein. Debian aktiviert es standardmäßig: Prüfe mit ip -6 addr, ob die VM eine IPv6-Adresse hat.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Kann ich die Gladys-VM auf einen anderen Proxmox-Knoten verschieben?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Ja, aber ein an die VM durchgereichtes USB-Gerät bleibt an dem Server, in dem es steckt: Nimm den Dongle mit der VM mit oder nutze einen Netzwerk-Zigbee-Koordinator, der von jedem Knoten aus funktioniert.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Kann Gladys meinen Proxmox-Server überwachen?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Ja. Die Community-Integration Proxmox zeigt in Gladys den Zustand deiner VMs und Container und das Ergebnis deiner Backups an, damit du benachrichtigt wirst, wenn ein Backup fehlschlägt.",
+        },
+      },
+    ],
+  }}
+/>

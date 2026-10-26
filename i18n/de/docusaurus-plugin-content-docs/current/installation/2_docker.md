@@ -125,7 +125,7 @@ Der obige Befehl verwendet `TZ=Europe/Paris`. Ersetze diesen Wert durch deinen e
 
 ### Auf welchen Systemen kann ich Gladys mit Docker betreiben?
 
-Die Docker-Installation funktioniert auf jedem System, auf dem Docker läuft: einem Mini-PC, einem NAS (Synology, Unraid), einem Linux-Server, einem Raspberry Pi oder einer virtuellen Maschine. Auf allen startet derselbe einzelne Befehl Gladys.
+Die Docker-Installation funktioniert auf jedem System, auf dem Docker läuft: einem Mini-PC, einem NAS (Synology, Unraid), einem Linux-Server, einem Raspberry Pi oder einer virtuellen Maschine. Auf allen startet derselbe einzelne Befehl Gladys. Auf einem Proxmox-Server folgst du der [Proxmox-Anleitung](/de/docs/installation/proxmox).
 
 ### Wie aktualisiere ich Gladys unter Docker?
 

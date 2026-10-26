@@ -119,7 +119,7 @@ Dans ce cas, saisissez plutôt l'IP de votre machine dans votre navigateur. Pour
 
 ### Sur quels systèmes puis-je faire tourner Gladys avec Docker ?
 
-L'installation avec Docker fonctionne sur tout système qui fait tourner Docker : un mini-PC, un NAS (Synology, Unraid), un serveur Linux, un Raspberry Pi ou une machine virtuelle. La même commande lance Gladys sur tous ces systèmes.
+L'installation avec Docker fonctionne sur tout système qui fait tourner Docker : un mini-PC, un NAS (Synology, Unraid), un serveur Linux, un Raspberry Pi ou une machine virtuelle. La même commande lance Gladys sur tous ces systèmes. Sur un serveur Proxmox, suivez le [guide Proxmox](/fr/docs/installation/proxmox).
 
 ### Puis-je installer Gladys sur Debian ou Ubuntu ?
 

@@ -151,6 +151,10 @@ module.exports = function createConfig() {
               to: "docs/installation/unraid/",
             },
             {
+              label: "Installing on Proxmox",
+              to: "docs/installation/proxmox/",
+            },
+            {
               label: "Installation sur une Freebox Delta",
               to: "docs/installation/freebox-delta/",
               className: "footer__link-item footer__link--fr-only",

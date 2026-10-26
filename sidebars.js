@@ -64,6 +64,7 @@ module.exports = {
         "installation/docker-compose",
         "installation/synology",
         "installation/unraid",
+        "installation/proxmox",
         {
           id: "installation/freebox-delta",
           type: "doc",
