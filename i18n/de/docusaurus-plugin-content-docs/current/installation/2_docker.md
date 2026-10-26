@@ -142,8 +142,8 @@ Ja, und die Schritte sind auf beiden gleich: Installiere Docker mit dem offiziel
 ### Gladys öffnet sich nach der Installation nicht: Was sollte ich prüfen?
 
 1. **Läuft der Container?** `sudo docker ps` sollte `gladys` mit dem Status `Up` anzeigen. Fehlt er oder startet er ständig neu, lies seine Logs mit `sudo docker logs gladys --tail=100` (siehe [Gladys-Logs herunterladen](/de/docs/installation/logs)).
-2. **Ist Port 80 schon belegt?** Gladys lauscht auf Port 80 des Rechners. Nutzt bereits ein anderer Webserver (Apache, Nginx …) diesen Port, kann Gladys nicht starten: Stoppe diesen Server oder starte Gladys mit `-e SERVER_PORT=8080` auf einem anderen Port und öffne `http://IP-DES-RECHNERS:8080`.
-3. **Blockiert eine Firewall?** Wenn `ufw` aktiv ist, gib den Port mit `sudo ufw allow 80/tcp` frei.
+2. **Ist Port 80 schon belegt?** Gladys lauscht auf Port 80 des Rechners. Nutzt bereits ein anderer Webserver (Apache, Nginx …) diesen Port, kann Gladys nicht starten. Stoppe diesen Server oder verlege Gladys auf einen anderen Port: Entferne den Container mit `sudo docker rm -f gladys` (deine Daten in `/var/lib/gladysassistant` bleiben erhalten), führe den [Installationsbefehl](#start-gladys) erneut mit `-e SERVER_PORT=8080` **statt** `-e SERVER_PORT=80` aus und öffne dann `http://IP-DES-RECHNERS:8080`.
+3. **Blockiert eine Firewall?** Wenn `ufw` aktiv ist, gib den Port frei, den Gladys nutzt: `sudo ufw allow 80/tcp` (oder `8080/tcp`, wenn du ihn geändert hast).
 4. **Öffnet sich `gladysassistant.local` nicht?** Nutze stattdessen die IP-Adresse des Rechners, wie [oben](#wenn-gladysassistantlocal-sich-nicht-öffnet) beschrieben.
 
 <JsonLd
@@ -188,7 +188,7 @@ Ja, und die Schritte sind auf beiden gleich: Installiere Docker mit dem offiziel
         name: "Gladys öffnet sich nach der Installation nicht: Was sollte ich prüfen?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Prüfe zuerst mit sudo docker ps, ob der Container läuft, und lies seine Logs mit sudo docker logs gladys, falls er fehlt oder ständig neu startet. Prüfe dann, ob kein anderer Webserver (Apache, Nginx) Port 80 belegt, oder starte Gladys mit -e SERVER_PORT=8080 auf einem anderen Port. Ist die Firewall ufw aktiv, gib den Port mit sudo ufw allow 80/tcp frei. Öffnet sich gladysassistant.local nicht, nutze die IP-Adresse des Rechners.",
+          text: "Prüfe zuerst mit sudo docker ps, ob der Container läuft, und lies seine Logs mit sudo docker logs gladys, falls er fehlt oder ständig neu startet. Prüfe dann, ob kein anderer Webserver (Apache, Nginx) Port 80 belegt, oder verlege Gladys auf einen anderen Port: Entferne den Container mit sudo docker rm -f gladys (deine Daten bleiben erhalten) und führe den Installationsbefehl erneut mit -e SERVER_PORT=8080 statt -e SERVER_PORT=80 aus. Ist die Firewall ufw aktiv, gib den Port frei, den Gladys nutzt, zum Beispiel mit sudo ufw allow 80/tcp. Öffnet sich gladysassistant.local nicht, nutze die IP-Adresse des Rechners.",
         },
       },
     ],

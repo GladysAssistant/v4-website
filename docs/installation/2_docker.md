@@ -142,8 +142,8 @@ Yes, and the steps are the same on both: install Docker with the official script
 ### Gladys does not open after the installation: what should I check?
 
 1. **Is the container running?** `sudo docker ps` should list `gladys` with an `Up` status. If it is missing or keeps restarting, read its logs with `sudo docker logs gladys --tail=100` (see [how to read Gladys logs](/docs/installation/logs)).
-2. **Is port 80 already taken?** Gladys listens on port 80 of the machine. If another web server (Apache, Nginx…) already uses it, Gladys cannot start: stop that server, or start Gladys on another port with `-e SERVER_PORT=8080` and open `http://MACHINE-IP:8080`.
-3. **Is a firewall blocking it?** If `ufw` is enabled, allow the port with `sudo ufw allow 80/tcp`.
+2. **Is port 80 already taken?** Gladys listens on port 80 of the machine. If another web server (Apache, Nginx…) already uses it, Gladys cannot start. Stop that server, or move Gladys to another port: remove the container with `sudo docker rm -f gladys` (your data in `/var/lib/gladysassistant` is kept), run the [install command](#start-gladys) again with `-e SERVER_PORT=8080` **instead of** `-e SERVER_PORT=80`, then open `http://MACHINE-IP:8080`.
+3. **Is a firewall blocking it?** If `ufw` is enabled, allow the port Gladys uses: `sudo ufw allow 80/tcp` (or `8080/tcp` if you moved it).
 4. **Does `gladysassistant.local` not resolve?** Use the IP address of the machine instead, as explained [above](#if-gladysassistantlocal-does-not-open).
 
 <JsonLd
@@ -188,7 +188,7 @@ Yes, and the steps are the same on both: install Docker with the official script
         name: "Gladys does not open after the installation: what should I check?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "First check that the container is running with sudo docker ps, and read its logs with sudo docker logs gladys if it is missing or restarting. Then check that no other web server (Apache, Nginx) already uses port 80, or start Gladys on another port with -e SERVER_PORT=8080. If the ufw firewall is enabled, allow the port with sudo ufw allow 80/tcp. Finally, if gladysassistant.local does not open, use the IP address of the machine.",
+          text: "First check that the container is running with sudo docker ps, and read its logs with sudo docker logs gladys if it is missing or restarting. Then check that no other web server (Apache, Nginx) already uses port 80, or move Gladys to another port: remove the container with sudo docker rm -f gladys (your data is kept) and run the install command again with -e SERVER_PORT=8080 instead of -e SERVER_PORT=80. If the ufw firewall is enabled, allow the port Gladys uses, for example sudo ufw allow 80/tcp. Finally, if gladysassistant.local does not open, use the IP address of the machine.",
         },
       },
     ],

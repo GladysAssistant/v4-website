@@ -142,8 +142,8 @@ Sí, y los pasos son los mismos en ambos: instala Docker con el script oficial y
 ### Gladys no se abre después de la instalación: ¿qué debo comprobar?
 
 1. **¿El contenedor está en marcha?** `sudo docker ps` debería mostrar `gladys` con el estado `Up`. Si no aparece o se reinicia sin parar, lee sus registros con `sudo docker logs gladys --tail=100` (consulta [cómo descargar los registros de Gladys](/es/docs/installation/logs)).
-2. **¿El puerto 80 ya está ocupado?** Gladys escucha en el puerto 80 de la máquina. Si otro servidor web (Apache, Nginx…) ya lo usa, Gladys no puede arrancar: detén ese servidor o inicia Gladys en otro puerto con `-e SERVER_PORT=8080` y abre `http://IP-DE-LA-MAQUINA:8080`.
-3. **¿Lo bloquea un cortafuegos?** Si `ufw` está activado, abre el puerto con `sudo ufw allow 80/tcp`.
+2. **¿El puerto 80 ya está ocupado?** Gladys escucha en el puerto 80 de la máquina. Si otro servidor web (Apache, Nginx…) ya lo usa, Gladys no puede arrancar. Detén ese servidor o mueve Gladys a otro puerto: elimina el contenedor con `sudo docker rm -f gladys` (tus datos en `/var/lib/gladysassistant` se conservan), vuelve a ejecutar el [comando de instalación](#start-gladys) con `-e SERVER_PORT=8080` **en lugar de** `-e SERVER_PORT=80` y abre `http://IP-DE-LA-MAQUINA:8080`.
+3. **¿Lo bloquea un cortafuegos?** Si `ufw` está activado, abre el puerto que usa Gladys: `sudo ufw allow 80/tcp` (o `8080/tcp` si lo has cambiado).
 4. **¿`gladysassistant.local` no se abre?** Usa en su lugar la dirección IP de la máquina, como se explica [más arriba](#si-gladysassistantlocal-no-se-abre).
 
 <JsonLd
@@ -188,7 +188,7 @@ Sí, y los pasos son los mismos en ambos: instala Docker con el script oficial y
         name: "Gladys no se abre después de la instalación: ¿qué debo comprobar?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Comprueba primero con sudo docker ps que el contenedor está en marcha y lee sus registros con sudo docker logs gladys si no aparece o se reinicia. Comprueba después que ningún otro servidor web (Apache, Nginx) usa ya el puerto 80, o inicia Gladys en otro puerto con -e SERVER_PORT=8080. Si el cortafuegos ufw está activado, abre el puerto con sudo ufw allow 80/tcp. Por último, si gladysassistant.local no se abre, usa la dirección IP de la máquina.",
+          text: "Comprueba primero con sudo docker ps que el contenedor está en marcha y lee sus registros con sudo docker logs gladys si no aparece o se reinicia. Comprueba después que ningún otro servidor web (Apache, Nginx) usa ya el puerto 80, o mueve Gladys a otro puerto: elimina el contenedor con sudo docker rm -f gladys (tus datos se conservan) y vuelve a ejecutar el comando de instalación con -e SERVER_PORT=8080 en lugar de -e SERVER_PORT=80. Si el cortafuegos ufw está activado, abre el puerto que usa Gladys, por ejemplo con sudo ufw allow 80/tcp. Por último, si gladysassistant.local no se abre, usa la dirección IP de la máquina.",
         },
       },
     ],

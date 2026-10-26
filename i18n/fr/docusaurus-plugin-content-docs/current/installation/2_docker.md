@@ -128,13 +128,17 @@ Oui, et les étapes sont les mêmes sur les deux : installez Docker avec le scri
 ### Gladys ne s'ouvre pas après l'installation : que vérifier ?
 
 1. **Le conteneur tourne-t-il ?** `sudo docker ps` doit afficher `gladys` avec le statut `Up`. S'il n'apparaît pas ou redémarre en boucle, lisez ses logs avec `sudo docker logs gladys --tail=100` (voir [comment télécharger les logs de Gladys](/fr/docs/installation/logs)).
-2. **Le port 80 est-il déjà pris ?** Gladys écoute sur le port 80 de la machine. Si un autre serveur web (Apache, Nginx…) l'utilise déjà, Gladys ne peut pas démarrer : arrêtez ce serveur, ou lancez Gladys sur un autre port avec `-e SERVER_PORT=8080` et ouvrez `http://IP-DE-LA-MACHINE:8080`.
-3. **Un pare-feu bloque-t-il l'accès ?** Si `ufw` est activé, autorisez le port avec `sudo ufw allow 80/tcp`.
+2. **Le port 80 est-il déjà pris ?** Gladys écoute sur le port 80 de la machine. Si un autre serveur web (Apache, Nginx…) l'utilise déjà, Gladys ne peut pas démarrer. Arrêtez ce serveur, ou déplacez Gladys sur un autre port : supprimez le conteneur avec `sudo docker rm -f gladys` (vos données dans `/var/lib/gladysassistant` sont conservées), relancez la [commande d'installation](#lancer-un-container-gladys-assistant) avec `-e SERVER_PORT=8080` **à la place de** `-e SERVER_PORT=80`, puis ouvrez `http://IP-DE-LA-MACHINE:8080`.
+3. **Un pare-feu bloque-t-il l'accès ?** Si `ufw` est activé, autorisez le port utilisé par Gladys : `sudo ufw allow 80/tcp` (ou `8080/tcp` si vous l'avez changé).
 4. **`gladysassistant.local` ne répond pas ?** Utilisez plutôt l'adresse IP de la machine, comme expliqué [plus haut](#si-gladysassistantlocal-ne-souvre-pas).
 
 ### Comment mettre à jour Gladys installée avec Docker ?
 
 Le plus simple est de lancer le conteneur Watchtower présenté ci-dessus. Il surveille les nouvelles images de Gladys et met votre conteneur à jour automatiquement à chaque nouvelle version : vous n'avez rien à faire à la main.
+
+### Puis-je faire tourner Gladys sur un NAS Synology ou Unraid ?
+
+Oui. Tant que votre NAS peut faire tourner des conteneurs Docker, vous pouvez y lancer Gladys avec la même commande. C'est une façon populaire d'auto-héberger Gladys sur du matériel que vous possédez déjà.
 
 <JsonLd
   data={{
@@ -162,7 +166,7 @@ Le plus simple est de lancer le conteneur Watchtower présenté ci-dessus. Il su
         name: "Gladys ne s'ouvre pas après l'installation : que vérifier ?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Vérifiez d'abord que le conteneur tourne avec sudo docker ps, et lisez ses logs avec sudo docker logs gladys s'il n'apparaît pas ou redémarre en boucle. Vérifiez ensuite qu'aucun autre serveur web (Apache, Nginx) n'utilise déjà le port 80, ou lancez Gladys sur un autre port avec -e SERVER_PORT=8080. Si le pare-feu ufw est activé, autorisez le port avec sudo ufw allow 80/tcp. Enfin, si gladysassistant.local ne s'ouvre pas, utilisez l'adresse IP de la machine.",
+          text: "Vérifiez d'abord que le conteneur tourne avec sudo docker ps, et lisez ses logs avec sudo docker logs gladys s'il n'apparaît pas ou redémarre en boucle. Vérifiez ensuite qu'aucun autre serveur web (Apache, Nginx) n'utilise déjà le port 80, ou déplacez Gladys sur un autre port : supprimez le conteneur avec sudo docker rm -f gladys (vos données sont conservées) et relancez la commande d'installation avec -e SERVER_PORT=8080 à la place de -e SERVER_PORT=80. Si le pare-feu ufw est activé, autorisez le port utilisé par Gladys, par exemple sudo ufw allow 80/tcp. Enfin, si gladysassistant.local ne s'ouvre pas, utilisez l'adresse IP de la machine.",
         },
       },
       {
@@ -171,6 +175,14 @@ Le plus simple est de lancer le conteneur Watchtower présenté ci-dessus. Il su
         acceptedAnswer: {
           "@type": "Answer",
           text: "Le plus simple est de lancer le conteneur Watchtower présenté ci-dessus. Il surveille les nouvelles images de Gladys et met votre conteneur à jour automatiquement à chaque nouvelle version : vous n'avez rien à faire à la main.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Puis-je faire tourner Gladys sur un NAS Synology ou Unraid ?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Oui. Tant que votre NAS peut faire tourner des conteneurs Docker, vous pouvez y lancer Gladys avec la même commande. C'est une façon populaire d'auto-héberger Gladys sur du matériel que vous possédez déjà.",
         },
       },
     ],
