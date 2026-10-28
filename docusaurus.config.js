@@ -26,18 +26,25 @@ module.exports = function createConfig() {
   i18n: {
     defaultLocale: "en",
     locales: ["en", "fr", "de", "es"],
+    // The baseUrl of each translated locale is spelled out because build.sh
+    // builds one locale per `docusaurus build --locale <locale>` call, and a
+    // single --locale otherwise drops the /<locale>/ prefix (it is meant for
+    // one domain per locale). These are the same values Docusaurus infers.
     localeConfigs: {
       en: {
         label: "English",
       },
       fr: {
         label: "Français",
+        baseUrl: "/fr/",
       },
       de: {
         label: "Deutsch",
+        baseUrl: "/de/",
       },
       es: {
         label: "Español",
+        baseUrl: "/es/",
       },
     },
   },

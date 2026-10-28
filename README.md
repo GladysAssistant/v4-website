@@ -69,6 +69,15 @@ option enabled (see `future` in `docusaurus.config.js`), so the only lever left
 is to keep the Rspack persistent cache between deploys: with the cache warm the
 same build takes about a minute and a half.
 
+`build.sh` runs one `docusaurus build --locale <locale>` per locale instead of a
+single `docusaurus build`. A single process never gives back the Rspack memory
+of the locales it has already built (about 2.5 GB each) and peaks around 12 GB
+on the fourth locale, where Cloudflare Pages builds stalled until the 20-minute
+timeout. One process per locale peaks around 5 GB, for the same build time and
+the same output. This is why `docusaurus.config.js` spells out the `baseUrl` of
+each translated locale: with a single `--locale`, Docusaurus would otherwise
+drop the `/fr/`, `/de/` or `/es/` prefix.
+
 That cache lives in `node_modules/.cache`, which Cloudflare Pages restores for
 Docusaurus projects once **build caching** is enabled on the project
 (Settings > Build > Build cache > Enable). The build log then opens with a
