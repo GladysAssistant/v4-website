@@ -30,6 +30,7 @@ module.exports = function createConfig() {
     // builds one locale per `docusaurus build --locale <locale>` call, and a
     // single --locale otherwise drops the /<locale>/ prefix (it is meant for
     // one domain per locale). These are the same values Docusaurus infers.
+    // build.sh refuses to start when a translated locale has no baseUrl.
     localeConfigs: {
       en: {
         label: "English",

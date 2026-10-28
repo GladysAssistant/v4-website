@@ -76,7 +76,9 @@ on the fourth locale, where Cloudflare Pages builds stalled until the 20-minute
 timeout. One process per locale peaks around 5 GB, for the same build time and
 the same output. This is why `docusaurus.config.js` spells out the `baseUrl` of
 each translated locale: with a single `--locale`, Docusaurus would otherwise
-drop the `/fr/`, `/de/` or `/es/` prefix.
+drop the `/fr/`, `/de/` or `/es/` prefix, and build that locale over the whole
+site. `build.sh` stops before building anything when a translated locale has
+no `baseUrl`, so a new language needs one too.
 
 That cache lives in `node_modules/.cache`, which Cloudflare Pages restores for
 Docusaurus projects once **build caching** is enabled on the project
