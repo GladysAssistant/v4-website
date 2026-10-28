@@ -1,0 +1,223 @@
+---
+title: "RabbitMQ Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "RabbitMQ"
+description: "Der Zustand deines RabbitMQ-Brokers in Gladys: Queues, Nachrichten, Consumer, Alarme, Ausfälle. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-rabbitmq.png"
+keywords:
+  - "rabbitmq"
+  - "rabbitmq smart home"
+  - "gladys rabbitmq"
+  - "rabbitmq gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-rabbitmq instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"RabbitMQ","description":"Der Zustand deines RabbitMQ-Brokers in Gladys: Queues, Nachrichten, Consumer, Alarme, Ausfälle.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-rabbitmq","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-rabbitmq.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-25T16:53:26Z"}} />
+
+Überwacht den Zustand deines **RabbitMQ**-Brokers in Gladys: Verbindungen, Kanäle, Consumer, bereite
+und unbestätigte Nachrichten, Veröffentlichungs- und Zustellraten, Speicher- und Festplattenalarme,
+laufende Knoten, Laufzeit und Ausfälle, dazu die Queues, die du beobachten willst (wartende
+Nachrichten, Consumer).
+
+Diese Integration steht in keiner Verbindung zu Broadcom oder dem RabbitMQ-Projekt.
+
+## Überblick
+
+RabbitMQ transportiert die Nachrichten vieler selbst gehosteter Dienste (Add-ons von Home Assistant,
+Node-RED-Flows, Celery, n8n, eigene Skripte, MQTT über sein Plugin). Wenn ein Consumer stoppt, füllt
+sich seine Queue unbemerkt; wenn Speicher oder Festplatte knapp werden, blockiert RabbitMQ alle
+Publisher. Diese Integration sagt es Gladys: Alle 30 Sekunden liest sie die **Management-API** von
+RabbitMQ und macht daraus Gladys-Geräte, sieben Szenen-Auslöser, zwei Szenen-Aktionen und ein
+Dashboard-Widget.
+
+Die Integration liest nur: Nichts wird veröffentlicht, geleert oder gelöscht, keine AMQP-Verbindung
+wird geöffnet, die Konfiguration von RabbitMQ bleibt unverändert. Alles bleibt in deinem lokalen Netzwerk.
+
+## Voraussetzungen
+
+- Gladys 5.1 oder neuer.
+- RabbitMQ 3.x oder 4.x (getestet mit 4.4.0) mit aktiviertem **Management-Plugin**
+  (`rabbitmq-plugins enable rabbitmq_management`; in den Docker-Images `rabbitmq:*-management` ist es
+  schon enthalten), sein Port (standardmäßig **15672**) von Gladys aus erreichbar.
+- Ein RabbitMQ-Benutzer und sein Passwort. Der Tag `monitoring` genügt: Kein Administrator nötig.
+
+### Einen Benutzer nur zum Lesen anlegen
+
+Auf dem Rechner von RabbitMQ (oder per `docker exec` in seinem Container):
+
+```sh
+rabbitmqctl add_user gladys 'ein-langes-passwort'
+rabbitmqctl set_user_tags gladys monitoring
+## Zugriff auf den virtuellen Host der beobachteten Queues ("/" hier), ohne Rechte an den Nachrichten:
+rabbitmqctl set_permissions -p / gladys '^$' '^$' '^$'
+```
+
+Der Tag `monitoring` gibt den Überblick, die Knoten und ihre Alarme frei. Eine Queue ist nur in einem
+virtuellen Host sichtbar, auf den der Benutzer Zugriff hat: Die Berechtigungen oben (leere Muster:
+weder Konfigurieren noch Schreiben noch Lesen) geben genau diesen Zugriff und nichts weiter.
+Wiederhole die letzte Zeile für jeden weiteren virtuellen Host einer beobachteten Queue, sonst
+antwortet RabbitMQ, als gäbe es die Queue nicht. Dasselbe geht in der Management-Oberfläche: **Admin →
+Users → Add a user**, Tag **Monitoring**, dann **Set permission**.
+
+## Konfiguration
+
+| Feld                                    | Beschreibung                                                                                                          |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Adresse von RabbitMQ                    | Die Adresse der Management-Oberfläche: `http://192.168.1.20:15672`, oder nur ein Host (Port 15672 wird ergänzt).      |
+| Benutzer                                | Der oben angelegte Benutzer.                                                                                          |
+| Passwort                                | Sein Passwort.                                                                                                        |
+| Selbstsigniertes Zertifikat akzeptieren | Für eine `https://`-Adresse, deren Zertifikat Gladys nicht prüfen kann.                                               |
+| Zu beobachtende Queues                  | Durch Kommas getrennt, höchstens 20. Jede wird ein Gerät. Leer lassen, um keine zu beobachten.                        |
+| Sprache der Texte                       | Namen der Funktionen der Geräte beim Hinzufügen, Szenen-Sätze und Meldungen der Aktionen (standardmäßig Französisch). |
+
+So schreibst du eine Queue:
+
+- `zigbee`: die Queue `zigbee` des virtuellen Standard-Hosts `/`;
+- `iot/sensoren`: die Queue `sensoren` des virtuellen Hosts `iot`;
+- `/haus/kueche`: die Queue `haus/kueche` des virtuellen Hosts `/` (ein `/` am Anfang für einen
+  Namen mit Schrägstrich).
+
+Die Schaltfläche **Verbindung prüfen** liest RabbitMQ sofort und nennt seine Version, seine
+Kennzahlen, seine aktiven Alarme und welche beobachteten Queues existieren.
+
+Öffne danach den Tab **Erkennung** der Integration und füge den Broker und die gewünschten Queues
+hinzu.
+
+## Das Broker-Gerät
+
+| Funktion                           | Bedeutung                                                                                      |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Erreichbar                         | 1, solange die API antwortet, 0 während eines Ausfalls.                                        |
+| Verbindungen                       | Gerade offene Client-Verbindungen (AMQP, MQTT, STOMP…).                                        |
+| Kanäle                             | In diesen Verbindungen offene Kanäle.                                                          |
+| Consumer                           | Consumer aller Queues.                                                                         |
+| Queues                             | Queues aller virtuellen Hosts, die der Benutzer sieht.                                         |
+| Bereite Nachrichten                | In allen Queues wartende, noch nicht zugestellte Nachrichten.                                  |
+| Unbestätigte Nachrichten           | An einen Consumer zugestellte Nachrichten, die er noch nicht bestätigt hat.                    |
+| Veröffentlichte Nachrichten (/min) | Vom Broker empfangene Nachrichten pro Minute.                                                  |
+| Zugestellte Nachrichten (/min)     | An Consumer zugestellte (oder abgeholte) Nachrichten pro Minute.                               |
+| Speicheralarm                      | 1, solange ein Knoten über seiner Speichergrenze liegt: RabbitMQ blockiert die Publisher.      |
+| Festplattenalarm                   | 1, solange ein Knoten unter seiner Grenze für freien Speicherplatz liegt: Publisher blockiert. |
+| Laufende Knoten                    | Laufende Knoten des Clusters (1 bei einem einzelnen Broker).                                   |
+| Laufzeit                           | In Tagen, seit dem Start des jüngsten Knotens.                                                 |
+| Version                            | Version von RabbitMQ.                                                                          |
+
+Die Raten berechnet RabbitMQ selbst über seine letzte 5-Sekunden-Stichprobe. Während eines Ausfalls
+ändert sich nur **Erreichbar**: Die anderen Werte behalten ihre letzte Messung.
+
+## Beobachtete Queues
+
+Jede Queue des Felds **Zu beobachtende Queues** wird ein Gerät mit ihrem Namen und fünf Funktionen:
+**Bereite Nachrichten**, **Unbestätigte Nachrichten**, **Consumer**, **Veröffentlichte Nachrichten
+(/min)** und **Zugestellte Nachrichten (/min)**.
+
+Existiert eine beobachtete Queue nicht (noch nicht deklariert, gelöscht, eine Auto-Delete-Queue, deren
+Consumer gegangen ist), behalten ihre Werte die letzte Messung, die Protokolle sagen es einmal, und
+**Verbindung prüfen** führt sie als nicht gefunden auf.
+
+## Dashboard-Widget
+
+Das Widget **RabbitMQ-Broker** zeigt den Zustand des Brokers, seine Version, seine Laufzeit, die Knoten
+eines Clusters, die aktiven Alarme, eine Zeile je beobachteter, zu Gladys hinzugefügter Queue (bereite
+Nachrichten und Consumer, orange, wenn niemand sie liest) und vier Live-Kacheln: bereite,
+veröffentlichte und zugestellte Nachrichten pro Minute, Verbindungen. Wähle den Broker in seinen
+Einstellungen.
+
+## Szenen-Auslöser
+
+| Auslöser                     | Wann                                                                                                   |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Broker nicht erreichbar      | Die API antwortet seit 1, 5, 15, 30 oder 60 Minuten nicht (nach Wahl).                                 |
+| Broker wieder da             | Die API antwortet wieder nach einem Ausfall von mindestens einer Minute.                               |
+| Broker neu gestartet         | Die Laufzeit eines Knotens ist auf null zurückgegangen, auch ohne sichtbaren Ausfall.                  |
+| Alarm ausgelöst              | Speicheralarm, Festplattenalarm, Netzwerkpartition oder ein gestoppter Knoten (filterbar).             |
+| Alarm beendet                | Einer dieser Alarme ist nicht mehr aktiv. Variable: seine Dauer in Minuten.                            |
+| Queue ohne Consumer          | Eine beobachtete Queue, die Consumer hatte, hat seit einer Minute keinen mehr.                         |
+| Queue über einem Schwellwert | Mehr bereite Nachrichten in einer beobachteten Queue als die gewählte Zahl; höchstens alle 30 Minuten. |
+
+Die Variable **Alarm** ist `memory`, `disk`, `partition` oder `node_down`. Nach einem Neustart der
+Integration dient die erste Messung als Referenz: Ein schon aktiver Alarm, eine Queue schon ohne
+Consumer oder schon über einem Schwellwert lösen nichts aus.
+
+## Szenen-Aktionen
+
+**Zustand des Brokers** liefert einen Satz für eine Nachricht („RabbitMQ 4.4.0 läuft seit 3 Tagen,
+5 Verbindungen, 12 Nachrichten bereit und 0 unbestätigt, 40 Nachrichten veröffentlicht und 38
+zugestellt pro Minute, kein Alarm.“) und seine Zahlen: erreichbar, Verbindungen, Queues, bereite und
+unbestätigte Nachrichten, veröffentlichte und zugestellte pro Minute, aktive Alarme und ihre Namen,
+Laufzeit in Stunden, Version.
+
+**Zustand einer Queue** macht dasselbe für eine beobachtete Queue deiner Wahl („Queue zigbee: 7
+Nachrichten bereit, Consumer: 1, 2 unbestätigt.“) mit ihren Zahlen und ob sie existiert.
+
+## Szenen-Ideen
+
+- **Queue ohne Consumer** auf der Queue deines Node-RED-Flows → schick dir „Niemand liest mehr
+  \{\{queue\}\}, \{\{messages_ready\}\} Nachrichten warten“.
+- **Alarm ausgelöst** (Filter: Speicherplatz) → warne, dass die Festplatte des Brokers fast voll ist:
+  Alle Publisher sind blockiert.
+- **Queue über einem Schwellwert** (1.000 Nachrichten) → färbe eine Lampe orange.
+- Jeden Morgen **Zustand des Brokers** → schick den Satz an Telegram.
+
+## Fehlerbehebung
+
+- **RabbitMQ ist nicht erreichbar**: Prüfe Adresse und Port (standardmäßig 15672, nicht der AMQP-Port 5672) und ob Gladys ihn erreicht (Firewall, Docker-Netzwerk).
+- **RabbitMQ lehnt den Benutzer ab**: Prüfe Namen und Passwort und ob er den Tag `monitoring` hat. Ein
+  Benutzer ohne Tag kann die Management-API nicht nutzen.
+- **Keine Management-API unter dieser Adresse**: Das Plugin ist nicht aktiviert, oder die Adresse zeigt
+  auf etwas anderes (AMQP-Port, ein anderer Dienst).
+- **Eine beobachtete Queue wird nicht gefunden**: Prüfe ihren genauen Namen und virtuellen Host auf der
+  Seite **Queues and Streams** (Groß- und Kleinschreibung zählt) und ob der Benutzer eine Berechtigung
+  für diesen virtuellen Host hat (`rabbitmqctl list_user_permissions gladys`).
+- **Die Raten bleiben bei 0**: Der Metrik-Sammler von RabbitMQ ist vielleicht deaktiviert
+  (`management_agent.disable_metrics_collector`).
+- Mehr Details: Setze `LOG_LEVEL=debug` und lies die Protokolle der Integration.
+
+## Grenzen
+
+- Alle 30 Sekunden gelesen: Ein Consumer, der weniger als eine Minute fehlt, löst nichts aus.
+- RabbitMQ aktualisiert die Statistiken der Knoten alle 5 Sekunden: Ein Alarm erscheint ein paar
+  Sekunden später.
+- Höchstens 20 beobachtete Queues; eine Queue mit einem Komma im Namen kann nicht beobachtet werden.
+- Nur Lesen: kein Leeren, kein Löschen, keine veröffentlichte Nachricht.
+- Exchanges, Bindings, Shovels und Federation-Links werden nicht überwacht.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt RabbitMQ in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| RabbitMQ verbinden | `section` | Nein | Die Integration liest alle 30 Sekunden die Management-API von RabbitMQ und ändert nie etwas. Ein Benutzer mit dem Tag monitoring genügt: rabbitmqctl set_user_tags \<Benutzer> monitoring. |
+| Adresse von RabbitMQ | `string` | Ja | Die Adresse der Management-Oberfläche, standardmäßig Port 15672 (http:\/\/ oder https:\/\/). |
+| Benutzer | `string` | Ja | Lesezugriff genügt: ein Benutzer mit dem Tag monitoring, kein Administrator. |
+| Passwort | `secret` | Ja |  |
+| Selbstsigniertes Zertifikat akzeptieren | `boolean` | Nein | Nur https:\/\/: Das Zertifikat von RabbitMQ wird dann nicht geprüft. |
+| Zu beobachtende Queues | `string` | Nein | Durch Kommas getrennt, höchstens 20: Jede wird ein Gerät (Nachrichten, Consumer). Schreibe Name für den virtuellen Host /, vhost/Name für einen anderen. Der Benutzer braucht eine Berechtigung für diesen virtuellen Host. |
+| Sprache der Texte | `select` | Nein | Namen der Funktionen der Geräte beim Hinzufügen, Szenen-Sätze und Meldungen der Aktionen. |
+
+## So installierst du RabbitMQ in Gladys
+
+1. Öffne in Gladys **Integrationen**: RabbitMQ erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-rabbitmq:1.0.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-rabbitmq](https://github.com/guim31/gladys-rabbitmq).
+
+RabbitMQ benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+RabbitMQ ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-rabbitmq) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-rabbitmq/blob/HEAD/docs/de.md)

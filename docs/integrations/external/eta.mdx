@@ -1,0 +1,205 @@
+---
+title: "ETA smart home integration, free and open source"
+sidebar_label: "ETA"
+description: "ETA wood and pellet boilers, read only via the local ETAtouch webservices. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-eta.png"
+keywords:
+  - "eta"
+  - "eta smart home"
+  - "gladys eta"
+  - "eta gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-eta instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"ETA","description":"ETA wood and pellet boilers, read only via the local ETAtouch webservices.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-eta","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-eta.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-27T14:31:23Z"}} />
+
+Unofficial integration, not affiliated with ETA. It brings into Gladys an
+**ETA** boiler (pellets, logs, wood chips: PE-K, PU, ePE-K, SH, HACK…) with
+the **ETAtouch** touch display, through its official **local REST
+webservices**, **read only**.
+
+> **Warning: never tested with a real boiler.** This integration was written
+> from the official document "ETAtouch RESTful Webservices" 1.2 and the Home
+> Assistant integration homeassistant_eta_integration, and tested against the
+> recorded answers of a PE-K only. Feedback is welcome.
+
+## What you get
+
+One Gladys device per block of the ETAtouch menu, with the names of the
+display, in its language: **ETA Kessel** (boiler), **ETA HK** (heating
+circuit), **ETA WW** (hot water), **ETA Sys** (system), **ETA LagerUm.**
+(pellet extraction)… depending on your installation.
+
+With **Main values** (the default), about thirty values:
+
+- the states of the boiler, the circuits, the hot water and the extraction
+  ("Bereit", "Heizen"…) and the modes shown;
+- the temperatures: boiler, boiler setpoint, boiler bottom, flue gas,
+  outdoor, flow of the circuits, hot water and its setpoint;
+- the boiler pressure (bar), the residual oxygen, the feed (%), the power
+  asked (kW);
+- the pellets: stock, hopper, consumption in total, since the service, since
+  the de-ashing, since the ash box was emptied (kg);
+- the counters: full load hours, number of heating runs and ignitions.
+
+With **All values**, every readable value of the menu (several hundred,
+inputs and outputs included; the time slots are left out). The first reading
+of the menu then takes a few minutes.
+
+Only the values of the devices you **add** are read afterwards, one at a
+time, at each refresh.
+
+Temperatures are probes (they do not enter the room averages). The pressure
+is in bar or Pa, the hours in hours. kg, %, kW, W, rpm… have no unit in
+Gladys (the core offers none for these categories): the unit is in the name,
+for example "Zählerstände > Gesamtverbrauch (kg)". kW and kWh are **not**
+sent to the Gladys energy dashboard (it would count them as electricity). A
+value is published only when the display shows the same number: a value the
+boiler does not have now ("xxx", "---"), a text such as "Aus", a time slot
+are never published as a number, never a false 0. The lifetime counters
+(total consumption, full load hours, heating runs, ignitions) are never
+published at 0 nor going back on a single read: a lower value is held back
+(the status and the device's badge say so) until 3 reads in a row above 0 confirm it (a 0 is never published);
+then the counter goes on from there. After a counter reset or a boiler
+replacement, nothing to do: the new values appear after 3 reads. Other kWh
+values (a daily heat quantity) are published as read. The error list is read apart: when it cannot
+be read, the values are read all the same and the status says so.
+
+The **ETA errors** device gives: active error (0/1), number of active errors,
+last error (block, message, priority, time).
+
+Scene trigger **ETA boiler error**: when a read shows an active error never
+seen before. Variables: `message`, `block` (the part of the installation) and
+`priority` (as the display shows it). The errors already seen are kept (200
+at most, in `/data`): an error that stays, or comes back with the same time,
+does not fire again, even after a restart (one that comes back with a new
+time is a new error and fires). Never at the very first read (it learns the errors
+present).
+
+The badge of each device shows "local", "unreachable" when the ETAtouch does
+not answer, and an orange dot when one of its values could not be read at
+the last refresh.
+
+## Installation
+
+1. On **meineta.at**, register your ETAtouch and **apply for the LAN
+   access** ("LAN-Zugriff").
+2. On the boiler's display, in the **system settings**, **turn the LAN
+   access on** ("Webservices"). Note the IP address of the display (network
+   settings); a fixed address (DHCP reservation) is better.
+3. In Gladys, install the ETA integration, enter the **IP address** (the
+   port is 8080) and save.
+4. Open the **Discovery** tab and add the devices you want.
+
+**Security**: the ETAtouch webservices answer **without any password** to
+whoever reaches port 8080 of the display (the manufacturer designed them so).
+Keep the boiler on your local network: never forward this port from your
+router to the Internet.
+
+## Settings
+
+| Setting               | Role                                                                             |
+| --------------------- | -------------------------------------------------------------------------------- |
+| IP address            | The address of the display, without a path (`192.168.1.50`, or `…:8080`).        |
+| Port                  | 8080.                                                                            |
+| Values offered        | "Main values" (about thirty) or "All values" (the whole menu).                   |
+| Refresh interval      | 60 s by default (60 to 3600).                                                    |
+| Language of the names | For the errors device and the messages; the values' names come from the display. |
+
+The **Test the connection** button reads the boiler once if the interval has
+passed since the last read; otherwise it shows the time left and the last
+status.
+
+## How the integration spares the boiler
+
+- Reading only (GET requests): nothing is ever written to the boiler, no
+  value, no variable set.
+- One request at a time, the next one after the answer of the previous one.
+- One read per interval, never sooner: neither the button, nor Discovery,
+  nor a restart of the integration bring it closer (the time of each read is
+  kept in `/data` before its first request; if `/data` cannot be written,
+  a restart may read sooner). Only a new address or port (another ETAtouch)
+  reads at once.
+- The menu is read at the first read, then kept in `/data`; Discovery reads
+  it again at most every 10 minutes, at the next read. Past 800
+  entries or 10 minutes, what was read is kept and the status says so; a
+  menu over 2 MB (or 60 000 elements) is refused whole ("an answer too
+  large") and tried again after the pause of a failure.
+- After a failure: new try after 1, 2, 5, 10 then 15 minutes (never less
+  than the interval). If the ETAtouch asks to slow down (HTTP 429): a pause
+  of 1 minute to 6 hours, kept across a restart.
+
+## Firmware
+
+The webservices exist since system software 1.20.0 of the ETAtouch. API 1.2
+(software x.49.0 and later) describes each value (`varinfo`); before, the
+integration goes into **reduced mode**: the kind of a value is guessed from
+the value itself and its name from the menu, and the connection status says
+so.
+
+## Known limits
+
+- Read only: no on/off, no setpoints, no modes, no time slots, no "charge
+  the hot water now". A future version could offer some of them, off by
+  default.
+- The ids of the main values come from a PE-K; another boiler may have
+  others (buffer tank, solar…): then choose "All values".
+- A value that showed "---" without a unit when the menu was read is not
+  offered; run a Discovery again later.
+- The name of a value is the display's when the menu was read. A number
+  value you rename keeps its unit while the menu lists it; one no longer
+  listed takes the unit the boiler sends.
+- Nothing checks that the ETAtouch at the address is the same boiler: if
+  another ETAtouch takes the address, its values go to the same devices.
+
+## Troubleshooting
+
+- **"no answer from the ETAtouch"**: check the IP address, that the LAN
+  access is on in the display, and that Gladys and the boiler are on the same
+  network.
+- **"no ETAtouch webservices on this port"**: the port is not 8080, or the
+  LAN access is off.
+- **"an answer that is not an ETAtouch one"**: the address is another
+  device's.
+- **"reduced mode"**: update the ETAtouch software to get the exact names
+  and kinds.
+
+## Configuration settings
+
+These are the settings ETA asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your ETA boiler | `section` | No | Brings an ETA boiler with an ETAtouch display into Gladys, read only: states, temperatures, pressure, pellet stock and consumption, ash box, counters, active errors and a scene trigger on a new error. Turn the LAN access on (request it on meineta.at, then turn it on in the system settings of the display): the webservices answer on port 8080, without any password, to whoever reaches them, so keep the boiler on your local network only. Nothing can be changed on the boiler from Gladys. Never tested with a real boiler. Not affiliated with ETA. |
+| IP address of the ETAtouch | `string` | Yes | The address of the touch display of the boiler on your network (shown in its network settings), without a path. |
+| Port of the webservices | `number` | No | 8080 on every ETAtouch. |
+| Values offered in Discovery | `select` | No | Main values: about thirty (states, temperatures, pellets, counters). All values: every readable value of the menu (several hundred, the first reading takes a few minutes). Only the values of the devices you add are read afterwards. |
+| Refresh interval (s) | `number` | No | Seconds between two reads of the boiler (60 to 3600). Each read asks the values one at a time. |
+| Language of the names | `select` | No | Used for the errors device and the messages of the integration. The names of the values come from the display, in its language. |
+
+## How to install ETA in Gladys
+
+1. In Gladys, open **Integrations**: ETA appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-eta:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-eta](https://github.com/LM1LC3N7/gladys-eta).
+
+ETA requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+ETA is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-eta) — [source of this documentation](https://github.com/LM1LC3N7/gladys-eta/blob/HEAD/docs/en.md)

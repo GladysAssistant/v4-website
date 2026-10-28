@@ -19,7 +19,7 @@ https://github.com/guim31/gladys-plex instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Plex","description":"Steuere deine Plex-Player: Wiedergabe, aktuelle Medien, Aktivität und Bibliotheken.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-plex","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-plex.png","type":"device","version":"1.2.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-22T18:08:07Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Plex","description":"Steuere deine Plex-Player: Wiedergabe, aktuelle Medien, Aktivität und Bibliotheken.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-plex","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-plex.png","type":"device","version":"1.3.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-10-25T23:04:40Z"}} />
 
 :::info
 
@@ -48,8 +48,11 @@ your server can control):
 
 - Playback controls: **Play, Pause, Stop, Previous, Next, Rewind, Forward**;
 - **Volume** (0–100) and **Mute**;
-- **Playback state** (playing or not) — compatible with the **Music** dashboard
-  widget of Gladys;
+- **Playback state** — playing (1), paused (0), stopped (2) or buffering (3),
+  and a control: write it to pause, play or stop;
+- **Title**, **Artist**, **Album**, **Artwork**, **Duration** and **Position**
+  of what is playing (the position is writable: a seek) — the **Music** widget
+  of Gladys 5.3 (see below);
 - **Now playing** — the formatted title of the current media
   (`Show S01E02 - Episode`, `Artist - Track`, `Movie (year)`);
 - **Remaining time**, in minutes;
@@ -60,6 +63,50 @@ your server can control):
 Playback states update every few seconds (configurable), and the integration
 also listens to the real-time notification stream of your server, so a play,
 pause or stop is reflected in Gladys within a second.
+
+## Music player of Gladys 5.3
+
+Version 1.3 of the integration requires Gladys 5.3 or later (older versions of
+Gladys stay on 1.2). Since Gladys 5.3, the **Music** box of the dashboard is a
+real player. Pick a
+Plex player: it shows what plays there (artwork, title, artist, album — for an
+episode: the episode, the show and the season; for a movie: its title), a
+progress bar you can drag to seek, play / pause, previous / next, the volume
+and mute.
+
+- **Music panel**: the magnifier of the box browses your music libraries
+  (artists, albums, audio playlists) and searches them; a tap plays a track,
+  an album, an artist or a playlist on the player, now, next or at the end of
+  its queue. The list icon shows the **play queue** of the player, the current
+  track highlighted: a tap jumps to a track. The same picker serves the scene
+  action of Gladys **Play music on a speaker** (_at 7:00, play the "Morning" playlist in
+  the kitchen_).
+- **What the player must accept**: the commands go through the remote control
+  of Plex (see [Which players can be controlled?](#which-players-can-be-controlled)).
+  Playing from the panel, the queue and the jump use the commands the Plex
+  apps use to cast (`playMedia`, `refreshPlayQueue`, `skipTo`): a player that
+  refuses them shows an error in the panel.
+- **The queue** is the one the server keeps for the player. Its id comes with
+  the real-time notifications: after a restart of the integration, it shows up
+  within a few seconds of playback. Until then, "next" and "at the end" ask to try again rather
+  than replacing what plays.
+- The player reaches your server at the **address of the configuration**:
+  enter the local address (IP) of the server, not `localhost`.
+- **No shuffle nor repeat**: the server does not report them (only the player
+  itself knows), so these two buttons do not show.
+- Volume and mute are not reported by the server either: the box shows the
+  last value set from Gladys.
+- The artworks are resized by your Plex server, as JPEG, and served by the
+  integration: the browser never contacts Plex.
+
+**Players added before version 1.3**: open the **Discover** tab and click
+**Update** on the player to receive the new features. The existing features
+keep their identifiers, so scenes and dashboards keep working: **Mute**
+becomes a music mute (an on/off switch instead of a push button), and the
+**Playback state** becomes writable. Two behaviours change: a stopped player
+now reports **2** (it reported 0), so a scene "playback state = 0" no longer
+fires on a stop — use 2, or the **Playback stopped** trigger; and the
+**Now playing** text stays, next to the new **Title**.
 
 ## Scenes
 
@@ -113,6 +160,8 @@ certificate, either use the `http` local address (recommended) or enable
   (5 min by default).
 - **Library sensors** — disable it if you do not want one counter feature per
   library on the server device.
+- **Language of the music panel** — the language of the folders of the Music
+  box and of the messages its commands return (French by default).
 
 ## Players discovery
 
@@ -145,7 +194,10 @@ player.
 ## Automation ideas
 
 - When **In credits** turns on in the living room → raise the lights;
-- When **Playback state** turns on after 10 pm → dim the lights to 20 %;
+- When **Playback state** becomes 1 (playing) after 10 pm → dim the lights to
+  20 %;
+- At 7:00 on weekdays → **Play music on a speaker**: your "Morning" playlist on the
+  kitchen speaker;
 - When **Active streams** goes above 3 → send a notification (bandwidth!);
 - One button on the dashboard to **Pause** every player at dinner time.
 
@@ -185,15 +237,16 @@ Diese Einstellungen fragt Plex in seinem Konfigurationsbildschirm in Gladys ab.
 | Aktualisierung der Bibliotheken (s) | `number` | Nein | Wie oft die Statistiken der Bibliotheken (Anzahl der Elemente) aktualisiert werden, in Sekunden. |
 | Bibliotheks-Sensoren | `boolean` | Nein | Fügt dem Server-Gerät pro Plex-Bibliothek einen Sensor für die Anzahl der Elemente hinzu (plus Episoden bei Serien und Titel bei Musik). |
 | Selbstsigniertes Zertifikat akzeptieren | `boolean` | Nein | Nur für https-URLs: akzeptiert das selbstsignierte Zertifikat des Plex-Servers. Bei http-URLs deaktiviert lassen. |
+| Sprache des Musik-Panels | `select` | Nein | Sprache der Ordner des Musik-Widgets (Gladys 5.3) und der Meldungen seiner Befehle. |
 
 ## So installierst du Plex in Gladys
 
 1. Öffne in Gladys **Integrationen**: Plex erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
-2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-plex:1.2.2`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-plex:1.3.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
 3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
 4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-plex](https://github.com/guim31/gladys-plex).
 
-Plex benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+Plex benötigt Gladys `>=5.3.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
 
 Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
 

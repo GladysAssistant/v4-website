@@ -19,7 +19,7 @@ https://github.com/guim31/gladys-snapcast instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Snapcast","description":"Multiroom audio with Snapcast: volume and mute per room, streams, groups, scenes.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-snapcast","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-snapcast.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-23T17:46:14Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Snapcast","description":"Multiroom audio with Snapcast: volume and mute per room, streams, groups, scenes.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-snapcast","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-snapcast.png","type":"device","version":"1.1.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-10-26T06:15:17Z"}} />
 
 [Snapcast](https://github.com/badaix/snapcast) plays the same audio in sync in every room: a
 `snapserver` receives the streams (Spotify through librespot, AirPlay, MPD, a radio, a pipe...) and
@@ -37,7 +37,7 @@ welcome.
   network.
 - Its JSON-RPC control port over TCP, **1705** by default, enabled (it is, unless the `[tcp]`
   section of `snapserver.conf` says `enabled = false`).
-- Gladys 5.1 or later.
+- Gladys 5.3 or later (Music player; version 1.0 of the integration stays for Gladys 5.1 and 5.2).
 
 ## Configuration
 
@@ -60,30 +60,59 @@ minute and after each reconnection.
 
 Each snapclient is a device, named after the name you gave it in Snapweb (or else its host name).
 
-| Feature        | What it does                                                                  |
-| -------------- | ----------------------------------------------------------------------------- |
-| Volume         | 0 to 100, in both directions                                                  |
-| Mute           | On = sound off, in both directions                                            |
-| Connected      | Whether the snapclient is connected to the server                             |
-| Stream         | The stream the room plays; choosing another one switches **its whole group**  |
-| Playback state | Playing when its stream has audio                                             |
-| Now playing    | Artist and title when the stream reports them, else the stream name and state |
-| Play, Pause    | Act on the stream of the room, when a control script drives it (see Streams)  |
-| Previous, Next | Same                                                                          |
+| Feature                       | What it does                                                                                                            |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Volume                        | 0 to 100, in both directions                                                                                            |
+| Mute                          | On = sound off, in both directions (the mute of the Music player)                                                       |
+| Connected                     | Whether the snapclient is connected to the server                                                                       |
+| Stream                        | The stream the room plays; choosing another one switches **its whole group**                                            |
+| Playback state                | Playing (1), paused (0) or stopped (2), from the stream of the room; commands work when the stream has a control script |
+| Now playing                   | Artist and title when the stream reports them, else the stream name and state                                           |
+| Play, Pause                   | Act on the stream of the room, when a control script drives it (see Streams)                                            |
+| Previous, Next                | Same                                                                                                                    |
+| Title, Artist, Album, Artwork | What the stream of the room plays (see Music player)                                                                    |
+| Duration, Position            | Of the current track; the position can be set when the stream can seek                                                  |
+| Shuffle, Repeat               | When a stream of the server reports them; act on the stream of the room                                                 |
 
-A client has the volume, play, pause and playback state of the Gladys **Music** box: add the box to a
-dashboard and choose the room.
+A client is a player for the Gladys **Music** box: add the box to a dashboard and choose the room
+(see Gladys 5.3 Music player).
 
 ### Streams
 
-Each stream of the server is a device too: its **playback state** and what it plays (**now
-playing**). A stream driven by a control script (librespot, MPD through `meta_mpd.py`, AirPlay,
+Each stream of the server is a device too: its **playback state** (1 playing, 0 paused, 2 stopped)
+and what it plays (**now playing**). A stream driven by a control script (librespot, MPD through `meta_mpd.py`, AirPlay,
 Plexamp... see the Snapcast documentation) also has **Play**, **Pause**, **Previous** and **Next**
 buttons. A plain pipe has no buttons: Snapcast cannot pause what it does not control.
 
 There is no device per group: Snapcast deletes a group when it is emptied and gives a new one a new
 identity, which would leave orphan devices in Gladys. Groups are handled through their clients
 (stream choice, actions below).
+
+## Gladys 5.3 Music player
+
+Since Gladys 5.3, the dashboard **Music** box is a real player. Choose a room (a client): it shows what
+the stream of its group plays (artwork, title, artist, album, progress bar), with play / pause,
+previous / next, shuffle, repeat, and the volume and mute of the room.
+
+- Title, artist, album, duration, position and artwork come from the **control script** of the
+  stream (librespot, Mopidy through `meta_mopidy.py`, MPD through `meta_mpd.py`, AirPlay...). A plain
+  pipe reports none: the box shows the stream name as the title, live, without a progress bar.
+- Playback, position, shuffle and repeat commands act on the stream the room plays, so on **every
+  room of its group**; volume and mute stay those of the room.
+- What can be controlled depends on your streams: play, pause and stop when the stream of the room
+  has a control script, the position when it can seek; shuffle and repeat appear as soon as a stream
+  of the server reports them. A command the stream of the room cannot carry out is refused with a
+  message.
+- The artwork is the address given by the script, or the image sent within the stream (AirPlay). A
+  heavy image is made smaller; the SVG logo librespot sends is not shown (a format Gladys refuses).
+- No library, search or queue: Snapcast has none. Pick the music in the app of your source.
+
+**Devices already added**: in the **Discovery** tab of the integration, click **Update** for each
+room and each stream. The room gets the new features, and its **Mute** becomes the mute of the Music
+player (same feature: scenes that set or watch it keep working; a scene that toggled it with the
+"turn on / off a switch" action must be redone with "control a device"). The offer comes back when a
+stream reports shuffle or repeat. The **playback state** is now **2** when nothing plays, instead of
+0: a scene on "playback state = 0" now only runs on a pause. **Now playing** stays available.
 
 ## Dashboard widget
 
@@ -148,6 +177,8 @@ action of Gladys.
 - No authentication: snapserver's control port has none by default. A server that requires one
   (optional in recent versions) is not supported.
 - No device per group (see Streams); the latency of a client and the names are changed in Snapweb.
+- A room device gains shuffle and repeat when a stream of the server reports them (see Music
+  player): Gladys then offers to **Update** it.
 - The structure of a stream device depends on its control script: if a stream becomes controllable
   later, Gladys offers to **Update** it in the Discovery tab.
 - Tested against snapserver and snapclient 0.31 in Docker, with a pipe stream and a scripted player,
@@ -168,11 +199,11 @@ These are the settings Snapcast asks for in its configuration screen in Gladys.
 ## How to install Snapcast in Gladys
 
 1. In Gladys, open **Integrations**: Snapcast appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-snapcast:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-snapcast:1.1.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-snapcast](https://github.com/guim31/gladys-snapcast).
 
-Snapcast requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+Snapcast requires Gladys `>=5.3.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
 
 Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
 

@@ -1,0 +1,276 @@
+---
+title: "Intégration domotique MAX! Cube, gratuite et open source"
+sidebar_label: "MAX! Cube"
+description: "Non officiel : MAX! Cube eQ-3 en local : thermostats de radiateur et muraux, contacts de fenêtre. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-maxcube.png"
+keywords:
+  - "max! cube"
+  - "domotique max! cube"
+  - "gladys max! cube"
+  - "max! cube gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-maxcube instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"MAX! Cube","description":"Non officiel : MAX! Cube eQ-3 en local : thermostats de radiateur et muraux, contacts de fenêtre.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-maxcube","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-maxcube.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-26T23:33:54Z"}} />
+
+Votre installation de chauffage **eQ-3 MAX!** dans Gladys, par le port local
+du **MAX! Cube** (TCP 62910) sur votre réseau, sans cloud :
+
+- **thermostats de radiateur** (MAX! Heating Thermostat et Thermostat+) :
+  **température** de la pièce (quand le Cube la donne), **consigne**, **mode**
+  (auto, chauffage, arrêt), **mode MAX!** (auto, manual, vacation, boost),
+  **état du chauffage** et **ouverture de la vanne** (%), **pile faible**,
+  **erreur de liaison radio** ;
+- **thermostats muraux** (MAX! Wall Thermostat) : **température**,
+  **consigne**, **mode**, **mode MAX!**, pile, liaison ;
+- **contacts de fenêtre** (MAX! Shutter Contact) : **ouvert / fermé**, pile,
+  liaison ;
+- le **Cube** lui-même : **budget radio utilisé** (%) et **emplacements de
+  commande libres**.
+
+> **Cette intégration n'a jamais été testée avec un vrai Cube.** Cette
+> première version a été écrite à partir de la description du protocole
+> (Bouni/max-cube-protocol) et de la bibliothèque python-maxcube-api (celle
+> de Home Assistant), et testée seulement contre un faux Cube. Dites sur le
+> forum de Gladys ce qui marche et ce qui ne marche pas.
+
+Intégration non officielle, sans lien avec eQ-3. Le matériel MAX! n'est plus
+fabriqué, mais il reste très installé ; le portail eQ-3 n'est pas utilisé.
+
+## Ce qu'il faut
+
+- Un **MAX! Cube** (la passerelle LAN) sur votre réseau, avec ses appareils
+  déjà appairés et rangés par pièce dans le logiciel MAX! (les noms des pièces
+  et des appareils viennent de là). Les boutons poussoirs (MAX! Eco Switch)
+  sont ignorés.
+- Un **seul client à la fois** peut être connecté à un Cube. Par défaut,
+  Gladys garde sa connexion ouverte : le logiciel MAX! ne peut pas se
+  connecter pendant ce temps. Décochez **Garder la connexion ouverte** pour
+  que Gladys n'ouvre une connexion que le temps d'une lecture ou d'une
+  commande ; le logiciel MAX! peut alors se connecter entre deux lectures.
+
+## Configuration
+
+- **Adresse du Cube** : son adresse IP sur votre réseau (`192.168.1.40`),
+  visible dans votre box ou le logiciel MAX! ; un port peut suivre (62910 par
+  défaut). Préférez l'adresse IP : un nom en `.local` (mDNS) ne se résout pas
+  dans le conteneur de l'intégration. Donnez au Cube une adresse fixe dans
+  votre box ; si elle change, saisissez la nouvelle : les appareils et leur
+  historique sont gardés (ils sont reconnus par leur numéro de série). Pas de
+  mot de passe : le Cube n'en demande pas sur son port local.
+- **Autoriser les commandes de consigne** et **Autoriser les commandes de
+  mode** : désactivées par défaut (voir Commandes).
+- **Garder la connexion ouverte** : cochée par défaut (voir ci-dessus).
+- **Langue des appareils** : français (par défaut) ou anglais.
+
+Ouvrez ensuite l'onglet **Découverte** et créez les appareils à suivre. Les
+appareils sont nommés `Pièce - Nom` d'après le logiciel MAX!. Le bouton
+**Tester la connexion** lit le Cube et liste ce qu'il montre ; il ne relit
+jamais le Cube moins d'une minute après la lecture précédente (il montre
+alors la dernière lecture), mais il n'attend pas la pause de nouvel essai
+après une panne.
+
+## Lectures
+
+- Le Cube est lu toutes les **minutes** (sa propre mémoire, sans trafic
+  radio : les appareils MAX! ne se signalent au Cube qu'à leur rythme, et le
+  Cube garde leurs dernières valeurs). Avec la connexion gardée ouverte, un
+  appareil qui se signale au Cube est affiché aussitôt. Seules les valeurs qui
+  changent sont envoyées à Gladys (et chacune au moins toutes les 10 minutes).
+- La **température** d'un thermostat de radiateur n'est donnée par le Cube
+  que par moments (quand la vanne bouge, en mode auto ou manuel) ; celle d'un
+  thermostat mural l'est à chaque lecture (d'après la doc du protocole). Un appareil que le Cube n'a pas encore
+  entendu (pas de valeurs) apparaît **injoignable** et l'état le dit.
+- Le **mode** suit les modes de Gladys : **auto** (3) quand le thermostat
+  suit son programme hebdomadaire, **chauffage** (1) en manuel, en boost ou
+  en vacances, **arrêt** (0) quand la consigne est 4,5 °C (vanne fermée). Le
+  **mode MAX!** (texte : `auto`, `manual`, `vacation`, `boost`) donne le
+  détail.
+- Le contact de fenêtre vaut **1 fermé, 0 ouvert** (capteur d'ouverture de
+  Gladys).
+- Seules les valeurs que le Cube marque **valables** sont affichées : un
+  appareil dont l'entrée n'est pas valable ou pas initialisée, ou qui signale
+  une **erreur de liaison radio**, n'affiche que ses indicateurs (pile faible,
+  erreur de liaison), apparaît injoignable, et l'état le dit. Le budget radio
+  du Cube n'est affiché que s'il date de moins de 10 minutes (le Cube le
+  remet à zéro chaque heure).
+- Un message du Cube qui ne se lit pas pour un appareil (sa configuration,
+  une entrée trop courte) n'empêche pas de lire les autres. Deux appareils
+  sur la même adresse radio sont laissés de côté (le journal en donne le
+  nombre).
+- Les noms des pièces et des appareils sont relus à chaque nouvelle
+  connexion (au plus tard toutes les 6 heures avec la connexion gardée).
+
+## Commandes
+
+Par défaut, Gladys ne fait que **lire**, et peut **arrêter** un thermostat
+(l'arrêt ne demande aucune option). Une fois une option cochée, le tableau de
+bord, les scènes, les assistants vocaux (Siri / HomeKit, Alexa, Google Home)
+et le service Thermostat de Gladys peuvent aussi régler la consigne ou passer
+en chauffage ou en auto. Comme le logiciel MAX!, chaque commande est envoyée à
+**toute la pièce** du thermostat (les thermostats d'une pièce sont liés).
+
+### Arrêt (mode 0)
+
+L'arrêt met le thermostat en manuel à **4,5 °C**, la consigne « arrêt » de
+MAX! (vanne fermée). Il ne demande **aucune option**, ni bornes, ni valeurs de
+l'appareil : seulement l'appareil dans la liste du Cube. Il est envoyé même
+s'il semble déjà à l'arrêt. Il passe **avant** les autres commandes :
+
+- les commandes de la même pièce demandées avant lui et pas encore envoyées
+  sont annulées (« annulée : un arrêt a été demandé ») ;
+- une lecture du Cube sans réponse depuis 1 s, ou une connexion dont
+  l'accueil du Cube est muet depuis 1 s (aucun octet), est coupée (une lecture plus
+  récente est attendue : le Cube y répond en quelques millisecondes) ;
+- il n'attend que la réponse d'une commande déjà envoyée (2 s au plus) ;
+- après une connexion fermée, il attend que le Cube libère sa place (il
+  n'accepte qu'un client), puis rouvre ; tout ce qui l'empêche de partir
+  (connexion refusée ou fermée, accueil qui ne vient pas, commande précédente
+  sans réponse) est réessayé toutes les 250 ms, dans les 3,5 s qui suivent la
+  commande.
+
+Le thermostat applique sa propre protection hors-gel telle que décrite par
+eQ-3 : vérifiez la notice de votre appareil avant de laisser un radiateur à
+l'arrêt en hiver.
+
+Un arrêt qui n'a pas pu partir dans ces 3,5 s **n'est pas abandonné** : Gladys
+répond « pas encore envoyé », l'état de l'intégration le dit, et il part à la
+lecture suivante du Cube (5 s plus tard), 3 essais au plus. L'arrêt est
+**refusé** seulement quand : l'adresse du Cube n'est pas saisie ou la
+configuration n'est pas encore chargée ; la configuration change pendant la
+commande ; l'appareil n'est plus appairé au Cube. Une fois envoyé, il peut
+être **rejeté par le Cube** (budget radio de l'heure épuisé ou plus
+d'emplacement libre) ou **mis en attente** par lui ; Gladys le dit.
+
+Il est ensuite **vérifié** : le Cube est relu 5 s, 30 s, 1 min et 2 min après.
+Si le thermostat ne montre pas l'arrêt 1 min après l'envoi, il est renvoyé, 3
+fois au plus (pas quand le budget radio frais du Cube atteint 90 %) ; s'il ne
+l'a toujours pas appliqué 2 min après le dernier envoi (budget radio compris),
+les journaux et l'état de l'intégration le disent (« l'arrêt n'a pas été
+appliqué par … »), jusqu'à ce que l'appareil le montre. Une commande plus
+récente acceptée pour la même pièce (consigne, chauffage, auto), qu'elle soit
+envoyée ou déjà faite, remplace l'arrêt : il n'est alors plus envoyé ni
+renvoyé.
+
+### Consigne, chauffage, auto
+
+- **Autoriser les commandes de consigne** : la **consigne** d'un thermostat de
+  radiateur ou mural, de **5 à 30 °C**, arrondie au demi-degré (la résolution
+  du thermostat), dans les bornes réglées sur **chaque thermostat de la
+  pièce** (le Cube les donne) ; une valeur en dehors est refusée, jamais
+  ramenée dans les bornes. En mode auto, la consigne vaut jusqu'au prochain
+  point du programme hebdomadaire ; sinon elle passe le thermostat en manuel
+  (un boost ou un mode vacances en cours se termine).
+- **Autoriser les commandes de mode (auto, chauffage)** :
+  - **auto** (3) : retour au programme hebdomadaire de l'appareil ;
+  - **chauffage** (1) : manuel à la consigne actuelle, ou à la température
+    confort réglée sur l'appareil quand la vanne était fermée ;
+  - **refroidissement** (2) : refusé, un thermostat MAX! ne refroidit pas.
+- Juste avant d'agir, Gladys **demande au Cube ses valeurs courantes** et
+  décide sur cette lecture seulement. Une de ces commandes **n'est pas
+  envoyée** quand :
+  - l'option est décochée (vérifiée à l'arrivée et de nouveau juste avant
+    l'envoi), ou la configuration n'est pas encore chargée ;
+  - la valeur n'est pas un nombre de 5 à 30 °C, ou le mode n'est pas 1 ou 3 ;
+  - le thermostat est à l'arrêt et seule la consigne est autorisée (une
+    consigne le rallumerait : « repassez-le en chauffage ou en auto ») ;
+  - l'appareil n'est plus appairé ; le Cube n'a pas de valeurs pour lui ; ses
+    valeurs sont marquées non valables ou il signale une erreur de liaison ;
+  - les bornes des thermostats de la pièce ne laissent aucune valeur ; le
+    chauffage demande la température confort et le Cube ne la donne pas ;
+  - le budget radio du Cube (donné il y a moins de 10 min) atteint 90 % ou
+    il n'a plus d'emplacement libre (la commande attendrait jusqu'à une
+    heure) ;
+  - la lecture échoue ou ne finit pas à temps, la configuration change, ou
+    un arrêt de la même pièce est demandé entre-temps ;
+  - la valeur demandée est déjà celle de **tous** les thermostats de la
+    pièce (rien à faire, commande acquittée).
+- Ces commandes passent une par une (un seul Cube, une seule connexion).
+- Une commande qui n'est pas visible sur l'appareil 2 min après son envoi est
+  signalée dans les journaux (pas de renvoi).
+
+### Délais
+
+Les délais se mesurent sur l'horloge monotone du conteneur (un changement
+d'heure ne les change pas). Quand une commande ne peut pas être envoyée dans
+les 3,5 s qui suivent son arrivée, rien n'est envoyé et Gladys affiche un
+échec. Une fois envoyée, Gladys reçoit une réponse au plus 4,3 s après
+l'arrivée de la commande : « acceptée par le Cube » quand le Cube a répondu
+qu'il la transmet par radio, « envoyée, sans confirmation » s'il n'a pas
+encore répondu, « mise en attente » ou « rejetée » selon sa réponse. Le Cube
+ne confirme pas que le thermostat a appliqué la commande : elle est vérifiée
+sur les relectures (voir plus haut) ; la valeur affichée est toujours celle
+que le Cube donne, jamais celle demandée.
+
+Le programme hebdomadaire, le boost, le mode vacances, les températures
+confort et éco, le décalage de température et l'appairage restent dans le
+logiciel MAX!.
+
+## Problèmes de connexion
+
+- **Cube injoignable** ou qui ne répond pas : tous les appareils apparaissent
+  injoignables ; nouvel essai après 1 min, puis de plus en plus rarement
+  jusqu'à toutes les 10 min (jamais plus vite que la lecture normale). Le
+  message le plus fréquent : un autre client (le logiciel MAX!, une autre
+  intégration) occupe la connexion du Cube.
+- **Cette adresse ne répond pas comme un MAX! Cube** : l'adresse ou le port
+  (62910) est faux, ou un autre service répond.
+- Après un redémarrage de l'intégration, la boucle de lecture ne relit pas le
+  Cube moins d'une minute après la lecture précédente (l'heure de la dernière
+  lecture est gardée dans `/data`) ; une commande, elle, le lit juste avant
+  d'agir, et les relectures qui suivent une commande ont lieu 5 s, 30 s, 1 min
+  et 2 min après elle.
+- Les journaux ne contiennent rien de ce que le Cube envoie (ni numéros de
+  série, ni noms, ni valeurs) : seulement des mots à nous, le type d'appareil
+  (« thermostat », « wall ») et des nombres (pas de connexion, pas de réponse à
+  temps…). L'état de l'intégration, lui, nomme les appareils (pièce et nom)
+  dont l'arrêt n'a pas été appliqué.
+
+## Limites
+
+- Un seul Cube par intégration.
+- Pas de boost, de mode vacances, de programme hebdomadaire, de températures
+  confort / éco, d'appairage ni de suppression d'appareils depuis Gladys.
+- Les boutons poussoirs (Eco Switch) ne sont pas publiés.
+- Jamais testée avec un vrai Cube.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par MAX! Cube dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Fonctionnement | `section` | Non | Intégration non officielle, sans lien avec eQ-3. Gladys lit votre MAX! Cube par son port local (62910), sur votre réseau, sans cloud : chaque minute, la température, la consigne, le mode, l’ouverture de la vanne et la pile des thermostats de radiateur, la température et la consigne des thermostats muraux, l’état ouvert / fermé des contacts de fenêtre. La consigne et le mode peuvent être commandés, chacun derrière une option désactivée par défaut. Un Cube accepte un seul client à la fois : fermez le logiciel MAX! pendant que Gladys l’utilise, ou décochez « Garder la connexion ouverte ». Jamais testée avec un vrai Cube : voir la documentation. |
+| Adresse du Cube | `string` | Oui | L’adresse IP (ou le nom) du MAX! Cube sur votre réseau, visible dans votre box ou le logiciel MAX!. Donnez-lui une adresse fixe dans votre box : les appareils et leur historique sont gardés si elle change (ils sont reconnus par leur numéro de série). Un port peut suivre (62910 par défaut). Pas de mot de passe : le Cube n’en demande pas sur son port local. |
+| Commandes | `section` | Non | Par défaut Gladys ne fait que lire, et arrêter : le mode arrêt (vanne fermée) ne demande aucune option. Une fois une option cochée, le tableau de bord, les scènes, les assistants vocaux (Siri / HomeKit, Alexa, Google Home) et le service Thermostat de Gladys peuvent aussi régler la consigne ou passer en chauffage ou en auto. Chacune de ces commandes demande au Cube ses valeurs courantes juste avant d’agir. Une commande s’applique à toute la pièce du thermostat, comme le fait le logiciel MAX!. Le programme hebdomadaire, le boost et le mode vacances restent dans le logiciel MAX!. |
+| Autoriser les commandes de consigne | `boolean` | Non | La consigne d’un thermostat de radiateur ou mural : de 5 à 30 °C par demi-degré, dans les bornes réglées sur chaque thermostat de la pièce. Une valeur en dehors est refusée, jamais ramenée dans les bornes. Sur un thermostat à l’arrêt, une consigne demande aussi les commandes de mode. |
+| Autoriser les commandes de mode (auto, chauffage) | `boolean` | Non | Auto (le programme hebdomadaire de l’appareil) et chauffage (une consigne fixe). L’arrêt (la vanne fermée : la consigne 4,5 °C de MAX!) ne demande aucune option : il est accepté avec cette option décochée. Le thermostat applique sa propre protection hors-gel telle que décrite par eQ-3 : vérifiez la notice de votre appareil avant de laisser un radiateur à l’arrêt en hiver. |
+| Garder la connexion ouverte | `boolean` | Non | Cochée : une connexion au Cube est gardée, et un appareil qui se signale est affiché aussitôt ; le logiciel MAX! ne peut pas se connecter pendant ce temps (un Cube accepte un seul client). Décochée : une connexion est ouverte puis fermée pour chaque lecture et chaque commande, et le logiciel MAX! peut se connecter entre-temps. |
+| Langue des appareils | `select` | Non | Noms des appareils et des fonctionnalités. |
+
+## Comment installer MAX! Cube dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : MAX! Cube apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-maxcube:0.1.2`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-maxcube](https://github.com/LM1LC3N7/gladys-maxcube).
+
+MAX! Cube nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+MAX! Cube est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-maxcube) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-maxcube/blob/HEAD/docs/fr.md)

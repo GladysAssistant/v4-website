@@ -1,0 +1,149 @@
+---
+title: "Intégration domotique Pure Energie, gratuite et open source"
+sidebar_label: "Pure Energie"
+description: "Non officiel : lecteur de compteur Pure Energie (NET2GRID) en local : puissance et index. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-pure-energie.png"
+keywords:
+  - "pure energie"
+  - "domotique pure energie"
+  - "gladys pure energie"
+  - "pure energie gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-pure-energie instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Pure Energie","description":"Non officiel : lecteur de compteur Pure Energie (NET2GRID) en local : puissance et index.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-pure-energie","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-pure-energie.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-27T10:21:25Z"}} />
+
+Intégration non officielle, sans lien avec Pure Energie ni NET2GRID. Elle lit
+le **lecteur de compteur de Pure Energie** (un SmartBridge NET2GRID, comme le
+SBWF3102, branché sur le port P1 de votre compteur électrique) par son API
+HTTP locale : sans cloud, sans compte, sans clé, rien n'est envoyé à
+l'appareil que des demandes de lecture (GET), une lecture toutes les 30
+secondes au plus.
+
+**Jamais testé avec un vrai appareil** : elle a été écrite à partir de la
+bibliothèque Python gridnet (celle qu'utilise l'intégration Pure Energie de
+Home Assistant). Vos retours sont les bienvenus.
+
+## Ce que vous obtenez
+
+Un appareil, nommé d'après le modèle et la fin de l'identifiant du lecteur
+(`Pure Energie SBWF3102 3795`) :
+
+| Fonction (nom dans Gladys) | Type                 |
+| -------------------------- | -------------------- |
+| Power                      | capteur d'énergie, W |
+| Consumption index          | index d'énergie, kWh |
+| Injection index (kWh)      | simple capteur       |
+
+- La **puissance** est signée : négative quand votre logement injecte
+  (panneaux solaires).
+- L'**index de consommation** alimente le suivi énergétique de Gladys :
+  Gladys en déduit la consommation et son coût. Il est publié au plus une
+  fois par minute et vérifié d'abord : une valeur à 0 n'est jamais envoyée ;
+  toute baisse, même de 1 Wh, ou tout saut plus grand que ce que votre
+  logement a pu consommer (la « puissance plausible la plus haute » de la
+  configuration, 100 kW par défaut, sur le temps écoulé depuis la dernière
+  valeur) est **retenu** (la dernière valeur acceptée est renvoyée) et
+  affiché dans l'état de l'intégration. Si c'est juste (un nouveau
+  compteur), cliquez deux fois sur **Accepter l'index retenu** (voir
+  Boutons). Enregistrer la configuration ne l'accepte jamais.
+- L'**injection** n'entre jamais dans le suivi énergétique (elle serait
+  facturée comme consommation) : un simple capteur, jamais envoyé à 0.
+- Un index donné dans une autre unité que Wh ou kWh, ou sans unité, n'est pas
+  envoyé (l'état le dit) : un index n'est jamais deviné.
+- Le gaz n'est pas lu.
+
+## Seulement des valeurs fraîches
+
+Le lecteur date ses valeurs. Une lecture dont la date et les valeurs n'ont
+pas bougé depuis la précédente n'envoie rien : une vieille valeur n'est
+jamais envoyée comme une nouvelle, ni après un redémarrage de
+l'intégration, ni après un redémarrage de Gladys (cette marque est gardée
+dans `/data` pour les 8 lecteurs dont les valeurs ont changé le plus
+récemment : au 9e, la marque du plus ancien est oubliée, et un lecteur
+revenu figé après un redémarrage peut alors être republié une fois ; même
+quand l'horloge de Gladys redémarre en retard). Quand rien n'a bougé depuis 2 heures, l'état le dit.
+Sans date, une empreinte des valeurs en tient lieu.
+
+## Identité
+
+L'appareil est repéré par l'identifiant que le lecteur donne sur sa page
+`/info` (`84df:0c11:9999:3795`, gardé sous forme de ses chiffres
+hexadécimaux). Chaque lecture demande l'identifiant avant et après les
+valeurs : si un autre identifiant répond entre-temps, ou si l'identifiant est
+illisible, rien de cette lecture n'est publié. Si un autre lecteur répond à
+l'adresse, il a son propre appareil (à créer dans Découverte) ; l'ancien
+appareil garde son historique.
+
+## Installation
+
+1. Trouvez l'adresse IP du lecteur dans votre box, et donnez-lui de
+   préférence une adresse fixe.
+2. Dans Gladys, ouvrez l'intégration, saisissez cette adresse et
+   enregistrez.
+3. Dans l'onglet **Découverte**, créez l'appareil.
+
+## Boutons
+
+- **Tester la connexion** : lit le lecteur une fois quand une lecture est due
+  (jamais plus d'une toutes les 30 secondes), sinon donne la dernière
+  lecture : son identifiant, la puissance, les index de consommation et
+  d'injection.
+- **Accepter l'index retenu**, en deux clics. Le premier clic affiche
+  l'index retenu et ne prend rien. Le second, de quelques secondes à 5
+  minutes plus tard, prend ce que le premier a affiché, seulement si la
+  valeur retenue n'a pas changé depuis (au-delà de ce que le compteur a pu
+  mesurer entre-temps). Un saut est alors compté d'un coup comme
+  consommation ; une baisse ne facture rien.
+
+## En cas de problème
+
+- **Injoignable ou mauvaise réponse** : nouvel essai après 30 secondes, puis
+  doublé jusqu'à 10 minutes.
+- **L'appareil demande d'attendre (429) ou échoue (5xx)** : lectures en pause
+  de 1 minute à 6 heures, y compris après un redémarrage.
+- **Le fichier d'état dans `/data` est illisible** : il est laissé tel quel
+  (jamais écrasé) et l'état le dit ; un index retenu ou la date des
+  dernières valeurs peuvent alors être oubliés.
+
+## Confidentialité
+
+Tout reste sur votre réseau. L'intégration n'envoie que des requêtes GET à
+l'adresse que vous avez saisie.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Pure Energie dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Lecteur de compteur Pure Energie | `section` | Non | Connecteur non officiel, sans lien avec Pure Energie ni NET2GRID. Il lit le lecteur de compteur de Pure Energie (un SmartBridge NET2GRID, branché sur le port P1 du compteur électrique) par son API HTTP locale, sans cloud ni clé : la puissance toutes les 30 secondes (signée : négative quand vous injectez), l'index de consommation chaque minute pour le suivi énergétique de Gladys, et l'index d'injection en simple capteur. Lecture seule. Le gaz n'est pas lu. Jamais testé avec un vrai appareil. |
+| Adresse du lecteur de compteur | `string` | Oui | L'adresse IP du lecteur de compteur sur votre réseau (visible dans votre box), avec un port seulement s'il n'est pas 80. Donnez-lui de préférence une adresse fixe dans votre box ; si elle change, saisissez la nouvelle : l'appareil garde son historique (il est repéré par l'identifiant du lecteur). |
+| Puissance plausible la plus haute du logement (kW) | `number` | Non | La garde de l'index de consommation retient une hausse plus grande que cette puissance sur le temps écoulé depuis la dernière valeur (100 kW par défaut). |
+
+## Comment installer Pure Energie dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Pure Energie apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-pure-energie:0.1.2`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-pure-energie](https://github.com/LM1LC3N7/gladys-pure-energie).
+
+Pure Energie nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Pure Energie est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-pure-energie) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-pure-energie/blob/HEAD/docs/fr.md)

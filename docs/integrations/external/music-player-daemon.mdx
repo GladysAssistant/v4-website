@@ -19,7 +19,7 @@ https://github.com/guim31/gladys-mpd instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Music Player Daemon","description":"Control your MPD players (moOde, Volumio, piCorePlayer…): music, volume, playlists, notifications.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-mpd","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-mpd.png","type":"device","version":"1.0.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-22T06:26:17Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Music Player Daemon","description":"Control your MPD players (moOde, Volumio, piCorePlayer…): music, volume, playlists, notifications.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-mpd","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-mpd.png","type":"device","version":"1.1.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-10-26T08:15:32Z"}} />
 
 Control your [MPD](https://www.musicpd.org) players from Gladys: a Raspberry Pi
 plugged into an amplifier with moOde, Volumio, piCorePlayer, or MPD itself.
@@ -28,8 +28,9 @@ sound or a web radio and then go back to the music, see what is playing on the
 dashboard. Everything stays on your local network: no cloud, no account.
 
 > **Developed without the hardware: feedback welcome.** The integration was
-> built and tested against a simulated MPD server that answers like MPD 0.23,
-> not against a real player. Please report what works and what does not in the
+> built and tested against a real MPD 0.24 running in Docker (without a sound
+> card) and a simulated server, not on a moOde, Volumio or piCorePlayer
+> player. Please report what works and what does not in the
 > [issues](https://github.com/guim31/gladys-mpd/issues).
 
 This integration is not affiliated with the MPD project, nor with moOde,
@@ -37,7 +38,10 @@ Volumio or piCorePlayer.
 
 ## What you need
 
-- Gladys Assistant **5.2.0** or later.
+- Gladys Assistant **5.3.0** or later.
+- For the search, browse and queue panels of the **Music** box: MPD **0.21**
+  or later (covers embedded in the files: **0.22**). moOde, Volumio 3 and
+  recent distributions ship 0.23 or 0.24.
 - A player running **MPD**, reachable from Gladys on the network, on its MPD
   port (**6600** by default). moOde and piCorePlayer (with its MPD extension)
   expose it out of the box; MPD itself listens on the network when
@@ -70,19 +74,64 @@ Each player is one device. Gladys shows it as a music player: the **Music**
 dashboard box (play, pause, previous, next, volume) and the **Talk on a
 speaker** scene action work with it.
 
-| Feature (English names) | What it does                                                                                            |
-| ----------------------- | ------------------------------------------------------------------------------------------------------- |
-| Play                    | Plays the queue (a paused song resumes where it was).                                                   |
-| Pause                   | Pauses.                                                                                                 |
-| Previous track          | Goes to the previous song.                                                                              |
-| Next track              | Goes to the next song.                                                                                  |
-| Volume                  | 0 to 100 %, as MPD sees it. Absent value when MPD has no mixer (fixed volume).                          |
-| Playback state          | 1 while playing, 0 when paused or stopped. Kept in the history, usable as a scene trigger or condition. |
-| Playlist                | A list of the playlists saved in MPD: picking one replaces the queue with it and plays it.              |
-| Notification            | Receives an address to play, then puts back what was playing (see below).                               |
+| Feature (English names) | What it does                                                                               |
+| ----------------------- | ------------------------------------------------------------------------------------------ |
+| Play                    | Plays the queue (a paused song resumes where it was).                                      |
+| Pause                   | Pauses.                                                                                    |
+| Previous track          | Goes to the previous song.                                                                 |
+| Next track              | Goes to the next song.                                                                     |
+| Volume                  | 0 to 100 %, as MPD sees it. Absent value when MPD has no mixer (fixed volume).             |
+| Playback state          | 0 paused, 1 playing, 2 stopped. Writing it pauses, plays or stops.                         |
+| Title                   | The title of the song (the song announced by a web radio).                                 |
+| Artist                  | Its artist.                                                                                |
+| Album                   | Its album (the station of a web radio).                                                    |
+| Artwork                 | The cover, shown by the Music box (see below).                                             |
+| Duration                | In seconds; 0 for a web radio.                                                             |
+| Position                | In seconds; writing it seeks in the song.                                                  |
+| Shuffle                 | MPD's random play, on or off.                                                              |
+| Repeat                  | Off, the whole queue, or the current song (MPD's repeat and single).                       |
+| Playlist                | A list of the playlists saved in MPD: picking one replaces the queue with it and plays it. |
+| Notification            | Receives an address to play, then puts back what was playing (see below).                  |
 
 The list of playlists follows MPD: a playlist saved or deleted on the player
 appears or disappears in the list.
+
+## Gladys 5.3 music player
+
+Since Gladys 5.3, the **Music** box of the dashboard is a real player, and MPD
+fills all of it:
+
+- the cover, the title, the artist and the album, a progress bar you can drag
+  to seek, play and pause, previous, next, shuffle, repeat and the volume;
+- the **queue** (list button): the songs of the MPD queue, the current one
+  highlighted; a tap plays another one;
+- **search and browse** (magnifier button): the search asks MPD for songs
+  (any tag) and looks in the names of the artists, the albums and the
+  playlists; browsing starts with **Folders** (the music directory of MPD),
+  **Artists**, **Albums** and **Playlists**. A tap plays the item in place of
+  the queue; the secondary gesture adds it after the current song or at the
+  end of the queue. A folder, an artist or an album plays whole (500 songs at
+  most).
+
+The **Play music on a speaker** scene action of Gladys picks a playlist, an
+album, an artist, a folder or a song in the same panel, and plays it when the
+scene runs.
+
+**A device added before version 1.1.0** keeps working as before, without the
+new features: open the **Discover** tab of the integration and click
+**Update** on the player (Gladys offers it because the features changed). The
+new features are added; the existing ones keep their scenes and dashboards.
+**Playback state** changes: it reads 2 instead of 0 when MPD is stopped, and it
+is no longer kept in the history (Gladys keeps no history of music features).
+
+Covers come from MPD: the picture embedded in the file first, else the cover
+file of its folder (`cover.jpg`, `folder.png`…). MPD sends it as it is in the
+file, often a scan of a few megabytes, and Gladys shows a cover of **300 KB at
+most**: the integration makes a larger one smaller (a JPEG of 400 pixels at
+most), up to 10 MB (see Limits).
+
+MPD has **no mute**: no Mute button for an MPD player (setting the volume to 0
+would lose the volume to come back to).
 
 ## Dashboard widget
 
@@ -100,8 +149,9 @@ Add the **MPD player** widget to a dashboard. In its settings, pick a player
   sent.
 
 The widget follows the player as it changes: it is refreshed within ten
-seconds when a song starts, the volume moves or a playlist is saved. No cover
-art (see Limits).
+seconds when a song starts, the volume moves or a playlist is saved. The **Music** box of Gladys 5.3
+(above) is the full player; this widget adds the **Options…** form and has no
+cover.
 
 ## Scenes
 
@@ -171,9 +221,9 @@ configuration.
 The integration keeps one connection open to each player and waits for its
 changes (the MPD `idle` command): what happens on the player, from Gladys or
 from another app, is in Gladys within a second. On top of that, every player
-is read every 30 seconds (it also checks that the player still answers), and
-an unchanged value is sent again every six hours so that Gladys never shows it
-as old. Only the changes are sent to Gladys.
+is read every 30 seconds (it also checks that the player still answers). Only
+the changes are sent to Gladys; the position in the song only when it jumps
+(Gladys moves the progress bar itself).
 
 A player that stops answering is shown unreachable (transport badge of the
 device, connection status of the integration), and the integration tries
@@ -185,6 +235,9 @@ every 30 seconds, on one connection per player.
 
 ## Troubleshooting
 
+- **"MPD answered with too much at once"** in the music panel: a folder or a
+  list larger than the integration reads (4 MB of text): open a smaller
+  folder, or search.
 - **"does not answer"**: check the address and the port (6600, or the one of
   `port` in `mpd.conf`), that MPD listens on the network (`bind_to_address`)
   and that no firewall blocks the port between Gladys and the player.
@@ -210,15 +263,17 @@ every 30 seconds, on one connection per player.
 
 - Up to four players. A player is known by its slot in the configuration:
   changing its address keeps the device and its history.
-- No cover art in the widget: MPD sends it unresized, often above what Gladys
-  accepts.
-- No browsing of the music library: playlists, addresses and library paths
-  only.
+- Covers above 10 MB or 25 megapixels are not shown, nor covers in another
+  format than JPEG, PNG and WebP (GIF…), nor WebP covers above 300 KB: the
+  integration only reduces JPEG and PNG.
+- The search of MPD ignores capitals; accents only when MPD was built with
+  ICU (`café` may not find `Café` otherwise).
+- No mute (MPD has none).
 - No grouping of players (Snapcast) nor choice of outputs.
 - MPD cannot be found automatically on the network: enter the addresses.
 - The volume of the **Talk on a speaker** action is not passed on by Gladys
   (the **Notification volume** applies).
-- Gladys 5.2.0 or later (the **Options…** form of the widget).
+- Gladys 5.3.0 or later (the music player and its panels).
 
 ## Configuration settings
 
@@ -249,11 +304,11 @@ These are the settings Music Player Daemon asks for in its configuration screen 
 ## How to install Music Player Daemon in Gladys
 
 1. In Gladys, open **Integrations**: Music Player Daemon appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-mpd:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-mpd:1.1.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-mpd](https://github.com/guim31/gladys-mpd).
 
-Music Player Daemon requires Gladys `>=5.2.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+Music Player Daemon requires Gladys `>=5.3.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
 
 Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
 

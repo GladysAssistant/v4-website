@@ -1,0 +1,263 @@
+---
+title: "SQL Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "SQL"
+description: "Deine SQL-Abfragen auf PostgreSQL, MariaDB oder MySQL als Gladys-Sensoren, nur lesend. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-sql.png"
+keywords:
+  - "sql"
+  - "sql smart home"
+  - "gladys sql"
+  - "sql gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-sql instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"SQL","description":"Deine SQL-Abfragen auf PostgreSQL, MariaDB oder MySQL als Gladys-Sensoren, nur lesend.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-sql","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-sql.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-26T16:44:31Z"}} />
+
+Mach aus deinen SQL-Abfragen Gladys-Sensoren: die Größe einer Datenbank, die
+Zeilen einer Log-Tabelle, den letzten Messwert einer Tabelle, die ein anderes
+Werkzeug füllt (eine Wetterstation, ein Energiezähler, ein Skript). Die
+Abfragen, die du wählst, laufen auf deiner **PostgreSQL**-, **MariaDB**- oder
+**MySQL**-Datenbank im gewählten Intervall, und deine Szenen reagieren, wenn
+die Datenbank nicht mehr antwortet oder eine Abfrage fehlschlägt. Ein Widget
+im Dashboard zeigt die Werte auf einen Blick.
+
+Die Integration liest nur, und prüft das dreifach: sie lehnt jeden Text ab,
+der kein einzelnes `SELECT` ist, jede Abfrage läuft in einer
+Nur-Lese-Transaktion, die die Datenbank selbst durchsetzt, und du gibst ihr
+einen Benutzer, der nur lesen darf.
+
+Getestet mit echten PostgreSQL-17-, MariaDB-11- und MySQL-8-Servern
+(offizielle Docker-Images, echte Tabellen, ein Nur-Lese-Benutzer, eine
+wirklich gestoppte Datenbank). Rückmeldungen sind willkommen:
+[github.com/guim31/gladys-sql/issues](https://github.com/guim31/gladys-sql/issues).
+
+## Was du brauchst
+
+- Gladys Assistant 5.1.0 oder neuer.
+- Eine PostgreSQL- (10 oder neuer), MariaDB- (10.3 oder neuer) oder
+  MySQL-Datenbank (5.7 oder neuer), vom Gladys-Rechner aus erreichbar (Port
+  5432 oder 3306).
+- Einen Benutzer dieser Datenbank, **der nur lesen darf**. Lege ihn als
+  Administrator der Datenbank an:
+
+PostgreSQL:
+
+```sql
+CREATE USER gladys PASSWORD 'ein langes Passwort';
+GRANT CONNECT ON DATABASE home TO gladys;
+GRANT USAGE ON SCHEMA public TO gladys;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO gladys;
+```
+
+MariaDB und MySQL:
+
+```sql
+CREATE USER 'gladys'@'%' IDENTIFIED BY 'ein langes Passwort';
+GRANT SELECT ON home.* TO 'gladys'@'%';
+```
+
+## Erste Schritte
+
+### 1. Die Integration konfigurieren
+
+Öffne in Gladys die Integration und fülle aus:
+
+- **Datenbanktyp**: PostgreSQL, oder MariaDB oder MySQL.
+- **Adresse** des Servers, z. B. `192.168.1.2`, und seinen **Port**, wenn es
+  nicht der Standard ist (5432 für PostgreSQL, 3306 für MariaDB und MySQL).
+- **Datenbank**, **Benutzer** und **Passwort**.
+- **Verschlüsselung (TLS)**: **Nein** in deinem Heimnetz; **Ja, jedes
+  Zertifikat (selbstsigniert)** für einen Server mit eigenem Zertifikat; **Ja,
+  mit gültigem Zertifikat** für eine Datenbank im Internet.
+- **Aktualisierungsintervall**: wie oft die Verbindung geprüft wird und die
+  Abfragen ohne eigenes Intervall laufen (standardmäßig 1 Minute, bis zu 1
+  Stunde).
+- **Zeitlimit pro Abfrage**: danach bricht die Datenbank die Abfrage ab
+  (standardmäßig 10 Sekunden).
+- **Sprache der Meldungen**: der Funktionsnamen, Szenenergebnisse und
+  Meldungen.
+
+**Verbindung testen** sagt, ob die Datenbank antwortet, ihre Version und den
+Zustand jeder Abfrage.
+
+### 2. Deine Abfragen hinzufügen
+
+**Abfrage hinzufügen** fragt nach:
+
+- **Name**: der Name ihrer Funktion in Gladys. Derselbe Name ersetzt die
+  Abfrage.
+- **SQL-Abfrage (SELECT)**: ein einziges `SELECT` oder `WITH … SELECT`. Der
+  Wert wird aus der **ersten Zeile** gelesen: sortiere und begrenze (`ORDER BY
+… DESC LIMIT 1`) oder aggregiere (`count(*)`, `max()`, `avg()`).
+- **Spalte (optional)**: die zu lesende Spalte; leer die erste.
+- **Typ**: Zahl (ohne Einheit), Temperatur (°C), Luftfeuchtigkeit (%), Prozent
+  (%), Leistung (W), Energie (kWh), Größe (MB), Text oder Ja / nein (1/0,
+  true/false).
+- **Intervall (optional)**: von 30 Sekunden bis 1 Stunde; leer das
+  Aktualisierungsintervall der Konfiguration.
+
+Die Abfrage wird vor dem Speichern ausprobiert: Die Meldung gibt ihren Wert an
+oder sagt, warum die Datenbank sie ablehnt. **Abfrage entfernen** nimmt ihren
+Namen.
+
+Beispiele:
+
+```sql
+-- PostgreSQL: Größe der Datenbank in MB (Typ Größe)
+SELECT pg_database_size(current_database()) / 1000000.0
+-- MariaDB, MySQL: Größe der Datenbank in MB (Typ Größe)
+SELECT SUM(data_length + index_length) / 1000000 FROM information_schema.tables WHERE table_schema = DATABASE()
+-- Heute hinzugefügte Zeilen (Typ Zahl)
+SELECT count(*) FROM ereignisse WHERE erstellt >= CURRENT_DATE
+-- Letzte Temperatur einer Messwert-Tabelle (Typ Temperatur)
+SELECT temperatur FROM messwerte ORDER BY erstellt DESC LIMIT 1
+-- Hat das Backup heute Nacht geklappt? (Typ Ja / nein)
+SELECT ok FROM backups ORDER BY ende DESC LIMIT 1
+```
+
+### 3. Das Gerät hinzufügen
+
+Füge im Tab **Entdecken** die Datenbank hinzu. Nachdem du Abfragen
+hinzugefügt oder entfernt hast, klicke dort bei ihr auf **Aktualisieren**:
+Gladys fügt die neuen Funktionen hinzu.
+
+## Die Geräte
+
+Ein Gerät für die Datenbank, nach ihr benannt (z. B. `PostgreSQL home`):
+
+- **Erreichbar**: 1, solange die Datenbank antwortet, sonst 0.
+- **Version**: die Serverversion, z. B. `PostgreSQL 17.6`, `MariaDB 11.4.3`.
+- Eine Funktion pro Abfrage, von ihrem Typ. Eine fehlende Zeile oder ein
+  `NULL`-Wert lässt den letzten Wert stehen.
+
+Das Abzeichen des Geräts wechselt auf „nicht erreichbar“, solange die
+Datenbank nicht antwortet.
+
+## Dashboard
+
+Das Widget **SQL-Werte** zeigt die Datenbank (ihre Version, oder warum sie
+nicht antwortet), dann den letzten Wert jeder Abfrage: höchstens zehn Zeilen.
+**Aktualisieren** liest alles sofort neu.
+
+## Szenen
+
+### Auslöser
+
+- **Die Datenbank ist nicht erreichbar**: Zwei Lesevorgänge nacheinander
+  schlagen fehl (keine Antwort, Zugriff verweigert, Datenbank nicht gefunden,
+  TLS abgelehnt). Variablen: der Fehler und sein Schlüssel (`unreachable`,
+  `auth`, `database`, `tls`).
+- **Die Datenbank antwortet wieder**: nach einem gemeldeten Ausfall; Variable:
+  seine Dauer in Minuten.
+- **Eine Abfrage schlägt fehl**: ein Fehler in der Abfrage, das Zeitlimit
+  erreicht oder ein Wert, der nicht zum Typ passt. Einmal, bis sie wieder
+  klappt. Filter: der Name der Abfrage (leer: alle).
+- **Eine Abfrage klappt wieder**: Die Abfrage liefert wieder einen Wert;
+  Variable: der Wert.
+
+Keine Zeile ist kein Fehler: Eine Abfrage, deren Ergebnis im Moment leer ist,
+löst nichts aus.
+
+### Aktionen
+
+**SQL-Abfrage jetzt lesen** führt eine gespeicherte Abfrage (gib ihren Namen
+an) oder ein `SELECT` (aus der ersten Spalte gelesen) aus und liefert
+**value** (eine Zahl, 0, wenn der Wert keine ist) und **text** (den Wert mit
+seiner Einheit oder den Text). Eine Szene kann sie in einer Nachricht oder
+Bedingung nutzen.
+
+### Ideen für Szenen
+
+- Jeden Morgen „\{\{text\}\} Zeilen gestern ins Log geschrieben“ senden, gelesen
+  mit **SQL-Abfrage jetzt lesen**.
+- **Die Datenbank ist nicht erreichbar**: eine Nachricht mit dem Fehler
+  senden und eine Lampe rot schalten, bis **Die Datenbank antwortet wieder**.
+- Wenn die Funktion „Backup ok“ um 8 Uhr 0 ist, eine Erinnerung senden, das
+  Backup zu prüfen.
+
+## Fehlerbehebung
+
+- **„antwortet nicht“**: Prüfe Adresse und Port, und dass der Server im Netz
+  lauscht (`listen_addresses` bei PostgreSQL, `bind-address` bei MariaDB und
+  MySQL) und den Gladys-Rechner zulässt (`pg_hba.conf` bei PostgreSQL).
+- **„Zugriff verweigert“**: Prüfe Benutzer und Passwort; bei MariaDB oder
+  MySQL muss der Benutzer von der Adresse des Gladys-Rechners aus erlaubt sein
+  (`'gladys'@'%'`).
+- **„Datenbank nicht gefunden“**: Prüfe ihren Namen (und bei MariaDB oder
+  MySQL, dass der Benutzer ein Recht darauf hat).
+- **„TLS abgelehnt“**: Ändere **Verschlüsselung (TLS)**: Der Server bietet es
+  nicht an, verlangt es, oder sein Zertifikat ist nicht gültig.
+- **„nur SELECT (oder WITH … SELECT) ist erlaubt“**, **„dieses Wort schreibt
+  oder sperrt“**: Die Integration lehnt ab, was schreiben könnte (`INSERT`,
+  `UPDATE`, `DELETE`, `SELECT … INTO`, `FOR UPDATE`, `nextval()`…). Setze
+  eine Spalte mit so einem Namen in Anführungszeichen (`"update"` bei
+  PostgreSQL, `` `update` `` bei MySQL).
+- **„von der Datenbank abgelehnt, da sie schreiben würde“**: Die Abfrage ruft
+  eine Funktion auf, die schreibt; die Nur-Lese-Transaktion hat sie gestoppt.
+- **„zu langsam“**: Lege einen Index an, begrenze die Abfrage (`WHERE
+erstellt > now() - interval '1 day'`) oder erhöhe das Zeitlimit.
+- **Protokolle**: In Gladys zeigt die Seite der Integration ihre Protokolle.
+  Setze `LOG_LEVEL=debug`, um jeden Lesevorgang zu sehen.
+
+## Grenzen
+
+- Eine Datenbank pro Installation, 20 Abfragen; ein Wert pro Abfrage (die
+  erste Zeile).
+- Nur lesend: Es wird nie etwas in die Datenbank geschrieben. Ein Backslash
+  (`\`) wird in einer Abfrage abgelehnt: Seine Bedeutung hängt von den
+  Servereinstellungen ab.
+- Nur PostgreSQL, MariaDB und MySQL (weder SQL Server noch Oracle noch
+  SQLite).
+- Die Abfragen liegen im Datenvolume der Integration: Eine Neuinstallation von
+  Grund auf verliert sie (füge sie unter denselben Namen erneut hinzu:
+  dieselben Funktionen).
+- Zahlen werden auf zwei Nachkommastellen gerundet, Texte nach 250 Zeichen
+  abgeschnitten.
+- Getestet mit den Testwerkzeugen des Gladys-SDK und echten Datenbankservern,
+  noch nicht in einer echten Gladys-Instanz: Rückmeldungen sind willkommen.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt SQL in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Deine Datenbank | `section` | Nein | Gib die Zugangsdaten deiner Datenbank ein, am besten einen Benutzer, der nur lesen darf. Füge dann deine Abfragen mit „Abfrage hinzufügen“ unten hinzu und die Datenbank im Tab „Entdecken“. |
+| Datenbanktyp | `select` | Nein |  |
+| Adresse | `string` | Ja | IP-Adresse oder Hostname des Datenbankservers. |
+| Port | `string` | Nein | Leer: 5432 für PostgreSQL, 3306 für MariaDB und MySQL. |
+| Datenbank | `string` | Ja |  |
+| Benutzer | `string` | Ja | Lege einen mit reinen Leserechten an: Siehe die Installationsanleitung. |
+| Passwort | `secret` | Nein |  |
+| Verschlüsselung (TLS) | `select` | Nein | Unverzichtbar für eine Datenbank außerhalb deines Heimnetzes. |
+| Optionen | `section` | Nein |  |
+| Aktualisierungsintervall | `select` | Nein | Der Verbindungsprüfung und der Abfragen ohne eigenes Intervall. |
+| Zeitlimit pro Abfrage | `select` | Nein | Danach bricht die Datenbank die Abfrage ab. |
+| Sprache der Meldungen | `select` | Nein | Sprache der Funktionsnamen, Szenenergebnisse und Meldungen. |
+
+## So installierst du SQL in Gladys
+
+1. Öffne in Gladys **Integrationen**: SQL erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-sql:1.0.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-sql](https://github.com/guim31/gladys-sql).
+
+SQL benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+SQL ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-sql) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-sql/blob/HEAD/docs/de.md)

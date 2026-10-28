@@ -1,0 +1,218 @@
+---
+title: "Integración domótica PJLink Projectors, gratuita y de código abierto"
+sidebar_label: "PJLink Projectors"
+description: "PJLink projectors on the local network: power, standby, input, A/V mute, lamp, errors. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-pjlink.png"
+keywords:
+  - "pjlink projectors"
+  - "domótica pjlink projectors"
+  - "gladys pjlink projectors"
+  - "pjlink projectors gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-pjlink instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"PJLink Projectors","description":"PJLink projectors on the local network: power, standby, input, A/V mute, lamp, errors.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-pjlink","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-pjlink.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-27T10:17:25Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+Control your **PJLink projectors** from Gladys, locally, without any cloud:
+power on, standby, input, A/V mute, the lamp hours and the error report.
+PJLink is the network control standard of many projectors and some flat
+screens (Epson, Panasonic, NEC / Sharp, Sony, BenQ, Canon, Hitachi / Maxell,
+Optoma, Ricoh, Christie...), class 1 and class 2.
+
+> **Important.** This integration has never been tested with a real device:
+> it was written from the public PJLink specification, cross-checked with the
+> `pypjlink2` library (the one Home Assistant uses), and tested against a fake
+> projector only. Your feedback is welcome.
+> Unofficial integration, not affiliated with JBMIA (the association behind
+> PJLink) nor with any projector maker.
+
+## Setup
+
+1. On the projector, enable **PJLink** (depending on the maker: _Network_ >
+   _Network control_, _PJLink_, _Control_...) and the **network standby**
+   (for example _Standby mode: Network on_). Without it, the projector leaves
+   the network in standby and cannot be turned on from Gladys.
+2. Give each projector a **fixed IP address** in your router (reserved DHCP
+   lease).
+3. In Gladys, install the **PJLink Projectors** integration, then open its
+   configuration.
+4. Type the IP addresses, separated by commas (for example
+   `192.168.1.60, 192.168.1.61`, 10 at most). Add `:port` only if the
+   projector does not use the PJLink port, 4352.
+5. If a PJLink password protects your projectors, type it (32 characters at
+   most, without accents, the same for all of them).
+6. Open the **Discovery** tab and scan: the projectors appear, create them.
+
+The integration talks to the projector with **PJLink** (TCP port 4352): one
+connection at a time (a projector accepts only one), closed after 3 s of
+silence. It reads the state at the refresh interval of the configuration
+(60 s by default, 30 s at least).
+
+## What you get
+
+| Feature    | Gladys type              | Note                                                  |
+| ---------- | ------------------------ | ----------------------------------------------------- |
+| Power      | binary state (read only) | 1 on or warming up, 0 in standby or cooling down      |
+| Power on   | button                   | sent only from standby                                |
+| Standby    | button                   | the protective command, see below                     |
+| Status     | text (read only)         | Standby, Warming up, On, Cooling down, Unreachable... |
+| Input      | dropdown                 | the inputs the projector lists, with their names      |
+| A/V mute   | button (mute)            | each press reads the state, then sets the opposite    |
+| Lamp hours | duration in hours        | the first lamp; absent on models that do not give it  |
+| Errors     | text (read only)         | `OK`, or for example `Lamp: warning, Filter: error`   |
+
+On purpose, no **switch**: an "everything off" or "everything on" from a
+voice assistant or a scene neither turns your projector on nor cuts it.
+
+Input and A/V mute are read and set only while the projector is on. The input
+names come from the projector (class 2: `HDMI 1`...); on a class 1 projector
+they are named by type (`Digital 1`, `RGB 1`...). They are read when you scan
+in the Discovery tab.
+
+Each projector is known by its **serial number** (class 2), or by its
+**address** (class 1, or a projector that gives none). Before anything is
+published or sent (Standby aside), the integration checks once per connection
+that it talks to the same projector: the serial number, or the maker and
+model for a projector known by its address. Another serial number at the
+address: the projector is marked "Another projector at this address" and
+nothing is sent to it; type its new address and scan again. Unreadable: its
+status shows "Identity not confirmed" and nothing is sent to it but Standby.
+
+## Commands
+
+Power on, input and A/V mute read the power state just before, then the
+current value, and are decided on what they read. A command is a success only
+once the projector shows the requested value when read back; Gladys gives a
+command 5 seconds, so every command is answered within 3.5 s, with exactly
+what is known:
+
+- "nothing sent": the projector did not answer, a password is missing or
+  refused, the identity is not confirmed, a Standby was asked meanwhile or is
+  not confirmed yet (input and A/V mute), or no time was left;
+- "sent, without confirmation" or "not applied yet": the command left; the
+  projector is read again 5 s and 20 s later;
+- "refused by the projector (ERR3)": the projector answered with an error
+  (ERR3 means "not now", for example while warming up).
+
+Commands to one projector go one at a time.
+
+### Standby, the protective command
+
+Standby is never held back by a reading or a command in progress, the
+commands waiting, the configuration not read yet, or a state not read yet:
+
+- it goes before everything waiting for that projector; the commands asked
+  before it and still waiting are cancelled ("nothing sent"), so nothing
+  asked before a Standby is sent after it;
+- a reading stuck for 1 s (no byte from the projector) is cut, and the
+  standby leaves on a new connection once the old one is closed;
+- `POWR 0` is sent without reading anything first, then the power is read
+  back: "Standby" or "Cooling down" confirms it;
+- when no connection can be made, it is tried again every 250 ms within its
+  3.2 s.
+
+A Standby the projector **accepted** (`OK`) is never sent again blindly: if
+the power read back still shows it on, it is sent again only by a reading
+that still shows it on, with no failed reading in between; a reading that
+fails, or one showing it warming up (a power on started since, by the remote
+or by Gladys), drops it. Accepted but not read back (many projectors leave
+the network while cooling down): it is not sent again.
+
+A Standby **not accepted** (refused with ERR3 while warming up, or no
+connection, or no answer) is **kept** (in the data of the integration, so a
+restart keeps it too) and sent again by the next readings that show the
+projector on: its own power readings every 12 s (whatever the refresh
+interval, stopped once it is confirmed or dropped) and the usual readings,
+3 times at most (a refusal with ERR3, warming up or cooling down, is not
+counted), for 2
+minutes at most (counted on a monotonic clock while the integration runs).
+While the projector is still warming up, it waits. It is dropped once a
+reading shows the projector in standby or cooling down, or when a Power on
+sent from Gladys after it is accepted.
+
+At a restart, a kept standby not accepted is decided on a power read first,
+before the configuration is read and before any reading: sent only if the
+projector is still on. An accepted one is dropped at a restart.
+
+The cases where a Standby does not leave ("nothing sent", kept and sent again
+as above):
+
+1. the address of the projector is unknown (another projector proved to
+   answer there);
+2. the projector asks for a password and none is typed, or the typed one was
+   refused (a refused password is not sent again by a Standby; right after a
+   restart, a projector asking for a password gets the standby once the
+   configuration is read);
+3. no connection within its 3.2 s (unreachable).
+
+## Passwords
+
+A missing or refused password blocks its projector: no reading, no command,
+no automatic retry, a reconnection or a restart included. The status says so.
+The block is lifted when you change the password in the configuration, or
+when the **Check the projectors** button succeeds (each press tries once;
+after a restart, a new password is recognized by its mark, see below, and in
+1 case out of 64 it is taken for the old one: press the button then).
+The password is kept by Gladys in its database, never shown again, sent only
+to the projectors as the MD5 digest PJLink uses, never written in the logs nor
+in the data of the integration. To know after a restart whether the password
+changed, the integration keeps only a 6-bit mark of a refused password (one
+value among 64, which identifies nothing), erased once a password is
+accepted.
+
+## Check the projectors
+
+The **Check the projectors** button shows the state of each projector. A
+projector read less than one refresh interval ago is shown as read, not asked
+again; a scan, a reconnection or a saved configuration does not make the
+projectors read sooner either.
+
+## Not supported yet
+
+Volume, freeze, filter hours, the notifications of class 2 (search by UDP
+broadcast, status pushed by the projector), one password per projector. See
+the project's TODO.md.
+
+## Parámetros de configuración
+
+Estos son los parámetros que PJLink Projectors te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Your PJLink projectors, on your local network | `section` | No | PJLink is the network control standard of many projectors (Epson, Panasonic, NEC, Sony, BenQ, Canon, Hitachi, Optoma...): TCP port 4352, without any cloud. On the projector, enable PJLink (often under Network > Network control or PJLink) and the network standby, otherwise it leaves the network in standby. Give each projector a fixed IP address in your router, type the addresses below, then scan in the Discovery tab. Unofficial integration, not affiliated with JBMIA nor with any projector maker. |
+| IP addresses of the projectors | `string` | No | Separated by commas, for example 192.168.1.60, 192.168.1.61 (10 at most). Add :port only if your projector does not use 4352. |
+| PJLink password (optional) | `secret` | No | Only if a PJLink password protects your projectors (32 characters at most, the same for all of them). Kept by Gladys in its database, never shown again, sent only to the projectors over your local network (as the MD5 digest PJLink uses), never written in the logs. A refused password is not tried again until you change it here or press "Check the projectors". |
+| Refresh interval (s) | `number` | No | How often the state of the projectors is read, in seconds (30 to 600). |
+
+## Cómo instalar PJLink Projectors en Gladys
+
+1. En Gladys, abre **Integraciones**: PJLink Projectors aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-pjlink:0.1.2`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-pjlink](https://github.com/LM1LC3N7/gladys-pjlink).
+
+PJLink Projectors requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+PJLink Projectors es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-pjlink) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-pjlink/blob/HEAD/docs/en.md)

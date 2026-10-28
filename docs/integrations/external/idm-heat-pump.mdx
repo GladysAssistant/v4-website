@@ -1,0 +1,177 @@
+---
+title: "iDM heat pump smart home integration, free and open source"
+sidebar_label: "iDM heat pump"
+description: "iDM heat pumps (NAVIGATOR 2.0) over local Modbus TCP: temperatures, circuits, hot water; options. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-idm.png"
+keywords:
+  - "idm heat pump"
+  - "idm heat pump smart home"
+  - "gladys idm heat pump"
+  - "idm heat pump gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-idm instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"iDM heat pump","description":"iDM heat pumps (NAVIGATOR 2.0) over local Modbus TCP: temperatures, circuits, hot water; options.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-idm","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-idm.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-28T02:59:22Z"}} />
+
+This integration shows your iDM heat pump with the **NAVIGATOR 2.0** controller in Gladys, through
+its **Modbus TCP** interface on your local network, without any cloud. If you allow it, it can also
+change the modes and setpoints.
+
+> **Never tested with a real device.** The integration follows iDM's Modbus TCP documentation and the
+> Home Assistant integration `hacs-idm-heatpump`, and was tested against a simulated heat pump only.
+> Not affiliated with iDM Energiesysteme GmbH.
+
+## What you need
+
+- An iDM heat pump with the **NAVIGATOR 2.0** controller (the NAVIGATOR 1.0 and 1.7 have another
+  Modbus table: they are not supported).
+- **Modbus TCP enabled**: "Settings" → "Building management" → "Modbus TCP" set to "On". This setting
+  is at installer level: ask your installer or iDM service. The web interface of the heat pump alone
+  is not enough.
+- A fixed IP address for the heat pump (reserve it in your router or set it in the network menu of
+  the NAVIGATOR).
+- Modbus TCP has **no password**: any device on your network can read and write the settings of the
+  heat pump. Keep it on a **trusted network**, never exposed to the Internet.
+
+## Configuration
+
+| Field                       | Role                                                                             |
+| --------------------------- | -------------------------------------------------------------------------------- |
+| IP address of the heat pump | IPv4 or host name, port 502 unless you add one (`192.168.1.60:502`).             |
+| Modbus unit id              | 1 on a NAVIGATOR.                                                                |
+| Heating circuits            | The letters of your circuits, A to G, separated by commas (`A` by default).      |
+| Allow the commands          | Off by default (see below).                                                      |
+| Hot water ceiling (°C)      | The highest hot water setpoint Gladys may send: 65 °C by default, 65 °C at most. |
+| Refresh interval            | 60 s by default, 30 s to 1 h.                                                    |
+| Language                    | Language of the device names, the status and the messages.                       |
+
+Save, then add the heat pump from the **Discovery** tab. The "Test the connection" button reads the
+heat pump again, never more often than the interval.
+
+## What you see
+
+- Operating mode (standby, automatic, away, holiday, hot water only, heating/cooling only) and heat
+  pump state (standby, heating, cooling, hot water, defrost).
+- Fault (heat pump locked), compressor running, charge pump running.
+- Temperatures: outdoor and average outdoor, heat pump flow and return, heat source inlet and outlet,
+  air intake, buffer tank, hot water (top, bottom, tap), hot water setpoint.
+- For each configured circuit: mode, current state (off, heating, cooling), "normal" room setpoint,
+  room, flow and flow target temperatures.
+- When the heat pump gives them: humidity, electrical power (kW), solar temperatures (collector,
+  collector return, charge).
+
+A feature shows once a value of it was read. The special values of the NAVIGATOR are never published
+as measures: -1.0 on a temperature (sensor absent, except the outdoor temperature and the heat pump
+flow/return, always fitted), "not available" on a mode, -1 on the charge pump (published as "off"),
+a value out of range. As a consequence, on the optional sensors (air intake, source inlet and outlet, buffer, hot water, solar, circuits), a real temperature of exactly -1.0 °C is not published and Gladys keeps the previous value until the next read. Thermal energy (kWh) is not published.
+
+## The commands
+
+Off by default. With "Allow the commands", Gladys may change:
+
+- the operating mode (automatic, away, hot water only, heating/cooling only; "holiday" is shown
+  only);
+- the mode of a configured circuit (time program, normal, eco, manual heating, manual cooling);
+- the "normal" room setpoint of a circuit, 15 to 30 °C by 0.5 °C;
+- the hot water setpoint, in whole degrees, from 35 °C to the ceiling of the configuration (65 °C by
+  default). **Nothing above 65 °C is ever sent**, whatever is typed.
+
+Each command first reads the current value on the heat pump, writes nothing when it is already right,
+then reads the written value back: it succeeds only when the read back shows the value asked.
+Otherwise Gladys answers "sent, without confirmation" and reads the heat pump 5 s, 25 s and 60 s
+after (the NAVIGATOR applies a change in about 15 s).
+
+A command is refused, nothing sent, when: the option is off (also checked right before the write),
+the value is out of range or above the ceiling, the circuit is not in the configuration, the current
+value could not be read, the configuration changed meanwhile, a stop was sent after it arrived, 16
+commands are already waiting, or this setting was already changed 6 times in the last hour. That last
+limit protects the NAVIGATOR, which keeps these settings in a memory with limited write cycles
+(300,000 according to iDM); it never applies to a lower setpoint nor to a stop.
+
+The commands go one at a time, in their order of arrival, on one connection. A scene setting several
+values sets them all: a command still waiting its turn after 3.5 s gets the answer "waiting" and goes
+within 15 s of the click, or not at all.
+
+## The stops
+
+Setting the operating mode to **Standby** or a circuit to **Off** **never** depends on the commands
+option, the bounds, a read in progress or failing, a heat pump not read yet, nor a waiting command. A
+stop goes before anything; every command that arrived before it and has not left is dropped. A refused
+connection is tried again every 250 ms for 3 s; Gladys gets its answer within 3.5 s.
+
+A stop not confirmed is kept in `/data` (with the value of before) for 3 minutes. During those 3
+minutes, whatever the refresh interval, the integration checks the heat pump every 15 s: a stop that
+could not leave is tried again at each check; a stop written but not shown yet is sent again (three
+times at most, at least 20 s after it was sent) while the heat pump still shows the value of before.
+A check never interrupts a command: it waits behind the commands (newer than it) and never writes over them; a new click on a stop interrupts a check and is always written and read back. After a restart, the check runs at once, before even reading the configuration. Each stop and each
+resend is a write in the NAVIGATOR's EEPROM (four at most per click); stops are never limited by the
+hourly quota of the commands.
+
+A stop can fail or not be sent again in these cases:
+
+- no valid address in the configuration (or, before the configuration is read, no heat pump read
+  before): refused, nothing sent;
+- the heat pump stays unreachable for 3 s: "not sent", then tried again every 15 s (and at a
+  restart) while the 3-minute guard runs;
+- the heat pump answers a Modbus exception: "refused" or "sent, without confirmation" depending on the
+  code;
+- the read back does not show the stop yet: "sent, without confirmation";
+- it is no longer sent again once someone set another value on the heat pump meanwhile (the value of
+  before is kept in `/data`; for a stop clicked before any read, the first value read after it), once
+  a newer Gladys command for the same setting left, after 3 resends or after 3 minutes;
+- `/data` holding a guard that would end more than 3 minutes from now (a clock set back, on a device
+  without a real-time clock): the guard is invalid and not replayed. A clock set back by less than
+  that cannot be told from a recent stop: after a power cut on such a device, an older stop may be
+  checked again at boot (sent again only while the heat pump shows the value of before it).
+
+Gladys never starts the heat pump again by itself.
+
+## Known limits
+
+- No serial number over Modbus: the device is tied to the integration, not to the IP address
+  (changing the address keeps the device and its history), and another Modbus device at the same
+  address would not be detected.
+- Writing the photovoltaic surplus, the room-by-room zones, cascades, boosters and thermal energy are
+  not supported yet.
+
+## Configuration settings
+
+These are the settings iDM heat pump asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your iDM heat pump | `section` | No | Shows your iDM heat pump with the NAVIGATOR 2.0 controller in Gladys through Modbus TCP (port 502) on your local network, without any cloud: temperatures, mode and state, fault, compressor, heating circuits, hot water, solar and power when the heat pump gives them. Have "Modbus TCP" set to "On" in the "Building management" menu of the NAVIGATOR (installer level; the web interface alone is not enough), enter its IP address, save, then add the heat pump from the Discovery tab. Modes and setpoints change only if you allow the commands below; hot water never above 65 °C. Standby and turning a circuit off never depend on that option (see the guide for when they can fail). NAVIGATOR 2.0 only. Modbus TCP has no password: keep the heat pump on a trusted network. Never tested with a real device. Not affiliated with iDM. |
+| IP address of the heat pump | `string` | Yes | An IPv4 address or a host name (port 502 unless you add one, for example 192.168.1.60:502). |
+| Modbus unit id | `number` | No | The Modbus slave address of the NAVIGATOR: 1. |
+| Heating circuits | `string` | No | The letters of the heating circuits of your installation, A to G, separated by commas (for example A, B). |
+| Allow the commands | `boolean` | No | Off by default. On: Gladys may change the operating mode, the mode of a heating circuit, the room setpoint of a circuit (15 to 30 °C) and the hot water setpoint (35 °C to the ceiling below). Off: these commands are refused. Standby and turning a heating circuit off never depend on this option. |
+| Hot water ceiling (°C) | `number` | No | The highest hot water setpoint Gladys may send, 35 to 65 °C (65 °C by default). Nothing above 65 °C is ever sent, whatever is typed here. |
+| Refresh interval (s) | `number` | No | How often the heat pump is read, in seconds. |
+| Language of the feature names | `select` | No | Used for the names of the device and features added from now on, the status and the command errors. |
+
+## How to install iDM heat pump in Gladys
+
+1. In Gladys, open **Integrations**: iDM heat pump appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-idm:0.1.2`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-idm](https://github.com/LM1LC3N7/gladys-idm).
+
+iDM heat pump requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+iDM heat pump is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-idm) — [source of this documentation](https://github.com/LM1LC3N7/gladys-idm/blob/HEAD/docs/en.md)

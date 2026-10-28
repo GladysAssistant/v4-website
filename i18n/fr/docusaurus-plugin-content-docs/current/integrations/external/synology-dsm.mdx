@@ -19,11 +19,13 @@ https://github.com/prohand/gladys-synology instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Synology DSM","description":"Supervisez les métriques système, volumes, états SMART des disques et sauvegardes d'un NAS Synology.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-synology","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-synology.png","type":"device","version":"2.4.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-23T17:32:25Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Synology DSM","description":"Supervisez les métriques système, volumes, états SMART des disques et sauvegardes d'un NAS Synology.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-synology","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-synology.png","type":"device","version":"2.5.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-10-25T16:53:41Z"}} />
 
 Cette intégration supervise un NAS Synology depuis Gladys Assistant. Elle fonctionne en lecture seule et utilise la WebAPI DSM disponible sur le NAS.
 
 ## Avant de commencer
+
+Nécessite **Gladys 5.3 ou plus récent**.
 
 1. Dans **Panneau de configuration → Utilisateur et groupe → Utilisateur**, créez un utilisateur dédié à Gladys.
 2. À l'étape d'affectation aux groupes, ajoutez-le au groupe **administrators**. Ce droit est obligatoire : les WebAPI DSM utilisées pour la charge système et le stockage refusent un utilisateur ordinaire avec l'erreur `105` (droits insuffisants). Le rôle délégué **Surveillance du système** ne remplace pas ce droit de manière fiable pour ces API.
@@ -58,7 +60,7 @@ Les indicateurs de bonne santé ne prennent une valeur que sur un état claireme
 
 ## Widgets du tableau de bord
 
-Nécessite Gladys 5.1 ou plus récent. Ajoutez-les depuis l'éditeur du tableau de bord ; chaque widget a un réglage **NAS** qui accepte n'importe quel appareil du NAS à afficher (le NAS lui-même, un volume, un disque ou une tâche de sauvegarde). Laissez-le vide pour afficher le premier NAS.
+Ajoutez-les depuis l'éditeur du tableau de bord ; chaque widget a un réglage **NAS** qui accepte n'importe quel appareil du NAS à afficher (le NAS lui-même, un volume, un disque ou une tâche de sauvegarde). Laissez-le vide pour afficher le premier NAS.
 
 - **NAS Synology** : modèle, version DSM, CPU, mémoire et température, une ligne par volume (occupation et santé), un résumé des disques et des sauvegardes, et un bouton pour ouvrir DSM si son URL utilise HTTPS. Une fois l'appareil NAS ajouté à Gladys, la carte affiche aussi l'historique du CPU et de la mémoire sur la période choisie dans le réglage **Historique de la charge**.
 - **Stockage Synology** : une jauge par volume, l'espace libre total et une ligne par disque avec son état SMART et sa température.
@@ -67,8 +69,6 @@ Nécessite Gladys 5.1 ou plus récent. Ajoutez-les depuis l'éditeur du tableau 
 Les widgets affichent les valeurs lues au dernier rafraîchissement : ouvrir un tableau de bord n'interroge jamais le NAS. Ils se mettent à jour après chaque rafraîchissement. Un NAS qui ne répond plus est signalé **Injoignable** et garde ses dernières valeurs connues. Sur un tableau de bord réglé en unités US, les températures sont affichées en °F.
 
 ## Scènes
-
-Nécessite Gladys 5.1 ou plus récent.
 
 Les **déclencheurs** se déclenchent une seule fois, sur un changement entre deux rafraîchissements. Le premier relevé après le démarrage de l'intégration sert uniquement de référence : une panne déjà présente au démarrage ne se redéclenche pas, et un changement survenu pendant l'arrêt de l'intégration n'est pas signalé. Chaque déclencheur peut être limité à un appareil ; laissez le champ vide pour réagir à tous.
 
@@ -88,6 +88,17 @@ Les **actions** interrogent le NAS au moment où la scène les atteint et renvoi
 - **Récupérer l'état d'un NAS Synology** : joignable (oui/non), modèle, version DSM, CPU, mémoire, température, nombre de volumes dégradés, de disques défaillants et de sauvegardes en échec, et la liste des problèmes détectés. Un NAS injoignable n'arrête pas la scène : testez la valeur **Joignable**.
 - **Récupérer l'état d'un volume Synology** : nom, état DSM, sain (oui/non), occupation (%), espace utilisé, libre et total (Go).
 - **Récupérer l'état d'une sauvegarde Synology** : nom de la tâche, paquet, état, résultat, date de la dernière sauvegarde (au format de date configuré) et heures depuis la dernière sauvegarde, pratique pour être prévenu d'une sauvegarde qui ne tourne plus.
+- **Réveiller un NAS Synology** : envoie un paquet Wake-on-LAN au NAS (voir plus bas) et renvoie l'adresse MAC réveillée.
+
+## Wake-on-LAN
+
+L'action de scène **Réveiller un NAS Synology** réveille un NAS en veille ou éteint, par exemple avant une sauvegarde nocturne. À l'installation, Gladys vous demande d'autoriser l'intégration à envoyer des paquets Wake-on-LAN : c'est Gladys qui envoie le paquet sur votre réseau local.
+
+1. Dans DSM, activez **Panneau de configuration → Matériel et alimentation → Général → Activer WOL sur LAN 1** (seulement sur les modèles qui le permettent, sur un port filaire).
+2. Laissez l'intégration joindre le NAS une première fois pendant qu'il est allumé, et ajoutez l'appareil du NAS dans Gladys : l'intégration lit son adresse MAC dans DSM et la garde sur cet appareil, ce qui lui permet de réveiller le NAS même après un redémarrage de Gladys.
+3. Dans l'action, choisissez l'appareil du NAS lui-même (n'importe quel appareil du NAS convient tant que le NAS a été lu depuis le démarrage de l'intégration), ou laissez le champ vide si Gladys ne connaît qu'un seul NAS.
+
+L'action envoie seulement le paquet : vérifiez le résultat un peu plus tard avec **Récupérer l'état d'un NAS Synology**. Rien n'est jamais modifié sur le NAS.
 
 ## Dépannage
 
@@ -145,11 +156,11 @@ Voici les paramètres demandés par Synology DSM dans son écran de configuratio
 ## Comment installer Synology DSM dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Synology DSM apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-synology:2.4.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-synology:2.5.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/prohand/gladys-synology](https://github.com/prohand/gladys-synology).
 
-Synology DSM nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+Synology DSM nécessite Gladys `>=5.3.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
 
 Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
 

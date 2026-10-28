@@ -1,0 +1,175 @@
+---
+title: "Integración domótica Waterkotte, gratuita y de código abierto"
+sidebar_label: "Waterkotte"
+description: "Waterkotte EcoTouch heat pumps on the local network: temperatures, state, optional commands. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-waterkotte.png"
+keywords:
+  - "waterkotte"
+  - "domótica waterkotte"
+  - "gladys waterkotte"
+  - "waterkotte gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-waterkotte instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Waterkotte","description":"Waterkotte EcoTouch heat pumps on the local network: temperatures, state, optional commands.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-waterkotte","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-waterkotte.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-28T02:59:28Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+Shows a Waterkotte heat pump in Gladys through the local web interface of its
+controller (EcoTouch, or the older EasyCon), without any cloud. Unofficial:
+not affiliated with Waterkotte. **Never tested with a real heat pump**: it was
+written from the open source Home Assistant integration
+[ha-waterkotte](https://github.com/marq24/ha-waterkotte) and tested against a
+simulated controller. Please report what you see on yours.
+
+## What you get
+
+One device, "Waterkotte heat pump", with what its controller gives:
+
+- temperatures: outside, flow, return and return target, heating demand,
+  source inlet and outlet, buffer tank, room (when a sensor is connected),
+  hot water and hot water demand;
+- compressor running, heating hot water, alarm;
+- electric power (kW), heat output (kW), COP;
+- **Heating** and **Hot water**: Off, Auto or Manual;
+- **Hot water setpoint** (°C).
+
+The values are read every 60 seconds (30 to 600, in the configuration).
+
+## Setting up
+
+1. Find the IP address of the heat pump (its web page) and give it a fixed
+   address in your router.
+2. In Gladys, open the integration's configuration: enter the address, choose
+   the controller (**EcoTouch** when the web page asks for a password, even
+   when it shows "EasyCon"; **EasyCon** for the older controllers without a
+   login page), the user name (`waterkotte` unless your installer changed it)
+   and the password of the web page. Save.
+3. Add the heat pump from the **Discovery** tab.
+
+The password is kept by Gladys in its database, never shown again, sent only
+to the heat pump. The web page is plain HTTP: keep the heat pump on a trusted
+network.
+
+### Sessions
+
+The controller accepts few sessions at once (two according to ha-waterkotte;
+its web page open in a browser uses one) and closes an idle one after about 5
+minutes: after a restart of Gladys, the previous session may stay taken that
+long. Gladys keeps a single session open, ends it when it stops or when the
+configuration changes (saved several times in a row: applied one after the
+other, the last one saved wins), and logs in again at most once
+per read or per command, never in a loop. When the controller answers "too
+many users", Gladys pauses for 1 minute, then 2, 4... up to 6 hours, and says
+so in the configuration screen. When it refuses the user name or the
+password, Gladys stops trying: correct them and save, or click **Test the
+connection** (one try per click).
+
+## Commands
+
+**Off** (heating or hot water) is a stop: it does not depend on the "Allow
+the commands" option, a pause or a read in progress. It is written, then read
+back:
+
+- read back Off: done;
+- otherwise Gladys answers "not sent", "sent, without confirmation" or "not
+  applied yet", keeps the stop (also across a restart) and writes it with the
+  next reads: written again 3 times at most, and dropped 15 minutes after the
+  click whatever the reads. Once written, it is not written again over a
+  value someone else set after the click (on the controller, its web page);
+  an older command of Gladys does not count. A stop not written yet is tried
+  again 10 seconds later, then every minute; during a pause too, until its
+  15 minutes (one login a minute at most). Such a stop can thus leave up to
+  15 minutes after the click, once, over a setting made on the controller
+  in between.
+
+Off is refused, nothing sent, in these cases only:
+
+- the controller is EasyCon (read only in this integration);
+- the address or the password is missing: the stop is kept and written as
+  soon as the configuration is complete (15 minutes at most);
+- the heat pump refused the credentials before: the stop is kept and written
+  once they are corrected (15 minutes at most);
+- nothing could be written within 3 seconds (no answer, network down, a
+  login refused "too many users"): the stop is kept and written by the next
+  reads.
+
+**Auto**, **Manual** and the **hot water setpoint** are refused unless you
+turn on **Allow the commands** (off by default). Then:
+
+- the hot water setpoint takes whole degrees from 28 °C to the ceiling of
+  the configuration, **65 °C by default**, 40 to 65 °C (never more than
+  65 °C, whatever is typed): scalding risk;
+- each command reads the value and the serial number of the heat pump just
+  before writing, and succeeds only when a read back shows the value asked;
+- a command refused or cancelled says "nothing sent"; one sent without an
+  answer says "sent, without confirmation" and the value is read again 5 and
+  20 seconds later;
+- a command clicked before an Off of the same value (or a hot water setpoint
+  clicked before a hot water Off) never leaves after it.
+
+The integration has no switch: a "turn everything off" of a voice assistant
+or a scene never reaches the heat pump.
+
+## Limits
+
+- One heat pump per integration. Its serial number is checked at every read
+  and before every command: when another heat pump answers at the address,
+  nothing is published and the commands other than Off are refused.
+- The controller answers one request at a time: when it is slow (more than
+  about half a second per request), a scene changing several values at once
+  may see the last ones refused "did not answer in time, nothing sent".
+- EasyCon: read only, and its tags are those of EcoTouch (unchecked).
+- The tag list comes from ha-waterkotte; Waterkotte publishes none.
+
+## Credits
+
+Built on the work of Matthias Marquardt and the contributors of
+[ha-waterkotte](https://github.com/marq24/ha-waterkotte) (MIT).
+
+## Parámetros de configuración
+
+Estos son los parámetros que Waterkotte te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Your heat pump | `section` | No | Shows your Waterkotte heat pump (EcoTouch controller, or the older EasyCon) in Gladys through its local web interface, without any cloud: temperatures, compressor, hot water, alarm, and optionally the operation of heating and hot water and the hot water setpoint. Enter the IP address of the heat pump (give it a fixed address in your router) and the password of its web page, save, then add it from the Discovery tab. The controller accepts few sessions at once: Gladys keeps one open. The web page is plain HTTP: keep the heat pump on a trusted network. Never tested with a real heat pump. Not affiliated with Waterkotte. |
+| IP address of the heat pump | `string` | Sí | The address of its web page: an IPv4 address or a host name (port 80 unless you add one, for example 192.168.1.50:8080). |
+| Controller | `select` | No | EcoTouch when the web page asks for a password (even when it shows "EasyCon"); EasyCon for the older controllers without a login page (read only here). |
+| User name | `string` | No | The user of the web page: waterkotte unless your installer changed it. |
+| Password | `secret` | No | The password of the web page of the heat pump. Kept by Gladys in its database, never shown again, sent only to the heat pump. |
+| Allow the commands | `boolean` | No | Off by default. On: Gladys may set heating and hot water to Auto or Manual and change the hot water setpoint, up to the ceiling below. Off: those are refused. Turning heating or hot water Off does not depend on this option. |
+| Hot water ceiling (°C) | `number` | No | Scalding risk: Gladys never sets the hot water above this temperature. 65 °C by default, from 40 to 65 °C (never more than 65 °C, whatever is typed). |
+| Refresh interval (s) | `number` | No | How often the heat pump is read, in seconds. |
+| Language of the feature names | `select` | No | Used for the names of the device and features added from now on, for the options and for the command errors. |
+
+## Cómo instalar Waterkotte en Gladys
+
+1. En Gladys, abre **Integraciones**: Waterkotte aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-waterkotte:0.1.2`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-waterkotte](https://github.com/LM1LC3N7/gladys-waterkotte).
+
+Waterkotte requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Waterkotte es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-waterkotte) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-waterkotte/blob/HEAD/docs/en.md)

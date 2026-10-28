@@ -19,7 +19,7 @@ https://github.com/guim31/gladys-openhab instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"openHAB","description":"Bridge to openHAB: import its items (lights, shutters, sensors…) into Gladys and control them.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-openhab","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-openhab.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-25T10:34:25Z"}} />
+<ExternalIntegrationHeader integration={{"name":"openHAB","description":"Bridge to openHAB: import its items (lights, shutters, sensors…) into Gladys and control them.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-openhab","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-openhab.png","type":"device","version":"1.1.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-10-26T07:08:39Z"}} />
 
 This integration connects Gladys to **your openHAB server** and offers its
 items in the Gladys **Discovery** tab: lights, switches and plugs, shutters and
@@ -30,15 +30,15 @@ Z-Wave, KNX, Modbus, cloud…). Move to Gladys at your own pace, or run both sid
 by side. Everything stays on your local network. Unofficial, not affiliated
 with the openHAB Foundation.
 
-> Tested against openHAB 5.0.1 in Docker with virtual items (no binding), not
-> yet on many real installations: feedback is welcome on the GitHub repository.
+> Tested against openHAB 5.0.1 in Docker with virtual items and a real Squeezebox player
+> (binding, Lyrion Music Server, squeezelite), not yet on many real installations: feedback is welcome on the GitHub repository.
 
 ## Requirements
 
 - openHAB 4.x or 5.x, reachable from the Gladys machine (same network, or a
   VPN).
 - An **API token** of an openHAB user (preferably an administrator: running a
-  rule from a scene needs one). If your openHAB accepts requests without login
+  rule from a scene and showing the title and artwork of players need one). If your openHAB accepts requests without login
   (its default "implicit user role"), no token is needed.
 
 ## Configuration
@@ -114,7 +114,7 @@ with its location ("Ceiling lamp (Living room)").
 | `Rollershutter`                                  | a shutter (or a curtain): open, close, stop, position         |
 | `Rollershutter` garage door, gate, door          | open or closed, position (read-only unless allowed)           |
 | `Contact`                                        | an opening sensor                                             |
-| `Player`                                         | playback state, play, pause, next, previous                   |
+| `Player`                                         | playback state (controllable), commands; Music player ↓       |
 | `Number:Temperature` tagged `Setpoint`           | a thermostat setpoint, within the item's min and max          |
 | `Number:Temperature`, `Pressure`, `Illuminance`… | temperature, pressure, light, power, energy, voltage, current |
 |                                                  | volume (gas, water), wind speed, noise, rain intensity        |
@@ -131,6 +131,44 @@ A shutter position follows Gladys: 100 % is open (openHAB says 0 %). A
 `Number:Dimensionless` without `unit` metadata keeps its state in "one" in
 openHAB (48 % is `0.48`): the bridge shows it in the unit of its pattern, like
 openHAB does.
+
+### Gladys 5.3 Music player
+
+An openHAB equipment holding a `Player` item becomes a real player in the Gladys **Music** widget:
+artwork, title, artist, album, progress bar, play / pause / stop, previous / next, seeking, shuffle,
+repeat and mute, depending on the channels of its binding (Squeezebox, Sonos, Chromecast, Kodi,
+HEOS, UPnP…). Nothing to configure: the integration reads the links between items and channels,
+and attaches to the player the items **of the same equipment** linked to a channel **of the same
+thing** that it recognises.
+
+| Role               | Recognised channels (examples)                      | Item                                        |
+| ------------------ | --------------------------------------------------- | ------------------------------------------- |
+| title              | `title`, `currenttitle`, `trackName`                | `String`                                    |
+| artist             | `artist`, `currentartist`                           | `String`                                    |
+| album              | `album`, `currentalbum`, `albumName`                | `String`                                    |
+| artwork            | `coverartdata`, `currentalbumart`, `image`, `cover` | `Image`                                     |
+| duration, position | `duration`, `currentPlayingTime`, `currentTime`     | `Number:Time`                               |
+| shuffle, repeat    | `shuffle`, `repeat`, `currentPlaylistRepeat`        | `Switch`, or `Number`/`String` with options |
+| mute, stop         | `mute`, `stop`                                      | `Switch`                                    |
+
+The simplest way: create the equipment from the thing in openHAB (**Add Equipment from Thing**) with
+these channels ticked. openHAB shows the links to **administrators** only: without an administrator
+token (anonymous openHAB, the token of a plain user), the player keeps the commands of version 1.0,
+with a controllable playback state.
+
+The artwork comes from the `Image` item (openHAB already downloaded it), reduced when it is over
+300 KB: your browser never contacts openHAB nor the player. No search, browsing or queue: openHAB
+has no standard for them. Without a `stop` channel, **Stop** pauses (a `Player` item cannot stop).
+What the binding keeps when stopped (the title, for Squeezebox) stays on screen. A `stop` channel
+linked after the player was added to Gladys does not add the **Stopped** option: Gladys offers no
+update for a change of options alone (it only appears on a player added after the link).
+
+**Players added with version 1.0**: their new features arrive through the **Discover** tab: click
+**Update** on the device. The ids do not change (play, pause, next, previous, volume; a mute already
+imported as a switch becomes the player's mute): scenes and dashboards keep working. An item
+already imported as a device of its own (a `Switch` without a semantic tag) stays so. One
+difference as soon as the integration is updated: a stopped player (`stop` channel on) or one with
+nothing loaded is now **Stopped** (2), no longer **Paused** (0), in the playback state.
 
 ### Dashboard widget
 
@@ -179,8 +217,9 @@ label, new state, previous state.
 
 ## Limits
 
-- Developed against openHAB 5.0.1 with virtual items: no binding nor real
-  hardware was used. Feedback welcome.
+- Developed against openHAB 5.0.1 with virtual items, and for the Music player a real
+  Squeezebox (binding, LMS, squeezelite) and an offline Sonos: no real Sonos, Chromecast, Kodi or
+  HEOS hardware. Feedback welcome.
 - Group items are not devices: a group of lights can still be commanded from a
   scene action.
 - A thermostat mode, a colour temperature or a fan speed have no openHAB item
@@ -220,11 +259,11 @@ These are the settings openHAB asks for in its configuration screen in Gladys.
 ## How to install openHAB in Gladys
 
 1. In Gladys, open **Integrations**: openHAB appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-openhab:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-openhab:1.1.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-openhab](https://github.com/guim31/gladys-openhab).
 
-openHAB requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+openHAB requires Gladys `>=5.3.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
 
 Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
 

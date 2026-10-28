@@ -1,0 +1,223 @@
+---
+title: "Integración domótica Sky Q, gratuita y de código abierto"
+sidebar_label: "Sky Q"
+description: "Sky Q set-top boxes on the local network: standby, channel, play, pause, remote keys. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-sky-q.png"
+keywords:
+  - "sky q"
+  - "domótica sky q"
+  - "gladys sky q"
+  - "sky q gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-sky-q instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Sky Q","description":"Sky Q set-top boxes on the local network: standby, channel, play, pause, remote keys.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-sky-q","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-sky-q.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-27T10:16:06Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+Control your **Sky Q** set-top boxes from Gladys, on your local network,
+without any cloud: power state, wake-up and standby, channel, play, pause,
+the other remote keys, the channel or recording being played and the share of
+the recordings disk in use. The integration uses the local ports of the box
+(REST 9006, UPnP/SOAP 49153, remote control 49160), the ones the Sky apps and
+the community libraries use.
+
+> **Unofficial integration, not affiliated with Sky.** This first milestone
+> was written and tested against simulated boxes: it has **never been tested
+> with a real box**. Your feedback is welcome.
+
+## Supported boxes
+
+- Sky Q main boxes (UK, Ireland, Italy, Germany).
+- Sky Q Mini boxes and Sky Glass TVs (types `IPSETTOPBOX` and `TV`) are read
+  (power state, disk) but take no remote key, and their playback is not read,
+  as in the reference library.
+
+## Prepare the box
+
+Give the box a **fixed IP address** in your router (reserved DHCP lease). The
+box must be on the same network as Gladys. No setting of the box is known to
+be needed (not checked on a real box yet).
+
+## Add a box
+
+- **By its address**: type the IP address in "IP addresses of the boxes"
+  (several addresses separated by commas) and save.
+- **By the search**: use **Find the boxes**. Gladys searches the network
+  (SSDP, target `urn:schemas-nds-com:device:SkyControl:2`) for the
+  integration; a network blocking multicast may hide the box: type its
+  address then.
+
+The box appears in the integration's **Discovery** tab: create it. Its states
+come with the next read (at most one refresh interval later).
+
+## What you get
+
+| Feature              | Detail                                                                                                      |
+| -------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Power                | Read only: 1 on, 0 in standby or not answering                                                              |
+| Reachable            | Read only: 1 the box answers on the network (on or in standby)                                              |
+| Wake up              | Button: "Home" then "Dismiss", sent only when the box was just read in standby                              |
+| Standby              | Button: the power key, sent only when the box was just read on                                              |
+| Channel              | Read while live TV is shown; setting it types the digits of the number, 300 ms apart                        |
+| Buttons              | Play, pause, stop, record, rewind, fast forward, channel up/down, arrows, select, back, Sky, TV guide, info |
+| Remote key           | Dropdown of the keys of the remote (colours, digits, text, help, Box Office...), never the power key        |
+| Channel name         | Read only, `-` when no live channel is shown                                                                |
+| Recording played     | Read only: the title of the recording played, `-` otherwise                                                 |
+| Playback             | Read only: playing, paused or idle                                                                          |
+| Recordings disk used | Read only, in percent, read every 10 minutes                                                                |
+
+There is no switch: wake-up and standby are two push buttons, so a generic
+on/off command ("everything off" scene, voice assistant) does not reach them,
+and the power toggle leaves only through the guarded Standby button. There is no volume: the box has none the network can read or set.
+The programme guide (EPG) is not read: it is online only, and this
+integration stays on your local network.
+
+## How a command is sent
+
+Commands to one box are sent one after the other; each gets 3.5 s from the
+moment Gladys asks, the wait for the previous ones included. Before any key,
+the integration reads the serial number at the box's address: a key is sent
+only after the box's own serial number was read there (a box replaced, or
+moved by DHCP, gets no key at an address where another box answers).
+
+- **Wake up**: the power state is read; in standby, "Home" then "Dismiss"
+  are sent (the way the Home Assistant integration wakes a box: these keys
+  are not a toggle). Already on: nothing is sent.
+- **Standby**: the power state is read; on, the power key is sent. Already in
+  standby: nothing is sent. The power key is a toggle, so it is sent only on
+  a state read just before.
+- Standby and wake-up send **nothing** ("nothing sent" in the logs) when: the
+  address of the box is unknown, the box does not answer, its serial number
+  cannot be read or is another box's, its power state cannot be read, it is a
+  Mini box or a Sky Glass TV, its remote port refuses the connection, or the
+  3.5 s ran out first.
+- The protocol of the remote has no acknowledgement: a key that left is
+  "sent, without confirmation". The box is read again 5 s after a wake-up, a
+  standby, a channel, play, pause, stop or a channel key (and 20 s after a
+  wake-up or a standby). A wake-up or standby that did not
+  change the state after 20 s is written to the logs; it is not sent again by
+  itself (a second toggle could undo the first).
+- After a wake-up or a standby, neither is sent again until a read shows the
+  state changed, or for 30 s (a box applies a key a second or two later: a
+  second toggle read on the old state would undo the first). Meanwhile they
+  are refused ("not seen applied yet (retry in up to 30 s): nothing sent").
+  The guard is kept in `/data` with its wall-clock time: after a restart of
+  the integration it is alive if it is under 30 s old, or if the clock seems
+  to have been set back. If `/data` cannot be read, they are refused ("/data
+  cannot be read ...: nothing sent") until it can, and at most 30 s after the
+  start (a guard of the previous run cannot be older). If the guard cannot be
+  written to `/data`, the key is not sent.
+- Between the read of the state and the key, the handshake of the remote
+  takes a moment (up to 1.5 s): a change made in that moment with the Sky
+  remote is not seen.
+- A channel is typed digit by digit. When the channel list of the box is
+  known, a number that is not in it is refused. A number whose digits cannot
+  all be typed in the time left is not started.
+
+## The User-Agent "SKYPLUS_skyplus"
+
+To find its SkyPlay service, a box publishes up to 50 description files on
+its UPnP port. The reference library asks them with the User-Agent of the
+box's own software, `SKYPLUS_skyplus`: some boxes may answer them only so
+(not checked on a real box yet). With the
+explicit agreement of the maintainer of these integrations, this integration
+may send it, under these rules:
+
+- each description file is first asked with this integration's own
+  User-Agent (`gladys-sky-q`);
+- `SKYPLUS_skyplus` is sent for a file only after that file got an explicit
+  HTTP refusal with the own User-Agent (an answer other than 200 and 404),
+  and only while no file answered the own User-Agent; a 404, no answer or a
+  cut answer never leads to it;
+- one pass over the files at most; after a failed search, or an error of the
+  SOAP service, the files are asked again 10 minutes later at the earliest;
+- it goes only to the box's own address, only on its UPnP port (49153), only
+  for these description files: the REST requests, the SOAP requests and the
+  remote keys carry the integration's own User-Agent or none;
+- once a User-Agent got a description file from a box, the other is not tried again
+  for that box until the integration restarts or the box changes address.
+
+No other imitation of an application is used, and the online services of Sky
+(guide, images) are not contacted.
+
+## Configuration
+
+| Field                     | Detail                                                  |
+| ------------------------- | ------------------------------------------------------- |
+| IP addresses of the boxes | Separated by commas; boxes found by the search are kept |
+| Refresh interval (s)      | 5 to 300, 15 by default: how often the boxes are read   |
+
+An invalid address is ignored; the status of the integration says how many
+were ignored (without showing them back).
+
+**Check the boxes** shows, for each known box, what the last read found and
+how long ago. It starts a read only when one is due: never sooner than the
+refresh interval.
+
+## Status of the integration
+
+- **No box answers**: every created box failed to answer at its last read.
+- **Another box answers at the address of...**: the serial number read at a
+  box's address is another box's. The first box gets no command until it is
+  found again (search or new address).
+- **The configuration could not be read**: Gladys did not give it; it is
+  asked again every 30 s, and the boxes already known keep taking commands.
+- **The saved data cannot be read**: `/data/sky-q.json` exists but cannot be
+  read; it is left untouched and nothing is saved until it is fixed. A file
+  that is not valid JSON is moved to `sky-q.json.bad`.
+
+## What the integration keeps
+
+In its data folder (`/data/sky-q.json`): the known boxes (serial number,
+address, model), the time of the last read, so that a restart does not
+read sooner than the interval, and the guard of a wake-up or standby just sent. No password: a box needs none.
+
+## Limits of this first milestone
+
+- Never tested with a real box (see the TODO of the repository for what to
+  check first).
+- No programme title for live TV (the guide is online only).
+- The current application of the box (Netflix, YouTube...) is not read.
+- No recording management (deleting, keeping, booking).
+
+## Parámetros de configuración
+
+Estos son los parámetros que Sky Q te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Your Sky Q boxes, on your local network | `section` | No | Power state, wake-up and standby, channel, playback, the recording played, the recordings disk and the remote keys, through the local ports of the box (REST 9006, UPnP 49153, remote 49160), without any cloud and without the online TV guide. Give each box a fixed IP address in your router, then type the addresses below, or use "Find the boxes". The boxes then appear in the Discovery tab. Sky Q main boxes (UK, Ireland, Italy, Germany); Sky Q Mini boxes and Sky Glass TVs are read but take no key. Unofficial integration, not affiliated with Sky. |
+| IP addresses of the boxes | `string` | No | Separated by commas, for example 192.168.1.50, 192.168.1.51. Boxes found by the search are kept without being typed here. |
+| Refresh interval (s) | `number` | No | How often the boxes are read, in seconds. |
+
+## Cómo instalar Sky Q en Gladys
+
+1. En Gladys, abre **Integraciones**: Sky Q aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-sky-q:0.1.2`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-sky-q](https://github.com/LM1LC3N7/gladys-sky-q).
+
+Sky Q requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Sky Q es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-sky-q) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-sky-q/blob/HEAD/docs/en.md)

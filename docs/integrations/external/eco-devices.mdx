@@ -1,0 +1,213 @@
+---
+title: "Eco-Devices smart home integration, free and open source"
+sidebar_label: "Eco-Devices"
+description: "Unofficial: GCE Eco-Devices on your network: teleinfo, water and gas pulse counters. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ecodevices.png"
+keywords:
+  - "eco-devices"
+  - "eco-devices smart home"
+  - "gladys eco-devices"
+  - "eco-devices gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-ecodevices instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Eco-Devices","description":"Unofficial: GCE Eco-Devices on your network: teleinfo, water and gas pulse counters.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-ecodevices","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ecodevices.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-27T17:45:12Z"}} />
+
+**Unofficial** integration, not affiliated with GCE Electronics. It reads an
+**Eco-Devices** (the DIN-rail teleinformation module, **not the Eco-Devices
+RT2**, which has another API) through its **local JSON API**, no cloud.
+**Read-only**: it only sends read requests, the Eco-Devices receives no
+command.
+
+**Never tested with a real Eco-Devices**: built from the GCE Electronics
+documentation (wiki, "API JSON" section) and the pyecodevices and ecodevices
+(Home Assistant) projects.
+
+## What you get
+
+One device per input in use:
+
+- **Teleinfo 1** and **Teleinfo 2** (an electricity meter in **historic**
+  mode on the input: a Linky in historic mode or an electronic meter):
+  - **Apparent power** (VA): the PAPP value of the meter, read every 15
+    seconds; the energy contracts of Gladys compare it with your subscribed
+    power;
+  - **Consumption index** (kWh): the sum of the indexes of the tariff option
+    of the meter (base; off-peak + peak; EJP; the six Tempo indexes), sent
+    once a minute; the Gladys energy monitoring turns it into consumption and
+    cost;
+  - each **tariff index** (kWh) as a plain sensor, for information (never
+    counted in the energy monitoring).
+- **Counter 1** and **Counter 2** (the pulse inputs), only when you set them
+  to **water** or **gas** in the configuration:
+  - **Index** (m³): the total index of the meter;
+  - **Consumption today** (m³): reset every day by the Eco-Devices, at the
+    hour set in its configuration page.
+
+Water and gas do not go through the Gladys energy monitoring (they are
+volumes, not kWh).
+
+This is **not** the `gladys-teleinfo` integration (a LiXee USB key): if your
+meter is already read by another integration, keep only one, or the
+consumption would be counted twice. Likewise, if Teleinfo 2 is a sub-meter of
+Teleinfo 1, put it under the main meter in the Gladys energy monitoring.
+
+## Setup
+
+1. Find the IP address of the Eco-Devices (in your router or with GCE
+   ScanDevice) and preferably give it a fixed address.
+2. Check that the JSON API answers: open
+   `http://<address>/api/xdevices.json?cmd=10` in a browser; you should see
+   an answer starting with `{"product":"Eco-devices"`. Otherwise, update the
+   firmware of the Eco-Devices.
+3. In Gladys, install the integration and fill in:
+   - **Eco-Devices address** (with a port only if it is not 80);
+   - **User name** and **password**, only if the secure access of the
+     Eco-Devices is on (System tab, Security block). The password is kept by
+     Gladys in its database, never shown again, never logged, sent only to
+     the Eco-Devices address (HTTP Basic authentication in plain HTTP on your
+     network: what the Eco-Devices offers). A password without a user name is
+     refused;
+   - for each **pulse counter**: water, gas or "not used", and the **unit of
+     its index** on the Eco-Devices (litres by default, the most common
+     setting: 1 pulse = 1 litre; otherwise cubic metres). Compare the index
+     Gladys shows with the one of the meter itself. Choose them **before**
+     creating the device: changing the unit later makes the index jump or
+     drop (see below).
+4. Save, then create the devices from the **Discover** tab.
+
+The **Test the connection** button reads the Eco-Devices once when a read is
+due (never more than one every 15 seconds), otherwise tells the last read.
+
+## Index guard
+
+The energy monitoring counts every rise of an index in full. So that a wrong
+index (a meter replaced, a read error) is held instead of billed:
+
+- an index at 0 is never sent;
+- a rise larger than what the home can consume since the last value (100 kW
+  for electricity, 10 m³/h for water, 16 m³/h for gas) is a **jump**; a value
+  lower than the last one is a **drop**;
+- a jump or a drop is **held**: the last accepted value is sent again, the
+  status of the integration shows it, and it is kept in `/data` across
+  restarts. Neither time nor repetition confirms it;
+- **a right jump** (and, for a water or gas counter, **a right drop**, for
+  example after correcting the index entered in the Eco-Devices) is taken in
+  **two clicks** on "Accept the held index": the first click lists the held
+  values and takes nothing; the second, a few seconds to 5 minutes later,
+  takes the values listed (plus what the meter may measure meanwhile), only
+  if they did not change otherwise. Saving the configuration accepts nothing.
+  The badge of the device turns orange while an index is held;
+- changing the **unit** of a pulse counter in the configuration (litres or
+  m³) converts the reference value: neither a jump nor a drop;
+- **a drop of a teleinfo consumption index is never accepted** (it is a sum
+  of indexes: it only drops when it is another meter). It happens when the
+  meter is **replaced**, or when the **tariff option changes** (base to
+  off-peak or Tempo, for example) and the meter starts its new indexes from
+  zero. The status of the integration says so ("Consumption index DROP held,
+  never accepted"). The only way out is to **delete the device** of that
+  input and **create it again** from the Discover tab. What it costs:
+  - the whole history of the device is lost: index, power, and the
+    **consumption and cost** computed by the energy monitoring;
+  - it must be placed again in the energy tree and tied to your contract;
+  - Gladys refuses to delete a device with more than 5000 states (about 21
+    hours of power at one value every 15 seconds): it purges them in the
+    background, try again later.
+    Keeping the history without accepting the drop (a new device created
+    beside the old one) is not possible in this version;
+- for an electricity index with several tariffs, the total is built only
+  when every index of the option is read; a tariff index back to 0 or
+  dropping alone is a read error: no index that time.
+
+## How it works
+
+- One read every 15 seconds (`cmd=10`), never more often, even after a
+  restart, a save of the configuration, a click or a reconnection (the time
+  of the last read is kept in `/data`).
+- The consumption of the day (`cmd=20`) is read every 5 minutes, only when a
+  pulse counter is set; if it fails, the indexes go on and it is tried again
+  after 5 minutes, then 10, up to 1 hour.
+- One request at a time to the Eco-Devices.
+- If the Eco-Devices does not answer: new try after 15 s, then doubled, up
+  to 10 minutes. If it answers 429 or 5xx: a pause of 1 minute to 6 hours,
+  kept across restarts.
+- **Login refused** (401/403 on the page of the indexes): the reads stop,
+  even after a restart, until you change the address, the user name or the
+  password, or the "Test the connection" button succeeds. A refusal on the
+  page of the day does not count as a refused login.
+- If the power and every index of a teleinfo input stay the same for 15
+  minutes (teleinfo cable out?), the power is no longer sent.
+- If the configuration cannot be read from Gladys at a connection, it is
+  asked again after 5 s, then doubled, up to 5 minutes, without end.
+- If the state file in `/data` cannot be read (or written), no index is sent
+  until it can (a held value may be in it); the power goes on. A file that
+  cannot be read is not overwritten. If it is damaged (after a power cut, for
+  example), delete the file `ecodevices-state.json` from the `/data` volume of
+  the integration (on the Docker host of Gladys) and restart the integration:
+  it starts from an empty state (the held indexes are forgotten).
+
+## Limits
+
+- Eco-Devices RT2 not supported (another API).
+- The **standard** teleinfo mode of the Linky is not read: switch the meter
+  to historic mode (ask your supplier) or use another module.
+- Pulse counters are read as water or gas only (no electricity pulses).
+- The Tempo colour of today and tomorrow is not published.
+
+## Troubleshooting
+
+If the status says the answer gives no index of some keys ("the answer gives
+no HCHP", for example), send the developer the `cmd=10` answer below: the
+names of the off-peak and EJP indexes are inferred, not yet confirmed on a
+real Eco-Devices.
+
+On the same network as the Eco-Devices:
+
+```bash
+curl -s "http://192.168.1.20/api/xdevices.json?cmd=10"; echo
+curl -s "http://192.168.1.20/api/xdevices.json?cmd=20"; echo
+## with the secure access:
+curl -s -u admin "http://192.168.1.20/api/xdevices.json?cmd=10"; echo
+```
+
+## Configuration settings
+
+These are the settings Eco-Devices asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| GCE Eco-Devices | `section` | No | Unofficial connector, not affiliated with GCE Electronics. It reads an Eco-Devices (not the RT2) through its local JSON API, without any cloud: for each teleinformation input with a meter in historic mode (Linky or electronic meter), its apparent power and its consumption index (the sum of its tariff indexes: base, off-peak/peak, EJP or Tempo) for the Gladys energy monitoring, and each tariff index as a plain sensor; for each pulse counter set below (water or gas), its index and its consumption of the day in m³. Read-only. Not the gladys-teleinfo integration (a LiXee USB key): use one of them per meter, never both. Never tested with a real Eco-Devices. |
+| Eco-Devices address | `string` | Yes | The IP address of the Eco-Devices on your network (shown by your router or by GCE ScanDevice), with a port only if it is not 80. Preferably give it a fixed address; if it changes, enter the new one: each input keeps its device and history. |
+| User name (optional) | `string` | No | Only if the secure access of the Eco-Devices is on (System tab, Security block): its user name. Leave empty otherwise. |
+| Password (optional) | `secret` | No | The password of that login. Kept by Gladys in its database, never shown again, never logged, sent only to the Eco-Devices address above (HTTP Basic authentication in plain HTTP on your network: the Eco-Devices offers nothing else). If the Eco-Devices refuses it, reads stop until you change it or click "Test the connection". |
+| Pulse counter 1 | `select` | No | What the meter wired on pulse input C1 of the Eco-Devices measures. "Not used" leaves it out. Choose before creating its device. |
+| Unit of the index of counter 1 | `select` | No | The unit of the index the Eco-Devices shows for counter 1 (litres by default, as most setups use: 1 pulse = 1 litre). Compare it with the index of the meter itself. Gladys shows m³. |
+| Pulse counter 2 | `select` | No | What the meter wired on pulse input C2 of the Eco-Devices measures. "Not used" leaves it out. Choose before creating its device. |
+| Unit of the index of counter 2 | `select` | No | The unit of the index the Eco-Devices shows for counter 2 (litres by default, as most setups use: 1 pulse = 1 litre). Compare it with the index of the meter itself. Gladys shows m³. |
+
+## How to install Eco-Devices in Gladys
+
+1. In Gladys, open **Integrations**: Eco-Devices appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-ecodevices:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-ecodevices](https://github.com/LM1LC3N7/gladys-ecodevices).
+
+Eco-Devices requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Eco-Devices is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-ecodevices) — [source of this documentation](https://github.com/LM1LC3N7/gladys-ecodevices/blob/HEAD/docs/en.md)

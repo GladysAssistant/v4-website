@@ -1,0 +1,236 @@
+---
+title: "Integración domótica MinIO, gratuita y de código abierto"
+sidebar_label: "MinIO"
+description: "Su almacenamiento MinIO en Gladys: espacio libre, discos, buckets y una alerta si cae un disco. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-minio.png"
+keywords:
+  - "minio"
+  - "domótica minio"
+  - "gladys minio"
+  - "minio gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-minio instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"MinIO","description":"Su almacenamiento MinIO en Gladys: espacio libre, discos, buckets y una alerta si cae un disco.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-minio","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-minio.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-26T06:13:46Z"}} />
+
+[MinIO](https://min.io/) es un servidor de almacenamiento de objetos
+autoalojado, compatible con Amazon S3. Esta integración lleva un servidor o un
+clúster MinIO a Gladys: su espacio libre, sus discos y nodos en línea o fuera
+de línea, sus objetos, y un dispositivo por bucket con su tamaño. Las escenas
+pueden reaccionar cuando MinIO deja de responder, cuando un disco o un nodo
+queda fuera de línea, o cuando el espacio libre escasea; un widget del panel
+muestra la capacidad y los buckets más grandes. La integración solo lee: nunca
+escribe en MinIO.
+
+Probada con un MinIO real RELEASE.2026-10-23 (compilado por Chainguard a partir
+de las fuentes de MinIO, un clúster de 4 nodos y un servidor con 4 discos, en
+Docker): un nodo detenido, un disco vuelto ilegible, dos discos perdidos
+(quórum de escritura perdido), el servidor detenido y arrancado de nuevo.
+También lee un MinIO de mayo de 2025. MinIO ya no publica imágenes Docker de su
+edición comunitaria desde finales de 2025: la integración lee las métricas que
+todas las versiones de MinIO ofrecen desde hace años, la forma de instalarlo da
+igual. Aún no probada con un Gladys real: sus comentarios son bienvenidos en
+[las issues](https://github.com/guim31/gladys-minio/issues).
+
+## Lo que necesita
+
+- Gladys Assistant 5.1.0 o posterior.
+- Un servidor o clúster MinIO accesible desde la máquina de Gladys, en el
+  puerto de su **API S3** (9000 por defecto), no en el de su consola (9001).
+- Un usuario de MinIO autorizado a leer las métricas (el permiso
+  `admin:Prometheus`), o métricas abiertas a todos con
+  `MINIO_PROMETHEUS_AUTH_TYPE=public`.
+
+La integración lee dos páginas de métricas cada minuto por defecto: peticiones
+ligeras en su propia red.
+
+## Primeros pasos
+
+### 1. Crear un usuario que solo lea las métricas
+
+Con el cliente `mc`, cree una política que solo permita las métricas, un
+usuario, y asígnele la política:
+
+```
+cat > gladys-metrics.json <<'EOF'
+{
+  "Version": "2012-10-17",
+  "Statement": [{ "Effect": "Allow", "Action": ["admin:Prometheus"], "Resource": ["arn:aws:s3:::*"] }]
+}
+EOF
+mc admin policy create myminio gladys-metrics gladys-metrics.json
+mc admin user add myminio gladys <una-clave-secreta-larga>
+mc admin policy attach myminio gladys-metrics --user gladys
+```
+
+Este usuario no puede leer ni escribir ningún objeto. No hace falta generar un
+token con `mc admin prometheus generate`: la integración firma el suyo, con la
+clave secreta, en cada petición.
+
+### 2. Configurar la integración
+
+En Gladys, abra la integración MinIO e introduzca:
+
+- **Dirección de MinIO**: p. ej. `http://192.168.1.2:9000`, o
+  `https://s3.example.org` detrás de un proxy inverso. Una dirección sola usa
+  el puerto 9000.
+- **Clave de acceso** y **Clave secreta** del usuario creado arriba. Deje
+  ambas vacías si las métricas son públicas.
+- **Aceptar un certificado autofirmado** solo para una dirección `https://`
+  cuyo certificado no está firmado por una autoridad conocida.
+- **Intervalo de actualización** (1 minuto por defecto), **Umbral de poco
+  espacio libre (%)** (10 % por defecto) y el **Idioma de los nombres**.
+
+**Probar la conexión** lee MinIO al momento y responde en una línea: versión,
+espacio libre, discos, buckets.
+
+En un clúster sirve cualquier nodo, pero la integración solo ve lo que ve el
+nodo que lee: si ese nodo se detiene, MinIO «ya no responde». Apunte mejor a un
+balanceador de carga delante de los nodos cuando lo haya.
+
+### 3. Añadir los dispositivos
+
+En la pestaña **Descubrir**, añada el servidor **MinIO** y los buckets que
+quiera seguir. No se crea nada sin usted.
+
+## Los dispositivos
+
+El dispositivo **MinIO**:
+
+- **En línea**: 1 mientras MinIO responde.
+- **En buen estado (quórum)**: 1 mientras cada conjunto de borrado tiene
+  suficientes discos para aceptar escrituras. A 0, MinIO rechaza los objetos
+  nuevos.
+- **Versión**: la fecha de RELEASE de MinIO (la más reciente cuando los nodos
+  difieren).
+- **Datos almacenados**: el tamaño de los objetos (GB).
+- **Espacio libre** y **Capacidad utilizable**: tras la paridad del código de
+  borrado (GB), las cifras que muestra `mc admin info`.
+- **Espacio libre (%)**: el espacio libre respecto a la capacidad utilizable.
+- **Objetos** y **Buckets**.
+- **Discos en línea**, **Discos fuera de línea**, **Nodos fuera de línea**.
+- **Discos en reparación**: los discos que MinIO reconstruye tras un
+  reemplazo.
+
+Un dispositivo por bucket: **Tamaño** (MB) y **Objetos**. Un bucket eliminado
+en MinIO aparece como inaccesible en Gladys.
+
+MinIO calcula los discos, los nodos y la capacidad en segundo plano: un disco
+perdido aparece en uno o dos minutos. Los objetos y los tamaños vienen de su
+escáner, que también funciona en segundo plano: en un servidor nuevo aparecen
+tras su primera pasada, y siguen a las subidas con retraso.
+
+## Panel
+
+El widget **MinIO** muestra un indicador de la capacidad usada (verde, naranja
+cerca del umbral, rojo por debajo), el espacio libre, los discos fuera de línea
+y los objetos, y después los buckets, los mayores primero, con su tamaño y sus
+objetos (diez filas como máximo). Sus ajustes eligen los buckets que se
+muestran (vacío: todos). El botón **Actualizar** vuelve a leer MinIO. Cuando
+MinIO no responde, o ha perdido su quórum de escritura, el widget lo indica.
+
+## Escenas
+
+### Disparadores
+
+- **MinIO ya no responde**: dos lecturas seguidas han fallado. Variables:
+  dirección del servidor, motivo.
+- **MinIO vuelve a responder**: con el tiempo de caída en minutos.
+- **Disco de MinIO fuera de línea**: hay más discos fuera de línea que en la
+  lectura anterior. Cuando se detiene un nodo entero, sus discos se van con él:
+  este disparador y el siguiente se activan los dos.
+- **Disco de MinIO de nuevo en línea**: hay menos discos fuera de línea.
+- **Nodo de MinIO fuera de línea** y **Nodo de MinIO de nuevo en línea**: lo
+  mismo para los nodos de un clúster.
+- **Poco espacio libre en MinIO**: el espacio libre ha bajado del umbral de la
+  configuración. Solo se vuelve a activar cuando el espacio libre ha subido un
+  punto por encima del umbral.
+
+Los disparadores de discos, nodos y umbral llevan las cifras (discos fuera de
+línea y en línea, nodos fuera de línea y en línea, espacio libre). La
+integración guarda lo que ha visto: un disco perdido durante un reinicio de
+Gladys se anuncia igualmente, una vez.
+
+### Acciones
+
+- **Estado de MinIO**: lee MinIO para las siguientes acciones: en línea, en
+  buen estado, versión, espacio libre, objetos, buckets, discos, y una frase
+  lista («MinIO: 400 GB libres (40 %), 0 disco(s) fuera de línea.»). Cuando
+  MinIO no responde, lo indica en lugar de fallar.
+- **Estado de un bucket**: el tamaño y los objetos de un bucket, y una frase.
+
+### Ideas de escenas
+
+- **Cae un disco**: con «Disco de MinIO fuera de línea», enviar un mensaje con
+  el número de discos fuera de línea, una variable del disparador.
+- **Almacenamiento casi lleno**: con «Poco espacio libre en MinIO», enviar un
+  mensaje con el espacio libre y el umbral.
+- **Cada domingo**: a las 10:00, «Estado de MinIO», y después enviar su frase.
+
+## Solución de problemas
+
+- **«Acceso denegado»**: clave de acceso o clave secreta incorrecta, o el
+  usuario no tiene el permiso `admin:Prometheus`. MinIO responde lo mismo en
+  ambos casos.
+- **«No hay ningún servidor MinIO en esta dirección»**: la dirección es
+  probablemente la de la consola (9001): use el puerto de la API (9000 por
+  defecto).
+- **«Certificado rechazado»**: marque «Aceptar un certificado autofirmado», o
+  use la dirección `http://`.
+- **Ni objetos ni buckets**: el escáner de MinIO aún no ha terminado su
+  primera pasada: espere unos minutos.
+- Registros detallados: `LOG_LEVEL=debug` en el contenedor de la integración.
+
+## Límites
+
+- Solo lectura: desde Gladys no se crea, vacía ni elimina ningún bucket.
+- Las cifras de discos y nodos son las de todo el clúster: las métricas de
+  MinIO no dicen qué disco ha caído (`mc admin info` sí).
+- Los tamaños vienen del escáner de MinIO y siguen con retraso.
+- La integración no se ha probado con alternativas compatibles con S3 (Garage,
+  SeaweedFS): sus métricas son distintas, no están soportadas.
+- Un servidor o clúster MinIO por instalación de la integración.
+- Sin relación con MinIO, Inc.
+
+## Parámetros de configuración
+
+Estos son los parámetros que MinIO te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Su servidor MinIO | `section` | No | Un servidor o clúster MinIO. Introduzca la dirección de su API y las claves de un usuario autorizado a leer sus métricas, y después añada el servidor y los buckets desde la pestaña Descubrir. |
+| Dirección de MinIO | `string` | Sí | La dirección de la API S3 (puerto 9000 por defecto), no la de la consola. https:\/\/ si el servidor usa TLS. |
+| Clave de acceso | `string` | No | De un usuario con el permiso admin:Prometheus (vea la guía). Vacío si las métricas son públicas (MINIO_PROMETHEUS_AUTH_TYPE=public). |
+| Clave secreta | `secret` | No | La clave secreta de este usuario. Nunca sale de la integración: firma las peticiones de métricas. |
+| Aceptar un certificado autofirmado | `boolean` | No | Solo para una dirección https:\/\/ cuyo certificado no está firmado por una autoridad conocida. |
+| Opciones | `section` | No |  |
+| Intervalo de actualización | `select` | No | Con qué frecuencia se leen las métricas. MinIO actualiza los discos y la capacidad aproximadamente una vez por minuto. |
+| Umbral de poco espacio libre (%) | `number` | No | El disparador «Poco espacio libre en MinIO» se activa cuando el espacio libre baja de este porcentaje de la capacidad utilizable. |
+| Idioma de los nombres | `select` | No | Idioma de los nombres de las funciones y de los textos enviados por la integración (acciones de escena, disparadores). |
+
+## Cómo instalar MinIO en Gladys
+
+1. En Gladys, abre **Integraciones**: MinIO aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-minio:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-minio](https://github.com/guim31/gladys-minio).
+
+MinIO requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+MinIO es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-minio) — [fuente de esta documentación](https://github.com/guim31/gladys-minio/blob/HEAD/docs/es.md)

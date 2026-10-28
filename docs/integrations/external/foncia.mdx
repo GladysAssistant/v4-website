@@ -1,0 +1,171 @@
+---
+title: "Foncia smart home integration, free and open source"
+sidebar_label: "Foncia"
+description: "Your MyFoncia account in Gladys: balance, calls for funds, documents and incidents. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-foncia.png"
+keywords:
+  - "foncia"
+  - "foncia smart home"
+  - "gladys foncia"
+  - "foncia gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/prohand/gladys-foncia instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Foncia","description":"Your MyFoncia account in Gladys: balance, calls for funds, documents and incidents.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-foncia","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-foncia.png","type":"device","version":"2.0.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-10-26T21:13:46Z"}} />
+
+This integration brings your **MyFoncia** account (Foncia, property management:
+co-ownership and rentals) into Gladys: account balance, next amount due, open
+incidents, new documents and the next general assembly. It also adds scene
+triggers, scene actions and a dashboard widget.
+
+> Unofficial integration. Foncia publishes no API: the integration reads your
+> account the way the my-foncia.fonciamillenium.net web site does. If Foncia changes its site,
+> the integration may stop working until it is updated.
+
+## Requirements
+
+- Gladys Assistant **5.3** or later.
+- A MyFoncia account (e-mail and password) **without a second factor** (SMS or
+  app code at each sign-in): the integration cannot answer it.
+- Internet access for Gladys. This is a **cloud** integration: nothing runs on
+  your local network.
+
+## Configuration
+
+| Field               | What to enter                                                                       |
+| ------------------- | ----------------------------------------------------------------------------------- |
+| MyFoncia e-mail     | The e-mail you sign in with on my-foncia.fonciamillenium.net.                       |
+| MyFoncia password   | Your password. Stored by Gladys as a secret, only sent to Foncia's sign-in page.    |
+| Sync interval (min) | How often MyFoncia is read. 60 by default, 15 minimum.                              |
+| Due reminder (days) | How many days before a due date the "Payment due soon" trigger fires. 7 by default. |
+| Advanced settings   | Leave empty, see [Advanced settings](#advanced-settings).                           |
+
+Then press **Test the connection**: the message lists the accounts found. **Sync
+now** reads MyFoncia right away.
+
+## Devices
+
+One Gladys device per MyFoncia account (one lot of a co-ownership, one rental),
+named `Foncia – <account>`. Create it from the **Discover** tab. Its features are
+read-only and keep their history:
+
+| Feature                         | Unit | Meaning                                                            |
+| ------------------------------- | ---- | ------------------------------------------------------------------ |
+| Account balance                 | €    | As shown by MyFoncia (negative: you owe money).                    |
+| Next amount due                 | €    | Amount of the next call for funds or rent.                         |
+| Days until the due date         | days | Negative once the date has passed.                                 |
+| Open incidents                  | —    | Requests to Foncia (repairs, incidents, questions) not closed yet. |
+| New documents                   | —    | Documents added since you last marked them as seen.                |
+| Days until the general assembly | days | Next general assembly of the co-ownership.                         |
+
+The badge of the device says **cloud**, or **unreachable** when the last sync failed.
+
+## Scene triggers
+
+Fired only for what is **new**: the first sync after installing only learns what
+already exists. At most 5 events of each kind per sync, so a scene that sends a
+notification per document never floods your phone.
+
+| Trigger                    | Filters                | Variables                            |
+| -------------------------- | ---------------------- | ------------------------------------ |
+| New Foncia document        | account, document type | account, title, date                 |
+| Foncia incident updated    | account, new status    | account, title, previous status      |
+| Payment due soon           | account                | account, amount, due date, days left |
+| General assembly announced | account                | account, title, date, days left      |
+
+Document types: call for funds, general assembly, statement of charges, invoice
+or receipt, other. Incident statuses: open, in progress, closed.
+
+Example: _"When a new Foncia document of type **call for funds** arrives, send
+me a message: New call for funds: \{\{triggerEvent.data.title\}\}"_.
+
+## Scene actions
+
+- **Sync Foncia**: reads MyFoncia now and gives the next actions the figures of
+  one account (empty = the first one): success, account, balance, amount due,
+  due date, open incidents, new documents.
+- **Mark Foncia documents as seen**: sets the "New documents" counter back to 0
+  (for one account, or all of them).
+
+## Dashboard widget
+
+**Foncia account**: balance, amount due (0 € when nothing is due), last payment and new documents,
+connection and last sync, next due date and next general assembly, the five
+latest documents, and two buttons: **Sync now** and **Mark as seen**. In its
+settings, pick the account to show (empty = the first one).
+
+A dash (—) means MyFoncia could not be read: see the integration logs.
+
+## Privacy
+
+- The password is only sent to Foncia's sign-in page (`login.my-foncia.fonciamillenium.net`).
+  It is never written in the logs.
+- The access tokens stay in memory. The only file written is
+  `/data/foncia-state.json`: the ids of the documents, incidents and meetings
+  already seen, so that no trigger fires twice after a restart.
+
+## Troubleshooting
+
+| Message                                     | What to do                                                                  |
+| ------------------------------------------- | --------------------------------------------------------------------------- |
+| MyFoncia refused the e-mail or the password | Check them by signing in on my-foncia.fonciamillenium.net.                  |
+| asks for a second factor                    | Not supported: the account needs a code at each sign-in.                    |
+| The MyFoncia account is locked              | Unlock it on my-foncia.fonciamillenium.net, then press Test the connection. |
+| The MyFoncia client id is missing           | See [Advanced settings](#advanced-settings).                                |
+| MyFoncia cannot be reached                  | Check the Internet access of Gladys.                                        |
+| MyFoncia answered with an error             | Look at the integration logs; Foncia may have changed its site.             |
+
+## Advanced settings
+
+The integration signs in and reads your account with the same settings as the
+MyFoncia web site: its Okta **client id** and the address of its **API**. Both
+are built in: leave the two fields empty.
+
+If one day Foncia changes them and every sync fails with an API error, read the
+new values in [https://my-foncia.fonciamillenium.net/config.js](https://my-foncia.fonciamillenium.net/config.js): `clientId`
+under `oktaConfig` is the **Okta client id**, `url` under `graphql` is the
+**MyFoncia API URL**. Enter them in the advanced settings, save, then press
+**Test the connection**. Please also open an issue on the repository so that the
+built-in values can be updated for everyone.
+
+## Configuration settings
+
+These are the settings Foncia asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Getting started | `section` | No | Enter the e-mail and password you use on my-foncia.fonciamillenium.net. The integration reads your account every hour: one Gladys device per account, with its balance, the next amount due, the open incidents and the new documents. Accounts protected by a second factor (SMS, app) are not supported. |
+| MyFoncia e-mail | `string` | Yes |  |
+| MyFoncia password | `secret` | Yes |  |
+| Sync interval (min) | `number` | No | How often MyFoncia is read, in minutes (15 minimum). |
+| Due reminder (days) | `number` | No | The "Payment due" scene trigger fires this many days before a due date. |
+| Advanced settings | `section` | No | Built in: leave these fields empty. Only fill them in if Foncia changes its settings (see the documentation). |
+| Okta client id | `string` | No |  |
+| MyFoncia API URL | `string` | No |  |
+
+## How to install Foncia in Gladys
+
+1. In Gladys, open **Integrations**: Foncia appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-foncia:2.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-foncia](https://github.com/prohand/gladys-foncia).
+
+Foncia requires Gladys `>=5.3.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Foncia is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [prohand](https://github.com/prohand), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/prohand/gladys-foncia) — [source of this documentation](https://github.com/prohand/gladys-foncia/blob/HEAD/docs/en.md)

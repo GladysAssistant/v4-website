@@ -1,0 +1,165 @@
+---
+title: "Roon zones (unofficial) Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Roon zones (unofficial)"
+description: "Unofficial connector: Roon outputs, play, volume, now playing, groups, on the local network. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-roon.png"
+keywords:
+  - "roon zones (unofficial)"
+  - "roon zones (unofficial) smart home"
+  - "gladys roon zones (unofficial)"
+  - "roon zones (unofficial) gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-roon instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Roon zones (unofficial)","description":"Unofficial connector: Roon outputs, play, volume, now playing, groups, on the local network.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-roon","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-roon.png","type":"device","version":"0.1.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-10-28T02:28:31Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+Unofficial connector, not affiliated with Roon Labs. It talks to your **Roon
+Core** (Roon Server, Nucleus, ROCK, or the Roon app acting as Core) on the
+local network, through the official Roon extension API: no account, no cloud.
+
+> Built from the Roon API documentation: it was **never tested with a real Roon Core**.
+> Reports are welcome (GitHub issues of `LM1LC3N7/gladys-roon`).
+
+Requires Gladys 5.3.0 or later (the Music widget).
+
+## What you get
+
+One Gladys device per **Roon output** (a room, a speaker, a DAC), with:
+
+- playback: play, pause, stop (the Music widget), previous, next;
+- the track playing: title, artist, album, artwork, duration and position;
+- shuffle and repeat (off, all, one);
+- volume (0-100 % of the range of the output) and mute, when Roon can set
+  the volume of the output (not for a fixed volume nor for +/- only
+  controls);
+- the name of the zone the output plays in (e.g. "Living room + Kitchen"
+  when grouped).
+
+Two scene actions: **group two outputs** (the zone keeps the queue of the
+first one) and **take an output out of its group**.
+
+## Setup
+
+1. Type the **address** of the Roon Core (give it a fixed address in your
+   router), or click **Find the Roon Core**: Gladys asks the local network,
+   and when exactly one Core answers and no address is typed, its address is
+   saved. The **port** is 9330 for Roon 2 (9100 for older versions).
+2. In Roon, open **Settings > Extensions** and click **Enable** next to
+   **Gladys (community)** (publisher LM1LC3N7, a community integration, not
+   made by the Gladys Assistant team). Until then the status says it is waiting for the
+   authorization.
+3. Open the **Discovery** tab and add the outputs you want.
+
+The authorization the Core gives is kept in the `/data` folder of the
+integration (never in the logs, never shown). **Forget the Roon
+authorization** deletes it: the extension then has to be enabled again in
+Roon.
+
+## Volume cap
+
+**Volume cap (%)**, 50 by default: the highest volume Gladys may set, in
+percent of the range of each output (100: no cap). A higher volume asked by a
+scene or the dashboard is set to the cap, rounded down to a step of the
+output, and never above the limits set in Roon. Unmuting first brings the
+volume back under the cap when it is above (and is refused when the volume of
+the output is unknown, while a cap applies). The volume changed in Roon itself
+is not touched.
+
+## Commands and their answers
+
+A command is a success when the Core accepted it **and** the state Roon sends
+back shows it (play, pause, stop, volume, mute, shuffle, repeat, grouping).
+Seek, previous and next succeed when the Core accepts them. A command whose
+state is already there (play on a zone playing) succeeds at once; a volume the
+Core trims (a limit set in Roon) answers "not yet seen applied" although it
+is done. Otherwise the
+answer says what happened: "nothing sent", "sent, without an answer (not
+confirmed)", "accepted, not yet seen applied (not confirmed)" or "refused by
+the Roon Core".
+
+**Pause, stop, mute and a lower volume are not held by the volume cap.** They
+are refused only when nothing can receive them:
+
+- the Roon Core is not connected (or not yet authorized);
+- the output is not in Roon right now (off, renamed or removed);
+- the value is invalid;
+- for mute and volume: the output has no volume Gladys can set;
+- more than 256 requests are already waiting for the Core (a Core that stopped
+  answering; other commands are held from 64 on).
+
+When two outputs or more have the name of the device, pause, stop, mute and a
+lower volume go to every one of them (a volume only to those it lowers); play,
+unmute, a higher volume and the other commands are refused (which room would
+it be?). A zone that cannot pause (a live radio) is stopped instead. An unmute that
+waits for its volume step is not sent when another command for the same
+output was clicked meanwhile (a mute clicked after it is never overtaken).
+
+## Good to know
+
+- **Identity**: an output is identified by its name in Roon, as Home Assistant
+  does (Roon may change its internal ids). Renaming an output in Roon gives a
+  new device in Gladys and leaves the old one "unreachable": the scenes using
+  it stop working, without an error. **Swapped names** (two outputs trading
+  their names in Roon) are seen from the output ids last seen for each name
+  (kept in `/data`): the volume never goes to the other room; until you open
+  Discovery again (which takes the new names), the device publishes nothing
+  (its badge shows "unreachable"),
+  pause, stop, mute and a lower volume go to the room it was made for, and
+  the other commands are refused. Two outputs with the same name are left out of Discovery and
+  publish nothing.
+- **Network**: the Roon extension API is plain `ws://` on the local network:
+  the authorization token and the commands travel in clear text on it, like for
+  every Roon extension. The token is sent to whatever answers at the address
+  typed with the id of the Core it came from.
+- The states come live from the Core (subscription), nothing is polled. After
+  a loss of the Core, nothing is published until the Core is back; the badge
+  of the devices shows "unreachable" meanwhile. The connection is tried again
+  after 5 s, then 10 s, up to every 2 minutes.
+- The artwork is fetched from the Core (400 px, at most 300 KB) when Gladys
+  shows it.
+- No playlists, library or radio browsing yet (see the TODO of the
+  repository).
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Roon zones (unofficial) in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Roon in Gladys | `section` | Nein | Unofficial connector, not affiliated with Roon Labs. It talks to your Roon Core on the local network through the official Roon extension API (no account, no cloud): one Gladys device per Roon output, with play, pause, stop, previous, next, volume, mute, shuffle, repeat, the track playing and its artwork for the Music widget, and grouping by scene actions. Type the address of the Core (or click "Find the Roon Core"), then in Roon open Settings > Extensions and click Enable next to "Gladys (community)". Then open Discovery to add the outputs. |
+| Roon Core address | `string` | Nein | IP address (or host name) of the computer or appliance running the Roon Core (Roon Server, Nucleus, ROCK…). Give it a fixed address in your router. "Find the Roon Core" fills it in when one Core answers. |
+| Roon Core port | `number` | Nein | The port of the extension API: 9330 for Roon 2, 9100 for older versions. |
+| Volume cap (%) | `number` | Nein | The highest volume Gladys may set, in percent of the range of each output, from 1 to 100 (100: no cap). A higher volume asked by a scene or the dashboard is set to this cap; unmuting brings the volume back under the cap first. The volume set in Roon itself is not changed, and a lower volume, pause, stop and mute are never held by the cap. |
+
+## So installierst du Roon zones (unofficial) in Gladys
+
+1. Öffne in Gladys **Integrationen**: Roon zones (unofficial) erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-roon:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-roon](https://github.com/LM1LC3N7/gladys-roon).
+
+Roon zones (unofficial) benötigt Gladys `>=5.3.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Roon zones (unofficial) ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-roon) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-roon/blob/HEAD/docs/en.md)

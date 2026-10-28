@@ -1,0 +1,224 @@
+---
+title: "Intégration domotique Lambda heat pump, gratuite et open source"
+sidebar_label: "Lambda heat pump"
+description: "PAC Lambda (EU-L) en Modbus local : températures, COP, circuits, commandes en option. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-lambda-heat-pump.png"
+keywords:
+  - "lambda heat pump"
+  - "domotique lambda heat pump"
+  - "gladys lambda heat pump"
+  - "lambda heat pump gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-lambda-heat-pump instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Lambda heat pump","description":"PAC Lambda (EU-L) en Modbus local : températures, COP, circuits, commandes en option.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-lambda-heat-pump","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-lambda-heat-pump.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-28T02:59:25Z"}} />
+
+Affiche une pompe à chaleur Lambda (série EU-L) dans Gladys par l'interface
+Modbus TCP de son régulateur, sur votre réseau local, sans cloud.
+
+> Cette intégration n'a jamais été testée avec un vrai appareil : elle suit le
+> manuel Modbus du fabricant (« Modbus-Protokoll 1.0 ») et l'intégration Home
+> Assistant lambda_heat_pumps. Les retours d'un propriétaire sont bienvenus.
+> Sans lien avec Lambda Wärmepumpen.
+
+## Avant de commencer
+
+- Le régulateur répond en Modbus TCP sur le port 502, identifiant d'unité 1,
+  tel que livré. Donnez-lui une adresse IP fixe dans votre routeur.
+- Modbus n'a pas de mot de passe : tout appareil du réseau peut lire et
+  écrire la pompe à chaleur. Gardez-la sur un réseau de confiance, jamais
+  joignable depuis Internet.
+- Le régulateur ferme une connexion inactive depuis une minute ; Gladys garde
+  une connexion et la ferme après 45 s sans requête. Un autre client Modbus
+  (Home Assistant, un gestionnaire d'énergie) peut partager le régulateur :
+  chacun écrit ses propres demandes.
+
+## Configuration
+
+| Champ                                                                          | Rôle                                                                     |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------ |
+| Adresse IP du régulateur                                                       | adresse IPv4 ou nom d'hôte, `:port` si ce n'est pas 502                  |
+| Identifiant d'unité Modbus                                                     | 1 sauf si votre installateur l'a changé                                  |
+| Pompes à chaleur, ballons d'eau chaude, ballons tampons, circuits de chauffage | nombre de chaque module, comme sur l'écran (1 à 5, 0 à 5, 0 à 5, 0 à 12) |
+| Autoriser les commandes                                                        | désactivé par défaut (voir plus bas)                                     |
+| Plafond de l'eau chaude                                                        | 65 °C par défaut, de 40 à 65 °C, jamais plus de 65 °C                    |
+| Intervalle de rafraîchissement                                                 | 30 s par défaut, de 10 s à 10 min                                        |
+
+Enregistrez, puis ajoutez les appareils depuis l'onglet Découverte.
+« Tester la connexion » affiche l'état de la dernière lecture ; il ne relit
+qu'une fois l'intervalle écoulé depuis la dernière lecture.
+
+## Appareils
+
+Un appareil par module, numéroté comme sur l'écran :
+
+- **Système** : température extérieure (moyenne sur 1 h et celle de la
+  courbe de chauffe), état et numéro d'erreur, état du gestionnaire
+  d'énergie, puissance absorbée des pompes à chaleur (W) et sa consigne.
+- **Pompe à chaleur n** : températures de départ, de retour et de la source,
+  régime du compresseur (%), puissance de chauffe (kW), puissance absorbée de
+  l'onduleur (W), COP, état et numéro d'erreur, état, état de fonctionnement,
+  relais de la résistance électrique.
+- **Ballon d'eau chaude n** : températures haut, bas et de bouclage, pompe de
+  bouclage, état, numéro d'erreur, consigne d'eau chaude.
+- **Ballon tampon n** : températures haut et bas, état, numéro d'erreur,
+  température maximale.
+- **Circuit de chauffage n** : températures de départ, de retour et
+  ambiante, consigne de départ calculée, décalage de la courbe de chauffe,
+  consignes ambiantes (chauffage, rafraîchissement), état, numéro d'erreur,
+  mode de fonctionnement demandé.
+
+Une fonctionnalité apparaît dès que son registre a donné une valeur : 0x8000
+(« non disponible »), -3000 (« sonde non raccordée ») et les valeurs hors
+d'une plage plausible ne sont jamais publiés. Les registres que seules
+certaines versions du logiciel servent (relais de la résistance, gestionnaire
+d'énergie, consigne de départ calculée, maximum du tampon) sont laissés de
+côté quand le régulateur les refuse. Les statistiques d'énergie des pompes à
+chaleur ne sont pas lues (leur ordre des mots a changé avec le logiciel, et
+elles peuvent être remises à zéro) : pas d'index d'énergie.
+
+## Commandes
+
+### Arrêter un circuit de chauffage (toujours possible)
+
+Choisir **Arrêt** dans le mode d'un circuit de chauffage l'arrête, quelle
+que soit l'option « Autoriser les commandes ». Le mode est une demande
+Modbus que le régulateur oublie si elle n'est pas réécrite : Gladys garde
+donc l'arrêt. Il est écrit tout de suite (avant les lectures en attente, une
+lecture muette depuis une seconde est coupée), relu, gardé dans `/data` et
+réécrit toutes les 20 s, y compris après un redémarrage de l'intégration,
+avant même que Gladys ou sa configuration soient joints.
+
+L'arrêt n'est refusé ni pour l'option, ni pour une lecture ou une commande
+en cours, ni pour une configuration que Gladys ne peut pas lire (le
+régulateur gardé dans `/data` sert alors), ni pour un `/data` non
+inscriptible (le statut dit alors que l'arrêt ne survivra pas à un
+redémarrage). Un arrêt que le régulateur n'acquitte pas, ou relit autrement,
+reçoit « non confirmé » et reste réécrit toutes les 20 s. Il n'attend que si
+aucune adresse n'est connue du tout (pas de configuration et rien dans
+`/data`) : il est alors écrit dès qu'elle l'est.
+
+Garder l'arrêt écraserait tout autre acteur qui demande un mode par Modbus :
+Gladys relit donc le mode avant chaque nouvelle écriture. L'arrêt ne prend
+jamais fin avec le temps ; le statut dit depuis quand il est maintenu (à
+l'heure de Gladys). Il
+prend fin, et le régulateur revient à son propre réglage quand la dernière
+demande expire (le chauffage peut alors repartir), seulement lorsque :
+
+- deux lectures de suite (à 2 s d'écart) montrent une autre demande de mode
+  documentée (2 à 6 : automatique, chauffage ou rafraîchissement
+  automatique, hors-gel, été) qui n'est ni l'arrêt ni la demande lue avant
+  l'arrêt. C'est ainsi qu'on en sort par un autre client Modbus, et sans
+  doute par le panneau (à confirmer, voir plus bas). Gladys n'écrit rien
+  entre les deux lectures. Tout le reste est réécrit : une demande seulement
+  expirée (-1), la demande lue avant l'arrêt (l'arrêt pas encore appliqué :
+  après trois lectures de ce genre, le statut dit que le régulateur ne
+  l'applique pas), un code inconnu, « manuel » ou « chape » (1, 7), une
+  valeur sentinelle, une lecture ratée. Si la demande d'avant l'arrêt n'est
+  pas connue (arrêt choisi pendant une panne, sans lecture récente), la
+  première demande documentée (-1 à 7) relue tant que l'arrêt n'a pas été
+  relu appliqué en tient lieu : elle est réécrite, jamais prise pour un
+  changement. Un arrêt relu appliqué sans demande d'avant connue est levé par
+  toute demande de 2 à 6 lue deux fois de suite ;
+- le circuit est retiré de la configuration (moins de circuits), son appareil
+  est supprimé, ou l'adresse est effacée ou changée ;
+- un autre mode ou **Aucune demande** est choisi dans Gladys : les deux
+  relancent le chauffage, donc les deux exigent « Autoriser les commandes ».
+
+Après un redémarrage de l'intégration, l'arrêt gardé dans `/data` est écrit
+une fois sans lecture préalable : un mode choisi au panneau ou par un autre
+client pendant que l'intégration était arrêtée est écrasé, donc perdu. Gladys
+relit ensuite le mode avant chaque écriture (toutes les 20 s) : seul un choix
+fait après cette première écriture, et autre que la demande d'avant l'arrêt,
+lève l'arrêt comme ci-dessus (deux lectures de suite).
+
+Une commande envoyée avant l'arrêt et encore en attente est abandonnée.
+
+### Consignes à leur minimum (toujours possibles)
+
+Une consigne ambiante de 15 °C ou une consigne d'eau chaude de 25 °C est
+écrite quelle que soit l'option. Si elle n'est pas relue, les trois lectures
+suivantes (dans les 15 minutes) la réécrivent, tant qu'elles montrent encore
+la valeur qu'elle remplace : une consigne changée depuis (au panneau ou par
+une commande plus récente) est laissée telle quelle.
+
+### Autres commandes (option « Autoriser les commandes »)
+
+- **Mode** d'un circuit de chauffage : automatique, chauffage automatique,
+  rafraîchissement automatique, hors-gel, été, ou « Aucune demande ». Le mode
+  choisi est gardé et réécrit toutes les 20 s tant que l'option est activée,
+  pendant 24 heures au plus (le régulateur reprend ensuite la main) ;
+  désactiver l'option l'arrête, un redémarrage aussi (seul un arrêt est
+  gardé). « Manuel » et « Programme de chape » sont affichés par le
+  régulateur mais jamais réglés.
+- **Consigne ambiante** (chauffage) : de 15 à 40 °C, au dixième de degré.
+- **Consigne d'eau chaude** : en degrés entiers, de 25 °C au plafond de la
+  configuration (65 °C par défaut, jamais au-dessus de 65 °C). Le plafond est
+  vérifié à l'arrivée de la commande et juste avant son envoi.
+
+Chaque commande lit d'abord la valeur actuelle (rien n'est envoyé si elle ne
+peut pas être lue), une commande à la fois par module. Elle ne réussit que si
+la valeur relue après l'écriture est celle demandée ; sinon Gladys journalise
+« pas encore appliqué », « envoyé, sans confirmation » ou « rien envoyé ».
+La réponse à Gladys arrive en 3,4 s ; une commande qui attend encore derrière
+d'autres est alors acceptée et son résultat journalisé. Elle part dans les
+10 s du clic, ou pas du tout.
+
+## Pas (encore) fait
+
+- Jamais testé avec un vrai régulateur : la carte des registres, l'échelle
+  du COP et le délai d'expiration d'une demande de mode sont à confirmer sur
+  un vrai.
+- Il reste à vérifier qu'un mode choisi au panneau du régulateur apparaît
+  dans la demande Modbus (registre 5x06) : c'est ce qui permet de lever un
+  arrêt depuis le panneau. D'ici là, les moyens sûrs sont Gladys (un autre
+  mode ou « Aucune demande », commandes autorisées) et un autre client
+  Modbus.
+- Pas de module solaire, pas d'index d'énergie, pas de demandes de surplus
+  photovoltaïque ni du tampon (elles doivent être réécrites régulièrement et
+  pilotent directement la pompe à chaleur).
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Lambda heat pump dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre pompe à chaleur Lambda | `section` | Non | Affiche votre pompe à chaleur Lambda (série EU-L) dans Gladys par l'interface Modbus TCP de son régulateur, sans cloud : températures, COP, états, circuits de chauffage, eau chaude, ballon tampon. Le circuit de chauffage peut être arrêté à tout moment ; les autres modes et les consignes seulement une fois « Autoriser les commandes » activé. Saisissez l'adresse IP du régulateur (donnez-lui une adresse fixe dans votre routeur), le nombre de chaque module comme sur son écran, enregistrez, puis ajoutez les appareils depuis l'onglet Découverte. Modbus n'a pas de mot de passe : gardez la pompe à chaleur sur un réseau de confiance. Jamais testé avec un vrai appareil. Sans lien avec Lambda Wärmepumpen. |
+| Adresse IP du régulateur | `string` | Oui | Une adresse IPv4 ou un nom d'hôte (port Modbus 502 sauf si vous en ajoutez un, par exemple 192.168.1.40:5020). |
+| Identifiant d'unité Modbus | `number` | Non | 1 sauf si votre installateur l'a changé. |
+| Pompes à chaleur | `number` | Non | Nombre de modules pompe à chaleur affichés par le régulateur (1 à 5). |
+| Ballons d'eau chaude | `number` | Non | Nombre de ballons d'eau chaude (0 à 5). |
+| Ballons tampons | `number` | Non | Nombre de ballons tampons (0 à 5). |
+| Circuits de chauffage | `number` | Non | Nombre de circuits de chauffage (0 à 12). |
+| Autoriser les commandes | `boolean` | Non | Désactivé par défaut. Activé : Gladys peut changer le mode d'un circuit de chauffage, sa consigne ambiante et la consigne d'eau chaude (jusqu'au plafond ci-dessous). Désactivé : ces commandes sont refusées. Arrêter un circuit de chauffage et une consigne à son minimum (ambiante 15 °C, eau chaude 25 °C) restent toujours possibles. Un arrêt est maintenu (réécrit toutes les 20 s, sans fin dans le temps) jusqu'à ce qu'un mode autre que celui demandé avant l'arrêt soit demandé par un autre client Modbus ou au panneau, ou qu'un autre mode ou « Aucune demande » soit choisi dans Gladys avec cette option. |
+| Plafond de l'eau chaude (°C) | `number` | Non | Risque de brûlure : Gladys ne règle jamais l'eau chaude au-dessus de cette température. 65 °C par défaut, de 40 à 65 °C (jamais plus de 65 °C, quoi qu'on saisisse). |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture du régulateur, en secondes. |
+| Langue des noms des fonctionnalités | `select` | Non | Sert aux noms des appareils et fonctionnalités ajoutés désormais, aux textes des états et aux erreurs des commandes. |
+
+## Comment installer Lambda heat pump dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Lambda heat pump apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-lambda-heat-pump:0.1.2`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-lambda-heat-pump](https://github.com/LM1LC3N7/gladys-lambda-heat-pump).
+
+Lambda heat pump nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Lambda heat pump est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-lambda-heat-pump) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-lambda-heat-pump/blob/HEAD/docs/fr.md)

@@ -1,0 +1,200 @@
+---
+title: "Integración domótica slskd, gratuita y de código abierto"
+sidebar_label: "slskd"
+description: "Siga slskd (Soulseek): red, descargas en curso, completadas y fallidas, subidas, velocidad. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-slskd.png"
+keywords:
+  - "slskd"
+  - "domótica slskd"
+  - "gladys slskd"
+  - "slskd gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-slskd instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"slskd","description":"Siga slskd (Soulseek): red, descargas en curso, completadas y fallidas, subidas, velocidad.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-slskd","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-slskd.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-26T06:15:03Z"}} />
+
+Siga [slskd](https://github.com/slskd/slskd) desde Gladys: el cliente moderno de Soulseek,
+instalado en un NAS o un servidor doméstico (Docker, Unraid…), con su interfaz web y su API. La
+integración lee la API local de slskd: la velocidad y las descargas aparecen en el panel, y Gladys
+puede avisarle cuando un archivo está descargado, cuando una descarga ha fallado, cuando todo ha
+terminado o cuando slskd ha perdido la red Soulseek.
+
+La integración solo lee. Nunca busca, descarga, comparte ni envía nada en la red Soulseek: eso
+sigue siendo cosa suya, en slskd. Su única orden, desactivada por defecto, quita las descargas
+completadas de la lista de slskd (los archivos se quedan en el disco).
+
+Probada con un slskd 0.26.2 real (dos instancias que intercambian archivos de prueba libres en la
+red Soulseek), todavía no en un Gladys real: sus comentarios son bienvenidos en
+[GitHub](https://github.com/guim31/gladys-slskd/issues).
+
+## Requisitos
+
+- Gladys 5.1.0 o posterior.
+- slskd accesible desde el servidor Gladys (misma red), en su puerto HTTP (5030 por defecto) o su
+  puerto HTTPS (5031).
+- Una **clave de API** de slskd. Añada una en `slskd.yml` y reinicie slskd:
+
+  ```yaml
+  web:
+    authentication:
+      api_keys:
+        gladys:
+          key: <de 16 a 255 caracteres a su elección>
+          role: readonly # readwrite si permite la limpieza
+          cidr: 192.168.1.0/24 # la red de Gladys
+  ```
+
+  O con la variable de entorno `SLSKD_API_KEY` (la clave principal de slskd). Sin autenticación en
+  slskd (`SLSKD_NO_AUTH`, o `web.authentication.disabled: true`), deje la clave vacía.
+
+## Configuración
+
+- **Dirección**: la dirección IP o el nombre, con el puerto: `192.168.1.10:5030`. Sin puerto, se
+  añade 5030. Escriba `https://` para HTTPS, y la ruta si slskd funciona bajo una `url_base` o
+  detrás de un proxy inverso (`https://example.com/slskd`).
+- **Clave de API**: la clave de `slskd.yml`.
+- **Nombre**: el nombre del dispositivo en Gladys (vacío: slskd seguido de la dirección).
+- **Aceptar certificados autofirmados**: para un slskd servido en HTTPS con su propio
+  certificado.
+- **Intervalo de actualización**: con qué frecuencia se lee slskd, de 10 segundos a 5 minutos
+  (30 segundos por defecto). También es el retraso de los disparadores. Una lectura cuesta tres
+  llamadas a la API local, nada en la red Soulseek.
+- **Permitir vaciar las descargas completadas**: permite que una escena o el widget vacíe la lista
+  de descargas completadas. Desactivado por defecto.
+- **Idioma de los nombres de funciones**: los nombres de las funciones al añadir el dispositivo, y
+  los textos de estado.
+
+**Probar la conexión** lee slskd enseguida e indica lo que encuentra: versión, red Soulseek,
+descargas.
+
+Después, en **Descubrimiento**, añada el dispositivo.
+
+## Dispositivos
+
+Un dispositivo, de solo lectura:
+
+| Función               | Contenido                                                                   |
+| --------------------- | --------------------------------------------------------------------------- |
+| Velocidad de descarga | KB/s, las descargas en curso                                                |
+| Velocidad de subida   | KB/s, lo que otros usuarios de Soulseek descargan de usted                  |
+| Descargas en curso    | archivos que se están transfiriendo                                         |
+| Descargas en espera   | archivos pedidos, en una cola (la suya o la del par), o entre dos intentos  |
+| Descargas completadas | archivos descargados, en la lista de slskd (hasta que se vacíe)             |
+| Descargas fallidas    | archivos rechazados por el par, con error o caducados, en la lista de slskd |
+| Subidas en curso      | archivos que otros usuarios descargan de usted ahora                        |
+| Estado                | Descargando, En espera, Inactivo, Soulseek desconectado, o Inaccesible      |
+| Última descarga       | nombre del último archivo completado                                        |
+
+El dispositivo muestra la insignia **inaccesible** cuando slskd no responde.
+
+## Widget
+
+**Descargas slskd** muestra la velocidad de descarga, las descargas en curso (y en espera), el
+tiempo restante, y luego el estado de slskd, los archivos en curso con su porcentaje y su tiempo
+restante, las descargas fallidas, las subidas y la última descarga. Cuando la limpieza está
+permitida, un botón **Vaciar completadas** vacía la lista de descargas completadas.
+
+## Disparadores de escena
+
+- **Descarga completada**: un archivo ha terminado de descargarse, una vez por archivo. Variables:
+  nombre del archivo, usuario de Soulseek, tamaño (MB).
+- **Descarga fallida**: una descarga ha fallado (rechazada por el par, error, tiempo agotado), una
+  vez por archivo. Variables: nombre del archivo, usuario de Soulseek, motivo. Una descarga que
+  usted cancela no es un fallo.
+- **Todas las descargas terminadas**: no queda nada por descargar, la última descarga ha terminado
+  o ha fallado.
+- **Red Soulseek perdida**: slskd ya no está conectado al servidor de Soulseek, en dos lecturas
+  seguidas (slskd se reconecta solo en unos segundos: un corte breve no se anuncia).
+- **Red Soulseek recuperada**: slskd vuelve a estar conectado, tras una pérdida.
+
+Tras un reinicio de la integración, se anuncia lo que ha pasado mientras tanto; la lista ya
+presente en el primer arranque no.
+
+## Acciones de escena
+
+- **Leer el resumen de slskd**: una frase para un mensaje («Soulseek: conectado a Soulseek, 2
+  descarga(s) en curso, 1 en espera (850 KB/s)»), y las cifras: conectado (1/0), descargas en
+  curso, en espera, fallidas.
+- **Vaciar las descargas completadas**: quita las descargas completadas (correctas, fallidas o
+  canceladas) de la lista de slskd; los archivos se quedan en el disco. Rechazada mientras
+  **Permitir vaciar las descargas completadas** esté desactivado. Salida: las descargas quitadas de
+  la lista.
+
+## Ejemplos de escenas
+
+- **Álbum descargado**: disparador **Descarga completada**, acción «Enviar un mensaje»:
+  «Descargado: \{\{name\}\} de \{\{user\}\}».
+- **Informe de la noche**: cada día a las 21:00, **Leer el resumen de slskd**, y enviar la frase
+  por Telegram.
+- **Soulseek caído**: disparador **Red Soulseek perdida**, acción «Enviar un mensaje» para revisar
+  la cuenta o la VPN de slskd; **Red Soulseek recuperada** para avisar de que todo va bien.
+- **Lista ordenada**: disparador **Todas las descargas terminadas**, acción **Vaciar las descargas
+  completadas** (con la limpieza permitida).
+
+## Solución de problemas
+
+- **Clave de API rechazada**: compruebe la clave en `slskd.yml`, y que la dirección de Gladys está
+  en su `cidr`. slskd vuelve a leer su configuración al guardarla; reinícielo si tiene dudas.
+  Después guarde la configuración de la integración: una clave rechazada no se reintenta sola,
+  para no llenar el registro de slskd.
+- **slskd no responde**: compruebe la dirección y el puerto (5030), y que el servidor Gladys llega
+  a slskd (cortafuegos, red Docker).
+- **No hay slskd en esta dirección**: la dirección responde, pero no con la API de slskd.
+  Compruebe el puerto, o la ruta detrás de un proxy inverso.
+- **El rol de la clave de API no lo permite**: la limpieza necesita una clave `readwrite`.
+- **Soulseek desconectado**: slskd responde pero no ha iniciado sesión en Soulseek: cuenta,
+  contraseña o red de slskd (VPN). Consulte el registro de slskd.
+
+## Límites
+
+- Un solo slskd por integración.
+- Solo lectura, a propósito: ni búsqueda, ni descarga, ni compartir, ni mensajes en Soulseek.
+- Los contadores de descargas completadas y fallidas siguen la lista de slskd: bajan cuando usted
+  la vacía.
+- El retraso de los disparadores es el intervalo de actualización. Una descarga que empieza y
+  termina entre dos lecturas se anuncia igualmente, mientras siga en la lista.
+- Una nueva dirección empieza el seguimiento de cero: lo que terminó durante el cambio no se anuncia.
+- Sin relación con slskd ni Soulseek.
+
+## Parámetros de configuración
+
+Estos son los parámetros que slskd te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Su slskd | `section` | No | slskd, el cliente de Soulseek, en su red. Cree una clave de API en slskd.yml (web.authentication.api_keys); el rol readonly basta para seguirlo. Solo lectura por defecto: nunca busca, descarga ni comparte nada. |
+| Dirección | `string` | Sí | Dirección IP o nombre, con :puerto (5030 por defecto). https:\/\/ para HTTPS. |
+| Clave de API | `secret` | No | La clave de slskd.yml. Vacía solo si la autenticación de slskd está desactivada. |
+| Nombre | `string` | No | Nombre del dispositivo en Gladys. Vacío: slskd seguido de la dirección. |
+| Opciones | `section` | No |  |
+| Aceptar certificados autofirmados | `boolean` | No | Para un slskd servido en HTTPS con su propio certificado (su puerto 5031 por defecto). |
+| Intervalo de actualización | `select` | No | Con qué frecuencia se lee slskd: también el retraso de los disparadores. |
+| Permitir vaciar las descargas completadas | `boolean` | No | Permite que una escena o el widget quite las descargas completadas de la lista de slskd (los archivos se quedan). Desactivado por defecto. |
+| Idioma de los nombres de funciones | `select` | No | Nombres de las funciones al añadir el dispositivo y textos de estado. |
+
+## Cómo instalar slskd en Gladys
+
+1. En Gladys, abre **Integraciones**: slskd aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-slskd:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-slskd](https://github.com/guim31/gladys-slskd).
+
+slskd requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+slskd es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-slskd) — [fuente de esta documentación](https://github.com/guim31/gladys-slskd/blob/HEAD/docs/es.md)
