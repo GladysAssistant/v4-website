@@ -1,0 +1,176 @@
+---
+title: "Foncia Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Foncia"
+description: "Dein MyFoncia-Konto in Gladys: Saldo, Zahlungsaufrufe, Dokumente und Vorfälle. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-foncia.png"
+keywords:
+  - "foncia"
+  - "foncia smart home"
+  - "gladys foncia"
+  - "foncia gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/prohand/gladys-foncia instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Foncia","description":"Dein MyFoncia-Konto in Gladys: Saldo, Zahlungsaufrufe, Dokumente und Vorfälle.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-foncia","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-foncia.png","type":"device","version":"2.0.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-10-26T21:13:46Z"}} />
+
+Diese Integration bringt dein **MyFoncia**-Konto (Foncia, Hausverwaltung:
+Wohnungseigentum und Vermietung) in Gladys: Kontosaldo, nächster fälliger
+Betrag, offene Vorfälle, neue Dokumente und die nächste Eigentümerversammlung.
+Dazu kommen Szenenauslöser, Szenenaktionen und ein Dashboard-Widget.
+
+> Inoffizielle Integration. Foncia veröffentlicht keine API: Die Integration
+> liest dein Konto so, wie es die Website my-foncia.fonciamillenium.net tut. Ändert Foncia seine
+> Website, kann die Integration bis zu einem Update nicht mehr funktionieren.
+
+## Voraussetzungen
+
+- Gladys Assistant **5.3** oder neuer.
+- Ein MyFoncia-Konto (E-Mail und Passwort) **ohne zweiten Faktor** (SMS- oder
+  App-Code bei jeder Anmeldung): Den kann die Integration nicht beantworten.
+- Internetzugang für Gladys. Es ist eine **Cloud**-Integration: In deinem
+  lokalen Netzwerk läuft nichts.
+
+## Konfiguration
+
+| Feld                             | Was eingeben                                                                                      |
+| -------------------------------- | ------------------------------------------------------------------------------------------------- |
+| MyFoncia-E-Mail                  | Die E-Mail-Adresse, mit der du dich auf my-foncia.fonciamillenium.net anmeldest.                  |
+| MyFoncia-Passwort                | Dein Passwort. Von Gladys als Geheimnis gespeichert, nur an die Anmeldeseite von Foncia gesendet. |
+| Synchronisierungsintervall (min) | Wie oft MyFoncia gelesen wird. Standard 60, mindestens 15.                                        |
+| Fälligkeitserinnerung (Tage)     | Wie viele Tage vor einer Fälligkeit der Auslöser „Zahlung bald fällig“ auslöst. Standard 7.       |
+| Erweiterte Einstellungen         | Leer lassen, siehe [Erweiterte Einstellungen](#erweiterte-einstellungen).                         |
+
+Drücke dann **Verbindung testen**: Die Meldung listet die gefundenen Konten auf.
+**Jetzt synchronisieren** liest MyFoncia sofort.
+
+## Geräte
+
+Ein Gladys-Gerät pro MyFoncia-Konto (eine Wohnung einer Eigentümergemeinschaft,
+eine Mietwohnung), mit dem Namen `Foncia – <Konto>`. Lege es im Tab **Entdecken**
+an. Seine Funktionen sind schreibgeschützt und behalten ihren Verlauf:
+
+| Funktion                           | Einheit | Bedeutung                                                                     |
+| ---------------------------------- | ------- | ----------------------------------------------------------------------------- |
+| Kontosaldo                         | €       | Wie von MyFoncia angezeigt (negativ: du schuldest Geld).                      |
+| Nächster fälliger Betrag           | €       | Betrag des nächsten Zahlungsaufrufs oder der nächsten Miete.                  |
+| Tage bis zur Fälligkeit            | Tage    | Negativ, sobald das Datum vorbei ist.                                         |
+| Offene Vorfälle                    | —       | Noch nicht abgeschlossene Anfragen an Foncia (Reparaturen, Vorfälle, Fragen). |
+| Neue Dokumente                     | —       | Dokumente, die seit der letzten Markierung als gesehen hinzugekommen sind.    |
+| Tage bis zur Eigentümerversammlung | Tage    | Nächste Versammlung der Eigentümergemeinschaft.                               |
+
+Das Abzeichen des Geräts zeigt **Cloud**, oder **nicht erreichbar**, wenn die
+letzte Synchronisierung fehlgeschlagen ist.
+
+## Szenenauslöser
+
+Sie lösen nur für **Neues** aus: Die erste Synchronisierung nach der Installation
+lernt nur, was schon da ist. Höchstens 5 Ereignisse jeder Art pro
+Synchronisierung, damit eine Szene, die pro Dokument eine Benachrichtigung
+schickt, dein Handy nie überflutet.
+
+| Auslöser                    | Filter              | Variablen                                          |
+| --------------------------- | ------------------- | -------------------------------------------------- |
+| Neues Foncia-Dokument       | Konto, Dokumenttyp  | Konto, Titel, Datum                                |
+| Foncia-Vorfall aktualisiert | Konto, neuer Status | Konto, Titel, vorheriger Status                    |
+| Zahlung bald fällig         | Konto               | Konto, Betrag, Fälligkeitsdatum, verbleibende Tage |
+| Versammlung angekündigt     | Konto               | Konto, Titel, Datum, verbleibende Tage             |
+
+Dokumenttypen: Zahlungsaufruf, Eigentümerversammlung, Nebenkostenabrechnung,
+Rechnung oder Quittung, anderes. Vorfallstatus: offen, in Bearbeitung,
+abgeschlossen.
+
+Beispiel: _„Wenn ein neues Foncia-Dokument vom Typ **Zahlungsaufruf** ankommt,
+schicke mir eine Nachricht: Neuer Zahlungsaufruf: \{\{triggerEvent.data.title\}\}“_.
+
+## Szenenaktionen
+
+- **Foncia synchronisieren**: liest MyFoncia jetzt und gibt den nächsten
+  Aktionen die Zahlen eines Kontos (leer = das erste): Erfolg, Konto, Saldo,
+  fälliger Betrag, Fälligkeitsdatum, offene Vorfälle, neue Dokumente.
+- **Foncia-Dokumente als gesehen markieren**: setzt den Zähler „Neue Dokumente“
+  auf 0 zurück (für ein Konto oder alle).
+
+## Dashboard-Widget
+
+**Foncia-Konto**: Saldo, fälliger Betrag (0 €, wenn nichts fällig ist), letzte
+Zahlung und neue Dokumente, Verbindung und letzte Synchronisierung, nächste Fälligkeit und nächste
+Versammlung, die fünf neuesten Dokumente und zwei Schaltflächen:
+**Synchronisieren** und **Als gesehen**. Wähle in seinen Einstellungen das
+anzuzeigende Konto (leer = das erste).
+
+Ein Strich (—) bedeutet, dass MyFoncia nicht gelesen werden konnte: Siehe die Logs der Integration.
+
+## Datenschutz
+
+- Das Passwort wird nur an die Anmeldeseite von Foncia
+  (`login.my-foncia.fonciamillenium.net`) gesendet. Es wird nie in die Logs geschrieben.
+- Die Zugriffstoken bleiben im Speicher. Die einzige geschriebene Datei ist
+  `/data/foncia-state.json`: die IDs der bereits gesehenen Dokumente, Vorfälle
+  und Versammlungen, damit nach einem Neustart kein Auslöser doppelt auslöst.
+
+## Fehlerbehebung
+
+| Meldung                                                     | Was tun                                                                            |
+| ----------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| MyFoncia hat die E-Mail-Adresse oder das Passwort abgelehnt | Prüfe sie mit einer Anmeldung auf my-foncia.fonciamillenium.net.                   |
+| verlangt einen zweiten Faktor                               | Nicht unterstützt: Das Konto verlangt bei jeder Anmeldung einen Code.              |
+| Das MyFoncia-Konto ist gesperrt                             | Entsperre es auf my-foncia.fonciamillenium.net und drücke dann Verbindung testen.  |
+| Die MyFoncia-Client-ID fehlt                                | Siehe [Erweiterte Einstellungen](#erweiterte-einstellungen).                       |
+| MyFoncia ist nicht erreichbar                               | Prüfe den Internetzugang von Gladys.                                               |
+| MyFoncia hat mit einem Fehler geantwortet                   | Sieh dir die Logs der Integration an; Foncia hat seine Website eventuell geändert. |
+
+## Erweiterte Einstellungen
+
+Die Integration meldet sich mit denselben Einstellungen an wie die
+MyFoncia-Website: deren Okta-**Client-ID** und die Adresse ihrer **API**. Beide
+sind eingebaut: Lass die zwei Felder leer.
+
+Ändert Foncia sie eines Tages und schlägt jede Synchronisierung mit einem
+API-Fehler fehl, lies die neuen Werte in
+[https://my-foncia.fonciamillenium.net/config.js](https://my-foncia.fonciamillenium.net/config.js): `clientId` unter `oktaConfig`
+ist die **Okta-Client-ID**, `url` unter `graphql` ist die **URL der
+MyFoncia-API**. Trage sie in die erweiterten Einstellungen ein, speichere und
+drücke **Verbindung testen**. Eröffne bitte auch ein Issue im Repository, damit
+die eingebauten Werte für alle aktualisiert werden.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Foncia in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Erste Schritte | `section` | Nein | Gib die E-Mail-Adresse und das Passwort ein, die du auf my-foncia.fonciamillenium.net verwendest. Die Integration liest dein Konto stündlich: ein Gladys-Gerät pro Konto, mit Saldo, nächstem fälligem Betrag, offenen Vorfällen und neuen Dokumenten. Konten mit zweitem Faktor (SMS, App) werden nicht unterstützt. |
+| MyFoncia-E-Mail | `string` | Ja |  |
+| MyFoncia-Passwort | `secret` | Ja |  |
+| Synchronisierungsintervall (min) | `number` | Nein | Wie oft MyFoncia gelesen wird, in Minuten (mindestens 15). |
+| Fälligkeitserinnerung (Tage) | `number` | Nein | Der Szenenauslöser „Zahlung fällig“ löst so viele Tage vor der Fälligkeit aus. |
+| Erweiterte Einstellungen | `section` | Nein | Eingebaut: Lass diese Felder leer. Fülle sie nur aus, wenn Foncia seine Einstellungen ändert (siehe Dokumentation). |
+| Okta-Client-ID | `string` | Nein |  |
+| URL der MyFoncia-API | `string` | Nein |  |
+
+## So installierst du Foncia in Gladys
+
+1. Öffne in Gladys **Integrationen**: Foncia erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/prohand/gladys-foncia:2.0.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/prohand/gladys-foncia](https://github.com/prohand/gladys-foncia).
+
+Foncia benötigt Gladys `>=5.3.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Foncia ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [prohand](https://github.com/prohand) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/prohand/gladys-foncia) — [Quelle dieser Dokumentation](https://github.com/prohand/gladys-foncia/blob/HEAD/docs/de.md)

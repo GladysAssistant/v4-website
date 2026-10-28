@@ -1,0 +1,239 @@
+---
+title: "Integración domótica Dantherm / Pluggit, gratuita y de código abierto"
+sidebar_label: "Dantherm / Pluggit"
+description: "Dantherm and Pluggit ventilation over local Modbus TCP: temperatures, mode, filter, alarms; stop. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-dantherm.png"
+keywords:
+  - "dantherm / pluggit"
+  - "domótica dantherm / pluggit"
+  - "gladys dantherm / pluggit"
+  - "dantherm / pluggit gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-dantherm instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Dantherm / Pluggit","description":"Dantherm and Pluggit ventilation over local Modbus TCP: temperatures, mode, filter, alarms; stop.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-dantherm","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-dantherm.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-28T01:19:51Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+Shows a **Dantherm** (HCV, RCV, HCH) or **Pluggit** (AP, iFlow) heat
+recovery ventilation unit in Gladys, through its **Modbus TCP** interface on
+your local network, without any cloud or account. Unofficial integration,
+**not affiliated with Dantherm or Pluggit**. **Never tested with a real
+device**: it reads and writes the registers of the manufacturer's Modbus
+table (the Pluggit controller, shared by both brands) as the open-source
+Dantherm integration of Home Assistant uses them; please report what you
+see.
+
+## Before you start
+
+- The unit must be on your network (Ethernet) and reachable from Gladys on
+  **port 502** (Modbus TCP). Give it a fixed IP address in your router.
+  Recommended firmware: 2.70 or 3.08 and later (those the Home Assistant
+  integration asks for).
+- Modbus TCP has **no password**: keep the unit on a trusted network.
+- The Modbus unit id (slave address) is 1 unless you changed it.
+- The controller accepts three connections at once. The integration opens
+  only one, and closes it after each read.
+
+## Installation
+
+1. Install the integration from the Gladys store.
+2. Enter the **IP address of the unit** (port 502 unless you add one) and,
+   if needed, the Modbus unit id; save.
+3. Open the **Discovery** tab and add the unit.
+
+## What you get
+
+One device, **Dantherm / Pluggit ventilation**, with:
+
+| Feature                           | Notes                                                                                                                                    |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Ventilation mode                  | list: automatic (demand), week program, manual level 1 to 4                                                                              |
+| Current mode                      | text (stable English key): `standby`, `manual`, `demand`, `week-program`, `away`, `summer`, `night`…                                     |
+| Fan level                         | 0 to 4 (0: stopped)                                                                                                                      |
+| Alarm                             | text: `none`, `exhaust-fan`, `supply-fan`, `bypass`, `overtemperature`, `fire`, `fire-protection`…; `unknown-<code>` for an unknown code |
+| Alarm active                      | 1 = an alarm is active                                                                                                                   |
+| Bypass damper                     | text: `closed`, `in-progress`, `opening`, `closing`, `opened`                                                                            |
+| Temperatures T1 to T4             | outdoor, supply, extract, exhaust; °C                                                                                                    |
+| Room temperature T5               | only when the unit lists the sensor (HRC2 component)                                                                                     |
+| Humidity                          | %; only with a sensor (0 is never published)                                                                                             |
+| Air quality (VOC, CO2 equivalent) | ppm; only with a VOC sensor (0 is never published)                                                                                       |
+| Filter: days left                 | days                                                                                                                                     |
+| Stop the ventilation              | button                                                                                                                                   |
+| Reset the filter timer            | button                                                                                                                                   |
+
+Texts are never published as a measure: an unknown or out-of-range value is
+not published (Gladys keeps the previous one).
+
+The unit is read every 60 s (30 s to 1 h), in ten requests on one
+connection, closed after. The test button, a Discovery scan, a reconnection
+of Gladys or a restart of the integration never read it sooner than the
+interval. Reads outside the interval:
+
+- each command reads the unit right before writing, then reads back what it
+  wrote;
+- the stop and its resends;
+- 5 s then 20 s after a command not confirmed and after each stop;
+- a new address or unit id saved is read at once.
+
+## Stopping the ventilation
+
+The **Stop the ventilation** button sets the unit to manual mode, level 0
+(what the Home Assistant integration calls stand-by). It first reads the
+current mode (1 s at most; read again on the next connection when the read
+fails): an away, summer, fireplace or night mode is ended first (ending the
+night mode, 0x8020, follows the Home Assistant integration and is still to
+check on a device). Then it writes level 0, manual mode, and level 0 again:
+cut after any of these writes, the stop never leaves the unit in manual mode
+at the level kept (up to 4).
+
+It depends on **no option**, nor on another command running, nor on a read
+running (it cuts it), nor on the wait after an error, nor on the serial
+number, nor on the state file in /data, nor on the configuration sent by
+Gladys (the last unit configured is kept in /data). It cancels a mode
+command not sent yet; an older write already sent that would apply after it
+is caught by the read that follows (below). A refused or closed connection,
+a missing or wrong answer, a Modbus exception other than 1, 2 or 3 (device
+failure, busy) are tried again every 250 ms until 3.5 s after the press. It
+is confirmed only when the unit reads back stand-by, or manual mode at
+level 0: level 0 read in another mode (automatic, night, away…) is not a
+stop.
+
+It can still answer without having stopped the ventilation in these cases:
+
+- no valid address, neither in the configuration nor in /data;
+- a value other than 1;
+- unit unreachable until 3.5 s after the press ("not sent", or "not sent
+  yet" while it still tries);
+- a missing or wrong answer until the end, Modbus exception 1 to 3, or the
+  unit read back running ("sent, without confirmation"); a unit that stays
+  in an override, installer, fail-safe or defrost mode answers "the unit
+  stays in … mode"; when the current mode could not be read in time, the
+  answer says so (away, summer, fireplace or night were then not ended).
+
+A second press during the first joins it. The stop is kept in /data:
+
+- **not confirmed**, it is sent again at the next start of the integration
+  (before any read and even if Gladys does not answer) and by every read
+  that shows the unit running, three times at most; then the status says
+  the stop did not take (or that the unit stays in its mode) until the next
+  press or a mode chosen;
+- **confirmed**, it is sent again once, when the first read begun after its
+  write (5 s later) shows the unit running (an older write may still land).
+  A restart made later from the panel or the app is never fought.
+
+This guard is **never lifted by the time**. It is lifted only:
+
+- by a mode chosen from Gladys with the option on (right before its write;
+  put back when the unit refuses that write with exception 1, 2 or 3);
+- after a confirmed stop, by two reads in a row showing the unit running
+  when no resend is due: the unit was restarted outside Gladys (panel,
+  app); the status says so. An unknown read between the two starts the
+  count again.
+
+## Optional commands
+
+The **mode** is refused unless **Allow the mode commands** is on, and the
+**filter reset** unless **Allow the filter reset** is on (both off by
+default). No switch: a "turn everything off" of a voice assistant never
+reaches the ventilation.
+
+- Each command reads the unit right before writing (serial number, current
+  mode, level and alarm; or the filter days left), writes nothing when the
+  mode is already the one asked (unless a stop is guarded: it is then
+  written, which lifts the guard), and is confirmed only when the unit answers
+  each write and then reads back what was asked (for the filter: more days
+  left than before; as many as before is not a confirmation). A command that
+  may have reached the unit without being confirmed answers "sent, without
+  confirmation": check the unit a few seconds later. A first write refused
+  with Modbus exception 1, 2 or 3 answers "refused" and is not applied; other
+  exceptions answer "sent, without confirmation". A command whose first
+  write cannot leave within 3.5 s is refused and nothing is sent.
+- A mode chosen may **restart a stopped unit**: that is why it depends on
+  the option. It is refused while a stop is running.
+- The mode is refused when the unit is in a mode Gladys does not set: away,
+  summer, fireplace, night, external input or hygrostat override, installer,
+  fail-safe, fail off, defrost. Change that mode on the unit or in its app.
+- The mode is refused in **fire, overtemperature or unknown alarm** (codes
+  12, 14, 16 and any code out of the list: `overtemperature`, `fire`,
+  `fire-protection`, `unknown-<code>`). The code names follow the Home
+  Assistant integration; the 2013 table names codes 12 to 15 differently,
+  hence the three codes refused.
+  An alarm register not filled (0xFFFFFFFF) reads `unknown-4294967295`: an
+  active alarm and the mode refused, on the safe side.
+- **Serial number**: the integration keeps a salted fingerprint of the
+  unit's serial number (never the number itself). If another number is read
+  (unit replaced, or another device at the same address), its values are
+  not shown, the status says so and the optional commands are refused until
+  a press on **Test the connection**, which accepts the unit. An unreadable
+  number is not "another unit". The stop does not depend on it.
+- If the state file in /data cannot be read, it is never written over and
+  the optional commands are refused (not the stop). A command is also
+  refused when the fingerprint learnt could not be written to /data.
+
+## Status and errors
+
+The status of the integration shows the current mode, the level, an alarm,
+the unit type and firmware, an unreachable unit (with the next try: 30 s,
+1, 2 then 5 min, never less than the interval), a stop not confirmed, a
+restart outside Gladys, a configuration Gladys could not give (tried again
+at 5 s, doubled up to 5 min, without end; the reads go on with the
+configuration in use). A request refused by the unit (Modbus exception)
+leaves its values unknown; a measure always refused or silent is read again
+only once an hour.
+
+## Limits
+
+- Never tested with a real device.
+- The unit type is shown by its number (the Dantherm and Pluggit tables give
+  different names to the same number).
+- The manufacturer's table (2013) puts the unit type in the low byte of
+  `prmSystemID`; the Home Assistant integration, used on current firmwares,
+  reads it in the high byte: that reading is kept. The type is only shown.
+- Not yet: bypass, humidity and week program settings, alarm reset, fan
+  speeds, operating hours.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Dantherm / Pluggit te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Your Dantherm or Pluggit unit | `section` | No | Shows your Dantherm (HCV, RCV, HCH) or Pluggit (AP, iFlow) heat recovery ventilation in Gladys through its Modbus TCP interface (port 502) on your local network, without any cloud: temperatures, current mode, fan level, bypass, humidity, air quality, filter days left and alarm. Enter the IP address of the unit (fixed in your router), save, then add it from the Discovery tab. The "Stop the ventilation" button never depends on an option (see the guide for the cases where it can fail). The mode and the filter reset only work if you allow them below. Modbus TCP has no password: keep the unit on a trusted network. Never tested with a real device. Not affiliated with Dantherm or Pluggit. |
+| IP address of the unit | `string` | Sí | An IPv4 address or a host name (port 502 unless you add one, for example 192.168.1.80:502). |
+| Modbus unit id | `number` | No | The Modbus slave address of the unit, 1 unless you changed it. |
+| Allow the mode commands | `boolean` | No | Off by default. On: Gladys may set the mode (automatic, week program, manual level 1 to 4), which can restart a stopped unit; refused while the unit is in a mode Gladys does not set (away, summer, fireplace, night, override, installer, fail-safe, defrost) or in fire alarm. Stopping the ventilation never depends on this option. |
+| Allow the filter reset | `boolean` | No | Off by default. On: the "Reset the filter timer" button restarts the filter countdown of the unit (after you changed the filters). |
+| Refresh interval (s) | `number` | No | How often the unit is read, in seconds. |
+| Language of the feature names | `select` | No | Used for the names of the device and features added from now on, the status and the command errors. |
+
+## Cómo instalar Dantherm / Pluggit en Gladys
+
+1. En Gladys, abre **Integraciones**: Dantherm / Pluggit aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-dantherm:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-dantherm](https://github.com/LM1LC3N7/gladys-dantherm).
+
+Dantherm / Pluggit requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Dantherm / Pluggit es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-dantherm) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-dantherm/blob/HEAD/docs/en.md)

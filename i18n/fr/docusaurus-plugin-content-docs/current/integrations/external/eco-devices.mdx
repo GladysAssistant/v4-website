@@ -1,0 +1,225 @@
+---
+title: "Intégration domotique Eco-Devices, gratuite et open source"
+sidebar_label: "Eco-Devices"
+description: "Non officiel : Eco-Devices de GCE en local : téléinfo, compteurs d'eau et de gaz. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ecodevices.png"
+keywords:
+  - "eco-devices"
+  - "domotique eco-devices"
+  - "gladys eco-devices"
+  - "eco-devices gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-ecodevices instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Eco-Devices","description":"Non officiel : Eco-Devices de GCE en local : téléinfo, compteurs d'eau et de gaz.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-ecodevices","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ecodevices.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-27T17:45:12Z"}} />
+
+Intégration **non officielle**, sans lien avec GCE Electronics. Elle lit un
+**Eco-Devices** (le module téléinfo sur rail DIN, **pas l'Eco-Devices RT2**,
+qui a une autre API) par son **API JSON locale**, sans cloud. **Lecture
+seule** : elle n'envoie que des requêtes de lecture, l'Eco-Devices ne reçoit
+aucune commande.
+
+**Jamais testé avec un vrai Eco-Devices** : construit à partir de la
+documentation de GCE Electronics (wiki, section « API JSON ») et des
+bibliothèques pyecodevices et ecodevices (Home Assistant).
+
+## Ce que vous obtenez
+
+Un appareil par entrée utilisée :
+
+- **Téléinfo 1** et **Téléinfo 2** (un compteur électrique en mode
+  **historique** sur l'entrée : Linky en mode historique ou compteur
+  électronique) :
+  - **Puissance apparente** (VA) : la valeur PAPP du compteur, lue toutes les
+    15 secondes ; les contrats d'énergie de Gladys la comparent à votre
+    puissance souscrite ;
+  - **Index de consommation** (kWh) : la somme des index de l'option
+    tarifaire du compteur (base ; heures creuses + heures pleines ; EJP ;
+    les six index Tempo), envoyée une fois par minute ; c'est la valeur que le
+    suivi énergétique de Gladys transforme en consommation et en coût ;
+  - chaque **index tarifaire** (kWh) en simple capteur, pour information
+    (jamais compté dans le suivi énergétique).
+- **Compteur 1** et **Compteur 2** (les entrées d'impulsions), seulement si
+  vous les réglez sur **eau** ou **gaz** dans la configuration :
+  - **Index** (m³) : l'index total du compteur ;
+  - **Consommation du jour** (m³) : remise à zéro chaque jour par
+    l'Eco-Devices, à l'heure réglée dans sa page de configuration.
+
+L'eau et le gaz ne passent pas par le suivi énergétique de Gladys (ce sont
+des volumes, pas des kWh).
+
+Ce n'est **pas** l'intégration `gladys-teleinfo` (une clé USB LiXee) : si
+votre compteur est déjà lu par une autre intégration, n'en gardez qu'une, sinon
+la consommation serait comptée deux fois. De même, si Téléinfo 2 est un
+sous-compteur de Téléinfo 1, rangez-le sous le compteur principal dans le
+suivi énergétique de Gladys.
+
+## Configuration
+
+1. Trouvez l'adresse IP de l'Eco-Devices (dans votre box ou avec GCE
+   ScanDevice) et donnez-lui de préférence une adresse fixe.
+2. Vérifiez que l'API JSON répond : ouvrez
+   `http://<adresse>/api/xdevices.json?cmd=10` dans un navigateur ; vous
+   devez voir une réponse qui commence par `{"product":"Eco-devices"`. Sinon,
+   mettez à jour le firmware de l'Eco-Devices.
+3. Dans Gladys, installez l'intégration puis remplissez :
+   - **Adresse de l'Eco-Devices** (avec un port seulement s'il n'est pas 80) ;
+   - **Nom d'utilisateur** et **mot de passe**, seulement si l'accès sécurisé
+     de l'Eco-Devices est activé (onglet Système, bloc Sécurité). Le mot de
+     passe est gardé par Gladys dans sa base, jamais réaffiché, jamais écrit
+     dans les journaux, envoyé seulement à l'adresse de l'Eco-Devices (en
+     authentification HTTP Basic, en HTTP simple sur votre réseau : c'est ce
+     que propose l'Eco-Devices). Un mot de passe sans nom d'utilisateur est
+     refusé ;
+   - pour chaque **compteur d'impulsions** : eau, gaz ou « non utilisé », et
+     l'**unité de son index** sur l'Eco-Devices (litres par défaut, le réglage
+     le plus courant : 1 impulsion = 1 litre ; sinon mètres cubes). Comparez
+     l'index affiché par Gladys avec celui du compteur lui-même. Choisissez-les
+     **avant** de créer l'appareil : changer d'unité ensuite fait sauter ou
+     baisser l'index (voir plus bas).
+4. Enregistrez, puis créez les appareils depuis l'onglet **Découverte**.
+
+Le bouton **Tester la connexion** lit l'Eco-Devices une fois quand une
+lecture est due (jamais plus d'une toutes les 15 secondes), sinon donne la
+dernière lecture.
+
+## Garde des index
+
+Le suivi énergétique compte chaque hausse d'un index en entier. Pour qu'un
+index faux (un compteur remplacé, une erreur de lecture) soit retenu au lieu
+d'être facturé :
+
+- un index à 0 n'est jamais envoyé ;
+- une hausse plus grande que ce que le logement peut consommer depuis la
+  dernière valeur (100 kW en électricité, 10 m³/h en eau, 16 m³/h en gaz)
+  est un **saut** ; une valeur plus basse que la dernière est une **baisse** ;
+- un saut ou une baisse est **retenu** : la dernière valeur acceptée est
+  renvoyée, l'état de l'intégration l'affiche, et il est gardé dans `/data`
+  au redémarrage. Ni le temps ni la répétition ne le confirment ;
+- **un saut** juste (et, pour un compteur d'eau ou de gaz, **une baisse**
+  juste, par exemple après avoir corrigé l'index saisi dans l'Eco-Devices) se
+  prend en **deux clics** sur « Accepter l'index retenu » : le premier clic
+  liste les valeurs retenues et ne prend rien ; le second, de quelques
+  secondes à 5 minutes plus tard, prend les valeurs listées (plus ce que le
+  compteur a pu mesurer entre-temps), seulement si elles n'ont pas changé
+  autrement. Enregistrer la configuration n'accepte rien. Le badge de
+  l'appareil passe à l'orange tant qu'un index est retenu ;
+- changer l'**unité** d'un compteur d'impulsions dans la configuration
+  (litres ou m³) convertit la valeur de référence : ni saut ni baisse ;
+- **une baisse de l'index de consommation téléinfo n'est jamais acceptée**
+  (c'est une somme d'index : elle ne baisse que si c'est un autre compteur).
+  Elle arrive quand le compteur est **remplacé**, ou quand l'**option
+  tarifaire change** (base vers heures creuses ou Tempo, par exemple) et que
+  le compteur repart de zéro sur les nouveaux index. L'état de l'intégration
+  le dit (« BAISSE d'index de consommation retenue, jamais acceptée »). La
+  seule sortie est de **supprimer l'appareil** de cette entrée puis de le
+  **recréer** depuis l'onglet Découverte. Ce que cela coûte :
+  - tout l'historique de l'appareil est perdu : index, puissance, et la
+    **consommation et le coût** calculés par le suivi énergétique ;
+  - il faut le replacer dans l'arbre énergie et le rattacher à votre contrat ;
+  - Gladys refuse de supprimer un appareil de plus de 5000 états (environ
+    21 heures de puissance à une valeur toutes les 15 secondes) : il les purge
+    en arrière-plan, réessayez plus tard.
+    Garder l'historique sans accepter la baisse (un nouvel appareil créé à côté
+    de l'ancien) n'est pas possible dans cette version ;
+- pour un index électrique en plusieurs tarifs, l'index total n'est construit
+  que si tous les index de l'option sont lus ; un index tarifaire qui revient
+  à 0 ou qui baisse seul est une erreur de lecture : pas d'index cette
+  fois-là.
+
+## Fonctionnement
+
+- Une lecture toutes les 15 secondes (`cmd=10`), jamais plus souvent, même
+  après un redémarrage, un enregistrement de la configuration, un clic ou une
+  reconnexion (l'heure de la dernière lecture est gardée dans `/data`).
+- La consommation du jour (`cmd=20`) est lue toutes les 5 minutes, seulement
+  si un compteur d'impulsions est réglé ; si elle échoue, les index continuent
+  et elle est réessayée après 5 minutes, puis 10, jusqu'à 1 heure.
+- Une seule requête à la fois vers l'Eco-Devices.
+- Si l'Eco-Devices ne répond pas : nouvel essai après 15 s, puis le double,
+  jusqu'à 10 minutes. S'il répond 429 ou 5xx : pause de 1 minute à 6 heures,
+  gardée au redémarrage.
+- **Identifiants refusés** (401/403 sur la page des index) : les lectures
+  s'arrêtent, même après un redémarrage, jusqu'à ce que vous changiez
+  l'adresse, le nom d'utilisateur ou le mot de passe, ou que le bouton
+  « Tester la connexion » réussisse. Un refus sur la page du jour ne compte
+  pas comme un refus des identifiants.
+- Si la puissance et tous les index d'une entrée téléinfo restent identiques
+  15 minutes (câble téléinfo débranché ?), la puissance n'est plus envoyée.
+- Si la configuration ne peut pas être lue depuis Gladys à la connexion, elle
+  est redemandée après 5 s, puis le double, jusqu'à 5 minutes, sans fin.
+- Si le fichier d'état dans `/data` ne peut pas être lu (ou écrit), aucun
+  index n'est envoyé tant qu'il ne l'est pas (une valeur retenue peut s'y
+  trouver) ; la puissance continue. Un fichier illisible n'est pas écrasé.
+  S'il est abîmé (après une coupure de courant, par exemple), supprimez le
+  fichier `ecodevices-state.json` du volume `/data` de l'intégration (sur
+  l'hôte Docker de Gladys) puis redémarrez l'intégration : elle repart d'un
+  état vide (les index retenus sont oubliés, et il faudra peut-être en
+  accepter de nouveau).
+
+## Limites
+
+- Eco-Devices RT2 non pris en charge (autre API).
+- Mode téléinfo **standard** du Linky non lu : passez le compteur en mode
+  historique (demande à votre fournisseur) ou utilisez un autre module.
+- Les compteurs d'impulsions sont lus en eau ou en gaz seulement (pas
+  d'impulsions électriques).
+- La couleur Tempo du jour et du lendemain n'est pas publiée.
+
+## Dépannage
+
+Si l'état dit que la réponse ne donne pas certains index (« la réponse ne
+donne pas HCHP », par exemple), envoyez au développeur la réponse de
+`cmd=10` ci-dessous : les noms des index des options heures creuses et EJP
+sont déduits, pas encore confirmés sur un vrai Eco-Devices.
+
+Sur le même réseau que l'Eco-Devices :
+
+```bash
+curl -s "http://192.168.1.20/api/xdevices.json?cmd=10"; echo
+curl -s "http://192.168.1.20/api/xdevices.json?cmd=20"; echo
+## avec l'accès sécurisé :
+curl -s -u admin "http://192.168.1.20/api/xdevices.json?cmd=10"; echo
+```
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Eco-Devices dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Eco-Devices de GCE | `section` | Non | Connecteur non officiel, sans lien avec GCE Electronics. Il lit un Eco-Devices (pas le RT2) par son API JSON locale, sans cloud : pour chaque entrée de téléinformation reliée à un compteur en mode historique (Linky ou compteur électronique), sa puissance apparente et son index de consommation (la somme de ses index tarifaires : base, heures creuses/pleines, EJP ou Tempo) pour le suivi énergétique de Gladys, et chaque index tarifaire en simple capteur ; pour chaque compteur d'impulsions réglé ci-dessous (eau ou gaz), son index et sa consommation du jour en m³. Lecture seule. Ce n'est pas l'intégration gladys-teleinfo (une clé USB LiXee) : une seule des deux par compteur, jamais les deux. Jamais testé avec un vrai Eco-Devices. |
+| Adresse de l'Eco-Devices | `string` | Oui | L'adresse IP de l'Eco-Devices sur votre réseau (visible dans votre box ou avec GCE ScanDevice), avec un port seulement s'il n'est pas 80. Donnez-lui de préférence une adresse fixe ; si elle change, saisissez la nouvelle : chaque entrée garde son appareil et son historique. |
+| Nom d'utilisateur (facultatif) | `string` | Non | Seulement si l'accès sécurisé de l'Eco-Devices est activé (onglet Système, bloc Sécurité) : son nom d'utilisateur. Sinon, laissez vide. |
+| Mot de passe (facultatif) | `secret` | Non | Le mot de passe de ces identifiants. Gardé par Gladys dans sa base, jamais réaffiché, jamais écrit dans les journaux, envoyé seulement à l'adresse de l'Eco-Devices ci-dessus (authentification HTTP Basic en HTTP simple sur votre réseau : l'Eco-Devices ne propose rien d'autre). Si l'Eco-Devices le refuse, les lectures s'arrêtent jusqu'à ce que vous le changiez ou cliquiez sur « Tester la connexion ». |
+| Compteur d'impulsions 1 | `select` | Non | Ce que mesure le compteur branché sur l'entrée d'impulsions C1 de l'Eco-Devices. « Non utilisé » l'ignore. À choisir avant de créer son appareil. |
+| Unité de l'index du compteur 1 | `select` | Non | L'unité de l'index que l'Eco-Devices affiche pour le compteur 1 (litres par défaut, le réglage le plus courant : 1 impulsion = 1 litre). Comparez-le avec l'index du compteur lui-même. Gladys affiche des m³. |
+| Compteur d'impulsions 2 | `select` | Non | Ce que mesure le compteur branché sur l'entrée d'impulsions C2 de l'Eco-Devices. « Non utilisé » l'ignore. À choisir avant de créer son appareil. |
+| Unité de l'index du compteur 2 | `select` | Non | L'unité de l'index que l'Eco-Devices affiche pour le compteur 2 (litres par défaut, le réglage le plus courant : 1 impulsion = 1 litre). Comparez-le avec l'index du compteur lui-même. Gladys affiche des m³. |
+
+## Comment installer Eco-Devices dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Eco-Devices apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-ecodevices:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-ecodevices](https://github.com/LM1LC3N7/gladys-ecodevices).
+
+Eco-Devices nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Eco-Devices est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-ecodevices) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-ecodevices/blob/HEAD/docs/fr.md)

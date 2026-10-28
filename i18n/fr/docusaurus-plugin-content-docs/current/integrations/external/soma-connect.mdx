@@ -1,0 +1,177 @@
+---
+title: "Intégration domotique SOMA Connect, gratuite et open source"
+sidebar_label: "SOMA Connect"
+description: "Stores SOMA Smart Shades et Tilt par l'API locale de SOMA Connect. Non officiel. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-soma-connect.png"
+keywords:
+  - "soma connect"
+  - "domotique soma connect"
+  - "gladys soma connect"
+  - "soma connect gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-soma-connect instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"SOMA Connect","description":"Stores SOMA Smart Shades et Tilt par l'API locale de SOMA Connect. Non officiel.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-soma-connect","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-soma-connect.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-27T00:21:00Z"}} />
+
+Pilotez vos **SOMA Smart Shades** (moteurs de stores enrouleurs) et **SOMA
+Tilt** (moteurs de stores vénitiens) depuis Gladys, par l'API HTTP locale de
+votre pont **SOMA Connect**.
+
+> Intégration non officielle, sans lien avec SOMA (Wazombi Labs). Elle n'a
+> **jamais été testée avec un vrai SOMA Connect** : elle suit l'API utilisée
+> par pysoma, la bibliothèque du fabricant. Vos retours sont les bienvenus.
+
+## Fonctionnement
+
+- Gladys ne parle qu'en **HTTP** à SOMA Connect, sur votre réseau local (port
+  3000). Le lien Bluetooth vers les stores reste dans SOMA Connect : Gladys n'a
+  pas besoin de Bluetooth. Pas de compte, pas de cloud.
+- Chaque appareil listé par SOMA Connect devient un **volet** dans l'onglet
+  Découverte, avec :
+  - **Ouverture / fermeture** : ouvrir, fermer et **arrêter** ;
+  - **Position** : de 0 % (fermé) à 100 % (ouvert) ;
+  - **Batterie** (%), lue au plus une fois par heure (chaque lecture réveille
+    le store).
+- Un **Tilt** oriente les lames : 100 % = lames à plat (ouvert), 0 % = fermé
+  vers le bas. Un Tilt fermé vers le haut (depuis l'application SOMA) se lit
+  fermé ; Gladys ne ferme que vers le bas.
+
+## Mise en route
+
+1. Appairez vos stores à SOMA Connect dans l'application SOMA, et vérifiez que
+   SOMA Connect est sur votre réseau.
+2. Donnez à SOMA Connect une adresse fixe dans votre box (réservation DHCP).
+3. Dans Gladys, saisissez son **adresse IP** (port 3000 par défaut ; un autre
+   port : `192.168.1.50:3001`) et enregistrez. Appuyez sur **Tester la
+   connexion**.
+4. Dans l'onglet **Découverte**, ajoutez les stores.
+
+## Commandes
+
+- **Ouvrir et la position** partent vers SOMA Connect dans les 3,5 s
+  de votre clic, ou sont refusées sans rien envoyer. Chaque store prend ses
+  mouvements un par un (4 en attente au plus) ; des stores différents bougent
+  côte à côte, une scène peut donc bouger tous vos stores d'un coup.
+- L'accusé de réception dit que **SOMA Connect a accepté** la commande. La
+  position n'est **confirmée** que par une lecture qui la montre (à 2 % près) :
+  le store est relu 2, 5, 20, 45 et 90 s après une commande. Un store qui n'a
+  pas atteint sa position après la dernière lecture reçoit un badge
+  d'avertissement et une ligne dans le statut.
+- Une commande qui a pu atteindre SOMA Connect sans réponse est annoncée
+  « envoyée, sans confirmation », et non « non envoyée ».
+
+### Arrêt
+
+L'arrêt passe devant : il ne prend aucune file, n'attend aucune lecture, ne
+dépend d'aucune option, et passe à travers une pause demandée par SOMA Connect
+et l'espacement des essais après une panne. Il fonctionne dès le redémarrage,
+avant toute lecture (l'adresse, le micrologiciel et les stores sont gardés
+dans `/data`). Il annule les mouvements de ce store pas encore partis : un
+mouvement demandé avant un arrêt ne part pas après lui. Une lecture muette
+depuis une seconde est coupée pour lui laisser la place.
+
+Un arrêt est refusé, ou ne part pas, dans ces cas seulement :
+
+- le store est inconnu de l'intégration (jamais listé par SOMA Connect, et pas
+  gardé dans `/data`), ou aucune adresse de SOMA Connect n'est saisie ni
+  gardée ;
+- un mouvement de ce store demandé **après** l'arrêt a été accepté par SOMA
+  Connect entre-temps (c'est ce mouvement que vous avez demandé en dernier) ;
+- SOMA Connect est injoignable, ou répond une erreur, pendant 3,5 s (essai
+  toutes les 250 ms) : l'arrêt est alors **gardé** (aussi dans `/data`) et
+  renvoyé une fois par minute (avec ou sans la configuration de Gladys, à
+  l'adresse gardée dans `/data`), 3 fois au plus ; le statut et le badge le
+  disent, et disent quand il est abandonné.
+
+Si les lectures de 2 et 5 s après un arrêt montrent que le store continue
+dans le même sens, l'arrêt est renvoyé (3 fois au plus). Les lectures
+suivantes ne renvoient pas d'arrêt : un mouvement lancé depuis l'application
+SOMA ou une télécommande après un arrêt est laissé tel quel.
+
+### Fermeture
+
+La **fermeture** (et la position 0 %) est aussi protectrice : aucune file
+(elle remplace les mouvements de ce store encore en attente), aucune option,
+à travers une pause, avant la lecture de la configuration de Gladys (adresse
+et store gardés dans `/data`), essai toutes les 250 ms pendant 3,5 s ; un
+mouvement qui partait est suivi d'une nouvelle fermeture. Elle est refusée, ou
+ne part pas, dans ces cas seulement :
+
+- le store est inconnu de l'intégration, ou aucune adresse de SOMA Connect
+  n'est saisie ni gardée ;
+- un arrêt, ou un mouvement accepté par SOMA Connect, demandé **après** elle ;
+- SOMA Connect est injoignable, ou répond une erreur, pendant 3,5 s :
+  contrairement à l'arrêt, la fermeture n'est alors **pas** gardée ni renvoyée
+  (pas non plus après un redémarrage).
+- Une fermeture annoncée « non envoyée » ou « refusée » ne part jamais ensuite,
+  pas même derrière le mouvement qui partait. Un mouvement qu'elle remplace
+  reçoit « remplacée par une fermeture », pas « annulée par un arrêt ».
+
+## Lectures
+
+- À chaque intervalle (60 s par défaut, de 30 à 3600 s) : la liste des
+  appareils, puis la position de chaque store. Pas plus souvent que
+  l'intervalle, sauf les lectures après une commande, même après un
+  redémarrage, une reconnexion ou le bouton de test.
+- Un store hors de portée Bluetooth de SOMA Connect est affiché « non lu » et
+  son badge injoignable ; les autres continuent.
+- SOMA Connect injoignable : nouvel essai après 30 s, 1, 2 puis 5 min (pas
+  plus souvent que l'intervalle). Un « trop de demandes » (HTTP 429), ou une
+  erreur 5xx sur la liste des appareils, met en pause les mouvements (ce que
+  demande Retry-After, de 1 min à 6 h ; sinon de 1 à 5 min ; gardée dans
+  `/data`) et les lectures (jamais avant l'intervalle de toute façon) ; la
+  pause ne retient ni l'arrêt ni la fermeture. Une erreur 5xx sur un seul
+  store marque seulement ce store « non lu ».
+- La forme des adresses suit pysoma (`?mac=` pour le micrologiciel 3, `/<mac>`
+  sinon) ; après un 404 l'autre forme est essayée aussitôt, et celle qui a
+  répondu est gardée pour les demandes suivantes.
+- Une position n'est publiée que tant qu'elle est récente ; rien d'ancien
+  n'est republié comme neuf.
+
+## Limites
+
+- Un seul SOMA Connect, 32 appareils au plus.
+- Le niveau de lumière du panneau solaire n'est pas encore lu (son unité n'est
+  pas connue).
+- Le type d'un appareil (store ou Tilt) changé dans SOMA Connect s'applique
+  après un **Scan** dans l'onglet Découverte.
+- Jamais testée avec un vrai SOMA Connect : la forme des adresses, les
+  réponses et le temps de réponse de SOMA Connect restent à vérifier.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par SOMA Connect dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Vos stores SOMA dans Gladys | `section` | Non | Chaque store SOMA Smart Shades ou Tilt appairé à votre SOMA Connect devient un volet dans l'onglet Découverte : ouverture, fermeture, arrêt, position et batterie. Gladys ne parle qu'en HTTP à SOMA Connect sur votre réseau local (port 3000) ; le lien Bluetooth vers les stores reste dans SOMA Connect. Pas de compte, pas de cloud. Jamais testée avec un vrai SOMA Connect pour l'instant. Non officiel, sans lien avec SOMA (Wazombi Labs). |
+| Adresse de SOMA Connect | `string` | Oui | L'adresse IP locale de votre SOMA Connect, par exemple 192.168.1.50 (port 3000 par défaut ; un autre port : 192.168.1.50:3001). Donnez-lui une adresse fixe dans votre box (réservation DHCP). |
+| Intervalle de lecture (s) | `number` | Non | Fréquence de lecture de la position de chaque store (30 à 3600 s). Après une commande, le store est aussi lu quelques fois pendant qu'il bouge. La batterie est lue au plus une fois par heure. |
+| Langue des noms des fonctionnalités | `select` | Non | Sert aux noms des fonctionnalités des stores ajoutés désormais. |
+
+## Comment installer SOMA Connect dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : SOMA Connect apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-soma-connect:0.1.2`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-soma-connect](https://github.com/LM1LC3N7/gladys-soma-connect).
+
+SOMA Connect nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+SOMA Connect est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-soma-connect) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-soma-connect/blob/HEAD/docs/fr.md)

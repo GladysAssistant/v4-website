@@ -1,0 +1,193 @@
+---
+title: "Intégration domotique Roth Touchline, gratuite et open source"
+sidebar_label: "Roth Touchline"
+description: "Plancher chauffant Roth Touchline (contrôleur Ethernet) : températures, consignes, modes par pièce. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-roth-touchline.png"
+keywords:
+  - "roth touchline"
+  - "domotique roth touchline"
+  - "gladys roth touchline"
+  - "roth touchline gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-roth-touchline instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Roth Touchline","description":"Plancher chauffant Roth Touchline (contrôleur Ethernet) : températures, consignes, modes par pièce.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-roth-touchline","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-roth-touchline.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-26T23:32:33Z"}} />
+
+Cette intégration affiche les pièces (thermostats d'ambiance) de votre plancher
+chauffant **Roth Touchline** dans Gladys, par le **régulateur Ethernet
+Touchline** branché sur votre réseau local. Elle lui parle directement, sans
+compte ni mot de passe, par les deux scripts CGI que le régulateur expose
+(lecture et écriture de valeurs).
+
+**Ce n'est pas Touchline SL** : Touchline SL est la gamme plus récente de Roth,
+pilotée par un service cloud avec un compte Roth ; elle a sa propre
+intégration (« Roth Touchline SL »). Si votre application Roth vous demande
+un compte, c'est Touchline SL.
+
+**Jamais testé avec un vrai appareil** : elle suit la bibliothèque
+pytouchline_extended (celle de l'intégration Home Assistant `touchline`),
+sans avoir pu être essayée sur une installation réelle. Dites-nous sur le
+forum si elle fonctionne chez vous. **Sans lien avec Roth.**
+
+## Ce qu'elle fait
+
+Pour chaque pièce connue du régulateur, un appareil « Nom de la pièce
+(Touchline) » avec :
+
+- la température de la pièce (lecture seule) ;
+- la consigne (thermostat) ;
+- le mode : normal, nuit ou vacances (liste) ;
+- le programme hebdomadaire : aucun, 1, 2 ou 3 (liste).
+
+Quand un programme est actif, c'est lui qui décide du mode au fil de la
+journée ; « aucun » laisse le mode choisi s'appliquer en permanence.
+
+## Installation
+
+1. Installez l'intégration depuis le store de Gladys.
+2. Saisissez l'adresse IP du régulateur Touchline (celle de son interface
+   web), puis enregistrez.
+3. Ouvrez l'onglet **Découverte** et ajoutez les pièces voulues.
+
+Le bouton **Tester la connexion** lit le régulateur une fois, si l'intervalle
+de rafraîchissement le permet, et affiche son état.
+
+Les appareils sont identifiés par les deux numéros que le régulateur donne à
+chaque thermostat (celui du régulateur et celui du thermostat), pas par leur
+position dans la liste : retirer un thermostat ne mélange pas les autres. Un
+thermostat dont ces numéros ne se lisent pas n'est pas proposé.
+
+## Commandes (désactivées par défaut)
+
+Par défaut, Gladys ne fait que lire. Deux options séparées :
+
+- **Autoriser les commandes de consigne** : le tableau de bord, les scènes et
+  les assistants vocaux peuvent changer la consigne d'une pièce.
+- **Autoriser les commandes de mode et de programme** : les listes « Mode »
+  et « Programme hebdomadaire » peuvent être changées depuis Gladys.
+
+Bornes de sécurité :
+
+- une consigne va de 5 °C au **plafond des consignes**, **24 °C par défaut**,
+  réglable de 16 à 30 °C ; les **limites du régulateur** lui-même (minimum
+  et maximum réglés pour la pièce) s'appliquent aussi, et ne sont jamais
+  modifiées par Gladys ;
+- le plafond, l'option et les limites sont revérifiés juste avant l'envoi :
+  si l'un d'eux a changé pendant la commande, rien ne part ;
+- aucune commande ne passe par un interrupteur : un « éteins tout » d'un
+  assistant vocal ne touche pas le chauffage. Le régulateur Touchline n'a pas
+  de commande d'arrêt du chauffage : baisser la consigne ou passer en mode
+  vacances sont des commandes comme les autres, soumises aux mêmes options.
+
+Chaque commande relit la pièce juste avant d'agir, vérifie que c'est bien le
+thermostat visé qui répond à cette position, et décide sur cette lecture ;
+elle part dans les 3,5 s ou est refusée sans rien envoyer. Le régulateur
+renvoie la valeur écrite (l'écho), puis la pièce est **relue** : la commande
+n'est réussie que si la valeur relue est celle demandée. Si l'écho arrive
+trop tard pour relire dans le délai de Gladys, Gladys affiche « envoyée et
+renvoyée par le régulateur : vérification par une relecture dans quelques
+secondes » ; sans écho à temps, « envoyée, sans confirmation ». Dans les deux
+cas la pièce est relue 5 s et 20 s plus tard (ces relectures attendent leur
+tour, elles ne sont jamais sautées). Si une relecture contredit l'écho, la
+commande est dite « sans effet » dans l'état de l'intégration, le journal et
+le badge de la pièce, jusqu'à la lecture suivante. Une lecture faite avant
+une écriture n'est jamais publiée après elle.
+
+Les commandes attendent leur tour dans une file (8 au plus), une écriture à
+la fois, espacées de 0,5 s après la réponse de la précédente ; chacune garde
+son délai de 3,5 s depuis son arrivée. Une scène qui règle plusieurs pièces
+l'une après l'autre les règle toutes ; une scène qui les règle en même temps
+en règle quelques-unes d'affilée (6 au plus avec un régulateur rapide,
+moins s'il est lent) : au-delà, ou si une pièce répond « non envoyée à
+temps », laissez environ 4 s entre deux pièces.
+
+Une commande est refusée, sans rien envoyer, dans ces cas : configuration
+de l'intégration pas encore chargée ; option désactivée ; valeur hors bornes,
+pas au dixième de degré, ou mode/programme inconnu ; 8 commandes déjà en
+attente ; lecture du régulateur en pause après des échecs ; pièce inconnue ;
+aucun thermostat ou un autre thermostat à sa position ; état actuel illisible
+(lecture fraîche en échec ou réponse invalide) ; limites de consigne
+illisibles ou incohérentes, ou minimum de la pièce au-dessus du plafond ; adresse ou option changée pendant la commande ;
+régulateur trop lent, lecture en cours trop longue, ou trop de commandes
+avant elle pour partir à temps ; connexion refusée avant l'envoi (« commande
+non envoyée » et la raison). Une écriture partie peut aussi revenir « le
+régulateur a refusé la commande » (réponse d'erreur 4xx).
+
+## Limites et sécurité
+
+- Lecture toutes les 60 s (de 30 s à 10 min), toutes les pièces à la suite,
+  une requête à la fois ; une pièce qui ne répond pas laisse les autres se
+  lire ; si toutes échouent, c'est une lecture en échec (pause ci-dessous).
+  Une lecture n'entame plus de nouvelle pièce passé 45 s (et jamais au-delà
+  de l'intervalle moins 10 s) ; la suivante reprend à la première pièce non
+  lue, si bien qu'aucune n'est oubliée ; une pièce pas encore relue garde ses
+  dernières valeurs et reste commandable, son badge passe en dégradé après
+  deux lectures sans elle. Le régulateur se repose au moins une
+  demi-intervalle entre deux lectures. Jamais deux lectures à moins d'un
+  intervalle, même après un redémarrage (l'heure de la dernière tentative
+  est gardée dans `/data` à chaque lecture).
+- Configuration de Gladys illisible au démarrage : nouvel essai après 5 s,
+  15 s, 1 min puis toutes les 5 min, avec un état qui le dit.
+- Une pièce ajoutée ou modifiée dans Gladys reçoit tout de suite ses
+  dernières valeurs seulement si elles sont fraîches (sinon à la lecture
+  suivante).
+- Régulateur injoignable : pause de 1, 2, 5, 10 puis 15 min (jamais moins
+  que l'intervalle), gardée dans `/data`, pour les lectures, le bouton et
+  les commandes.
+- `/data` ne contient ni l'adresse du régulateur ni aucun secret (il n'y en a
+  pas) : seulement l'heure de la dernière tentative, la pause et l'heure de
+  la dernière écriture, rattachées à une empreinte de l'adresse.
+- Le régulateur expose son mot de passe d'interface (`CD.upass`) à qui le lui
+  demande : l'intégration ne le demande jamais.
+- La requête de lecture s'identifie comme « gladys-roth-touchline », pas comme
+  le logiciel Roth. Si votre régulateur n'y répond pas, dites-le sur le forum.
+- 32 pièces au plus par régulateur.
+
+## Crédits
+
+Le protocole du régulateur et la forme de ses réponses viennent de
+[pytouchline_extended](https://github.com/brondum/pytouchline) (brondum,
+d'après pytouchline d'abondoe, MIT), la bibliothèque de l'intégration Home
+Assistant `touchline`. Voir `THIRD_PARTY_NOTICES.md`.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Roth Touchline dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre régulateur Touchline | `section` | Non | Amène dans Gladys les thermostats d'ambiance d'un plancher chauffant Roth Touchline par son régulateur Ethernet, sur votre réseau local (sans compte ni mot de passe) : température, consigne, mode et programme hebdomadaire de chaque pièce. Consignes, modes et programmes ne se changent depuis Gladys qu'une fois autorisés ci-dessous, dans les limites du régulateur et sous un plafond. Pas Touchline SL (un service cloud, une autre intégration). Jamais testé avec un vrai appareil. Sans lien avec Roth. |
+| Adresse IP du régulateur | `string` | Oui | L'adresse du régulateur Touchline sur votre réseau local (« :port » s'il n'est pas 80), sans chemin. |
+| Commandes (désactivées par défaut) | `section` | Non | Sans ces options, Gladys ne fait que lire. Chaque commande est décidée sur une lecture fraîche de l'appareil, dans les limites de consigne du régulateur et sous le plafond ci-dessous. Aucune commande ne passe par un interrupteur : un « éteins tout » n'atteint jamais le chauffage. Le régulateur n'a pas de commande d'arrêt. |
+| Autoriser les commandes de consigne | `boolean` | Non | Le tableau de bord, les scènes et les assistants vocaux peuvent changer la consigne d'une pièce. |
+| Autoriser les commandes de mode et de programme | `boolean` | Non | Le mode (normal, nuit, vacances) et le programme hebdomadaire (aucun, 1, 2, 3) d'une pièce peuvent être changés depuis Gladys. |
+| Plafond des consignes (°C) | `number` | Non | Une consigne au-dessus de cette valeur est refusée (16 à 30 °C). Les limites du régulateur lui-même s'appliquent aussi et ne sont jamais modifiées. |
+| Intervalle de rafraîchissement (s) | `number` | Non | Secondes entre deux lectures de toutes les pièces (30 à 600). Le régulateur est lent : lire beaucoup de pièces prend plusieurs secondes. |
+| Langue des noms | `select` | Non | Sert aux noms des appareils, fonctionnalités et options ajoutés désormais. |
+
+## Comment installer Roth Touchline dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Roth Touchline apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-roth-touchline:0.1.2`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-roth-touchline](https://github.com/LM1LC3N7/gladys-roth-touchline).
+
+Roth Touchline nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Roth Touchline est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-roth-touchline) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-roth-touchline/blob/HEAD/docs/fr.md)

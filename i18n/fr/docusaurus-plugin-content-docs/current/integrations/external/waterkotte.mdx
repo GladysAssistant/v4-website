@@ -1,0 +1,179 @@
+---
+title: "Intégration domotique Waterkotte, gratuite et open source"
+sidebar_label: "Waterkotte"
+description: "PAC Waterkotte EcoTouch en local : températures, état, commandes en option. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-waterkotte.png"
+keywords:
+  - "waterkotte"
+  - "domotique waterkotte"
+  - "gladys waterkotte"
+  - "waterkotte gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-waterkotte instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Waterkotte","description":"PAC Waterkotte EcoTouch en local : températures, état, commandes en option.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-waterkotte","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-waterkotte.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-28T02:59:28Z"}} />
+
+Affiche une pompe à chaleur Waterkotte dans Gladys par l'interface web locale
+de sa régulation (EcoTouch, ou l'ancienne EasyCon), sans cloud. Non officiel :
+sans lien avec Waterkotte. **Jamais testé avec une vraie pompe à chaleur** :
+écrit à partir de l'intégration Home Assistant libre
+[ha-waterkotte](https://github.com/marq24/ha-waterkotte) et testé avec une
+régulation simulée. Merci de signaler ce que vous voyez sur la vôtre.
+
+## Ce que vous obtenez
+
+Un appareil, « Pompe à chaleur Waterkotte », avec ce que sa régulation donne :
+
+- températures : extérieure, départ, retour et consigne de retour,
+  température demandée (chauffage), entrée et sortie source, ballon tampon,
+  pièce (si une sonde est branchée), eau chaude et température demandée
+  (eau chaude) ;
+- compresseur en marche, production d'eau chaude, alarme ;
+- puissance électrique (kW), puissance thermique (kW), COP ;
+- **Chauffage** et **Eau chaude** : Arrêt, Auto ou Manuel ;
+- **Consigne d'eau chaude** (°C).
+
+Les valeurs sont lues toutes les 60 secondes (30 à 600, dans la configuration).
+
+## Mise en place
+
+1. Trouvez l'adresse IP de la pompe à chaleur (sa page web) et donnez-lui une
+   adresse fixe dans votre routeur.
+2. Dans Gladys, ouvrez la configuration de l'intégration : saisissez
+   l'adresse, choisissez la régulation (**EcoTouch** si la page web demande un
+   mot de passe, même si elle affiche « EasyCon » ; **EasyCon** pour les
+   anciennes régulations sans page de connexion), le nom d'utilisateur
+   (`waterkotte` sauf si votre installateur l'a changé) et le mot de passe de
+   la page web. Enregistrez.
+3. Ajoutez la pompe à chaleur depuis l'onglet **Découverte**.
+
+Le mot de passe est gardé par Gladys dans sa base, jamais réaffiché, envoyé
+seulement à la pompe à chaleur. La page web est en HTTP simple : gardez la
+pompe à chaleur sur un réseau de confiance.
+
+### Sessions
+
+La régulation accepte peu de sessions à la fois (deux selon ha-waterkotte ;
+sa page web ouverte dans un navigateur en prend une) et ferme une session
+inactive après 5 minutes environ : après un redémarrage de Gladys, l'ancienne
+session peut rester prise aussi longtemps. Gladys garde une seule session
+ouverte, la ferme quand il s'arrête ou quand la configuration change
+(enregistrée plusieurs fois de suite : appliquée l'une après l'autre, la
+dernière enregistrée l'emporte), et se reconnecte au plus une fois par
+lecture ou par commande, jamais en boucle.
+Quand la régulation répond « trop d'utilisateurs », Gladys fait une pause de
+1 minute, puis 2, 4… jusqu'à 6 heures, et l'indique dans l'écran de
+configuration. Quand elle refuse le nom d'utilisateur ou le mot de passe,
+Gladys arrête d'essayer : corrigez-les puis enregistrez, ou cliquez sur
+**Tester la connexion** (un essai par clic).
+
+## Commandes
+
+L'**Arrêt** (chauffage ou eau chaude) est une commande de mise à l'arrêt :
+il ne dépend ni de l'option « Autoriser les commandes », ni d'une pause, ni
+d'une lecture en cours. Il est écrit, puis relu :
+
+- relu à l'Arrêt : fait ;
+- sinon Gladys répond « non envoyé », « envoyé, sans confirmation » ou « pas
+  encore appliqué », garde l'arrêt (y compris après un redémarrage) et
+  l'écrit avec les lectures suivantes : réécrit 3 fois au plus, et abandonné
+  15 minutes après le clic quelles que soient les lectures. Une fois écrit,
+  il n'est pas réécrit par-dessus une valeur réglée après le clic par
+  quelqu'un d'autre (sur la régulation, sa page web) ; une commande plus
+  ancienne de Gladys ne compte pas. Un arrêt pas encore écrit est réessayé
+  10 secondes plus tard, puis chaque minute ; pendant une pause aussi,
+  jusqu'à ses 15 minutes (une connexion par minute au plus). Un tel arrêt
+  peut donc partir jusqu'à 15 minutes après le clic, une fois, par-dessus
+  un réglage fait entre-temps sur la régulation.
+
+L'Arrêt est refusé, rien n'est envoyé, dans ces cas seulement :
+
+- la régulation est une EasyCon (lecture seule dans cette intégration) ;
+- l'adresse ou le mot de passe manque : l'arrêt est gardé et écrit dès que la
+  configuration est complète (15 minutes au plus) ;
+- la pompe à chaleur a refusé les identifiants auparavant : l'arrêt est gardé
+  et écrit dès leur correction (15 minutes au plus) ;
+- rien n'a pu être écrit en 3 secondes (pas de réponse, réseau coupé,
+  connexion refusée « trop d'utilisateurs ») : l'arrêt est gardé et écrit
+  par les lectures suivantes.
+
+**Auto**, **Manuel** et la **consigne d'eau chaude** sont refusés tant que
+vous n'activez pas **Autoriser les commandes** (désactivé par défaut).
+Ensuite :
+
+- la consigne d'eau chaude prend des degrés entiers de 28 °C au plafond de la
+  configuration, **65 °C par défaut**, de 40 à 65 °C (jamais plus de 65 °C,
+  quoi qu'on saisisse) : risque de brûlure ;
+- chaque commande lit la valeur et le numéro de série de la pompe à chaleur
+  juste avant d'écrire, et ne réussit que si une relecture montre la valeur
+  demandée ;
+- une commande refusée ou annulée dit « rien envoyé » ; une commande partie
+  sans réponse dit « envoyée, sans confirmation » et la valeur est relue 5 et
+  20 secondes plus tard ;
+- une commande cliquée avant un Arrêt de la même valeur (ou une consigne
+  d'eau chaude cliquée avant un Arrêt de l'eau chaude) ne part jamais après
+  lui.
+
+L'intégration n'a aucun interrupteur : un « tout éteindre » d'un assistant
+vocal ou d'une scène n'atteint pas la pompe à chaleur.
+
+## Limites
+
+- Une pompe à chaleur par intégration. Son numéro de série est vérifié à
+  chaque lecture et avant chaque commande : si une autre pompe à chaleur
+  répond à l'adresse, rien n'est publié et les commandes autres que l'Arrêt
+  sont refusées.
+- La régulation répond à une requête à la fois : si elle est lente (plus
+  d'une demi-seconde environ par requête), une scène qui change plusieurs
+  valeurs d'un coup peut voir les dernières refusées « pas de réponse à
+  temps : rien envoyé ».
+- EasyCon : lecture seule, et ses tags sont ceux d'EcoTouch (non vérifiés).
+- La liste des tags vient de ha-waterkotte ; Waterkotte n'en publie pas.
+
+## Remerciements
+
+Construit sur le travail de Matthias Marquardt et des contributeurs de
+[ha-waterkotte](https://github.com/marq24/ha-waterkotte) (MIT).
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Waterkotte dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre pompe à chaleur | `section` | Non | Affiche votre pompe à chaleur Waterkotte (régulation EcoTouch, ou l'ancienne EasyCon) dans Gladys par son interface web locale, sans cloud : températures, compresseur, eau chaude, alarme, et en option le fonctionnement du chauffage et de l'eau chaude et la consigne d'eau chaude. Saisissez l'adresse IP de la pompe à chaleur (donnez-lui une adresse fixe dans votre routeur) et le mot de passe de sa page web, enregistrez, puis ajoutez-la depuis l'onglet Découverte. La régulation accepte peu de sessions à la fois : Gladys en garde une ouverte. La page web est en HTTP simple : gardez la pompe à chaleur sur un réseau de confiance. Jamais testé avec une vraie pompe à chaleur. Sans lien avec Waterkotte. |
+| Adresse IP de la pompe à chaleur | `string` | Oui | L'adresse de sa page web : une adresse IPv4 ou un nom d'hôte (port 80 sauf si vous en ajoutez un, par exemple 192.168.1.50:8080). |
+| Régulation | `select` | Non | EcoTouch si la page web demande un mot de passe (même si elle affiche « EasyCon ») ; EasyCon pour les anciennes régulations sans page de connexion (lecture seule ici). |
+| Nom d'utilisateur | `string` | Non | L'utilisateur de la page web : waterkotte sauf si votre installateur l'a changé. |
+| Mot de passe | `secret` | Non | Le mot de passe de la page web de la pompe à chaleur. Gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement à la pompe à chaleur. |
+| Autoriser les commandes | `boolean` | Non | Désactivé par défaut. Activé : Gladys peut mettre le chauffage et l'eau chaude en Auto ou en Manuel et changer la consigne d'eau chaude, jusqu'au plafond ci-dessous. Désactivé : ces commandes sont refusées. Mettre le chauffage ou l'eau chaude à l'Arrêt ne dépend pas de cette option. |
+| Plafond de l'eau chaude (°C) | `number` | Non | Risque de brûlure : Gladys ne règle jamais l'eau chaude au-dessus de cette température. 65 °C par défaut, de 40 à 65 °C (jamais plus de 65 °C, quoi qu'on saisisse). |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture de la pompe à chaleur, en secondes. |
+| Langue des noms des fonctionnalités | `select` | Non | Sert aux noms de l'appareil et des fonctionnalités ajoutés désormais, aux options et aux erreurs des commandes. |
+
+## Comment installer Waterkotte dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Waterkotte apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-waterkotte:0.1.2`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-waterkotte](https://github.com/LM1LC3N7/gladys-waterkotte).
+
+Waterkotte nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Waterkotte est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-waterkotte) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-waterkotte/blob/HEAD/docs/fr.md)

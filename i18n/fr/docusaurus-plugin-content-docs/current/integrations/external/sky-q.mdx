@@ -1,0 +1,237 @@
+---
+title: "Intégration domotique Sky Q, gratuite et open source"
+sidebar_label: "Sky Q"
+description: "Décodeurs Sky Q en local : veille, chaîne, lecture, pause, touches de télécommande. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-sky-q.png"
+keywords:
+  - "sky q"
+  - "domotique sky q"
+  - "gladys sky q"
+  - "sky q gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-sky-q instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Sky Q","description":"Décodeurs Sky Q en local : veille, chaîne, lecture, pause, touches de télécommande.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-sky-q","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-sky-q.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-27T10:16:06Z"}} />
+
+Pilotez vos décodeurs **Sky Q** depuis Gladys, sur votre réseau local, sans
+aucun cloud : état d'alimentation, réveil et mise en veille, chaîne, lecture,
+pause, les autres touches de la télécommande, la chaîne ou l'enregistrement en
+cours et la part du disque des enregistrements utilisée. L'intégration utilise
+les ports locaux du décodeur (REST 9006, UPnP/SOAP 49153, télécommande 49160),
+ceux qu'utilisent les applications Sky et les bibliothèques de la communauté.
+
+> **Intégration non officielle, sans lien avec Sky.** Ce premier jalon a été
+> écrit et testé avec des décodeurs simulés : l'intégration n'a **jamais été
+> testée avec un vrai décodeur**. Vos retours sont les bienvenus.
+
+## Décodeurs pris en charge
+
+- Décodeurs Sky Q principaux (Royaume-Uni, Irlande, Italie, Allemagne).
+- Les Sky Q Mini et les TV Sky Glass (types `IPSETTOPBOX` et `TV`) sont lus
+  (état d'alimentation, disque) mais ne prennent aucune touche, et leur
+  lecture n'est pas lue, comme dans la bibliothèque de référence.
+
+## Préparer le décodeur
+
+Donnez au décodeur une **adresse IP fixe** dans votre box (bail DHCP réservé).
+Le décodeur doit être sur le même réseau que Gladys. Aucun réglage du
+décodeur n'est connu comme nécessaire (pas encore vérifié sur un vrai
+décodeur).
+
+## Ajouter un décodeur
+
+- **Par son adresse** : saisissez l'adresse IP dans « Adresses IP des
+  décodeurs » (plusieurs adresses séparées par des virgules) et enregistrez.
+- **Par la recherche** : utilisez **Chercher les décodeurs**. Gladys cherche
+  sur le réseau (SSDP, cible `urn:schemas-nds-com:device:SkyControl:2`) pour
+  l'intégration ; un réseau qui bloque le multicast peut cacher le décodeur :
+  saisissez alors son adresse.
+
+Le décodeur apparaît dans l'onglet **Découverte** de l'intégration : créez-le.
+Ses états arrivent avec la lecture suivante (au plus un intervalle de
+rafraîchissement plus tard).
+
+## Ce que vous obtenez
+
+| Fonction (nom dans Gladys) | Détail                                                                                                                |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Power                      | Lecture seule : 1 allumé, 0 en veille ou sans réponse                                                                 |
+| Reachable                  | Lecture seule : 1 le décodeur répond sur le réseau (allumé ou en veille)                                              |
+| Wake up                    | Bouton : « Accueil » puis « Fermer », envoyés seulement quand le décodeur vient d'être lu en veille                   |
+| Standby                    | Bouton : la touche marche, envoyée seulement quand le décodeur vient d'être lu allumé                                 |
+| Channel                    | Lue pendant la TV en direct ; la régler tape les chiffres du numéro, à 300 ms d'intervalle                            |
+| Boutons                    | Lecture, pause, stop, enregistrer, retour rapide, avance rapide, chaîne +/-, flèches, OK, retour, Sky, guide TV, info |
+| Remote key                 | Liste des touches (couleurs, chiffres, texte, aide, Box Office...), jamais la touche marche                           |
+| Channel name               | Lecture seule, `-` quand aucune chaîne en direct n'est affichée                                                       |
+| Recording played           | Lecture seule : le titre de l'enregistrement lu, `-` sinon                                                            |
+| Playback                   | Lecture seule : en lecture, en pause ou à l'arrêt                                                                     |
+| Recordings disk used       | Lecture seule, en pourcentage utilisé, lu toutes les 10 minutes                                                       |
+
+Il n'y a pas d'interrupteur : le réveil et la mise en veille sont deux
+boutons, qu'une commande générique marche/arrêt (scène « tout éteindre »,
+assistant vocal) n'atteint pas, et la bascule marche ne part que par le bouton
+Standby gardé. Pas de volume : le décodeur n'en a
+pas que le réseau puisse lire ou régler. Le guide des programmes (EPG) n'est
+pas lu : il est seulement en ligne, et cette intégration reste sur votre
+réseau local.
+
+## Comment une commande part
+
+Les commandes vers un décodeur partent l'une après l'autre ; chacune dispose
+de 3,5 s à partir de la demande de Gladys, attente des précédentes comprise.
+Avant toute touche, l'intégration lit le numéro de série à l'adresse du
+décodeur : une touche ne part qu'après la lecture du numéro de série du
+décodeur lui-même à cette adresse (un décodeur remplacé, ou déplacé par le
+DHCP, ne reçoit pas de touche à une adresse où un autre décodeur répond).
+
+- **Wake up** (réveiller) : l'état d'alimentation est lu ; en veille, « Accueil » puis
+  « Fermer » sont envoyés (la façon dont l'intégration Home Assistant réveille
+  un décodeur : ces touches ne sont pas une bascule). Déjà allumé : rien n'est
+  envoyé.
+- **Standby** (mettre en veille) : l'état d'alimentation est lu ; allumé, la touche
+  marche est envoyée. Déjà en veille : rien n'est envoyé. La touche marche est
+  une bascule : elle n'est envoyée que sur un état lu juste avant.
+- La mise en veille et le réveil n'envoient **rien** (« nothing sent » dans
+  les journaux) quand : l'adresse du décodeur est inconnue, le décodeur ne
+  répond pas, son numéro de série est illisible ou celui d'un autre décodeur,
+  son état d'alimentation est illisible, c'est un Sky Q Mini ou une TV Sky
+  Glass, son port de télécommande refuse la connexion, ou les 3,5 s sont
+  écoulées avant.
+- Le protocole de la télécommande n'a pas d'accusé de réception : une touche
+  partie est « envoyée, sans confirmation ». Le décodeur est relu 5 s après
+  un réveil, une mise en veille, une chaîne, lecture, pause, stop ou une
+  touche chaîne (et 20 s après un réveil ou une mise en veille). Un réveil ou
+  une mise en veille qui n'a pas changé l'état au bout de 20 s est écrit dans
+  les journaux ; il n'est pas renvoyé de lui-même (une seconde bascule pourrait
+  défaire la première).
+- Après un réveil ou une mise en veille, ni l'un ni l'autre ne repart tant
+  qu'une lecture n'a pas montré l'état changé, ou pendant 30 s (un décodeur
+  applique une touche une ou deux secondes plus tard : une seconde bascule lue
+  sur l'ancien état déferait la première). Entre-temps, ils sont refusés
+  (« not seen applied yet (retry in up to 30 s): nothing sent »). La garde est
+  gardée dans `/data` avec son heure murale : après un redémarrage de
+  l'intégration, elle est active si elle a moins de 30 s, ou si l'horloge
+  semble avoir reculé. Si `/data` est illisible, ils sont refusés (« /data
+  cannot be read ... : nothing sent ») tant qu'il ne l'est pas, et au plus 30 s
+  après le démarrage (une garde du lancement précédent ne peut pas être plus
+  vieille). Si la garde ne peut pas être écrite dans `/data`, la touche n'est
+  pas envoyée.
+- Entre la lecture de l'état et la touche, la poignée de main de la
+  télécommande prend un instant (jusqu'à 1,5 s) : un changement fait à ce
+  moment avec la télécommande Sky n'est pas vu.
+- Une chaîne est tapée chiffre par chiffre. Quand la liste des chaînes du
+  décodeur est connue, un numéro qui n'y est pas est refusé. Un numéro dont
+  les chiffres ne peuvent pas tous être tapés dans le temps restant n'est pas
+  commencé.
+
+## L'User-Agent « SKYPLUS_skyplus »
+
+Pour trouver son service SkyPlay, un décodeur publie jusqu'à 50 fichiers de
+description sur son port UPnP. La bibliothèque de référence les demande avec
+l'User-Agent du logiciel du décodeur, `SKYPLUS_skyplus` : certains décodeurs ne
+répondraient qu'ainsi (pas encore vérifié sur un vrai décodeur). Avec l'accord explicite du mainteneur de
+ces intégrations, cette intégration peut l'envoyer, selon ces règles :
+
+- chaque fichier de description est d'abord demandé avec l'User-Agent propre
+  de l'intégration (`gladys-sky-q`) ;
+- `SKYPLUS_skyplus` n'est envoyé pour un fichier qu'après un refus HTTP
+  explicite de ce fichier avec l'User-Agent propre (une réponse autre que 200
+  et 404), et seulement tant qu'aucun fichier n'a répondu à l'User-Agent
+  propre ; un 404, une absence de réponse ou une réponse coupée n'y mènent
+  pas ;
+- une seule passe sur les fichiers ; après une recherche vaine, ou une erreur
+  du service SOAP, les fichiers sont redemandés 10 minutes plus tard au plus
+  tôt ;
+- il ne part que vers l'adresse du décodeur lui-même, sur son port UPnP
+  (49153), pour ces seuls fichiers de description : les requêtes REST, les
+  requêtes SOAP et les touches portent l'User-Agent propre de l'intégration
+  ou aucun ;
+- une fois qu'un User-Agent a obtenu un fichier de description d'un
+  décodeur, l'autre n'est plus essayé pour ce décodeur jusqu'au redémarrage de
+  l'intégration ou un changement d'adresse du décodeur.
+
+Aucune autre imitation d'application n'est utilisée, et les services en ligne
+de Sky (guide, images) ne sont pas contactés.
+
+## Configuration
+
+| Champ                              | Détail                                                                     |
+| ---------------------------------- | -------------------------------------------------------------------------- |
+| Adresses IP des décodeurs          | Séparées par des virgules ; les décodeurs trouvés par la recherche restent |
+| Intervalle de rafraîchissement (s) | 5 à 300, 15 par défaut : fréquence de lecture des décodeurs                |
+
+Une adresse invalide est ignorée ; le statut de l'intégration dit combien
+l'ont été (sans les réafficher).
+
+**Vérifier les décodeurs** montre, pour chaque décodeur connu, ce que la
+dernière lecture a trouvé et il y a combien de temps. Il ne lance une lecture
+que quand elle est due : jamais plus tôt que l'intervalle de rafraîchissement.
+
+## Statut de l'intégration
+
+- **Aucun décodeur ne répond** : tous les décodeurs créés n'ont pas répondu à
+  leur dernière lecture.
+- **Un autre décodeur répond à l'adresse de...** : le numéro de série lu à
+  l'adresse d'un décodeur est celui d'un autre. Le premier ne reçoit plus de
+  commande tant qu'il n'est pas retrouvé (recherche ou nouvelle adresse).
+- **La configuration n'a pas pu être lue** : Gladys ne l'a pas donnée ; elle
+  est redemandée toutes les 30 s, et les décodeurs déjà connus continuent
+  d'accepter les commandes.
+- **Les données enregistrées sont illisibles** : `/data/sky-q.json` existe
+  mais ne peut pas être lu ; il est laissé tel quel et rien n'est enregistré
+  tant que ce n'est pas réparé. Un fichier qui n'est pas du JSON valide est
+  déplacé dans `sky-q.json.bad`.
+
+## Ce que l'intégration garde
+
+Dans son dossier de données (`/data/sky-q.json`) : les décodeurs connus
+(numéro de série, adresse, modèle), l'heure de la dernière lecture, pour
+qu'un redémarrage ne lise pas plus tôt que l'intervalle, et la garde d'un
+réveil ou d'une mise en veille qui vient de partir. Aucun mot de passe :
+un décodeur n'en demande pas.
+
+## Limites de ce premier jalon
+
+- Jamais testée avec un vrai décodeur (voir le TODO du dépôt pour ce qu'il
+  faut vérifier d'abord).
+- Pas de titre de programme pour la TV en direct (le guide est seulement en
+  ligne).
+- L'application en cours sur le décodeur (Netflix, YouTube...) n'est pas lue.
+- Pas de gestion des enregistrements (supprimer, garder, programmer).
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Sky Q dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Vos décodeurs Sky Q, sur votre réseau local | `section` | Non | État d'alimentation, réveil et mise en veille, chaîne, lecture, enregistrement lu, disque des enregistrements et touches de télécommande, par les ports locaux du décodeur (REST 9006, UPnP 49153, télécommande 49160), sans aucun cloud et sans le guide des programmes en ligne. Donnez à chaque décodeur une adresse IP fixe dans votre box, puis saisissez les adresses ci-dessous, ou utilisez « Chercher les décodeurs ». Les décodeurs apparaissent alors dans l'onglet Découverte. Décodeurs Sky Q principaux (Royaume-Uni, Irlande, Italie, Allemagne) ; les Sky Q Mini et les TV Sky Glass sont lus mais ne prennent aucune touche. Intégration non officielle, sans lien avec Sky. |
+| Adresses IP des décodeurs | `string` | Non | Séparées par des virgules, par exemple 192.168.1.50, 192.168.1.51. Les décodeurs trouvés par la recherche sont gardés sans être saisis ici. |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture des décodeurs, en secondes. |
+
+## Comment installer Sky Q dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Sky Q apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-sky-q:0.1.2`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-sky-q](https://github.com/LM1LC3N7/gladys-sky-q).
+
+Sky Q nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Sky Q est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-sky-q) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-sky-q/blob/HEAD/docs/fr.md)

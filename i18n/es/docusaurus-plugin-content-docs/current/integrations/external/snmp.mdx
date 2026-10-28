@@ -19,7 +19,7 @@ https://github.com/prohand/gladys-snmp instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"SNMP","description":"Supervise switches, routers, NAS y SAI por SNMP: estado, tráfico, CPU, batería.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-snmp","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-snmp.png","type":"device","version":"1.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-23T17:31:24Z"}} />
+<ExternalIntegrationHeader integration={{"name":"SNMP","description":"Supervise switches, routers, NAS y SAI por SNMP: estado, tráfico, CPU, batería.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-snmp","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-snmp.png","type":"device","version":"1.2.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-10-25T16:55:50Z"}} />
 
 Esta integración lee sus equipos de red por **SNMP** — switches, routers,
 puntos de acceso Wi-Fi, NAS, servidores, SAI, PDU, impresoras — y convierte
@@ -31,6 +31,8 @@ Todo se queda en su red local: Gladys consulta sus equipos directamente
 (puerto UDP 161), nada pasa por una nube.
 
 ## Antes de empezar
+
+Esta integración necesita **Gladys 5.3.0 o posterior**.
 
 Active SNMP en cada equipo:
 
@@ -170,6 +172,8 @@ Campos de un agente:
 | `interfaces`                                                                | las interfaces a seguir, por índice o por nombre (16 como máximo)                                                                              |
 | `oids`                                                                      | sus propios OID, vea más abajo                                                                                                                 |
 | `refresh`                                                                   | intervalo de actualización de este equipo, en segundos (60 como mínimo)                                                                        |
+| `mac`                                                                       | dirección MAC de la máquina, para despertarla con la acción de escena **Despertar un agente SNMP** (Wake-on-LAN)                               |
+| `wake_address`                                                              | dirección de difusión del paquete Wake-on-LAN (`192.168.1.255`), si la máquina ignora la predeterminada                                        |
 
 **Interfaces.** Cada interfaz da tres funciones: enlace (1 = activo), tasa de
 entrada y tasa de salida en kbit/s. Use **Listar las interfaces** (más abajo)
@@ -266,6 +270,11 @@ función.
   una toma de una PDU, reiniciar un puerto PoE… Salidas: `success`, `error`.
 - **Consultar un agente SNMP ahora** — lee un equipo sin esperar. Salidas:
   `reachable`, `response_time`.
+- **Despertar un agente SNMP (Wake-on-LAN)** — envía un paquete Wake-on-LAN a
+  la máquina de un equipo declarado con su `mac` en la forma JSON (un NAS o un
+  servidor en reposo). Gladys emite el paquete en su red. Salidas: `sent`,
+  `error`. `sent` significa que el paquete salió, no que la máquina se haya
+  despertado: consulte el agente un minuto después.
 
 Una acción que falla nunca detiene la escena: compruebe `success` (o
 `reachable`) en una condición justo después.
@@ -303,7 +312,7 @@ Estos son los parámetros que SNMP te pide en su pantalla de configuración en G
 | Parámetro | Tipo | Obligatorio | Descripción |
 | --- | --- | --- | --- |
 | Primeros pasos | `section` | No | Gladys lee sus equipos por SNMP en su red local (UDP 161): switches, routers, puntos de acceso Wi-Fi, NAS, servidores, SAI, impresoras. Active SNMP en cada equipo (v2c con una comunidad de solo lectura es lo más sencillo) y pulse Escanear en la pestaña Descubrimiento, o lístelos abajo. Cada uno se convierte en un dispositivo Gladys: accesible, tiempo de respuesta y tiempo activo, más los perfiles elegidos (interfaces, host, ups) y sus propios OID. |
-| Agentes SNMP | `string` | No | Los equipos hallados por el escaneo no hace falta listarlos. Los demás, separados por comas: host[:puerto];nombre;perfiles — p. ej. 192.168.1.10;NAS;host, 192.168.1.20;SAI;ups. Perfiles: interfaces, host, ups (varios con +). Para interfaces, OID personalizados o credenciales por equipo, pegue una lista JSON: consulte la documentación. |
+| Agentes SNMP | `string` | No | Los equipos hallados por el escaneo no hace falta listarlos. Los demás, separados por comas: host[:puerto];nombre;perfiles — p. ej. 192.168.1.10;NAS;host, 192.168.1.20;SAI;ups. Perfiles: interfaces, host, ups (varios con +). Para interfaces, OID personalizados, credenciales por equipo o Wake-on-LAN, pegue una lista JSON: consulte la documentación. |
 | Acceso SNMP | `section` | No | Se usa para cada agente que no indique otra cosa en la lista JSON. |
 | Versión SNMP | `select` | No |  |
 | Comunidad (v1 / v2c) | `secret` | No | La comunidad de lectura de sus equipos. Si se deja vacía: public. Use una comunidad de solo lectura: Gladys solo escribe los OID que marque como modificables. |
@@ -322,11 +331,11 @@ Estos son los parámetros que SNMP te pide en su pantalla de configuración en G
 ## Cómo instalar SNMP en Gladys
 
 1. En Gladys, abre **Integraciones**: SNMP aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
-2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/prohand/gladys-snmp:1.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/prohand/gladys-snmp:1.2.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
 3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
 4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/prohand/gladys-snmp](https://github.com/prohand/gladys-snmp).
 
-SNMP requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+SNMP requiere Gladys `>=5.3.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
 
 ¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
 

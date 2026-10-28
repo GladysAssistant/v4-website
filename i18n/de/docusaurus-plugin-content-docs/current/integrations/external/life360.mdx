@@ -1,0 +1,198 @@
+---
+title: "Life360 Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Life360"
+description: "Familienpräsenz in Gladys: wer zu Hause ist, Orte, Akkustand, über Life360. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-life360.png"
+keywords:
+  - "life360"
+  - "life360 smart home"
+  - "gladys life360"
+  - "life360 gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/prohand/gladys-life360 instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Life360","description":"Familienpräsenz in Gladys: wer zu Hause ist, Orte, Akkustand, über Life360.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-life360","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-life360.png","type":"device","version":"0.0.3","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-10-27T17:21:49Z"}} />
+
+Diese Integration bringt die Mitglieder deiner [Life360](https://www.life360.com)-Kreise in
+Gladys: wer zu Hause ist, wo alle sind, den Akku ihres Telefons und ihre Entfernung von zu Hause.
+Zum Beispiel: die Alarmanlage einschalten, wenn die letzte Person geht, die Heizung hochdrehen,
+wenn jemand auf dem Heimweg ist, oder eine Nachricht bekommen, wenn ein Akku schwach wird.
+
+> Life360 hat keine offizielle öffentliche API. Die Integration nutzt die API der Life360-App,
+> wie die Home-Assistant-Integration. Life360 kann sie ohne Vorwarnung ändern.
+
+## Voraussetzungen
+
+- Gladys Assistant **5.3 oder neuer**.
+- Ein Life360-Konto, das Mitglied der zu folgenden Kreise ist.
+- Am besten die Koordinaten deines Hauses in Gladys (**Einstellungen → Häuser**): Sie dienen dazu,
+  „zu Hause“ zu erkennen und die Entfernung von zu Hause zu berechnen.
+
+## 1. Dein Life360-Zugriffstoken holen
+
+Life360 lehnt Anmeldungen mit Benutzername und Passwort inzwischen oft ab (es verlangt einen
+Bestätigungscode, den die Integration nicht eingeben kann). Der zuverlässige Weg: das
+Zugriffstoken einmal von der Life360-Website kopieren.
+
+1. Öffne auf einem Computer ein privates Browserfenster und gehe zu [https://life360.com/login](https://life360.com/login).
+2. Öffne die Entwicklertools (**F12**) und dann den Tab **Netzwerk**. Gib `token` in das
+   Filterfeld ein.
+3. Melde dich bei Life360 an (E-Mail oder Telefon, dann der Code, den Life360 dir schickt).
+4. Klicke auf die erscheinende Anfrage `token` (ein `POST` an `/v3/oauth2/token`) und dann auf den
+   Tab **Antwort** (oder **Vorschau**).
+5. Kopiere den Wert von `access_token` (eine lange Folge aus Buchstaben und Ziffern).
+
+Halte dieses Token geheim: Es gibt Zugriff auf die Standorte deiner Kreise. Es bleibt mehrere
+Wochen gültig; wenn Life360 es ablehnt, zeigt der Konfigurationsbildschirm das an, und du kopierst
+auf dieselbe Weise ein neues.
+
+## 2. Die Integration konfigurieren
+
+Öffne in Gladys **Integrationen → Life360 → Konfiguration**:
+
+| Feld                            | Was eintragen                                                                                                  |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Anmeldemethode                  | **Zugriffstoken** (empfohlen) oder **Benutzername und Passwort**.                                              |
+| Zugriffstoken                   | Das oben kopierte `access_token`. Das Präfix `Bearer` ist optional.                                            |
+| Benutzername / Passwort         | Nur für die Methode Benutzername und Passwort. Gespeichert wird das Token von Life360, nicht das Passwort.     |
+| Zu folgende Kreise              | Kreisnamen, durch Kommas getrennt, z. B. `Familie, Großeltern`. Leer: alle Kreise.                             |
+| Zuhause                         | Das Gladys-Haus, das „zu Hause“ bedeutet. Leer: das erste Haus mit Koordinaten.                                |
+| Life360-Ort für Zuhause         | Der Name deines Life360-Orts für zu Hause (Standard `Home`). Leer: nur die Koordinaten.                        |
+| Radius um Zuhause (m)           | Entfernung vom Haus, die noch als „zu Hause“ zählt (Standard 150 m).                                           |
+| Aktualisierungsintervall (s)    | Wie oft Life360 abgefragt wird (Standard 60 s, mindestens 15 s). Life360 begrenzt die Anfragen: nicht weniger. |
+| Schwelle für schwachen Akku (%) | Unter diesem Wert löst „Akku des Telefons schwach“ aus (Standard 20 %).                                        |
+| Ausführliche Logs               | Protokolliert jede Abfrage, zur Fehlersuche. Tokens und Passwörter werden nie protokolliert.                   |
+
+Speichere und drücke dann **Verbindung testen**: Die Antwort listet die Kreise, die Mitglieder und
+das als Zuhause verwendete Haus.
+
+## 3. Die Mitglieder hinzufügen
+
+Öffne den Tab **Erkennung** der Integration: Jedes Mitglied der verfolgten Kreise erscheint als
+Gerät mit dem Namen `<Vorname> <Nachname> (Life360)`. Lege die gewünschten an. Ein Mitglied in
+mehreren Kreisen ist ein einziges Gerät.
+
+Jedes Gerät hat diese Funktionen:
+
+| Funktion           | Werte                                                                         |
+| ------------------ | ----------------------------------------------------------------------------- |
+| At home            | 1 zu Hause, 0 abwesend.                                                       |
+| Phone battery      | Akku des Telefons des Mitglieds, in %.                                        |
+| Phone charging     | 1, solange das Telefon lädt.                                                  |
+| Distance from home | In km, vom Gladys-Haus aus (kein Wert, wenn das Haus keine Koordinaten hat).  |
+| Speed              | In km/h, 0 im Stillstand.                                                     |
+| Place              | Der Life360-Ort (Zuhause, Schule…), sonst die Adresse, sonst die Koordinaten. |
+
+**Wie „zu Hause“ bestimmt wird:** Ein Mitglied ist zu Hause, wenn sein Standort innerhalb des
+Radius um das Gladys-Haus liegt, **oder** wenn Life360 es an dem unter „Life360-Ort für Zuhause“
+angegebenen Ort sieht. Die Genauigkeit des Telefonstandorts wird berücksichtigt, bis zum Radius
+selbst.
+
+Das Abzeichen jedes Geräts zeigt **cloud**, wenn Life360 geantwortet hat, einen orangen Punkt,
+wenn Life360 keinen Standort für dieses Mitglied hat (Standortfreigabe aus, Telefon stumm), und
+**nicht erreichbar**, wenn Life360 nicht erreicht werden konnte.
+
+## Szenen
+
+### Auslöser
+
+Alle Auslöser können auf ein Mitglied gefiltert werden, die Orts-Auslöser auch auf einen Ortsnamen.
+Jeder gibt der Szene die Variablen `member_name`, `place`, `address`, `battery` und `distance_km`.
+
+| Auslöser                         | Schlüssel         | Wann                                                           |
+| -------------------------------- | ----------------- | -------------------------------------------------------------- |
+| Mitglied ist nach Hause gekommen | `arrived_home`    | Das Mitglied ist wieder zu Hause.                              |
+| Mitglied hat das Haus verlassen  | `left_home`       | Das Mitglied ist nicht mehr zu Hause.                          |
+| Mitglied an einem Ort angekommen | `place_arrived`   | Das Mitglied hat einen Life360-Ort betreten (Schule, Arbeit…). |
+| Mitglied hat einen Ort verlassen | `place_left`      | Das Mitglied hat einen Life360-Ort verlassen.                  |
+| Mitglied fährt los               | `driving_started` | Life360 hat erkannt, dass das Mitglied fährt.                  |
+| Akku des Telefons schwach        | `battery_low`     | Das Telefon ist unter die Schwelle gefallen und lädt nicht.    |
+
+Die Auslöser vergleichen zwei aufeinanderfolgende Abfragen: Ein Neustart der Integration löst nie
+„nach Hause gekommen“ für alle aus. Die Funktion „At home“ funktioniert auch mit dem
+Standard-Auslöser **Gerätezustand**.
+
+### Aktionen
+
+| Aktion                     | Schlüssel                 | Ergebnis                                                                                                                                      |
+| -------------------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| Ein Life360-Mitglied orten | `request_location_update` | Fordert vom Telefon des Mitglieds einen frischen Standort an. Ausgabe: `requested`.                                                           |
+| Ein Life360-Mitglied lesen | `get_member_status`       | Ausgaben `found`, `at_home`, `place`, `distance_km` (-1 unbekannt), `battery` (-1 unbekannt), `charging`, `driving`, `last_seen` (ISO-Datum). |
+
+## Dashboard-Widget
+
+Füge das Widget **Life360-Kreis** zu einem Dashboard hinzu: Akku-Kacheln der ersten Mitglieder,
+eine Zeile pro Mitglied (grün zu Hause), die Uhrzeit der letzten Abfrage, ein Knopf
+**Aktualisieren** und ein Knopf **Alle orten** (fordert nach einer Bestätigung von jedem Telefon
+einen frischen Standort an).
+
+## Fehlerbehebung
+
+- **„Life360 hat das Zugriffstoken abgelehnt“**: Das Token ist abgelaufen oder falsch kopiert.
+  Kopiere ein neues (Schritt 1).
+- **„Life360 akzeptiert dieses Zugriffstoken nicht (HTTP 403)“**: Der kopierte Wert ist nicht das
+  `access_token` der Anfrage `/v3/oauth2/token` (andere Anfrage oder die ganze Antwort). Kopiere
+  es erneut (Schritt 1).
+- **„Cloudflare … sperrt die Internetadresse von Gladys“**: Cloudflare vor Life360 lehnt deine
+  Verbindung ab (oft ein VPN, ein Proxy oder eine geteilte Adresse). Die Integration versucht es
+  alle 15 Minuten erneut; schalte das VPN aus oder warte ein paar Stunden.
+- **„Life360 hat die Anmeldung abgelehnt“** mit Benutzername und Passwort: Life360 will einen
+  Bestätigungscode. Wechsle zur Zugriffstoken-Methode.
+- **„Life360 begrenzt die Anfragen“**: Die Integration wartet so lange, wie Life360 es verlangt,
+  und macht dann weiter. Erhöhe das Aktualisierungsintervall.
+- **Ein Mitglied ist immer abwesend**: Prüfe die Koordinaten des Gladys-Hauses, vergrößere den
+  Radius oder gib den Namen deines Life360-Orts für zu Hause ein.
+- **Kein Standort für ein Mitglied**: Es hat die Standortfreigabe in der Life360-App
+  ausgeschaltet, oder sein Telefon hat sich länger nicht gemeldet (Energiesparmodus, kein Netz).
+
+## Datenschutz
+
+Token und Passwort bleiben in den geheimen Feldern der Integration und werden nur an Life360
+gesendet. Die Standorte werden nur in deinem Gladys veröffentlicht. Siehe
+[SECURITY.md](https://github.com/prohand/gladys-life360/blob/main/SECURITY.md).
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Life360 in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Erste Schritte | `section` | Nein | Life360 hat keine offizielle API: Die Integration nutzt die der Life360-App. Melde dich auf life360.com an, kopiere das Zugriffstoken (siehe Dokumentation) und füge es unten ein. Jedes Mitglied deiner Kreise wird ein Gladys-Gerät: zu Hause, Ort, Akku des Telefons, Entfernung von zu Hause. |
+| Anmeldemethode | `select` | Nein | Das Zugriffstoken ist der zuverlässige Weg: Life360 lehnt Anmeldungen mit Benutzername und Passwort inzwischen oft ab. |
+| Zugriffstoken | `secret` | Nein | Das von life360.com kopierte access_token (das Präfix „Bearer“ ist optional). |
+| Benutzername (E-Mail oder Telefon) | `string` | Nein | Nur bei der Methode Benutzername und Passwort. |
+| Passwort | `secret` | Nein | Nur bei der Methode Benutzername und Passwort. |
+| Zu folgende Kreise | `string` | Nein | Kreisnamen, durch Kommas getrennt. Leer lassen, um allen Kreisen zu folgen. |
+| Zuhause | `select` | Nein | Das Gladys-Haus, dessen Koordinaten „zu Hause“ bedeuten. Leer: das erste Haus mit Koordinaten. |
+| Life360-Ort für Zuhause | `string` | Nein | Name des Life360-Orts, der ebenfalls „zu Hause“ bedeutet. Leer: nur Koordinaten. |
+| Radius um Zuhause (m) | `number` | Nein | Entfernung vom Haus, die noch als „zu Hause“ zählt, in Metern. |
+| Aktualisierungsintervall (s) | `number` | Nein | Wie oft Life360 abgefragt wird, in Sekunden (mindestens 15). |
+| Schwelle für schwachen Akku (%) | `number` | Nein | Unter diesem Wert löst der Szenen-Auslöser „Akku des Telefons schwach“ aus. |
+| Ausführliche Logs | `boolean` | Nein | Protokolliert jede Life360-Abfrage, zur Fehlersuche. Tokens werden nie protokolliert. |
+
+## So installierst du Life360 in Gladys
+
+1. Öffne in Gladys **Integrationen**: Life360 erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/prohand/gladys-life360:0.0.3`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/prohand/gladys-life360](https://github.com/prohand/gladys-life360).
+
+Life360 benötigt Gladys `>=5.3.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Life360 ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [prohand](https://github.com/prohand) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/prohand/gladys-life360) — [Quelle dieser Dokumentation](https://github.com/prohand/gladys-life360/blob/HEAD/docs/de.md)

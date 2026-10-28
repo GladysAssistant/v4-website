@@ -1,0 +1,190 @@
+---
+title: "Mailcow smart home integration, free and open source"
+sidebar_label: "Mailcow"
+description: "Watch your mailcow mail server: containers, queue, quarantine, storage and mailboxes. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-mailcow.png"
+keywords:
+  - "mailcow"
+  - "mailcow smart home"
+  - "gladys mailcow"
+  - "mailcow gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/prohand/gladys-mailcow instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Mailcow","description":"Watch your mailcow mail server: containers, queue, quarantine, storage and mailboxes.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-mailcow","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-mailcow.png","type":"device","version":"2.0.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-10-26T21:17:06Z"}} />
+
+Watch your [mailcow: dockerized](https://mailcow.email) mail server from Gladys: containers,
+mail queue, quarantine, banned IPs, storage, domains and mailboxes — with scene triggers, scene
+actions and dashboard widgets.
+
+Requires **Gladys 5.3 or later** and a mailcow API key.
+
+## 1. Create an API key in mailcow
+
+1. Log in to the mailcow web interface as an administrator.
+2. Open **System → Configuration → Access → Administrators**, then unfold **API**.
+3. Choose the key:
+   - **Read-only**: enough to watch the server (recommended);
+   - **Read-write**: needed only if you want Gladys to flush the queue or turn domains and
+     mailboxes on and off.
+4. In **Allow API access from these IPs/CIDR**, add the IP address Gladys reaches mailcow from
+   (the IP of the Gladys host, or its public IP if mailcow is on the internet).
+5. Tick **Activate API** and save. Copy the key.
+
+> If the IP is missing, mailcow answers "api access denied for ip …": **Test the connection**
+> shows that IP, add it to the list.
+
+## 2. Configure the integration
+
+| Field                                    | What to put                                                                                     |
+| ---------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| LAN address                              | mailcow on your network, e.g. `https://192.168.1.20`. Empty if mailcow is elsewhere.            |
+| Public address                           | mailcow on the internet, e.g. `https://mail.example.com`.                                       |
+| API key                                  | The key copied above.                                                                           |
+| Check the certificate of the LAN address | Untick it when the LAN address is an IP (the certificate names the domain).                     |
+| Refresh interval (s)                     | How often the server is read: 60 s to 1 h, 300 s by default.                                    |
+| One device per domain                    | On by default.                                                                                  |
+| One device per mailbox                   | Off by default; for a server with a few mailboxes (200 at most).                                |
+| Allow changes                            | Off by default. On (with a read-write key): flush the queue, turn domains/mailboxes on and off. |
+| Thresholds                               | Queue (20 mails), storage (85 %), mailbox quota (90 %): used by the scene triggers.             |
+| Detailed logs                            | Logs every read. The API key is never logged.                                                   |
+
+Then click **Test the connection**: it reads the server and sums it up (version, containers,
+queue, quarantine, storage, domains, mailboxes), or says what is wrong.
+
+## 3. Local and cloud
+
+The integration knows two ways to reach mailcow:
+
+- the **LAN address** is the `local` transport;
+- the **public address** is the `cloud` transport (a server at a hosting provider, or your own
+  server reached over the internet).
+
+Give one or both. With both, the **Prefer the local connection** switch (shown by Gladys)
+chooses which one is tried first; the other one is the fallback. Every device shows a badge with
+the address that answered. When the fallback is used, the badge is **degraded** (orange dot):
+it works, but not through the preferred address.
+
+The certificate of the public address is always checked. Only the LAN address can skip the
+check.
+
+## 4. Devices
+
+Open **Integrations → Mailcow → Discovery** to create them.
+
+**mailcow server** (always): containers running, containers down, mail queue, quarantine,
+banned IPs, mail storage used (GB and %), domains, mailboxes, mailcow version.
+
+**mailcow &lt;domain&gt;** (one per domain): active (switch), mailboxes, aliases, messages,
+storage used.
+
+**&lt;mailbox address&gt;** (one per mailbox, if enabled): active (switch), quota used (%),
+storage used, messages.
+
+The **active** switches can be used from Gladys only when **Allow changes** is on; otherwise they
+are read-only.
+
+## 5. Scene triggers
+
+In a scene, pick **Integrations → Mailcow**. A trigger fires when something _changes_ between
+two reads: the first read after a start never fires anything.
+
+| Trigger                              | Key                   | Filters         | Variables                                          |
+| ------------------------------------ | --------------------- | --------------- | -------------------------------------------------- |
+| A mailcow container stopped          | `container_down`      | container       | `container`, `state`                               |
+| A mailcow container is running again | `container_up`        | container       | `container`                                        |
+| Mail queue too long                  | `queue_high`          | –               | `queue_size`, `threshold`                          |
+| Mail storage almost full             | `storage_high`        | –               | `used_percent`, `threshold`                        |
+| Mailbox almost full                  | `quota_high`          | domain, mailbox | `mailbox`, `domain`, `percent`, `threshold`        |
+| A mail was quarantined               | `quarantine_new`      | recipient       | `sender`, `recipient`, `subject`, `score`, `virus` |
+| An IP was banned                     | `ip_banned`           | –               | `ip`                                               |
+| mailcow server unreachable           | `connection_lost`     | –               | `reason`, `message`                                |
+| mailcow server reachable again       | `connection_restored` | –               | `transport`                                        |
+
+The thresholds fire once, when the value goes over them. Use the variables in the next actions,
+e.g. a message `{{triggerEvent.data.container}} is down`. At most 10 events of one kind are sent
+per read (a spam wave does not flood your scenes).
+
+## 6. Scene actions
+
+| Action                      | Key                  | Fields                  | Outputs                                                                       |
+| --------------------------- | -------------------- | ----------------------- | ----------------------------------------------------------------------------- |
+| Read the mailcow server now | `refresh`            | –                       | `reachable`, `queue_size`, `quarantine`, `containers_down`, `storage_percent` |
+| Flush the mail queue        | `flush_queue`        | –                       | `queued_before`                                                               |
+| Turn a mailbox on or off    | `set_mailbox_active` | mailbox address, active | `changed`                                                                     |
+
+`flush_queue` and `set_mailbox_active` need **Allow changes** and a read-write key.
+
+## 7. Dashboard widgets
+
+- **mailcow server**: address used, version, containers, stopped containers, queue, storage
+  gauge, quarantine and banned IPs, a **Refresh** button, a **Flush queue** button (when changes
+  are allowed, with a confirmation) and a link to mailcow.
+- **mailcow quarantine**: the last quarantined mails (subject, sender, recipient, score or
+  virus). Setting: number of mails (1 to 8).
+- **mailcow mailboxes**: the mailboxes closest to their quota. Settings: number (1 to 10) and an
+  optional domain.
+
+## 8. Troubleshooting
+
+| Message                             | What to do                                                                             |
+| ----------------------------------- | -------------------------------------------------------------------------------------- |
+| The mailcow server does not answer  | Check the address and that Gladys can reach it (firewall, DNS).                        |
+| The HTTPS certificate is refused    | For a LAN address written as an IP, untick "Check the certificate of the LAN address". |
+| The API key is refused              | Copy the key again; check that the API is activated.                                   |
+| mailcow refuses the API to the IP … | Add that IP to "Allow API access from these IPs/CIDR".                                 |
+| Something answered, but not the API | Give the address of the mailcow web interface, without any path.                       |
+| Changes are turned off              | Tick "Allow changes" and use the read-write key.                                       |
+| This API key is read-only           | Use the read-write key for changes.                                                    |
+
+A section mailcow does not answer (an older version, for instance) is simply left out: the rest
+is still read, and **Test the connection** lists what was not read.
+
+## Configuration settings
+
+These are the settings Mailcow asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Getting started | `section` | No | The integration reads your mailcow server through its API. In mailcow, open System → Configuration → Access → Administrators, unfold API, create a read-only key (or a read-write one to act from Gladys) and add the IP Gladys reaches mailcow from to the allowed addresses. Give the LAN address, the public one, or both: the "Prefer the local connection" switch chooses which one is tried first, the other one is the fallback. |
+| LAN address | `string` | No | The address of mailcow on your network (the "local" transport). Leave empty if mailcow is not on your network. |
+| Public address | `string` | No | The address of mailcow on the internet (the "cloud" transport), e.g. a server at a hosting provider. Its certificate is always checked. |
+| API key | `secret` | Yes | The read-only key is enough to watch the server. The read-write key also lets Gladys flush the queue and turn domains and mailboxes on or off, when "Allow changes" is ticked. |
+| Check the certificate of the LAN address | `boolean` | No | Reached by its IP, mailcow shows a certificate made for its domain name, which does not match: untick this for a LAN address written as an IP. The public address is always checked. |
+| Refresh interval (s) | `number` | No | How often the server is read, in seconds (one minute minimum). Every read is one request per section of the API. |
+| Devices | `section` | No | The server is always a device. Each domain and each mailbox can be one too, to follow it, chart it, or turn it on and off from Gladys. |
+| One device per domain | `boolean` | No |  |
+| One device per mailbox | `boolean` | No | For a server with a few mailboxes (200 at most are published). |
+| Allow changes | `boolean` | No | Let Gladys flush the mail queue and turn domains and mailboxes on or off (needs the read-write API key). Off, everything stays read-only. |
+| Alert thresholds | `section` | No | The scene triggers "Mail queue too long", "Mail storage almost full" and "Mailbox almost full" fire when a value goes over its threshold. |
+| Mail queue threshold | `number` | No |  |
+| Mail storage threshold (%) | `number` | No |  |
+| Mailbox quota threshold (%) | `number` | No |  |
+| Detailed logs (debug) | `boolean` | No | Log every read of the server. The API key is never logged. |
+
+## How to install Mailcow in Gladys
+
+1. In Gladys, open **Integrations**: Mailcow appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-mailcow:2.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-mailcow](https://github.com/prohand/gladys-mailcow).
+
+Mailcow requires Gladys `>=5.3.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Mailcow is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [prohand](https://github.com/prohand), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/prohand/gladys-mailcow) — [source of this documentation](https://github.com/prohand/gladys-mailcow/blob/HEAD/docs/en.md)

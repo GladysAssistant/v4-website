@@ -19,7 +19,7 @@ https://github.com/LM1LC3N7/gladys-rheem-econet instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Rheem EcoNet","description":"Rheem and Ruud EcoNet water heaters and thermostats: modes, setpoints, hot water, energy","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-rheem-econet","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-rheem-econet.png","type":"device","version":"0.1.2","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-23T18:46:29Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Rheem EcoNet","description":"Rheem and Ruud EcoNet water heaters and thermostats: modes, setpoints, hot water, energy","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-rheem-econet","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-rheem-econet.png","type":"device","version":"0.1.3","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-28T03:08:28Z"}} />
 
 :::info
 
@@ -46,7 +46,7 @@ with the features it reports.
 | Feature                  | What it is                                                                                                                                                                                                      |
 | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Mode                     | The modes of your unit, with their EcoNet names: off, energy saver, heat pump only, high demand, electric, gas, performance, vacation. In scenes, they are the Gladys water heater modes (see the table below). |
-| Water setpoint           | In °F, from the minimum of the unit up to the **maximum water setpoint** of the configuration (120 °F by default, see "Scalding and legionella").                                                               |
+| Water setpoint           | In °F, from the minimum of the unit up to the **maximum water setpoint** of the configuration (149 °F = 65 °C by default and at most, see "Scalding and legionella").                                           |
 | Hot water available      | 0, 33, 66 or 100 %, the tank level the app shows (units that report it).                                                                                                                                        |
 | Heating                  | 1 while the unit heats.                                                                                                                                                                                         |
 | Shut-off valve           | An opening sensor, read only, when a valve is installed: 1 closed, 0 open. Gladys never opens nor closes it.                                                                                                    |
@@ -106,16 +106,33 @@ afterwards.
 
 Hot water above 120 °F (49 °C) can scald in seconds, a child or an elderly
 person first. Gladys refuses any water setpoint above the **maximum water
-setpoint** of the configuration, 120 °F by default, whatever a scene or a
-voice command asks.
+setpoint** of the configuration, whatever a scene or a voice command asks:
+**149 °F (65 °C) by default, and never more than 149 °F (65 °C)**, whatever
+is typed. The setpoint stays in °F, like in the EcoNet app; 149 °F is
+exactly 65 °C, so no value Gladys writes goes above 65.0 °C.
 
-Water kept warm but below 140 °F (60 °C) lets legionella grow in the tank.
-If you want the tank at 140 °F for that reason, raise the maximum to 140 °F
-on purpose, and have a mixing valve on the hot water. The limits of the
-unit still apply. The new cap applies to the commands as soon as the
-configuration is saved. The slider of a device already created only changes
-after a click on **Update** for that device in the **Discovery** tab; until
-then, a setpoint above the cap is still refused.
+Water kept warm but below 140 °F (60 °C) lets legionella grow in the tank:
+140 °F is enough for that. To limit scalding, lower the maximum (120 °F =
+49 °C is the usual anti-scald value), or have a mixing valve on the hot
+water. The limits of the unit still apply: when the unit stops lower (often
+140 °F), its limit wins.
+
+| °F  | °C   |
+| --- | ---- |
+| 120 | 48.9 |
+| 130 | 54.4 |
+| 140 | 60   |
+| 149 | 65   |
+
+The new cap applies to the commands as soon as the configuration is saved.
+The slider of a device already created only changes after a click on
+**Update** for that device in the **Discovery** tab; until then, a setpoint
+above the cap is still refused.
+
+A maximum saved above 149 °F by an earlier version (up to 185 °F was
+allowed) counts as 149 °F, and the log says so; lower it to 149 °F or less
+to save the configuration form again. Under the minimum of the unit, Gladys
+can only set that minimum.
 
 ## How it works
 
@@ -163,7 +180,7 @@ the token and the e-mail address never appear in the logs.
 - "the live updates are down": the integration tries again (10 s, then
   longer, 5 minutes at most). The states keep coming every 5 minutes.
 - "Scald risk": the setpoint is above the maximum water setpoint of the
-  configuration.
+  configuration, the limit of the unit, or 149 °F (65 °C).
 - A feature missing: the device is built from what the unit reported when it
   was discovered. Delete the device and scan again after a firmware update.
 
@@ -179,13 +196,13 @@ Diese Einstellungen fragt Rheem EcoNet in seinem Konfigurationsbildschirm in Gla
 | Your Rheem and Ruud equipment in Gladys | `section` | Nein | The water heaters (heat pump, electric, gas, tankless) and the thermostats of your EcoNet app (United States and Canada) are offered in the Discovery tab: mode, water setpoint, hot water available, heating, tank and compressor health, energy per day; room temperature and humidity, heating and cooling setpoints, mode, fan. The states arrive live from the EcoNet cloud, and the commands go through it. Temperatures are in °F, as EcoNet reports them. Never tested on a real account yet. Unofficial, not affiliated with Rheem. |
 | EcoNet e-mail address | `string` | Ja | The e-mail address you sign in to the EcoNet app with. |
 | Password | `secret` | Ja | The password of the EcoNet app. A refused password is never retried by itself: fix it and save, or use the test button. |
-| Maximum water setpoint (°F) | `number` | Nein | Anti-scald cap: Gladys refuses any water heater setpoint above it (the limits of the unit apply too). 120 °F (49 °C) by default. Raise it to 140 °F (60 °C) if you keep the tank hot against legionella, and fit a mixing valve then. |
+| Maximum water setpoint (°F) | `number` | Nein | Anti-scald cap: Gladys refuses any water heater setpoint above it (the limits of the unit apply too, a lower one wins). 149 °F (65 °C) by default and at most, from 80 °F (27 °C): never more than 149 °F, whatever is typed. 140 °F (60 °C) is enough against legionella; lower it to 120 °F (49 °C) to limit scalding, or fit a mixing valve. |
 | Language of the feature names | `select` | Nein | The names of the features and of the options (modes, fan speeds) of the discovered devices. |
 
 ## So installierst du Rheem EcoNet in Gladys
 
 1. Öffne in Gladys **Integrationen**: Rheem EcoNet erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
-2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-rheem-econet:0.1.2`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-rheem-econet:0.1.3`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
 3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
 4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-rheem-econet](https://github.com/LM1LC3N7/gladys-rheem-econet).
 

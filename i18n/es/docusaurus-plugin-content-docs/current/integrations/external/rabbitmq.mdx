@@ -1,0 +1,222 @@
+---
+title: "Integración domótica RabbitMQ, gratuita y de código abierto"
+sidebar_label: "RabbitMQ"
+description: "La salud de su broker RabbitMQ en Gladys: colas, mensajes, consumidores, alarmas, caídas. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-rabbitmq.png"
+keywords:
+  - "rabbitmq"
+  - "domótica rabbitmq"
+  - "gladys rabbitmq"
+  - "rabbitmq gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-rabbitmq instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"RabbitMQ","description":"La salud de su broker RabbitMQ en Gladys: colas, mensajes, consumidores, alarmas, caídas.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-rabbitmq","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-rabbitmq.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-25T16:53:26Z"}} />
+
+Vigila la salud de su broker **RabbitMQ** en Gladys: conexiones, canales, consumidores, mensajes listos
+y sin confirmar, ritmos de publicación y de entrega, alarmas de memoria y de disco, nodos en marcha,
+tiempo en marcha y caídas, además de las colas que usted elija seguir (mensajes en espera,
+consumidores).
+
+Esta integración no está afiliada a Broadcom ni al proyecto RabbitMQ.
+
+## Presentación
+
+RabbitMQ transporta los mensajes de muchos servicios autoalojados (complementos de Home Assistant,
+flujos de Node-RED, Celery, n8n, scripts propios, MQTT mediante su plugin). Cuando un consumidor se
+detiene, su cola se llena en silencio; cuando faltan memoria o disco, RabbitMQ bloquea a todos los
+publicadores. Esta integración se lo dice a Gladys: cada 30 segundos lee la **API de gestión** de
+RabbitMQ y la convierte en dispositivos de Gladys, siete disparadores de escena, dos acciones de escena
+y un widget del panel.
+
+Solo lee: nunca publica, vacía ni elimina nada, no abre ninguna conexión AMQP y nunca modifica la
+configuración de RabbitMQ. Todo se queda en su red local.
+
+## Requisitos
+
+- Gladys 5.1 o posterior.
+- RabbitMQ 3.x o 4.x (probado con 4.4.0) con el **plugin de gestión** activado
+  (`rabbitmq-plugins enable rabbitmq_management`; ya viene en las imágenes Docker
+  `rabbitmq:*-management`), su puerto (**15672** por defecto) accesible desde Gladys.
+- Un usuario de RabbitMQ y su contraseña. Basta con la etiqueta `monitoring`: no hace falta un
+  administrador.
+
+### Crear un usuario de solo lectura
+
+En el equipo de RabbitMQ (o con `docker exec` en su contenedor):
+
+```sh
+rabbitmqctl add_user gladys 'una-contrasena-larga'
+rabbitmqctl set_user_tags gladys monitoring
+## Acceso al host virtual de las colas seguidas ("/" aquí), sin ningún derecho sobre sus mensajes:
+rabbitmqctl set_permissions -p / gladys '^$' '^$' '^$'
+```
+
+La etiqueta `monitoring` da la vista general, los nodos y sus alarmas. Una cola solo es visible en un
+host virtual al que el usuario tiene acceso: los permisos de arriba (patrones vacíos: ni configurar,
+ni escribir, ni leer) dan ese acceso y nada más. Repita la última línea para cada otro host virtual de
+una cola seguida; si no, RabbitMQ responde como si la cola no existiera. Lo mismo se puede hacer en la
+interfaz de gestión: **Admin → Users → Add a user**, etiqueta **Monitoring**, y luego **Set
+permission**.
+
+## Configuración
+
+| Campo                              | Descripción                                                                                                                    |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Dirección de RabbitMQ              | La dirección de la interfaz de gestión: `http://192.168.1.20:15672`, o solo un host (se añade el puerto 15672).                |
+| Usuario                            | El usuario creado arriba.                                                                                                      |
+| Contraseña                         | Su contraseña.                                                                                                                 |
+| Aceptar un certificado autofirmado | Para una dirección `https://` cuyo certificado Gladys no puede comprobar.                                                      |
+| Colas que seguir                   | Separadas por comas, 20 como máximo. Cada una se convierte en un dispositivo. Déjelo vacío para no seguir ninguna.             |
+| Idioma de los textos               | Nombres de las funciones de los dispositivos al añadirlos, frases de escenas y mensajes de las acciones (francés por defecto). |
+
+Cómo escribir una cola:
+
+- `zigbee`: la cola `zigbee` del host virtual por defecto `/`;
+- `iot/sensores`: la cola `sensores` del host virtual `iot`;
+- `/casa/cocina`: la cola `casa/cocina` del host virtual `/` (una `/` al principio para un nombre que
+  contiene una barra).
+
+El botón **Comprobar la conexión** lee RabbitMQ al momento e indica su versión, sus cifras clave, sus
+alarmas activas y qué colas seguidas existen.
+
+Abra después la pestaña **Descubrimiento** de la integración y añada el broker y las colas que quiera.
+
+## El dispositivo broker
+
+| Función                    | Significado                                                                                            |
+| -------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Accesible                  | 1 mientras la API responde, 0 durante una caída.                                                       |
+| Conexiones                 | Conexiones de clientes (AMQP, MQTT, STOMP…) abiertas ahora mismo.                                      |
+| Canales                    | Canales abiertos en esas conexiones.                                                                   |
+| Consumidores               | Consumidores de todas las colas.                                                                       |
+| Colas                      | Colas de todos los hosts virtuales que ve el usuario.                                                  |
+| Mensajes listos            | Mensajes en espera en todas las colas, aún no entregados.                                              |
+| Mensajes sin confirmar     | Mensajes entregados a un consumidor que todavía no los ha confirmado.                                  |
+| Mensajes publicados (/min) | Mensajes recibidos por el broker, por minuto.                                                          |
+| Mensajes entregados (/min) | Mensajes entregados a los consumidores (o recogidos), por minuto.                                      |
+| Alarma de memoria          | 1 mientras un nodo supera su umbral de memoria: RabbitMQ bloquea a los publicadores.                   |
+| Alarma de disco            | 1 mientras un nodo está por debajo de su límite de espacio libre: RabbitMQ bloquea a los publicadores. |
+| Nodos en marcha            | Nodos del clúster en marcha (1 para un broker único).                                                  |
+| Tiempo en marcha           | En días, desde el arranque del nodo más reciente.                                                      |
+| Versión                    | Versión de RabbitMQ.                                                                                   |
+
+Los ritmos los calcula RabbitMQ sobre su última muestra de 5 segundos. Durante una caída solo cambia
+**Accesible**: los demás valores conservan su última lectura.
+
+## Colas seguidas
+
+Cada cola del campo **Colas que seguir** se convierte en un dispositivo con su nombre y cinco
+funciones: **Mensajes listos**, **Mensajes sin confirmar**, **Consumidores**, **Mensajes publicados
+(/min)** y **Mensajes entregados (/min)**.
+
+Cuando una cola seguida no existe (aún no declarada, eliminada, una cola autoeliminable cuyo consumidor
+se fue), sus valores conservan su última lectura, los registros lo dicen una vez y **Comprobar la
+conexión** la indica como no encontrada.
+
+## Widget del panel
+
+El widget **Broker RabbitMQ** muestra el estado del broker, su versión, su tiempo en marcha, los nodos
+de un clúster, las alarmas activas, una fila por cola seguida añadida a Gladys (mensajes listos y
+consumidores, en naranja cuando nadie la consume) y cuatro mosaicos en directo: mensajes listos,
+publicados y entregados por minuto, conexiones. Elija el broker en sus ajustes.
+
+## Disparadores de escena
+
+| Disparador                   | Cuándo                                                                                     |
+| ---------------------------- | ------------------------------------------------------------------------------------------ |
+| Broker inaccesible           | La API no responde desde hace 1, 5, 15, 30 o 60 minutos (a elegir).                        |
+| Broker de vuelta             | La API vuelve a responder tras una caída de al menos un minuto.                            |
+| Broker reiniciado            | El tiempo en marcha de un nodo volvió a cero, incluso sin caída visible.                   |
+| Alarma activada              | Alarma de memoria, de disco, partición de red o un nodo del clúster detenido (filtrable).  |
+| Alarma desactivada           | Una de esas alarmas ya no está activa. Variable: su duración en minutos.                   |
+| Cola sin consumidor          | Una cola seguida que tenía consumidores no tiene ninguno desde hace un minuto.             |
+| Cola por encima de un umbral | Más mensajes listos en una cola seguida que el número elegido; como mucho cada 30 minutos. |
+
+La variable **alarma** vale `memory`, `disk`, `partition` o `node_down`. Tras un reinicio de la
+integración, la primera lectura sirve de referencia: una alarma ya activa, una cola ya sin consumidor
+o ya por encima de un umbral no activan nada.
+
+## Acciones de escena
+
+**Estado del broker** da una frase lista para un mensaje («RabbitMQ 4.4.0 lleva en marcha 3 días, 5
+conexiones, 12 mensajes listos y 0 sin confirmar, 40 mensajes publicados y 38 entregados por minuto,
+ninguna alarma.») y sus cifras: accesible, conexiones, colas, mensajes listos y sin confirmar,
+publicados y entregados por minuto, alarmas activas y sus nombres, tiempo en marcha en horas, versión.
+
+**Estado de una cola** hace lo mismo para una cola seguida que usted elija («Cola zigbee: 7 mensajes
+listos, consumidores: 1, 2 sin confirmar.») con sus cifras y si existe.
+
+## Ideas de escenas
+
+- **Cola sin consumidor** en la cola de su flujo de Node-RED → envíese «Ya nadie lee \{\{queue\}\},
+  \{\{messages_ready\}\} mensajes en espera».
+- **Alarma activada** (filtro: espacio en disco) → avise de que el disco del broker está casi lleno:
+  todos los publicadores están bloqueados.
+- **Cola por encima de un umbral** (1.000 mensajes) → ponga una lámpara en naranja.
+- Cada mañana, **Estado del broker** → envíe la frase de resumen a Telegram.
+
+## Solución de problemas
+
+- **No se puede acceder a RabbitMQ**: compruebe la dirección y el puerto (15672 por defecto, no el
+  puerto AMQP 5672) y que Gladys llegue a él (cortafuegos, red Docker).
+- **RabbitMQ rechaza el usuario**: compruebe su nombre y su contraseña, y que tenga la etiqueta
+  `monitoring`. Un usuario sin etiqueta no puede usar la API de gestión.
+- **No hay API de gestión en esta dirección**: el plugin no está activado, o la dirección apunta a otra
+  cosa (puerto AMQP, otro servicio).
+- **Una cola seguida no se encuentra**: compruebe su nombre exacto y su host virtual en la página
+  **Queues and Streams** (se distinguen mayúsculas y minúsculas), y que el usuario tenga un permiso en
+  ese host virtual (`rabbitmqctl list_user_permissions gladys`).
+- **Los ritmos se quedan en 0**: puede que el recolector de métricas de RabbitMQ esté desactivado
+  (`management_agent.disable_metrics_collector`).
+- Más detalles: ponga `LOG_LEVEL=debug` y lea los registros de la integración.
+
+## Límites
+
+- Lectura cada 30 segundos: un consumidor ausente menos de un minuto no activa nada.
+- RabbitMQ refresca las estadísticas de los nodos cada 5 segundos: una alarma aparece con unos
+  segundos de retraso.
+- 20 colas seguidas como máximo; una cola cuyo nombre contiene una coma no se puede seguir.
+- Solo lectura: ni vaciado, ni eliminación, ni mensaje publicado.
+- No se vigilan los intercambios, enlaces, shovels ni enlaces de federación.
+
+## Parámetros de configuración
+
+Estos son los parámetros que RabbitMQ te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Conectar RabbitMQ | `section` | No | La integración lee la API de gestión de RabbitMQ cada 30 segundos. Nunca modifica nada. Basta con un usuario con la etiqueta monitoring: rabbitmqctl set_user_tags \<usuario> monitoring. |
+| Dirección de RabbitMQ | `string` | Sí | La dirección de la interfaz de gestión, puerto 15672 por defecto (http:\/\/ o https:\/\/). |
+| Usuario | `string` | Sí | Basta con acceso de lectura: un usuario con la etiqueta monitoring, no un administrador. |
+| Contraseña | `secret` | Sí |  |
+| Aceptar un certificado autofirmado | `boolean` | No | Solo https:\/\/: el certificado de RabbitMQ no se comprueba. |
+| Colas que seguir | `string` | No | Separadas por comas, 20 como máximo: cada una se convierte en un dispositivo (mensajes, consumidores). Escriba nombre para el host virtual /, vhost/nombre para otro. El usuario necesita un permiso en ese host virtual. |
+| Idioma de los textos | `select` | No | Nombres de las funciones de los dispositivos al añadirlos, frases de escenas y mensajes de las acciones. |
+
+## Cómo instalar RabbitMQ en Gladys
+
+1. En Gladys, abre **Integraciones**: RabbitMQ aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-rabbitmq:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-rabbitmq](https://github.com/guim31/gladys-rabbitmq).
+
+RabbitMQ requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+RabbitMQ es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-rabbitmq) — [fuente de esta documentación](https://github.com/guim31/gladys-rabbitmq/blob/HEAD/docs/es.md)

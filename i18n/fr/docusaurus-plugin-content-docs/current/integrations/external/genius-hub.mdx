@@ -1,0 +1,248 @@
+---
+title: "Intégration domotique Genius Hub, gratuite et open source"
+sidebar_label: "Genius Hub"
+description: "Non officiel : chauffage Genius Hub, en local : zones, consignes, modes, vannes, capteurs. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-genius-hub.png"
+keywords:
+  - "genius hub"
+  - "domotique genius hub"
+  - "gladys genius hub"
+  - "genius hub gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-genius-hub instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Genius Hub","description":"Non officiel : chauffage Genius Hub, en local : zones, consignes, modes, vannes, capteurs.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-genius-hub","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-genius-hub.png","type":"device","version":"0.1.3","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-28T03:08:31Z"}} />
+
+Intégration non officielle, sans lien avec Genius Hub (Heat Genius Ltd).
+Elle lit un Genius Hub par son **API locale** (port 1223 du hub, sans cloud)
+et permet à Gladys de voir et de piloter les zones de chauffage de la maison.
+**Jamais testé avec un vrai Genius Hub** : écrit d'après la documentation
+publique et la bibliothèque geniushub-client, celle de Home Assistant.
+Signalez ce qui diffère sur votre hub.
+
+## Ce que vous obtenez
+
+Un appareil Gladys par **zone** du hub :
+
+| Type de zone                           | Lecture                                                                                                                                     | Commandes                                                                                       |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Pièce à radiateurs, plancher chauffant | température, consigne, mode du thermostat, demande de chauffe, mode Genius, dérogation restante, présence (zones avec détecteur), anomalies | consigne, mode du thermostat (arrêt / chauffage), mode Genius (off, timer, footprint, override) |
+| Eau chaude                             | température de l'eau, consigne, mode eau chaude, chauffe, dérogation restante, anomalies                                                    | consigne, mode eau chaude (arrêt / timer / override)                                            |
+| Minuterie marche/arrêt                 | marche, mode Genius, dérogation restante, anomalies                                                                                         | marche / arrêt, mode Genius (off, timer, override)                                              |
+
+Et un appareil **en lecture seule** par appareil relié au hub (vanne de
+radiateur, thermostat d'ambiance, prise, récepteur, détecteur de mouvement ou
+capteur de pièce) : température, consigne de la vanne, batterie, luminosité,
+mouvement, sortie. Le hub les pilote depuis ses zones ; Gladys ne les
+commande jamais. La zone « My House » (gestionnaire), les groupes et le
+module OpenTherm ne sont pas proposés.
+
+## Configuration
+
+1. Trouvez l'**adresse IP** du hub (votre box, ou l'application Genius Hub :
+   Réglages > Hub). Donnez-lui une adresse fixe dans votre box si possible.
+2. Saisissez le **nom d'utilisateur et le mot de passe du hub** (ceux de son
+   interface web locale, tels que le hub les demande ; pas le compte
+   my.geniushub.co.uk). Le mot de passe est gardé par Gladys dans sa base,
+   jamais réaffiché, jamais écrit dans les journaux, et envoyé seulement au
+   hub sous la forme qu'il demande : un hachage qui suffit à se connecter
+   au hub, envoyé en HTTP simple, donc lisible par quiconque peut observer
+   votre réseau local.
+3. Enregistrez, puis ouvrez l'onglet **Découverte** et créez les zones et
+   appareils voulus.
+4. Les commandes sont **désactivées par défaut** : activez « Autoriser les
+   commandes de consigne » et/ou « Autoriser les commandes de mode et de
+   marche » quand vous voulez piloter le chauffage depuis Gladys. « Arrêt »
+   n'a pas besoin d'option.
+
+Le hub est lu toutes les 60 s par défaut (60 s au moins). En dehors de ce
+rythme, les zones sont aussi lues : juste avant et juste après une commande,
+5 s et 20 s après, et toutes les 20 s pendant la vérification d'un « Arrêt »
+(deux minutes au plus, y compris après un redémarrage de l'intégration).
+
+## Les commandes en détail
+
+- Une **consigne** envoyée depuis Gladys est une **dérogation** de la zone
+  pour la durée configurée (60 min par défaut, de 10 à 1440), comme le
+  « boost » de l'application ; la zone revient ensuite à son timer ou à son
+  mode. Consignes de pièce : de 4 à 28 °C par demi-degré, plafonnées par
+  « Consigne de pièce la plus haute » (25 °C par défaut). Eau chaude :
+  degrés entiers, de 30 à 65 °C, plafonnés par « Consigne d'eau chaude la
+  plus haute » (65 °C par défaut, 65 au plus ; un plafond avec une décimale est
+  arrondi vers le bas).
+- **Mode du thermostat** : « Chauffage » met la zone sur son timer, c'est-à-
+  dire le programme gardé dans le hub : ses consignes sont celles du hub,
+  les plafonds de l'intégration ne les couvrent pas. « Arrêt » arrête la
+  zone. **Mode Genius** : off, timer (le programme du hub), footprint (zones
+  avec détecteur de présence seulement), override (la consigne que le hub
+  montre maintenant, pour la durée configurée, seulement si elle est dans
+  les bornes ci-dessus ; sinon refusé : envoyez une consigne). **Mode eau
+  chaude** : arrêt, timer (le programme du hub), override (boost à la
+  consigne que le hub montre maintenant, seulement si elle est dans les
+  bornes ci-dessus ; sinon refusé). **Zone marche/arrêt** : « marche » est
+  une dérogation de la durée configurée, « arrêt » arrête la zone.
+- Une consigne, un mode ou une « marche » est décidé sur une lecture
+  fraîche du hub (son identité et ses zones), faite pour la commande ; la
+  pause, des identifiants refusés et la garde d'un « Arrêt » viennent de ce
+  que l'intégration sait. La commande n'est réussie que si la zone relue
+  juste après montre le mode écrit, et pour une dérogation sa consigne (à
+  0,05 °C près) et une durée dans celle configurée. Une commande qui ne
+  changerait rien (la zone est déjà ainsi) est réussie sans rien envoyer.
+  La commande est refusée, **rien envoyé**, quand :
+  - son option est désactivée ;
+  - la valeur n'est pas valide ou hors des bornes ci-dessus ;
+  - la consigne que garderait une dérogation ou un boost est hors des
+    bornes (ou inconnue) ;
+  - le hub ne liste pas la zone, ou la liste avec un autre type ;
+  - un autre hub répond à l'adresse (dans la dernière lecture périodique ou
+    dans la lecture fraîche ; lancez un Scan pour l'adopter), ou le hub n'a
+    jamais été lu ;
+  - le hub refuse les identifiants ;
+  - le hub a demandé d'attendre après une erreur (une pause) ;
+  - la zone traite encore une commande ou une est partie il y a moins de
+    2 s ;
+  - un « Arrêt » de la zone est encore vérifié (deux minutes au plus, voir
+    ci-dessous) ;
+  - la lecture fraîche a échoué : pas de réponse en 2 s environ (« trop
+    lent »), hub injoignable, réponse trop grande ou qui n'est pas d'un
+    Genius Hub, page refusée aux identifiants ;
+  - la configuration de l'intégration a changé pendant la commande ;
+  - la requête n'a pas pu partir dans les 3,5 s environ après le clic ;
+  - le hub était injoignable à l'envoi.
+
+  Elle est refusée **après envoi** quand :
+  - le hub la rejette (numéro d'erreur dans le message) : non appliquée ;
+  - le hub ne répond pas, ou répond une erreur serveur : « envoyée, sans
+    confirmation » ;
+  - la zone ne peut pas être relue à temps, ou la relecture la montre encore
+    comme avant la commande, y compris relue une seconde fois 0,5 s plus
+    tard environ (le hub peut appliquer un peu après sa réponse) : « pas
+    encore visible ». Les relectures à 5 s et 20 s la
+    vérifient alors : l'état dit si la commande n'est pas appliquée à 20 s
+    ou appliquée avec une autre valeur, et une nouvelle valeur hors bornes
+    arrête la zone ;
+  - la zone relue montre un autre mode, ou une autre consigne (« le hub a
+    appliqué X au lieu de Y ») ;
+  - la zone relue montre une nouvelle consigne ou durée hors des bornes de
+    l'intégration : « Arrêt » est alors envoyé aussitôt à la zone, maintenu
+    deux minutes, et l'état dit ce que le hub a appliqué.
+
+- **« Arrêt »** (mode du thermostat, mode Genius, mode eau chaude ou état
+  marche/arrêt) n'a pas besoin d'option, ne fait pas de lecture fraîche,
+  passe pendant une pause et malgré des identifiants refusés (un essai), et
+  annule une consigne ou un mode de la même zone pas encore envoyé. Il n'est
+  réussi que si la zone relue est arrêtée. Il est refusé, **rien envoyé**,
+  quand :
+  - la configuration de l'intégration n'est pas encore lue depuis Gladys et
+    n'arrive pas en 3 s environ ;
+  - l'adresse ou les identifiants du hub ne sont pas renseignés ;
+  - une écriture de la même zone en train de partir ne part pas en 3 s
+    environ ;
+  - la configuration de l'intégration a changé entre-temps ;
+  - la requête n'a pas pu partir en 3,5 s environ, ou le hub a refusé la
+    connexion.
+
+  Il est refusé **après envoi** quand :
+  - le hub le rejette, refuse les identifiants ou n'a pas cette page (non
+    appliqué, le message dit lequel) ;
+  - le hub ne répond pas, ou répond une erreur serveur : « envoyé, sans
+    confirmation » ;
+  - la zone ne peut pas être relue à temps ;
+  - la zone relue juste après est encore en marche (le hub peut appliquer
+    un peu après sa réponse).
+
+  Dans les trois derniers cas, et après tout « Arrêt » accepté par le hub,
+  la zone est vérifiée pendant deux minutes : tant qu'une relecture de suivi
+  (5 s, 20 s, puis toutes les 20 s) la montre en marche, « Arrêt » est réécrit (3 fois au plus), l'état dit « Arrêt n'a
+  pas pris effet », et aucune commande qui relancerait la zone n'est prise.
+  Une lecture qui montre la zone arrêtée termine la vérification, sauf
+  quand une consigne ou un mode de la zone est parti moins de 2 min avant
+  l'« Arrêt » (le hub peut encore l'appliquer après) : la vérification dure
+  alors ses deux minutes.
+
+## Valeurs
+
+- Les valeurs d'une zone sont publiées à chaque lecture. Quand le hub
+  signale qu'une zone utilise la température extérieure (ses capteurs ne
+  répondent plus, anomalie `zone:using_weather_temp`), la température de
+  cette zone n'est pas publiée ; le texte des anomalies le dit.
+- Les valeurs d'un appareil relié au hub ne sont publiées que quand
+  l'appareil (pour un canal, son nœud) a communiqué avec le hub depuis les
+  dernières valeurs publiées (le hub donne l'heure de sa dernière
+  communication), et pas quand c'était il y a plus de 2 h : l'état compte
+  alors ces appareils. Un appareil qui ne donne pas cette heure est publié
+  quand une valeur change, et n'est pas renvoyé sinon.
+- Les valeurs inchangées des zones et des appareils datés sont renvoyées
+  toutes les 30 min.
+
+## État et pauses
+
+- Des identifiants refusés par le hub sur sa page principale (HTTP 401 ou 403) arrêtent les lectures jusqu'à ce que vous les changiez ou cliquiez
+  sur « Tester la connexion » (une lecture part dès la fin de l'intervalle
+  de lecture). Une page des zones ou des appareils refusée à des
+  identifiants acceptés n'est pas un refus d'identifiants : cette page est
+  réessayée plus tard (les zones après 30 s, doublé ; les appareils après
+  deux intervalles, doublé), jusqu'à 1 h.
+- Après un 429 ou un 5xx du hub, les lectures font une pause (1 min,
+  doublée jusqu'à 6 h, ou le délai demandé par le hub), gardée au
+  redémarrage. Le hub répond aussi 503 à des identifiants faux : l'état le
+  dit. Changer l'adresse, le nom d'utilisateur ou le mot de passe termine la
+  pause. Un hub injoignable est réessayé après 30 s, 1 min, 2 min...
+  jusqu'à 10 min, jamais plus tôt que l'intervalle de lecture.
+- Quand la configuration ne peut pas être lue depuis Gladys au démarrage,
+  elle est relue après 5 s, doublé jusqu'à 5 min, et l'état le dit.
+- Le hub est reconnu par son identifiant unique. Si un autre hub répond à
+  l'adresse, rien n'est publié vers les appareils de l'ancien tant que vous
+  n'avez pas lancé un Scan depuis l'onglet Découverte, qui adopte le nouveau
+  hub.
+
+## Pas dans cette version
+
+L'API cloud v1 (my.geniushub.co.uk), les programmes (timer et footprint), la
+zone « My House » et les modes de toute la maison, les groupes, le module
+OpenTherm de la chaudière, les anomalies en appareils séparés, les commandes
+sur les appareils eux-mêmes (prises, vannes). Voir `TODO.md`.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Genius Hub dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Genius Hub | `section` | Non | Connecteur non officiel, sans lien avec Genius Hub (Heat Genius). Il lit un Genius Hub par son API locale (port 1223 du hub, sans cloud) : un appareil par zone (pièce à radiateurs, plancher chauffant, eau chaude, minuterie marche/arrêt) avec sa température, sa consigne, ses modes, la demande de chauffe, la dérogation et les anomalies, et un appareil en lecture seule par vanne de radiateur, thermostat, prise ou capteur relié au hub (température, consigne de la vanne, batterie, luminosité, mouvement, sortie). Depuis Gladys : une consigne (une dérogation pour la durée configurée), les modes (timer, footprint, dérogation), l'eau chaude, une zone marche/arrêt. Les commandes de consigne et de mode sont désactivées par défaut ; « Arrêt » n'a pas besoin d'option. Jamais testé avec un vrai Genius Hub. |
+| Adresse du hub | `string` | Oui | L'adresse IP du Genius Hub sur votre réseau (visible dans votre box ou dans l'application Genius Hub, Réglages > Hub), avec un port seulement s'il n'est pas 1223. Donnez-lui de préférence une adresse fixe dans votre box. |
+| Nom d'utilisateur du hub | `string` | Oui | Le nom d'utilisateur du hub lui-même (celui de son interface web locale, pas le compte my.geniushub.co.uk). |
+| Mot de passe du hub | `secret` | Oui | Le mot de passe de cet utilisateur. Gardé par Gladys dans sa base, jamais réaffiché, jamais écrit dans les journaux, envoyé seulement à l'adresse du hub ci-dessus, sous la forme que le hub demande : un hachage qui suffit à se connecter au hub, envoyé en HTTP simple, lisible sur votre réseau local. Si le hub le refuse, les lectures s'arrêtent jusqu'à ce que vous le changiez ou cliquiez sur « Tester la connexion ». |
+| Intervalle de lecture (s) | `number` | Non | Secondes entre deux lectures du hub (60 par défaut, jamais moins). |
+| Durée d'une dérogation (min) | `number` | Non | Une consigne ou une « marche » envoyée depuis Gladys est une dérogation de la zone pendant ce nombre de minutes (60 par défaut, l'heure du boost de l'application) ; la zone revient ensuite à son timer ou à son mode. |
+| Autoriser les commandes de consigne | `boolean` | Non | Désactivé par défaut. Désactivé : toute consigne de pièce ou d'eau chaude envoyée depuis Gladys est refusée. |
+| Autoriser les commandes de mode et de marche | `boolean` | Non | Désactivé par défaut. Désactivé : le mode de thermostat « Chauffage », les modes Genius (timer, footprint, dérogation), le timer et le boost de l'eau chaude et la « marche » d'une zone marche/arrêt sont refusés. « Arrêt » n'a pas besoin d'option ; le guide liste ses cas de refus. « Timer » applique le programme du hub, dont les consignes ne sont pas couvertes par les plafonds ci-dessous. |
+| Consigne de pièce la plus haute (°C) | `number` | Non | Une consigne de pièce au-dessus est refusée (25 °C par défaut ; 28 °C est le maximum du hub). |
+| Consigne d'eau chaude la plus haute (°C) | `number` | Non | Une consigne d'eau chaude au-dessus est refusée (65 °C par défaut, 65 °C au plus : brûlures). |
+
+## Comment installer Genius Hub dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Genius Hub apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-genius-hub:0.1.3`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-genius-hub](https://github.com/LM1LC3N7/gladys-genius-hub).
+
+Genius Hub nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Genius Hub est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-genius-hub) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-genius-hub/blob/HEAD/docs/fr.md)

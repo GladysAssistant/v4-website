@@ -1,0 +1,187 @@
+---
+title: "Intégration domotique iDM heat pump, gratuite et open source"
+sidebar_label: "iDM heat pump"
+description: "Pompes à chaleur iDM (NAVIGATOR 2.0) en Modbus TCP local : températures, circuits, eau chaude. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-idm.png"
+keywords:
+  - "idm heat pump"
+  - "domotique idm heat pump"
+  - "gladys idm heat pump"
+  - "idm heat pump gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-idm instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"iDM heat pump","description":"Pompes à chaleur iDM (NAVIGATOR 2.0) en Modbus TCP local : températures, circuits, eau chaude.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-idm","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-idm.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-28T02:59:22Z"}} />
+
+Cette intégration affiche votre pompe à chaleur iDM à régulation **NAVIGATOR 2.0** dans Gladys, par
+son interface **Modbus TCP** sur votre réseau local, sans cloud. Elle peut aussi, si vous l’autorisez,
+changer les modes et les consignes.
+
+> **Jamais testé avec un vrai appareil.** L’intégration suit la documentation Modbus TCP d’iDM et
+> l’intégration Home Assistant `hacs-idm-heatpump`, et a été testée contre une pompe à chaleur simulée
+> seulement. Sans lien avec iDM Energiesysteme GmbH.
+
+## Ce qu’il faut
+
+- Une pompe à chaleur iDM à régulation **NAVIGATOR 2.0** (les NAVIGATOR 1.0 et 1.7 ont une autre
+  table Modbus : ils ne sont pas pris en charge).
+- Le **Modbus TCP activé** : menu « Paramètres » → « Gestion technique du bâtiment » → « Modbus TCP »
+  sur « Marche ». Ce réglage est au niveau installateur : demandez-le à votre installateur ou au SAV
+  iDM. L’interface web de la pompe à chaleur seule ne suffit pas.
+- Une adresse IP fixe pour la pompe à chaleur (réservez-la dans votre box ou réglez-la dans le menu
+  réseau du NAVIGATOR).
+- Le Modbus TCP n’a **pas de mot de passe** : n’importe quel appareil de votre réseau peut lire et
+  écrire les réglages de la pompe à chaleur. Gardez-la sur un **réseau de confiance**, jamais exposée
+  à Internet.
+
+## Configuration
+
+| Champ                            | Rôle                                                                                              |
+| -------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Adresse IP de la pompe à chaleur | IPv4 ou nom d’hôte, port 502 sauf si vous en ajoutez un (`192.168.1.60:502`).                     |
+| Identifiant d’unité Modbus       | 1 sur un NAVIGATOR.                                                                               |
+| Circuits de chauffage            | Les lettres de vos circuits, de A à G, séparées par des virgules (`A` par défaut).                |
+| Autoriser les commandes          | Désactivé par défaut (voir plus bas).                                                             |
+| Plafond d’eau chaude (°C)        | La consigne d’eau chaude la plus haute que Gladys peut envoyer : 65 °C par défaut, 65 °C au plus. |
+| Intervalle de rafraîchissement   | 60 s par défaut, de 30 s à 1 h.                                                                   |
+| Langue                           | Langue des noms de l’appareil, du statut et des messages.                                         |
+
+Enregistrez, puis ajoutez la pompe à chaleur depuis l’onglet **Découverte**. Le bouton « Tester la
+connexion » relit la pompe à chaleur, jamais plus souvent que l’intervalle.
+
+## Ce que vous voyez
+
+- Mode de fonctionnement (veille, automatique, absent, vacances, eau chaude seulement,
+  chauffage/rafraîchissement seulement) et état de la pompe à chaleur (veille, chauffage,
+  rafraîchissement, eau chaude, dégivrage).
+- Défaut (pompe à chaleur verrouillée), compresseur en marche, pompe de charge en marche.
+- Températures : extérieure et extérieure moyenne, départ et retour de la pompe à chaleur, entrée et
+  sortie de la source, aspiration de l’air, ballon tampon, eau chaude (haut, bas, puisage), consigne
+  d’eau chaude.
+- Pour chaque circuit configuré : mode, état en cours (arrêt, chauffage, rafraîchissement), consigne
+  ambiante « normal », températures ambiante, de départ et de départ visée.
+- Si la pompe à chaleur les donne : humidité, puissance électrique (kW), températures solaires
+  (capteur, retour du capteur, charge).
+
+Une fonctionnalité n’apparaît qu’une fois qu’une valeur en a été lue. Les valeurs spéciales du
+NAVIGATOR ne sont jamais publiées comme des mesures : -1,0 sur une température (capteur absent, sauf
+la température extérieure et le départ/retour de la pompe à chaleur, toujours présents), « non
+disponible » sur un mode, -1 sur la pompe de charge (publié comme « arrêtée »), une valeur hors plage.
+Conséquence : sur les capteurs optionnels (air aspiré, entrée et sortie de la source, ballon, eau chaude, solaire, circuits), une vraie température d’exactement -1,0 °C n’est pas publiée et Gladys garde la valeur précédente jusqu’à la lecture suivante. L’énergie thermique (kWh) n’est pas publiée.
+
+## Les commandes
+
+Désactivées par défaut. Avec « Autoriser les commandes », Gladys peut changer :
+
+- le mode de fonctionnement (automatique, absent, eau chaude seulement, chauffage/rafraîchissement
+  seulement ; « vacances » est seulement affiché) ;
+- le mode d’un circuit configuré (programme horaire, normal, éco, chauffage manuel, rafraîchissement
+  manuel) ;
+- la consigne ambiante « normal » d’un circuit, de 15 à 30 °C par pas de 0,5 °C ;
+- la consigne d’eau chaude, en degrés entiers, de 35 °C au plafond de la configuration (65 °C par
+  défaut). **Rien au-dessus de 65 °C n’est jamais envoyé**, quoi qu’il soit saisi.
+
+Chaque commande relit d’abord la valeur actuelle sur la pompe à chaleur, n’écrit rien si elle est
+déjà la bonne, puis relit la valeur écrite : elle n’est réussie que si la relecture montre la valeur
+demandée. Sinon Gladys répond « envoyée, sans confirmation » et relit la pompe à chaleur 5 s, 25 s et
+60 s après (le NAVIGATOR applique un changement en 15 s environ).
+
+Une commande est refusée, sans rien envoyer, quand : l’option est désactivée (vérifiée aussi juste
+avant l’écriture), la valeur est hors limites ou au-dessus du plafond, le circuit n’est pas dans la
+configuration, la valeur actuelle n’a pas pu être relue, la configuration a changé entre-temps, un
+arrêt a été envoyé après son arrivée, 16 commandes attendent déjà, ou ce réglage a déjà été changé 6
+fois dans la dernière heure. Cette dernière limite protège la mémoire du NAVIGATOR, qui garde ces
+réglages dans une mémoire à nombre d’écritures limité (300 000 selon iDM) ; elle ne s’applique jamais à
+une baisse de consigne ni à un arrêt.
+
+Les commandes passent une par une, dans leur ordre d’arrivée, sur une seule connexion. Une scène qui
+règle plusieurs valeurs les règle toutes : une commande qui attend son tour au-delà de 3,5 s reçoit la
+réponse « en attente » et part dans les 15 s qui suivent le clic, ou pas du tout.
+
+## Les arrêts
+
+Mettre le mode de fonctionnement sur **Veille** ou un circuit sur **Arrêt** ne dépend **jamais** de
+l’option des commandes, ni des limites, ni d’une lecture en cours ou en échec, ni d’une pompe à chaleur
+pas encore lue, ni d’une commande en attente. Un arrêt passe devant tout ; toutes les commandes
+arrivées avant lui et pas encore parties sont abandonnées. Une connexion refusée est réessayée toutes
+les 250 ms pendant 3 s ; Gladys a sa réponse en 3,5 s au plus.
+
+Un arrêt non confirmé est gardé dans `/data` (avec la valeur d’avant) pendant 3 minutes. Pendant ces
+3 minutes, quel que soit l’intervalle de rafraîchissement, l’intégration vérifie la pompe à chaleur
+toutes les 15 s : un arrêt qui n’a pas pu partir est retenté à chaque vérification ; un arrêt écrit mais
+pas encore visible est renvoyé (3 fois au plus, 20 s au moins après l’envoi) tant que la pompe à
+chaleur montre encore la valeur d’avant. Une vérification n’interrompt jamais une commande : elle attend derrière les commandes (plus récentes qu’elle) et n’écrit jamais par-dessus ; un nouveau clic sur un arrêt interrompt une vérification et est toujours écrit puis relu. Après un redémarrage, la vérification part aussitôt, avant
+même de lire la configuration. Chaque arrêt et chaque renvoi est une écriture dans l’EEPROM du
+NAVIGATOR (quatre au plus par clic) ; les arrêts ne sont jamais limités par le quota horaire des
+commandes.
+
+Un arrêt peut échouer ou ne pas être renvoyé dans ces cas :
+
+- aucune adresse valide dans la configuration (ou, avant que la configuration soit lue, aucune pompe à
+  chaleur lue auparavant) : refusé, rien n’est envoyé ;
+- la pompe à chaleur reste injoignable pendant 3 s : « non envoyé », puis retenté toutes les 15 s (et
+  au redémarrage) tant que la garde de 3 minutes court ;
+- la pompe à chaleur répond une exception Modbus : « refusée » ou « envoyée, sans confirmation » selon
+  le code ;
+- la relecture ne montre pas encore l’arrêt : « envoyée, sans confirmation » ;
+- il n’est plus renvoyé quand quelqu’un a mis une autre valeur sur la pompe à chaleur entre-temps (la
+  valeur d’avant est gardée dans `/data` ; pour un arrêt cliqué avant toute lecture, c’est la première
+  valeur relue après lui), quand une commande plus récente de Gladys pour le même réglage est partie,
+  après 3 renvois ou après 3 minutes ;
+- `/data` contient une garde qui finirait dans plus de 3 minutes (horloge revenue en arrière, sur un
+  appareil sans horloge temps réel) : la garde est invalide et n’est pas rejouée. Une horloge revenue
+  moins loin en arrière ne se distingue pas d’un arrêt récent : après une coupure sur un tel appareil,
+  un arrêt plus ancien peut être revérifié au démarrage (renvoyé seulement si la pompe à chaleur montre
+  la valeur d’avant lui).
+
+Gladys ne remet jamais la pompe à chaleur en marche toute seule.
+
+## Limites connues
+
+- Pas de numéro de série en Modbus : l’appareil est lié à l’intégration, pas à l’adresse IP (changer
+  d’adresse garde l’appareil et son historique), et un autre appareil Modbus à la même adresse ne
+  serait pas détecté.
+- L’écriture du surplus photovoltaïque, les zones de régulation pièce par pièce, la cascade, les
+  booster et l’énergie thermique ne sont pas encore pris en charge.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par iDM heat pump dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre pompe à chaleur iDM | `section` | Non | Affiche votre pompe à chaleur iDM à régulation NAVIGATOR 2.0 dans Gladys par Modbus TCP (port 502) sur votre réseau local, sans cloud : températures, mode et état, défaut, compresseur, circuits de chauffage, eau chaude, solaire et puissance quand la pompe les donne. Faites régler « Modbus TCP » sur « Marche » dans le menu « Gestion technique du bâtiment » du NAVIGATOR (niveau installateur ; l’interface web seule ne suffit pas), saisissez son adresse IP, enregistrez, puis ajoutez la pompe depuis l’onglet Découverte. Modes et consignes ne changent que si vous autorisez les commandes ci-dessous ; eau chaude jamais au-dessus de 65 °C. La veille et l’arrêt d’un circuit ne dépendent jamais de cette option (voir le guide pour les cas d’échec). NAVIGATOR 2.0 seulement. Le Modbus TCP n’a pas de mot de passe : gardez la pompe sur un réseau de confiance. Jamais testé avec un vrai appareil. Sans lien avec iDM. |
+| Adresse IP de la pompe à chaleur | `string` | Oui | Une adresse IPv4 ou un nom d’hôte (port 502 sauf si vous en ajoutez un, par exemple 192.168.1.60:502). |
+| Identifiant d’unité Modbus | `number` | Non | L’adresse esclave Modbus du NAVIGATOR : 1. |
+| Circuits de chauffage | `string` | Non | Les lettres des circuits de chauffage de votre installation, de A à G, séparées par des virgules (par exemple A, B). |
+| Autoriser les commandes | `boolean` | Non | Désactivé par défaut. Activé : Gladys peut changer le mode de fonctionnement, le mode d’un circuit de chauffage, la consigne ambiante d’un circuit (15 à 30 °C) et la consigne d’eau chaude (35 °C jusqu’au plafond ci-dessous). Désactivé : ces commandes sont refusées. La veille et l’arrêt d’un circuit de chauffage ne dépendent jamais de cette option. |
+| Plafond d’eau chaude (°C) | `number` | Non | La consigne d’eau chaude la plus haute que Gladys peut envoyer, de 35 à 65 °C (65 °C par défaut). Rien au-dessus de 65 °C n’est jamais envoyé, quoi qu’il soit saisi ici. |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture de la pompe à chaleur, en secondes. |
+| Langue des noms des fonctionnalités | `select` | Non | Sert aux noms de l’appareil et des fonctionnalités ajoutés désormais, au statut et aux erreurs des commandes. |
+
+## Comment installer iDM heat pump dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : iDM heat pump apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-idm:0.1.2`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-idm](https://github.com/LM1LC3N7/gladys-idm).
+
+iDM heat pump nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+iDM heat pump est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-idm) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-idm/blob/HEAD/docs/fr.md)

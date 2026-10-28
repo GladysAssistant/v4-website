@@ -19,7 +19,7 @@ https://github.com/guim31/gladys-dlna instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"DLNA","description":"Control DLNA/UPnP renderers (TV, amp, speaker) and play your media servers, 100% local.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-dlna","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-dlna.png","type":"device","version":"1.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-25T10:30:10Z"}} />
+<ExternalIntegrationHeader integration={{"name":"DLNA","description":"Control DLNA/UPnP renderers (TV, amp, speaker) and play your media servers, 100% local.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-dlna","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-dlna.png","type":"device","version":"1.2.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-10-26T03:26:02Z"}} />
 
 Control the DLNA / UPnP renderers of your home (TV, amplifier, speaker, streamer) and play the
 content of your media servers (Plex, Jellyfin, Emby, MiniDLNA, a NAS…) from Gladys. Everything stays
@@ -27,7 +27,7 @@ on your local network: no account, no cloud.
 
 ## Requirements
 
-- Gladys 5.1.0 or later.
+- Gladys 5.3.0 or later (version 1.2 of the integration: the music player of Gladys 5.3).
 - The renderers and servers on the same network as Gladys. A device on another network (VLAN, other
   subnet) can be added by hand, see below.
 - On a renderer, DLNA must be enabled: it is sometimes called "DLNA", "UPnP", "Media renderer",
@@ -58,19 +58,24 @@ search again.
 
 ## The renderer device
 
-| Feature        | What it does                                                     |
-| -------------- | ---------------------------------------------------------------- |
-| Play, Pause    | Starts or resumes, pauses (stops when the renderer cannot pause) |
-| Stop           | Stops the playback                                               |
-| Previous, Next | Previous or next track (of the queue, see below)                 |
-| Volume         | 0 to 100 %, mapped to the range the renderer declares            |
-| Mute           | Toggles mute                                                     |
-| Playback state | 1 while playing, 0 otherwise (paused, stopped, off)              |
-| Now playing    | "Artist — Title" as the renderer describes it, "—" when nothing  |
-| Notification   | Used by the core "Play a notification" scene action              |
+| Feature              | What it does                                                                     |
+| -------------------- | -------------------------------------------------------------------------------- |
+| Play, Pause          | Starts or resumes, pauses (stops when the renderer cannot pause)                 |
+| Stop                 | Stops the playback                                                               |
+| Previous, Next       | Previous or next track (of the queue, see below)                                 |
+| Volume               | 0 to 100 %, mapped to the range the renderer declares                            |
+| Mute                 | On or off (Gladys 5.3 music mute)                                                |
+| Playback state       | 1 playing, 0 paused, 2 stopped or nothing loaded, 3 loading; writable: 0/1/2     |
+| Title, Artist, Album | What the renderer plays, empty when nothing is loaded                            |
+| Artwork              | The cover of what plays (album art of the media server), served by Gladys        |
+| Duration, Position   | In seconds; writing a position moves within the track (Seek)                     |
+| Shuffle, Repeat      | Modes of the play queue of the integration (repeat: off, all, one track)         |
+| Now playing          | "Artist — Title" as the renderer describes it, "—" when nothing (1.x text, kept) |
+| Notification         | Used by the core "Play a notification" scene action                              |
 
-Volume and Mute only appear when the renderer has them. The device works with the core **Music**
-widget of the dashboard (previous, play/pause, next, volume).
+Volume and Mute only appear when the renderer has them; Position is read-only when the renderer
+cannot seek (no `Seek` in its UPnP description). The device works with the core **Music** widget
+of the dashboard: see the next section.
 
 **What the device plays some other way** (Spotify Connect, AirPlay, Chromecast, an HDMI input…):
 **volume** and **mute** are the device's own, so Gladys sets them whatever the source. For example,
@@ -83,6 +88,40 @@ The state is refreshed every few seconds while playing, every 15 seconds otherwi
 that is off shows the **unreachable** badge and is checked once a minute; when it comes back on
 another address, the integration finds it again by itself (a network search, at most every 5
 minutes).
+
+## Gladys 5.3 music player
+
+Since Gladys 5.3, the core **Music** widget is a real player, and it is the first choice on a
+dashboard: the cover, the title, the artist and the album, a progress bar you can drag, play/pause,
+previous, next, shuffle, repeat, mute and volume. Its two buttons open a panel:
+
+- **Search and browse**: the media servers added to Gladys (Discovery tab): with one server, the
+  panel opens on its content (MiniDLNA: "Music", "Video", then "Album", "Artist", "Folders"…), with
+  several, on the list of servers. A search looks into every server (albums, artists, playlists and
+  tracks), with the `Search` of the server, or by browsing its folders when it has none. A tap on a
+  track plays it; an album, an artist or a playlist plays whole with its **Play** button; a plain
+  folder is browsed, not played. **Play next** and **Add to queue** put the media in the play queue
+  instead of replacing what plays.
+- **Queue**: the play queue of the integration (a DLNA renderer plays one media at a time: the
+  integration hands it the tracks one after the other), the current track highlighted; a tap jumps
+  to a track. When something else plays (an app, a URL started by a scene), the queue shows it
+  alone, and "Play next" / "Add to queue" keep it as the first track.
+- **Shuffle and repeat** apply to that queue: shuffle mixes the tracks left to play (turned off,
+  they come back in their order), repeat plays the queue again from its first track, or the current
+  track again. They are kept from one queue to the next, until the integration restarts.
+- **Covers**: the album art the media server gives (its small 160 px variant when it has one); a
+  full-size cover (several megabytes) is made smaller by the integration, Gladys accepting 300 KB at
+  most. A renderer playing something started by another app shows its cover when it describes one.
+- The core scene action **"Play music on a speaker"** can start an album, an artist, a playlist or a
+  track picked in that panel. Its reference keeps the title: if the server renumbers its library
+  (MiniDLNA rebuilding its database), the integration finds the media again by its title.
+
+**Devices added before version 1.2**: open the **Discovery** tab of the integration and press
+**Update** on each renderer: it gains the new features, and **Mute** becomes the music mute of
+Gladys 5.3 (same feature, your scenes keep working). Until then, the mute button still toggles as
+before. **The playback state is now 2 when stopped**, no longer 0: a scene "when the playback state
+equals 0" no longer starts on a stop, only on a pause. The texts are emptied when nothing is
+loaded.
 
 ## Scenes
 
@@ -147,6 +186,9 @@ change of the configuration.
 
 ## Dashboard
 
+The core **Music** widget comes first (previous section). The two widgets of the integration remain
+for what it does not do:
+
 Add the **DLNA player** widget and pick a renderer in its settings: it shows the title, the album,
 the state, the queue position, mute, a live volume gauge, and four buttons (play/pause, stop,
 volume − and +, by steps of 5 %).
@@ -187,6 +229,14 @@ useful to play media from a server or announcements, next to their own integrati
   streams play like http ones.
 - **Checked by a user on a Sennheiser AMBEO Soundbar**: found by itself at install time, volume set
   from the widget, including during a Spotify Connect session.
+- **Gladys 5.3 music player, checked against real software** (no Gladys 5.3 instance, no hardware):
+  upmpdcli 1.9.6 with MPD 0.24 (silent output) as the renderer, MiniDLNA 1.3.3 as the server, with
+  a small library (two albums, one of them with a 6.5 MB cover). Browsing and paging, search by
+  type, play an album, next, seek, pause and play, the gapless move to the next track, play next
+  and add to queue, a jump in the queue, repeat one, shuffle on and off, volume, mute, stop, a
+  media started by another controller (its 6.5 MB cover made into 44 KB in 0.6 s, then queued
+  after), and a scene reference whose server object moved: all through the integration in its
+  locked container.
 - **Not checked on real hardware yet**: the play queue and its gapless transitions, the network
   search run by Gladys, searching a real media server (MiniDLNA, Plex, Jellyfin), the favorites and
   their widget, and the station name read from a real web radio. They are
@@ -283,11 +333,11 @@ These are the settings DLNA asks for in its configuration screen in Gladys.
 ## How to install DLNA in Gladys
 
 1. In Gladys, open **Integrations**: DLNA appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-dlna:1.1.2`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-dlna:1.2.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-dlna](https://github.com/guim31/gladys-dlna).
 
-DLNA requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+DLNA requires Gladys `>=5.3.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
 
 Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
 

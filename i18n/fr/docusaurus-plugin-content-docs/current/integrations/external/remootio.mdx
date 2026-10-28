@@ -1,0 +1,198 @@
+---
+title: "Intégration domotique Remootio, gratuite et open source"
+sidebar_label: "Remootio"
+description: "Contrôleurs de portail et de porte de garage Remootio, en local : état, ouvrir, fermer. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-remootio.png"
+keywords:
+  - "remootio"
+  - "domotique remootio"
+  - "gladys remootio"
+  - "remootio gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-remootio instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Remootio","description":"Contrôleurs de portail et de porte de garage Remootio, en local : état, ouvrir, fermer.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-remootio","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-remootio.png","type":"device","version":"0.1.3","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-27T00:25:04Z"}} />
+
+Intégration non officielle, sans lien avec Remootio. **Jamais testé avec un vrai appareil** : elle suit la
+documentation officielle de l'API Websocket de Remootio et a été vérifiée contre un faux Remootio qui en
+reproduit les trames et leur cryptographie. Vos retours avec un vrai Remootio sont les bienvenus.
+
+## Ce que fait l'intégration
+
+Pour chaque Remootio (deux au plus), par son API Websocket locale (sans le cloud Remootio) :
+
+- l'**état** du portail ou de la porte de garage (fermé ou non fermé), si un capteur d'état est installé ;
+- deux **boutons** : **Ouvrir** et **Fermer** (jamais un interrupteur : un « tout éteindre » ou une scène sur
+  des interrupteurs n'atteint pas le portail).
+
+L'état arrive dès qu'il change (événements poussés par le Remootio) et il est relu toutes les 5 minutes.
+
+## Mise en place
+
+1. Dans l'application Remootio, avec la clé maître : **Device software**, puis **Remootio Websocket API**.
+   Activez l'API, de préférence **avec journalisation** (« Enable API with logging ») : Gladys voit alors aussi
+   les impulsions des autres **clés Remootio** (application, clés partagées, automatisations Remootio) et du
+   bouton manuel du Remootio, et attend la fin de la course avant d'en envoyer une.
+2. L'application affiche l'**API Secret Key**, l'**API Auth Key** (64 chiffres hexadécimaux chacune) et
+   l'adresse IP. Donnez au Remootio une adresse IP fixe dans votre box.
+3. Dans Gladys, configuration de l'intégration : saisissez l'adresse et les deux clés. Les champs de clé sont
+   gardés par Gladys dans sa base, jamais réaffichés, et servent seulement avec ce Remootio, sur votre réseau
+   local. Les clés n'apparaissent dans aucun journal, aucun statut, aucun fichier de `/data`.
+4. Ajoutez l'appareil depuis l'onglet **Découverte**.
+
+Logiciel du Remootio : 2.21 ou plus récent (API v2 ou v3). Une version plus ancienne ne donne pas son numéro
+de série : le statut le dit, mettez le Remootio à jour.
+
+L'API n'accepte qu'**une connexion à la fois** : si une autre domotique (Home Assistant…) est connectée au même
+Remootio, les deux se coupent l'une l'autre.
+
+## Ouvrir et fermer
+
+La sortie du Remootio commande le moteur par une **impulsion qui est une bascule** : la même impulsion ouvre
+une porte fermée, ferme une porte ouverte, et arrête ou inverse une porte en mouvement. Pour cette raison :
+
+- Gladys n'envoie que les actions **OPEN** et **CLOSE** de l'API, jamais l'impulsion simple (TRIGGER) : le
+  Remootio n'actionne sa sortie que si **son propre capteur** lit la porte fermée (Ouvrir) ou ouverte
+  (Fermer), au moment où l'action arrive. Sans capteur d'état, il refuse les deux.
+- **Ouvrir et Fermer sont désactivés par défaut, chacun avec sa propre option** : « Autoriser l'ouverture » et
+  « Autoriser la fermeture » (décision du 2026-10-26). Fermer n'exige pas « Autoriser l'ouverture » : on peut
+  fermer la nuit sans autoriser l'ouverture à distance. Fermer a sa propre option parce qu'**il peut ouvrir ou
+  arrêter la porte** dans ces cas :
+  - **une porte en train de se fermer sans que le Remootio le sache** : télécommande d'origine du moteur,
+    bouton mural, fermeture automatique du moteur, clé Remootio quand l'API est sans journalisation, ou
+    durée de course réglée trop courte. Le capteur lit « ouverte » jusqu'en bas, l'impulsion arrête la porte
+    ou la fait remonter ;
+  - **un capteur qui lit « ouverte » sur une porte fermée** (fil coupé, aimant décollé, logique inversée) :
+    Fermer devient une impulsion à l'aveugle et ouvre la porte. Vérifiez l'état affiché dans l'application
+    Remootio avant d'automatiser une fermeture.
+- **Mise à jour depuis la 0.1.1** : Fermer exigeait « Autoriser l'ouverture ». Il exige maintenant seulement
+  « Autoriser la fermeture », qui n'est **pas cochée automatiquement** : si vous aviez coché « Autoriser
+  l'ouverture » pour pouvoir fermer, cochez aussi « Autoriser la fermeture », sinon Fermer est refusé.
+- Après une impulsion (de Gladys, d'une autre clé Remootio ou du bouton manuel si l'API est activée avec
+  journalisation, ou une sortie déjà en train d'être actionnée), la suivante attend la **durée de course**
+  configurée (30 s par défaut) plus 5 s. Après une fermeture, elle attend seulement jusqu'à ce que la porte
+  soit lue fermée. Cette garde est enregistrée dans `/data` avant l'envoi : un redémarrage la garde. Les
+  impulsions de la télécommande d'origine et du bouton mural du moteur ne passent pas par le Remootio : aucune
+  garde ne les suit.
+
+### Les cas où une commande est refusée
+
+Ouvrir ou Fermer est refusé, sans rien envoyer, dans ces cas (chaque bouton a sa propre option) :
+
+- la configuration n'est pas encore chargée (elle est redemandée à Gladys) ;
+- Ouvrir : l'option « Autoriser l'ouverture » n'est pas cochée ;
+- Fermer : l'option « Autoriser la fermeture » n'est pas cochée (même si « Autoriser l'ouverture » l'est) ;
+- l'adresse ou une clé de ce Remootio manque ou est invalide, ou ce Remootio n'est plus dans la configuration,
+  ou un autre Remootio répond à son adresse ;
+- les clés ont été refusées par le Remootio (voir plus bas) ;
+- une impulsion est partie il y a moins que la durée de course plus 5 s, ou la porte vient d'être actionnée
+  par une autre clé Remootio ou par le bouton manuel ;
+- une autre commande de la même porte est en cours (une fermeture annule une ouverture pas encore envoyée) ;
+- le Remootio n'a pas pu être joint dans les 3,5 s ;
+- la garde de l'impulsion n'a pas pu être écrite dans `/data` ;
+- la configuration a changé pendant la commande.
+
+Le Remootio lui-même peut ensuite refuser l'action : pas de capteur d'état (ERR_NO_SENSOR) ; sortie en train
+d'être actionnée (ERR_RELAY_BUSY : la porte va bouger, Gladys pose la garde de course et ne renvoie rien) ;
+déjà dans l'état demandé (rien ne bouge, la commande est réussie).
+
+### La fermeture gardée
+
+Une fermeture qui n'a pas pu partir dans les 3,5 s (Remootio injoignable) est **gardée** : elle part à la
+prochaine connexion, essayée toutes les 5 s, **jusqu'à 2 minutes après le clic**, 3 essais au plus. La porte
+peut donc bouger jusqu'à 2 minutes après le clic, sans personne pour regarder : seules les sécurités du moteur
+(cellules, détection d'effort) protègent alors quelqu'un sous la porte. Elle est abandonnée, et le statut le
+dit, si :
+
+- le Remootio n'a pas pu être joint en 2 minutes, ou 3 essais n'ont pas abouti ;
+- l'historique que le Remootio renvoie à la reconnexion montre que la porte a bougé pendant la coupure ;
+- une autre clé Remootio ou le bouton manuel a actionné la porte, ou la sortie était en train d'être
+  actionnée ;
+- l'option « Autoriser la fermeture » a été décochée (elle est relue au moment où la fermeture part).
+
+Une ouverture partie entre-temps l'annule sans message.
+
+Pour laisser arriver cet historique, la fermeture gardée ne part qu'après un échange PING/PONG et au moins 1 s de
+session prête.
+
+### Après l'envoi
+
+Si l'action a pu partir sans que la réponse arrive, Gladys répond « Commande envoyée, sans confirmation »,
+garde la garde, et ouvre une nouvelle connexion. Avant d'écrire une impulsion, la connexion est vérifiée par
+un PING si rien n'a été reçu depuis 2 s. L'état est relu 5 s et 15 s après une impulsion, puis à la fin de la
+course ; une porte qui n'est pas lue là où elle a été envoyée (obstacle, télécommande, course plus longue que
+configurée), ou un état qui n'a pas pu être relu, est signalé dans le statut.
+
+## Connexion et clés refusées
+
+- La connexion est ouverte au démarrage et gardée ; une connexion perdue est rouverte après 5 s, 15 s, 30 s,
+  1 min, 2 min, puis toutes les 5 minutes (toutes les 5 s tant qu'une fermeture est gardée). Un PING part
+  chaque minute.
+- Une commande n'attend pas la reconnexion : elle utilise la connexion ouverte, sinon en ouvre une nouvelle
+  tout de suite, après avoir fermé l'ancienne ; ses essais n'allongent pas l'attente de la reconnexion.
+- **Clés refusées** : deux fois de suite, le Remootio a répondu par un défi que ces clés n'ouvrent pas. Plus
+  aucun essai automatique, le statut le dit. Une connexion lente, coupée ou prise par une autre domotique
+  pendant l'authentification n'est pas un refus. Enregistrez les bonnes clés ou une autre adresse, ou utilisez
+  le bouton **Vérifier les Remootio** (un essai, au plus toutes les 30 s ; le refus n'est levé que par un
+  succès).
+- **Un autre Remootio répond à l'adresse** (son numéro de série n'est pas celui attendu, et les clés ne
+  l'ouvrent pas) : le statut le dit, les essais continuent normalement ; corrigez l'adresse.
+
+## Limites connues
+
+- Sans capteur d'état, rien n'est lu et les deux boutons sont refusés par le Remootio.
+- Sans journalisation dans l'API, les impulsions des autres clés Remootio ne sont pas vues ; la télécommande
+  d'origine et le bouton mural du moteur ne le sont dans aucun cas.
+- Pendant la toute première fraction de seconde d'une ouverture lancée par la télécommande, le capteur lit
+  encore « fermé » : une ouverture envoyée à ce moment arrêterait la porte.
+- Le protocole n'a pas de valeur aléatoire du client : quelqu'un qui enregistre le réseau local peut rejouer
+  une session entière ; ce n'est pas corrigeable côté Gladys.
+- La sortie secondaire (« free relay output » du Remootio 2) n'est pas utilisée.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Remootio dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre Remootio, sur votre réseau local | `section` | Non | L'état du portail ou de la porte de garage (avec le capteur d'état du Remootio), et des boutons Ouvrir et Fermer, par l'API Websocket locale de chaque Remootio (deux au plus), sans le cloud Remootio. Saisissez l'adresse et les deux clés d'API ci-dessous, puis ajoutez l'appareil depuis l'onglet Découverte. Jamais testé avec un vrai appareil. Intégration non officielle, sans lien avec Remootio. |
+| Remootio 1 | `section` | Non | Votre Remootio : son adresse et ses deux clés d'API. Dans l'application Remootio (avec la clé maître), ouvrez Device software, puis Remootio Websocket API, et activez l'API (de préférence « avec journalisation » : les impulsions des autres clés Remootio et de son bouton manuel sont alors vues (jamais celles de la télécommande ou du bouton mural du moteur)). L'application affiche alors l'API Secret Key, l'API Auth Key et l'adresse IP. Donnez au Remootio une adresse IP fixe dans votre box. |
+| Adresse IP | `string` | Non | Par exemple 192.168.1.115 (port 8080 de l'API Websocket ; ajoutez :port seulement s'il diffère). |
+| API Secret Key | `secret` | Non | 64 chiffres hexadécimaux, affichés par l'application Remootio quand l'API Websocket est activée. Ce champ est gardé par Gladys dans sa base, jamais réaffiché, et sert seulement avec ce Remootio, sur votre réseau local. |
+| API Auth Key | `secret` | Non | 64 chiffres hexadécimaux, affichés par l'application Remootio quand l'API Websocket est activée. Ce champ est gardé par Gladys dans sa base, jamais réaffiché, et sert seulement avec ce Remootio, sur votre réseau local. |
+| Remootio 2 | `section` | Non | Un deuxième Remootio (un autre portail ou une autre porte de garage), facultatif : mêmes champs. |
+| Adresse IP | `string` | Non | Par exemple 192.168.1.115 (port 8080 de l'API Websocket ; ajoutez :port seulement s'il diffère). |
+| API Secret Key | `secret` | Non | 64 chiffres hexadécimaux, affichés par l'application Remootio quand l'API Websocket est activée. Ce champ est gardé par Gladys dans sa base, jamais réaffiché, et sert seulement avec ce Remootio, sur votre réseau local. |
+| API Auth Key | `secret` | Non | 64 chiffres hexadécimaux, affichés par l'application Remootio quand l'API Websocket est activée. Ce champ est gardé par Gladys dans sa base, jamais réaffiché, et sert seulement avec ce Remootio, sur votre réseau local. |
+| Ouverture et fermeture | `section` | Non | La porte a deux boutons, jamais un interrupteur. La sortie commande le moteur par une impulsion bascule. Gladys n'envoie que les actions Ouvrir et Fermer : le Remootio n'actionne sa sortie que si son capteur lit la porte fermée (Ouvrir) ou ouverte (Fermer) ; sans capteur, il refuse les deux. Chaque bouton a sa propre option, toutes deux désactivées par défaut : Fermer peut arrêter, inverser ou ouvrir une porte en train de se fermer à l'insu du Remootio (télécommande, bouton mural, fermeture automatique) ou avec un capteur faux, donc il ne dépend pas d'Ouvrir. Après une impulsion, la suivante attend la durée de course plus 5 s. Une fermeture qui ne peut pas partir est gardée et envoyée jusqu'à 2 minutes plus tard, si elle est encore autorisée. Mise à jour depuis la 0.1.1 : Fermer exigeait « Autoriser l'ouverture » ; cochez « Autoriser la fermeture » pour continuer à fermer. |
+| Autoriser l'ouverture | `boolean` | Non | Désactivé par défaut : les portes sont seulement lues. Activé : le tableau de bord, les scènes et les assistants vocaux peuvent ouvrir le portail ou la porte de garage. |
+| Autoriser la fermeture | `boolean` | Non | Désactivé par défaut. Activé : le tableau de bord, les scènes et les assistants vocaux peuvent fermer le portail ou la porte de garage, sans avoir besoin de « Autoriser l'ouverture ». Fermer est la même impulsion qu'ouvrir : sur une porte déjà en train de se fermer à l'insu du Remootio, ou avec un capteur faux, elle peut l'arrêter, l'inverser ou l'ouvrir. |
+| Durée de course la plus longue de la porte (s) | `number` | Non | Le temps que met le portail ou la porte à s'ouvrir ou se fermer complètement, en secondes (10 à 120). Aucune autre impulsion n'est envoyée pendant ce temps plus 5 s. |
+| Langue des noms des fonctionnalités | `select` | Non | Sert aux noms des fonctionnalités ajoutées désormais, et aux erreurs des commandes. |
+
+## Comment installer Remootio dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Remootio apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-remootio:0.1.3`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-remootio](https://github.com/LM1LC3N7/gladys-remootio).
+
+Remootio nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Remootio est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-remootio) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-remootio/blob/HEAD/docs/fr.md)

@@ -1,0 +1,187 @@
+---
+title: "Intégration domotique Somfy MyLink, gratuite et open source"
+sidebar_label: "Somfy MyLink"
+description: "Volets Somfy RTS et scènes par le pont Somfy MyLink, sur le réseau local. Non officiel. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-somfy-mylink.png"
+keywords:
+  - "somfy mylink"
+  - "domotique somfy mylink"
+  - "gladys somfy mylink"
+  - "somfy mylink gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-somfy-mylink instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Somfy MyLink","description":"Volets Somfy RTS et scènes par le pont Somfy MyLink, sur le réseau local. Non officiel.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-somfy-mylink","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-somfy-mylink.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-27T00:22:30Z"}} />
+
+Cette intégration pilote vos volets et stores à moteur **Somfy RTS** par le
+**pont Somfy MyLink**, sur votre réseau local : ouverture, fermeture, arrêt,
+position favorite (« my ») et scènes MyLink. Elle parle à l'API « Synergy » du
+pont (TCP, port 44100) ; le cloud Somfy n'est pas utilisé.
+
+> **Non officiel**, sans lien avec Somfy. L'intégration n'a **jamais été
+> testée avec un vrai pont** pour l'instant : elle suit le protocole de la
+> bibliothèque pysomfymylink (celle de Home Assistant). Vos retours sont les
+> bienvenus.
+
+## Avant de commencer
+
+1. Installez le pont et vos volets dans l'application **MyLink**.
+2. Dans l'application, menu **Intégration**, notez le **System ID**.
+3. Donnez au pont une adresse IP fixe dans votre box (réservation DHCP).
+
+## Configuration
+
+- **Adresse du pont** : son adresse IP, par exemple `192.168.1.60` (port
+  44100 par défaut ; `192.168.1.60:44100` est accepté).
+- **System ID** : gardé par Gladys dans sa base, jamais réaffiché, envoyé
+  seulement à votre pont. Il n'apparaît dans aucun journal, aucun statut ni
+  dans `/data`.
+- **Intervalle de lecture** (60 à 3600 s, 300 par défaut) : la liste des
+  volets et des scènes est relue à ce rythme, seulement pour savoir si le pont
+  répond.
+- **Langue** des noms des fonctionnalités.
+
+Le bouton **Tester la connexion** relit le pont (au plus une fois par minute).
+
+## Ce que vous obtenez
+
+- Un **volet** par moteur du pont : `Ouverture / fermeture` (ouvrir, fermer,
+  stop) et un bouton `Position favorite (my)`.
+- Un **bouton** par scène MyLink (`Lancer`).
+
+Jamais d'interrupteur : un « tout éteindre » n'atteint pas vos volets.
+
+## L'état est supposé, jamais confirmé
+
+Les moteurs RTS sont à **sens unique** : ils ne renvoient ni leur état ni leur
+position, et le pont dit seulement qu'il a pris la commande. Donc :
+
+- il n'y a **pas de position** dans Gladys ;
+- la valeur que Gladys affiche pour `Ouverture / fermeture` est la **dernière
+  commande envoyée**, pas un état mesuré : un volet indiqué « fermé » a reçu
+  l'ordre de fermer, rien de plus (télécommande, obstacle, protection
+  thermique du moteur peuvent l'avoir changé) ;
+- le badge de chaque volet (point orange) dit « État supposé » avec la
+  dernière commande et si le pont l'a acceptée ;
+- aucune commande ne peut être « confirmée par une relecture » : une commande
+  réussie veut dire « acceptée par le pont » (il a répondu). Sans réponse du
+  pont, Gladys affiche une erreur « envoyé, mais le pont n'a pas répondu :
+  état inconnu » (la commande a pu partir : elle n'est jamais dite « non
+  envoyée »).
+
+**Stop et position favorite** : sur un moteur RTS, c'est le même bouton
+« my ». Pendant un mouvement, il arrête le volet ; à l'arrêt, il l'envoie à sa
+position favorite. Le pont ne sait pas si le volet bouge : appuyer sur stop
+quand le volet est immobile le déplace donc vers sa position favorite.
+
+## Arrêt et fermeture
+
+L'arrêt et la fermeture passent **avant** les autres commandes : une lecture
+en cours est coupée, et ils n'attendent ni la liste des volets, ni le System ID
+validé par une lecture, ni une lecture récente. Le pont n'accepte qu'une
+connexion, et l'intégration n'y envoie **qu'une requête à la fois**, chacune
+après la réponse du pont à la précédente. Si la requête en cours n'a pas de
+réponse depuis une seconde, la connexion est coupée, et l'arrêt ou la
+fermeture part sur une nouvelle connexion une fois l'ancienne fermée. Une
+scène Gladys sur cinq volets prend donc cinq fois le temps de réponse du pont ;
+ce qui n'a pas pu partir dans les 3,5 s est gardé (voir plus bas).
+
+**La plus récente gagne, dès son arrivée** : tout nouveau clic sur un volet
+(ouvrir, fermer, stop, position favorite), qu'il parte ou non, annule la
+commande gardée de ce volet ; lancer une scène MyLink annule toutes les
+commandes gardées.
+
+Ils sont refusés (message d'erreur dans Gladys) dans ces cas, et seulement
+ceux-là :
+
+1. l'adresse ou le System ID manque dans la configuration, ou la configuration
+   n'a pas encore pu être lue auprès de Gladys (rien n'est envoyé) ;
+2. la valeur reçue n'est pas « fermer » ou « stop » ;
+3. une commande plus récente du même volet est déjà partie ;
+4. le pont répond une erreur ou une réponse inattendue (System ID refusé,
+   volet inconnu du pont) : le message le dit ;
+5. **stop** écrit sans réponse du pont : erreur « vérifiez le volet » ; il
+   n'est **jamais renvoyé** (à l'arrêt, stop envoie le volet à sa position
+   favorite) ;
+6. **stop** pas parti dans les 3,5 s (pont injoignable, essais toutes les
+   250 ms) : il est gardé et réessayé à partir de 4 s, **jamais écrit plus de
+   8 s après le clic** (au-delà, le volet a souvent fini sa course et le stop
+   le déplacerait vers sa position favorite) ;
+7. **fermeture** sans réponse du pont dans les 3,5 s : elle est réécrite sur
+   une nouvelle connexion dans ce délai, puis gardée et réessayée 5, 12 et
+   25 s après le clic (3 s chaque fois, jusqu'à environ 30 s).
+
+Une commande gardée vit **en mémoire seulement** : si l'intégration redémarre,
+elle est perdue, jamais rejouée ; le badge du volet indique alors « non envoyé
+ou non confirmé : vérifiez le volet ».
+
+## Ouverture, position favorite, scènes
+
+Elles sont refusées, sans rien envoyer, si : l'adresse ou le System ID manque
+ou la configuration n'est pas encore lue ; le pont a refusé le System ID ; le
+volet ou la scène n'est pas dans la liste lue sur le pont (bouton Scanner de
+l'onglet Découverte) ; 32 commandes attendent déjà ; un arrêt ou une fermeture
+plus récent du même volet (pour une scène : de n'importe quel volet) est
+arrivé avant leur envoi ; elles n'ont pas pu partir dans les 3,5 s (pont
+occupé ou injoignable). Écrites sans réponse du pont, elles s'affichent en
+erreur « état inconnu ». Elles ne sont jamais réessayées.
+
+## Sens de chaque volet
+
+Vérifiez le sens de chaque volet avant de vous en servir dans une scène : sur
+un moteur câblé à l'envers, « fermer » ouvre. Home Assistant a une option
+d'inversion ; elle est prévue ici plus tard.
+
+## System ID refusé
+
+Si le pont refuse le System ID, l'intégration s'arrête de lire le pont (le
+refus est gardé dans `/data` sous une marque de 8 bits qui ne permet pas de
+retrouver le System ID) jusqu'à ce que vous enregistriez un autre System ID ou
+que **Tester la connexion** réussisse, ou que le pont réponde sans erreur à une
+commande. L'arrêt et la fermeture sont quand même envoyés.
+
+## Confidentialité
+
+Tout reste sur votre réseau local. `/data` contient l'heure de la dernière
+lecture, la liste des volets et des scènes (identifiants et noms), la dernière
+commande de chaque volet et les commandes restées « non envoyées » (pour le
+badge, jamais renvoyées) ; jamais le System ID.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Somfy MyLink dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Vos volets Somfy RTS dans Gladys | `section` | Non | Chaque volet de votre pont MyLink devient un volet dans l'onglet Découverte (ouverture, fermeture, arrêt, position favorite), et chaque scène MyLink un bouton. Les moteurs RTS ne renvoient jamais leur état : Gladys ne connaît que la dernière commande envoyée, affichée comme un état supposé, jamais comme un fait. Tout reste sur votre réseau local (l'API Synergy du pont, port 44100). Jamais testée avec un vrai pont pour l'instant. Non officiel, sans lien avec Somfy. |
+| Adresse du pont | `string` | Oui | L'adresse IP locale de votre pont MyLink, par exemple 192.168.1.60. Donnez-lui une adresse fixe dans votre box (réservation DHCP). |
+| System ID | `secret` | Oui | Affiché dans l'application MyLink, menu Intégration. Gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement à votre pont. |
+| Intervalle de lecture (s) | `number` | Non | Fréquence de lecture de la liste des volets et des scènes sur le pont (60 à 3600 s). Elle dit seulement si le pont répond : les moteurs RTS n'ont pas d'état à lire. |
+| Langue des noms des fonctionnalités | `select` | Non | Sert aux noms des fonctionnalités des appareils ajoutés désormais. |
+
+## Comment installer Somfy MyLink dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Somfy MyLink apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-somfy-mylink:0.1.2`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-somfy-mylink](https://github.com/LM1LC3N7/gladys-somfy-mylink).
+
+Somfy MyLink nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Somfy MyLink est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-somfy-mylink) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-somfy-mylink/blob/HEAD/docs/fr.md)

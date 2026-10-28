@@ -19,7 +19,7 @@ https://github.com/guim31/gladys-mpd instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Music Player Daemon","description":"Controle sus reproductores MPD (moOde, Volumio, piCorePlayer…): música, volumen, listas, avisos.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-mpd","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-mpd.png","type":"device","version":"1.0.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-10-22T06:26:17Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Music Player Daemon","description":"Controle sus reproductores MPD (moOde, Volumio, piCorePlayer…): música, volumen, listas, avisos.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-mpd","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-mpd.png","type":"device","version":"1.1.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-10-26T08:15:32Z"}} />
 
 Controle sus reproductores [MPD](https://www.musicpd.org) desde Gladys: una
 Raspberry Pi conectada a un amplificador con moOde, Volumio, piCorePlayer o el
@@ -29,16 +29,20 @@ la música, y ver en el panel lo que suena. Todo se queda en su red local: sin
 nube, sin cuenta.
 
 > **Desarrollada sin el hardware: sus comentarios son bienvenidos.** La
-> integración se construyó y probó con un servidor MPD simulado que responde
-> como MPD 0.23, no con un reproductor real. Indique lo que funciona y lo que
-> no en las [issues](https://github.com/guim31/gladys-mpd/issues).
+> integración se construyó y probó con un MPD 0.24 real en Docker (sin tarjeta
+> de sonido) y un servidor simulado, no en un reproductor moOde, Volumio o
+> piCorePlayer. Indique lo que funciona y lo que no en las
+> [issues](https://github.com/guim31/gladys-mpd/issues).
 
 Esta integración no está afiliada al proyecto MPD, ni a moOde, Volumio o
 piCorePlayer.
 
 ## Lo que necesita
 
-- Gladys Assistant **5.2.0** o posterior.
+- Gladys Assistant **5.3.0** o posterior.
+- Para los paneles de búsqueda, navegación y cola de la caja **Música**: MPD
+  **0.21** o posterior (carátulas incluidas en los archivos: **0.22**). moOde,
+  Volumio 3 y las distribuciones recientes traen la 0.23 o la 0.24.
 - Un reproductor con **MPD**, accesible desde Gladys en la red, en su puerto
   MPD (**6600** por defecto). moOde y piCorePlayer (con su extensión MPD) lo
   exponen de serie; el propio MPD escucha en la red cuando `bind_to_address`
@@ -72,19 +76,66 @@ Cada reproductor es un dispositivo. Gladys lo muestra como un reproductor de
 música: la caja **Música** del panel (reproducir, pausa, anterior, siguiente,
 volumen) y la acción de escena **Hablar en un altavoz** funcionan con él.
 
-| Función (nombres en español) | Lo que hace                                                                                                         |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| Reproducir                   | Reproduce la cola (una canción en pausa sigue donde estaba).                                                        |
-| Pausa                        | Pone en pausa.                                                                                                      |
-| Pista anterior               | Pasa a la canción anterior.                                                                                         |
-| Pista siguiente              | Pasa a la canción siguiente.                                                                                        |
-| Volumen                      | 0 a 100 %, tal como lo ve MPD. Sin valor cuando MPD no tiene mezclador (volumen fijo).                              |
-| Estado de reproducción       | 1 durante la reproducción, 0 en pausa o detenido. Guardado en el historial, utilizable como disparador o condición. |
-| Lista de reproducción        | La lista de las listas guardadas en MPD: elegir una sustituye la cola por ella y la reproduce.                      |
-| Notificación                 | Recibe una dirección que reproducir y luego vuelve a lo que sonaba (ver más abajo).                                 |
+| Función (nombres en español) | Lo que hace                                                                                    |
+| ---------------------------- | ---------------------------------------------------------------------------------------------- |
+| Reproducir                   | Reproduce la cola (una canción en pausa sigue donde estaba).                                   |
+| Pausa                        | Pone en pausa.                                                                                 |
+| Pista anterior               | Pasa a la canción anterior.                                                                    |
+| Pista siguiente              | Pasa a la canción siguiente.                                                                   |
+| Volumen                      | 0 a 100 %, tal como lo ve MPD. Sin valor cuando MPD no tiene mezclador (volumen fijo).         |
+| Estado de reproducción       | 0 en pausa, 1 reproduciendo, 2 detenido. Escribirlo pausa, reproduce o detiene.                |
+| Título                       | El título de la canción (la que anuncia una radio web).                                        |
+| Artista                      | Su artista.                                                                                    |
+| Álbum                        | Su álbum (la emisora de una radio web).                                                        |
+| Carátula                     | La carátula, mostrada por la caja Música (ver más abajo).                                      |
+| Duración                     | En segundos; 0 para una radio web.                                                             |
+| Posición                     | En segundos; escribirla salta a ese punto de la canción.                                       |
+| Reproducción aleatoria       | La reproducción aleatoria de MPD, activada o no.                                               |
+| Repetición                   | Desactivada, toda la cola o la canción actual (repeat y single de MPD).                        |
+| Lista de reproducción        | La lista de las listas guardadas en MPD: elegir una sustituye la cola por ella y la reproduce. |
+| Notificación                 | Recibe una dirección que reproducir y luego vuelve a lo que sonaba (ver más abajo).            |
 
 La lista sigue a MPD: una lista guardada o borrada en el reproductor aparece o
 desaparece de la lista.
+
+## Reproductor de música de Gladys 5.3
+
+Desde Gladys 5.3, la caja **Música** del panel es un verdadero reproductor, y
+MPD la llena por completo:
+
+- la carátula, el título, el artista y el álbum, una barra de progreso que se
+  puede arrastrar para saltar, reproducir y pausa, anterior, siguiente,
+  aleatorio, repetición y el volumen;
+- la **cola** (botón de lista): las canciones de la cola de MPD, la actual
+  resaltada; un toque reproduce otra;
+- **búsqueda y navegación** (botón de lupa): la búsqueda pide a MPD canciones
+  (cualquier etiqueta) y busca en los nombres de los artistas, los álbumes y
+  las listas; la navegación empieza por **Carpetas** (el directorio musical de
+  MPD), **Artistas**, **Álbumes** y **Listas de reproducción**. Un toque
+  reproduce el elemento en lugar de la cola; el gesto secundario lo añade
+  después de la canción actual o al final de la cola. Una carpeta, un artista
+  o un álbum se reproduce entero (500 canciones como máximo).
+
+La acción de escena **Reproducir música en un altavoz** de Gladys elige una
+lista, un álbum, un artista, una carpeta o una canción en el mismo panel, y la
+reproduce cuando se ejecuta la escena.
+
+**Un dispositivo añadido antes de la versión 1.1.0** sigue funcionando como
+antes, sin las nuevas funciones: abra la pestaña **Descubrir** de la
+integración y haga clic en **Actualizar** en el reproductor (Gladys lo propone
+porque las funciones han cambiado). Las nuevas funciones se añaden; las
+existentes conservan sus escenas y paneles. **Estado de reproducción** cambia:
+vale 2 en lugar de 0 cuando MPD está detenido, y ya no se guarda en el
+historial (Gladys no guarda historial de las funciones de música).
+
+Las carátulas vienen de MPD: primero la imagen incluida en el archivo, si no el
+archivo de carátula de su carpeta (`cover.jpg`, `folder.png`…). MPD la envía
+tal como está en el archivo, a menudo un escaneo de varios megabytes, y Gladys
+muestra una carátula de **300 KB como máximo**: la integración reduce una más
+grande (un JPEG de 400 píxeles como máximo), hasta 10 MB (ver Límites).
+
+MPD **no tiene silencio**: no hay botón Silencio para un reproductor MPD (poner
+el volumen a 0 perdería el volumen al que volver).
 
 ## Widget del panel
 
@@ -102,8 +153,9 @@ reproductor (vacío: el primero de la configuración). Muestra:
   se envía lo que usted cambia.
 
 El widget sigue al reproductor: se actualiza en menos de diez segundos cuando
-empieza una canción, cambia el volumen o se guarda una lista. Sin carátula
-(ver Límites).
+empieza una canción, cambia el volumen o se guarda una lista. La caja **Música** de Gladys 5.3
+(más arriba) es el reproductor completo; este widget añade el formulario
+**Opciones…** y no tiene carátula.
 
 ## Escenas
 
@@ -175,11 +227,11 @@ notificaciones** de la configuración.
 ## Actualización
 
 La integración mantiene una conexión abierta con cada reproductor y espera sus
-cambios (el comando `idle` de MPD): lo que pasa en el reproductor, desde Gladys
-o desde otra aplicación, llega a Gladys en menos de un segundo. Además, cada
-reproductor se lee cada 30 segundos (así se comprueba también que sigue
-respondiendo), y un valor sin cambios se reenvía cada seis horas para que
-Gladys nunca lo muestre como antiguo. Solo se envían a Gladys los cambios.
+cambios (la orden `idle` de MPD): lo que pasa en el reproductor, desde Gladys o
+desde otra aplicación, llega a Gladys en menos de un segundo. Además, cada
+reproductor se lee cada 30 segundos (lo que también comprueba que sigue
+respondiendo). Solo se envían los cambios a Gladys; la posición en la canción
+solo cuando salta (Gladys hace avanzar la barra de progreso ella misma).
 
 Un reproductor que deja de responder se muestra inaccesible (indicador de
 transporte del dispositivo, estado de conexión de la integración), y la
@@ -191,6 +243,9 @@ cada 30 segundos, con una conexión por reproductor.
 
 ## Solución de problemas
 
+- **«MPD ha respondido con demasiados datos a la vez»** en el panel de música:
+  una carpeta o una lista más grande de lo que lee la integración (4 MB de
+  texto): abra una carpeta más pequeña, o busque.
 - **«no responde»**: compruebe la dirección y el puerto (6600, o el de `port`
   en `mpd.conf`), que MPD escucha en la red (`bind_to_address`) y que ningún
   cortafuegos bloquea el puerto entre Gladys y el reproductor.
@@ -220,15 +275,17 @@ cada 30 segundos, con una conexión por reproductor.
 
 - Hasta cuatro reproductores. Un reproductor se reconoce por su posición en la
   configuración: cambiar su dirección conserva el dispositivo y su historial.
-- Sin carátula en el widget: MPD la envía sin reducir, a menudo por encima de
-  lo que Gladys acepta.
-- Sin navegación por la biblioteca musical: solo listas, direcciones y rutas de
-  la biblioteca.
+- No se muestran las carátulas de más de 10 MB o 25 megapíxeles, ni las de
+  otro formato que JPEG, PNG y WebP (GIF…), ni las WebP de más de 300 KB: la
+  integración solo reduce JPEG y PNG.
+- La búsqueda de MPD ignora las mayúsculas; los acentos solo si MPD está
+  compilado con ICU (si no, `cafe` puede no encontrar `Café`).
+- Sin silencio (MPD no tiene).
 - Sin agrupación de reproductores (Snapcast) ni elección de salidas.
 - MPD no se descubre solo en la red: introduzca las direcciones.
 - Gladys no transmite el volumen de la acción **Hablar en un altavoz** (se
   aplica el **Volumen de las notificaciones**).
-- Gladys 5.2.0 o posterior (el formulario **Opciones…** del widget).
+- Gladys 5.3.0 o posterior (el reproductor de música y sus paneles).
 
 ## Parámetros de configuración
 
@@ -259,11 +316,11 @@ Estos son los parámetros que Music Player Daemon te pide en su pantalla de conf
 ## Cómo instalar Music Player Daemon en Gladys
 
 1. En Gladys, abre **Integraciones**: Music Player Daemon aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
-2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-mpd:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-mpd:1.1.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
 3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
 4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-mpd](https://github.com/guim31/gladys-mpd).
 
-Music Player Daemon requiere Gladys `>=5.2.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+Music Player Daemon requiere Gladys `>=5.3.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
 
 ¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
 
