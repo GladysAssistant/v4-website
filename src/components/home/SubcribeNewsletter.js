@@ -7,7 +7,7 @@ import Turnstile from "../Turnstile";
 
 const NEWSLETTER_API = "https://newsletter.gladysassistant.com/api/v1/subscribe";
 // Public site key of the Turnstile widget of the newsletter (Cloudflare dashboard > Turnstile).
-const TURNSTILE_SITE_KEY = "REPLACE_WITH_TURNSTILE_SITE_KEY";
+const TURNSTILE_SITE_KEY = "0x4AAAAAAFrS08neWvo251Yb";
 
 function validateEmail(email) {
   var re = /[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}/gim;
