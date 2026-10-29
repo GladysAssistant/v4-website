@@ -38,7 +38,7 @@ Cliquez sur **Create VM** en haut à droite et suivez l'assistant :
 - **System** : cochez **Qemu Agent**.
 - **Disks** : **32 Go** suffisent pour commencer. Gladys conserve l'historique de vos capteurs : prévoyez plus si vous avez beaucoup d'appareils.
 - **CPU** : **2 cœurs**. Choisissez le type **host** pour de meilleures performances (dans un cluster avec des modèles de CPU différents, voir la FAQ plus bas).
-- **Memory** : **4096 Mo** (4 Go). Gladys tourne avec 2 Go, mais Zigbee2MQTT et les autres intégrations apprécieront la marge.
+- **Memory** : **4096 Mo** (4 Go) pour commencer. Prévoyez **6 à 8 Go** dès que vous utilisez Zigbee2MQTT et plusieurs intégrations, qui tournent chacune dans leur propre conteneur. Vous pourrez l'augmenter plus tard depuis l'onglet **Hardware** : le changement s'applique une fois la VM arrêtée puis redémarrée.
 - **Network** : gardez le bridge par défaut (`vmbr0`) et le modèle **VirtIO**, pour que la VM obtienne une adresse sur votre réseau local comme n'importe quel autre appareil.
 
 Validez, puis démarrez la VM.
@@ -114,11 +114,11 @@ Si vous utilisez [Gladys Plus](/fr/docs/plus/intro), il sauvegarde déjà votre 
 
 ### Faut-il utiliser une VM ou un conteneur LXC ?
 
-Nous recommandons une VM. Gladys tourne dans Docker, et Docker dans un conteneur LXC demande un conteneur privilégié avec l'option nesting activée. Les périphériques USB sont aussi plus difficiles à transmettre à un conteneur, et Matter a besoin que l'IPv6 fonctionne aussi dans le conteneur. Certains membres de la communauté font tourner Gladys dans un LXC « Docker » privilégié, et ça fonctionne, mais une VM vous donne exactement la même configuration que l'installation officielle, pour quelques centaines de Mo de RAM en plus.
+Nous recommandons une VM parce que c'est le plus simple : l'installation officielle fonctionne telle quelle, et le dongle USB, le Bluetooth et l'IPv6 pour Matter se comportent comme sur une machine physique. Un conteneur LXC fonctionne aussi, et plusieurs membres expérimentés de la communauté font tourner Gladys ainsi : il consomme un peu moins de RAM, et ses ressources se modifient sans redémarrage. Mais Docker dans un LXC demande un conteneur privilégié avec l'option nesting activée, et transmettre les périphériques USB et l'IPv6 au conteneur demande une configuration supplémentaire. Si vous êtes à l'aise avec ça, le LXC est un bon choix ; sinon, partez sur la VM.
 
 ### De combien de RAM et de disque la VM Gladys a-t-elle besoin ?
 
-2 cœurs, 4 Go de RAM et un disque de 32 Go sont confortables pour une maison classique. Gladys elle-même tourne avec 2 Go de RAM. Donnez plus de disque à la VM si vous gardez un long historique pour beaucoup de capteurs.
+Commencez avec 2 cœurs, 4 Go de RAM et un disque de 32 Go. Les membres de la communauté qui utilisent Zigbee2MQTT et plusieurs intégrations constatent que 4 Go deviennent vite un peu justes : prévoyez alors 6 à 8 Go. Vous pouvez augmenter la RAM à tout moment, le changement s'applique une fois la VM arrêtée puis redémarrée. Donnez plus de disque à la VM si vous gardez un long historique pour beaucoup de capteurs.
 
 ### Matter fonctionne-t-il dans une VM Proxmox ?
 
@@ -142,7 +142,7 @@ Oui. L'[intégration communautaire Proxmox](/fr/docs/integrations/external/proxm
         name: "Faut-il utiliser une VM ou un conteneur LXC ?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Nous recommandons une VM. Gladys tourne dans Docker, et Docker dans un conteneur LXC demande un conteneur privilégié avec l'option nesting activée. Les périphériques USB sont aussi plus difficiles à transmettre à un conteneur, et Matter a besoin que l'IPv6 fonctionne aussi dans le conteneur. Certains membres de la communauté font tourner Gladys dans un LXC Docker privilégié, et ça fonctionne, mais une VM vous donne exactement la même configuration que l'installation officielle, pour quelques centaines de Mo de RAM en plus.",
+          text: "Nous recommandons une VM parce que c'est le plus simple : l'installation officielle fonctionne telle quelle, et le dongle USB, le Bluetooth et l'IPv6 pour Matter se comportent comme sur une machine physique. Un conteneur LXC fonctionne aussi, et plusieurs membres expérimentés de la communauté font tourner Gladys ainsi : il consomme un peu moins de RAM, et ses ressources se modifient sans redémarrage. Mais Docker dans un LXC demande un conteneur privilégié avec l'option nesting activée, et transmettre les périphériques USB et l'IPv6 au conteneur demande une configuration supplémentaire. Si vous êtes à l'aise avec ça, le LXC est un bon choix ; sinon, partez sur la VM.",
         },
       },
       {
@@ -150,7 +150,7 @@ Oui. L'[intégration communautaire Proxmox](/fr/docs/integrations/external/proxm
         name: "De combien de RAM et de disque la VM Gladys a-t-elle besoin ?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "2 cœurs, 4 Go de RAM et un disque de 32 Go sont confortables pour une maison classique. Gladys elle-même tourne avec 2 Go de RAM. Donnez plus de disque à la VM si vous gardez un long historique pour beaucoup de capteurs.",
+          text: "Commencez avec 2 cœurs, 4 Go de RAM et un disque de 32 Go. Les membres de la communauté qui utilisent Zigbee2MQTT et plusieurs intégrations constatent que 4 Go deviennent vite un peu justes : prévoyez alors 6 à 8 Go. Vous pouvez augmenter la RAM à tout moment, le changement s'applique une fois la VM arrêtée puis redémarrée. Donnez plus de disque à la VM si vous gardez un long historique pour beaucoup de capteurs.",
         },
       },
       {

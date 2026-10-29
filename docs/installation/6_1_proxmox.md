@@ -38,7 +38,7 @@ Click on **Create VM** at the top right and go through the wizard:
 - **System**: tick **Qemu Agent**.
 - **Disks**: **32 GB** is enough to start. Gladys keeps the history of your sensors, so give it more if you have a lot of devices.
 - **CPU**: **2 cores**. Choose the **host** type for the best performance (in a cluster with different CPU models, see the FAQ below).
-- **Memory**: **4096 MB** (4 GB). Gladys runs with 2 GB, but Zigbee2MQTT and the other integrations will thank you for the margin.
+- **Memory**: **4096 MB** (4 GB) to start. Plan **6 to 8 GB** as soon as you use Zigbee2MQTT and several integrations, which each run in their own container. You can raise it later from the **Hardware** tab: the change applies once you shut the VM down and start it again.
 - **Network**: keep the default bridge (`vmbr0`) and the **VirtIO** model, so the VM gets an address on your home network like any other device.
 
 Confirm, then start the VM.
@@ -114,11 +114,11 @@ If you use [Gladys Plus](/docs/plus/intro), it already backs up your Gladys ever
 
 ### Should I use a VM or an LXC container?
 
-We recommend a VM. Gladys runs in Docker, and Docker inside an LXC container needs a privileged container with nesting enabled. USB devices are also harder to pass to a container, and Matter needs IPv6 to work inside the container as well. Some community members do run Gladys in a privileged "Docker" LXC, and it works, but a VM gives you exactly the same setup as the official installation, for a few hundred MB of RAM more.
+We recommend a VM because it is the simplest: the official installation works unchanged, and the USB dongle, Bluetooth and IPv6 for Matter behave like on a physical machine. An LXC container also works, and several experienced community members run Gladys that way: it uses a little less RAM, and its resources can be changed without a restart. But Docker inside an LXC needs a privileged container with nesting enabled, and passing USB devices and IPv6 to the container takes extra configuration. If you are comfortable with that, an LXC is a fine choice; otherwise, go for the VM.
 
 ### How much RAM and disk does the Gladys VM need?
 
-2 CPU cores, 4 GB of RAM and a 32 GB disk are comfortable for a typical home. Gladys itself runs with 2 GB of RAM. Give the VM more disk if you keep a long history for many sensors.
+Start with 2 CPU cores, 4 GB of RAM and a 32 GB disk. Community members who run Zigbee2MQTT and several integrations find that 4 GB quickly gets tight: plan 6 to 8 GB in that case. You can raise the RAM at any time, the change applies once you shut the VM down and start it again. Give the VM more disk if you keep a long history for many sensors.
 
 ### Does Matter work in a Proxmox VM?
 
@@ -142,7 +142,7 @@ Yes. The community [Proxmox integration](/docs/integrations/external/proxmox) sh
         name: "Should I use a VM or an LXC container?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "We recommend a VM. Gladys runs in Docker, and Docker inside an LXC container needs a privileged container with nesting enabled. USB devices are also harder to pass to a container, and Matter needs IPv6 to work inside the container as well. Some community members do run Gladys in a privileged Docker LXC, and it works, but a VM gives you exactly the same setup as the official installation, for a few hundred MB of RAM more.",
+          text: "We recommend a VM because it is the simplest: the official installation works unchanged, and the USB dongle, Bluetooth and IPv6 for Matter behave like on a physical machine. An LXC container also works, and several experienced community members run Gladys that way: it uses a little less RAM, and its resources can be changed without a restart. But Docker inside an LXC needs a privileged container with nesting enabled, and passing USB devices and IPv6 to the container takes extra configuration. If you are comfortable with that, an LXC is a fine choice; otherwise, go for the VM.",
         },
       },
       {
@@ -150,7 +150,7 @@ Yes. The community [Proxmox integration](/docs/integrations/external/proxmox) sh
         name: "How much RAM and disk does the Gladys VM need?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "2 CPU cores, 4 GB of RAM and a 32 GB disk are comfortable for a typical home. Gladys itself runs with 2 GB of RAM. Give the VM more disk if you keep a long history for many sensors.",
+          text: "Start with 2 CPU cores, 4 GB of RAM and a 32 GB disk. Community members who run Zigbee2MQTT and several integrations find that 4 GB quickly gets tight: plan 6 to 8 GB in that case. You can raise the RAM at any time, the change applies once you shut the VM down and start it again. Give the VM more disk if you keep a long history for many sensors.",
         },
       },
       {
