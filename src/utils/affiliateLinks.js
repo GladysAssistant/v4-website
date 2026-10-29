@@ -26,7 +26,7 @@ const addAffiliateTag = (href) => {
   } catch (e) {
     return href;
   }
-  const site = url.hostname.toLowerCase().replace(/^(www|smile)\./, "");
+  const site = url.hostname.toLowerCase().replace(/^(www|smile|m)\./, "");
   const param = AFFILIATE_PARAMS[site];
   if (!param || url.searchParams.get(param.name) === param.value) {
     return href;
