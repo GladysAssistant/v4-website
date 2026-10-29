@@ -3,6 +3,7 @@ import classnames from "classnames";
 import styles from "./styles.module.css";
 import Link from "@docusaurus/Link";
 import useBaseUrl from "@docusaurus/useBaseUrl";
+import { addAmazonAffiliateTag } from "@site/src/utils/amazonAffiliate";
 
 import Translate, { translate } from "@docusaurus/Translate";
 
@@ -27,11 +28,7 @@ function Integration({
   if (description.length > MAX_DESCRIPTION_LENGTH) {
     description = truncate(description, MAX_DESCRIPTION_LENGTH) + " ...";
   }
-  if (buyLink && buyLink.indexOf("amazon.fr") !== -1) {
-    var amazonUrl = new URL(buyLink);
-    amazonUrl.searchParams.set("tag", "gladproj-21");
-    buyLink = amazonUrl.toString();
-  }
+  buyLink = addAmazonAffiliateTag(buyLink);
   return (
     <div class={classnames("card", styles.integrationCard)}>
       <div class="card__image">
