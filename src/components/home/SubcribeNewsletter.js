@@ -22,6 +22,8 @@ function SubcribeNewsletter({ lang }) {
   const [showCaptcha, setShowCaptcha] = React.useState(false);
   const [turnstileToken, setTurnstileToken] = React.useState("");
   const [turnstileKey, setTurnstileKey] = React.useState(0);
+  // A Turnstile token is single use: a second click while a request is pending would fail the captcha.
+  const pending = React.useRef(false);
 
   const resetTurnstile = () => {
     setTurnstileToken("");
@@ -30,6 +32,9 @@ function SubcribeNewsletter({ lang }) {
 
   async function subscribe(e) {
     e.preventDefault();
+    if (pending.current) {
+      return;
+    }
     setShowCaptcha(true);
 
     if (!validateEmail(email)) {
@@ -41,6 +46,7 @@ function SubcribeNewsletter({ lang }) {
       return;
     }
 
+    pending.current = true;
     try {
       setStatus("waiting");
       const res = await fetch(NEWSLETTER_API, {
@@ -76,6 +82,8 @@ function SubcribeNewsletter({ lang }) {
     } catch (e) {
       resetTurnstile();
       setStatus("failed");
+    } finally {
+      pending.current = false;
     }
   }
 
@@ -154,7 +162,7 @@ function SubcribeNewsletter({ lang }) {
           {status === "success" && (
             <div
               class="alert alert--success"
-              role="alert"
+              role="status"
               style={{ marginBottom: "10px" }}
             >
               <Translate
@@ -215,6 +223,7 @@ function SubcribeNewsletter({ lang }) {
           )}
           <button
             onClick={subscribe}
+            disabled={status === "waiting"}
             style={{ marginTop: "10px" }}
             class="button button--primary button--block"
           >
