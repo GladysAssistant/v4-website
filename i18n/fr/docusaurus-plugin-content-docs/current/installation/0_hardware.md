@@ -34,6 +34,7 @@ Si vous avez déjà un NAS Synology, un serveur Linux ou tout autre matériel co
 
 - [Installer sur un NAS Synology](/fr/docs/installation/synology/)
 - [Installer sur un NAS Unraid](/fr/docs/installation/unraid/)
+- [Installer sur un serveur Proxmox](/fr/docs/installation/proxmox/)
 - [Installer sur une Freebox Delta](/fr/docs/installation/freebox-delta/)
 
 ### Raspberry Pi : pour découvrir
@@ -81,6 +82,7 @@ Selon le matériel choisi, vous pouvez suivre l'un des tutoriels suivants :
 - [Installer Gladys Assistant sur une Freebox Delta](/fr/docs/installation/freebox-delta/)
 - [Installer Gladys Assistant sur un NAS Synology](/fr/docs/installation/synology/)
 - [Installer Gladys Assistant sur un NAS Unraid](/fr/docs/installation/unraid/)
+- [Installer Gladys Assistant sur Proxmox VE](/fr/docs/installation/proxmox/)
 - [Installer Gladys Assistant sur un Raspberry Pi](/fr/docs/installation/raspberry-pi/)
 
 ## Configuration de votre maison connectée
