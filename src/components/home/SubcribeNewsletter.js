@@ -107,7 +107,7 @@ function SubcribeNewsletter({ lang }) {
         </Translate>
       </div>
       <div className={cx("col col--4", styles.newsletterSectionInputCol)}>
-        <form>
+        <form onSubmit={subscribe}>
           {status === "failed" && (
             <div
               class="alert alert--danger"
@@ -222,7 +222,7 @@ function SubcribeNewsletter({ lang }) {
             />
           )}
           <button
-            onClick={subscribe}
+            type="submit"
             disabled={status === "waiting"}
             style={{ marginTop: "10px" }}
             class="button button--primary button--block"
