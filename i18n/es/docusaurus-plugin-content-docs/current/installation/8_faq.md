@@ -15,6 +15,10 @@ Consulta la [guía de instalación con Docker](/es/docs/installation/docker#auto
 
 Puedes descargarlos con un clic desde **Configuración > Sistema > Descargar registros**, sin línea de comandos. Consulta [cómo descargar los registros de Gladys](/es/docs/installation/logs).
 
+### Algo no funciona, ¿por dónde empiezo?
+
+Consulta la [página de solución de problemas](/es/docs/installation/troubleshooting): cubre los problemas más frecuentes, desde una contraseña olvidada hasta una actualización que falla o un dongle Zigbee que no se detecta.
+
 ### ¿Quién usa Gladys Assistant 4?
 
 Gladys Assistant v4 se lanzó en [noviembre de 2020](/es/blog/lancement-gladys-assistant-4) y desde entonces se desarrolla activamente, con una nueva versión cada pocas semanas.
