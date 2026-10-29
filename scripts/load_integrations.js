@@ -7,6 +7,7 @@ const path = require("path");
 const Joi = require("joi");
 const download = require("download");
 const Promise = require("bluebird");
+const { addAffiliateTag } = require("../src/utils/affiliateLinks");
 
 const AUTHORIZED_DOC_ID = [
   "broadlink",
@@ -54,16 +55,6 @@ const cleanLabel = (label = '') => {
 const parseAndFormatRecords = (records, lang) => {
   console.log(`>> Processing ${lang} integrations`);
   const products = [];
-  let amazonLink = "www.amazon.fr";
-  switch (lang) {
-    case "fr":
-      amazonLink = "www.amazon.fr";
-      break;
-    case "en":
-      amazonLink = "www.amazon.com";
-      break;
-    default:
-  }
   records.forEach((record) => {
     const filename = get(record, "fields.Image.0.filename", { default: "" });
     const imageExtension = filename ? path.extname(filename) : "";
@@ -79,20 +70,9 @@ const parseAndFormatRecords = (records, lang) => {
       imageUrl: get(record, "fields.Image.0.thumbnails.large.url"),
       imageName: `${slug(title)}${imageExtension}`,
       tags: tags ? tags.split(",").map(tag => cleanLabel(tag)) : [],
-      buyLink: get(record, "fields.Lien d'achat"),
+      // Amazon / Domadoo partner id
+      buyLink: addAffiliateTag(get(record, "fields.Lien d'achat")),
     };
-    // set amazon partner id
-    if (newItem.buyLink && newItem.buyLink.indexOf(amazonLink) !== -1) {
-      var amazonUrl = new URL(newItem.buyLink);
-      amazonUrl.searchParams.set("tag", "gladproj-21");
-      newItem.buyLink = amazonUrl.toString();
-    }
-    // Domadoo link
-    if (newItem.buyLink && newItem.buyLink.indexOf("domadoo.fr") !== -1) {
-      var domadooUrl = new URL(newItem.buyLink);
-      domadooUrl.searchParams.set("domid", "17");
-      newItem.buyLink = domadooUrl.toString();
-    }
     const { value, error } = schema.validate(newItem);
     if (error) {
       console.log(error);

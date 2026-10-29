@@ -1,13 +1,13 @@
-const { addAmazonAffiliateTag } = require("../src/utils/amazonAffiliate");
+const { addAffiliateTag } = require("../src/utils/affiliateLinks");
 
-// Remark plugin adding the Amazon affiliate tag to every amazon.fr and
-// amazon.com link of the Markdown/MDX content: Markdown links
+// Remark plugin adding the affiliate partner id to every Amazon (amazon.fr,
+// amazon.com) and Domadoo link of the Markdown/MDX content: Markdown links
 // ([text](url)), reference definitions ([id]: url) and JSX/HTML elements
 // (<a href="...">). The external integration pages are generated from the
 // store, so their links can't be tagged by hand.
 const visit = (node) => {
   if ((node.type === "link" || node.type === "definition") && node.url) {
-    node.url = addAmazonAffiliateTag(node.url);
+    node.url = addAffiliateTag(node.url);
   }
   if (
     (node.type === "mdxJsxFlowElement" || node.type === "mdxJsxTextElement") &&
@@ -15,7 +15,7 @@ const visit = (node) => {
   ) {
     node.attributes.forEach((attribute) => {
       if (attribute.name === "href" && typeof attribute.value === "string") {
-        attribute.value = addAmazonAffiliateTag(attribute.value);
+        attribute.value = addAffiliateTag(attribute.value);
       }
     });
   }
@@ -24,7 +24,7 @@ const visit = (node) => {
   }
 };
 
-module.exports = function remarkAmazonAffiliate() {
+module.exports = function remarkAffiliateLinks() {
   return (tree) => {
     visit(tree);
   };

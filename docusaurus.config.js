@@ -1,6 +1,6 @@
-// Adds the Amazon affiliate tag to every amazon.fr / amazon.com link of the
-// docs, blog posts and Markdown pages.
-const remarkAmazonAffiliate = require("./plugins/remark-amazon-affiliate");
+// Adds the affiliate partner id to every Amazon (amazon.fr, amazon.com) and
+// Domadoo link of the docs, blog posts and Markdown pages.
+const remarkAffiliateLinks = require("./plugins/remark-affiliate-links");
 
 module.exports = function createConfig() {
   const locale = process.env.DOCUSAURUS_CURRENT_LOCALE ?? "en";
@@ -308,12 +308,12 @@ module.exports = function createConfig() {
           editUrl: "https://github.com/GladysAssistant/v4-website/edit/master/",
           editLocalizedFiles: true,
           showLastUpdateTime: true,
-          remarkPlugins: [remarkAmazonAffiliate],
+          remarkPlugins: [remarkAffiliateLinks],
         },
         blog: {
           showReadingTime: true,
           showLastUpdateTime: true,
-          remarkPlugins: [remarkAmazonAffiliate],
+          remarkPlugins: [remarkAffiliateLinks],
           blogDescription:
             "Follow the latest from Gladys Assistant: new releases, integrations, AI features, tutorials and updates from the open-source, privacy-first home assistant.",
           // Please change this to your repo.
@@ -325,7 +325,7 @@ module.exports = function createConfig() {
           },
         },
         pages: {
-          remarkPlugins: [remarkAmazonAffiliate],
+          remarkPlugins: [remarkAffiliateLinks],
         },
         theme: {
           customCss: [
