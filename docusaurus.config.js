@@ -1,3 +1,7 @@
+// Adds the affiliate partner id to every Amazon (amazon.fr, amazon.com) and
+// Domadoo link of the docs, blog posts and Markdown pages.
+const remarkAffiliateLinks = require("./plugins/remark-affiliate-links");
+
 module.exports = function createConfig() {
   const locale = process.env.DOCUSAURUS_CURRENT_LOCALE ?? "en";
 
@@ -304,10 +308,12 @@ module.exports = function createConfig() {
           editUrl: "https://github.com/GladysAssistant/v4-website/edit/master/",
           editLocalizedFiles: true,
           showLastUpdateTime: true,
+          remarkPlugins: [remarkAffiliateLinks],
         },
         blog: {
           showReadingTime: true,
           showLastUpdateTime: true,
+          remarkPlugins: [remarkAffiliateLinks],
           blogDescription:
             "Follow the latest from Gladys Assistant: new releases, integrations, AI features, tutorials and updates from the open-source, privacy-first home assistant.",
           // Please change this to your repo.
@@ -317,6 +323,9 @@ module.exports = function createConfig() {
             type: "all",
             copyright: `Copyright © ${new Date().getFullYear()} Gladys Assistant.`,
           },
+        },
+        pages: {
+          remarkPlugins: [remarkAffiliateLinks],
         },
         theme: {
           customCss: [
