@@ -154,6 +154,10 @@ Bei diesem ersten Start installiert Gladys Assistant OS Docker, lädt Gladys her
 - auf dem Bildschirm des Mini-PCs,
 - oder von deinem Computer oder Smartphone aus, unter der **Einrichtungsadresse**, die auf dem Bildschirm angezeigt wird (zum Beispiel `http://192.168.1.42`).
 
+![Der Bildschirm des Mini-PCs beim ersten Start, mit der Einrichtungsadresse](../../../../../static/img/docs/en/installation/gladys-assistant-os/first-boot-console.png)
+
+![Die Einrichtungsseite, auf einem Computer geöffnet](../../../../../static/img/docs/en/installation/gladys-assistant-os/setup-page.jpg)
+
 Der Download von Gladys ist der längste Schritt, und wie lange er dauert, hängt von deiner Internetverbindung ab. Lass den Mini-PC bis zum Schluss mit dem Ethernet-Kabel verbunden.
 
 :::note[Kein Grund zur Sorge]
