@@ -112,6 +112,8 @@ L'image doit être **écrite** sur la clé USB avec un outil dédié : copier le
 
 Le menu de Gladys Assistant OS s'affiche, avec **Install Gladys Assistant** en surbrillance. Il démarre tout seul au bout de 3 secondes.
 
+![Le menu de démarrage de Gladys Assistant OS](../../../../../static/img/docs/en/installation/gladys-assistant-os/grub-menu.png)
+
 :::tip[Le mini-PC ne démarre pas sur la clé USB ?]
 Ouvrez les réglages du BIOS (en général avec **Suppr** ou **F2** au démarrage), vérifiez que l'ordinateur démarre en mode **UEFI** (et non « Legacy » ou « CSM »), et placez la clé USB en premier dans l'ordre de démarrage. S'il refuse toujours de démarrer, désactivez le **Secure Boot** dans ces mêmes réglages.
 :::
@@ -121,15 +123,25 @@ Ouvrez les réglages du BIOS (en général avec **Suppr** ou **F2** au démarrag
 L'installeur ne pose que quelques questions. Déplacez-vous avec les **flèches** et **Tab**, cochez ou décochez une option avec **Espace**, et validez avec **Entrée**.
 
 1. **Langue** : l'anglais est présélectionné. Choisissez **Français** : les écrans suivants, puis la page d'installation de Gladys, seront en français.
+
+   ![L'écran de choix de la langue](../../../../../static/img/docs/en/installation/gladys-assistant-os/language.png)
 2. **Clavier** : la disposition de votre langue est proposée (AZERTY français si vous avez choisi le français). Vérifiez-la bien, vous allez taper votre mot de passe juste après.
+
+   ![L'écran du clavier](../../../../../static/img/docs/en/installation/gladys-assistant-os/keyboard.png)
 3. **Disque** :
    - si le mini-PC a **un seul disque interne** (les disques de moins de 16 Go ne comptent pas), il n'y a rien à choisir : Gladys Assistant OS s'installe dessus automatiquement, en utilisant tout le disque ;
    - s'il a **plusieurs disques**, l'installeur vous demande lequel utiliser : gardez l'option qui utilise le disque entier (*Use an entire disk*), sélectionnez le disque, laissez l'option LVM telle quelle, puis validez l'écran de résumé (*Done*).
 
    Dans les deux cas, l'installeur vous demande ensuite de confirmer dans une fenêtre (*Confirm destructive action*), qui peut n'apparaître qu'un peu plus tard, après l'écran du compte. **Non** (*No*) est sélectionné par défaut : descendez sur **Continuer** (*Continue*) avec les flèches et appuyez sur **Entrée** pour effacer le disque et lancer l'installation. Rien n'est effacé avant cette étape.
 
+   ![La fenêtre de confirmation avant l'effacement du disque](../../../../../static/img/docs/en/installation/gladys-assistant-os/confirm.png)
+
 4. **Votre compte** : saisissez votre nom, un nom d'utilisateur et un mot de passe. C'est le seul compte de la machine (il n'y a pas de mot de passe par défaut) : notez-le en lieu sûr, il vous servira pour la maintenance. L'installeur demande aussi un nom de serveur, mais la machine s'appelle toujours `gladys` : vous pouvez taper n'importe quoi.
+
+   ![L'écran du compte](../../../../../static/img/docs/en/installation/gladys-assistant-os/account.png)
 5. **SSH** : l'option **Installer le serveur OpenSSH** (*Install OpenSSH server*) est cochée par défaut. Gardez-la pour pouvoir vous connecter plus tard au mini-PC à distance depuis votre ordinateur. Vous pouvez la décocher si vous n'en voulez pas.
+
+   ![L'écran SSH, avec Install OpenSSH server coché](../../../../../static/img/docs/en/installation/gladys-assistant-os/ssh.png)
 
 L'installation se déroule ensuite toute seule pendant quelques minutes.
 
