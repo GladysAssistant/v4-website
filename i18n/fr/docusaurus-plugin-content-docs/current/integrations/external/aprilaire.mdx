@@ -1,0 +1,174 @@
+---
+title: "Intégration domotique Aprilaire, gratuite et open source"
+sidebar_label: "Aprilaire"
+description: "Thermostats Aprilaire série 8800 par leur protocole local « Home Automation ». Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-aprilaire.png"
+keywords:
+  - "aprilaire"
+  - "domotique aprilaire"
+  - "gladys aprilaire"
+  - "aprilaire gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-aprilaire instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Aprilaire","description":"Thermostats Aprilaire série 8800 par leur protocole local « Home Automation ».","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-aprilaire","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-aprilaire.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-29T09:09:01Z"}} />
+
+Cette intégration affiche dans Gladys un thermostat Wi-Fi **Aprilaire série 8800** (8810, 8820, 8830,
+8840, 8910W, et le 6000 de régulation par zones ; selon des utilisateurs, le 8920W ne propose
+pas le mode « Automation ») par son protocole local
+« Home Automation », publié par Aprilaire : une connexion TCP sur votre réseau, sans cloud.
+
+**Jamais testé avec un vrai appareil** : l’intégration a été écrite d’après la bibliothèque
+pyaprilaire (utilisée par Home Assistant) et testée sur un faux thermostat. Sans lien avec Aprilaire.
+
+## Ce qu’il faut
+
+- Le thermostat en type de connexion **« Automation »** (menu installateur, « Connection Type ») ;
+  certains modèles vendus comme domotiques ne le proposent pas et ne sont pas pris en charge.
+- Une adresse fixe pour le thermostat dans votre routeur.
+- **Une seule connexion domotique** : le thermostat n’accepte qu’une connexion « Automation » à la
+  fois (l’application Aprilaire n’est pas concernée). Deux domotiques en même temps peuvent le faire
+  cesser de répondre jusqu’à ce qu’on coupe son alimentation. N’utilisez pas en même temps Home
+  Assistant ou un autre système sur ce thermostat. L’intégration n’ouvre elle-même qu’une seule
+  connexion, gardée ouverte, et n’en rouvre une qu’après la fermeture de la précédente.
+- Le protocole n’a **pas de mot de passe** : gardez le thermostat sur un réseau de confiance.
+
+## Configuration
+
+- **Adresse du thermostat** : adresse IPv4 ou nom d’hôte, port 7000 par défaut (ajoutez « :8000 »
+  par exemple si le vôtre en utilise un autre).
+- **Autoriser les commandes** : désactivé par défaut. Voir plus bas.
+- **Intervalle de rafraîchissement** : 60 s par défaut (30 s à 10 min). Le thermostat envoie aussi
+  ses changements au fil de l’eau.
+- **Langue** des noms, des options et des textes.
+
+Après l’enregistrement, ajoutez le thermostat depuis l’onglet **Découverte**. L’appareil est reconnu
+par son **adresse MAC** : il reste le même si son adresse IP change ; un autre thermostat à la même
+adresse est un autre appareil (le statut le dit).
+
+## Ce que vous voyez
+
+- Température et humidité (sondes de régulation), température et humidité extérieures si une sonde
+  les donne. Une sonde en erreur, absente ou hors plage n’est jamais publiée comme une mesure.
+- Consignes de chauffage et de climatisation, en °C (le protocole transporte toujours des °C, quel
+  que soit l’affichage du thermostat ; Gladys convertit pour ceux qui préfèrent les °F).
+- Mode (arrêt, chauffage, climatisation, auto selon le thermostat ; le chauffage d’appoint est montré
+  comme « chauffage »), ventilateur (auto, marche, brassage), fonctionnement (au repos, chauffage,
+  climatisation), ventilateur en marche.
+- Dérogation (aucune, temporaire, permanente, absence, vacances), erreur du thermostat (E1 à E8).
+- Selon l’équipement : humidificateur, déshumidificateur, ventilation (air neuf), purificateur d’air,
+  chacun en texte (état, consigne ou mode).
+
+Rien n’est affiché tant que l’adresse MAC n’est pas lue dans la session. Une valeur est publiée
+quand elle est lue (ou quand vous ajoutez l’appareil, si elle a été lue moins de 2 minutes avant) ;
+jamais une valeur de plus de 2 minutes.
+
+## Les commandes
+
+Avec **Autoriser les commandes** activé, Gladys peut régler :
+
+- le **mode** chauffage, climatisation ou auto (seulement ceux que le thermostat propose) ;
+- le **ventilateur** (auto, marche, brassage) ;
+- les **consignes** de chauffage et de climatisation, de **4,5 à 32 °C** par pas de 0,5 °C. Ces
+  bornes viennent de la plage du fabricant (40 à 99 °F, « 4 à 32 °C ») : les °F convertis
+  exactement, ramenés à l’intérieur sur le pas de 0,5 °C, puis dans la plage en °C. Une valeur hors
+  bornes est refusée, jamais ramenée dans la plage ; l’octet envoyé est vérifié une seconde fois.
+
+Chaque commande relit d’abord l’état (une lecture partie après le clic), n’écrit que le champ demandé
+(les autres restent « inchangés » dans la trame), puis relit : elle n’est réussie que si la relecture
+montre la valeur demandée (à 0,5 °C près pour une consigne quand le thermostat affiche des °F : il les
+garde en °F entiers) et si le thermostat ne l’a pas refusée. Sinon : « envoyée, sans confirmation »,
+puis deux relectures 5 s et 20 s plus tard. Les commandes passent une à une ; une commande en attente
+derrière d’autres (une scène) part au plus tard 15 s après le clic, ou pas du tout. En mode auto, le
+thermostat peut déplacer l’autre consigne pour garder son écart : c’est lui qui décide.
+
+Pendant qu’un arrêt n’est pas confirmé, les consignes et le ventilateur sont refusés ; un nouveau mode
+est accepté et lève l’arrêt quand il part (après l’avoir levé dans `/data` : si `/data` n’est pas
+inscriptible, rien n’est envoyé) et que le thermostat ne le refuse pas : refusé (code NACK, « occupé »
+compris), l’arrêt est de nouveau gardé tel qu’il était, dans `/data` aussi, et vérifié aussitôt.
+
+## L’arrêt (mode Arrêt)
+
+Choisir le mode **Arrêt** n’est soumis à rien : ni à l’option « Autoriser les commandes », ni à une
+lecture préalable, ni à une commande ou une lecture en cours, ni à une session coupée, ni à un
+thermostat jamais lu, ni à une configuration pas encore lue après un redémarrage.
+
+- Il part en premier : toute commande cliquée avant lui et pas encore partie est abandonnée ; une
+  lecture en cours qui n’a rien reçu depuis 1,5 s est coupée (la session est fermée, puis rouverte
+  pour l’arrêt).
+- Il est écrit sans lecture avant, puis relu. Il part vers l’adresse de la configuration, sans
+  attendre la lecture de l’identité du thermostat ni celle de `/data` (lue 1 s au plus au démarrage,
+  reprise ensuite).
+- Si une connexion est acceptée puis fermée aussitôt sans un octet du thermostat (une autre domotique
+  le tient), l’écriture ne compte pas : l’arrêt est réécrit, chaque seconde pendant les 10 s qui
+  suivent le clic, puis chaque minute.
+- Sans session (thermostat injoignable), il est **gardé** (en mémoire et dans `/data`) et part dès
+  que le thermostat répond ; une nouvelle connexion est tentée au clic, puis au moins chaque minute.
+  Un arrêt jamais parti n’est jamais abandonné, même après un redémarrage (il part alors avant même la
+  lecture de la configuration).
+- Non confirmé, il est vérifié toutes les 15 s pendant 3 minutes puis chaque minute, et renvoyé tant
+  que le thermostat montre le mode d’avant, 3 fois au plus par clic (un refus « occupé » du
+  thermostat ne compte pas). Il prend fin quand une lecture montre l’arrêt, quand un nouveau mode
+  choisi dans Gladys part sans être refusé par le thermostat, ou quand un autre mode est lu deux fois
+  de suite (choisi sur le thermostat) ; jamais avec le temps.
+
+Cas où l’arrêt ne part pas (le statut de l’intégration le dit) :
+
+- aucune adresse valide dans la configuration (gardé, il part dès qu’une adresse est enregistrée) ;
+- le thermostat ne répond pas ou refuse la connexion (gardé, il part dès qu’il répond) ;
+- le thermostat refuse l’écriture (code NACK affiché ; une réponse « occupé » ne compte pas et
+  l’arrêt est réécrit à chaque vérification) ;
+- un autre thermostat (une autre adresse MAC lue dans la session) répond à l’adresse : l’arrêt
+  demandé pour l’appareil d’avant est refusé, rien n’est envoyé à l’autre ; le statut le dit jusqu’à
+  ce qu’un arrêt parte ou que cet appareil soit supprimé (ajoutez le nouveau depuis Découverte).
+
+Tant que `/data` n’est pas lu (stockage lent), le statut le dit : un arrêt cliqué en attendant part,
+mais n’y est pas gardé. Un arrêt gardé lu tard n’est pas envoyé si un arrêt, ou un mode que le
+thermostat n’a pas refusé, a été écrit depuis le démarrage (il est plus ancien) ; il est alors retiré
+de `/data`.
+
+## Limites connues
+
+- Jamais testé avec un vrai appareil ; aucun thermostat nord-américain n’était disponible.
+- Les consignes d’humidité, l’air neuf, le purificateur, les dérogations et le programme sont
+  seulement affichés dans cette version.
+- Un seul thermostat par installation de l’intégration.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Aprilaire dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre thermostat Aprilaire | `section` | Non | Affiche un thermostat Wi-Fi Aprilaire série 8800 (8810, 8820, 8830, 8840, 8910W…) dans Gladys par son protocole local « Home Automation », sans cloud : température, humidité, consignes, mode, ventilateur, dérogation, humidificateur, déshumidificateur, air neuf, purificateur, erreurs. Sur le thermostat, réglez le type de connexion sur « Automation » (menu installateur), donnez-lui une adresse fixe dans votre routeur, saisissez cette adresse et enregistrez ; ajoutez-le ensuite depuis l’onglet Découverte. Le thermostat n’accepte QU’UNE connexion domotique : jamais deux domotiques dessus. Modes, ventilateur et consignes ne changent que si vous autorisez les commandes ci-dessous ; l’arrêt (mode Arrêt) ne dépend jamais de cette option (voir le guide pour les cas où il ne peut pas partir). Le protocole n’a pas de mot de passe : gardez le thermostat sur un réseau de confiance. Jamais testé avec un vrai appareil. Sans lien avec Aprilaire. |
+| Adresse du thermostat | `string` | Oui | Adresse IPv4 ou nom d’hôte ; port 7000 sauf si vous en ajoutez un (« 192.168.1.40:8000 »). L’appareil est reconnu par son adresse MAC. |
+| Autoriser les commandes | `boolean` | Non | Désactivé par défaut : Gladys ne change rien, sauf l’arrêt (mode Arrêt), qui ne dépend jamais de cette option. Activé : Gladys peut aussi régler le mode (chauffage, climatisation, auto), le ventilateur et les consignes (4,5 à 32 °C, la plage du thermostat). |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture des valeurs, en secondes ; le thermostat envoie aussi ses changements au fil de l’eau. |
+| Langue des noms des fonctionnalités | `select` | Non | Sert aux noms de l’appareil et des fonctionnalités ajoutés désormais, aux options, aux textes et aux erreurs des commandes. |
+
+## Comment installer Aprilaire dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Aprilaire apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-aprilaire:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-aprilaire](https://github.com/LM1LC3N7/gladys-aprilaire).
+
+Aprilaire nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Aprilaire est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-aprilaire) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-aprilaire/blob/HEAD/docs/fr.md)

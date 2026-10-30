@@ -1,0 +1,259 @@
+---
+title: "Wekan Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Wekan"
+description: "Wekan-Kanban-Boards: heute fällige, überfällige und erledigte Karten, neue Karten, aus Szenen. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-wekan.png"
+keywords:
+  - "wekan"
+  - "wekan smart home"
+  - "gladys wekan"
+  - "wekan gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-wekan instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Wekan","description":"Wekan-Kanban-Boards: heute fällige, überfällige und erledigte Karten, neue Karten, aus Szenen.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-wekan","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-wekan.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-30T02:28:16Z"}} />
+
+Hol die Kanban-Boards deines [Wekan](https://wekan.fi) in Gladys: die heute
+fälligen Karten, die überfälligen, die erledigten, die nächste Fälligkeit und
+die Zahl der Karten jeder Liste eines Boards. Eine Szene reagiert, wenn eine
+Karte hinzugefügt wird, in einer Liste ankommt (`Erledigt`, `Zu prüfen`…) oder
+fällig wird, eine andere legt „Brot kaufen“ per Knopf an oder verschiebt eine
+Karte per NFC-Tag, ein Tippen im Dashboard erledigt eine Karte, und Gladys kann
+jeden Morgen die Karten des Tages vorlesen.
+
+> **Rückmeldungen willkommen.** Diese Integration wurde gegen einen echten
+> Wekan-Server getestet (Docker-Image `wekanteam/wekan` vom 30. Oktober 2026,
+> mit MongoDB 7), aber noch nicht im Alltag. Wenn etwas nicht wie beschrieben
+> funktioniert, sag es im [Gladys-Forum](https://community.gladysassistant.com)
+> oder in den [Issues](https://github.com/guim31/gladys-wekan/issues).
+
+## Was du brauchst
+
+- Gladys Assistant 5.1.0 oder neuer.
+- Ein **selbst gehostetes Wekan**, von Gladys aus erreichbar, mit aktiver
+  REST-API (`WITH_API=true`, Standard des Docker-Images und des Snaps).
+- **Benutzername** (oder E-Mail) und **Passwort** eines Wekan-Benutzers, der
+  Mitglied der zu verfolgenden Boards ist. Es muss ein **Passwortkonto** sein:
+  Ein Benutzer, der sich über LDAP, OAuth2 oder ein anderes Single Sign-on
+  anmeldet, kann sich nicht aus Gladys anmelden. Ein eigener Benutzer, als
+  Mitglied der Boards hinzugefügt, ist eine gute Idee.
+
+Die Integration sieht die Boards, die dieser Benutzer sieht, und handelt **in
+seinem Namen**: Aus Gladys hinzugefügte Karten haben ihn als Autor. Ein nur
+lesendes Mitglied eines Boards kann es verfolgen, aber keine Karten hinzufügen
+oder verschieben.
+
+## Einrichtung
+
+1. In Gladys **Integrationen** → **Wekan** installieren.
+2. Im Bildschirm **Konfiguration** ausfüllen:
+   - **Adresse**: die Adresse von Wekan wie im Browser, zum Beispiel
+     `http://192.168.1.20:8080`, oder `https://kanban.example.org` hinter einem
+     Reverse Proxy (ein Pfadpräfix wie `/wekan` bleibt erhalten);
+   - **Benutzername oder E-Mail** und **Passwort**.
+3. Optionen:
+   - **Verfolgte Boards**: Namen durch Kommas getrennt (`Haushalt, Einkauf`),
+     oder die ID eines Boards (in seiner Adresse, nach `/b/`). Leer: alle
+     Boards des Benutzers, höchstens 20;
+   - **„Erledigt“-Listen**: die Listen, deren Karten als erledigt zählen, nach
+     Namen, durch Kommas getrennt. Standard: `Done, Fait, Terminé, Erledigt,
+Hecho`; Groß-/Kleinschreibung und Akzente sind egal. Leer: nur die
+     Enddaten zählen;
+   - **Selbstsignierte Zertifikate akzeptieren**: für eine `https://`-Adresse
+     mit selbstsigniertem Zertifikat, nur auf deinem eigenen Server;
+   - **Aktualisierungsintervall**: 1 bis 10 Minuten (Standard 5). Fälligkeiten
+     und Mitternacht werden immer pünktlich verfolgt, egal welches Intervall;
+   - **Sprache der Funktionsnamen**: die Namen der Funktionen beim Hinzufügen
+     eines Geräts (Standard Französisch) und die an Szenen gesendeten Texte.
+4. Speichern, dann **Verbindung testen**: liest Wekan und nennt die Zahl der
+   offenen Karten und der verfolgten Boards.
+5. Im Tab **Entdecken** die gewünschten Geräte hinzufügen.
+
+## Geräte
+
+**Wekan _Board_** für jedes verfolgte Board, mit diesen Funktionen:
+
+| Funktion               | Was sie angibt                                                                             |
+| ---------------------- | ------------------------------------------------------------------------------------------ |
+| `Offene Karten`        | die Karten, die weder erledigt noch archiviert sind                                        |
+| `Heute fällige Karten` | offene Karten, deren Fälligkeit heute ist, vorbei oder nicht                               |
+| `Überfällige Karten`   | offene Karten, deren Fälligkeit vorbei ist                                                 |
+| `Erledigte Karten`     | die Karten mit Enddatum oder in einer „Erledigt“-Liste (archivierte Karten zählen nicht)   |
+| eine pro Liste         | die Zahl der Karten jeder der ersten fünf Listen, die keine „Erledigt“-Listen sind         |
+| `Nächste Fälligkeit`   | die Karte mit der nächsten kommenden Fälligkeit und ihr Datum; `Keine`, wenn es keine gibt |
+
+Eine Karte ist **erledigt**, wenn sie ein **Enddatum** hat (das „Ende“-Datum
+von Wekan) oder in einer der „Erledigt“-Listen der Konfiguration liegt. „Heute“
+ist der Tag in der Zeitzone von Gladys. Die Karten aller Swimlanes werden
+gezählt. Die Funktionsnamen werden beim Hinzufügen des Geräts festgelegt: Eine
+später umbenannte Liste behält in Gladys ihren alten Namen. Eine neue Liste
+unter den ersten fünf lässt Gladys im Tab **Entdecken** ein Update des Geräts
+anbieten.
+
+## Dashboard
+
+Das Widget **Heutige Karten** zeigt zwei Kacheln (heute fällig, überfällig),
+die Liste der bis heute Abend fälligen Karten (höchstens 10), überfällige
+zuerst, mit Uhrzeit, Liste und Board, und eine Schaltfläche für jede der vier
+dringendsten: Ein Tippen **erledigt die Karte** in Wekan (ihr Enddatum wird
+jetzt). Wähle in den Widget-Einstellungen ein Board-Gerät, um nur seine Karten
+zu sehen; leer lassen für alle verfolgten Boards. Ist nichts fällig, sagt das
+Widget es und nennt die nächste Fälligkeit.
+
+Auf einem geteilten Bildschirm wähle **„Erledigt“-Schaltflächen anzeigen** in
+den Widget-Einstellungen ab: Die Karten werden dann nur angezeigt. Die Boards
+tragen den Namen aus Gladys, sobald ihr Gerät hinzugefügt ist.
+
+Die Zähler können auch wie jede Gerätefunktion ins Dashboard.
+
+## Szenen
+
+### Auslöser
+
+- **Neue Wekan-Karte**: Eine Karte ist auf einem verfolgten Board erschienen:
+  erstellt, aus dem Archiv wiederhergestellt oder von einem anderen Board.
+  Filter: das Board (ein Board-Gerät), der **Listenname**, genau wie in Wekan
+  (`Zu erledigen`).
+- **Wekan-Karte verschoben**: Eine Karte ist in einer anderen Liste ihres
+  Boards angekommen. Gleiche Filter. Die an Aktionen weitergegebenen
+  Informationen nennen auch die vorherige Liste.
+- **Wekan-Karte fällig**: Eine offene Karte hat ihre Fälligkeit erreicht.
+- **Wekan-Karte überfällig**: Um Mitternacht ist eine an diesem Tag fällige
+  Karte noch nicht erledigt. Einmal pro Karte und Fälligkeit.
+
+Filter der letzten beiden: das Board, der Kartenname. An Aktionen
+weitergegebene Informationen: die Karte, ihre ID, ihr Board, ihre Liste, ihre
+Fälligkeit.
+
+Eine neue Karte oder eine Verschiebung wird beim nächsten Lesen erkannt:
+innerhalb des Aktualisierungsintervalls. Ein gerade zu den verfolgten
+hinzugefügtes Board bringt keine „neue Karte“. Eine vor ihrer Fälligkeit
+erledigte Karte löst nichts aus, und eine von Hand vor das letzte Lesen
+verschobene Fälligkeit auch nicht. Ein Neustart löst nichts zweimal aus; eine
+Karte, die hinzugefügt oder verschoben wurde, während die Integration gestoppt
+war, löst beim Neustart aus, ebenso eine weniger als eine Stunde alte
+Fälligkeit.
+
+### Aktionen
+
+- **Wekan-Karte hinzufügen**: ein Titel; das Board nach Namen (leer: das erste
+  verfolgte Board); die Liste nach Namen (leer: seine erste Liste, die keine
+  „Erledigt“-Liste ist); optional eine **Fälligkeit**, in der Uhrzeit von
+  Gladys: `2026-10-24 18:00`, `2026-10-24` (Mittag), oder ab jetzt `+30m`,
+  `+2h`, `+3d`. Die Karte kommt in die erste Swimlane des Boards. Ergebnisse:
+  die Karte, ihre ID, ihr Board, ihre Liste, ihre Fälligkeit.
+- **Wekan-Karte verschieben**: die Karte nach ihrem genauen Namen
+  (Groß-/Kleinschreibung und Akzente egal) oder ihrer ID, die Zielliste nach
+  Namen, und das Board, wenn zwei Boards eine Karte dieses Namens haben. Wekan
+  setzt sie oben in die Liste; eine Karte aus einer „Erledigt“-Liste kann
+  zurückkommen. Ergebnisse: die Karte, ihre ID, ihr Board, ihre Liste, die
+  vorherige Liste.
+- **Heutige Wekan-Karten vorlesen**: die bis heute Abend fälligen Karten als
+  Satz (`3 Karte(n) bis heute Abend fällig: …. 2 überfällig.`), für alle
+  verfolgten Boards oder eines davon. Ergebnisse: der Satz, die Zahl der bis
+  heute Abend fälligen und der überfälligen Karten. Schick den Satz in einer
+  Nachricht, oder lass ihn Gladys sagen.
+
+Die Felder akzeptieren Szenenvariablen: `{{triggerEvent.data.card}}`
+verschiebt die Karte, die die Szene ausgelöst hat.
+
+### Szenenideen
+
+- Um 7:30 **Heutige Wekan-Karten vorlesen**, dann den Satz per Telegram
+  senden.
+- **Neue Wekan-Karte** im Board `Einkauf`: an die Person schicken, die
+  einkaufen geht.
+- **Wekan-Karte verschoben** in die Liste `Erledigt` des Boards `Haushalt`:
+  der Familie „gut gemacht“ schicken oder die Erinnerungslampe ausschalten.
+- Wenn die Waschmaschine stoppt, **Wekan-Karte hinzufügen**
+  `Wäsche aufhängen` in `Zu erledigen`, fällig `+1h`.
+- Ein NFC-Tag an den Mülltonnen startet **Wekan-Karte verschieben**
+  `Müll rausbringen` nach `Erledigt`.
+
+## Fehlerbehebung
+
+- **„Wekan antwortet nicht“**: Prüfe Adresse und Port vom Gladys-Rechner aus
+  (die Adresse öffnet Wekan im Browser).
+- **„Benutzername oder Passwort abgelehnt“**: Das Passwort hat sich geändert,
+  oder der Benutzer meldet sich über LDAP oder OAuth2 an: Nimm einen Benutzer
+  mit Passwortkonto.
+- **„Keine Wekan-API unter dieser Adresse“**: Die Adresse antwortet, aber nicht
+  mit der REST-API von Wekan: Prüfe Port, Pfadpräfix und dass `WITH_API` in den
+  Wekan-Einstellungen nicht `false` ist.
+- **„Die Adresse leitet um“**: Gib die `https://`-Adresse ein.
+- **„Dieser Benutzer darf das nicht“**: Der Benutzer ist nur lesendes Mitglied
+  des Boards.
+- **Ein Board fehlt**: Der Benutzer muss Mitglied des Boards sein; ein unter
+  **Verfolgte Boards** eingegebener Name ohne passendes Board wird ignoriert,
+  und **Verbindung testen** nennt ihn. Archivierte Boards und Vorlagen werden
+  ausgelassen. Ab 20 Boards die zu verfolgenden auflisten.
+- **Eine fertige Karte zählt noch als offen**: Gib ihr in Wekan ein Enddatum,
+  oder füge ihre Liste zu den **„Erledigt“-Listen** hinzu.
+- **„Mehrere Karten haben diesen Namen“**: Gib das Board oder die ID der Karte
+  an.
+- Protokolle: `LOG_LEVEL=debug` am Container zeigt jedes Lesen.
+
+## Grenzen
+
+- Wekan wird alle 1 bis 10 Minuten gelesen (und zu jeder Fälligkeit und um
+  Mitternacht): Eine Änderung in Wekan erscheint innerhalb dieser Zeit in
+  Gladys. Die ausgehenden Webhooks von Wekan werden nicht genutzt.
+- Bei jedem Lesen: die Liste der Boards, dann für jedes verfolgte Board seine
+  Listen, seine Swimlanes und eine Anfrage pro Swimlane. Die Anmeldung bleibt
+  im Speicher (Wekan gibt sie für 90 Tage) und wird nur neu gemacht, wenn Wekan
+  sie ablehnt.
+- Die Integration fügt Karten hinzu, verschiebt und erledigt sie (Enddatum);
+  sie bearbeitet, archiviert, löscht oder weist sie nicht zu und liest weder
+  ihre Checklisten noch Labels oder Kommentare.
+- Archivierte Karten und die Karten archivierter Listen werden ausgelassen: Die
+  API von Wekan liefert sie nicht.
+- Nur die ersten fünf Listen eines Boards, die keine „Erledigt“-Listen sind,
+  bekommen einen Zähler.
+- Gladys speichert keine Wekan-Daten außer `/data/wekan-state.json` (Zeit des
+  letzten Lesens und Liste jeder Karte, damit kein Ereignis zweimal ausgelöst
+  wird).
+- Nicht mit Wekan oder seinen Autoren verbunden.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Wekan in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Dein Wekan | `section` | Nein | Ein selbst gehostetes Wekan mit aktiver REST-API (WITH_API=true, Standard). Gib Benutzername und Passwort eines Wekan-Benutzers mit Passwortkonto an (weder LDAP noch OAuth). |
+| Adresse | `string` | Ja | Adresse von Wekan wie im Browser, mit https:\/\/ für HTTPS und :Port, falls nicht der Standard. |
+| Benutzername oder E-Mail | `string` | Ja | Ein Wekan-Benutzer, der Mitglied der zu verfolgenden Boards ist. Aus Gladys hinzugefügte Karten werden in seinem Namen erstellt. |
+| Passwort | `secret` | Ja |  |
+| Optionen | `section` | Nein |  |
+| Verfolgte Boards | `string` | Nein | Namen oder IDs durch Kommas getrennt. Leer: alle Boards des Benutzers (höchstens 20). Ein Gerät pro verfolgtem Board. |
+| „Erledigt“-Listen | `string` | Nein | Listen, deren Karten als erledigt zählen, nach Namen, durch Kommas getrennt. Eine Karte mit Enddatum ist auch erledigt. |
+| Selbstsignierte Zertifikate akzeptieren | `boolean` | Nein | Für eine https:\/\/-Adresse mit selbstsigniertem Zertifikat. Nur für deinen eigenen Server aktivieren. |
+| Aktualisierungsintervall | `select` | Nein | Wie oft Wekan gelesen wird (zwei Anfragen pro Board und eine pro Swimlane). Fälligkeiten und Mitternacht werden immer pünktlich verfolgt. |
+| Sprache der Funktionsnamen | `select` | Nein | Namen der Funktionen beim Hinzufügen eines Geräts und an Szenen gesendete Texte. |
+
+## So installierst du Wekan in Gladys
+
+1. Öffne in Gladys **Integrationen**: Wekan erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-wekan:1.0.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-wekan](https://github.com/guim31/gladys-wekan).
+
+Wekan benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Wekan ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-wekan) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-wekan/blob/HEAD/docs/de.md)

@@ -1,0 +1,169 @@
+---
+title: "Integración domótica Ecowitt, gratuita y de código abierto"
+sidebar_label: "Ecowitt"
+description: "Bring your Ecowitt weather station sensors into Gladys, fully locally. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/cicoub13--gladys-ecowitt.png"
+keywords:
+  - "ecowitt"
+  - "domótica ecowitt"
+  - "gladys ecowitt"
+  - "ecowitt gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/cicoub13/gladys-ecowitt instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Ecowitt","description":"Bring your Ecowitt weather station sensors into Gladys, fully locally.","owner":"cicoub13","owner_avatar_url":"https://avatars.githubusercontent.com/u/1773153?v=4","repo_url":"https://github.com/cicoub13/gladys-ecowitt","cover_url":"https://integration-store-storage.gladysassistant.com/covers/cicoub13--gladys-ecowitt.png","type":"device","version":"1.1.3","gladys_version":">=4.86.0","stars":0,"pushed_at":"2026-10-28T10:50:04Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+## Overview
+
+This integration brings your Ecowitt weather station sensors into Gladys:
+temperature, humidity, wind, rain, solar radiation, UV, pressure, and also the
+remote probes (soil moisture, PM2.5, CO2, lightning, leak detection). Every
+physical sensor becomes its own Gladys device, with its own battery and history,
+ready to use in your scenes.
+
+Everything stays local: no data goes through the Ecowitt cloud.
+
+## Prerequisites
+
+- Gladys 4.86 or later.
+- An Ecowitt weather station, console or gateway on the same local network as
+  the machine running Gladys.
+- For the push mode: the **WS View Plus** app, and a station that can reach the
+  machine running Gladys over the local network, on the port shown in the
+  configuration screen.
+- For the local polling mode: a gateway or a console with a local API (see the
+  list below), reachable at its IP address from the machine running Gladys.
+
+## Configuration
+
+Two modes are available, depending on your hardware.
+
+### Push (works with almost every station)
+
+Your station sends its readings to Gladys itself. This is the mode to use with
+the **WS2910, GW1000, WN1900, WN1910, WS2320, HP2550, HP3500** consoles and,
+more generally, with every model except the WS6006.
+
+1. Install the integration and wait for the receiver container to start.
+2. Open the configuration screen: the full address to copy is shown there, as
+   `http://<address>:<port>/data/report/`. If it contains `localhost` or
+   `127.0.0.1` — which happens when you browse Gladys from the machine running
+   it — replace that part with the **local IP address of that machine**: your
+   station has to reach it over the network, and `localhost` means nothing to
+   it.
+3. In the **WS View Plus** app, select your station, then **Customized**:
+   - _Protocol Type Same As_: **Ecowitt**
+   - _Server IP / Hostname_: the local IP address of the machine running Gladys
+   - _Path_: `/data/report/`
+   - _Port_: the port shown in Gladys
+   - _Upload Interval_: `60` seconds
+   - Turn **Enable** on and save.
+4. Wait for a first upload, then click **Test the connection** to confirm the
+   readings are arriving.
+5. Go to the **Discover** screen: your sensors are listed there.
+
+> Sensors are only known after the first reading arrives. An empty Discover
+> screen almost always means the station has not sent anything yet: double-check
+> the address, port and path set in WS View Plus.
+
+If your console only offers the **Wunderground** protocol, that works too: use
+the path `/weatherstation/updateweatherstation.php`. It carries fewer
+measurements (no multi-channel, no PM2.5, no CO2, no lightning).
+
+### Local polling (recent gateways)
+
+The **GW1100, GW1200, GW2000, GW3000** and the recent network consoles
+(**WS3800, WS3820, WS3900, WS3910, WN1700, WN1820, WN1821, WN1920, WN1980,
+WS6210**) expose a local API. Gladys polls them directly, with nothing to
+configure on the station.
+
+1. Fill in the **gateway IP address** in the configuration. The **Search for
+   gateways** button can find it for you.
+2. Adjust the polling interval if needed: 30 or 60 seconds (60 by default).
+   The integration reads the gateway at that interval and refreshes the
+   readings of every device you created.
+3. Run a discovery.
+
+This mode has one advantage: it reads each sensor's hardware id, so replacing a
+battery or moving a sensor to another channel breaks neither your scenes nor
+your history.
+
+## Choosing the mode
+
+By default the integration switches to local polling as soon as an IP address is
+set, and stays in push mode otherwise.
+
+The two sources do not produce the same device identifiers, so they are never
+combined on a single station. If you switch modes after creating your devices,
+they will show up again in the Discover screen — delete the old ones.
+
+## Security
+
+The receiving port is open on your local network and accepts, by design, any
+upload that reaches it. If several stations coexist on your network, fill in the
+**PASSKEY** field to accept only yours. To find it, enter any value in that field and
+save: the next reading is then ignored, and the integration logs show its
+PASSKEY (`Relevé ignoré : PASSKEY inattendu (…)`). Copy that value into the
+field and save again.
+
+## Troubleshooting
+
+| Symptom                                                                               | What to check                                                                                                                                                                                                                         |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The Discover screen stays empty                                                       | No reading received: check the address, port and path in WS View Plus, then click "Test the connection".                                                                                                                              |
+| The displayed address looks wrong                                                     | It mirrors the one your browser uses to reach Gladys: `localhost` when you are on the machine itself, the tunnel hostname through Gladys Plus or a reverse proxy. Replace it with the local IP address of the machine running Gladys. |
+| "Search for gateways" finds nothing                                                   | Expected on a WS2910 or a GW1000: those models have no local API. Use the push mode.                                                                                                                                                  |
+| A measurement is missing                                                              | Not every sensor reports every measurement. Only the ones actually received become features.                                                                                                                                          |
+| No battery on a solar sensor                                                          | Ecowitt reports a voltage but documents no threshold for the WS80, WS90, WH40 and WH85: rather than an invented state, nothing is shown.                                                                                              |
+| "Gateway unreachable at …"                                                            | Local polling mode: check that the gateway is powered on and that its IP address has not changed (give it a fixed address in your router), or find it again with "Search for gateways".                                               |
+| "The reading receiver is unreachable (it may be restarting): retrying automatically." | Push mode: the receiver container may be restarting. The integration retries on its own; if the message stays, restart the integration.                                                                                               |
+| "Initialization failed, check the integration logs."                                  | Open the integration logs and restart the integration.                                                                                                                                                                                |
+
+The integration logs are in the **Logs** tab of the integration page in Gladys.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Ecowitt te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Send your station's data to Gladys | `section` | No | In the WS View Plus app, open your station then Customized: choose the Ecowitt protocol and a 60 second interval, then copy the address below. Sensors appear in the Discover screen after the first reading, which can take a few minutes. |
+| http:\/\/\{\{gladys_host\}\}:\{\{port:ecowitt\}\}/data/report/ | `section` | No | WS View Plus asks for the three fields separately: server \{\{gladys_host\}\}, port \{\{port:ecowitt\}\}, path /data/report/. If the address above contains localhost, 127.0.0.1 or a domain name (Gladys Plus, reverse proxy), replace it with the local IP address of the machine running Gladys: your station has to reach it over the local network, and localhost means nothing to it. |
+| Station PASSKEY (optional) | `string` | No | Only accept readings from this station. Leave empty to accept the first station that reports. |
+| Or poll a recent gateway | `section` | No | GW1100, GW1200, GW2000, GW3000 and recent network consoles expose a local API: fill in their IP address and Gladys polls them directly, with no configuration on the station. Consoles such as the WS2910 or the GW1000 do not: leave this empty and use the push mode above. |
+| Gateway IP address | `string` | No |  |
+| Acquisition mode | `select` | No | The two sources do not produce the same identifiers, so they are never combined on one station. |
+| Polling interval (s) | `number` | No | Local polling mode only: how often the gateway is read and the readings refreshed, 30 or 60 seconds. |
+
+## Cómo instalar Ecowitt en Gladys
+
+1. En Gladys, abre **Integraciones**: Ecowitt aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/cicoub13/gladys-ecowitt:1.1.3`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/cicoub13/gladys-ecowitt](https://github.com/cicoub13/gladys-ecowitt).
+
+Ecowitt requiere Gladys `>=4.86.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Ecowitt es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [cicoub13](https://github.com/cicoub13), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/cicoub13/gladys-ecowitt) — [fuente de esta documentación](https://github.com/cicoub13/gladys-ecowitt/blob/HEAD/docs/en.md)

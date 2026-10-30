@@ -1,0 +1,201 @@
+---
+title: "Intégration domotique SPAN Panel, gratuite et open source"
+sidebar_label: "SPAN Panel"
+description: "Non officiel : tableau électrique SPAN en local, puissance et énergie par circuit. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-span-panel.png"
+keywords:
+  - "span panel"
+  - "domotique span panel"
+  - "gladys span panel"
+  - "span panel gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-span-panel instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"SPAN Panel","description":"Non officiel : tableau électrique SPAN en local, puissance et énergie par circuit.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-span-panel","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-span-panel.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-28T20:46:42Z"}} />
+
+Intégration non officielle, sans lien avec SPAN. Elle relie Gladys à un
+**tableau électrique intelligent SPAN** (États-Unis) par son API locale
+officielle, « eBus » : le broker MQTT qui tourne dans le tableau, en TLS. Sans
+cloud : les serveurs SPAN ne sont jamais contactés.
+
+**Jamais testé avec un vrai appareil.** Elle a été construite d'après la
+documentation du client libre span-panel-api, l'intégration Home Assistant
+SpanPanel/span et une capture d'un vrai tableau MAIN 32. Vos retours sont
+bienvenus sur le forum Gladys.
+
+## Ce que vous obtenez
+
+Un appareil pour le tableau :
+
+- puissance réseau (+ importée, − exportée), production solaire, consommation
+  de la maison ;
+- puissance par les bornes principales et énergie tirée par elles (un index
+  pour le suivi énergétique de Gladys), énergie renvoyée (affichée, non
+  comptée) ;
+- niveau de la batterie, puissance de charge et de décharge, énergie restante
+  (quand une batterie est installée) ;
+- tension des deux phases ; relais principal, porte et état du réseau (textes).
+
+Un appareil par circuit :
+
+- puissance (consommation, ou production pour un circuit solaire) ;
+- énergie consommée (un index pour le suivi énergétique), ou énergie produite
+  pour un circuit solaire ;
+- la liste **Relais** (Fermé, Ouvert) et qui l'a réglé en dernier (USER,
+  LOAD_SHED, PCS…).
+
+## Prérequis
+
+- Firmware **r202633 ou plus récent** (modèle de données 1.x). SPAN met les
+  tableaux à jour à distance. Les firmwares plus anciens publient le schéma
+  « plat », que cette intégration ne lit pas : l'état le dit.
+- Gladys 5.1 ou plus récent, sur le même réseau que le tableau.
+
+## Appairage
+
+1. Saisissez l'adresse du tableau (donnez-lui une adresse fixe dans votre box).
+2. Soit saisissez la **phrase secrète** du tableau (imprimée sur l'étiquette
+   derrière la porte sauf si elle a été changée), soit laissez-la vide pour
+   appairer **par proximité** : ouvrez et fermez trois fois la porte du
+   tableau juste avant l'étape suivante.
+3. Cliquez sur **Appairer le panneau**. Le premier clic lit l'autorité de
+   certification du tableau en HTTP simple et affiche son empreinte : rien de
+   secret n'est envoyé. Cette autorité n'est pas encore adoptée.
+4. Cliquez de nouveau après quelques secondes, dans les 5 minutes.
+   L'intégration vérifie que cette autorité signe le certificat HTTPS du
+   tableau, la garde dans `/data`, puis s'enregistre auprès du tableau en
+   HTTPS vérifié contre elle (la phrase secrète ne circule que là). Le tableau
+   répond par des identifiants pour son broker, que Gladys garde dans sa base
+   (jamais dans `/data`, jamais dans un journal).
+
+Si vous connaissez déjà l'empreinte (une autre installation), saisissez-la
+dans « Empreinte de l'autorité de certification » : un seul clic suffit alors.
+
+Chaque appairage réussi ajoute un client dans le tableau : n'appairez de
+nouveau qu'en cas de besoin (nouveau tableau, identifiants refusés).
+
+## Relais
+
+Ouvrir un relais **coupe l'alimentation d'un circuit** de la maison ; le fermer
+le réalimente. Les deux sont refusés tant que **Permettre d'ouvrir et de fermer
+les relais des circuits** est désactivé (c'est le réglage par défaut). La
+liste Relais est une liste, pas un interrupteur : une scène « tout éteindre »
+n'y touche pas.
+
+Quand l'option est activée, une commande n'est envoyée que si tout ceci est
+vrai à ce moment (sinon elle est refusée et rien n'est envoyé) : l'option est
+toujours activée ; la session avec le tableau est ouverte ; le tableau est prêt
+et c'est celui qui est appairé ; le circuit est dans le tableau ; le tableau
+déclare son relais commandable (pas un circuit toujours alimenté, pas un
+circuit solaire) ; son état actuel est connu ; la commande n'a pas attendu plus
+de 2,5 s derrière une autre sur le même circuit. Une commande vers l'état où
+est déjà le relais n'envoie rien.
+
+Une commande n'est confirmée que quand le tableau publie le nouvel état, dans
+les 3 secondes environ après le clic. Sinon Gladys indique « Envoyée, sans
+confirmation » : l'état affiché suit dès que le tableau le publie. Rien n'est
+mis en file d'attente quand le tableau est injoignable.
+
+Les priorités de délestage, le relais principal et les bornes de recharge ne
+sont pas commandés.
+
+## Compteurs d'énergie
+
+Les compteurs à vie (énergie par circuit, par les bornes principales) passent
+par une garde. Une valeur à 0 est ignorée (jamais publiée). Une baisse (une
+remise à zéro du tableau) ou un saut plus grand que ce qu'un circuit peut tirer
+(60 kW) ou que les bornes principales peuvent porter (120 kW) depuis la
+dernière valeur est **retenue** :
+Gladys continue de recevoir la dernière valeur acceptée, et l'état liste ce
+qui est retenu. Le temps ne fait pas accepter une valeur retenue. Si elle est
+réelle (compteur remis à zéro, tableau remplacé), cliquez deux fois sur
+**Accepter le compteur retenu** : le premier clic liste, le second (après
+quelques secondes, dans les 5 minutes) accepte exactement ce qui a été listé.
+Une baisse acceptée devient un plancher (une valeur plus basse ensuite est de
+nouveau retenue). Une valeur retenue le reste après un redémarrage. Une limite : la marge
+compte le temps écoulé depuis la dernière valeur acceptée avec l'horloge du
+système à travers un redémarrage de l'intégration, donc une horloge système
+fausse de plusieurs heures à ce moment-là l'élargit pour la première valeur.
+
+## Publication
+
+Le tableau pousse ses valeurs ; Gladys les reçoit toutes les 60 secondes par
+défaut (30 à 600 s), dans la limite de 300 valeurs par minute (les circuits
+au-delà sont servis à tour de rôle aux publications suivantes). Un changement
+de relais est envoyé tout de suite. Les valeurs ne sont publiées que tant que
+le tableau et l'appareil auquel elles appartiennent se disent prêts ; après
+une reconnexion, rien n'est publié avant que le tableau se soit de nouveau
+décrit.
+
+## État et pannes
+
+- Identifiants refusés par le broker : les connexions s'arrêtent jusqu'au
+  prochain appairage.
+- Le broker a fermé deux fois la connexion sans répondre (un tableau qui
+  redémarre, un autre service à cette adresse) : les essais automatiques
+  s'arrêtent ; « Tester la connexion » fait un essai par clic, enregistrer la
+  configuration en fait un.
+- Le tableau n'envoie rien pendant 5 minutes alors qu'il est connecté : ses
+  valeurs ne sont plus publiées comme actuelles, l'état le dit, jusqu'à ce
+  qu'il reparle.
+- Tableau injoignable : nouveaux essais après 5 s, 15 s, 30 s, 1 min, 2 min,
+  puis toutes les 5 min.
+- Un certificat que l'autorité épinglée ne signe pas : rien n'est envoyé à ce
+  pair. L'état affiche l'autorité que le tableau annonce maintenant (si elle a
+  changé). Elle n'est pas adoptée d'elle-même : saisissez son empreinte dans la
+  configuration et enregistrez, ou videz le champ de l'empreinte, enregistrez
+  et appairez de nouveau (deux clics).
+- « Tester la connexion » affiche l'état de la session en cours (il n'ouvre pas
+  de nouvelle connexion, sauf un essai après deux fermetures sans réponse du
+  broker).
+
+## Vie privée
+
+La phrase secrète et les identifiants du broker ne sont envoyés qu'au tableau.
+L'intégration n'écrit dans `/data` que l'autorité de certification du tableau
+(publique), celle qu'il annonçait quand l'épingle a refusé son certificat
+(publique), un sel aléatoire, l'état des gardes d'énergie et, tant que le
+broker refuse les identifiants (ou a fermé deux fois sans répondre), une
+empreinte salée de 8 bits de ceux-ci.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par SPAN Panel dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Tableau SPAN | `section` | Non | Connecteur non officiel, sans lien avec SPAN. Il lit votre tableau SPAN (États-Unis) par son API locale officielle (eBus : le broker MQTT du tableau, firmware r202633 ou plus récent) : puissance et énergie par circuit, réseau, solaire, batterie, relais principal et relais de chaque circuit. Sans cloud : les serveurs SPAN ne sont jamais contactés. Saisissez l'adresse, puis cliquez sur « Appairer le panneau » (deux fois : le premier clic affiche l'empreinte de l'autorité de certification du tableau). Ouvrir ou fermer un relais de circuit est désactivé par défaut. Jamais testé avec un vrai appareil. |
+| Adresse du tableau | `string` | Oui | L'adresse IP (ou le nom d'hôte) du tableau SPAN sur votre réseau, visible dans votre box ou l'application SPAN. Donnez-lui de préférence une adresse fixe dans votre box. |
+| Phrase secrète du tableau | `secret` | Non | Utilisée seulement par le bouton « Appairer le panneau ». La phrase secrète est imprimée sur l'étiquette derrière la porte du tableau sauf si elle a été changée. Laissez-la vide pour appairer par proximité : ouvrez et fermez trois fois la porte du tableau, puis cliquez sur le bouton. Gardée par Gladys dans sa base, jamais réaffichée, envoyée seulement au tableau SPAN, en HTTPS vérifié contre son autorité de certification. |
+| Empreinte de l'autorité de certification (facultatif) | `string` | Non | L'empreinte SHA-256 de l'autorité de certification du tableau, si vous la connaissez (une autre installation, ou l'état de cette intégration après un changement de certificat). Saisie ici, elle est adoptée sans le second clic ; elle n'est jamais obligatoire. |
+| Permettre d'ouvrir et de fermer les relais des circuits | `boolean` | Non | Désactivé par défaut. Ouvrir un relais coupe l'alimentation d'un circuit de la maison (un réfrigérateur, un appareil médical, une pompe...) ; le fermer le réalimente. Activé, la liste « Relais » de chaque circuit que le tableau laisse commander envoie Ouvert ou Fermé. Désactivé, toute commande est refusée et rien n'est envoyé. |
+| Intervalle de publication (secondes) | `number` | Non | Fréquence d'envoi des puissances et énergies à Gladys, de 30 à 600 secondes (le tableau pousse ses valeurs ; Gladys accepte 300 valeurs par minute). Un changement de relais est envoyé tout de suite. |
+| Port HTTP (avancé) | `number` | Non | Laissez 80 sauf si le tableau est joint par une redirection de port. |
+| Port HTTPS (avancé) | `number` | Non | Laissez 443 sauf si le tableau est joint par une redirection de port. |
+
+## Comment installer SPAN Panel dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : SPAN Panel apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-span-panel:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-span-panel](https://github.com/LM1LC3N7/gladys-span-panel).
+
+SPAN Panel nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+SPAN Panel est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-span-panel) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-span-panel/blob/HEAD/docs/fr.md)

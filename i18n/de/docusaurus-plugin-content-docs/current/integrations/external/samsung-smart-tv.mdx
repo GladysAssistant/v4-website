@@ -19,7 +19,7 @@ https://github.com/cicoub13/gladys-samsung-tv instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Samsung Smart TV","description":"Control your Samsung Smart TVs (Tizen) over the local network: power, volume, mute and input source.","owner":"cicoub13","owner_avatar_url":"https://avatars.githubusercontent.com/u/1773153?v=4","repo_url":"https://github.com/cicoub13/gladys-samsung-tv","cover_url":"https://integration-store-storage.gladysassistant.com/covers/cicoub13--gladys-samsung-tv.png","type":"device","version":"1.1.1","gladys_version":">=4.86.0","stars":0,"pushed_at":"2026-10-27T22:55:06Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Samsung Smart TV","description":"Control your Samsung Smart TVs (Tizen) over the local network: power, volume, mute and input source.","owner":"cicoub13","owner_avatar_url":"https://avatars.githubusercontent.com/u/1773153?v=4","repo_url":"https://github.com/cicoub13/gladys-samsung-tv","cover_url":"https://integration-store-storage.gladysassistant.com/covers/cicoub13--gladys-samsung-tv.png","type":"device","version":"1.1.2","gladys_version":">=4.86.0","stars":0,"pushed_at":"2026-10-28T10:50:51Z"}} />
 
 :::info
 
@@ -27,10 +27,12 @@ Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bi
 
 :::
 
+## Overview
+
 Control your Samsung televisions (Tizen, 2016 models onwards) from Gladys, entirely over the local network: no
 Samsung account, nothing going through the cloud.
 
-## What the integration exposes
+### What the integration exposes
 
 | Feature          | Detail                                                                |
 | ---------------- | --------------------------------------------------------------------- |
@@ -40,7 +42,25 @@ Samsung account, nothing going through the cloud.
 | Mute             | Set or cleared, never toggled blindly                                 |
 | Source           | TV, HDMI, and the installed apps when the TV reports them             |
 
-## Setup
+### Sources and applications
+
+TV and HDMI are always offered: they are remote-control keys, present on every model.
+
+The list of installed applications is requested from the TV during the scan, but several recent models (2021 and
+later) ignore that request. When that happens only TV and HDMI show up — that is expected behaviour, not a failure.
+Run a new scan after installing an app: if your model answers, it will be added.
+
+## Prerequisites
+
+- **Gladys 4.86 or later.**
+- A Samsung Smart TV running Tizen, 2016 model or later.
+- The TV connected to the same local network as Gladys: Gladys finds it with a network scan and
+  turns it on with a Wake-on-LAN packet. No Samsung account is needed.
+- The TV remote, to accept the authorization prompt the first time Gladys sends a command.
+- To turn the TV on from Gladys: the wake-on-network option enabled on the TV (see "Turning the TV
+  back on").
+
+## Configuration
 
 1. **Turn your television on**, then open the **Discovery** tab and run a scan. It shows up under its own name
    ("Samsung AU7025 55 TV", for instance). Create it.
@@ -69,14 +89,6 @@ while the option is enabled, an Ethernet link makes it reliable. Turning off alw
 - the TV answers nothing at all: it shut its network interface down, no packet can reach it any more and the wake-up
   will fail. That is the symptom of a disabled wake-on-network option — enable it, then run the test again.
 
-## Sources and applications
-
-TV and HDMI are always offered: they are remote-control keys, present on every model.
-
-The list of installed applications is requested from the TV during the scan, but several recent models (2021 and
-later) ignore that request. When that happens only TV and HDMI show up — that is expected behaviour, not a failure.
-Run a new scan after installing an app: if your model answers, it will be added.
-
 ## Refresh
 
 The integration reads the power state, the volume and the mute state back from every TV at the **Refresh interval**
@@ -93,6 +105,53 @@ Three channels, each for what it does best:
 
 The pairing token is kept in the integration's `/data` volume: it survives restarts and container updates.
 
+## Troubleshooting
+
+The integration logs are available in Gladys, from the **Configuration** tab of the integration,
+alongside the supervision controls (start, stop, restart…).
+
+**The scan finds no TV**: the TV is almost always in standby (see "Configuration"). Turn it on,
+wait a few seconds, then scan again. The integration logs then read
+`No Samsung TV found. A television in standby is invisible on the network: turn it on, then run the scan again.`
+If the TV is on, check that it is on the same local network as Gladys.
+
+**"Test the connection" answers "No answer from …: the TV is off or unreachable."**: the TV is off,
+or no longer answers at the address it had when you created it. Turn it on and test again; if it
+still does not answer, see the next point.
+
+**The TV changed IP address**: a TV whose address was reassigned by your router stops answering at
+the old one. If another Samsung TV took that address, the logs read
+`A different device (…) now answers at …, not …: rescan to pick up the new address of this TV`.
+Turn the TV on and run a new scan from the **Discovery** tab: the TV you created picks up its new
+address. Reserving its IP address in your router avoids the problem.
+
+**A command fails with `Authorization was not granted on the TV at … within 30 s`**: the
+authorization prompt was not accepted in time. Send the command again and accept the prompt with
+the remote.
+
+**A command fails with `The TV at … refused the connection (authorization denied)`**: the prompt
+was refused on the TV. Check the _Device Connection Manager_ settings described in "Configuration",
+then send a command again.
+
+**A command fails with `The TV at … did not answer` or `Connection to … failed: …`**: the TV is
+off, or Gladys cannot reach its remote-control channel (port 8002, see "How it works").
+
+**The TV does not turn on**: check the wake-on-network option and run the `ping` test described in
+"Turning the TV back on". If the command fails with
+`This TV reported no MAC address: Wake-on-LAN is impossible`, turn the TV on with the remote and
+run a new scan: its MAC address is read again.
+
+**Volume and mute are not updated while the TV is on**: the logs read
+`Could not read the volume of …: …`. The TV did not answer on its UPnP channel (port 9197, see
+"How it works"); check that nothing between Gladys and the TV filters that port.
+
+**Only TV and HDMI in the sources**: expected on several recent models, see "Sources and
+applications".
+
+**The connection status reads "Initialization failed, check the integration logs."**: the
+integration could not finish starting up after connecting to Gladys. The logs give the reason
+(`Post-connection initialization failed`). Restart the integration from its **Configuration** tab.
+
 ## Konfigurationseinstellungen
 
 Diese Einstellungen fragt Samsung Smart TV in seinem Konfigurationsbildschirm in Gladys ab.
@@ -106,7 +165,7 @@ Diese Einstellungen fragt Samsung Smart TV in seinem Konfigurationsbildschirm in
 ## So installierst du Samsung Smart TV in Gladys
 
 1. Öffne in Gladys **Integrationen**: Samsung Smart TV erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
-2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/cicoub13/gladys-samsung-tv:1.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/cicoub13/gladys-samsung-tv:1.1.2`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
 3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
 4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/cicoub13/gladys-samsung-tv](https://github.com/cicoub13/gladys-samsung-tv).
 

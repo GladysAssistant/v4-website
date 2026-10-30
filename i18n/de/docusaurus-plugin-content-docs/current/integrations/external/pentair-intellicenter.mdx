@@ -1,0 +1,202 @@
+---
+title: "Pentair IntelliCenter Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Pentair IntelliCenter"
+description: "Pentair IntelliCenter pool panels on the local network: circuits, pumps, heating, chemistry. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-intellicenter.png"
+keywords:
+  - "pentair intellicenter"
+  - "pentair intellicenter smart home"
+  - "gladys pentair intellicenter"
+  - "pentair intellicenter gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-intellicenter instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Pentair IntelliCenter","description":"Pentair IntelliCenter pool panels on the local network: circuits, pumps, heating, chemistry.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-intellicenter","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-intellicenter.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-29T06:16:14Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+Shows your **Pentair IntelliCenter** pool panel (i5P, i7+3, i8PS, i10PS,
+i10+3D) in Gladys through its **local protocol** (TCP, port 6681): no cloud,
+no account, straight on your network.
+
+> **Never tested with a real panel.** Not affiliated with Pentair.
+> The integration follows the pyintellicenter library (MIT). A firmware
+> update of the panel may change the protocol. ScreenLogic is not supported.
+
+## What you get
+
+One device per panel (identified by the unique name of its system, not by
+its IP address), with, for each object the panel shows:
+
+| Object                        | Features                                                            |
+| ----------------------------- | ------------------------------------------------------------------- |
+| Body (pool, spa)              | Water temperature, heating set point, heat mode (list), heating now |
+| Circuit (pool, spa, featured) | On / off (list)                                                     |
+| Light                         | On / off (list)                                                     |
+| Pump                          | Running, speed (rpm), power (W)                                     |
+| Sensor (air, solar, water)    | Temperature                                                         |
+| IntelliChem                   | pH, ORP (mV), pH and ORP set points (read only)                     |
+| IntelliChlor                  | Salt (ppm)                                                          |
+
+Plus a **Status** feature (connected or unreachable). Circuits that are not
+featured (the unused "Aux") are not shown.
+
+- Temperatures are in °C: a panel set to °F is converted exactly
+  ((°F − 32) × 5 / 9). When the unit of the panel cannot be read, no
+  temperature is published.
+- The water temperature of a body is only published while it runs (pump on):
+  stopped, the panel keeps an old value.
+- A value that is unknown, empty, or 0 where 0 means "not available" (pH,
+  ORP, salt) is never published.
+
+Read every 30 seconds by default (15 s to 10 min, adjustable), one request at
+a time, on one connection.
+
+## Installation
+
+1. Give the panel a fixed IP address in your router.
+2. In Gladys, install the integration and enter the IP address of the panel
+   (or its host name, optionally followed by a port).
+3. Save, then add the panel from the **Discovery** tab.
+
+The panel has no credentials: nothing secret is configured.
+
+## Turning off (always available)
+
+Choosing **Off** on a circuit (or a light), or **Off** in the heat mode of a
+body, depends on no option, nor on a read or a command in progress (it ends
+them and goes on a new connection), nor on a failed read, nor on the
+configuration: right after a restart, it goes to the address of the last
+panel read (kept in `/data`), and a stop not yet seen applied before a
+restart is sent again as soon as the container starts. A command that
+arrived before it and has not left yet is given up. Several stops clicked
+together go in one write.
+
+It succeeds when the read back of the panel shows it (for the heating stop:
+the mode Off **and** no heating any more). Otherwise the answer says why, and
+the stop is kept (in `/data`) and checked every 15 s (each panel address has
+its own check) and at every read:
+
+- **no address known** (no configuration, no panel read before): nothing is
+  sent for now; the stop is kept in memory and goes first as soon as an
+  address is known;
+- **the panel does not answer** (3 s of tries, every 250 ms): tried again at
+  every check (15 s), at every read that reaches the panel and when you click
+  **Test the connection**; a stop that never left is never given up;
+- **refused by the panel** (a code other than 200): written again after
+  15 s, then less and less often (30 s, 1, 2, 4 min, then every 5 min),
+  without end; a refusal does not count as a write;
+- **not applied yet** (the panel does not show it): written again 15 s after
+  each write, 3 times at most (writes the panel accepted), then held without
+  new writes, which the status of the integration says;
+- **without confirmation** in time (4.3 s): checked the same way;
+- **heating stop shown but the body still heats** (the panel shows the mode
+  Off but still reports heating): watched, nothing written again; normal
+  during a cool-down, but after 2 minutes the status asks you to check on
+  the panel (the mode Off written comes from pyintellicenter and was not
+  checked on a real panel); when the panel gives no heating state, the
+  status says so ("heating state cannot be read") and the stop stays
+  watched.
+
+The status of the integration says where each stop is: not sent yet, sent
+and waiting for the read back, refused (with the code), held, still heating,
+or watched. When the panel moves to a new address (the same panel read
+there), its kept stops follow it.
+
+A kept stop is let go when the panel shows it, or when a command of the same
+setting clicked in Gladys after it (option on) left without a refusal of the
+panel (no answer lets it go too: the command may have been applied). A new
+click on Off writes it again and counts its writes anew. A stop kept in
+`/data` before a restart is let go the same way, unsent, when such a command
+of its setting left since the start (a `/data` slow to read is applied when
+its read ends). Never by time. A command that left less than 30 s before
+the stop and lands after it is countered by a new write. While the heating
+stop of a body is not seen applied, its set point, turning its circuit on
+and turning a circuit group on are refused. A body "heats" while its heat
+mode is not seen Off **or** the panel still reports heating (unreadable
+counts as heating).
+
+## Turning on and heating (options)
+
+Three options, **off by default**:
+
+- **Allow turning circuits and pumps on**: the circuits that are not lights
+  (pool, spa and their pumps, featured circuits). Turning on a pool or spa
+  that heats (heat mode not seen Off, or heating still reported) also needs
+  the heating option (its pump starts, and with it its heating). A **circuit
+  group** ("Spa Mode"...) may turn a body on: it needs the heating option
+  while a body heats or no body has been read yet.
+- **Allow turning lights on**.
+- **Allow heating**: choosing a heat source, setting the set point. A **spa
+  is limited to 40 °C**, a pool to the ceiling of the configuration (35 °C by
+  default, 40 °C at most). The bound is checked on the value written (a whole
+  degree), after the conversion to °F when the panel is in °F: 40 °C =
+  104 °F; the low bound is 4 °C (40 °F).
+
+They are lists and a set point, never a switch: a "turn everything off" never
+reaches them. Each command reads the panel again right before (identity,
+objects, unit), checks the options again right before writing, leaves within
+3.5 s or not at all, and succeeds only when the read back shows the value
+asked ("sent, not applied yet" otherwise, then reads at 5 and 20 s). Commands
+arriving together (a scene) go in one write. Also refused: before the
+configuration is read, when another panel answers at the address, or when a
+stop was clicked meanwhile.
+
+## Good to know
+
+- The panel is never read sooner than the interval: not by the **Test the
+  connection** button, a Discovery, a reconnection to Gladys or a restart (the
+  time of the last read is kept in `/data`). Only the reads that follow a
+  command or a click on Off (5 and 20 s) and the checks of a kept stop (every
+  15 s, reading only the objects of the stop) are an exception.
+- A value older than 2 minutes is never sent again as new.
+- The chemistry set points (pH, ORP), the pump speeds, light shows and
+  schedules are read only or absent in this version.
+- The Pentair app, the screen of the panel and its schedules may drive it
+  too: the last write wins.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Pentair IntelliCenter in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Your IntelliCenter panel | `section` | Nein | Shows your Pentair IntelliCenter pool panel in Gladys through its local protocol (TCP port 6681), without any cloud: bodies (pool, spa) with their water temperature, heat mode and heating set point, circuits, lights, pumps, temperature sensors, IntelliChem and IntelliChlor. Enter the IP address of the panel (give it a fixed address in your router), save, then add it from the Discovery tab. Turning a circuit or a heating off always works; turning things on and heating are only allowed by the options below. Never tested with a real panel. Not affiliated with Pentair. |
+| IP address of the panel | `string` | Ja | An IPv4 address or a host name, optionally followed by a port (6681 by default). |
+| Allow turning circuits and pumps on | `boolean` | Nein | Off by default. On: Gladys may turn on the circuits that are not lights (pool, spa and their pumps, featured circuits). Turning a pool or spa on whose heat mode is not Off also needs the heating option. Turning off works either way. |
+| Allow turning lights on | `boolean` | Nein | Off by default. On: Gladys may turn on the light circuits. Turning off works either way. |
+| Allow heating | `boolean` | Nein | Off by default. On: Gladys may choose a heat source and set the heating set point of a body (a spa 40 °C at most, a pool the ceiling below). Setting the heat mode to Off works either way. |
+| Ceiling of the pool set point (°C) | `number` | Nein | The highest heating set point Gladys may write for a pool (35 °C by default, 40 °C at most). A spa is always limited to 40 °C. Checked on the value written, after the conversion to °F when the panel is in °F. |
+| Refresh interval (s) | `number` | Nein | How often the panel is read, in seconds. |
+| Language of the feature names | `select` | Nein | Used for the feature names of the devices added from now on, for the status texts and for the command errors. |
+
+## So installierst du Pentair IntelliCenter in Gladys
+
+1. Öffne in Gladys **Integrationen**: Pentair IntelliCenter erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-intellicenter:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-intellicenter](https://github.com/LM1LC3N7/gladys-intellicenter).
+
+Pentair IntelliCenter benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Pentair IntelliCenter ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-intellicenter) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-intellicenter/blob/HEAD/docs/en.md)

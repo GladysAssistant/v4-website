@@ -1,0 +1,190 @@
+---
+title: "Rappels Canada Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Rappels Canada"
+description: "Recalls and safety alerts in Canada (Health Canada open data): food, products, vehicles. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-rappels-canada.png"
+keywords:
+  - "rappels canada"
+  - "rappels canada smart home"
+  - "gladys rappels canada"
+  - "rappels canada gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-rappels-canada instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Rappels Canada","description":"Recalls and safety alerts in Canada (Health Canada open data): food, products, vehicles.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-rappels-canada","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-rappels-canada.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-29T22:42:49Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+Recalls and safety alerts published in Canada, read from the open data of
+Health Canada: food recalls of the Canadian Food Inspection Agency (CFIA),
+consumer products, vehicles, tires and child car seats of Transport Canada,
+drugs and health products, medical devices. The integration gives Gladys a
+device with two values, a scene trigger for each new recall of your
+selection, a scene action and a dashboard widget.
+
+It was tested against the real file of Health Canada and in a test Gladys
+(29/10/2026), not yet over weeks of real use. No device of yours is involved:
+the data comes from the cloud.
+
+## What you get
+
+- A device **Recalls in Canada** with:
+  - **Recalls in 7 days**: the sheets of your selection, not archived, whose
+    "last updated" day is one of the last 7 days (today included, in the time
+    zone of Gladys). The file gives no publication date: an older sheet
+    updated this week counts too.
+  - **Latest recall**: the newest of them, with its day.
+- A scene trigger **Canada: new recall in my selection**, with the title,
+  product, category, issue, recall class, link and a one-sentence summary as
+  variables. The trigger can be limited to some categories.
+- A scene action **Canada: read the recalls of the last 7 days** (a sentence
+  to send by message or read aloud, and the count).
+- A widget **Recalls in Canada**: the latest recalls of your selection, the
+  most serious ones (Class 1, Type I) in red, with the link to each sheet.
+- A button **Show the recalls of the last 7 days** in the configuration.
+
+## Configuration
+
+1. **Categories**: food (CFIA), consumer products, vehicles (Transport
+   Canada), drugs and health products, medical devices, other. Medical
+   devices are not followed by default: a quarter of the sheets, nearly all
+   hospital and laboratory equipment.
+2. **Brands or words** (optional): only the recalls naming one of them in
+   their title, product or category, separated by commas. Accents and case do
+   not matter; a word matches whole words only ("nut" does not match
+   "peanut").
+3. **Check interval**: 3, 6 (default), 12 or 24 hours.
+4. **Language of the recalls**: English or French. It picks the file read
+   (each language has its own), the names of the features at their creation
+   and the texts sent to the scenes.
+
+Save, then create the device in the **Discover** tab.
+
+## How it works
+
+Health Canada publishes one file per language (16 MB in English, 21 MB in
+French, about 34,000 sheets since 1991), regenerated once a day around 02:15
+UTC. At each check the integration asks whether the file changed
+(`If-None-Match` and `If-Modified-Since`): while it did not, the server
+answers "not modified" and nothing is downloaded. When it changed, the file
+is read as a stream: only the numbers (NID) of the sheets and the sheets of
+the last 30 days stay in memory. One request at a time, with a User-Agent
+naming the integration.
+
+A recall is **new** when its number was absent from every file read before.
+The first file ever read fires nothing (what is listed then is not news), nor
+does a widened selection, nor a sheet only updated. A new sheet whose "last
+updated" day is more than 7 days old is remembered without firing. A scene
+event Gladys refuses is sent again at the next check; at most 20 events leave
+per check, the rest at the next one. An event is sent before `/data` records
+it: if the integration is killed in between, it is sent again after the
+restart. Some new recalls are never sent, and the status says when the caps
+are reached: beyond 500 new sheets in one file, beyond 500 events waiting,
+or once their "last updated" day is more than 7 days old.
+
+What was seen, the copy of the recent sheets and the time of the last check
+are kept in `/data`: a restart fires nothing again, keeps the time planned
+for the next check, and publishes the copy kept if it is still fresh.
+Changing the selection is applied at once from the copy kept; changing the
+language checks the other file (not twice in 5 minutes, never during a
+pause). A copy of each language is kept, so going back costs a "not
+modified". Configurations saved one after the other are applied in order:
+the last one wins.
+
+When a server of the content network still serves an older file than the
+copy kept, the copy is kept and the next checks send only its date, so that
+server answers "not modified" instead of sending 16 MB again. A file in
+another format (fewer than half of the sheets dated, a column renamed) is
+refused, never read as "no recall".
+
+## Status and failures
+
+The status of the integration says:
+
+- the file cannot be read (network, HTTP error), with the next try: 15
+  minutes later, then 30, doubled up to the interval; a "429" or "5xx" answer
+  starts a pause of 1 minute to 6 hours (the server's `Retry-After` when it
+  gives one), kept across restarts;
+- the file has not changed for more than 3 days (compared to the date the
+  server gives): the counters are then not published again until it changes,
+  so an old value is not shown as fresh;
+- no category is selected;
+- `/data` cannot be read or written.
+
+## Up to date or not
+
+The recalls are **up to date** when the last successful check is less than
+two intervals and an hour old and the file is not stale. Otherwise:
+
+- the counters of the device are not published (they keep their last value);
+- the scene action fails with the reason ("The recalls are not up to date:
+  the file of Health Canada was last read on …" or "… has not changed since
+  …"), so a scene never reads "no recall" from data that is not current;
+- the configuration button gives that reason instead of the recalls;
+- the widget titles "Recalls not up to date" and gives the reason under the
+  list.
+
+When the last check failed but the recalls are still up to date, the scene
+action, the button and the widget give them with a warning first ("Warning:
+the last check of the file failed …; the recalls are those read on …").
+
+Nothing is published as 0 when the file could not be read.
+
+## Limits
+
+- A complement, not an official alert system: always check the recall sheet
+  on [recalls-rappels.canada.ca](https://recalls-rappels.canada.ca/en). Not
+  affiliated with the Government of Canada.
+- The file holds no barcode (UPC) and no province: neither can be filtered.
+- The file holds no publication date, only "last updated".
+
+## Data and licence
+
+Contains information licensed under the
+[Open Government Licence – Canada](https://open.canada.ca/en/open-government-licence-canada)
+(dataset [Recalls and Safety Alerts](https://open.canada.ca/data/en/dataset/d38de914-c94c-429b-8ab1-8776c31643e3),
+Health Canada). No account, no key, no personal data.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Rappels Canada in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Your selection | `section` | Nein | Health Canada publishes every recall and safety alert of Canada as open data: food (CFIA), consumer products, vehicles (Transport Canada), drugs and health products, medical devices. Choose the categories to follow and, if you like, brands or words. Save, then create the device in the Discover tab. |
+| Sources and limits | `section` | Nein | Data: "Recalls and safety alerts" of Health Canada, under the Open Government Licence – Canada, read without an account (one file of 16 to 21 MB, downloaded when it changes, about once a day). A complement, not an official alert system: always check the recall sheet. Not affiliated with the Government of Canada. |
+| Categories | `multi_select` | Nein | Recalls and alerts of these categories are followed. About 35 a week (autumn 2026): 40 % vehicles, a quarter medical devices (not followed by default). |
+| Brands or words (optional) | `string` | Nein | Only the recalls naming one of them (title, product or category), separated by commas. Accents and case do not matter. Empty: every recall of the categories. |
+| Check interval | `select` | Nein | Health Canada regenerates the file once a day: a check of an unchanged file downloads nothing. |
+| Language of the recalls | `select` | Nein | The file read (English or French), the names of the features (at their creation) and the texts sent to the scenes. |
+
+## So installierst du Rappels Canada in Gladys
+
+1. Öffne in Gladys **Integrationen**: Rappels Canada erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-rappels-canada:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-rappels-canada](https://github.com/LM1LC3N7/gladys-rappels-canada).
+
+Rappels Canada benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Rappels Canada ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-rappels-canada) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-rappels-canada/blob/HEAD/docs/en.md)

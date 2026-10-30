@@ -1,0 +1,262 @@
+---
+title: "Integración domótica Wekan, gratuita y de código abierto"
+sidebar_label: "Wekan"
+description: "Tableros kanban de Wekan: tarjetas de hoy, atrasadas y terminadas, nuevas, añadidas por escena. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-wekan.png"
+keywords:
+  - "wekan"
+  - "domótica wekan"
+  - "gladys wekan"
+  - "wekan gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-wekan instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Wekan","description":"Tableros kanban de Wekan: tarjetas de hoy, atrasadas y terminadas, nuevas, añadidas por escena.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-wekan","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-wekan.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-30T02:28:16Z"}} />
+
+Lleve los tableros kanban de su [Wekan](https://wekan.fi) a Gladys: las
+tarjetas que vencen hoy, las atrasadas, las terminadas, el próximo vencimiento
+y el número de tarjetas de cada lista de un tablero. Una escena reacciona
+cuando se añade una tarjeta, llega a una lista (`Hecho`, `Por revisar`…) o
+vence, otra añade «comprar pan» desde un botón o mueve una tarjeta desde una
+etiqueta NFC, un toque en el panel termina una tarjeta, y Gladys puede leer las
+tarjetas del día cada mañana.
+
+> **Sus comentarios son bienvenidos.** Esta integración se ha probado contra un
+> servidor Wekan real (imagen Docker `wekanteam/wekan` del 30 de octubre de
+> 2026, con MongoDB 7), aún no en el uso diario. Si algo no funciona como se
+> describe, dígalo en el [foro de Gladys](https://community.gladysassistant.com)
+> o en las [issues](https://github.com/guim31/gladys-wekan/issues).
+
+## Qué necesita
+
+- Gladys Assistant 5.1.0 o posterior.
+- Un **Wekan autoalojado**, accesible desde Gladys, con su API REST activa
+  (`WITH_API=true`, valor por defecto de la imagen Docker y del Snap).
+- El **usuario** (o correo electrónico) y la **contraseña** de un usuario de
+  Wekan miembro de los tableros que se siguen. Debe ser una **cuenta con
+  contraseña**: un usuario que inicia sesión por LDAP, OAuth2 u otro inicio de
+  sesión único no puede iniciar sesión desde Gladys. Un usuario dedicado,
+  añadido como miembro de los tableros, es una buena idea.
+
+La integración ve los tableros que ve este usuario, y actúa **en su nombre**:
+las tarjetas añadidas desde Gladys lo tienen como autor. Un miembro de solo
+lectura de un tablero puede seguirlo, pero no añadir ni mover sus tarjetas.
+
+## Configuración
+
+1. En Gladys, **Integraciones** → instale **Wekan**.
+2. En la pantalla **Configuración**, rellene:
+   - **Dirección**: la dirección de Wekan como en el navegador, por ejemplo
+     `http://192.168.1.20:8080`, o `https://kanban.example.org` detrás de un
+     proxy inverso (se conserva un prefijo como `/wekan`);
+   - **Usuario o correo electrónico** y **Contraseña**.
+3. Opciones:
+   - **Tableros seguidos**: nombres separados por comas (`Casa, Compras`), o
+     el identificador de un tablero (en su dirección, después de `/b/`). Vacío:
+     todos los tableros del usuario, 20 como máximo;
+   - **Listas «terminado»**: las listas cuyas tarjetas cuentan como
+     terminadas, por nombre, separadas por comas. Por defecto
+     `Done, Fait, Terminé, Erledigt, Hecho`; mayúsculas y acentos no cuentan.
+     Vacío: solo cuentan las fechas de fin;
+   - **Aceptar certificados autofirmados**: para una dirección `https://` con
+     un certificado autofirmado, solo en su propio servidor;
+   - **Intervalo de actualización**: de 1 a 10 minutos (5 por defecto). Los
+     vencimientos y la medianoche se siguen siempre a tiempo, sea cual sea el
+     intervalo;
+   - **Idioma de los nombres de funciones**: los nombres dados a las funciones
+     al añadir un dispositivo (francés por defecto), y los textos enviados a
+     las escenas.
+4. Guarde y luego **Probar la conexión**: lee Wekan e indica el número de
+   tarjetas abiertas y de tableros seguidos.
+5. En la pestaña **Descubrimiento**, añada los dispositivos que desee.
+
+## Dispositivos
+
+**Wekan _tablero_** para cada tablero seguido, con estas funciones:
+
+| Función               | Qué indica                                                                                   |
+| --------------------- | -------------------------------------------------------------------------------------------- |
+| `Tarjetas abiertas`   | las tarjetas ni terminadas ni archivadas                                                     |
+| `Tarjetas para hoy`   | tarjetas abiertas cuyo vencimiento cae hoy, pasado o no                                      |
+| `Tarjetas atrasadas`  | tarjetas abiertas cuyo vencimiento ha pasado                                                 |
+| `Tarjetas terminadas` | las tarjetas con fecha de fin, o en una lista «terminado» (las archivadas no cuentan)        |
+| una por lista         | el número de tarjetas de cada una de las cinco primeras listas que no son listas «terminado» |
+| `Próximo vencimiento` | la tarjeta con el vencimiento futuro más cercano, y su fecha; `Ninguna` si no hay ninguna    |
+
+Una tarjeta está **terminada** cuando tiene una **fecha de fin** (la fecha
+«Fin» de Wekan), o cuando está en una de las listas «terminado» de la
+configuración. «Hoy» es el día en la zona horaria de Gladys. Se cuentan las
+tarjetas de todos los carriles. Los nombres de las funciones se fijan al añadir
+el dispositivo: una lista renombrada después conserva su antiguo nombre en
+Gladys. Una nueva lista entre las cinco primeras hace que Gladys proponga
+actualizar el dispositivo en la pestaña **Descubrimiento**.
+
+## Panel
+
+El widget **Tarjetas de hoy** muestra dos mosaicos (para hoy, atrasadas), la
+lista de las tarjetas para esta noche (10 como máximo), primero las atrasadas,
+con su hora, su lista y su tablero, y un botón para cada una de las cuatro más
+urgentes: un toque **termina la tarjeta** en Wekan (su fecha de fin pasa a ser
+ahora). Elija un dispositivo de tablero en la configuración del widget para ver
+solo sus tarjetas; déjelo vacío para todos los tableros seguidos. Cuando no
+vence nada, el widget lo dice e indica el próximo vencimiento.
+
+En una pantalla compartida, desmarque **Mostrar los botones «terminado»** en
+la configuración del widget: las tarjetas solo se muestran. Los tableros
+llevan el nombre dado en Gladys una vez añadido su dispositivo.
+
+Los contadores también pueden ir al panel como cualquier función de
+dispositivo.
+
+## Escenas
+
+### Disparadores
+
+- **Nueva tarjeta de Wekan**: apareció una tarjeta en un tablero seguido:
+  creada, restaurada desde el archivo o traída de otro tablero. Filtros: el
+  tablero (un dispositivo de tablero), el **nombre de la lista**, exactamente
+  como en Wekan (`Por hacer`).
+- **Tarjeta de Wekan movida**: una tarjeta llegó a otra lista de su tablero.
+  Mismos filtros. La información transmitida a las acciones da también la
+  lista anterior.
+- **Tarjeta de Wekan vencida**: una tarjeta abierta alcanzó su vencimiento.
+- **Tarjeta de Wekan atrasada**: a medianoche, una tarjeta que vencía ese día
+  sigue sin terminar. Una vez por tarjeta y vencimiento.
+
+Filtros de los dos últimos: el tablero, el nombre de la tarjeta. Información
+transmitida a las acciones: la tarjeta, su identificador, su tablero, su
+lista, su vencimiento.
+
+Una nueva tarjeta o un movimiento se ve en la lectura siguiente: dentro del
+intervalo de actualización. Un tablero recién añadido a los seguidos no trae
+ninguna «nueva tarjeta». Una tarjeta terminada antes de su vencimiento no
+dispara nada, y un vencimiento movido a mano antes de la lectura anterior
+tampoco. Un reinicio no dispara nada dos veces; una tarjeta añadida o movida
+mientras la integración estaba parada dispara al reiniciarse, igual que un
+vencimiento de menos de una hora.
+
+### Acciones
+
+- **Añadir una tarjeta de Wekan**: un título; el tablero por su nombre (vacío:
+  el primer tablero seguido); la lista por su nombre (vacío: su primera lista
+  que no es una lista «terminado»); un **vencimiento** opcional, en la hora de
+  Gladys: `2026-10-24 18:00`, `2026-10-24` (mediodía), o a partir de ahora
+  `+30m`, `+2h`, `+3d`. La tarjeta va al primer carril del tablero.
+  Resultados: la tarjeta, su identificador, su tablero, su lista, su
+  vencimiento.
+- **Mover una tarjeta de Wekan**: la tarjeta por su nombre exacto (mayúsculas
+  y acentos ignorados) o su identificador, la lista de destino por su nombre,
+  y el tablero si dos tableros tienen una tarjeta con ese nombre. Wekan la
+  coloca arriba de la lista; una tarjeta de una lista «terminado» puede
+  volver. Resultados: la tarjeta, su identificador, su tablero, su lista, la
+  lista anterior.
+- **Leer las tarjetas de Wekan de hoy**: las tarjetas para esta noche en una
+  frase (`3 tarjeta(s) para esta noche: …. 2 atrasada(s).`), para todos los
+  tableros seguidos o uno de ellos. Resultados: la frase, el número de
+  tarjetas para esta noche y de tarjetas atrasadas. Envíe la frase en un
+  mensaje, o haga que Gladys la diga.
+
+Los campos aceptan variables de escena: `{{triggerEvent.data.card}}` mueve la
+tarjeta que disparó la escena.
+
+### Ideas de escenas
+
+- A las 7:30, **Leer las tarjetas de Wekan de hoy**, y luego enviar la frase
+  por Telegram.
+- **Nueva tarjeta de Wekan** en el tablero `Compras`: enviarla a quien hace la
+  compra.
+- **Tarjeta de Wekan movida** a la lista `Hecho` del tablero `Casa`: enviar
+  «bien hecho» a la familia, o apagar la luz de recordatorio.
+- Cuando la lavadora se detiene, **Añadir una tarjeta de Wekan**
+  `Tender la ropa` en `Por hacer`, vencimiento `+1h`.
+- Una etiqueta NFC en los cubos de basura lanza **Mover una tarjeta de Wekan**
+  `Sacar la basura` a `Hecho`.
+
+## Solución de problemas
+
+- **«Wekan no responde»**: compruebe la dirección y el puerto desde la máquina
+  de Gladys (la dirección abre Wekan en un navegador).
+- **«Usuario o contraseña rechazados»**: la contraseña ha cambiado, o el
+  usuario inicia sesión por LDAP u OAuth2: use un usuario con cuenta con
+  contraseña.
+- **«No hay ninguna API de Wekan en esta dirección»**: la dirección responde,
+  pero no con la API REST de Wekan: compruebe el puerto, el prefijo y que
+  `WITH_API` no valga `false` en la configuración de Wekan.
+- **«La dirección redirige»**: introduzca la dirección `https://`.
+- **«Este usuario no tiene este permiso»**: el usuario es solo miembro de
+  solo lectura del tablero.
+- **Falta un tablero**: el usuario debe ser miembro del tablero; un nombre
+  escrito en **Tableros seguidos** que no corresponde a ningún tablero se
+  ignora, y **Probar la conexión** lo indica. Los tableros archivados y las
+  plantillas se dejan fuera. Por encima de 20 tableros, indique los que se
+  siguen.
+- **Una tarjeta acabada sigue contando como abierta**: dele una fecha de fin
+  en Wekan, o añada su lista a las **Listas «terminado»**.
+- **«Varias tarjetas tienen este nombre»**: indique el tablero, o el
+  identificador de la tarjeta.
+- Registros: `LOG_LEVEL=debug` en el contenedor muestra cada lectura.
+
+## Límites
+
+- Wekan se lee cada 1 a 10 minutos (y en cada vencimiento y a medianoche): un
+  cambio en Wekan aparece en Gladys en ese plazo. No se usan los webhooks
+  salientes de Wekan.
+- En cada lectura: la lista de tableros, y luego para cada tablero seguido sus
+  listas, sus carriles y una solicitud por carril. El inicio de sesión se
+  guarda en memoria (Wekan lo da para 90 días) y solo se repite cuando Wekan lo
+  rechaza.
+- La integración añade tarjetas, las mueve y las termina (fecha de fin); no
+  las edita, archiva, elimina ni asigna, ni lee sus listas de control,
+  etiquetas o comentarios.
+- Las tarjetas archivadas, y las de listas archivadas, se dejan fuera: la API
+  de Wekan no las da.
+- Solo las cinco primeras listas de un tablero que no son listas «terminado»
+  tienen un contador.
+- Gladys no guarda ningún dato de Wekan aparte de `/data/wekan-state.json` (la
+  hora de la última lectura y la lista de cada tarjeta, para que ningún evento
+  se dispare dos veces).
+- Sin relación con Wekan ni con sus autores.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Wekan te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Su Wekan | `section` | No | Un Wekan autoalojado con su API REST activa (WITH_API=true, por defecto). Indique el usuario y la contraseña de un usuario de Wekan con cuenta por contraseña (ni LDAP ni OAuth). |
+| Dirección | `string` | Sí | Dirección de Wekan, como en el navegador, con https:\/\/ para HTTPS y :puerto si no es el predeterminado. |
+| Usuario o correo electrónico | `string` | Sí | Un usuario de Wekan miembro de los tableros que se siguen. Las tarjetas añadidas desde Gladys se crean a su nombre. |
+| Contraseña | `secret` | Sí |  |
+| Opciones | `section` | No |  |
+| Tableros seguidos | `string` | No | Nombres o identificadores separados por comas. Vacío: todos los tableros del usuario (20 como máximo). Un dispositivo por tablero seguido. |
+| Listas «terminado» | `string` | No | Listas cuyas tarjetas cuentan como terminadas, por nombre, separadas por comas. Una tarjeta con fecha de fin también lo está. |
+| Aceptar certificados autofirmados | `boolean` | No | Para una dirección https:\/\/ con certificado autofirmado. Márquelo solo para su propio servidor. |
+| Intervalo de actualización | `select` | No | Frecuencia de lectura de Wekan (dos solicitudes por tablero y una por carril). Los vencimientos y la medianoche se siguen siempre a tiempo. |
+| Idioma de los nombres de funciones | `select` | No | Nombres dados a las funciones al añadir un dispositivo y textos enviados a las escenas. |
+
+## Cómo instalar Wekan en Gladys
+
+1. En Gladys, abre **Integraciones**: Wekan aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-wekan:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-wekan](https://github.com/guim31/gladys-wekan).
+
+Wekan requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Wekan es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-wekan) — [fuente de esta documentación](https://github.com/guim31/gladys-wekan/blob/HEAD/docs/es.md)

@@ -1,0 +1,282 @@
+---
+title: "Intégration domotique SMA EV Charger, gratuite et open source"
+sidebar_label: "SMA EV Charger"
+description: "Borne SMA EV Charger par son API web locale : état, puissance, énergie, arrêt ; démarrage en option. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-sma-ev-charger.png"
+keywords:
+  - "sma ev charger"
+  - "domotique sma ev charger"
+  - "gladys sma ev charger"
+  - "sma ev charger gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-sma-ev-charger instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"SMA EV Charger","description":"Borne SMA EV Charger par son API web locale : état, puissance, énergie, arrêt ; démarrage en option.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-sma-ev-charger","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-sma-ev-charger.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-29T06:05:23Z"}} />
+
+Affiche une borne **SMA EV Charger** (EVC7.4-1AC-10, EVC22-3AC-10) ou une
+**SMA eCharger** dans Gladys par l'API web locale de la borne, sans cloud.
+Intégration non officielle, sans lien avec SMA. **Jamais testé avec une vraie
+borne** : elle a été écrite d'après les bibliothèques libres pysmaev et
+ha-sma-ev-charger (utilisées par Home Assistant) et testée contre une borne
+simulée. Vos retours sont les bienvenus.
+
+## Ce que vous obtenez
+
+Un appareil par borne (repéré par son numéro de série), avec :
+
+- l'état (aucun véhicule, véhicule branché, en charge, charge arrêtée, borne
+  verrouillée, défaut de la borne), le connecteur et l'état de charge, le
+  véhicule branché, l'erreur signalée, le statut de la borne, le sélecteur
+  rotatif ;
+- le mode de charge (charge rapide, charge optimisée, charge avec consigne,
+  arrêt de la charge) et « charge arrêtée » ;
+- la puissance, le courant et la tension par phase ;
+- l'**index d'énergie** de la borne (kWh, son compteur), pour l'onglet
+  énergie de Gladys, et l'**énergie de la session** (kWh) ;
+- la limite du courant de charge (A) ;
+- **Arrêter la charge** (bouton), **Démarrer la charge** (bouton), **Régler
+  le mode de charge** (liste) et **Régler le courant de charge** (liste).
+
+Pas d'interrupteur : un « tout éteindre » (un assistant vocal, une scène) ne
+peut pas démarrer ni arrêter une charge par erreur.
+
+## Installation
+
+1. Donnez à la borne une adresse IP fixe dans votre box.
+2. Créez au besoin un utilisateur dans l'interface web de la borne. Pour
+   tout lire et tout régler, l'utilisateur doit être **installateur ou
+   administrateur** (d'après Home Assistant) : avec moins de droits, la borne
+   peut refuser des valeurs ou les commandes, ce que l'état indique alors.
+3. Dans Gladys, saisissez l'adresse (une adresse IPv4 ou un nom d'hôte,
+   éventuellement `:port`, 443 par défaut), le **nom d'utilisateur et le mot
+   de passe** (les deux sont nécessaires : l'un sans l'autre est refusé),
+   enregistrez.
+4. Ouvrez l'onglet **Découverte** et ajoutez la borne.
+
+Le mot de passe est gardé par Gladys dans sa base, jamais réaffiché, et
+envoyé seulement à la borne, en HTTPS, une fois son certificat comparé à
+celui épinglé à la première connexion. Il n'est jamais écrit dans les
+journaux, dans `/data` ni dans un état, pas plus que le jeton d'accès que
+donne la borne.
+
+### Le certificat de la borne
+
+La borne présente un certificat auto-signé. À la première connexion, son
+empreinte SHA-256 est épinglée (gardée dans `/data`) **avant** l'envoi du mot
+de passe ; ensuite chaque connexion lui est comparée avant d'écrire le
+moindre octet. Si le certificat change (borne remplacée, mise à jour),
+l'intégration n'envoie rien (le mot de passe non plus) et l'état affiche le
+début de la nouvelle empreinte. Comparez-la avec celle que votre navigateur
+montre sur l'interface web de la borne, puis cliquez deux fois sur **Faire
+confiance au nouveau certificat** : le premier clic montre l'empreinte
+entière, un second clic 3 à 60 secondes plus tard épingle exactement
+celle-là. TLS 1.2 au minimum.
+
+## Lectures
+
+La borne est lue à chaque intervalle de rafraîchissement (30 s par défaut,
+de 15 s à 1 h) : un jeton d'accès quand celui en mémoire est ancien (il sert
+jusqu'à 90 % de sa durée, une heure par défaut), les mesures, puis les
+paramètres. Chaque requête a sa propre connexion, fermée juste après. Jamais
+plus tôt que l'intervalle : le bouton **Tester la connexion**, l'onglet
+Découverte, une reconnexion à Gladys, une configuration enregistrée sans
+changement ou un redémarrage ne lisent pas plus tôt (seules les deux
+lectures 5 s et 20 s après une commande, et la lecture juste après de
+nouveaux identifiants ou un certificat que vous avez approuvé, le font).
+
+- **429** (la borne demande de ralentir) : pause du Retry-After, de 1 min à
+  6 h (5 min sans), gardée dans `/data` ; **5xx** : une pause du délai
+  d'échec (1 min au moins). Rien d'autre que « Arrêter la charge » n'est
+  envoyé pendant une pause.
+- **Identifiants refusés** (la demande de jeton répond 401, ou 400/403 avec
+  une erreur OAuth comme `invalid_grant` ; un autre 400/403, d'un proxy ou
+  d'un serveur occupé, est un échec ordinaire) :
+  gardé dans `/data`, et **plus aucun essai automatique** (une borne peut
+  verrouiller le compte après quelques mots de passe refusés). Enregistrer
+  d'autres identifiants essaie aussitôt ; **Tester la connexion** essaie une
+  fois de plus, au plus une fois par minute.
+- Une valeur que la borne refuse de donner avec un jeton qu'elle vient de
+  donner (401 ou 403) : l'utilisateur n'a pas les droits ; ce n'est pas un
+  mot de passe refusé. Réessayé après 5 minutes, puis une attente qui double
+  jusqu'à 1 heure.
+- Injoignable : nouveaux essais après 30 s, 1, 2, puis 5 min, jamais plus
+  tôt que l'intervalle.
+
+## Commandes
+
+### Arrêter la charge
+
+**Arrêter la charge** (et le mode **Arrêt de la charge** de la liste) met le
+mode de fonctionnement de la borne sur « Arrêt de la charge ». Elle ne
+demande aucune option et n'est jamais retenue : ni par une commande en cours
+(elle prend la borne aussitôt, et un démarrage, un mode ou un courant pas
+encore envoyé est abandonné), ni par la minute entre deux changements, ni
+par une pause 429 ou 5xx, ni par une lecture en échec ou figée (elle n'en a
+pas besoin), ni avant la première lecture après un redémarrage (le numéro
+de série de la borne est gardé dans `/data`), ni par un `/data` impossible à
+écrire. Elle reste jusqu'à un démarrage (depuis Gladys avec l'option, depuis
+l'application SMA, ou par le sélecteur rotatif) : **un arrêt oublié peut
+empêcher la charge suivante**.
+
+Quand l'arrêt n'est pas appliqué — la borne ne peut pas être jointe, lui
+répond 429 ou 5xx, son certificat a changé, ou les identifiants sont
+refusés — il est **gardé** dans `/data` et renvoyé à son propre rythme,
+toutes les 30 secondes (après l'attente qu'un 429 demande, 5 minutes au
+plus), quels que soient l'intervalle ou une pause des lectures, jusqu'à ce
+que la borne le prenne. Il n'est jamais abandonné avec le temps : seuls une
+lecture montrant la borne arrêtée, un démarrage envoyé depuis Gladys que la
+borne prend (réponse 2xx ou 5xx, ou sans réponse : il a pu arriver) ou une autre
+borne à l'adresse y mettent fin (un démarrage que la borne refuse, HTTP 3xx,
+4xx ou 429, laisse l'arrêt gardé tel quel ; un autre mode lu n'est pas pris
+pour un démarrage venu d'ailleurs : l'arrêt n'ayant jamais été appliqué,
+rien n'a été redémarré). Avec
+des identifiants refusés, ou une écriture refusée pour les droits de
+l'utilisateur (401/403 avec un jeton tout juste donné), il n'est pas envoyé
+avec les mêmes : il part en premier dès que d'autres identifiants sont
+enregistrés ou que **Tester la connexion** réussit (un clic sur l'arrêt tente
+aussi une connexion, au plus une fois par minute). Un autre refus de
+l'écriture (HTTP 3xx ou 4xx : borne occupée, conflit, redirection jamais
+suivie…) le garde aussi, renvoyé toutes les 5 minutes ; il n'est abandonné
+qu'après 3 refus identiques de suite (comptés de nouveau à partir de 1 à
+chaque clic sur l'arrêt), ce que l'état et le badge de l'appareil disent
+alors jusqu'à ce qu'une lecture montre la borne arrêtée, qu'un nouvel arrêt
+soit envoyé ou gardé, ou que la borne prenne un démarrage, un mode ou un
+courant permis par l'option (un clic refusé avant tout envoi, ou une
+commande que la borne refuse, laisse l'avertissement).
+
+Pour annuler un arrêt gardé (pour charger malgré tout) : démarrez la charge
+ou choisissez un mode depuis Gladys, avec l'option, une fois la commande
+acceptée par la borne (elle est alors écrite même si la borne montre déjà ce
+mode, pour qu'elle mette fin à l'arrêt gardé ; refusée, elle laisse l'arrêt
+gardé) ; ou réglez le mode « Arrêt de la charge » dans l'application
+SMA et attendez que Gladys le lise (l'état ne parle plus de l'arrêt gardé),
+puis choisissez-y le mode voulu ; ou enregistrez une autre adresse. Sinon,
+il attend : il n'est jamais abandonné avec le temps.
+
+Après un arrêt, les lectures des 90 secondes suivantes surveillent la
+borne : une lecture qui ne montre pas « Arrêt de la charge » alors qu'aucun
+démarrage n'est parti de Gladys depuis renvoie l'arrêt, deux fois au plus ;
+une fois qu'une lecture (celle juste après l'arrêt comprise) l'a montrée
+arrêtée, un démarrage vu ensuite (depuis l'application SMA) est laissé
+tranquille, sauf si un démarrage envoyé depuis Gladys juste avant l'arrêt
+peut encore arriver.
+
+L'arrêt est refusé, et non gardé, seulement :
+
+- quand la configuration n'a jamais été lue auprès de Gladys (elle est
+  redemandée sans fin ; après une reconnexion, la configuration lue avant
+  continue de servir) ;
+- sans adresse, nom d'utilisateur et mot de passe valables ;
+- quand `/data` ne peut pas être lu (le certificat épinglé est inconnu) ;
+- pour un appareil qui n'est pas la borne à l'adresse (une autre borne y a
+  été lue).
+
+### Démarrage, mode et courant (option)
+
+**Démarrer la charge**, **Régler le mode de charge** (charge rapide ou
+optimisée) et **Régler le courant de charge** sont **désactivés par
+défaut** : activez « Autoriser le démarrage, le mode et le courant » dans la
+configuration. Ensuite :
+
+- chaque commande lit d'abord la borne (dans la même session) et se décide
+  sur cette lecture, jamais sur les valeurs gardées en mémoire ; une valeur
+  dont elle a besoin qui manque la fait refuser ;
+- « Démarrer la charge » met la charge rapide ; elle est refusée sans
+  véhicule branché, sur un défaut, une borne verrouillée ou un état inconnu,
+  et quand la borne autorise moins de 6 A en ce moment ;
+- « Charge optimisée » est refusée quand la borne ne la propose pas (elle
+  demande un gestionnaire d'énergie comme le Sunny Home Manager). La charge
+  avec consigne (une énergie et une heure de fin) est affichée, pas réglée ;
+- le courant est un nombre entier d'ampères de 6 A (ou du minimum de la
+  borne) à la plus basse des valeurs suivantes : le plafond de la
+  configuration (16 A par défaut, 32 A au plus), le maximum que la borne
+  donne pour sa limite de courant, et son courant nominal ;
+- un démarrage, un mode ou un courant par minute (gardé dans `/data` avant
+  que la commande parte : un `/data` impossible à écrire la fait refuser) ;
+- l'option, le délai et le plafond sont revérifiés juste avant le départ de
+  la commande ; un arrêt arrivé entre-temps l'emporte ;
+- refusées pendant une pause 429/5xx ou avec des identifiants refusés.
+
+### Réponses
+
+Chaque commande part dans les 3,5 s suivant le clic ou est refusée **non
+envoyée**. Une commande acceptée par la borne est confirmée par une lecture
+juste après : la valeur demandée relue est un succès ; la valeur d'avant
+encore lue est « pas encore appliquée » (revérifiée 5 et 20 secondes plus
+tard) ; une commande qui a pu arriver sans réponse est « envoyée, sans
+confirmation ». Un refus de la borne (3xx, 4xx) est indiqué.
+
+## Énergie
+
+L'index d'énergie est le compteur de la borne (kWh). Une valeur de 0 ou une
+baisse n'est **jamais** publiée, ni un saut plus grand que ce que la borne
+peut délivrer (25 kW en moyenne depuis la dernière valeur, plus 0,5 kWh) : la
+valeur est retenue, l'état et le badge de l'appareil le disent, et Gladys
+garde la dernière valeur. **Accepter l'index retenu** la prend, en deux
+clics : le premier montre la valeur retenue, un second 3 à 60 secondes plus
+tard accepte exactement cela (pour un compteur remis à zéro ou remplacé). La
+garde tourne sur une horloge que le réglage de l'heure par NTP ne déplace
+pas. L'énergie de la session repart à chaque session : elle n'est jamais
+publiée à 0 (la session précédente reste affichée jusqu'à ce que la nouvelle
+ait délivré quelque chose).
+
+Note : la borne est derrière votre compteur principal. Si Gladys compte déjà
+toute la maison, l'index de la borne en est une part, pas un ajout.
+
+## Limites
+
+- Une borne par intégration. La consigne du mode de charge, la luminosité
+  des voyants, la déconnexion en veille, la validation manuelle de la charge
+  et le redémarrage de la borne ne sont pas gérés.
+- Un arrêt envoyé avant la première lecture après un redémarrage a besoin
+  de la configuration de Gladys (le mot de passe n'est jamais gardé dans
+  `/data`).
+- La fraîcheur repose sur les lectures : la borne ne donne pas l'heure de
+  ses mesures.
+- Un `/data` illisible arrête tout (rien n'est épinglé de nouveau à
+  l'aveugle) ; il est relu à chaque intervalle.
+- Jamais testé avec une vraie borne : les réponses d'une vraie (les modes
+  proposés, les droits de chaque utilisateur, la durée du jeton) peuvent
+  différer.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par SMA EV Charger dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre borne SMA EV Charger | `section` | Non | Affiche votre borne SMA EV Charger (EVC7.4-1AC-10, EVC22-3AC-10) ou SMA eCharger dans Gladys par son API web locale, sans cloud : état, véhicule branché, mode de charge, puissance, courant et tension par phase, index d'énergie, énergie de la session. Donnez à la borne une adresse fixe dans votre box, saisissez-la avec le nom d'utilisateur et le mot de passe de son interface web (un compte installateur ou administrateur pour tout lire et régler), enregistrez, puis ajoutez la borne depuis l'onglet Découverte. Arrêter la charge est toujours possible depuis Gladys ; la démarrer, le mode de charge et le courant de charge seulement si vous les autorisez ci-dessous. Jamais testé avec une vraie borne. Sans lien avec SMA. |
+| Adresse IP de la borne | `string` | Oui | Une adresse IPv4 ou un nom d'hôte, éventuellement suivi d'un port (443 par défaut). La borne est jointe en HTTPS. |
+| Nom d'utilisateur | `string` | Oui | Le nom d'utilisateur de l'interface web de la borne (celui avec lequel vous vous connectez dans un navigateur). |
+| Mot de passe de la borne | `secret` | Oui | Le mot de passe de l'interface web de la borne. Gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement à la borne, en HTTPS, et seulement une fois son certificat comparé à celui épinglé à la première connexion. Envoyé tel que saisi (espaces compris). Des identifiants refusés ne sont plus réessayés automatiquement : enregistrez-en d'autres ou cliquez sur « Tester la connexion ». |
+| Autoriser le démarrage, le mode et le courant | `boolean` | Non | Désactivé par défaut. Activé : Gladys peut démarrer la charge (bouton, charge rapide), régler le mode de charge (charge rapide ou optimisée) et le courant de charge (liste, de 6 A au plafond ci-dessous). Désactivé : ces fonctionnalités refusent toute commande. « Arrêter la charge » (et le mode « Arrêt de la charge ») reste toujours disponible : elle met le mode de fonctionnement de la borne sur « Arrêt de la charge », qui reste jusqu'à un démarrage (depuis Gladys avec cette option activée, ou depuis l'application SMA) ; un arrêt oublié peut empêcher la charge suivante. |
+| Plafond du courant de charge (A) | `number` | Non | Le courant de charge le plus élevé que Gladys peut régler (16 A par défaut). La plus basse de cette valeur, du maximum que la borne donne pour sa limite de courant et de son courant nominal s'applique. |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture de la borne, en secondes (deux requêtes par lecture). |
+| Langue des noms des fonctionnalités | `select` | Non | Sert aux noms des fonctionnalités des appareils ajoutés désormais, aux textes d'état et aux erreurs des commandes. |
+
+## Comment installer SMA EV Charger dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : SMA EV Charger apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-sma-ev-charger:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-sma-ev-charger](https://github.com/LM1LC3N7/gladys-sma-ev-charger).
+
+SMA EV Charger nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+SMA EV Charger est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-sma-ev-charger) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-sma-ev-charger/blob/HEAD/docs/fr.md)

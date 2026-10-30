@@ -1,0 +1,205 @@
+---
+title: "Intégration domotique Pentair IntelliCenter, gratuite et open source"
+sidebar_label: "Pentair IntelliCenter"
+description: "Panneaux de piscine Pentair IntelliCenter en local : circuits, pompes, chauffage, chimie. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-intellicenter.png"
+keywords:
+  - "pentair intellicenter"
+  - "domotique pentair intellicenter"
+  - "gladys pentair intellicenter"
+  - "pentair intellicenter gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-intellicenter instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Pentair IntelliCenter","description":"Panneaux de piscine Pentair IntelliCenter en local : circuits, pompes, chauffage, chimie.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-intellicenter","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-intellicenter.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-29T06:16:14Z"}} />
+
+Affiche votre panneau de piscine **Pentair IntelliCenter** (i5P, i7+3, i8PS,
+i10PS, i10+3D) dans Gladys par son **protocole local** (TCP, port 6681) : sans
+cloud, sans compte, directement sur votre réseau.
+
+> **Jamais testé avec un vrai panneau.** Sans lien avec Pentair.
+> L'intégration suit la bibliothèque pyintellicenter (MIT). Une mise à jour
+> du firmware du panneau peut changer le protocole. ScreenLogic n'est pas pris
+> en charge.
+
+## Ce que vous obtenez
+
+Un appareil par panneau (repéré par le nom unique de son système, pas par son
+adresse IP), avec, pour chaque objet que le panneau montre :
+
+| Objet                                | Fonctionnalités                                                                          |
+| ------------------------------------ | ---------------------------------------------------------------------------------------- |
+| Bassin (piscine, spa)                | Température de l'eau, consigne de chauffage, mode de chauffage (liste), chauffe en cours |
+| Circuit (piscine, spa, mis en avant) | Marche / arrêt (liste)                                                                   |
+| Éclairage                            | Marche / arrêt (liste)                                                                   |
+| Pompe                                | En marche, vitesse (tr/min), puissance (W)                                               |
+| Sonde (air, solaire, eau)            | Température                                                                              |
+| IntelliChem                          | pH, redox (ORP, mV), consignes de pH et de redox (lecture seule)                         |
+| IntelliChlor                         | Sel (ppm)                                                                                |
+
+Plus une fonctionnalité **État** (connecté ou injoignable). Les circuits non
+mis en avant (les « Aux » inutilisés) ne sont pas affichés.
+
+- Les températures sont en °C : un panneau réglé en °F est converti
+  exactement ((°F − 32) × 5 / 9). Si l'unité du panneau ne peut pas être lue,
+  aucune température n'est publiée.
+- La température de l'eau d'un bassin n'est publiée que pendant qu'il tourne
+  (pompe en marche) : à l'arrêt, le panneau garde une valeur ancienne.
+- Une valeur inconnue, vide ou à 0 quand 0 veut dire « non disponible » (pH,
+  redox, sel) n'est jamais publiée.
+
+Lecture toutes les 30 secondes par défaut (de 15 s à 10 min, réglable), une
+requête à la fois, sur une seule connexion.
+
+## Installation
+
+1. Donnez une adresse IP fixe au panneau dans votre box.
+2. Dans Gladys, installez l'intégration et saisissez l'adresse IP du panneau
+   (ou son nom d'hôte, éventuellement suivi d'un port).
+3. Enregistrez, puis ajoutez le panneau depuis l'onglet **Découverte**.
+
+Le panneau n'a pas d'identifiants : rien de secret n'est configuré.
+
+## Arrêter (toujours disponible)
+
+Choisir **Arrêt** sur un circuit (ou un éclairage), ou **Arrêt** dans le mode
+de chauffage d'un bassin, ne dépend d'aucune option, ni d'une lecture ou d'une
+commande en cours (il les interrompt et part sur une nouvelle connexion), ni
+d'une lecture qui a échoué, ni de la configuration : juste après un
+redémarrage, il part vers l'adresse du dernier panneau lu (gardée dans
+`/data`), et un arrêt pas encore vu appliqué avant un redémarrage est renvoyé
+dès le démarrage du conteneur. Une commande arrivée avant lui et pas encore
+partie est abandonnée. Plusieurs arrêts cliqués ensemble partent dans une
+seule écriture.
+
+Il est réussi quand la relecture du panneau le montre (pour l'arrêt du
+chauffage : le mode Arrêt **et** plus de chauffe en cours). Sinon la réponse
+dit pourquoi, et l'arrêt est gardé (dans `/data`) et vérifié toutes les 15 s
+(chaque adresse de panneau a sa propre vérification) et à chaque lecture :
+
+- **aucune adresse connue** (ni configuration ni panneau lu auparavant) :
+  rien n'est envoyé pour le moment ; l'arrêt est gardé en mémoire et part en
+  premier dès qu'une adresse est connue ;
+- **le panneau ne répond pas** (3 s d'essais, toutes les 250 ms) : réessayé
+  à chaque vérification (15 s), à chaque lecture qui atteint le panneau et au
+  clic sur **Tester la connexion** ; un arrêt qui n'est jamais parti n'est
+  jamais abandonné ;
+- **refusé par le panneau** (un code autre que 200) : réécrit après 15 s,
+  puis de plus en plus espacé (30 s, 1, 2, 4 min, puis toutes les 5 min),
+  sans fin ; un refus ne compte pas comme écriture ;
+- **pas encore appliqué** (le panneau ne le montre pas) : réécrit 15 s après
+  chaque écriture, au plus 3 fois (écritures acceptées par le panneau), puis
+  tenu sans nouvelle écriture, ce que l'état de l'intégration dit ;
+- **sans confirmation** à temps (4,3 s) : vérifié de la même façon ;
+- **arrêt du chauffage affiché mais le bassin chauffe encore** (le panneau
+  montre le mode Arrêt, mais signale encore une chauffe) : surveillé, rien
+  n'est réécrit ; c'est normal pendant un refroidissement, mais au-delà de
+  2 minutes l'état de l'intégration demande de vérifier sur le panneau (le
+  mode Arrêt écrit vient de pyintellicenter et n'a pas été vérifié sur un
+  vrai panneau) ; si le panneau ne donne pas son état de chauffe, l'état de
+  l'intégration le dit (« état de chauffe illisible ») et l'arrêt reste
+  surveillé.
+
+L'état de l'intégration dit où en est chaque arrêt : pas encore envoyé,
+envoyé en attente de relecture, refusé (avec le code), tenu, chauffe encore,
+ou surveillé. Si le panneau change d'adresse (même panneau lu à la nouvelle),
+ses arrêts gardés le suivent.
+
+Un arrêt gardé est levé quand le panneau le montre, ou quand une commande du
+même réglage cliquée dans Gladys après lui (option activée) est partie sans
+refus du panneau (une absence de réponse le lève aussi : la commande a pu
+s'appliquer). Un nouveau clic sur Arrêt le réécrit et recompte ses écritures.
+Un arrêt gardé dans `/data` avant un redémarrage est levé de même, sans être
+envoyé, quand une telle commande de son réglage est partie depuis le démarrage
+(un `/data` lent à lire est appliqué à la fin de sa lecture). Jamais par le
+temps. Une commande partie moins de 30 s avant l'arrêt et appliquée après
+lui est contrée par une nouvelle écriture. Tant que l'arrêt
+du chauffage d'un bassin n'est pas vu appliqué, sa consigne, la mise en
+marche de son circuit et celle d'un groupe de circuits sont refusées. Un
+bassin « chauffe » tant que son mode n'est pas vu sur Arrêt **ou** que le
+panneau signale encore une chauffe (illisible compte comme chauffe).
+
+## Mettre en marche et chauffer (options)
+
+Trois options, **désactivées par défaut** :
+
+- **Autoriser la mise en marche des circuits et pompes** : les circuits qui
+  ne sont pas des éclairages (piscine, spa et leurs pompes, circuits mis en
+  avant). Mettre en marche une piscine ou un spa qui chauffe (mode de
+  chauffage pas vu sur Arrêt, ou chauffe encore signalée) exige aussi
+  l'option chauffage (sa pompe démarre, et avec elle son chauffage). Un
+  **groupe de circuits** (« Spa Mode »…) peut allumer un bassin : il exige
+  l'option chauffage tant qu'un des bassins chauffe ou qu'aucun bassin n'a
+  encore été lu.
+- **Autoriser l'allumage des éclairages**.
+- **Autoriser le chauffage** : choisir une source de chauffage, régler la
+  consigne. Un **spa est limité à 40 °C**, une piscine au plafond de la
+  configuration (35 °C par défaut, 40 °C au plus). La borne est vérifiée sur
+  la valeur écrite (un degré entier), après la conversion en °F quand le
+  panneau est en °F : 40 °C = 104 °F ; le bas est 4 °C (40 °F).
+
+Ce sont des listes et une consigne, jamais un interrupteur : un « tout
+éteindre » ne les atteint pas. Chaque commande relit le panneau juste avant
+(identité, objets, unité), revérifie les options juste avant d'écrire, part
+dans les 3,5 s ou pas du tout, et n'est réussie que si la relecture montre la
+valeur demandée (« envoyé, pas encore appliqué » sinon, puis relectures à 5
+et 20 s). Les commandes arrivées ensemble (une scène) partent dans une seule
+écriture. Refusées aussi : avant la lecture de la configuration, si un autre
+panneau répond à l'adresse, ou si un arrêt a été cliqué entre-temps.
+
+## Bon à savoir
+
+- Le panneau n'est jamais lu avant l'intervalle : ni par le bouton **Tester
+  la connexion**, ni par une Découverte, ni après une reconnexion à Gladys ou
+  un redémarrage (l'heure de la dernière lecture est gardée dans `/data`).
+  Seules les relectures qui suivent une commande ou un clic sur Arrêt (5 et
+  20 s) et les vérifications d'un arrêt gardé (toutes les 15 s, qui ne lisent
+  que les objets de l'arrêt) font exception.
+- Une valeur de plus de 2 minutes n'est jamais renvoyée comme nouvelle.
+- Les consignes de la chimie (pH, redox), la vitesse des pompes, les
+  spectacles de lumière et les programmes sont en lecture seule ou absents
+  dans cette version.
+- L'application Pentair, l'écran du panneau et ses programmes peuvent aussi
+  le piloter : la dernière écriture gagne.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Pentair IntelliCenter dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre panneau IntelliCenter | `section` | Non | Affiche votre panneau de piscine Pentair IntelliCenter dans Gladys par son protocole local (port TCP 6681), sans cloud : bassins (piscine, spa) avec température de l'eau, mode de chauffage et consigne, circuits, éclairages, pompes, sondes de température, IntelliChem et IntelliChlor. Saisissez l'adresse IP du panneau (donnez-lui une adresse fixe dans votre box), enregistrez, puis ajoutez-le depuis l'onglet Découverte. Arrêter un circuit ou un chauffage fonctionne toujours ; mettre en marche et chauffer ne sont permis que par les options ci-dessous. Jamais testé avec un vrai panneau. Sans lien avec Pentair. |
+| Adresse IP du panneau | `string` | Oui | Une adresse IPv4 ou un nom d'hôte, éventuellement suivi d'un port (6681 par défaut). |
+| Autoriser la mise en marche des circuits et pompes | `boolean` | Non | Désactivé par défaut. Activé : Gladys peut mettre en marche les circuits qui ne sont pas des éclairages (piscine, spa et leurs pompes, circuits mis en avant). Mettre en marche une piscine ou un spa dont le mode de chauffage n'est pas Arrêt exige aussi l'option chauffage. L'arrêt fonctionne dans les deux cas. |
+| Autoriser l'allumage des éclairages | `boolean` | Non | Désactivé par défaut. Activé : Gladys peut allumer les circuits d'éclairage. L'extinction fonctionne dans les deux cas. |
+| Autoriser le chauffage | `boolean` | Non | Désactivé par défaut. Activé : Gladys peut choisir une source de chauffage et régler la consigne de chauffage d'un bassin (un spa 40 °C au plus, une piscine le plafond ci-dessous). Mettre le mode de chauffage sur Arrêt fonctionne dans les deux cas. |
+| Plafond de la consigne de la piscine (°C) | `number` | Non | La consigne de chauffage la plus haute que Gladys peut écrire pour une piscine (35 °C par défaut, 40 °C au plus). Un spa est toujours limité à 40 °C. Vérifié sur la valeur écrite, après conversion en °F quand le panneau est en °F. |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture du panneau, en secondes. |
+| Langue des noms des fonctionnalités | `select` | Non | Sert aux noms des fonctionnalités des appareils ajoutés désormais, aux textes d'état et aux erreurs des commandes. |
+
+## Comment installer Pentair IntelliCenter dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Pentair IntelliCenter apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-intellicenter:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-intellicenter](https://github.com/LM1LC3N7/gladys-intellicenter).
+
+Pentair IntelliCenter nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Pentair IntelliCenter est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-intellicenter) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-intellicenter/blob/HEAD/docs/fr.md)

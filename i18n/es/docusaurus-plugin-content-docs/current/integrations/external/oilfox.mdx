@@ -1,0 +1,148 @@
+---
+title: "Integración domótica OilFox, gratuita y de código abierto"
+sidebar_label: "OilFox"
+description: "Sensores de depósito OilFox por la API oficial: nivel, cantidad, autonomía, rellenos. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-oilfox.jpg"
+keywords:
+  - "oilfox"
+  - "domótica oilfox"
+  - "gladys oilfox"
+  - "oilfox gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/William-De71/gladys-oilfox instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"OilFox","description":"Sensores de depósito OilFox por la API oficial: nivel, cantidad, autonomía, rellenos.","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-oilfox","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-oilfox.jpg","type":"device","version":"0.1.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-10-28T12:18:12Z"}} />
+
+## Presentación
+
+Esta integración trae a Gladys los sensores **OilFox** de su cuenta. Un OilFox (de FoxInsights GmbH) es un sensor Wi-Fi de ultrasonidos colocado encima de un depósito: gasóleo de calefacción, pero también pellets (en kg), diésel… La integración lee su nivel de llenado, la cantidad restante, la autonomía en días y la pila a través de la [Customer API oficial de FoxInsights](https://github.com/foxinsights/customer-api), con la dirección de correo y la contraseña de su aplicación **FoxMobile**. Solo lee. No está afiliada a FoxInsights.
+
+- Un dispositivo por sensor OilFox: nivel de llenado, cantidad, autonomía, pila y estado de la medición.
+- Dos widgets de panel: todos los depósitos de un vistazo, los problemas primero; un depósito con su nivel de los últimos 90 días, el día estimado en que quedará vacío y el consumo por día.
+- Disparadores de escena: nueva medición, relleno detectado, problema de medición, medición correcta de nuevo, medición con retraso, mediciones de vuelta, acceso denegado.
+- Acción de escena: los valores de un depósito (nivel, cantidad, día en que quedará vacío, consumo por día, una frase…).
+
+Transporte: nube. La dirección de correo y la contraseña van a OilFox (`api.oilfox.io`) para iniciar sesión; las mediciones de sus depósitos vienen de la nube OilFox, que las recibe del sensor por Wi-Fi.
+
+## Requisitos
+
+- Gladys Assistant 5.3.0 o posterior.
+- Un sensor OilFox configurado en la aplicación FoxMobile, con su depósito (forma y tamaño): sin ellos, OilFox no da ningún nivel («Faltan los ajustes del depósito»).
+- La dirección de correo y la contraseña de la cuenta FoxMobile. Solo pueden leerse sus propios sensores: la política de uso razonable de FoxInsights no permite vigilar los dispositivos de otras personas.
+
+Frescura de los datos: un OilFox mide su depósito **aproximadamente una vez al día**. FoxInsights considera uso razonable una lectura por hora (más allá, responde HTTP 429). La integración lee la cuenta **una vez por hora**, más una vez 15 minutos después de cada medición prevista por OilFox (siempre al menos 15 minutos después de la lectura anterior): un nuevo nivel llega pronto sin pedir más.
+
+## Configuración
+
+| Campo                | Significado                                                                                                                                           |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Dirección de correo  | El correo de su cuenta FoxMobile                                                                                                                      |
+| Contraseña           | Su contraseña (un secreto: nunca se vuelve a mostrar, nunca se escribe en los registros ni en `/data`)                                                |
+| Idioma de los textos | Nombres de las funciones, estado de la medición, textos de las escenas y errores; automático sigue el idioma del último widget mostrado (en/fr/de/es) |
+
+Botones:
+
+- **Probar la conexión** inicia sesión en OilFox, lee los sensores y lista sus identificadores de hardware.
+- **Diagnóstico** escribe el estado de la integración en sus registros, sin la contraseña, ni el token, ni la dirección de correo.
+
+El token de acceso (válido 15 minutos) se renueva con un token de actualización de un solo uso. Ambos se quedan en memoria: tras un reinicio, la integración vuelve a iniciar sesión.
+
+## Uso
+
+### Dispositivos
+
+Tras la configuración, abra **Descubrimiento**: cada sensor OilFox se ofrece como «OilFox \<identificador de hardware>» (la API no da ningún nombre). Añádalo y luego cámbiele el nombre en Gladys («Depósito de gasóleo», «Silo de pellets»…): los widgets y las escenas usan el nombre que usted le dé.
+
+| Función               | Categoría / tipo                              | Unidad |
+| --------------------- | --------------------------------------------- | ------ |
+| Nivel de llenado      | `level-sensor` / `liquid-level-percent`       | %      |
+| Cantidad              | `volume-sensor` / `integer`                   | L      |
+| Cantidad (kg)         | `counter-sensor` / `integer` (depósito en kg) | —      |
+| Autonomía             | `duration` / `integer`                        | días   |
+| Pila                  | `battery` / `integer`                         | %      |
+| Estado de la medición | `text` / `text`                               | —      |
+
+Todas las funciones son de solo lectura y guardan su historial. Para un depósito en kg (pellets), la cantidad es un contador sin unidad llamado «Cantidad (kg)»: Gladys no tiene unidad de kilogramo. La autonomía es la estimación de OilFox de los días que faltan hasta que el depósito quede vacío. OilFox da la pila como un nivel: la integración lo convierte en un porcentaje **aproximado** (Llena 100, Buena 75, Media 50, Baja 15, Crítica 5) para que funcionen las alertas de pila de Gladys. El estado de la medición es «OK» o el problema, en el idioma de la configuración.
+
+Un valor que OilFox omite (por ejemplo ningún nivel cuando la medición tiene un problema) no se publica: se queda el último valor. Los valores sin cambios se vuelven a enviar cada 6 horas, salvo para un sensor con retraso: Gladys muestra entonces sus valores como desactualizados.
+
+### Widgets del panel
+
+![Los dos widgets: Depósitos OilFox con los indicadores de un silo de pellets y un depósito de gasóleo y un depósito del garaje con error, y el widget Depósito OilFox del depósito de gasóleo con su nivel de los últimos 90 días y un relleno a mediados de septiembre (ilustración generada, no una captura de pantalla)](https://raw.githubusercontent.com/William-De71/gladys-oilfox/main/docs/assets/widgets.es.png)
+
+- **Depósitos OilFox**: un indicador por depósito cuyo nivel se conoce (6 como máximo), luego una tarjeta por depósito (8 como máximo), los problemas primero, luego los sensores con retraso, luego las pilas bajas, con la cantidad, la autonomía y la antigüedad de la última medición.
+- **Depósito OilFox**: un depósito (elíjalo en los ajustes del widget; el primero por defecto): indicador del nivel, cantidad, autonomía, pila, el nivel de los últimos 90 días, el estado de la medición, la última y la próxima medición, el día estimado en que quedará vacío y el consumo medio por día en 30 días (las bajadas entre dos mediciones, sin los rellenos). El gráfico sale de los puntos que la integración guarda en `/data` (aproximadamente un año), sin ninguna petición adicional: aparece tras dos mediciones, el consumo por día tras dos días.
+
+### Escenas
+
+Disparadores (una vez por cambio, nunca en la primera lectura, nunca a causa de una acción de escena), filtrables por depósito:
+
+- **Nueva medición**: OilFox midió el depósito (aproximadamente una vez al día); variables: nivel, cantidad, unidad, autonomía, nivel de pila, cantidad consumida desde la medición anterior, hora de la medición.
+- **Relleno detectado**: el nivel subió 5 puntos o más entre dos mediciones; variables: nivel antes y después, cantidad añadida.
+- **Problema de medición** (filtro: problemas): Todavía sin medición, Medición incorrecta, Ningún nivel detectado, Medición defectuosa, Faltan los ajustes del depósito, Ajustes del depósito incorrectos, Distancia medida demasiado corta, Depósito lleno (por encima del máximo), Nivel calculado poco plausible; variables: el código y la etiqueta.
+- **Medición correcta de nuevo**: el problema desapareció.
+- **Medición con retraso** / **Mediciones de vuelta**: la medición prevista por OilFox lleva 24 horas de retraso (variables: hora esperada, horas de retraso), luego de nuevo mediciones.
+- **Acceso denegado**: OilFox rechaza la dirección de correo, la contraseña o los tokens (motivo: `refused`, `unknown_account` o `token`, y un mensaje).
+
+Una comparación como «nivel por debajo del 20 %» no es un disparador de la integración: use una condición de dispositivo de Gladys sobre la función Nivel de llenado, con su propio umbral.
+
+Acción:
+
+- **Valores de un depósito**: nombre, nivel, cantidad, unidad, autonomía, día estimado en que quedará vacío (AAAA-MM-DD), consumo por día (media de 30 días), nivel y porcentaje aproximado de la pila, problema de medición (código, vacío si no hay ninguno, y etiqueta), última y próxima medición, si lleva retraso, y una frase (`summary`), de la última lectura (sin petición).
+
+Ejemplos:
+
+- Cuando el **Nivel de llenado** del depósito de gasóleo baja del 20 % (condición de dispositivo) → enviar «Es hora de pedir gasóleo».
+- Cuando **OilFox: relleno detectado** → enviar «\{\{triggerEvent.data.tank_name\}\}: +\{\{triggerEvent.data.added_quantity\}\} \{\{triggerEvent.data.unit\}\} entregados».
+- Cada lunes a las 8:00 → **OilFox: valores de un depósito** → enviar su `summary`.
+- Cuando **OilFox: problema de medición** → enviar «\{\{triggerEvent.data.tank_name\}\}: \{\{triggerEvent.data.error_label\}\}».
+
+## Solución de problemas
+
+- **«OilFox no conoce ninguna cuenta con esta dirección de correo»**: OilFox respondió 404 al inicio de sesión; compruebe el correo de la aplicación FoxMobile.
+- **«OilFox rechazó el inicio de sesión»**: compruebe la contraseña en la aplicación FoxMobile. Una cuenta rechazada se vuelve a intentar cada hora, o enseguida con **Probar la conexión**.
+- **«Faltan los ajustes del depósito»**: la forma y el tamaño del depósito no están indicados: configure el depósito en la aplicación FoxMobile.
+- **Medición con retraso**: el sensor no ha medido en el día siguiente a la hora prevista: compruebe su Wi-Fi y su pila.
+- **Lecturas en pausa**: tras un HTTP 429 la integración espera una hora; tras un error del servidor o sin respuesta, 10 minutos, luego el doble hasta 2 horas.
+- **Un valor nuevo llega tarde**: llega a Gladys hasta aproximadamente una hora después de aparecer la medición en la aplicación.
+- Para una incidencia, indique las versiones de Gladys y de la integración, el mensaje de **Probar la conexión** y las líneas «OilFox diagnostic» que **Diagnóstico** escribe en los registros de la integración (`DEBUG=gladys-integration-sdk` añade los registros del SDK). Nunca pegue su contraseña.
+- Limitaciones: nunca probada con una cuenta OilFox real (escrita a partir de la documentación oficial y de respuestas reales de la API: cuenta desconocida 404, campo ausente 400, token de actualización no válido 401, token erróneo 401); una sola cuenta por integración; sin galones estadounidenses.
+
+## Parámetros de configuración
+
+Estos son los parámetros que OilFox te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Cuenta OilFox | `section` | No | Introduzca la dirección de correo y la contraseña de la aplicación FoxMobile. La integración se conecta a la API oficial FoxInsights Customer API (api.oilfox.io) y solo lee: las mediciones pasan por la nube de OilFox. Solo se pueden leer sus propios sensores (política de uso razonable de FoxInsights). No afiliada a FoxInsights. |
+| Dirección de correo | `string` | Sí |  |
+| Contraseña | `secret` | Sí |  |
+| Lecturas | `section` | No | Un OilFox mide su depósito aproximadamente una vez al día. La integración lee la cuenta una vez por hora (el uso razonable de FoxInsights), y una vez más 15 minutos después de cada medición prevista. |
+| Idioma de los textos | `select` | No | Nombres de las funciones, estado de la medición, textos de escenas y errores. Automático: el idioma del último widget mostrado. |
+
+## Cómo instalar OilFox en Gladys
+
+1. En Gladys, abre **Integraciones**: OilFox aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/william-de71/gladys-oilfox:0.1.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/William-De71/gladys-oilfox](https://github.com/William-De71/gladys-oilfox).
+
+OilFox requiere Gladys `>=5.3.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+OilFox es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [William-De71](https://github.com/William-De71), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/William-De71/gladys-oilfox) — [fuente de esta documentación](https://github.com/William-De71/gladys-oilfox/blob/HEAD/docs/es.md)

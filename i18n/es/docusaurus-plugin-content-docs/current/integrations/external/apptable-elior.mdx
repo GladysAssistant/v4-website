@@ -1,0 +1,166 @@
+---
+title: "Integración domótica AppTable Elior, gratuita y de código abierto"
+sidebar_label: "AppTable Elior"
+description: "Comedor escolar Elior: menús, reservas de comidas y facturas de sus hijos en Gladys. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-apptableelior.png"
+keywords:
+  - "apptable elior"
+  - "domótica apptable elior"
+  - "gladys apptable elior"
+  - "apptable elior gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/prohand/gladys-apptableelior instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"AppTable Elior","description":"Comedor escolar Elior: menús, reservas de comidas y facturas de sus hijos en Gladys.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-apptableelior","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-apptableelior.png","type":"device","version":"0.0.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-10-29T13:06:24Z"}} />
+
+Esta integración conecta Gladys con **AppTable**, la aplicación de los comedores
+escolares de **Elior** (sustituye a la antigua aplicación Bon'App). Para cada uno de sus
+hijos lee el menú del comedor y la reserva de la comida, y para su cuenta, las facturas
+pendientes.
+
+## Requisitos
+
+- Gladys **5.3** o posterior.
+- Una cuenta de AppTable (la de la aplicación móvil o de
+  [apptable.elior.com](https://apptable.elior.com)), con al menos un niño vinculado.
+- Gladys necesita acceso a Internet: AppTable es un servicio en la **nube**.
+
+## Configuración
+
+1. Instale la integración **AppTable Elior** desde el catálogo de integraciones.
+2. En la pantalla **Configuración** de la integración, rellene:
+   - **Correo electrónico**: la dirección de su cuenta de AppTable;
+   - **Contraseña**: la contraseña de esa cuenta (un campo secreto, nunca mostrado ni
+     escrito en los registros);
+   - **Intervalo de actualización**: cada cuánto se lee AppTable, en minutos (60 por
+     defecto, de 15 a 1440).
+3. Pulse **Probar la conexión**: el mensaje indica el número de niños encontrados y el
+   número de facturas pendientes.
+4. En la pestaña **Descubrir**, añada los dispositivos propuestos.
+
+Si la contraseña es rechazada, la pantalla de configuración lo indica. Si AppTable no
+está disponible, la integración lo vuelve a intentar sola en el siguiente intervalo.
+
+## Dispositivos
+
+**Un dispositivo por niño** — «Cantine Léa»:
+
+| Función                   | Tipo                  | Contenido                                   |
+| ------------------------- | --------------------- | ------------------------------------------- |
+| Repas réservé aujourd'hui | interruptor (lectura) | 1 = reservado hoy, 0 = no reservado         |
+| Repas réservé demain      | interruptor (lectura) | 1 = reservado mañana, 0 = no reservado      |
+| Menu d'aujourd'hui        | texto                 | «Carottes râpées, Poulet basquaise, Yaourt» |
+| Menu de demain            | texto                 | lo mismo, para mañana                       |
+
+Un día sin comida (fin de semana, vacaciones, menú aún no publicado) muestra «—». Las
+reservas solo aparecen si su cuenta gestiona las reservas de ese niño.
+
+**Un dispositivo para la cuenta** — «AppTable – Factures»:
+
+| Función          | Tipo     | Contenido                                 |
+| ---------------- | -------- | ----------------------------------------- |
+| Montant à payer  | moneda   | total de las facturas sin pagar, en euros |
+| Factures à payer | contador | número de facturas pendientes de pago     |
+
+Los nombres de dispositivos y funciones están en francés, como el servicio AppTable:
+puede cambiarlos en Gladys. Las reservas se modifican en la aplicación AppTable (donde
+se muestran los plazos y precios del municipio): en Gladys son de solo lectura.
+
+### Hermanos: un solo menú
+
+Dos niños que comen en el **mismo restaurante escolar y la misma sección** tienen el
+mismo menú. La integración lo pide entonces **una sola vez** a AppTable, y el widget
+«Menú del comedor» lo muestra una sola vez con los nombres de los niños afectados. Cada
+niño conserva su propio dispositivo y sus propias reservas.
+
+## Disparadores de escena
+
+- **Hay una nueva factura del comedor** — acaba de aparecer una factura en la cuenta.
+  Variables: `label`, `amount` (en €), `period` (mes, AAAA-MM), `paid`. Las facturas ya
+  presentes en la primera instalación no se anuncian.
+- **Ha cambiado una reserva de comida** — la comida de hoy o de mañana de un niño se ha
+  reservado o cancelado (por el otro progenitor, el colegio o usted). Filtros: el niño,
+  el cambio (reservado / cancelado), el día (hoy / mañana). Variables: `child_name`,
+  `change`, `when`, `date`.
+
+## Acciones de escena
+
+- **Leer el menú del comedor de un niño** — elija el niño y el día (próxima comida, hoy,
+  mañana). Resultados: `menu` (el menú en una línea), `has_menu`, `date`, `booked`,
+  `child_name`. «Próxima comida» significa hoy hasta las 14 h, después el siguiente día
+  con menú (el lunes, un viernes por la tarde).
+- **Actualizar AppTable ahora** — lee AppTable sin esperar al intervalo. Resultados:
+  `children`, `amount_due`, `invoices_to_pay`.
+
+Ejemplo de escena matinal: disparador «todos los días a las 7:30», acción «Leer el menú
+del comedor de un niño», luego «Enviar un mensaje» con el texto
+`Hoy en el comedor: {{0.0.menu}}`.
+
+## Widgets del panel
+
+- **Menú del comedor** — el menú del día elegido (próxima comida, hoy o mañana). Un solo
+  menú para todos los niños: los platos se listan directamente. Menús distintos
+  (colegios distintos): una fila por menú, el detalle al pulsar. Debajo, la reserva de
+  cada niño para ese día.
+- **Cuenta del comedor** — el importe a pagar y el número de facturas (en directo), las
+  reservas de mañana, la hora de la última actualización, un botón **Actualizar** y un
+  enlace a AppTable.
+
+## Preguntas frecuentes
+
+**El menú muestra «—».** Ese día no se sirve comida, o la cocina aún no ha publicado el
+menú.
+
+**Las facturas no aparecen.** Algunos municipios no facturan a través de AppTable: el
+dispositivo «Factures» queda vacío, los menús siguen funcionando.
+
+**¿Se comparten mis datos?** No. La integración habla directamente con AppTable, con su
+cuenta, desde su Gladys. La contraseña se queda en el campo secreto de Gladys.
+
+**¿Es una integración oficial de Elior?** No. Es una integración de la comunidad, que
+usa la misma interfaz que el sitio de AppTable. Si Elior cambia esa interfaz, puede ser
+necesaria una actualización de la integración.
+
+## Diagnóstico
+
+Active **Registros detallados** en la configuración y consulte los registros de la
+integración. La contraseña y los tokens de conexión nunca aparecen en ellos.
+
+## Parámetros de configuración
+
+Estos son los parámetros que AppTable Elior te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Su cuenta de AppTable | `section` | No | Use el correo y la contraseña de la aplicación AppTable (comedores escolares Elior). Sus hijos se encuentran automáticamente: un dispositivo por niño, más uno para las facturas. |
+| Correo electrónico | `string` | Sí |  |
+| Contraseña | `secret` | Sí |  |
+| Intervalo de actualización (min) | `number` | No | Cada cuánto se lee AppTable, en minutos (15 a 1440). |
+| Registros detallados | `boolean` | No | Escribe líneas de depuración en los registros de la integración, para diagnosticar un problema. |
+
+## Cómo instalar AppTable Elior en Gladys
+
+1. En Gladys, abre **Integraciones**: AppTable Elior aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/prohand/gladys-apptableelior:0.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/prohand/gladys-apptableelior](https://github.com/prohand/gladys-apptableelior).
+
+AppTable Elior requiere Gladys `>=5.3.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+AppTable Elior es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [prohand](https://github.com/prohand), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/prohand/gladys-apptableelior) — [fuente de esta documentación](https://github.com/prohand/gladys-apptableelior/blob/HEAD/docs/es.md)

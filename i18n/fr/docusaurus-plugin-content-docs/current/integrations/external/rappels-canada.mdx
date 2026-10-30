@@ -1,0 +1,195 @@
+---
+title: "Intégration domotique Rappels Canada, gratuite et open source"
+sidebar_label: "Rappels Canada"
+description: "Rappels et avis de sécurité au Canada (données de Santé Canada) : aliments, produits, véhicules. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-rappels-canada.png"
+keywords:
+  - "rappels canada"
+  - "domotique rappels canada"
+  - "gladys rappels canada"
+  - "rappels canada gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-rappels-canada instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Rappels Canada","description":"Rappels et avis de sécurité au Canada (données de Santé Canada) : aliments, produits, véhicules.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-rappels-canada","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-rappels-canada.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-29T22:42:49Z"}} />
+
+Les rappels et avis de sécurité publiés au Canada, lus dans les données
+ouvertes de Santé Canada : rappels d'aliments de l'Agence canadienne
+d'inspection des aliments (ACIA), produits de consommation, véhicules, pneus
+et sièges d'auto pour enfants de Transports Canada, médicaments et produits de
+santé, instruments médicaux. L'intégration donne à Gladys un appareil à deux
+valeurs, un déclencheur de scène pour chaque nouveau rappel de votre
+sélection, une action de scène et un widget de tableau de bord.
+
+Elle a été essayée sur le vrai fichier de Santé Canada et dans un Gladys de
+test (29/10/2026), pas encore sur des semaines d'usage réel. Aucun appareil
+chez vous n'est en jeu : les données viennent du cloud.
+
+## Ce que vous obtenez
+
+- Un appareil **Rappels au Canada** avec :
+  - **Rappels sur 7 jours** : les fiches de votre sélection, non archivées,
+    dont le jour de « dernière mise à jour » est l'un des 7 derniers jours
+    (aujourd'hui compris, fuseau horaire de Gladys). Le fichier ne donne pas
+    de date de publication : une fiche plus ancienne mise à jour cette semaine
+    compte aussi.
+  - **Dernier rappel** : la plus récente d'entre elles, avec son jour.
+- Un déclencheur de scène **Canada : nouveau rappel dans ma sélection**, avec
+  en variables le titre, le produit, la catégorie, le problème, la classe de
+  rappel, le lien et un résumé en une phrase. Le déclencheur peut se limiter
+  à certaines catégories.
+- Une action de scène **Canada : lire les rappels des 7 derniers jours** (une
+  phrase à envoyer par message ou à lire à voix haute, et le nombre).
+- Un widget **Rappels au Canada** : les derniers rappels de votre sélection,
+  les plus graves (classe 1, type I) en rouge, avec le lien de chaque fiche.
+- Un bouton **Afficher les rappels des 7 derniers jours** dans la
+  configuration.
+
+## Configuration
+
+1. **Catégories** : aliments (ACIA), produits de consommation, véhicules
+   (Transports Canada), médicaments et produits de santé, instruments
+   médicaux, autres. Les instruments médicaux ne sont pas suivis par défaut :
+   un quart des fiches, presque tout du matériel d'hôpital et de laboratoire.
+2. **Marques ou mots** (facultatif) : seulement les rappels qui en citent un
+   dans leur titre, leur produit ou leur catégorie, séparés par des virgules.
+   Accents et majuscules indifférents ; un mot ne correspond qu'à des mots
+   entiers (« noix » ne correspond pas à « noisette »).
+3. **Fréquence de vérification** : 3, 6 (par défaut), 12 ou 24 heures.
+4. **Langue des rappels** : anglais ou français. Elle choisit le fichier lu
+   (chaque langue a le sien), les noms des fonctionnalités à leur création et
+   les textes envoyés aux scènes.
+
+Enregistrez, puis créez l'appareil dans l'onglet **Découverte**.
+
+## Fonctionnement
+
+Santé Canada publie un fichier par langue (16 Mo en anglais, 21 Mo en
+français, environ 34 000 fiches depuis 1991), régénéré une fois par jour vers
+02 h 15 UTC. À chaque vérification, l'intégration demande si le fichier a
+changé (`If-None-Match` et `If-Modified-Since`) : tant qu'il n'a pas changé, le
+serveur répond « non modifié » et rien n'est téléchargé. Quand il a changé, le
+fichier est lu au fil de l'eau : seuls les numéros (NID) des fiches et les
+fiches des 30 derniers jours restent en mémoire. Une requête à la fois, avec
+un User-Agent au nom de l'intégration.
+
+Un rappel est **nouveau** quand son numéro était absent de tous les fichiers
+lus avant. Le premier fichier lu ne déclenche rien (ce qu'il liste n'est pas
+une nouvelle), pas plus qu'une sélection élargie ni une fiche seulement mise à
+jour. Une nouvelle fiche dont le jour de « dernière mise à jour » a plus de 7
+jours est retenue sans déclencher. Un évènement de scène refusé par Gladys est
+renvoyé à la vérification suivante ; au plus 20 évènements partent par
+vérification, le reste à la suivante. Un évènement part avant que `/data` ne
+l'enregistre : si l'intégration est tuée entre les deux, il repart après le
+redémarrage. Certains nouveaux rappels ne partent jamais, et le statut dit
+quand les plafonds sont atteints : au-delà de 500 nouvelles fiches dans un
+fichier, au-delà de 500 évènements en attente, ou quand leur jour de
+« dernière mise à jour » a plus de 7 jours.
+
+Ce qui a été vu, la copie des fiches récentes et l'heure de la dernière
+vérification sont gardés dans `/data` : un redémarrage ne déclenche rien une
+seconde fois, garde l'heure prévue de la vérification suivante et publie la
+copie gardée si elle est encore récente. Un changement de sélection s'applique
+tout de suite depuis la copie gardée ; un changement de langue vérifie l'autre
+fichier (pas deux fois en 5 minutes, jamais pendant une pause). Une copie de
+chaque langue est gardée : revenir à l'une coûte un « non modifié ». Des
+configurations enregistrées coup sur coup s'appliquent dans l'ordre : la
+dernière gagne.
+
+Quand un serveur du réseau de diffusion sert encore un fichier plus ancien que
+la copie gardée, la copie est conservée et les vérifications suivantes
+n'envoient que sa date, pour que ce serveur réponde « non modifié » au lieu de
+renvoyer 16 Mo. Un fichier d'un autre format (moins de la moitié des fiches
+datées, une colonne renommée) est refusé, jamais lu comme « aucun rappel ».
+
+## Statut et pannes
+
+Le statut de l'intégration indique :
+
+- que le fichier est illisible (réseau, erreur HTTP), avec le prochain essai :
+  15 minutes plus tard, puis 30, doublé jusqu'à l'intervalle ; une réponse
+  « 429 » ou « 5xx » ouvre une pause de 1 minute à 6 heures (le `Retry-After`
+  du serveur quand il en donne un), gardée après un redémarrage ;
+- que le fichier n'a pas changé depuis plus de 3 jours (par rapport à la date
+  donnée par le serveur) : les compteurs ne sont alors plus publiés jusqu'à sa
+  mise à jour, pour ne pas montrer une vieille valeur comme récente ;
+- qu'aucune catégorie n'est choisie ;
+- que `/data` ne peut pas être lu ou écrit.
+
+## À jour ou non
+
+Les rappels sont **à jour** quand la dernière vérification réussie a moins de
+deux intervalles et une heure et que le fichier n'est pas périmé. Sinon :
+
+- les compteurs de l'appareil ne sont pas publiés (ils gardent leur dernière
+  valeur) ;
+- l'action de scène échoue avec la raison (« Les rappels ne sont pas à jour :
+  le fichier de Santé Canada a été lu pour la dernière fois le … » ou « … n'a
+  pas changé depuis le … »), pour qu'une scène ne lise jamais « aucun rappel »
+  sur des données qui ne sont pas à jour ;
+- le bouton de la configuration donne cette raison au lieu des rappels ;
+- le widget titre « Rappels non à jour » et donne la raison sous la liste.
+
+Quand la dernière vérification a échoué mais que les rappels sont encore à
+jour, l'action de scène, le bouton et le widget les donnent précédés d'un
+avertissement (« Attention : la dernière vérification du fichier a échoué … ;
+les rappels sont ceux lus le … »).
+
+Rien n'est publié à 0 quand le fichier n'a pas pu être lu.
+
+## Limites
+
+- Un complément, pas un système d'alerte officiel : vérifiez toujours la fiche
+  de rappel sur [recalls-rappels.canada.ca](https://recalls-rappels.canada.ca/fr).
+  Non affiliée au gouvernement du Canada.
+- Le fichier ne contient ni code-barres (CUP) ni province : on ne peut filtrer
+  ni sur l'un ni sur l'autre.
+- Le fichier ne contient pas de date de publication, seulement la « dernière
+  mise à jour ».
+
+## Données et licence
+
+Contient des informations visées par la
+[Licence du gouvernement ouvert – Canada](https://ouvert.canada.ca/fr/licence-du-gouvernement-ouvert-canada)
+(jeu de données [Rappels et avis de sécurité](https://ouvert.canada.ca/data/fr/dataset/d38de914-c94c-429b-8ab1-8776c31643e3),
+Santé Canada). Ni compte, ni clé, ni donnée personnelle.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Rappels Canada dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre sélection | `section` | Non | Santé Canada publie tous les rappels et avis de sécurité du Canada en données ouvertes : aliments (ACIA), produits de consommation, véhicules (Transports Canada), médicaments et produits de santé, instruments médicaux. Choisissez les catégories à suivre et, si vous le souhaitez, des marques ou des mots. Enregistrez, puis créez l’appareil dans l’onglet Découverte. |
+| Sources et limites | `section` | Non | Données : « Rappels et avis de sécurité » de Santé Canada, sous la Licence du gouvernement ouvert – Canada, lues sans compte (un fichier de 16 à 21 Mo, téléchargé quand il change, environ une fois par jour). Un complément, pas un système d’alerte officiel : vérifiez toujours la fiche de rappel. Non affiliée au gouvernement du Canada. |
+| Catégories | `multi_select` | Non | Les rappels et avis de ces catégories sont suivis. Environ 35 par semaine (automne 2026) : 40 % de véhicules, un quart d’instruments médicaux (non suivis par défaut). |
+| Marques ou mots (facultatif) | `string` | Non | Seulement les rappels qui en citent un (titre, produit ou catégorie), séparés par des virgules. Accents et majuscules indifférents. Vide : tous les rappels des catégories. |
+| Fréquence de vérification | `select` | Non | Santé Canada régénère le fichier une fois par jour : la vérification d’un fichier inchangé ne télécharge rien. |
+| Langue des rappels | `select` | Non | Le fichier lu (anglais ou français), les noms des fonctionnalités (à leur création) et les textes envoyés aux scènes. |
+
+## Comment installer Rappels Canada dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Rappels Canada apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-rappels-canada:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-rappels-canada](https://github.com/LM1LC3N7/gladys-rappels-canada).
+
+Rappels Canada nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Rappels Canada est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-rappels-canada) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-rappels-canada/blob/HEAD/docs/fr.md)
