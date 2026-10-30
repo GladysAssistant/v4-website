@@ -204,10 +204,12 @@ const FAQQuestions = {
       title: <>Est-ce compliqué à installer ?</>,
       response: (
         <>
-          <b>Cela demande un peu de technique, mais c'est guidé.</b> Il faut
-          d'abord préparer une machine Linux (Ubuntu Server, par exemple), puis
-          lancer Gladys via Docker. Notre documentation vous accompagne pas à
-          pas, avec des captures d'écran et des vidéos.
+          <b>C'est guidé pas à pas.</b> Sur un mini-PC,{" "}
+          <Link href="/fr/docs/installation/mini-pc/">Gladys Assistant OS</Link>
+          , notre installeur officiel, s'occupe de tout : vous l'écrivez sur une
+          clé USB, vous démarrez le mini-PC dessus, vous répondez à quelques
+          questions, et Gladys s'installe toute seule, mises à jour automatiques
+          comprises. Aucune ligne de commande.
           <br />
           <br />
           <b>Pour aller plus vite :</b> le{" "}
@@ -304,10 +306,15 @@ const FAQQuestions = {
       title: <>Is it hard to install?</>,
       response: (
         <>
-          <b>It takes some technical steps, but we guide you through them.</b>{" "}
-          You first need a Linux machine (Ubuntu Server, for example), then you
-          run Gladys via Docker. Our documentation walks you through each step
-          with screenshots and videos.
+          <b>It's guided step by step.</b> On a mini-PC,{" "}
+          <Link href="/docs/installation/mini-pc/">Gladys Assistant OS</Link>,
+          our official installer, does everything for you: write it to a USB
+          drive, start the mini-PC from it, answer a few questions, and Gladys
+          installs itself, automatic updates included. No command line needed.
+          <br />
+          <br />
+          Already have a server or a NAS? Gladys also installs there with{" "}
+          <Link href="/docs/installation/docker/">Docker</Link>.
         </>
       ),
     },
@@ -403,13 +410,17 @@ const FAQQuestions = {
       title: <>Ist die Installation kompliziert?</>,
       response: (
         <>
-          <b>
-            Ein paar technische Schritte sind nötig, aber wir begleiten dich
-            dabei.
-          </b>{" "}
-          Zuerst brauchst du einen Linux-Rechner (zum Beispiel Ubuntu Server),
-          dann startest du Gladys über Docker. Unsere Dokumentation führt dich
-          Schritt für Schritt durch alles, mit Screenshots und Videos.
+          <b>Wir führen dich Schritt für Schritt.</b> Auf einem Mini-PC
+          erledigt{" "}
+          <Link href="/de/docs/installation/mini-pc/">Gladys Assistant OS</Link>
+          , unser offizielles Installationsprogramm, alles für dich: Du
+          schreibst es auf einen USB-Stick, startest den Mini-PC davon,
+          beantwortest ein paar Fragen, und Gladys installiert sich von selbst,
+          inklusive automatischer Updates. Keine Kommandozeile nötig.
+          <br />
+          <br />
+          Du hast schon einen Server oder ein NAS? Dann installierst du Gladys
+          dort mit <Link href="/de/docs/installation/docker/">Docker</Link>.
         </>
       ),
     },
@@ -514,10 +525,16 @@ const FAQQuestions = {
       title: <>¿Es difícil de instalar?</>,
       response: (
         <>
-          <b>Requiere algunos pasos técnicos, pero te guiamos en cada uno.</b>{" "}
-          Primero necesitas una máquina Linux (Ubuntu Server, por ejemplo) y
-          después ejecutas Gladys con Docker. Nuestra documentación te acompaña
-          paso a paso, con capturas de pantalla y vídeos.
+          <b>Te guiamos paso a paso.</b> En un mini-PC,{" "}
+          <Link href="/es/docs/installation/mini-pc/">Gladys Assistant OS</Link>
+          , nuestro instalador oficial, se encarga de todo: lo grabas en una
+          memoria USB, arrancas el mini-PC desde ella, respondes a unas pocas
+          preguntas y Gladys se instala sola, con actualizaciones automáticas.
+          Sin línea de comandos.
+          <br />
+          <br />
+          ¿Ya tienes un servidor o un NAS? Gladys también se instala ahí con{" "}
+          <Link href="/es/docs/installation/docker/">Docker</Link>.
         </>
       ),
     },
