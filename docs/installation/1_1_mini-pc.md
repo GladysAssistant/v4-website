@@ -168,9 +168,15 @@ If the mini-PC has no Internet access, its screen shows **Internet connection re
 
 When the screen shows **Gladys Assistant is ready**, open **`http://gladysassistant.local`** in your browser, from a computer or phone on the same network. If you kept the setup page open, it switches to Gladys on its own (refresh it if needed).
 
+![The screen of the mini-PC once Gladys is ready](../../static/img/docs/en/installation/gladys-assistant-os/ready.png)
+
 If `gladysassistant.local` does not open, use the address displayed under it on the screen of the mini-PC instead (for example `http://192.168.1.42`). Some networks, for example some Android phones, guest networks or routers with client isolation, do not support these local names.
 
 All that's left is to create your account and set up your home: see [Configuring your smart home](/docs/#configuring-your-smart-home). You can unplug the screen and the keyboard, the mini-PC no longer needs them.
+
+![The welcome screen of Gladys](../../static/img/docs/en/installation/gladys-assistant-os/gladys-welcome.jpg)
+
+Already using Gladys Plus? The **Gladys Plus backup restore** button of this screen lets you restore the backup of your previous installation instead of starting from scratch.
 
 :::tip
 Give the mini-PC a fixed IP address with a DHCP reservation in the settings of your router: its address will then never change.

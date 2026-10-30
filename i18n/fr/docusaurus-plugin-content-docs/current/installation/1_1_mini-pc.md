@@ -170,9 +170,15 @@ Si le mini-PC n'a pas accès à Internet, son écran affiche **Connexion Interne
 
 Quand l'écran affiche **Gladys Assistant est prêt**, ouvrez **`http://gladysassistant.local`** dans votre navigateur, depuis un ordinateur ou un téléphone connecté au même réseau. Si vous aviez laissé la page de configuration ouverte, elle bascule toute seule sur Gladys (rafraîchissez-la si besoin).
 
+![L'écran du mini-PC une fois Gladys prête](../../../../../static/img/docs/en/installation/gladys-assistant-os/ready.png)
+
 Si `gladysassistant.local` ne s'ouvre pas, utilisez plutôt l'adresse affichée juste en dessous sur l'écran du mini-PC (par exemple `http://192.168.1.42`). Certains réseaux, par exemple certains téléphones Android, les réseaux invités ou les box avec l'isolation des clients activée, ne gèrent pas ces noms locaux.
 
 Il ne vous reste plus qu'à créer votre compte et à configurer votre maison : voir [Configuration de votre maison connectée](/fr/docs/#configuration-de-votre-maison-connectée). Vous pouvez débrancher l'écran et le clavier, le mini-PC n'en a plus besoin.
+
+![L'écran d'accueil de Gladys](../../../../../static/img/docs/en/installation/gladys-assistant-os/gladys-welcome.jpg)
+
+Vous utilisez déjà Gladys Plus ? Le bouton de restauration d'une sauvegarde Gladys Plus, sur cet écran, vous permet de restaurer la sauvegarde de votre ancienne installation au lieu de repartir de zéro.
 
 :::tip
 Donnez une adresse IP fixe au mini-PC avec une réservation DHCP dans les réglages de votre box : son adresse ne changera plus jamais.
