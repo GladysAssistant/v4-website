@@ -35,7 +35,7 @@ Installing it is easy with **Gladys Assistant OS**, our official installer: writ
 
 ### Option 3: A Server or NAS You Already Run
 
-If you already have a machine running other services, you can install Gladys on it with Docker, next to what is already there:
+If you already have a machine running other services, you can install Gladys on it, next to what is already there:
 
 - **Any Linux server with Debian or Ubuntu**: see the [Docker installation guide](/docs/installation/docker/)
 - **Synology or Unraid NAS**: see the [Synology](/docs/installation/synology/) and [Unraid](/docs/installation/unraid/) guides

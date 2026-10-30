@@ -35,7 +35,7 @@ Mit **Gladys Assistant OS**, unserem offiziellen Installer, ist die Installation
 
 ### Option 3: Dein vorhandener Server oder NAS
 
-Wenn du bereits einen Rechner hast, auf dem andere Dienste laufen, kannst du Gladys dort mit Docker installieren, neben dem, was schon darauf läuft:
+Wenn du bereits einen Rechner hast, auf dem andere Dienste laufen, kannst du Gladys dort installieren, neben dem, was schon darauf läuft:
 
 - **Jeder Linux-Server mit Debian oder Ubuntu**: siehe die [Anleitung zur Docker-Installation](/de/docs/installation/docker/)
 - **Synology- oder Unraid-NAS**: siehe die Anleitungen für [Synology](/de/docs/installation/synology/) und [Unraid](/de/docs/installation/unraid/)

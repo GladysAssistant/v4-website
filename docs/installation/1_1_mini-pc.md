@@ -132,7 +132,7 @@ The installer only asks a few questions. Move with the **arrow keys** and **Tab*
 
    In both cases, the installer then asks you to confirm in a **Confirm destructive action** window, which can show up a little later, after the account screen. **No** is selected by default: move to **Continue** with the arrow keys and press **Enter** to erase the disk and start the installation. Nothing is erased before this step.
 
-   ![The confirmation window before the disk is erased](../../static/img/docs/en/installation/gladys-assistant-os/confirm.png)
+   ![The confirmation window before the disk is erased, with Continue selected](../../static/img/docs/en/installation/gladys-assistant-os/confirm.png)
 
 4. **Your account**: enter your name, a username and a password. This is the only account of the machine (there is no default password): write it down somewhere safe, you will need it for maintenance. The installer also asks for a server name, but the machine is always named `gladys`, so you can type anything.
 

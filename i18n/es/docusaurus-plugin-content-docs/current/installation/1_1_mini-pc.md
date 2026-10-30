@@ -132,7 +132,7 @@ El instalador solo hace unas pocas preguntas. Muévete con las **flechas** del t
 
    En ambos casos, el instalador te pide después que confirmes en una ventana (_Confirm destructive action_), que puede aparecer un poco más tarde, después de la pantalla de la cuenta. **No** (_No_) está seleccionado por defecto: baja hasta **Continuar** (_Continue_) con las flechas y pulsa **Intro** para borrar el disco e iniciar la instalación. No se borra nada antes de este paso.
 
-   ![La ventana de confirmación antes de borrar el disco](../../../../../static/img/docs/en/installation/gladys-assistant-os/confirm.png)
+   ![La ventana de confirmación antes de borrar el disco, con Continue seleccionado](../../../../../static/img/docs/en/installation/gladys-assistant-os/confirm.png)
 
 4. **Tu cuenta**: introduce tu nombre, un nombre de usuario y una contraseña. Es la única cuenta de la máquina (no hay ninguna contraseña por defecto): apunta la contraseña en un lugar seguro, la necesitarás para el mantenimiento. El instalador también te pide un nombre de servidor (_server name_), pero la máquina siempre se llama `gladys`, así que puedes escribir lo que quieras.
 

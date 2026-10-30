@@ -56,7 +56,7 @@ Bestätige und starte die VM.
 
 Beantworte dann die Fragen des Installers genau wie auf einem Mini-PC: Sprache, Tastatur, dein Konto und SSH. Die Details findest du in [Schritt 4 der Mini-PC-Anleitung](/de/docs/installation/mini-pc/#installer-questions). Die virtuelle Festplatte der VM ist ihre einzige Festplatte, es gibt also nichts auszuwählen: Wenn der Installer dich bittet, das Löschen der Festplatte zu bestätigen, wird nur diese virtuelle Festplatte gelöscht, niemals die Festplatten deines Proxmox-Servers.
 
-Am Ende der Installation startet die VM neu. Wenn die Konsole dich auffordert, das Installationsmedium zu entfernen, drücke **Enter**. Danach kannst du das Image aus der VM entfernen: Doppelklicke im Tab **Hardware** auf **CD/DVD Drive** und wähle **Do not use any media**.
+Am Ende der Installation startet die VM neu. Entferne zuerst das Image aus der VM, damit sie den Installer nicht erneut startet: Doppelklicke im Tab **Hardware** auf **CD/DVD Drive** und wähle **Do not use any media**. Wenn die Konsole dich dann auffordert, das Installationsmedium zu entfernen, drücke **Enter**.
 
 Bei diesem ersten Start installiert Gladys Assistant OS Docker, lädt Gladys herunter und startet es: Verfolge den Fortschritt in der Konsole. Sobald dort **Gladys Assistant ist bereit** steht, öffne **`http://gladysassistant.local`** auf einem Rechner im selben Netzwerk. Wenn sich dieser Name nicht öffnet, nutze stattdessen die IP-Adresse, die in der Konsole angezeigt wird: `http://IP-DER-VM`.
 

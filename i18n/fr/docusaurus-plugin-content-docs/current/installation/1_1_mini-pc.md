@@ -134,7 +134,7 @@ L'installeur ne pose que quelques questions. Déplacez-vous avec les **flèches*
 
    Dans les deux cas, l'installeur vous demande ensuite de confirmer dans une fenêtre (*Confirm destructive action*), qui peut n'apparaître qu'un peu plus tard, après l'écran du compte. **Non** (*No*) est sélectionné par défaut : descendez sur **Continuer** (*Continue*) avec les flèches et appuyez sur **Entrée** pour effacer le disque et lancer l'installation. Rien n'est effacé avant cette étape.
 
-   ![La fenêtre de confirmation avant l'effacement du disque](../../../../../static/img/docs/en/installation/gladys-assistant-os/confirm.png)
+   ![La fenêtre de confirmation avant l'effacement du disque, avec Continue sélectionné](../../../../../static/img/docs/en/installation/gladys-assistant-os/confirm.png)
 
 4. **Votre compte** : saisissez votre nom, un nom d'utilisateur et un mot de passe. C'est le seul compte de la machine (il n'y a pas de mot de passe par défaut) : notez-le en lieu sûr, il vous servira pour la maintenance. L'installeur demande aussi un nom de serveur, mais la machine s'appelle toujours `gladys` : vous pouvez taper n'importe quoi.
 

@@ -40,7 +40,7 @@ Pour une utilisation au quotidien sur le long terme, un mini-PC reste préférab
 
 ### Réutiliser un NAS ou un serveur existant
 
-Si vous avez déjà un NAS Synology, un serveur Linux ou une autre machine qui fait tourner d'autres services, vous pouvez y installer Gladys avec Docker, à côté de ce qui s'y trouve déjà, sans acheter de nouvelle machine.
+Si vous avez déjà un NAS Synology, un serveur Linux ou une autre machine qui fait tourner d'autres services, vous pouvez y installer Gladys, à côté de ce qui s'y trouve déjà, sans acheter de nouvelle machine.
 
 - [Installer avec Docker sur Debian, Ubuntu ou tout serveur Linux](/fr/docs/installation/docker/)
 - [Installer sur un serveur Proxmox](/fr/docs/installation/proxmox/)

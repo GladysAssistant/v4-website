@@ -132,7 +132,7 @@ Der Installer stellt nur ein paar Fragen. Du bewegst dich mit den **Pfeiltasten*
 
    In beiden Fällen bittet dich der Installer anschließend in einem Fenster um Bestätigung (*Confirm destructive action*). Es kann auch erst etwas später erscheinen, nach dem Kontobildschirm. **Nein** (*No*) ist vorausgewählt: Geh mit den Pfeiltasten auf **Weiter** (*Continue*) und drücke **Enter**, um die Festplatte zu löschen und die Installation zu starten. Vor diesem Schritt wird nichts gelöscht.
 
-   ![Das Bestätigungsfenster vor dem Löschen der Festplatte](../../../../../static/img/docs/en/installation/gladys-assistant-os/confirm.png)
+   ![Das Bestätigungsfenster vor dem Löschen der Festplatte, mit ausgewähltem Continue](../../../../../static/img/docs/en/installation/gladys-assistant-os/confirm.png)
 
 4. **Dein Konto**: Gib deinen Namen, einen Benutzernamen und ein Passwort ein. Das ist das einzige Konto auf dem Rechner (es gibt kein Standardpasswort): Bewahre das Passwort an einem sicheren Ort auf, du brauchst es für die Wartung. Der Installer fragt außerdem nach einem Servernamen, aber der Rechner heißt immer `gladys`, du kannst also irgendetwas eingeben.
 
