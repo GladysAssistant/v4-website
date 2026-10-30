@@ -157,7 +157,7 @@ Yes. As long as your NAS can run Docker containers, you can run Gladys on it wit
 
 ### Can I install Gladys on Debian or Ubuntu?
 
-Yes, and the steps are the same on both: install Docker with the official script, then start the Gladys container with the command above. Any Debian or Ubuntu version supported by Docker works, on a mini-PC, a server or a virtual machine. On a minimal Debian install, install `curl` and `sudo` first (see the tip at the top of this page).
+Yes, and the steps are the same on both: install Docker with the official script, then start the Gladys container with the command above. Any Debian or Ubuntu version supported by Docker works, on a mini-PC, a server or a virtual machine. On a minimal Debian install, install `curl` and `sudo` first (see the tip in the [Install Docker](#install-docker) section).
 
 ### Gladys does not open after the installation: what should I check?
 
@@ -200,7 +200,7 @@ Yes, and the steps are the same on both: install Docker with the official script
         name: "Can I install Gladys on Debian or Ubuntu?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes, and the steps are the same on both: install Docker with the official script, then start the Gladys container with the command above. Any Debian or Ubuntu version supported by Docker works, on a mini-PC, a server or a virtual machine. On a minimal Debian install, install curl and sudo first (see the tip at the top of this page).",
+          text: "Yes, and the steps are the same on both: install Docker with the official script, then start the Gladys container with the command above. Any Debian or Ubuntu version supported by Docker works, on a mini-PC, a server or a virtual machine. On a minimal Debian install, install curl and sudo first (see the tip in the Install Docker section).",
         },
       },
       {

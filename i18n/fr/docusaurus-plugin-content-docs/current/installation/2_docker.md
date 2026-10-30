@@ -149,7 +149,7 @@ L'installation avec Docker fonctionne sur tout système qui fait tourner Docker 
 
 ### Puis-je installer Gladys sur Debian ou Ubuntu ?
 
-Oui, et les étapes sont les mêmes sur les deux : installez Docker avec le script officiel, puis lancez le conteneur Gladys avec la commande ci-dessus. Toute version de Debian ou d'Ubuntu prise en charge par Docker fonctionne, sur un mini-PC, un serveur ou une machine virtuelle. Sur une installation minimale de Debian, installez d'abord `curl` et `sudo` (voir l'encadré en haut de cette page).
+Oui, et les étapes sont les mêmes sur les deux : installez Docker avec le script officiel, puis lancez le conteneur Gladys avec la commande ci-dessus. Toute version de Debian ou d'Ubuntu prise en charge par Docker fonctionne, sur un mini-PC, un serveur ou une machine virtuelle. Sur une installation minimale de Debian, installez d'abord `curl` et `sudo` (voir l'encadré de la section [Installer Docker](#installer-docker)).
 
 ### Gladys ne s'ouvre pas après l'installation : que vérifier ?
 
@@ -184,7 +184,7 @@ Oui. Tant que votre NAS peut faire tourner des conteneurs Docker, vous pouvez y 
         name: "Puis-je installer Gladys sur Debian ou Ubuntu ?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Oui, et les étapes sont les mêmes sur les deux : installez Docker avec le script officiel, puis lancez le conteneur Gladys avec la commande ci-dessus. Toute version de Debian ou d'Ubuntu prise en charge par Docker fonctionne, sur un mini-PC, un serveur ou une machine virtuelle. Sur une installation minimale de Debian, installez d'abord curl et sudo (voir l'encadré en haut de cette page).",
+          text: "Oui, et les étapes sont les mêmes sur les deux : installez Docker avec le script officiel, puis lancez le conteneur Gladys avec la commande ci-dessus. Toute version de Debian ou d'Ubuntu prise en charge par Docker fonctionne, sur un mini-PC, un serveur ou une machine virtuelle. Sur une installation minimale de Debian, installez d'abord curl et sudo (voir l'encadré de la section Installer Docker).",
         },
       },
       {

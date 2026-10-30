@@ -3,7 +3,7 @@ id: hardware
 title: Erste Schritte mit Gladys Assistant
 sidebar_label: Erste Schritte
 slug: /
-description: "So installierst du Gladys Assistant: auf einem Mini-PC, einem Raspberry Pi, einem Synology-NAS oder jedem Linux-Rechner mit Docker. Kostenlose, quelloffene und selbst gehostete Hausautomation."
+description: "So installierst du Gladys Assistant: auf einem Mini-PC mit Gladys Assistant OS, unserem offiziellen Installer, auf einem Raspberry Pi oder auf jedem Linux-Rechner mit Docker. Kostenlose, quelloffene und selbst gehostete Hausautomation."
 ---
 
 Wenn du neu in der Hausautomation bist, ist es oft schwer zu wissen, wo du anfangen sollst.
@@ -14,41 +14,43 @@ Gladys Assistant ist eine selbst gehostete Software, das heißt, alles läuft lo
 
 Du hast mehrere Möglichkeiten, Gladys zu betreiben:
 
-### Option 1: Mini-PC (empfohlen)
+### Option 1: Mini-PC mit Gladys Assistant OS (empfohlen)
 
-Die meisten Nutzer installieren Gladys selbst auf einem Mini-PC mit Linux. Für einen langfristigen Betrieb bietet das das beste Preis-Leistungs-Verhältnis.
+Die meisten Nutzer betreiben Gladys auf einem Mini-PC. Für einen langfristigen Betrieb bietet das das beste Preis-Leistungs-Verhältnis.
 
-- **Neuer Mini-PC** (Beelink, Intel NUC …): Installiere Ubuntu Server und anschließend Gladys über Docker. Beispiel: [Beelink Mini S13 bei Amazon](https://www.amazon.com/s?k=Beelink+Mini+S13&tag=gladproj-21)
+Mit **Gladys Assistant OS**, unserem offiziellen Installer, ist die Installation ganz einfach: Schreib das Image auf einen USB-Stick, starte den Mini-PC davon und beantworte ein paar Fragen. Gladys installiert sich von selbst und bleibt danach automatisch auf dem neuesten Stand. Ganz ohne Kommandozeile.
+
+- **Neuer Mini-PC** (Beelink, Intel NUC …), zum Beispiel der [Beelink Mini S13 bei Amazon](https://www.amazon.com/s?k=Beelink+Mini+S13&tag=gladproj-21)
 - **Gebrauchter Mini-PC**: auf Gebrauchtmarktplätzen oft günstiger. Achte auf mindestens 8 GB RAM und eine SSD.
-- **Hardware, die du bereits besitzt**: ein alter PC, ein Intel NUC, der Staub ansetzt … Wenn Docker darauf läuft, läuft auch Gladys darauf.
+- **Ein Computer, den du bereits besitzt**: ein alter PC, ein Intel NUC, der Staub ansetzt … Jeder Computer mit Intel- oder AMD-Prozessor kann zu deiner Gladys-Zentrale werden (seine Festplatte wird dabei gelöscht).
 
-👉 [Anleitung zur Installation auf einem Mini-PC](/de/docs/installation/mini-pc/)
+👉 [Gladys mit Gladys Assistant OS auf einem Mini-PC installieren](/de/docs/installation/mini-pc/)
 
-### Option 2: Vorhandene Hardware
-
-Wenn du bereits kompatible Hardware hast:
-
-- **Synology-NAS, Intel NUC oder jeder Docker-fähige Linux-Server**
-  - Nutze deine vorhandene Hardware weiter
-  - Folge unseren Installationsanleitungen weiter unten
-- **Proxmox-VE-Server**: Betreibe Gladys in einer Debian-VM, siehe die [Anleitung zur Installation auf Proxmox](/de/docs/installation/proxmox/)
-
-### Option 3: Raspberry Pi
+### Option 2: Raspberry Pi
 
 - Eine tolle Möglichkeit, Gladys kennenzulernen, wenn du schon einen zur Hand hast
 - Vereinfachte Einrichtung mit unserem offiziellen 64-Bit-Image (Pi 3, 4 und 5)
 - 👉 [Anleitung zur Installation auf einem Raspberry Pi](/de/docs/installation/raspberry-pi/)
 - Für den langfristigen Alltagsbetrieb bleibt ein Mini-PC die bessere Wahl
 
+### Option 3: Dein vorhandener Server oder NAS
+
+Wenn du bereits einen Rechner hast, auf dem andere Dienste laufen, kannst du Gladys dort mit Docker installieren, neben dem, was schon darauf läuft:
+
+- **Jeder Linux-Server mit Debian oder Ubuntu**: siehe die [Anleitung zur Docker-Installation](/de/docs/installation/docker/)
+- **Synology- oder Unraid-NAS**: siehe die Anleitungen für [Synology](/de/docs/installation/synology/) und [Unraid](/de/docs/installation/unraid/)
+- **Proxmox-VE-Server**: Betreibe Gladys in einer Debian-VM, siehe die [Anleitung zur Installation auf Proxmox](/de/docs/installation/proxmox/)
+
 ## Gladys Assistant installieren
 
 Je nach gewählter Hardware kannst du einer der folgenden Anleitungen folgen:
 
-- [Gladys Assistant auf einem Mini-PC installieren](/de/docs/installation/mini-pc/)
+- **Empfohlen:** [Gladys Assistant mit Gladys Assistant OS auf einem Mini-PC installieren](/de/docs/installation/mini-pc/)
+- [Gladys Assistant auf einem Raspberry Pi installieren](/de/docs/installation/raspberry-pi/)
+- [Gladys Assistant mit Docker unter Debian, Ubuntu oder einem anderen Linux-System installieren](/de/docs/installation/docker/)
+- [Gladys Assistant auf Proxmox VE installieren](/de/docs/installation/proxmox/)
 - [Gladys Assistant auf einem Synology-NAS installieren](/de/docs/installation/synology/)
 - [Gladys Assistant auf einem Unraid-NAS installieren](/de/docs/installation/unraid/)
-- [Gladys Assistant auf Proxmox VE installieren](/de/docs/installation/proxmox/)
-- [Gladys Assistant auf einem Raspberry Pi installieren](/de/docs/installation/raspberry-pi/)
 
 ## Plane dein Smart-Home-Projekt
 
@@ -70,7 +72,7 @@ Eine gute Möglichkeit, dich zu organisieren, ist eine Tabelle (in Excel, Google
 
 Es geht nicht unbedingt darum, alles auf einmal zu kaufen, sondern eher darum, zu planen und dein Zuhause nach und nach auszustatten – es sei denn, du bist gerade erst eingezogen und möchtest alles sofort installieren.
 
-## Dein Smart Home konfigurieren
+## Dein Smart Home konfigurieren {/* #configuring-your-smart-home */}
 
 Sobald Gladys bei dir zu Hause läuft, kannst du es über deinen Webbrowser aufrufen und mit der Konfiguration deines Zuhauses beginnen.
 

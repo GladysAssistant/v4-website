@@ -1,15 +1,15 @@
 ---
 id: faq
 title: Preguntas frecuentes
-description: "Preguntas frecuentes sobre Gladys Assistant: cómo actualizar con Watchtower, quién usa Gladys y cómo contribuir al proyecto de código abierto."
+description: "Preguntas frecuentes sobre Gladys Assistant: cómo actualizar Gladys, quién usa Gladys y cómo contribuir al proyecto de código abierto."
 sidebar_label: Preguntas frecuentes
 ---
 
 ### ¿Cómo actualizo Gladys?
 
-Te recomendamos usar [Watchtower](https://github.com/nicholas-fedor/watchtower), un contenedor Docker que se ejecuta en paralelo a Gladys. Comprueba periódicamente si hay nuevas versiones de Gladys y actualiza el contenedor automáticamente.
+Si instalaste Gladys con [Gladys Assistant OS](/es/docs/installation/mini-pc/), no tienes que hacer nada: Gladys se actualiza automáticamente.
 
-Consulta la [guía de instalación con Docker](/es/docs/installation/docker#auto-upgrade-gladys-with-watchtower) para ver el comando exacto que debes ejecutar.
+Si instalaste Gladys tú mismo con Docker, te recomendamos usar [Watchtower](https://github.com/nicholas-fedor/watchtower), un contenedor Docker que se ejecuta en paralelo a Gladys. Comprueba periódicamente si hay nuevas versiones de Gladys y actualiza el contenedor automáticamente. Consulta la [guía de instalación con Docker](/es/docs/installation/docker#auto-upgrade-gladys-with-watchtower) para ver el comando exacto que debes ejecutar.
 
 ### ¿Dónde están los registros (logs) de Gladys?
 
