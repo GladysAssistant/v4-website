@@ -145,7 +145,7 @@ Die Installation läuft dann ein paar Minuten lang von selbst.
 
 ## Schritt 5: Gladys installiert sich von selbst
 
-Wenn der Bildschirm **Installation complete!** anzeigt, wähle mit den Pfeiltasten **Reboot Now**, drücke **Enter** und **zieh dann den USB-Stick ab** (wenn eine Meldung dich auffordert, das Installationsmedium zu entfernen, entferne es und drücke dann **Enter**).
+Wenn der Bildschirm meldet, dass die Installation abgeschlossen ist (*Installation complete!*), wähle mit den Pfeiltasten **Jetzt neu starten** (*Reboot Now*), drücke **Enter** und **zieh dann den USB-Stick ab** (wenn eine Meldung dich auffordert, das Installationsmedium zu entfernen, entferne es und drücke dann **Enter**).
 
 ![Das Ende der Installation, mit ausgewähltem Reboot Now](../../../../../static/img/docs/en/installation/gladys-assistant-os/install-complete.png)
 
@@ -207,7 +207,7 @@ docker compose -f /opt/gladys/compose.yaml up -d gladys
 
 **`gladysassistant.local` öffnet sich nicht**: Dein Netzwerk unterstützt keine lokalen Namen. Verwende die Adresse, die auf dem Bildschirm des Mini-PCs angezeigt wird.
 
-**Der Bildschirm bleibt nach Reboot Now schwarz**: Die Installation ist bereits abgeschlossen. Zieh den USB-Stick ab und starte den Mini-PC mit seinem Einschaltknopf neu.
+**Der Bildschirm bleibt nach dem Neustart (*Reboot Now*) schwarz**: Die Installation ist bereits abgeschlossen. Zieh den USB-Stick ab und starte den Mini-PC mit seinem Einschaltknopf neu.
 
 **Der Browser zeigt immer noch die Einrichtungsseite an**: Gladys ist noch nicht bereit. Warte, bis auf dem Bildschirm **Gladys Assistant ist bereit** steht, und lade die Seite dann neu.
 
