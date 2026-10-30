@@ -1,0 +1,168 @@
+---
+title: "Intégration domotique SAX Power Home, gratuite et open source"
+sidebar_label: "SAX Power Home"
+description: "Non officiel : batteries SAX Power Home en local par Modbus TCP, lecture seule. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-sax-power.png"
+keywords:
+  - "sax power home"
+  - "domotique sax power home"
+  - "gladys sax power home"
+  - "sax power home gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-sax-power instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"SAX Power Home","description":"Non officiel : batteries SAX Power Home en local par Modbus TCP, lecture seule.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-sax-power","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-sax-power.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-28T20:35:15Z"}} />
+
+Connecteur **non officiel**, sans lien avec SAX Power. Il lit vos batteries
+**SAX Power Home** ou **Home Plus** sur votre réseau local par leur interface
+**Modbus TCP** (port 502) : une batterie seule, ou un groupe de trois au plus
+(la maîtresse A et les autres). **Lecture seule** : il ne change jamais un
+réglage et ne pilote pas la batterie. Pas de cloud.
+
+**Jamais testé avec un vrai appareil.** Vos retours sont les bienvenus.
+
+## Ce que vous obtenez
+
+Pour **chaque batterie** (registres lus par sax_battery_ha, unités Modbus 64
+et 40) :
+
+- état de charge (%), puissance de la batterie (W, signée telle que la
+  batterie la donne : le sens de charge et de décharge n'est pas documenté
+  par SAX), code d'état ;
+- température, nombre de cycles, capacité (kWh) ;
+- deux compteurs d'énergie, « énergie produite » et « énergie consommée »
+  (kWh), **affichés seulement** : ils ne vont pas au suivi énergétique de
+  Gladys (leur sens et leur unité ne sont pas documentés par SAX).
+
+Pour la **batterie A (maîtresse)**, en plus, les valeurs du **système entier**
+par l'interface SunSpec documentée par SAX (firmware Master V61 / Gateway V54
+ou plus récent) :
+
+- état de charge du système, puissance du stockage (W, signée), température
+  de cellule la plus haute, état (1 arrêt, 2 veille, 3 attente, 4 marche,
+  7 défaut compteur), événements ;
+- puissances de charge et de décharge disponibles, capacité du système ;
+- avec le compteur **ADW200** seulement : puissance solaire et puissance du
+  réseau (W, signée telle que le compteur la donne). Sans ADW200 (tension du
+  réseau lue sous 100 V), ces deux valeurs ne sont pas publiées.
+
+SAX conseille de ne lire que la maîtresse d'un groupe : elle donne déjà les
+valeurs du système. Ajoutez B et C seulement pour voir les valeurs propres de
+chaque batterie.
+
+## Installation
+
+1. Activez l'interface Modbus TCP de vos batteries si elle ne l'est pas (le
+   service client de SAX Power le fait ; une mise à jour du firmware peut
+   être nécessaire pour l'interface SunSpec).
+2. Donnez à chaque batterie une **adresse fixe** dans votre box (elle prend son
+   adresse par DHCP ; l'adresse s'affiche sur son écran).
+3. Dans Gladys, installez l'intégration, saisissez l'adresse de la batterie A,
+   puis celles de B et C s'il y a lieu, et enregistrez.
+4. Onglet « Découverte » : créez l'appareil de chaque batterie. Ses valeurs
+   arrivent à la lecture suivante.
+
+## Lecture
+
+- Chaque batterie est lue toutes les 30 s par défaut (15 à 300 s), sur sa
+  propre connexion, une requête à la fois et 500 ms au moins entre deux
+  requêtes, comme SAX le demande. Les batteries sont lues côte à côte : une
+  batterie qui ne répond pas ne retarde pas les autres.
+- Jamais plus vite que l'intervalle : ni le bouton de test, ni la Découverte,
+  ni une reconnexion à Gladys, ni un redémarrage du conteneur (la première
+  lecture attend alors l'intervalle et une minute après la dernière lecture). Seule une **nouvelle
+  adresse** enregistrée est lue tout de suite.
+- Pendant le rafraîchissement de son écran, la batterie ne répond pas 1 à
+  3 s : la partie non lue manque cette fois, l'état le dit (« non lu cette
+  fois »), le reste est publié. Une partie qui échoue trois lectures de suite
+  est sautée pendant dix lectures (jamais le numéro de série d'une batterie
+  déjà connue par son numéro de série).
+- Une batterie injoignable : nouvel essai après 1 min au moins, puis un
+  délai doublé jusqu'à 15 min.
+
+## Identité de chaque batterie
+
+- Chaque lecture lit le **numéro de série** de l'interface SunSpec (avec ses
+  valeurs fixes « SunS », modèle 1 de longueur 15 et « SAXPOWER ») ; si la
+  lecture doit ouvrir une nouvelle connexion, elle le relit d'abord, et une
+  autre batterie à cette adresse n'y donne rien. Les valeurs ne vont qu'à
+  l'appareil de ce numéro.
+- Une batterie sans interface SunSpec (firmware plus ancien, ou batterie d'un
+  groupe qui la laisse à la maîtresse) prend le nom de son adresse
+  (`ip192-168-1-51-502`) après trois lectures où son unité 64 a répondu et
+  son numéro de série non. Si un numéro de série apparaît plus tard, il
+  l'emporte : un nouvel appareil apparaît dans la Découverte, l'ancien garde
+  son historique.
+- Une batterie dont le numéro de série est connu et qui ne le donne pas cette
+  fois : rien n'est publié pour elle (jamais à l'appareil de son adresse).
+- Un autre numéro de série à la même adresse : c'est une autre batterie, son
+  propre appareil apparaît dans la Découverte ; l'ancien ne reçoit plus de
+  valeur.
+
+## Compteurs d'énergie
+
+Les deux compteurs « énergie produite » et « énergie consommée » de chaque
+batterie sont publiés **tels que lus**, en capteurs simples (kWh), jamais
+comptés par le suivi énergétique. SAX ne documente ni leur sens, ni leur
+unité, ni leur nature : ce sont des registres de 16 bits qui peuvent
+**repartir de zéro** (vers 65,5 kWh s'ils sont en Wh) ou être **périodiques**
+(remis à zéro régulièrement). À confirmer sur une vraie batterie. Une valeur 0
+est tenue pour inconnue et n'est jamais publiée.
+
+## Ce qui n'est pas fait
+
+- Aucun pilotage : pas de limite de charge ou de décharge, pas de consigne de
+  puissance (le « mode pilote » de sax_battery_ha n'est pas porté).
+- Pas d'index pour le suivi énergétique de Gladys.
+
+## Dépannage
+
+- « injoignable » : vérifiez l'adresse et le port (502), et que la batterie
+  est sur le même réseau.
+- « connecté, mais aucun registre n'a répondu » : l'interface Modbus n'est
+  sans doute pas activée ; voyez avec le service client de SAX Power.
+- « numéro de série (SunSpec) » toujours non lu sur la maîtresse : le firmware
+  est sans doute plus ancien que Master V61 / Gateway V54 ; les valeurs du
+  système manquent alors.
+- /data illisible : le fichier est laissé tel quel, aucune batterie ne prend le
+  nom de son adresse (une batterie identifiée par son numéro de série reste
+  lue) ; redémarrez l'intégration.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par SAX Power Home dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Batteries SAX Power Home | `section` | Non | Connecteur non officiel, sans lien avec SAX Power. Il lit vos batteries SAX Power Home ou Home Plus (une seule, ou un groupe de trois au plus : la maîtresse et les autres) sur votre réseau par leur interface Modbus TCP (port 502), toutes les 30 s par défaut : état de charge, puissance, température, cycles, capacité et deux compteurs d'énergie de chaque batterie, et les valeurs du système entier depuis la maîtresse (interface SunSpec, firmware Master V61 / Gateway V54 ou plus récent). Sans cloud. Lecture seule : il ne change jamais un réglage et ne pilote pas la batterie (le « mode pilote » d'autres outils n'est pas proposé). Jamais testé avec un vrai appareil. |
+| Batterie A (maîtresse) | `string` | Oui | L'adresse IP de la batterie maîtresse (A), affichée sur son écran, avec un port seulement s'il n'est pas 502. Donnez-lui une adresse fixe dans votre box (la batterie prend son adresse par DHCP). Les valeurs du système entier sont lues sur celle-ci. |
+| Batterie B (facultative) | `string` | Non | L'adresse IP d'une deuxième batterie du groupe, pour ses propres valeurs. Laissez vide avec une seule batterie. |
+| Batterie C (facultative) | `string` | Non | L'adresse IP d'une troisième batterie du groupe, pour ses propres valeurs. Laissez vide sinon. |
+| Intervalle de lecture (secondes) | `number` | Non | Fréquence de lecture de chaque batterie, de 15 à 300 secondes. Jamais plus vite, sauf juste après l'enregistrement d'une nouvelle adresse. |
+
+## Comment installer SAX Power Home dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : SAX Power Home apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-sax-power:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-sax-power](https://github.com/LM1LC3N7/gladys-sax-power).
+
+SAX Power Home nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+SAX Power Home est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-sax-power) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-sax-power/blob/HEAD/docs/fr.md)

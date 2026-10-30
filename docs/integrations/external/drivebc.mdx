@@ -1,0 +1,177 @@
+---
+title: "DriveBC smart home integration, free and open source"
+sidebar_label: "DriveBC"
+description: "Unofficial. Road events in British Columbia from DriveBC open data. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-drivebc.png"
+keywords:
+  - "drivebc"
+  - "drivebc smart home"
+  - "gladys drivebc"
+  - "drivebc gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-drivebc instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"DriveBC","description":"Unofficial. Road events in British Columbia from DriveBC open data.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-drivebc","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-drivebc.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-30T02:16:04Z"}} />
+
+Unofficial integration. It reads the road events that **DriveBC** (Province of British Columbia) publishes on its
+public **Open511 API**: closures, construction, incidents, weather and road conditions. No account, no API key.
+
+> This integration is not an official source. Before you drive, check [DriveBC](https://www.drivebc.ca/) itself.
+> The data may lag behind the road, and the integration may miss an event.
+
+Contains information licensed under the Open Government Licence – British Columbia.
+
+## What you get
+
+Up to **three watch zones**, each one a Gladys device. A zone is a circle around a point (1 to 300 km), optionally
+limited to some roads ("Highway 1, Highway 99").
+
+Each zone device has:
+
+| Feature          | Type    | Meaning                                                       |
+| ---------------- | ------- | ------------------------------------------------------------- |
+| Events in effect | counter | Active events in effect now inside the zone                   |
+| Road closures    | counter | Those with a road marked closed                               |
+| Major events     | counter | Those of severity "major"                                     |
+| Summary          | text    | The events, closures first, then major ones, then by distance |
+
+The summary is written in the language chosen in the configuration (English or French); the road names and the
+DriveBC texts stay in English, the only language of the API.
+
+**In effect** means: an active event whose schedule interval covers the current time, as given by the DriveBC
+server (`Date` header). An event planned for later is not counted until its interval starts. Daily hours written only
+in the description ("7:00 AM to 7:00 PM, weekdays") are not read: such an event counts for its whole interval. An
+event without a readable schedule, or an answer without a readable server time, counts as in effect. A server time
+more than a day away from the clock of Gladys is not believed (taken as unreadable).
+
+**No event**: DriveBC answers a box without any event with an HTTP 500 carrying the code 1008 ("Error processing
+OP5 event data"), never with an empty list (observed on the live API in October 2026). The integration reads that exact answer as
+"no event"; any other 500 is an outage. When a zone that had events falls to "no event" through that answer, 0 is
+published only if the next scheduled read says the same (no extra request): one interval later. A first read, or a
+zone already at 0, is published at once. A list where more than half of the events cannot be read is never 0: the status says that DriveBC sends events
+that cannot be read, nothing is published, and the reads go on at the interval (no pause).
+
+## Scene trigger: "New DriveBC event in a zone"
+
+Fired when an event in effect appears in a zone for the first time and was created, updated or started within the
+last 2 hours (server time). Filters: zone, event types, severity. Variables: road, headline and description (English),
+type, severity, closed (yes/no), distance from the zone center (km), announced delay (minutes, empty when unknown),
+DriveBC event id.
+
+It is not fired by the first read of a zone, nor after you move a zone (new center, radius or roads): that read only
+learns what is already there. It is not fired when the answer carries no readable server time. At most 20 events
+per zone and per read.
+
+## Configuration
+
+1. **Language of the summary**: English or French.
+2. **Read interval**: 3 to 60 minutes (5 by default).
+3. **Zone 1** (required), zones 2 and 3 (optional, left empty to turn them off): a name, the latitude and longitude
+   of the center (decimal degrees, inside British Columbia), the radius in km (25 by default), and optionally the
+   roads to keep, separated by commas, as DriveBC writes them ("Highway 1", "Highway 99"; "Hwy 99" works too; the
+   case is ignored). Local roads are named "Other Roads" by DriveBC.
+
+A refused field is named in the status (the value you typed is not repeated there).
+
+The button **Show the last read** tells what the last read of each zone gave and when the next comes. It does not
+read DriveBC.
+
+## Pace and courtesy toward DriveBC
+
+DriveBC throttles its API and asks to space requests by 10 seconds or more. The integration:
+
+- sends one request at a time, 12 seconds at least between the starts of two requests (one per zone and per
+  round; a zone with more than 500 events takes one more request per 500, up to 2000);
+- starts a round every interval, measured from the start of the previous round;
+- does not read sooner after a restart, a reconnection to Gladys, a configuration saved unchanged, a Discovery or
+  the test button (the time of the last attempt is kept in `/data`, and in memory); moving a zone reads at once,
+  12 seconds after the last request;
+- when `/data` cannot tell the last attempt (unreadable file, a date in the future, a `/data` that cannot be written
+  or does not answer within 2 seconds), waits 3 minutes after the start before the first read, and says so in the
+  status; a `/data` that stops being writable later is said in the status too: a restart may then read sooner;
+- after a **429** ("too many requests"), pauses every read for 5 minutes, then 10, 20… up to 6 hours; after a
+  server error (**5xx**, the "no event" answer apart) or another unexpected status (400, 403, 404…), for 2 minutes,
+  then 4, 8… up to 6 hours; a `Retry-After` longer than that is honored, up to 6 hours. A refusal that arrives while
+  the configuration is being saved, or Gladys reconnects, still starts the pause. The pause is kept in `/data`
+  across restarts; the doubling starts over after a successful read;
+- identifies itself with the User-Agent `gladys-drivebc/<version> (+https://github.com/LM1LC3N7/gladys-drivebc)`;
+- cuts an answer after 30 seconds or 16 MB.
+
+DriveBC does not offer `ETag` nor `Last-Modified` on its events: every round reads the events again.
+
+## Status
+
+The Configuration screen shows, for each zone, the counts of the last read and its time (Pacific time), or why it
+failed and the time of the last data. Data older than 2 hours is said stale. When a read fails, nothing is
+published for that zone: the devices keep their last values and the status says since when. A fall to 0 waiting
+for its confirmation is said too. The integration is
+shown connected when the last read of at least one zone succeeded, less than 2 hours ago.
+
+## Privacy
+
+The coordinates of your zones stay in the Gladys configuration. DriveBC receives, for each zone, the box around
+the circle (its center is the middle of the box). The `/data` file holds the time of the last attempt, the pause,
+and per zone the ids of the events already seen with a salted fingerprint of the zone, not its coordinates.
+
+## Limits
+
+- British Columbia only (the zone center must be in BC; events near the borders are included).
+- Tested against the real DriveBC API on 2026-10-29; not yet tested by a user in British Columbia.
+- The texts of DriveBC are in English only.
+- "No event" is the HTTP 500 with code 1008 of DriveBC: should DriveBC ever send that exact answer during an outage,
+  a zone would show 0 after two such reads in a row (one interval apart).
+
+## Configuration settings
+
+These are the settings DriveBC asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| DriveBC road events | `section` | No | Closures, construction, incidents and road conditions published by DriveBC (Province of British Columbia), read from its public Open511 API: no account, no key. Up to three zones, each one a device. Data in English only, under the Open Government Licence – British Columbia. Check DriveBC before you drive: this integration is not an official source. |
+| Language of the summary | `select` | No | Language of the device names and of the summary text (DriveBC road names stay in English). |
+| Read interval (minutes) | `number` | No | From 3 to 60 minutes. DriveBC asks for at least 10 s between two requests: the zones are read one after the other, 12 s apart. |
+| Zone 1 | `section` | No | A circle around a point: the events in effect inside it are counted. Required. |
+| Name | `string` | No | Name of the device in Gladys (60 characters at most). |
+| Latitude | `number` | Yes | Center of the zone, in British Columbia (decimal degrees). |
+| Longitude | `number` | Yes | Center of the zone (decimal degrees, negative: west). |
+| Radius (km) | `number` | No | From 1 to 300 km. |
+| Only these roads | `string` | No | Optional: road names as DriveBC writes them, separated by commas ("Highway 1, Highway 99"; "Hwy 99" works too). Empty: every road of the zone. |
+| Zone 2 (optional) | `section` | No | A circle around a point: the events in effect inside it are counted. Leave the latitude and longitude empty to turn it off. |
+| Name | `string` | No | Name of the device in Gladys (60 characters at most). |
+| Latitude | `number` | No | Center of the zone, in British Columbia (decimal degrees). |
+| Longitude | `number` | No | Center of the zone (decimal degrees, negative: west). |
+| Radius (km) | `number` | No | From 1 to 300 km. |
+| Only these roads | `string` | No | Optional: road names as DriveBC writes them, separated by commas ("Highway 1, Highway 99"; "Hwy 99" works too). Empty: every road of the zone. |
+| Zone 3 (optional) | `section` | No | A circle around a point: the events in effect inside it are counted. Leave the latitude and longitude empty to turn it off. |
+| Name | `string` | No | Name of the device in Gladys (60 characters at most). |
+| Latitude | `number` | No | Center of the zone, in British Columbia (decimal degrees). |
+| Longitude | `number` | No | Center of the zone (decimal degrees, negative: west). |
+| Radius (km) | `number` | No | From 1 to 300 km. |
+| Only these roads | `string` | No | Optional: road names as DriveBC writes them, separated by commas ("Highway 1, Highway 99"; "Hwy 99" works too). Empty: every road of the zone. |
+
+## How to install DriveBC in Gladys
+
+1. In Gladys, open **Integrations**: DriveBC appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-drivebc:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-drivebc](https://github.com/LM1LC3N7/gladys-drivebc).
+
+DriveBC requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+DriveBC is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-drivebc) — [source of this documentation](https://github.com/LM1LC3N7/gladys-drivebc/blob/HEAD/docs/en.md)

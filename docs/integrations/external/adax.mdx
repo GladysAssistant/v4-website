@@ -1,0 +1,141 @@
+---
+title: "Adax smart home integration, free and open source"
+sidebar_label: "Adax"
+description: "Adax WiFi heaters by room: setpoint, on/off, temperature, power, energy, scenes. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-adax.jpg"
+keywords:
+  - "adax"
+  - "adax smart home"
+  - "gladys adax"
+  - "adax gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/William-De71/gladys-adax instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Adax","description":"Adax WiFi heaters by room: setpoint, on/off, temperature, power, energy, scenes.","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-adax","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-adax.jpg","type":"device","version":"0.1.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-10-28T19:40:33Z"}} />
+
+## Overview
+
+This integration brings your **Adax WiFi** panel heaters into Gladys. It uses the **official Adax API** (the "Remote user client API" of the Adax WiFi app), with your account id and a credential you create in the app.
+
+- One Gladys device per **room** of the Adax app: setpoint, heating on or off, room temperature, and, when your heaters report it, heating now, power and an energy index for the Gladys energy dashboard.
+- Scene triggers (heating turned on or off, setpoint changed in the Adax app or on the heater) and scene actions (setpoint of one room or of every room, heating on or off, read now).
+- Three dashboard widgets: the rooms, with "All on" and "All off" buttons, the energy of today and of the last 24 hours, and the connection.
+
+**Transport: cloud.** Gladys never talks to your heaters directly: it reads and writes the Adax cloud, which relays the changes to the heaters. Adax accepts **one request every 30 seconds**: a change made in Gladys is shown at once and reaches the heater **within 30 seconds**; a change made in the Adax app or on the heater reaches Gladys at the next reading. Your heater data leave your home (they already do with the Adax app).
+
+Not affiliated with Adax. Not yet tested with a real Adax account: please report what works and what does not.
+
+![Generated illustration of the three widgets: the Adax rooms (temperature, setpoint, heating, All on / All off), the energy of today, yesterday and the last 24 hours, and the connection to the Adax API — not a screenshot](https://raw.githubusercontent.com/William-De71/gladys-adax/main/docs/assets/widgets.en.png)
+
+## Prerequisites
+
+- Gladys Assistant **5.3.0** or later.
+- Adax **WiFi** heaters set up in the **Adax WiFi app** (version 3.7 or later), each one placed in a **room**: the API sets the temperature of rooms, not of single heaters.
+- In the app, **Account** tab → **Remote user client API**: note the **account id** shown there, then tap **Add credential**, give it a name (for example "Gladys") and copy the **generated password**. You can delete this credential at any time to revoke the access of Gladys.
+
+## Configuration
+
+In Gladys, open **Integrations → Adax**:
+
+| Field                        | Description                                                                     |
+| ---------------------------- | ------------------------------------------------------------------------------- |
+| Account id                   | The number shown in the Adax WiFi app, Account → Remote user client API.        |
+| Credential password          | The password of the credential: sent to Adax only, never shown again or logged. |
+| Reading interval             | Every 1, 2, 5 or 10 minutes (2 by default). One request reads every room.       |
+| Language of the device texts | Names of the features and messages of the button; automatic by default.         |
+
+Click **Test the connection**: the integration reads your rooms and lists them with their heaters and features. Then open the **Discover** tab and add the rooms you want: nothing is created without you. With several homes in the app, the home is added to the room name.
+
+## Usage
+
+### Devices
+
+Each room offers these features:
+
+| Feature          | Gladys type                             | Notes                                                                                                                      |
+| ---------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Setpoint         | Thermostat setpoint, 5 to 35 °C by 1 °C | Adax ignores a setpoint while the heating is off: changing the setpoint turns the heating of the room on.                  |
+| Heating          | Thermostat mode: off or heating         | Off stops the heaters of the room; heating restores the setpoint (20 °C when Adax gives none).                             |
+| Room temperature | Temperature sensor                      | Measured by the heaters.                                                                                                   |
+| Heats            | Operating state: idle or heating        | Whether the heaters drew power since the previous reading. Only when the heaters report their energy.                      |
+| Power            | Power (W)                               | The average power of the room since the previous reading.                                                                  |
+| Energy           | Energy index (kWh)                      | Counted by the integration from the energy of each hour that Adax reports; feeds the consumption and cost pages of Gladys. |
+
+The Gladys **Thermostat** dashboard widget works with the setpoint. The energy index starts at 0 the first time a room is read: Gladys only uses its increases. A few percent of each hour can be missed at a 2-minute interval (the energy between the last reading of an hour and its end); a shorter interval misses less.
+
+### Dashboard widgets
+
+- **Adax rooms**: each room with its temperature and setpoint, a badge (off, heating with its power, a command being sent). Tap a room for its details (home, heaters, energy index). **All on** and **All off** act on the rooms of the widget, in one request, after a confirmation; **Refresh** reads now. Choose the rooms in the widget settings (8 at most).
+- **Adax energy**: the energy of today and of yesterday, the power now, and a bar chart of the last 24 hours, for every room or the ones chosen in the settings.
+- **Adax**: the state of the connection to the API, the rooms heating, the requests of the last hour, a **Refresh** button.
+
+### Scenes
+
+Triggers (each one can be limited to one room):
+
+- **The heating of a room is turned on** / **is turned off**: in the Adax WiFi app or on the heater, never by Gladys itself.
+- **The setpoint of a room changes**: in the app, on the heater or by its weekly schedule. The previous setpoint is a variable of the trigger.
+
+Actions:
+
+- **Set the setpoint of the rooms**: one room or every room, 5 to 35 °C; turns the heating on (outputs: changed, refused, setpoint written).
+- **Turn the heating on or off**: one room or every room (outputs: changed, refused).
+- **Read the Adax rooms now**: outputs the rooms, the rooms heating and the energy of today.
+
+Examples:
+
+- When everybody leaves home → set the setpoint of every room to 16 °C; when somebody comes back → 21 °C.
+- When the electricity price of the hour is high → turn the heating of the bedrooms off for an hour, then on again.
+- When the setpoint of a room changes in the Adax app → send a notification "\{\{triggerEvent.data.device_name\}\}: \{\{triggerEvent.data.target_temperature\}\} °C".
+
+### Transport
+
+The catalog shows the **cloud** badge: every request goes to `api-1.adax.no`, with your credential. This integration does not use the local mode of the newest heaters (it needs a Bluetooth pairing that a container cannot do).
+
+## Troubleshooting
+
+- **"Adax refuses the credentials"**: check the account id, and create a new credential in the app if you deleted it or are not sure of its password.
+- **Connected, but no room**: put your heaters in rooms in the Adax WiFi app.
+- **"Adax asks to slow down"**: the API answered "request limit exceeded" (402). The integration waits longer between readings, then goes back to normal by itself. Do not use the same credential in several programs at once.
+- **No power nor energy**: your heaters do not report their energy to the Adax cloud; the setpoint, the heating and the temperature still work.
+- **A command takes up to 30 seconds**: Adax accepts one request every 30 seconds; the badge "Sending…" shows a command waiting.
+- Report a problem on [GitHub](https://github.com/William-De71/gladys-adax/issues) with your Gladys version, the integration version and the result of "Test the connection".
+
+## Configuration settings
+
+These are the settings Adax asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Adax | `section` | No | How to connect: 1. Set up your heaters in the Adax WiFi app (version 3.7 or later) and put each one in a room. 2. In the app, open the Account tab, then “Remote user client API”. 3. Copy the account id shown there below, then tap “Add credential”, give it a name and copy the generated password below. 4. In the Discover tab, add your rooms. The integration reads the Adax cloud: a change reaches the heaters within 30 seconds, and a change made on them reaches Gladys at the next reading. |
+| Account id | `string` | Yes | The number shown in the Adax WiFi app, Account tab → Remote user client API. |
+| Credential password | `secret` | Yes | The password generated by “Add credential” in the same screen. Sent to Adax only, never shown again. |
+| Reading interval | `select` | No | One request reads every room. Adax refuses too many requests (one every 30 s at most): 2 minutes is a good balance. |
+| Language of the device texts | `select` | No | Names of the features and messages of the button below. Automatic: the language of the dashboard once a widget is shown. |
+
+## How to install Adax in Gladys
+
+1. In Gladys, open **Integrations**: Adax appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/william-de71/gladys-adax:0.1.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/William-De71/gladys-adax](https://github.com/William-De71/gladys-adax).
+
+Adax requires Gladys `>=5.3.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Adax is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [William-De71](https://github.com/William-De71), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/William-De71/gladys-adax) — [source of this documentation](https://github.com/William-De71/gladys-adax/blob/HEAD/docs/en.md)

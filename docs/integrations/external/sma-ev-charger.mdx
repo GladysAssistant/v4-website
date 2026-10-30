@@ -1,0 +1,264 @@
+---
+title: "SMA EV Charger smart home integration, free and open source"
+sidebar_label: "SMA EV Charger"
+description: "SMA EV Charger over its local web API: state, power, energy, stop; optional start and mode. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-sma-ev-charger.png"
+keywords:
+  - "sma ev charger"
+  - "sma ev charger smart home"
+  - "gladys sma ev charger"
+  - "sma ev charger gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-sma-ev-charger instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"SMA EV Charger","description":"SMA EV Charger over its local web API: state, power, energy, stop; optional start and mode.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-sma-ev-charger","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-sma-ev-charger.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-29T06:05:23Z"}} />
+
+Shows an **SMA EV Charger** (EVC7.4-1AC-10, EVC22-3AC-10) or an **SMA
+eCharger** in Gladys through the local web API of the charger, without any
+cloud. Unofficial integration, not affiliated with SMA. **Never tested with a
+real charger**: it was built from the open-source libraries pysmaev and
+ha-sma-ev-charger (used by Home Assistant) and tested against a simulated
+charger. Feedback is welcome.
+
+## What you get
+
+One device per charger (keyed by its serial number), with:
+
+- status (no vehicle, vehicle plugged in, charging, charge stopped, charging
+  station locked, charger fault), connector and charging state, vehicle
+  plugged in, error reported, status of the charger, rotary switch;
+- charging mode (boost charging, optimized charging, charging with setpoint,
+  charge stop) and "charge stopped";
+- power, current and voltage per phase;
+- the **energy index** of the charger (kWh, its meter reading), for the energy
+  tab of Gladys, and the **energy of the session** (kWh);
+- the charge current limit (A);
+- **Stop charging** (button), **Start charging** (button), **Set the
+  charging mode** (list) and **Set the charging current** (list).
+
+No switch: a "turn everything off" (a voice assistant, a scene) can never
+start or stop a charge by mistake.
+
+## Setup
+
+1. Give the charger a fixed IP address in your router.
+2. Create a user in the web interface of the charger if needed. To read and
+   set everything, the user must be an **installer or administrator**
+   (as Home Assistant says): with fewer rights the charger may refuse some
+   values or the commands, which the status then says.
+3. In Gladys, enter the address (an IPv4 address or a host name, optionally
+   `:port`, 443 by default), the **user name and the password** (both are
+   needed: one alone is refused), save.
+4. Open the **Discovery** tab and add the charger.
+
+The password is kept by Gladys in its database, never shown again, and sent
+only to the charger, over HTTPS, once its certificate matched the one pinned
+at the first connection. It is never written in the logs, in `/data` or in a
+status, and neither is the access token the charger gives.
+
+### The certificate of the charger
+
+The charger serves a self-signed certificate. At the first connection its
+SHA-256 fingerprint is pinned (kept in `/data`) **before** the password is
+sent; afterwards every connection is checked against it before any byte is
+written. If the certificate changes (charger replaced, firmware update), the
+integration sends nothing (the password neither) and the status shows the
+start of the new fingerprint. Compare it with the one your browser shows on
+the web interface of the charger, then click **Trust the new certificate**
+twice: the first click shows the whole fingerprint, a second click 3 to 60
+seconds later pins exactly that one. TLS 1.2 at least.
+
+## Reads
+
+The charger is read every refresh interval (30 s by default, 15 s to 1 h):
+an access token when the one in memory is old (it is used until 90 % of its
+life, one hour by default), the measurements, then the parameters. Each
+request has its own connection, closed right after. Never sooner than the
+interval: the **Test the connection** button, the Discovery tab, a
+reconnection to Gladys, a configuration saved unchanged or a restart do not
+read sooner (only the two reads 5 s and 20 s after a command, and the read
+right after new credentials or a certificate trusted by you, do).
+
+- **429** (the charger asks to slow down): pause of the Retry-After, 1 min
+  to 6 h (5 min without one), kept in `/data`; **5xx**: a pause of the
+  failure delay (1 min at least). Nothing but "Stop charging" is sent during
+  a pause.
+- **Refused credentials** (the token request answered 401, or 400/403 with
+  an OAuth error such as `invalid_grant`; another 400/403, from a proxy or a
+  busy server, is an ordinary failure): kept
+  in `/data`, and **no automatic try any more** (a charger may lock the
+  account after a few refused passwords). Saving other credentials tries at
+  once; **Test the connection** tries once more, at most once a minute.
+- A value the charger refuses to give with a token it has just given (401 or
+  403): the user lacks the rights; it is not a refused password. Tried again
+  after 5 minutes, then a wait that doubles up to 1 hour.
+- Unreachable: new tries after 30 s, 1, 2, then 5 min, never sooner than the
+  interval.
+
+## Commands
+
+### Stop charging
+
+**Stop charging** (and the mode **Charge stop** of the list) sets the
+operating mode of the charger to "Charge stop". It needs no option and is
+never held back: not by a command under way (it takes the charger at once,
+and a start, a mode or a current not sent yet is dropped), not by the minute
+between two changes, not by a 429 or 5xx pause, not by a read that fails or
+hangs (it needs no read), not before the first read after a restart (the
+serial of the charger is kept in `/data`), not by a `/data` that cannot be
+written. It stays until a start (from Gladys with the option, from the SMA
+app, or with the rotary switch): **a forgotten stop may prevent the next
+charge**.
+
+When the stop is not applied — the charger cannot be reached, answers 429 or
+5xx to it, its certificate changed, or the credentials are refused — it is
+**kept** in `/data` and sent again on its own rhythm, every 30 seconds (after
+the wait a 429 asks for, 5 minutes at most), whatever the interval or a pause
+of the reads, until the charger takes it. It is never dropped by the time;
+only a read showing the charger stopped, a start sent from Gladys that the
+charger takes (answered 2xx or 5xx, or without an answer: it may have landed)
+or another charger at the address end it (a start the charger refuses, HTTP
+3xx, 4xx or 429, leaves the stop kept as it was; another mode read is not
+taken for a start from elsewhere: the stop never applied, nothing was started
+again). With refused credentials, or a write refused for the rights of the
+user (401/403 with a token just given), it is not sent with the same ones: it
+goes first as soon as other credentials are saved or **Test the connection**
+succeeds (a click of the stop also tries one login, at most once a minute).
+Another refusal of the write (HTTP 3xx or 4xx: busy, conflict, a redirect,
+never followed…) keeps it too, sent again every 5 minutes; only after 3
+identical refusals in a row (counted from 1 again at each click of the stop)
+is it given up, which the status and the badge of the device then say until a
+read shows the charger stopped, a new stop is sent or kept, or the charger
+takes a start, a mode or a current allowed by the option (a click refused
+before anything is sent, or a command the charger refuses, leaves the
+warning).
+
+To cancel a kept stop (to charge after all): start the charge or choose a
+mode from Gladys, with the option, once the charger accepts it (the command
+is then written even when the charger already shows that mode, so that it
+ends the kept stop; refused, it leaves the stop kept); or set the
+mode "Charge stop" in the SMA app and wait until Gladys reads it (the status
+no longer mentions the kept stop), then choose the mode you want there; or
+save another address. Otherwise it waits: it is never dropped with time.
+
+After a stop, the reads of the next 90 seconds watch the charger: one that
+does not show "Charge stop" while no start left Gladys since sends the stop
+again, twice at most; once a read (the one right after the stop included)
+showed it stopped, a start seen afterwards (from the SMA app) is left alone,
+unless a start sent from Gladys just before the stop may still land.
+
+The stop is refused, and not kept, only:
+
+- when the configuration was never read from Gladys (it is asked again
+  without end; after a reconnection, the configuration read before keeps
+  working);
+- without a valid address, user name and password;
+- when `/data` cannot be read (the pinned certificate is unknown);
+- for a device that is not the charger at the address (another charger read
+  there).
+
+### Start, mode and current (option)
+
+**Start charging**, **Set the charging mode** (boost or optimized charging)
+and **Set the charging current** are **off by default**: turn on "Allow
+starting, the mode and the current" in the configuration. Then:
+
+- each command reads the charger first (in the same session) and is decided
+  on that read, never on the values kept in memory; a value it needs that is
+  missing refuses it;
+- "Start charging" sets boost charging; it is refused without a vehicle
+  plugged in, on a fault, a locked charger or an unknown state, and when the
+  charger allows less than 6 A now;
+- "Optimized charging" is refused when the charger does not offer it (it
+  needs an energy manager such as the Sunny Home Manager). Charging with a
+  setpoint (an energy and an end time) is shown, not set;
+- the current is a whole number of amperes from 6 A (or the minimum of the
+  charger) to the lowest of the ceiling of the configuration (16 A by
+  default, 32 A at most), the maximum the charger gives for its charge
+  current limit, and its rated current;
+- one start, mode or current change a minute (kept in `/data` before the
+  command leaves: a `/data` that cannot be written refuses it);
+- the option, the deadline and the ceiling are checked again right before
+  the command leaves; a stop arriving meanwhile wins;
+- refused during a 429/5xx pause or with refused credentials.
+
+### Answers
+
+Every command leaves within 3.5 s of the click or is refused **not sent**.
+A command the charger accepted is confirmed by a read right after it: the
+value asked read back is a success; the value before still read is "not
+applied yet" (checked again 5 and 20 seconds later); a command that may have
+reached the charger without an answer is "sent, without confirmation". The
+charger refusing the command (3xx, 4xx) says so.
+
+## Energy
+
+The energy index is the meter reading of the charger (kWh). A value of 0 or
+a drop is **never** published, nor a jump larger than the charger can
+deliver (25 kW on average since the last value, plus 0.5 kWh): the value is
+held, the status and the badge of the device say so, and Gladys keeps the
+last value. **Accept the held index** takes it, in two clicks: the first one
+lists the value held, a second one 3 to 60 seconds later accepts exactly
+that (for a meter reset or replaced). The guard runs on a clock that a wall
+clock set by NTP does not move. The energy of the session restarts at each
+session: it is never published as 0 (the last session stays shown until the
+new one has delivered something).
+
+Note: the charger is behind your main meter. If Gladys already counts the
+whole home, the index of the charger is a part of it, not an addition.
+
+## Limits
+
+- One charger per integration. The charging mode setpoint, the LED
+  brightness, the standby disconnection, the manual charging release and
+  the restart of the charger are not handled.
+- A stop sent before the first read after a restart needs the configuration
+  from Gladys (the password is never kept in `/data`).
+- Freshness relies on the reads: the charger gives no reading time.
+- `/data` that cannot be read stops everything (nothing is pinned again
+  blindly); it is read again at each interval.
+- Never tested with a real charger: the answers of a real one (the
+  operating modes offered, the rights of each user, the lifetime of the
+  token) may differ.
+
+## Configuration settings
+
+These are the settings SMA EV Charger asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your SMA EV Charger | `section` | No | Shows your SMA EV Charger (EVC7.4-1AC-10, EVC22-3AC-10) or SMA eCharger in Gladys through its local web API, without any cloud: state, vehicle plugged in, charging mode, power, current and voltage per phase, energy index, energy of the session. Give the charger a fixed address in your router, enter it with the user name and the password of its web interface (an installer or administrator account to read and set everything), save, then add the charger from the Discovery tab. Stopping the charge is always possible from Gladys; starting it, the charging mode and the charging current only if you allow them below. Never tested with a real charger. Not affiliated with SMA. |
+| IP address of the charger | `string` | Yes | An IPv4 address or a host name, optionally followed by a port (443 by default). The charger is reached over HTTPS. |
+| User name | `string` | Yes | The user name of the web interface of the charger (the one you log in with in a browser). |
+| Password of the charger | `secret` | Yes | The password of the web interface of the charger. Kept by Gladys in its database, never shown again, sent only to the charger, over HTTPS, and only once its certificate is checked against the one pinned at the first connection. Sent as typed (spaces included). Refused credentials are not tried again automatically: save other ones or click "Test the connection". |
+| Allow starting, the mode and the current | `boolean` | No | Off by default. On: Gladys may start the charge (button, boost charging), set the charging mode (boost or optimized charging) and the charging current (list, 6 A to the ceiling below). Off: these features refuse every command. "Stop charging" (and the mode "Charge stop") is always available: it sets the operating mode of the charger to "Charge stop", which stays until a start (from Gladys with this option on, or from the SMA app); a forgotten stop may prevent the next charge. |
+| Ceiling of the charging current (A) | `number` | No | The highest charging current Gladys may set (16 A by default). The lowest of this value, the maximum the charger gives for its charge current limit and its rated current applies. |
+| Refresh interval (s) | `number` | No | How often the charger is read, in seconds (two requests per read). |
+| Language of the feature names | `select` | No | Used for the feature names of the devices added from now on, for the status texts and for the command errors. |
+
+## How to install SMA EV Charger in Gladys
+
+1. In Gladys, open **Integrations**: SMA EV Charger appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-sma-ev-charger:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-sma-ev-charger](https://github.com/LM1LC3N7/gladys-sma-ev-charger).
+
+SMA EV Charger requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+SMA EV Charger is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-sma-ev-charger) — [source of this documentation](https://github.com/LM1LC3N7/gladys-sma-ev-charger/blob/HEAD/docs/en.md)

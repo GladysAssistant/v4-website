@@ -1,0 +1,234 @@
+---
+title: "Solarfocus Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Solarfocus"
+description: "Solarfocus eco manager-touch over local Modbus TCP: circuits, hot water, heat pump; options. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-solarfocus.png"
+keywords:
+  - "solarfocus"
+  - "solarfocus smart home"
+  - "gladys solarfocus"
+  - "solarfocus gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-solarfocus instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Solarfocus","description":"Solarfocus eco manager-touch over local Modbus TCP: circuits, hot water, heat pump; options.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-solarfocus","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-solarfocus.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-28T12:50:27Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+This integration shows your Solarfocus heating driven by the **eco manager-touch** controller
+(vampair heat pump, pellet or wood boiler, control centre) in Gladys, through its **Modbus TCP**
+interface on your local network, without any cloud. If you allow it, it can also change the modes and
+the setpoints.
+
+> **Never tested with a real device.** The integration follows Solarfocus's Modbus TCP document
+> (DR-0180-DE, version v14-260212), the `aiosolarfocus` library and the Home Assistant integration
+> `home-assistant-solarfocus`, and was tested against a simulated controller only.
+> Not affiliated with Solarfocus GmbH.
+
+## What you need
+
+- An **eco manager-touch** controller with the 7-inch display (vampair, therminator II touch,
+  pelletelegance, octoplus, pellettop touch or control centre; software 19.050 or newer). The
+  registers used are those of the current software (26.020); on older software, those it lacks are
+  simply not read.
+- **Modbus TCP activated**, once: customer menu → installer (spanner) → "Modbus TCP", parameter
+  "Modbus TCP" set to 1; "Interface activated" turns green. Solarfocus notes that once the interface
+  is active, the modes can no longer be set from the mySOLARFOCUS app.
+- For the room setpoint sent by Gladys to count, **room influence** must be enabled on the display
+  for the circuit.
+- A fixed IP address for the controller (reserve it in your router).
+- Modbus TCP has **no password**: any device on your network can read and write the heating
+  settings. Keep the controller on a **trusted network**, never exposed to the Internet.
+
+## Configuration
+
+| Field              | Role                                                                          |
+| ------------------ | ----------------------------------------------------------------------------- |
+| IP address         | IPv4 or host name, port 502 unless you add one (`192.168.1.70:502`).          |
+| Modbus unit id     | 1 on an eco manager-touch.                                                    |
+| Heat generator     | None, vampair heat pump, or pellet / wood / combination boiler.               |
+| Heating circuits   | How many, 0 to 8 (1 by default), numbered as on the display.                  |
+| Hot water tanks    | How many, 0 to 4 (1 by default); "Boiler" on the display.                     |
+| Buffer tanks       | How many, 0 to 4 (0 by default).                                              |
+| Allow the commands | Off by default (see below).                                                   |
+| Hot water ceiling  | The highest hot water setpoint Gladys may send: 65 °C by default, 65 at most. |
+| Refresh interval   | 60 s by default, 30 s to 1 h.                                                 |
+| Language           | Language of the device names, the status and the messages.                    |
+
+The controller answers for every component its software knows, even those you do not have: that is
+why the integration asks for the generator and the counts of circuits and tanks. Save, then add the
+controller from the **Discovery** tab. The "Test the connection" button reads the controller again,
+never more often than the interval.
+
+## What you see
+
+- The outdoor temperature.
+- With a vampair heat pump: flow and return temperatures, utility lock (EVU) active or not; with
+  software 25.030 or newer, its state (standby, heating, hot water, cooling, locks…) and its
+  electrical power (W).
+- With a pellet or wood boiler: the boiler temperature.
+- For each configured circuit: mode (continuous, setback, automatic, off), room setpoint, flow and
+  room temperatures.
+- For each hot water tank: release mode applied (register 502: always off, always on, programs),
+  setpoint and temperature.
+- For each buffer tank: top and bottom temperatures.
+
+A measurement feature appears only once a value of it was read. Never published as measurements: the
+values of an unplugged sensor (130.0, 270.0 or 350.0 °C), a temperature of exactly 0.0 °C (what an
+absent component reads; except outdoors, where 0.0 °C is real), a room setpoint of 0 (no setpoint from
+Modbus), a mode or state outside Solarfocus's list, a value out of range. A block of registers
+without an answer is skipped (the read goes on over a new connection, twice per poll at most) and the
+status names it. Energy counters are not published yet.
+
+## The commands
+
+Off by default. With "Allow the commands", Gladys may change:
+
+- the **mode of a circuit** in the configuration (continuous, setback, automatic);
+- the **room setpoint** of a circuit, 10 to 30 °C by 0.5 °C (Solarfocus accepts 5 to 45 °C);
+- the **release mode of a hot water tank** (always on, Monday-Sunday program, by blocks, day by day);
+- the **hot water setpoint**, by 0.5 °C, from 20 °C to the ceiling of the configuration (65 °C by
+  default). **Nothing above 65 °C is ever sent**, whatever is typed.
+
+A circuit mode is written the way Solarfocus asks (§ 6.2 of its document: all the registers of the
+circuit together): flow setpoint 0 (the controller's heating curve applies), cooling 0, the
+heating/cooling mode as read (software 22.090 or newer; older software has none), then the mode; the
+read back checks the mode, the flow setpoint and the cooling. A tank's mode is written to register
+32002 and read back from register 502, the mode the controller applies. The
+integration **never** sends a flow setpoint and **never** switches a circuit to cooling: the
+controller's dew point monitoring stays active. If another Modbus client (Loxone…) wrote a flow
+setpoint on a circuit, Gladys does not change its mode (the status says so); a stop still goes.
+
+Each command first reads the current values on the controller, writes nothing if they are already
+right, then reads back what it wrote: it succeeds only if the read back shows the value asked.
+Otherwise Gladys answers "sent, without confirmation" and reads the controller again 5 s, 25 s and
+60 s later.
+
+A command is refused, with nothing sent, when: the option is off (also checked right before each
+write), the value is out of range or above the ceiling, the circuit or tank is not in the
+configuration, the current value could not be read, a flow setpoint of another client is active
+(circuit mode), the configuration changed meanwhile, a stop was sent after it arrived, or 16 commands
+are already waiting. If the option is turned off between two writes of a circuit, the mode is not
+written (the writes already sent change nothing in the operation: 0 on a flow setpoint already at
+0, and the cooling flag acts only with a flow setpoint).
+
+Commands go one at a time, in their order of arrival, on a single connection. A scene setting several
+values sets them all: a command waiting its turn beyond 3.5 s is answered "waiting" and is sent within
+15 s of the start of its turn and 60 s of the click, or not at all.
+
+## The stops
+
+Turning a circuit **Off** (frost protection only) or a tank **Always off** **never** depends on the
+command option, the bounds, a read in progress or failed, a controller not read yet, a command
+waiting, nor on `/data` that cannot be written. A stop goes before everything; every command that
+arrived before it and has not left is dropped. Turning a circuit off writes what Solarfocus documents
+(§ 6.2.3), the mode first: mode 3, flow setpoint 0, cooling 0, then the heating/cooling mode, read at
+that moment and written back as it is (nothing on software without it, or when it cannot be read). It
+is confirmed only when the read back shows mode 3, flow setpoint 0 and cooling 0; a tank, only when
+the mode applied (register 502) is "always off". For 3 s, the stop is tried again every 250 ms (the
+writes repeat without side effects) when the connection is refused or closed, an answer is missing or
+wrong, the controller answers a Modbus exception other than 1 to 3 (busy, failure: nothing applied),
+or a register of the circuit was refused and the read back shows it; once the group was
+acknowledged, only its read back is tried again; those 3 s count from the start of
+its turn (a stop queued behind another one has them all). Gladys gets its answer within 3.5 s. The
+guard is in `/data` before the first write.
+
+A stop not confirmed is kept in `/data` with the values read before it. The integration checks the
+controller every 15 s, whatever the refresh interval: a stop that could not leave is tried again at
+each check; a stop written but not showing yet (or a circuit off without its flow setpoint and cooling
+at 0) is sent again, at least 20 s after it was sent, while the controller shows a value of before;
+only the resends the controller acknowledged count, 3 at most (a resend it refuses is tried again at
+the next check). After those 3 resends, the controller is read every 5 minutes, without writing, and
+the status shows "Stop not confirmed" until the stop shows or the guard is lifted. This guard is
+**never** lifted by the time, only:
+
+- by a read showing the stop (two reads in a row, after the time to apply it, when a command sent
+  before the stop could still land);
+- by a newer Gladys command on the same setting that left (a click, with the option);
+- by another value, read twice in a row, set at the display or by another client: it is never
+  overridden. For a stop clicked before any read, the first value read after it counts as the value of
+  before; an unknown value of before never counts as "changed elsewhere".
+
+When the configuration names another controller (a new address, another device), the guard of a stop
+of the former one is put aside: nothing more is sent to nor read at its address, the status shows it
+("Stop not confirmed on a controller no longer configured"), and it resumes if that controller is
+configured again. Being put aside is kept in `/data`: at a restart, even before the configuration is
+read, a guard put aside is neither read nor written; only the active guards are checked.
+
+A check never interrupts a command: it waits behind the commands (newer than it) and never writes over
+them; a new click on a stop interrupts a check and is written then read back like a first click. After
+a restart, the check starts at once, before the configuration is even read.
+
+A stop can fail or not be sent again in these cases:
+
+- no valid address in the configuration (or, before the configuration is read, no controller read
+  before): refused, nothing sent;
+- the controller stays unreachable or busy for 3 s: "not sent" or "sent, without confirmation", then
+  tried again every 15 s (and at a restart);
+- the controller refuses the mode itself (Modbus exception 1 to 3): "refused"; an exception on the
+  other registers of the circuit is logged and the stop goes on;
+- the read back does not show the whole stop yet, or cannot be read: "sent, without confirmation";
+- it is no longer sent again after another value read twice in a row, a newer Gladys command that
+  left, or 3 acknowledged resends; nor to a controller no longer configured;
+- `/data` holds a stop clicked "in the future" (clock set back): it is invalid and not replayed;
+  unreadable `/data` is never overwritten (the stops it holds are then lost for that start).
+
+Gladys never turns the heating back on by itself.
+
+## Known limits
+
+- No serial number over Modbus: the device is tied to the integration, not to the IP address
+  (changing the address keeps the device and its history), and another Modbus device at the same
+  address would not be detected.
+- Not supported yet: energy counters, solar, fresh water modules, circulation, photovoltaics, detailed
+  states of circuits, tanks and boilers, one-time hot water charge, external outdoor or room
+  temperature, SG Ready and utility lock.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Solarfocus in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Your Solarfocus heating | `section` | Nein | Shows the Solarfocus eco manager-touch controller (vampair heat pump, pellet or wood boiler, control centre) in Gladys through Modbus TCP (port 502) on your local network, without any cloud: outdoor temperature, heating circuits, hot water tanks, buffers, heat pump or boiler. On the display, activate Modbus TCP (Customer menu > Installer > Modbus TCP), enter its IP address and your counts below, save, then add the controller from the Discovery tab. Modes and setpoints change only if you allow the commands below; hot water never above 65 °C. Turning a circuit off and hot water "always off" never depend on that option (see the guide for when they can fail). Modbus TCP has no password: keep the controller on a trusted network. Never tested with a real device. Not affiliated with Solarfocus. |
+| IP address of the eco manager-touch | `string` | Ja | An IPv4 address or a host name (port 502 unless you add one, for example 192.168.1.70:502). |
+| Modbus unit id | `number` | Nein | The Modbus slave address of the eco manager-touch: 1. |
+| Heat generator | `select` | Nein | What produces the heat: its values are read only when chosen here (a register of a generator you do not have reads 0). |
+| Heating circuits | `number` | Nein | How many heating circuits your installation has, 0 to 8 (numbered as on the display). |
+| Hot water tanks | `number` | Nein | How many hot water tanks ("Boiler" on the display), 0 to 4. |
+| Buffer tanks | `number` | Nein | How many buffer tanks, 0 to 4. |
+| Allow the commands | `boolean` | Nein | Off by default. On: Gladys may change the mode of a heating circuit, its room setpoint (10 to 30 °C), the release mode of a hot water tank and its setpoint (20 °C to the ceiling below). Off: these commands are refused. Turning a circuit off and hot water "always off" never depend on this option. |
+| Hot water ceiling (°C) | `number` | Nein | The highest hot water setpoint Gladys may send, 20 to 65 °C (65 °C by default). Nothing above 65 °C is ever sent, whatever is typed here. |
+| Refresh interval (s) | `number` | Nein | How often the controller is read, in seconds. |
+| Language of the feature names | `select` | Nein | Used for the names of the device and features added from now on, the status and the command errors. |
+
+## So installierst du Solarfocus in Gladys
+
+1. Öffne in Gladys **Integrationen**: Solarfocus erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-solarfocus:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-solarfocus](https://github.com/LM1LC3N7/gladys-solarfocus).
+
+Solarfocus benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Solarfocus ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-solarfocus) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-solarfocus/blob/HEAD/docs/en.md)

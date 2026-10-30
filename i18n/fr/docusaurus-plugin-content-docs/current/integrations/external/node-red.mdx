@@ -1,0 +1,205 @@
+---
+title: "Intégration communautaire Node-RED, gratuite et open source"
+sidebar_label: "Node-RED"
+description: "Node-RED dans Gladys : flux low-code, déclencheurs et actions de scène, widgets. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/gboulvin--Gladys-Node-RED.png"
+keywords:
+  - "node-red"
+  - "domotique node-red"
+  - "gladys node-red"
+  - "node-red gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/gboulvin/Gladys-Node-RED instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Node-RED","description":"Node-RED dans Gladys : flux low-code, déclencheurs et actions de scène, widgets.","owner":"gboulvin","owner_avatar_url":"https://avatars.githubusercontent.com/u/78817935?v=4","repo_url":"https://github.com/gboulvin/Gladys-Node-RED","cover_url":"https://integration-store-storage.gladysassistant.com/covers/gboulvin--Gladys-Node-RED.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-29T19:02:33Z"}} />
+
+Cette intégration fait tourner [Node-RED](https://nodered.org) à côté de
+Gladys Assistant et relie les deux : vos flux peuvent démarrer des scènes
+Gladys, les scènes Gladys peuvent appeler vos flux, et Node-RED s'affiche sur
+vos tableaux de bord. Elle remplace l'intégration Node-RED native de Gladys.
+
+## Où l'utiliser
+
+- **Tous les pays, toutes les régions** : Node-RED tourne sur votre propre
+  machine Gladys, sans compte ni service cloud.
+- **Local uniquement** : tout reste sur votre réseau. Node-RED n'accède à
+  Internet que si l'un de vos flux (ou le gestionnaire de palette) le fait.
+- **Prérequis** : Gladys Assistant 5.1 ou plus récent, installé avec Docker
+  (amd64 ou arm64, par ex. un Raspberry Pi 4/5). Node-RED utilise jusqu'à
+  512 Mo de mémoire.
+
+## Installation et configuration
+
+1. Installez l'intégration **Node-RED** depuis le catalogue des intégrations.
+2. Ouvrez son onglet **Configuration**, choisissez un **nom d'utilisateur**
+   (`admin` par défaut) et un **mot de passe** (8 caractères minimum), puis
+   enregistrez.
+3. Node-RED démarre. Son éditeur s'ouvre sur `http://<adresse-gladys>:<port>` :
+   le port est choisi par Gladys et affiché dans l'écran de configuration,
+   dans le widget **État de Node-RED** et par le bouton **Tester la
+   connexion**.
+
+Node-RED ne démarre jamais sans mot de passe : son éditeur peut exécuter
+n'importe quel code sur la machine. Changer l'identifiant ou le mot de passe
+redémarre Node-RED.
+
+Options :
+
+- **Protéger les points d'accès HTTP des flux** (activé par défaut) : les
+  nœuds `http in` demandent le même identifiant et mot de passe
+  (authentification HTTP Basic). Ne la désactivez que si un appareil de votre
+  réseau doit les appeler sans identifiants.
+- **Conserver le contexte après un redémarrage** : enregistre le contexte des
+  flux et global sur disque (`localfilesystem`) au lieu de la mémoire seule.
+
+Les boutons de la configuration :
+
+- **Tester la connexion** — vérifie que Node-RED répond, affiche sa version,
+  ses flux et le port de l'éditeur.
+- **Redémarrer Node-RED** — par exemple après l'installation de nœuds depuis
+  la palette.
+
+## Appareils
+
+Dans l'onglet **Découverte** de l'intégration :
+
+- **Node-RED** — un interrupteur qui démarre ou arrête tous les flux ;
+- **Node-RED · \<nom du flux>** — un appareil par onglet de flux, un
+  interrupteur qui active ou désactive ce flux (comme le bouton de l'éditeur).
+
+Ajoutez-les pour les utiliser sur les tableaux de bord et dans les scènes
+(« contrôler un appareil », déclencheur « état d'un appareil »). Un nouveau
+flux apparaît dans l'onglet Découverte en moins de 30 secondes.
+
+## Scènes
+
+L'intégration ajoute ses propres cartes à l'éditeur de scènes, dans la
+catégorie **Intégrations**.
+
+### Déclencheurs
+
+- **Événement Node-RED** — un flux a envoyé un événement à Gladys. Indiquez
+  le nom de l'événement pour ne réagir qu'à celui-ci, ou laissez vide pour
+  tous. Les actions suivantes lisent `{{triggerEvent.data.event}}`,
+  `{{triggerEvent.data.value}}` (un nombre) et `{{triggerEvent.data.text}}`.
+- **Node-RED démarré ou arrêté** — Node-RED est devenu joignable ou
+  injoignable (variables `status` et `version`).
+
+Pour envoyer un événement depuis un nœud **function** :
+
+```js
+await global.get('gladys').trigger('door_opened', { value: 1, text: "Porte d'entrée" });
+return msg;
+```
+
+Ou avec un nœud **http request** : méthode `POST`, URL `${GLADYS_EVENT_URL}`,
+en-tête `Authorization` = `Bearer ${GLADYS_EVENT_TOKEN}`, et un corps JSON
+`{ "event": "door_opened", "value": 1, "text": "Porte d'entrée" }`. Les deux
+variables sont définies par l'intégration. Un nom d'événement compte 1 à 64
+lettres, chiffres, `_`, `-`, `.` ou `:` ; `value` est un nombre (ou un
+booléen, envoyé en 1/0) et `text` fait au plus 1 000 caractères.
+
+### Actions
+
+- **Envoyer à un flux Node-RED** — envoie en `POST`
+  `{ "message": …, "value": …, "source": "gladys-scene" }` (JSON) à un nœud
+  `http in` de vos flux, par ex. le chemin `/gladys/lumieres`. Le message
+  accepte les variables de scène. Sorties : `success` (HTTP 2xx),
+  `status_code` et `response` (le corps renvoyé par le nœud `http response`,
+  10 000 caractères maximum).
+- **Démarrer ou arrêter tous les flux** — sortie `running`.
+- **Activer ou désactiver un flux** — choisissez l'appareil du flux ; sortie
+  `enabled`.
+- **Redémarrer Node-RED** — sortie `restarted`.
+
+Exemple de flux recevant l'action : `http in` (POST, `/gladys/lumieres`) →
+`function` (lit `msg.payload.message` et `msg.payload.value`) →
+`http response`.
+
+## Tableau de bord
+
+Deux widgets sont disponibles dans l'éditeur de tableau de bord :
+
+- **État de Node-RED** — si Node-RED fonctionne, sa version, le nombre de
+  flux activés et le port de l'éditeur, avec les boutons **Démarrer / Arrêter
+  les flux** et **Redémarrer** ;
+- **Flux Node-RED** — la liste des flux avec leur badge activé / désactivé.
+
+## Migrer depuis l'intégration native
+
+1. Dans l'**ancien** éditeur Node-RED : menu **☰ → Exporter → Tous les flux →
+   Télécharger**. Notez les nœuds supplémentaires installés dans **Gérer la
+   palette**.
+2. Installez et configurez cette intégration (voir plus haut), ouvrez le
+   nouvel éditeur.
+3. Installez les mêmes nœuds depuis **Gérer la palette**, puis **☰ →
+   Importer** le fichier exporté.
+4. Ressaisissez les mots de passe des nœuds de configuration (broker MQTT,
+   identifiants HTTP…) : ils sont chiffrés et ne suivent pas l'export.
+5. Dans les nœuds broker MQTT, remplacez `localhost` / `127.0.0.1` par
+   l'**adresse IP de la machine Gladys** (voir les limites ci-dessous).
+6. Désactivez l'intégration Node-RED native de Gladys
+   (**Intégrations → Node-RED**), pour que les deux n'exécutent pas les mêmes
+   flux.
+
+## Limites
+
+- Node-RED tourne dans son propre conteneur isolé, sur un réseau privé :
+  `localhost` désigne Node-RED lui-même. Joignez les autres services de la
+  machine (broker MQTT, Zigbee2MQTT…) par l'adresse IP de la machine Gladys.
+- Pas d'accès aux ports USB / série ni de diffusion réseau (mDNS, découverte
+  UDP) depuis les flux : le conteneur n'a pas d'accès privilégié.
+- Node-RED 5 est installé ; il est mis à jour avec l'intégration.
+
+## Dépannage
+
+- **« Définissez un mot de passe »** dans l'écran de configuration : le mot de
+  passe manque ou fait moins de 8 caractères.
+- **« Node-RED a refusé les identifiants »** : appuyez sur **Redémarrer
+  Node-RED**.
+- **L'éditeur ne s'ouvre pas** : Node-RED est peut-être encore en train de
+  démarrer (jusqu'à une minute sur un Raspberry Pi), utilisez **Tester la
+  connexion**.
+- Les logs de l'intégration (avec `LOG_LEVEL=debug` pour le détail) et de
+  Node-RED sont disponibles dans l'écran de supervision de Gladys.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Node-RED dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Éditeur Node-RED | `section` | Non | Choisissez l'identifiant et le mot de passe de l'éditeur, puis enregistrez : Node-RED démarre et son éditeur s'ouvre sur http:\/\/\{\{gladys_host\}\}:\{\{port:editor\}\} (il ne démarre jamais sans mot de passe). |
+| Nom d'utilisateur | `string` | Oui | Identifiant de l'éditeur Node-RED. |
+| Mot de passe | `secret` | Oui | 8 caractères minimum. Protège l'éditeur et l'API d'administration. |
+| Protéger les points d'accès HTTP des flux | `boolean` | Non | Les nœuds « http in » exigent le même identifiant et mot de passe (HTTP Basic). Recommandé : ils sont accessibles depuis votre réseau. |
+| Conserver le contexte après un redémarrage | `boolean` | Non | Enregistre le contexte des flux et global sur disque (localfilesystem) au lieu de la mémoire seule. |
+| Envoyer des événements aux scènes Gladys | `section` | Non | Dans un nœud function : await global.get('gladys').trigger('door_opened', \{ value: 1, text: 'Porte d’entrée' \}). Ou un nœud « http request » : POST vers $\{GLADYS_EVENT_URL\} avec l'en-tête Authorization: Bearer $\{GLADYS_EVENT_TOKEN\}. Démarrez ensuite une scène avec le déclencheur « Événement Node-RED ». |
+| Vous venez de l'intégration Node-RED native ? | `section` | Non | Exportez tous vos flux depuis l'ancien éditeur (menu > Exporter > Tous les flux), importez-les ici, puis désactivez l'intégration native. Les nœuds MQTT doivent viser l'adresse IP de la machine Gladys, pas localhost. |
+
+## Comment installer Node-RED dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Node-RED apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/gboulvin/gladys-node-red:1.0.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/gboulvin/Gladys-Node-RED](https://github.com/gboulvin/Gladys-Node-RED).
+
+Node-RED nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Node-RED est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [gboulvin](https://github.com/gboulvin), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/gboulvin/Gladys-Node-RED) — [source de cette documentation](https://github.com/gboulvin/Gladys-Node-RED/blob/HEAD/docs/fr.md)

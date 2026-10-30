@@ -19,7 +19,7 @@ https://github.com/LM1LC3N7/gladys-ipx800 instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"IPX800","description":"GCE IPX800 V4 and V5 on your network: relays, inputs, pilot wire (X-4FP), X-THL sensors.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-ipx800","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ipx800.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-27T21:10:22Z"}} />
+<ExternalIntegrationHeader integration={{"name":"IPX800","description":"GCE IPX800 V4 and V5 on your network: relays, inputs, pilot wire (X-4FP), X-THL sensors.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-ipx800","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ipx800.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-29T20:54:47Z"}} />
 
 Brings a **GCE Electronics IPX800 V4 or V5** into Gladys through its local HTTP
 API: its relays, its digital inputs, the pilot-wire zones of its X-4FP
@@ -36,10 +36,23 @@ extensions and its X-THL sensors (temperature, humidity, luminosity).
    Network > API (tick the API access).
 2. In Gladys, Integrations > IPX800: choose the model (V5 or V4), type the
    address of the IPX800 (e.g. `192.168.1.50`, give it a fixed address in
-   your router) and the API key, then save.
+   your router) and the API key. On the same page, list in "Relays Gladys
+   may drive" the relays Gladys must drive, and only those (e.g. `R1, R2`;
+   see "Relays" below: never a pump, a ventilation, a door strike…). Then
+   save.
 3. "Test the connection" reads the IPX800 now (once an interval has passed
-   since the last read) and shows what it found.
-4. In Discover, create the devices you want.
+   since the last read) and shows what it found. An X-8R output (V5) is
+   listed by the code in its name in Discover (e.g. `X8R4259840-3`): add it
+   to the list now, before creating it.
+4. In Discover, create the devices you want. A listed relay comes as a
+   switch (or a light); the others come **read only** ("State (read
+   only)"): Gladys shows their state, nothing can switch them.
+
+A relay listed **after** its creation stays read only until you click
+**"Update"** on it in Discover: it then gets its switch (or light), next to
+its "State (read only)", which stays. The status of the integration says
+how many relays are read only while none is listed, and which listed relays
+still wait for "Update".
 
 The IPX800 wants the API key in the address of every request, over plain
 http: anyone who can watch your local network can read it, as with the
@@ -52,7 +65,7 @@ files of the integration.
 | On the IPX800                   | In Gladys                                                                | Code (in the name)         |
 | ------------------------------- | ------------------------------------------------------------------------ | -------------------------- |
 | Relay (V4 1-56, V5 1-8)         | read only, or a switch / light if you list it                            | `R3`                       |
-| X-8R output (V5)                | the same                                                                 | `X8R12-3` (12: its id)     |
+| X-8R output (V5)                | the same                                                                 | `X8R4259840-3` (its id)    |
 | Digital input (V4 1-56, V5 1-8) | a binary input (read only)                                               | `D3`                       |
 | X-8D / X-24D input (V5)         | the same                                                                 | `X8D5-2`, `X24D6-10`       |
 | X-4FP zone                      | pilot wire (Off, Frost protection, Eco, Comfort, Comfort -1, Comfort -2) | `FP5` (V4), `X4FP7-2` (V5) |
@@ -67,18 +80,24 @@ V4 is zone z of X-4FP e: n = 4 × (e − 1) + z).
 The IPX800 is read every 10 seconds by default (5 s at least). A value the
 IPX800 does not give (absent, a text, out of range) is not published: never
 as 0.
+On the V5, an X-THL whose own "measurement fault" IO is on publishes
+nothing until it clears, and the status names it; Gladys keeps showing its
+last published value. The ids of the V5 extensions are those the IPX800
+gives them (often 7 digits): copy the code from the device name.
 
 ## Relays: read only unless you list them
 
-Every relay is **read only** by default. To drive one from Gladys, list it in
-"Relays Gladys may drive", e.g. `R1, R3:light, X8R12-2` (`:light` makes it a
-light, otherwise a switch). A switch or a light obeys every "turn everything
+A relay you do not list is **read only**. To drive one from Gladys, list it
+in "Relays Gladys may drive", e.g. `R1, R3:light, X8R4259840-2` (`:light`
+makes it a light, otherwise a switch), preferably before creating it in
+Discover; already created, click "Update" on it in Discover. A switch or a light obeys every "turn everything
 off" of Google, Alexa, the MCP and the scenes: never list a pump, a freezer,
 a ventilation, a heating, a door strike nor a valve. A relay you remove from
 the list is read only again at once: its commands are refused, and a
 switch-off the integration was still holding for it is dropped (in memory
-and in `/data`, also at a restart). Its old feature in Gladys stays: delete
-it if you want.
+and in `/data`, also at a restart). Its switch stays on the device in Gladys
+(without effect): Gladys does not delete one feature alone; only deleting
+the device, then creating it again, removes it, with its history.
 
 ## Pilot wire
 
@@ -156,7 +175,7 @@ These are the settings IPX800 asks for in its configuration screen in Gladys.
 | Address of the IPX800 | `string` | Yes | Its IP address (or name) on your network, without path nor key; give it a fixed address in your router. |
 | Port | `number` | No | 80 unless you changed the port of its web server. |
 | API key | `secret` | Yes | Created in the IPX800 (V5: System > API, V4: Network > API). The IPX800 wants it in the address of every request, over plain http: anyone who can watch your network can read it, as with the IPX800's own apps. Kept by Gladys in its database, never shown again, sent only to the IPX800, never written in the logs. |
-| Relays Gladys may drive | `string` | No | The other relays are read only. Codes as in the device names: R1 to R8 (V4: up to R56), X8R\<id>-\<n> for an X-8R of the V5; add :light for a light, e.g. "R1, R3:light, X8R12-2". A relay listed here obeys every "turn everything off" of Google, Alexa, the MCP and the scenes: never list a pump, a freezer, a ventilation, a heating, a door strike nor a valve. |
+| Relays Gladys may drive | `string` | No | The other relays are read only. Codes as in the device names: R1 to R8 (V4: up to R56), X8R\<id>-\<n> for an X-8R of the V5 (copy it from the device name); add :light for a light, e.g. "R1, R3:light, X8R4259840-2". A relay listed here obeys every "turn everything off" of Google, Alexa, the MCP and the scenes: never list a pump, a freezer, a ventilation, a heating, a door strike nor a valve. List them before creating them in Discover; a relay already created stays read only until you click "Update" on it in Discover. |
 | Extensions of an IPX800 V4 | `string` | No | V4 only (the V5 lists its extensions itself): what your IPX800 V4 has beyond its 8 relays and 8 inputs, e.g. "R9-R16, D9-D16, FP1-FP4, THL1" (FP: pilot-wire zones 1 to 16, four per X-4FP). |
 | Pilot wire | `section` | No | Off and Frost protection need no option and go before everything else, during a pause or before the first read; they are refused only when the IPX800 or the zone is not known yet (see the guide). Eco, Comfort, Comfort -1 and Comfort -2 drive the heating: they are off by default. Once allowed, every Gladys user, every scene and the Gladys app can choose them. |
 | Allow Eco and Comfort from Gladys | `boolean` | No |  |
@@ -166,7 +185,7 @@ These are the settings IPX800 asks for in its configuration screen in Gladys.
 ## How to install IPX800 in Gladys
 
 1. In Gladys, open **Integrations**: IPX800 appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-ipx800:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-ipx800:0.1.2`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-ipx800](https://github.com/LM1LC3N7/gladys-ipx800).
 

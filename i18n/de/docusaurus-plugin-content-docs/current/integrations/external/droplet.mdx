@@ -1,0 +1,164 @@
+---
+title: "Droplet Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Droplet"
+description: "Unofficial: Droplet (Hydrific) water flow sensor on your network: flow, water index, leaks. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-droplet.png"
+keywords:
+  - "droplet"
+  - "droplet smart home"
+  - "gladys droplet"
+  - "droplet gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-droplet instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Droplet","description":"Unofficial: Droplet (Hydrific) water flow sensor on your network: flow, water index, leaks.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-droplet","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-droplet.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-29T02:08:47Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+Unofficial integration, not affiliated with Hydrific nor LIXIL. It reads a
+**Droplet** clamp-on water flow sensor on your home network, without the
+cloud, through the local WebSocket the Droplet opens (firmware 1.4.0 or
+later), as Hydrific's own library pydroplet does. **Read-only**: no setting
+nor command is ever sent to the Droplet. **Never tested with a real Droplet**: it was
+built from pydroplet and tested against a fake one; please report what you
+see.
+
+## Setup
+
+1. In the Droplet app, find the **pairing code** for local access.
+2. Give the Droplet a fixed IP address in your router.
+3. In Gladys, fill **Droplet address** (e.g. `192.168.1.30`, a port only if it
+   is not 443) and **Pairing code**, then save.
+4. The status shows `Connected to Droplet <id>` once the Droplet has sent its
+   device id. Create the device in the **Discover** tab.
+
+The pairing code is kept by Gladys in its database, never shown again, and
+sent only to the Droplet, over TLS, after its certificate was checked.
+
+## What you get
+
+| Feature             | Unit | Notes                                           |
+| ------------------- | ---- | ----------------------------------------------- |
+| Flow rate           | m³/h | the Droplet gives L/min (1 L/min = 0.06 m³/h)   |
+| Water index         | L    | built from the volume reports, see below        |
+| Server connectivity | text | as the Droplet says it (e.g. "Connected")       |
+| Signal quality      | text | ultrasonic signal, as the Droplet says it       |
+| Leak                | 0/1  | flow above the threshold set in the Droplet app |
+| Unusual flow        | 0/1  | a leaky flapper, a slow leak                    |
+
+Leak and unusual flow are only known while the Droplet reaches the Hydrific
+servers. When the Droplet is unreachable, the flow rate and the alerts stay at
+their last value in Gladys (Gladys has no "unknown" state for them): the badge
+of the device turns "unreachable" after a minute and the integration status
+says it; a scene that relies on the leak alert should check that badge too. The live values go to Gladys at most every 10 seconds; a value older
+than 2 minutes is not sent again as new (after a restart of Gladys, a device
+created).
+
+## The water index
+
+The Droplet has no meter reading: it reports the volume since its previous
+report (in mL, sometimes negative). The integration adds the reports up into
+an index in litres, kept in /data across restarts, published once a minute
+after /data holds it. Its rules:
+
+- it is never 0 and never goes down: a negative report lowers the running
+  total, and the index waits until the total climbs back above it (the status
+  says by how much when it is 1 L or more);
+- a report larger than what 200 L/min (about 53 US gal/min) bring in the time
+  since the previous report (counted up to 10 minutes) plus 10 L is **held**:
+  shown in the status (orange badge), kept in /data, never counted by time
+  nor by repetition. The reports after it count as usual. If it is right,
+  click **Accept the held volume** twice (3 seconds to 5 minutes apart): the
+  second click adds exactly what the first one listed. A negative report that
+  large is ignored (counted in the status). The 10 L are allowed per report:
+  a Droplet sending many reports of 10 L each in a burst would have them
+  counted (a margin kept on purpose, so that the first report of a
+  connection is not held for nothing);
+- the volumes reported before the Droplet gives its device id count for that
+  Droplet once it does; the volumes reported while the integration is not
+  connected to the Droplet are not known (the index stays where it was);
+- if Gladys already holds a larger index than /data (a /data lost), the index
+  goes on from Gladys's value;
+- another Droplet at the address (a replacement) is another device, with its
+  own index. Deleting and creating the device again keeps the index going.
+
+## Connection
+
+- One connection at a time. A connection that ends is opened again 30 seconds
+  after the previous attempt; while it fails, after 30 s, 1, 2, 4... up to 30
+  minutes. Never
+  two attempts less than 30 seconds apart, whatever asks (the test button, a
+  save, a restart: the time of the attempt is kept in /data).
+- A ping every 30 seconds: no answer within 15 seconds, the connection is
+  closed and opened again later.
+- **Pairing code refused** (an HTTP 401/403 at the handshake, or, with
+  firmware 1.4.1 and older, the connection closed by the Droplet before any
+  message, twice in a row): nothing is tried by itself until you save the code
+  again or the **Test the connection** button receives data from the Droplet
+  (one attempt per click, at the pace above; a connection that opens and
+  closes at once lifts nothing). Two closes at once may also mean that the
+  Droplet accepts no more local clients (Home Assistant connected too?): the
+  status says both.
+- HTTP 429 or 5xx at the handshake: a pause of 1 minute, doubled up to 6 hours,
+  kept across restarts.
+- **Certificate**: pinned at the first connection (written to /data before the
+  code is sent). Another certificate later: nothing is sent and the status
+  shows its fingerprint; if you replaced or reset the Droplet, copy it into
+  **Certificate fingerprint** and save.
+- /data that cannot be read: no certificate is learned (nothing sent unless a
+  fingerprint is typed), the index is not published (its volumes are kept in
+  memory and added once /data reads again), and the file is never
+  overwritten.
+
+## Buttons
+
+- **Test the connection**: while connected, the flow and the index; otherwise
+  one attempt when it is due.
+- **Accept the held volume**: see "The water index".
+
+## Not done
+
+No discovery on the network (type the address), no settings of the Droplet,
+no history from the Hydrific cloud.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Droplet in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Droplet | `section` | Nein | Unofficial connector, not affiliated with Hydrific nor LIXIL. It reads a Droplet clamp-on water flow sensor through its local WebSocket (TLS on your network, firmware 1.4.0 or later), as Hydrific's own pydroplet library does: the flow rate, a water index built from the volumes the Droplet reports, its connectivity to the Hydrific servers, the quality of its ultrasonic signal and its leak alerts (these two only while the Droplet reaches the Hydrific servers). Read-only: no setting nor command is ever sent to the Droplet. Never tested with a real Droplet. |
+| Droplet address | `string` | Ja | The IP address of the Droplet on your home network (shown by your router), with a port only if it is not 443. Preferably give it a fixed address. |
+| Pairing code | `secret` | Ja | The pairing code the Droplet app shows for local access. Kept by Gladys in its database, never shown again, sent only to the Droplet above, over TLS to its pinned certificate; never logged. |
+| Certificate fingerprint (optional) | `string` | Nein | Leave empty: the certificate of the Droplet is pinned at the first connection. Fill it only when the status says the certificate changed (a Droplet replaced or reset) and shows the new fingerprint: copy it here and save. |
+
+## So installierst du Droplet in Gladys
+
+1. Öffne in Gladys **Integrationen**: Droplet erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-droplet:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-droplet](https://github.com/LM1LC3N7/gladys-droplet).
+
+Droplet benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Droplet ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-droplet) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-droplet/blob/HEAD/docs/en.md)

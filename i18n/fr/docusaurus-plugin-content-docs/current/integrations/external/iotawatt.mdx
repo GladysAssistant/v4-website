@@ -1,0 +1,155 @@
+---
+title: "Intégration domotique IoTaWatt, gratuite et open source"
+sidebar_label: "IoTaWatt"
+description: "Moniteur d’énergie IoTaWatt en local : puissance, énergie et tension par circuit. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-iotawatt.jpg"
+keywords:
+  - "iotawatt"
+  - "domotique iotawatt"
+  - "gladys iotawatt"
+  - "iotawatt gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/William-De71/gladys-iotawatt instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"IoTaWatt","description":"Moniteur d’énergie IoTaWatt en local : puissance, énergie et tension par circuit.","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-iotawatt","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-iotawatt.jpg","type":"device","version":"0.1.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-10-28T13:17:34Z"}} />
+
+## Présentation
+
+Cette intégration amène vos moniteurs d’énergie **IoTaWatt** dans Gladys. Un IoTaWatt est un moniteur d’énergie Wi-Fi en matériel libre : des pinces ampèremétriques (CT) sur les circuits de votre tableau électrique, et un transformateur de tension (VT) sur une prise. L’intégration le lit **sur votre réseau local**, par son API locale documentée (`/status` et `/query`), et n’y écrit jamais : rien ne sort de chez vous. Elle n’est pas affiliée à IoTaWatt, Inc.
+
+- Un appareil pour l’IoTaWatt lui-même (signal Wi-Fi, pile de l’horloge, micrologiciel), et un appareil par entrée ou sortie : puissance, énergie consommée, énergie injectée, tension, intensité.
+- Des index d’énergie comptés chaque minute à partir du journal de l’IoTaWatt : un redémarrage de Gladys ou de l’intégration ne perd rien.
+- Deux widgets de tableau de bord : un IoTaWatt avec ses voies les plus chargées ; une voie avec un graphique tiré du journal de l’IoTaWatt.
+- Déclencheurs de scène : ne répond plus, répond de nouveau, redémarré.
+- Action de scène : l’énergie d’une voie sur une période (aujourd’hui, hier, le mois dernier…).
+
+Transport : local. L’intégration parle à l’IoTaWatt en HTTP sur votre réseau ; aucune donnée ne part sur Internet.
+
+## Prérequis
+
+- Gladys Assistant 5.3.0 ou plus récent.
+- Un IoTaWatt configuré avec son application de configuration (entrées nommées, sorties si vous en voulez), sur le même réseau que Gladys.
+- Son adresse (IP ou nom), ou laissez l’intégration le trouver : l’IoTaWatt s’annonce en mDNS sous son nom d’appareil, et l’intégration n’essaie que les noms qui contiennent « iota » (le nom par défaut est « IotaWatt »). Un appareil renommé doit être saisi à la main.
+- Aucun mot de passe, sauf si vous en avez défini un dans l’IoTaWatt (Setup → Passwords) sans autoriser l’accès local sans mot de passe.
+
+L’intégration lit la puissance de chaque voie toutes les 10, 30 ou 60 secondes (une requête), et chaque minute l’énergie des minutes pas encore comptées (une requête de plus). Un IoTaWatt est un petit module ESP8266 : les requêtes passent une par une, jamais en parallèle.
+
+## Configuration
+
+| Champ                   | Rôle                                                                                                                          |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| Adresses                | Adresses IP ou noms de vos IoTaWatt, séparés par des virgules (`192.168.1.20, iotawatt.local`) ; vide : recherche automatique |
+| Utilisateur             | `user` (lecture seule, suffisant) ou `admin` ; utilisé seulement avec un mot de passe                                         |
+| Mot de passe            | Seulement si l’IoTaWatt en demande un (un secret : jamais réaffiché, jamais écrit dans les journaux ni dans `/data`)          |
+| Lecture de la puissance | Toutes les 10 secondes, 30 secondes (par défaut) ou minutes ; l’énergie est comptée chaque minute quel que soit ce réglage    |
+| Langue des textes       | Noms des fonctionnalités, textes des scènes et erreurs ; automatique suit la langue du dernier widget affiché (en/fr/de/es)   |
+
+Boutons :
+
+- **Rechercher et tester** cherche les IoTaWatt (adresses saisies et recherche sur le réseau), les lit et propose leurs voies dans l’écran Découverte.
+- **Diagnostic** écrit ce que sait l’intégration dans ses journaux, sans le mot de passe.
+
+Le mot de passe sert à l’authentification HTTP Digest : il ne circule jamais sur le réseau, seule une réponse calculée à partir de lui. Quand l’« accès local » est autorisé dans l’IoTaWatt, une requête venant du même réseau n’a pas besoin de mot de passe ; les requêtes de l’intégration sortent par la machine de Gladys, elles viennent donc en général du même réseau.
+
+## Utilisation
+
+### Appareils
+
+Après la configuration, ouvrez **Découverte** : l’IoTaWatt et chacune de ses voies sont proposés, nommés d’après l’IoTaWatt (« Heat Pump (IoTaWatt) »). N’ajoutez que les voies qui vous intéressent, placez chacune dans sa pièce et renommez-la si vous voulez : les widgets et les scènes utilisent le nom que vous lui donnez.
+
+| Appareil                      | Fonctionnalité           | Catégorie / type                     | Unité   |
+| ----------------------------- | ------------------------ | ------------------------------------ | ------- |
+| IoTaWatt                      | Signal Wi-Fi             | `signal` / `integer`                 | — (dBm) |
+| IoTaWatt                      | Pile de l’horloge faible | `battery-low` / `binary`             | —       |
+| IoTaWatt                      | Micrologiciel            | `text` / `text`                      | —       |
+| Entrée ou sortie de puissance | Puissance                | `energy-sensor` / `power`            | W       |
+| Entrée ou sortie de puissance | Énergie consommée        | `energy-sensor` / `index`            | kWh     |
+| Entrée ou sortie de puissance | Énergie injectée         | `energy-production-sensor` / `index` | kWh     |
+| Entrée/sortie de tension      | Tension                  | `energy-sensor` / `voltage`          | V       |
+| Sortie d’intensité            | Intensité                | `energy-sensor` / `current`          | A       |
+
+Toutes les fonctionnalités sont en lecture seule. La puissance est signée : une voie qui injecte (une pince sur l’arrivée pendant que des panneaux solaires produisent) devient négative. **Énergie injectée** n’apparaît qu’une fois la voie vue négative (sur les 7 derniers jours à la première lecture, ou plus tard) : appuyez sur **Mettre à jour** dans l’écran Découverte pour l’ajouter à un appareil existant.
+
+Les index d’énergie partent de 0 quand l’intégration voit une voie pour la première fois ; Gladys n’utilise que leurs augmentations (consommation, coût). Chaque minute, l’intégration demande à l’IoTaWatt l’énergie de chaque minute pas encore comptée et ajoute les minutes positives à « Énergie consommée », les négatives à « Énergie injectée ». Après un arrêt de Gladys ou de l’intégration, elle rattrape à partir du journal de l’IoTaWatt, jusqu’à 7 jours en arrière.
+
+Une entrée garde son appareil quand vous la renommez dans l’IoTaWatt (elle est connue par son numéro de voie). Une sortie n’est connue que par son nom : renommée, elle est proposée comme un nouvel appareil. Les sorties en VA, VAR, PF ou Hz n’ont pas de fonctionnalité correspondante dans Gladys et ne sont pas proposées.
+
+### Widgets du tableau de bord
+
+![Les deux widgets : IoTaWatt avec la puissance de ses cinq voies les plus chargées et son état, et Voie IoTaWatt deux fois, le réseau avec 24 heures de puissance et la pompe à chaleur avec 14 jours d’énergie (illustration générée, pas une capture d’écran)](https://raw.githubusercontent.com/William-De71/gladys-iotawatt/main/docs/assets/widgets.fr.png)
+
+- **IoTaWatt** : un IoTaWatt (à choisir dans les réglages du widget ; le premier par défaut) : la puissance de ses cinq voies les plus chargées (une puissance négative, injectée, en vert), puis son état, la dernière lecture, le signal Wi-Fi, la pile de l’horloge, depuis quand il est allumé et le micrologiciel.
+- **Voie IoTaWatt** : une voie (la première par défaut) : sa puissance actuelle, l’énergie d’aujourd’hui et d’hier, et un graphique tiré du journal de l’IoTaWatt : puissance sur 24 heures, énergie par jour sur 14 jours, ou énergie par mois sur 12 mois (réglage **Graphique**). Pour une voie de tension ou d’intensité, la valeur actuelle et 24 heures de graphique. L’historique est demandé à l’IoTaWatt et gardé 5 minutes.
+
+### Scènes
+
+Déclencheurs (une fois par changement, jamais à la première lecture, jamais à cause d’une action de scène), filtrés par IoTaWatt (l’appareil de l’IoTaWatt lui-même, pas une voie) :
+
+- **IoTaWatt : ne répond plus** : pas de réponse à 3 lectures de suite, pendant au moins une minute (coupure de courant, Wi-Fi perdu, plantage) ; variables : nom, adresse, adresse MAC, lectures manquées, message.
+- **IoTaWatt : répond de nouveau** : il répond de nouveau ; variable : minutes sans réponse.
+- **IoTaWatt : redémarré** : sa durée de fonctionnement est revenue en arrière (coupure de courant, mise à jour, plantage) ; variable : heures de marche avant.
+
+Une comparaison comme « puissance au-dessus de 3 000 W » n’est pas un déclencheur de l’intégration : utilisez une condition d’appareil de Gladys sur la fonctionnalité Puissance, avec votre propre seuil.
+
+Action :
+
+- **IoTaWatt : énergie d’une voie** : l’énergie (kWh) et la puissance moyenne (W) d’une voie de puissance sur une période (aujourd’hui, hier, cette semaine depuis dimanche, la semaine dernière, ce mois-ci, le mois dernier, cette année, dernières 24 heures, 7 derniers jours, 30 derniers jours), avec le début et la fin de la période et une phrase (`summary`). L’IoTaWatt la calcule à partir de son propre journal, à son heure locale.
+
+Exemples :
+
+- Chaque matin à 8 h → **IoTaWatt : énergie d’une voie** (Heat Pump, hier) → envoyer son `summary`.
+- Quand la **Puissance** du four dépasse 3 000 W (condition d’appareil) → éteindre le chauffe-eau.
+- Quand **IoTaWatt : ne répond plus** → envoyer « \{\{triggerEvent.data.meter_name\}\} ne répond plus : coupure de courant ? ».
+
+## Dépannage
+
+- **« Aucun IoTaWatt trouvé »** : saisissez son adresse dans **Adresses**, puis appuyez sur **Rechercher et tester**. La recherche automatique n’essaie que les noms mDNS qui contiennent « iota ».
+- **« demande un mot de passe, ou refuse celui saisi »** : l’IoTaWatt a des mots de passe ; saisissez l’utilisateur (`user` suffit) et son mot de passe, ou autorisez l’accès local dans l’IoTaWatt.
+- **« répond, mais ce n’est pas un IoTaWatt »** : l’adresse est celle d’un autre appareil ; elle est laissée de côté 30 minutes.
+- **Une voie s’appelle « Input 3 »** : la liste des séries ne correspondait pas aux entrées ; elle est relue toutes les 10 minutes.
+- **Pas d’« Énergie injectée »** : la voie n’a jamais été vue négative ; dès qu’elle l’est, appuyez sur **Mettre à jour** dans l’écran Découverte.
+- **Les valeurs sont anciennes** : l’IoTaWatt ne répond pas ; son adresse a peut-être changé : avec la recherche automatique, il est recherché de nouveau toutes les 30 minutes (un IoTaWatt est connu par son adresse MAC).
+- Pour un signalement, donnez les versions de Gladys, de l’intégration et du micrologiciel de l’IoTaWatt, le message de **Rechercher et tester** et les lignes « IoTaWatt diagnostic » écrites par **Diagnostic** dans les journaux de l’intégration (`DEBUG=gladys-integration-sdk` ajoute les journaux du SDK). Ne collez jamais votre mot de passe.
+- Limites : jamais testée avec un vrai IoTaWatt (écrite d’après la documentation officielle et le micrologiciel 02_08_04) ; les sorties en VA, VAR, PF et Hz ne sont pas proposées ; les index partent de 0, pas de l’historique de l’IoTaWatt.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par IoTaWatt dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| IoTaWatt sur votre réseau | `section` | Non | L’intégration lit votre IoTaWatt sur le réseau local, par son API locale, et n’y écrit jamais : rien ne sort de chez vous. Laissez les adresses vides pour le trouver automatiquement (son nom doit contenir « iota », comme par défaut), ou saisissez son adresse IP ou son nom. Non affiliée à IoTaWatt, Inc. |
+| Adresses | `string` | Non | Adresses IP ou noms de vos IoTaWatt, séparés par des virgules. Vide : recherche automatique. |
+| Mot de passe (facultatif) | `section` | Non | Seulement si vous avez défini des mots de passe dans l’application de configuration de l’IoTaWatt (Setup → Passwords) sans autoriser l’accès local sans mot de passe. Le compte « user » suffit : il ne peut que lire. |
+| Utilisateur | `select` | Non |  |
+| Mot de passe | `secret` | Non |  |
+| Options | `section` | Non |  |
+| Lecture de la puissance | `select` | Non | Fréquence de lecture de la puissance. L’énergie est comptée chaque minute à partir du journal de l’IoTaWatt, quel que soit ce réglage. |
+| Langue des textes | `select` | Non | Noms des fonctionnalités, textes des scènes et erreurs. Automatique : la langue du dernier widget affiché. |
+
+## Comment installer IoTaWatt dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : IoTaWatt apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/william-de71/gladys-iotawatt:0.1.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/William-De71/gladys-iotawatt](https://github.com/William-De71/gladys-iotawatt).
+
+IoTaWatt nécessite Gladys `>=5.3.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+IoTaWatt est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [William-De71](https://github.com/William-De71), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/William-De71/gladys-iotawatt) — [source de cette documentation](https://github.com/William-De71/gladys-iotawatt/blob/HEAD/docs/fr.md)

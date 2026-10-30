@@ -1,0 +1,206 @@
+---
+title: "Intégration domotique Weishaupt heat pump, gratuite et open source"
+sidebar_label: "Weishaupt heat pump"
+description: "Pompes à chaleur Weishaupt à Modbus TCP intégré : températures, circuits, eau chaude. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-weishaupt.png"
+keywords:
+  - "weishaupt heat pump"
+  - "domotique weishaupt heat pump"
+  - "gladys weishaupt heat pump"
+  - "weishaupt heat pump gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-weishaupt instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Weishaupt heat pump","description":"Pompes à chaleur Weishaupt à Modbus TCP intégré : températures, circuits, eau chaude.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-weishaupt","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-weishaupt.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-28T11:52:40Z"}} />
+
+Cette intégration affiche votre pompe à chaleur Weishaupt dans Gladys par son interface **Modbus TCP
+intégrée**, sur votre réseau local, sans cloud. Si vous l’autorisez, elle peut aussi changer les modes
+et les consignes et lancer une charge d’eau chaude forcée.
+
+> **Jamais testé avec un vrai appareil.** L’intégration suit la liste de points de Weishaupt « Modbus
+> TCP (WWP) » 83807301 (1/2025-11) et l’intégration Home Assistant `weishaupt_modbus`, et n’a été
+> testée que contre une pompe simulée. Sans lien avec Weishaupt.
+
+## Ce qu’il faut
+
+- Une pompe à chaleur Weishaupt dont la régulation intègre **Modbus TCP** : WAB, WBB, WSB ou WGB,
+  avec un logiciel de régulation récent (Weishaupt : un point absent peut demander une mise à jour). Les pompes qui n’offrent que le **module Modbus séparé
+  de Weishaupt** ne sont **pas prises en charge** (autre produit, autre table de registres). Le portail
+  Weishaupt WEM (cloud) n’est pas utilisé.
+- **Modbus TCP activé** sur la pompe : « Utilisateur » → « Réglages » → « Modbus TCP », « Paramètre :
+  Marche », et dans « Réseau » / « Masque » une plage qui contient l’adresse de Gladys (le plus sûr :
+  n’autoriser que l’adresse IP de Gladys).
+- Une adresse IP fixe pour la pompe (réservez-la dans votre box).
+- Le Modbus TCP n’a **pas de mot de passe** : tout appareil autorisé peut lire et écrire les réglages
+  de la pompe. Gardez-la sur un **réseau de confiance**, jamais exposée à Internet.
+
+## Configuration
+
+| Champ                          | Rôle                                                                                           |
+| ------------------------------ | ---------------------------------------------------------------------------------------------- |
+| Adresse IP de la pompe         | IPv4 ou nom d’hôte, port 502 sauf si vous en ajoutez un (`192.168.1.60:502`).                  |
+| Identifiant d’unité Modbus     | 1.                                                                                             |
+| Circuits de chauffage          | Les numéros de vos circuits, de 1 à 4, séparés par des virgules (`1` par défaut).              |
+| Autoriser les commandes        | Désactivé par défaut (voir plus bas).                                                          |
+| Plafond d’eau chaude (°C)      | La consigne d’eau chaude la plus haute que Gladys peut envoyer : 65 °C par défaut, 30 à 65 °C. |
+| Intervalle de rafraîchissement | 60 s par défaut, de 30 s à 1 h.                                                                |
+| Langue                         | Langue des noms de l’appareil, du statut et des messages.                                      |
+
+Enregistrez, puis ajoutez la pompe depuis l’onglet **Découverte**. Le bouton « Tester la connexion »
+relit la pompe, jamais plus souvent que l’intervalle.
+
+## Ce que vous voyez
+
+- Mode de fonctionnement du système (automatique, chauffage, rafraîchissement, été, veille, second
+  générateur), état du système et état de la pompe (chauffage, eau chaude, dégivrage, veille, coupure
+  du distributeur, hors-gel…, en textes stables comme `heating`, `hot-water`, `defrost`).
+- Défaut (0/1, registre 33102), code d’erreur et code d’avertissement (`none`, ou le numéro du code
+  en texte : à chercher dans la notice de la pompe).
+- Demande de puissance (%), températures : extérieures 1 et 2, départ et retour de la pompe,
+  bouteille de découplage, régénératif, ballon tampon, départ commun (B7), eau chaude et consigne
+  d’eau chaude en cours.
+- Consignes d’eau chaude (normale, réduite) et charge d’eau chaude forcée (arrêt, ou les minutes
+  restantes arrondies au choix suivant par pas de 5 : 27 minutes restantes s’affichent « 30 min »).
+- Second générateur et résistances électriques 1 et 2 (marche/arrêt), quand la pompe les donne.
+- Pour chaque circuit configuré : mode, fête/pause (`automatic`, `pause-90-min`, `party-60-min`…),
+  consignes ambiantes (confort, normale, réduite), température et humidité ambiantes, consigne
+  ambiante en cours, températures de départ et de départ visée.
+
+Une fonctionnalité apparaît dès qu’une valeur en a été lue. Les valeurs spéciales ne sont jamais
+publiées comme des mesures : « pas de sonde », « coupure », « court-circuit » et les états numériques
+d’une sonde, « pas de demande de consigne » (1 ou -32768) sur une consigne, 0xFFFF sur un
+pourcentage, un état hors de sa liste, une valeur hors plage. Un texte
+(état, code) n’est jamais publié comme un nombre.
+
+Non affichés : les statistiques d’énergie de la pompe (kWh du jour, du mois, de l’année : elles
+repartent à zéro à chaque période, ce n’est pas un index de compteur), la puissance calorifique que
+`weishaupt_modbus` calcule d’après la courbe d’un seul modèle, les entrées/sorties et les réglages
+installateur.
+
+## Les commandes
+
+Désactivées par défaut. Avec « Autoriser les commandes », Gladys peut changer :
+
+- le mode de fonctionnement du système (automatique, chauffage, rafraîchissement, été, second
+  générateur) ;
+- le mode d’un circuit configuré (automatique, confort, normal, réduit) ;
+- les consignes ambiantes d’un circuit (confort, normale, réduite), de 16 à 28 °C par pas de 0,5 °C,
+  en gardant confort ≥ normale ≥ réduite d’après la pompe relue juste avant ;
+- les consignes d’eau chaude (normale, réduite), de 5,5 °C jusqu’au plafond de la configuration
+  (65 °C par défaut), par pas de 0,5 °C, en gardant normale ≥ réduite. **Rien au-dessus de 65 °C
+  n’est jamais envoyé**, quoi qu’il soit saisi. La pompe refuse une consigne au-dessus de sa propre
+  température maximale d’eau chaude (réglage installateur, 60 °C d’usine) : Gladys répond alors
+  « refusée » ;
+- la charge d’eau chaude forcée (5 à 240 minutes, par pas de 5).
+
+Chaque commande relit d’abord les valeurs actuelles sur la pompe, n’écrit rien si c’est déjà bon,
+puis relit la valeur écrite : elle ne réussit que si la relecture montre la valeur demandée. Sinon
+Gladys répond « envoyée, sans confirmation » et relit la pompe 5 s, 25 s et 60 s après.
+
+Une commande est refusée, rien n’est envoyé, quand : l’option est désactivée (vérifiée aussi juste
+avant l’écriture), la valeur est hors limites, au-dessus du plafond ou casse l’ordre des consignes, le
+circuit n’est pas dans la configuration, les valeurs actuelles n’ont pas pu être relues, la
+configuration a changé entre-temps, un arrêt est parti après son arrivée, un arrêt envoyé à cette pompe
+n’est pas encore confirmé (seul un nouveau choix sur ce même réglage part alors), 16 commandes
+attendent déjà, ou ce réglage a déjà été changé 6 fois dans la dernière heure ou 20 fois dans les dernières 24 heures (gardé après un redémarrage).
+Ces limites protègent la mémoire de la pompe, qui garde ces réglages dans une EEPROM de 100 000
+écritures sur toute sa vie (Weishaupt) ; elles ne s’appliquent jamais à une baisse de consigne ni à un
+arrêt.
+
+Les commandes partent une à une, dans l’ordre d’arrivée, sur une seule connexion. Une scène qui règle
+plusieurs valeurs les règle toutes : une commande qui attend encore son tour après 3,5 s reçoit la
+réponse « en attente » et part dans les 15 s qui suivent le clic, ou pas du tout.
+
+## Les arrêts
+
+Mettre le mode du système sur **Veille**, un circuit sur **Veille** ou la charge forcée sur **Arrêt**
+ne dépend pas de l’option des commandes, des bornes, d’une lecture en cours ou en échec, d’une pompe
+pas encore lue, ni d’une commande en attente. Un arrêt passe avant tout ; toute commande arrivée avant
+lui et pas encore partie est abandonnée. Une connexion refusée est retentée toutes les 250 ms pendant
+3 s ; Gladys reçoit sa réponse en 3,5 s au plus.
+
+Un arrêt non confirmé est **tenu** dans `/data` (avec la valeur d’avant) jusqu’à ce qu’une lecture le
+montre : il n’est pas abandonné au bout d’un temps. L’intégration vérifie la pompe toutes les 15 s
+pendant 3 minutes, puis toutes les minutes, quel que soit l’intervalle : un arrêt qui n’a pas pu partir
+est retenté à chaque vérification ; un arrêt écrit mais pas encore visible est renvoyé tant que la pompe
+montre la valeur d’avant (au moins 20 s après la dernière écriture, trois fois au plus par clic :
+chacune est une écriture dans la mémoire de la pompe). Ensuite l’arrêt reste tenu sans écrire jusqu’à
+ce qu’une lecture le montre, un nouveau clic ou un changement sur la pompe. Une vérification
+n’interrompt jamais une commande ; un nouveau clic sur un arrêt interrompt une vérification et est
+écrit puis relu comme tout clic. Après un redémarrage, la vérification part tout de suite, avant même la
+lecture de la configuration. Les arrêts ne sont jamais limités par le quota horaire des commandes.
+
+Tant qu’un arrêt est tenu, les autres commandes vers la même pompe sont refusées.
+
+Un arrêt peut échouer ou ne plus être tenu dans ces cas :
+
+- aucune adresse valide dans la configuration (ou, avant la lecture de la configuration, aucune pompe
+  lue auparavant) : refusé, rien n’est envoyé ;
+- la pompe reste injoignable pendant 3 s : « non envoyée », puis retenté à chaque vérification jusqu’à
+  ce qu’il puisse partir ;
+- la pompe répond une exception Modbus : « refusée » ou « envoyée, sans confirmation » selon le code ;
+- la relecture ne montre pas encore l’arrêt : « envoyée, sans confirmation », puis tenu ;
+- il n’est plus tenu dès qu’une lecture le montre, dès qu’une commande Gladys plus récente sur le même
+  réglage est partie (un clic avec l’option activée), dès que deux lectures de suite montrent une autre
+  valeur que celle d’avant l’arrêt (réglée sur la pompe ; pour un arrêt cliqué avant toute lecture, la
+  première valeur lue après lui est la valeur d’avant), ou dès que la configuration désigne une autre
+  pompe (adresse, port ou identifiant d’unité) ;
+- un arrêt de `/data` daté dans le futur (horloge reculée) : invalide, il n’est pas rejoué.
+
+Gladys ne relance jamais la pompe d’elle-même.
+
+## Limites connues
+
+- Pas de numéro de série en Modbus : l’appareil est lié à l’intégration, pas à l’adresse IP (changer
+  l’adresse garde l’appareil et son historique), et un autre appareil Modbus à la même adresse ne
+  serait pas détecté.
+- Les registres sont ceux de la liste Weishaupt 83807301 (1/2025-11) ; la fête/pause d’un circuit
+  (41x04) ne vient que de `weishaupt_modbus` et est lue à part, sans faire échouer la lecture si la
+  pompe ne la sert pas. La liste prévient que certains logiciels Modbus décalent les adresses de un :
+  l’intégration les envoie telles que listées, comme `weishaupt_modbus`. Le délai d’application d’une
+  valeur écrite n’est pas documenté (l’intégration attend 20 s avant de renvoyer un arrêt).
+- Le registre 30005 (« Fehlerfrei ») est lu mais pas affiché : Weishaupt et `weishaupt_modbus` ne
+  lui donnent pas le même format ; le défaut vient du registre 33102.
+- Deux clients Modbus à la fois (Home Assistant et Gladys) peuvent ne pas être acceptés par la pompe.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Weishaupt heat pump dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre pompe à chaleur Weishaupt | `section` | Non | Affiche votre pompe à chaleur Weishaupt à Modbus TCP intégré (WAB, WBB, WSB, WGB) dans Gladys sur votre réseau local (port 502), sans cloud : températures, états, défaut et codes, circuits 1 à 4, eau chaude, second générateur. Sur la pompe, réglez Utilisateur > Réglages > Modbus TCP sur « Marche » avec Gladys dans le réseau autorisé, saisissez ici son adresse IP, enregistrez, puis ajoutez-la depuis l’onglet Découverte. Le module Modbus séparé de Weishaupt n’est pas pris en charge. Modes, consignes et charge forcée ne changent que si vous autorisez les commandes ci-dessous ; eau chaude jamais au-dessus du plafond ci-dessous (65 °C au plus). La veille, celle d’un circuit et l’arrêt de la charge forcée ne dépendent jamais de cette option (voir le guide pour les cas d’échec). Le Modbus TCP n’a pas de mot de passe : gardez la pompe sur un réseau de confiance. Jamais testé avec un vrai appareil. Sans lien avec Weishaupt. |
+| Adresse IP de la pompe à chaleur | `string` | Oui | Une adresse IPv4 ou un nom d’hôte (port 502 sauf si vous en ajoutez un, par exemple 192.168.1.60:502). |
+| Identifiant d’unité Modbus | `number` | Non | L’identifiant d’unité Modbus de la pompe à chaleur : 1. |
+| Circuits de chauffage | `string` | Non | Les numéros des circuits de chauffage de votre installation, de 1 à 4, séparés par des virgules (par exemple 1, 2). |
+| Autoriser les commandes | `boolean` | Non | Désactivé par défaut. Activé : Gladys peut changer le mode de fonctionnement du système, le mode d’un circuit de chauffage, les consignes ambiantes d’un circuit (confort, normale, réduite : 16 à 28 °C), les consignes d’eau chaude (5,5 °C jusqu’au plafond ci-dessous) et lancer une charge d’eau chaude forcée. Désactivé : ces commandes sont refusées. La veille, la veille d’un circuit et l’arrêt de la charge forcée ne dépendent jamais de cette option. |
+| Plafond d’eau chaude (°C) | `number` | Non | La consigne d’eau chaude la plus haute que Gladys peut envoyer, de 30 à 65 °C (65 °C par défaut). Rien au-dessus de 65 °C n’est jamais envoyé, quoi qu’il soit saisi ici. La pompe refuse aussi plus que sa propre température maximale d’eau chaude (réglage installateur, 60 °C d’usine). |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture de la pompe à chaleur, en secondes. |
+| Langue des noms des fonctionnalités | `select` | Non | Sert aux noms de l’appareil et des fonctionnalités ajoutés désormais, au statut et aux erreurs des commandes. |
+
+## Comment installer Weishaupt heat pump dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Weishaupt heat pump apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-weishaupt:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-weishaupt](https://github.com/LM1LC3N7/gladys-weishaupt).
+
+Weishaupt heat pump nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Weishaupt heat pump est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-weishaupt) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-weishaupt/blob/HEAD/docs/fr.md)

@@ -1,0 +1,156 @@
+---
+title: "Intégration domotique Shodan, gratuite et open source"
+sidebar_label: "Shodan"
+description: "Ce qu’Internet voit de votre maison, par Shodan : ports ouverts, vulnérabilités, alertes. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-shodan.jpg"
+keywords:
+  - "shodan"
+  - "domotique shodan"
+  - "gladys shodan"
+  - "shodan gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/William-De71/gladys-shodan instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Shodan","description":"Ce qu’Internet voit de votre maison, par Shodan : ports ouverts, vulnérabilités, alertes.","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-shodan","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-shodan.jpg","type":"device","version":"0.1.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-10-28T18:32:02Z"}} />
+
+## Présentation
+
+Cette intégration affiche dans Gladys ce qu’Internet voit de votre maison, tel que **Shodan** le connaît. Shodan scanne tout Internet et relève les ports ouverts, les logiciels qui y répondent et les vulnérabilités connues (CVE) de ces logiciels. L’intégration se contente de **demander** à Shodan ce qu’il sait des adresses que vous surveillez : elle ne scanne jamais rien depuis Gladys, et seules les adresses sont envoyées à Shodan. Elle ne fait que lire. Elle n’est pas affiliée à Shodan.
+
+- Un appareil par adresse surveillée : l’adresse publique de la maison, et jusqu’à 10 autres adresses publiques ou noms d’hôte.
+- Trois widgets : l’exposition Internet de chaque adresse, la plus préoccupante d’abord ; une adresse avec ses services et ses vulnérabilités ; le compte Shodan et ses crédits.
+- Déclencheurs de scène : port ouvert, port fermé, vulnérabilité trouvée, vulnérabilité disparue, nouvelle étiquette, IP publique changée, clé API refusée.
+- Actions de scène : les valeurs d’une adresse, consulter n’importe quelle adresse, demander à Shodan de scanner une adresse.
+
+Deux sources :
+
+- **Sans clé API** : [Shodan InternetDB](https://internetdb.shodan.io), gratuit pour un usage non commercial, sans compte, rafraîchi une fois par semaine par Shodan. Il donne les ports ouverts, les identifiants CVE, les noms d’hôte, les étiquettes Shodan et les CPE — ni produit ni version, ni score CVSS, ni date du dernier scan.
+- **Avec la clé API d’un compte Shodan** (facultative, [account.shodan.io](https://account.shodan.io)) : la consultation d’hôte de l’[API Shodan](https://developer.shodan.io/api) ajoute le logiciel et la version de chaque service, le score CVSS et la description de chaque CVE, la date à laquelle Shodan a vu l’adresse pour la dernière fois et l’organisation ou le FAI ; plus l’offre et les crédits (widget du compte) et le scan à la demande (offres payantes seulement).
+
+Transport : cloud. Les données viennent de `internetdb.shodan.io` et `api.shodan.io`. L’intégration garde dans `/data/shodan.json` (mode 0600) ses lectures, ce que savent les déclencheurs, les crédits et les scans demandés — jamais la clé API.
+
+## Prérequis
+
+- Gladys Assistant 5.3.0 ou plus récent : les instances plus anciennes ne peuvent pas installer l’intégration.
+- Un accès à Internet.
+- Facultatif : un compte Shodan et sa clé API. Shodan InternetDB n’est gratuit que pour un usage non commercial.
+- Ne surveillez que vos propres adresses.
+
+Fraîcheur des données : un minuteur vérifie chaque minute ce qui est dû. L’adresse publique est demandée à Shodan toutes les 15 minutes ; chaque adresse est lue toutes les 6 heures, ou tout de suite quand son IP a changé ; une lecture échouée est retentée 30 minutes plus tard ; les crédits sont lus toutes les 6 heures. Les requêtes partent à 1,1 s d’intervalle (Shodan demande une requête par seconde au plus) ; un 429 ou une erreur serveur ne met en pause que ce service (InternetDB ou l’API). InternetDB change environ une fois par semaine : la plupart des lectures n’apportent rien de nouveau, c’est normal.
+
+## Configuration
+
+| Champ                                      | Signification                                                                                                                                                                                                                                                                                                               |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Surveiller l’adresse publique de la maison | Activé par défaut : l’adresse qu’utilise votre box, demandée à Shodan toutes les 15 minutes ; un changement d’adresse est suivi                                                                                                                                                                                             |
+| Autres adresses                            | Adresses IP publiques ou noms d’hôte (un nom DNS dynamique, un serveur), séparés par des virgules, 10 au maximum ; les noms d’hôte sont résolus par le DNS du conteneur à chaque lecture (IPv4 d’abord) ; les entrées privées, locales (`.local`, `.lan`) ou invalides sont ignorées et listées dans l’état de la connexion |
+| Clé API                                    | Facultative, un secret (jamais réaffichée, jamais écrite dans les journaux ni dans `/data`)                                                                                                                                                                                                                                 |
+| Langue des textes                          | Noms des fonctionnalités, textes des scènes et erreurs ; automatique suit la langue du dernier widget affiché (en/fr/de/es)                                                                                                                                                                                                 |
+
+Boutons :
+
+- **Tester la connexion** demande l’adresse publique, lit chaque adresse et vérifie la clé tout de suite, puis répond par exemple « Shodan répond. Adresse publique : 203.0.113.7. 1 adresse(s) lue(s) avec API Shodan. Offre : dev, 87 crédit(s) de scan. »
+- **Diagnostic** écrit ce que sait l’intégration dans ses journaux, jamais la clé.
+
+Quand Shodan refuse la clé (HTTP 401), InternetDB répond en attendant, le déclencheur « clé API refusée » part une fois et la clé est réessayée toutes les 6 heures. Quand l’offre de la clé refuse les consultations d’hôte (HTTP 403), InternetDB est utilisé pendant 24 heures.
+
+## Utilisation
+
+### Appareils
+
+Après la configuration, ouvrez **Découverte** : « Shodan : IP publique » est proposé pour l’adresse publique — un seul appareil, qui reste le même quand l’adresse change — et « Shodan &lt;adresse&gt; » pour chaque adresse saisie. Ajoutez ceux que vous voulez.
+
+| Fonctionnalité | Catégorie / type             | Contenu                                                |
+| -------------- | ---------------------------- | ------------------------------------------------------ |
+| Ports ouverts  | `counter-sensor` / `integer` | Nombre de ports ouverts vus par Shodan                 |
+| Vulnérabilités | `counter-sensor` / `integer` | Nombre de CVE que Shodan a associées aux logiciels vus |
+| Adresse IP     | `text` / `text`              | L’adresse lue                                          |
+| Ports exposés  | `text` / `text`              | « 22/tcp, 443/tcp » avec une clé, « 22, 443 » sans     |
+
+Toutes les fonctionnalités sont en lecture seule et gardent leur historique. Les vulnérabilités sont associées par Shodan d’après les versions des logiciels vus : elles ne sont **pas vérifiées** sur la machine. Utilisez les fonctionnalités dans les conditions de scène, par exemple « Vulnérabilités > 0 ».
+
+### Widgets du tableau de bord
+
+![Le widget Exposition Internet avec les ports ouverts et les vulnérabilités des adresses surveillées, et le widget Adresse Shodan avec les services et les CVE d’une adresse (illustration générée, pas une capture d’écran)](https://raw.githubusercontent.com/William-De71/gladys-shodan/main/docs/assets/widgets.fr.png)
+
+- **Exposition Internet** : des tuiles avec le total des ports ouverts et des vulnérabilités, puis une carte par adresse, la plus préoccupante d’abord (étiquettes d’alarme compromised, malware ou doublepulsar, puis CVE, puis erreurs, puis ports ouverts). Chaque carte montre les ports, les CVE, les étiquettes et un lien vers la page de l’adresse sur shodan.io ; une légende indique la source.
+- **Adresse Shodan** : une adresse (choisissez son appareil dans les réglages du widget ; vide = l’adresse publique) : tuiles ports, vulnérabilités et CVSS le plus élevé (avec une clé), une carte par port ou service avec son produit, sa version et ses CVE (scores et descriptions), un texte qui liste les CVE, des lignes d’état (IP, vue par Shodan, lue, noms d’hôte, étiquettes, réseau, source), un bouton **Relire** (une fois par minute au plus) et un bouton **Voir sur Shodan**.
+- **Compte Shodan** : crédits de requête, crédits de scan et IP surveillées face à leurs limites, l’offre et les derniers scans. Sans clé, il indique qu’une clé est nécessaire.
+
+### Scènes
+
+Déclencheurs (une fois par changement, jamais à la première lecture, jamais à cause d’une action de scène ; 10 événements d’un même type au plus par adresse et par lecture) :
+
+- **Shodan : port ouvert** (filtres : adresse, numéro de port) : variables target, target_name, ip, ports, port, et transport et product avec une clé.
+- **Shodan : port fermé** (mêmes filtres) : variables target, target_name, ip, ports, port.
+- **Shodan : vulnérabilité trouvée** (filtre : adresse) : variables target, target_name, ip, ports, cve, cvss et summary avec une clé, url (la page NVD de la CVE).
+- **Shodan : vulnérabilité disparue** : variables target, target_name, ip, ports, cve, url.
+- **Shodan : nouvelle étiquette** (filtres : adresse, étiquettes : compromised, malware, honeypot, doublepulsar, eol-product, eol-os, self-signed, starttls, database, devops, iot, ics, medical, videogame, vpn, proxy, tor, cdn, cloud, scanner) : variable tag.
+- **Shodan : IP publique changée** (vérifiée toutes les 15 minutes) : variables previous_ip, ip.
+- **Shodan : clé API refusée** : variables reason (`refused`) et message ; une fois par refus. Une offre qui refuse les consultations d’hôte (HTTP 403) ne le déclenche pas.
+
+Une nouvelle adresse, ou un changement de source (clé ajoutée ou retirée), repart d’une nouvelle base sans aucun événement : ce que Shodan sait d’une adresse tout juste attribuée peut décrire son précédent titulaire.
+
+Actions :
+
+- **Shodan : valeurs d’une adresse** (sans requête ; champ : un appareil adresse, vide = l’adresse publique ou la première) : target_name, ip, port_count, ports, vuln_count, vulns, max_cvss, tags, hostnames, source (`internetdb` ou `api`), last_scan (ISO 8601, avec une clé), read_at et summary, par exemple « Shodan : IP publique (203.0.113.7) : 2 ports ouverts (22/tcp, 443/tcp), 2 vulnérabilités (CVSS 9.8). Étiquettes Shodan : self-signed. »
+- **Shodan : consulter une adresse** (champ : n’importe quelle IP publique ou nom d’hôte ; une requête tout de suite) : ip, found, port_count, ports, vuln_count, vulns, max_cvss, tags, hostnames, source, summary.
+- **Shodan : scanner une adresse** (demande une clé API et les crédits de scan d’une offre payante, 1 crédit par adresse ; champ : un appareil adresse) : scan_id, ip, credits_left. Le scan est suivi toutes les 2 minutes jusqu’à sa fin, puis l’adresse est relue.
+
+Exemples :
+
+- Quand **Shodan : port ouvert** sur l’IP publique → envoyer « Le port \{\{triggerEvent.data.port\}\} est ouvert sur \{\{triggerEvent.data.ip\}\} ».
+- Quand **Shodan : vulnérabilité trouvée** → envoyer « \{\{triggerEvent.data.cve\}\} : \{\{triggerEvent.data.url\}\} ».
+- Chaque lundi à 8 h → **Shodan : valeurs d’une adresse** → envoyer son `summary`.
+- Quand **Shodan : IP publique changée** → envoyer « Nouvelle adresse publique : \{\{triggerEvent.data.ip\}\} ».
+
+## Dépannage
+
+- **« L’adresse publique n’est pas encore connue »** : `api.shodan.io` n’a pas pu être joint pour demander l’adresse publique ; vérifiez l’accès à Internet de Gladys.
+- **Un nom d’hôte « ne correspond à aucune adresse publique »** : le DNS du conteneur ne donne aucune adresse, ou une adresse privée ; vérifiez le nom.
+- **« Shodan refuse la clé API »** : vérifiez la clé sur [account.shodan.io](https://account.shodan.io). InternetDB répond en attendant ; la clé est réessayée toutes les 6 heures, ou tout de suite avec **Tester la connexion**.
+- **HTTP 403 (offre)** : l’offre gratuite ou oss peut ne permettre ni les consultations d’hôte ni les scans. InternetDB est utilisé pour les consultations ; un scan demande des crédits de scan.
+- **Les données semblent anciennes** : InternetDB est rafraîchi environ une fois par semaine ; avec une clé, le widget Adresse Shodan indique quand Shodan a vu l’adresse pour la dernière fois.
+- **Après un changement d’adresse publique**, les données peuvent décrire le précédent titulaire de l’adresse jusqu’à ce que Shodan la scanne de nouveau.
+- **Rien n’apparaît** : Shodan ne voit que ce qui est joignable depuis Internet. Derrière un CGNAT ou sans redirection de port, il peut n’y avoir rien à voir, ce qui est une bonne nouvelle.
+- Pour un problème, donnez les versions de Gladys et de l’intégration, le message de **Tester la connexion** et les lignes écrites par **Diagnostic** dans les journaux de l’intégration (`DEBUG=gladys-integration-sdk` ajoute les journaux du SDK). Ne collez jamais votre clé API.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Shodan dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Ce qu’Internet voit | `section` | Non | Shodan scanne tout Internet et recense les ports ouverts et les logiciels qu’il trouve. L’intégration demande à Shodan ce qu’il sait de votre adresse publique : rien n’est scanné depuis Gladys, et seules les adresses partent chez Shodan. Sans clé, elle utilise InternetDB, gratuit pour un usage non commercial et mis à jour une fois par semaine. Non affiliée à Shodan. |
+| Surveiller l’adresse publique de la maison | `boolean` | Non | L’adresse de votre box Internet, demandée à Shodan toutes les 15 minutes : elle suit un changement d’adresse. |
+| Autres adresses | `string` | Non | Adresses IP publiques ou noms d’hôte (un nom DNS dynamique, un serveur), séparés par des virgules, 10 au maximum. Ne surveillez que vos propres adresses. |
+| Clé API Shodan (facultative) | `section` | Non | Avec la clé d’un compte Shodan (account.shodan.io), l’intégration lit l’API Shodan à la place : logiciel et version de chaque service, scores CVSS, date du dernier scan, crédits, et scan à la demande (offres payantes). Sans clé, tout le reste fonctionne. |
+| Clé API | `secret` | Non |  |
+| Langue des textes | `select` | Non | Noms des fonctionnalités, textes des scènes et erreurs. Automatique : la langue du dernier widget affiché. |
+
+## Comment installer Shodan dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Shodan apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/william-de71/gladys-shodan:0.1.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/William-De71/gladys-shodan](https://github.com/William-De71/gladys-shodan).
+
+Shodan nécessite Gladys `>=5.3.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Shodan est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [William-De71](https://github.com/William-De71), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/William-De71/gladys-shodan) — [source de cette documentation](https://github.com/William-De71/gladys-shodan/blob/HEAD/docs/fr.md)

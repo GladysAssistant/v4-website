@@ -1,0 +1,200 @@
+---
+title: "Intégration domotique SunPower PVS, gratuite et open source"
+sidebar_label: "SunPower PVS"
+description: "Non officiel : PVS5/PVS6 SunPower en local : production, réseau, micro-onduleurs. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-sunpower-pvs.png"
+keywords:
+  - "sunpower pvs"
+  - "domotique sunpower pvs"
+  - "gladys sunpower pvs"
+  - "sunpower pvs gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-sunpower-pvs instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"SunPower PVS","description":"Non officiel : PVS5/PVS6 SunPower en local : production, réseau, micro-onduleurs.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-sunpower-pvs","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-sunpower-pvs.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-28T21:06:01Z"}} />
+
+Intégration **non officielle**, sans lien avec SunPower ni SunStrong
+Management. Elle lit une passerelle de supervision **SunPower PVS5 ou PVS6**
+par l'**API locale** publiée par SunStrong en 2025 (varserver, HTTPS sur
+votre réseau domestique), sans cloud. **Lecture seule** : elle ne fait que
+lire, rien n'est jamais écrit dans la PVS.
+
+**Jamais testé avec une vraie PVS** : construit d'après le document
+« LocalAPI » de SunStrong, les listes publiques de variables et le code de la
+bibliothèque pypvs (MIT, SunStrong Management), et testé contre une fausse
+PVS bâtie à partir d'eux.
+
+## Prérequis
+
+- Une PVS6 avec un firmware **2025.06 build 61840** ou plus récent
+  (SunStrong : PVS6 2025.06 b61839 au moins, PVS5 2025.11 b5412 ; la PVS2
+  n'est pas prise en charge) ;
+- la PVS sur votre réseau domestique (son port LAN ou son Wi-Fi), joignable
+  depuis Gladys. L'ancien port installateur et son API `dl_cgi` ne sont pas
+  utilisés.
+
+## Configuration
+
+- **Adresse de la PVS** : son adresse IP sur votre réseau (visible dans votre
+  box), avec un port seulement s'il n'est pas 443. Donnez-lui une adresse
+  fixe dans votre box.
+- **Mot de passe** (facultatif) : laissez-le vide. L'intégration lit le
+  numéro de série de la PVS et prend ses 5 derniers caractères, le mot de
+  passe documenté par SunStrong (utilisateur `ssm_owner`). Saisissez-le
+  seulement si le statut le demande : les 5 derniers caractères du numéro de
+  série imprimé sur l'étiquette de la PVS. Il est gardé par Gladys dans sa
+  base, jamais réaffiché, envoyé seulement à la PVS, en HTTPS vers son
+  certificat épinglé, et jamais écrit dans les journaux. Le numéro de série
+  et le mot de passe ne sont écrits ni dans les journaux, ni dans le statut,
+  ni dans `/data`.
+- **Empreinte du certificat** (facultatif) : laissez-la vide. La PVS a un
+  certificat autosigné : à la première connexion son empreinte est épinglée
+  (gardée dans `/data`) avant l'envoi du mot de passe. Si le certificat
+  change ensuite (PVS remplacée ou réinitialisée), plus rien n'est envoyé et
+  le statut affiche la nouvelle empreinte : si vous lui faites confiance,
+  copiez-la dans ce champ et enregistrez.
+
+Ouvrez ensuite l'onglet **Découverte** et créez les appareils voulus.
+
+## Ce que vous obtenez
+
+- **Site PVS SunPower** (lu toutes les 30 secondes) :
+  - **Puissance de production** (W) ;
+  - **Index de production** (kWh, la production totale de la PVS, envoyé
+    une fois par minute) : le suivi énergétique de Gladys en tire la
+    production par demi-heure (la fonction 30 minutes est déclarée avec lui,
+    Gladys la remplit) ;
+  - **Puissance réseau** (W, + achetée au réseau, - vendue), **Consommation
+    de la maison** (W) et **Consommation de la maison** totale (kWh, simple
+    capteur, non comptée) ;
+  - avec une batterie SunVault : **Puissance de la batterie** (W,
+    - décharge, - charge) et **Autonomie de secours restante** (minutes).
+- **Chaque micro-onduleur** (lu toutes les 5 minutes, un échantillon toutes
+  les 5 minutes) : puissance de production, production totale (kWh, simple
+  capteur), tension et courant alternatifs, fréquence du réseau, température
+  du dissipateur, puissance, tension et courant continus du panneau.
+- **Le compteur de production** de la PVS : puissance, production totale
+  (simple capteur), tension, fréquence. **Le compteur de consommation** :
+  puissance réseau (signée comme la PVS la donne), totaux achetés au réseau
+  et vendus au réseau (kWh, simples capteurs), tensions et courants de L1 et
+  L2, fréquence.
+- **Chaque batterie SunVault** : état de charge (%), puissance (signée comme
+  la PVS la donne), tension de la batterie, température de l'onduleur.
+- **Chaque commutateur de transfert** (MIDC) : relais réseau fermé (1) ou
+  ouvert (0), température, tensions du réseau.
+
+Seul l'index de production du site entre dans le suivi énergétique : avec
+cette seule intégration, la consommation de la maison n'y apparaît pas. Les
+totaux achetés et vendus au réseau et la consommation de la maison sont de
+simples capteurs (l'unité dans leur nom), car : ce que mesure le compteur de
+consommation de la PVS dépend de la pose de ses capteurs (au raccordement au
+réseau ou sur les circuits de la maison) et les signes ne sont pas
+documentés, donc en index une erreur fausserait le suivi sans alerte ; et
+une maison qui envoie déjà son compteur réseau à Gladys (autre intégration)
+le compterait deux fois. Faire de « acheté au réseau » un index de
+consommation est une option pour plus tard, une fois vérifié sur une vraie
+PVS.
+
+## Compteurs cumulés : la garde
+
+Chaque compteur cumulé (l'index de production et chaque total) passe par une
+garde avant d'arriver à Gladys :
+
+- une valeur nulle ou négative n'est pas envoyée ;
+- une valeur plus basse que la dernière envoyée (une baisse), ou plus haute
+  que ce que le site a pu produire ou consommer depuis (200 kW en moyenne
+  pour le site et ses compteurs, 2 kW pour un micro-onduleur), est
+  **retenue** : non envoyée, affichée dans le statut, le badge de l'appareil
+  passe à l'orange, et elle reste retenue après un redémarrage. Ni le temps
+  ni la répétition ne la lèvent ;
+- si elle est juste (appareil remplacé, compteur remis à zéro), cliquez deux
+  fois sur **Accepter les valeurs retenues** : le premier clic liste ce qui
+  est retenu, le second (de 3 secondes à 5 minutes plus tard) accepte
+  exactement ce qui a été listé si cela n'a pas changé autrement. Un saut
+  accepté est compté d'un coup ; une baisse acceptée ne compte rien et le
+  compteur repart de là. Enregistrer la configuration n'accepte rien.
+
+La garde mesure le temps sur l'horloge de la session de l'intégration : une
+horloge remise à l'heure par le réseau (NTP) n'élargit ni ne rétrécit sa
+marge.
+
+## Fraîcheur et identité
+
+- Chaque échantillon d'un appareil est envoyé une fois (son heure est gardée
+  dans `/data` : un redémarrage ne le renvoie pas). Un échantillon de plus
+  de 2 heures plus ancien que l'horloge de la PVS (son en-tête `Date`, ou
+  l'heure de ses données instantanées) n'est pas envoyé ; sans horloge
+  lisible de la PVS, un échantillon n'est pas tenu pour expiré.
+- Chaque lecture vérifie l'adresse MAC réseau de la PVS (gardée dans
+  `/data` sous forme d'empreinte salée, pas l'adresse). Si une autre PVS
+  répond à l'adresse, rien n'est publié tant que vous n'avez pas cliqué
+  deux fois sur **Accepter les valeurs retenues**. Une adresse MAC illisible
+  ne publie rien de cette lecture.
+
+## Statut et boutons
+
+- **Tester la connexion** : lit la PVS une fois quand une lecture est due
+  (jamais plus d'une toutes les 30 secondes), sinon donne la dernière
+  lecture. Après un mot de passe refusé, il réessaie une fois ; une réussite
+  lève le refus.
+- Un **mot de passe refusé** arrête les lectures jusqu'à ce qu'un autre mot
+  de passe soit enregistré ou que le bouton de test réussisse (gardé après un
+  redémarrage).
+- « Trop de requêtes » (429) ou une erreur de la PVS (5xx) sur les données
+  instantanées met les lectures en pause (1 minute, doublée jusqu'à 6
+  heures, gardée après un redémarrage).
+- Une PVS injoignable est réessayée après 30 secondes, doublées jusqu'à 30
+  minutes. Une sorte d'appareil en échec (micro-onduleurs, compteurs...) est
+  réessayée après 5 minutes, doublées jusqu'à 1 heure, sans retenir les
+  autres.
+
+## Limites
+
+- Une PVS par intégration.
+- L'API locale est récente : SunStrong prévient que la liste des variables
+  peut changer.
+- Au plus 200 micro-onduleurs, 8 compteurs, 8 batteries, 4 commutateurs de
+  transfert ; l'intégration envoie au plus 250 valeurs par minute à Gladys :
+  au-delà d'environ 130 micro-onduleurs, ils sont envoyés à tour de rôle (le
+  plus anciennement envoyé d'abord), chacun recevant une valeur toutes les 10
+  à 15 minutes au lieu de 5.
+- Les signes des puissances de la batterie et des compteurs sont ceux de la
+  PVS (non vérifiés sur une vraie installation).
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par SunPower PVS dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| PVS SunPower | `section` | Non | Connecteur non officiel, sans lien avec SunPower ni SunStrong Management. Il lit une passerelle de supervision SunPower PVS5 ou PVS6 par l'API locale publiée par SunStrong (varserver, HTTPS sur votre réseau, firmware PVS6 2025.06 build 61840 ou plus récent), sans cloud : la puissance de production, du réseau et de la maison, l'index de production pour le suivi énergétique de Gladys, et chaque micro-onduleur, compteur, batterie SunVault et commutateur de transfert listé par la PVS. Lecture seule : rien n'est jamais écrit dans la PVS. Jamais testé avec une vraie PVS. |
+| Adresse de la PVS | `string` | Oui | L'adresse IP de la PVS sur votre réseau domestique (son interface LAN ou Wi-Fi, visible dans votre box), avec un port seulement s'il n'est pas 443. Donnez-lui de préférence une adresse fixe. |
+| Mot de passe (facultatif) | `secret` | Non | Laissez vide : l'intégration lit le numéro de série de la PVS et prend ses 5 derniers caractères, le mot de passe que SunStrong documente pour l'API locale (utilisateur ssm_owner). Saisissez-le seulement si la PVS refuse celui-là ou ne donne pas son numéro de série. Gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement à la PVS ci-dessus, en HTTPS vers son certificat épinglé ; jamais écrit dans les journaux. |
+| Empreinte du certificat (facultatif) | `string` | Non | Laissez vide : le certificat de la PVS est épinglé à la première connexion. Remplissez-le seulement quand le statut indique que le certificat a changé (PVS remplacée ou réinitialisée) et affiche la nouvelle empreinte : copiez-la ici et enregistrez. |
+
+## Comment installer SunPower PVS dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : SunPower PVS apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-sunpower-pvs:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-sunpower-pvs](https://github.com/LM1LC3N7/gladys-sunpower-pvs).
+
+SunPower PVS nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+SunPower PVS est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-sunpower-pvs) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-sunpower-pvs/blob/HEAD/docs/fr.md)

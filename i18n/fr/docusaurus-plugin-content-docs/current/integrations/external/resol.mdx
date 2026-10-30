@@ -1,0 +1,203 @@
+---
+title: "Intégration domotique RESOL, gratuite et open source"
+sidebar_label: "RESOL"
+description: "Non officiel : régulateurs solaires et chauffage RESOL via KM2, DL2, DL3, lecture seule. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-resol.png"
+keywords:
+  - "resol"
+  - "domotique resol"
+  - "gladys resol"
+  - "resol gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-resol instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"RESOL","description":"Non officiel : régulateurs solaires et chauffage RESOL via KM2, DL2, DL3, lecture seule.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-resol","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-resol.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-28T16:04:41Z"}} />
+
+Intégration non officielle, sans lien avec RESOL. Elle lit vos **régulateurs
+solaires et de chauffage RESOL** (DeltaSol et les autres appareils du VBus)
+par l'API HTTP locale d'un **KM2**, **DL2**, **DL2Plus** ou **DL3** sur votre
+réseau. **Lecture seule** : elle ne change jamais un réglage. Sans cloud :
+VBus.net n'est jamais contacté.
+
+**Jamais testé avec un vrai appareil** : construite à partir de l'API telle que
+l'utilise l'intégration Home Assistant hass-Deltasol-KM2 et de la
+documentation du format DLx. Vos retours sont les bienvenus.
+
+## Appareils pris en charge
+
+- **KM2** et **DL2Plus** : identifiant et mot de passe de l'interface web
+  nécessaires ;
+- **DL2** et **DL3** : mot de passe seulement si l'enregistreur ne laisse pas
+  un invité lire les données en direct ; un filtre défini sur l'enregistreur
+  peut être utilisé ;
+- **KM1** (ancien) et adaptateurs **VBus/LAN** ou **VBus/USB** : pas
+  directement. Ils fonctionnent à travers le `json-live-data-server` de
+  resol-vbus, qui se présente comme un DL2 (port 3333, sans mot de passe).
+
+## Ce que vous obtenez
+
+Un appareil par régulateur ou module présent sur le VBus (nommé d'après lui,
+ex. `RESOL DeltaSol MX [Regler]`), avec les valeurs que l'enregistreur
+annonce, **sous les noms de son fichier de spécification VBus (VSF)**, dans
+sa langue (gardez le VSF à jour) :
+
+- températures (°C ; un capteur coupé, 888,8 °C, ou en court-circuit,
+  -888,8 °C, n'est jamais publié) ;
+- pressions (bar) ;
+- vitesses des pompes (%), débits (l/h), puissances (W), rayonnement
+  (W/m²)… : l'unité est dans le nom ;
+- **compteurs à vie** (« lifetime » dans le nom) : quantités de chaleur
+  (kWh), heures de fonctionnement (h ; les secondes de fonctionnement de
+  certains régulateurs sont converties en heures) et volumes totaux (l, m³) ;
+- compteurs d'une période (aujourd'hui, semaine, mois, année, semaine
+  précédente…) : de simples capteurs, qui reviennent à 0 normalement ; les
+  réglages en heures ou en secondes (temps de montée, durée du mélangeur…) et
+  les volumes maximaux sont aussi de simples capteurs ;
+- une quantité de chaleur découpée par le régulateur en champs Wh, kWh et MWh
+  est publiée une fois, recomposée en kWh (ou pas du tout quand le régulateur
+  donne aussi le total) ; si un champ autre que celui de la plus grande unité
+  vaut 1000 ou plus dans son unité, ce n'est pas un morceau mais le même
+  compteur dans une autre unité : chaque champ est alors publié à part.
+
+Les valeurs sans unité (masques d'erreur, versions, dates, heures du jour)
+ne sont pas publiées. Les quantités de chaleur sont de la **chaleur**, pas de
+l'électricité : elles ne vont jamais au suivi énergétique de Gladys (elles y
+seraient comptées comme de l'électricité).
+
+## Configuration
+
+1. Donnez au KM2 / DL2 / DL3 une adresse fixe dans votre box.
+2. Dans Gladys, installez l'intégration et remplissez :
+   - **Adresse** : son adresse IP ; ajoutez un port seulement s'il n'est pas
+     80 (`:3333` pour le json-live-data-server). `https://` est refusé : cette
+     intégration ne parle qu'en HTTP simple (le mot de passe partirait sans
+     protection là où vous attendez du HTTPS) ;
+   - **Identifiant** : celui de l'interface web (`admin` par défaut) ;
+   - **Mot de passe** : celui de l'interface web (voir plus haut) ;
+   - **Filtre** (DL2 / DL3, facultatif) : l'identifiant d'un filtre de
+     l'enregistreur ;
+   - **Intervalle de lecture** : 60 s par défaut (60 à 900).
+3. Cliquez sur **Tester la connexion**, puis créez les appareils depuis
+   l'onglet **Découverte**.
+
+## Comment il lit
+
+Chaque lecture demande d'abord l'identité de l'appareil
+(`get_resol_device_information` : produit et numéro de série), puis les
+données en direct : sur un KM2 ou un DL2Plus, une connexion JSON-RPC avec
+l'identifiant et le mot de passe puis `dataGetCurrentData` ; sur un DL2 ou un
+DL3, `/dlx/download/live` (l'enregistreur prend l'identifiant et le mot de
+passe dans l'adresse de la requête : c'est son API). Une lecture à la fois,
+jamais plus vite que l'intervalle : ni au bouton de test, ni à la Découverte,
+ni à une reconnexion, ni après un redémarrage du conteneur (il attend
+l'intervalle plus une minute après la dernière lecture). Une nouvelle adresse,
+un nouvel identifiant ou un nouveau mot de passe est lu tout de suite.
+
+- **Identifiant ou mot de passe refusé** (HTTP 401 ou 403 à la connexion ou
+  aux données en direct, ou erreur à la connexion JSON-RPC autre qu'une erreur
+  de protocole) : les lectures s'arrêtent jusqu'à l'enregistrement de
+  nouveaux identifiants ou un clic sur **Tester la connexion** (un essai par
+  clic) ; sans mot de passe saisi, l'état dit que l'appareil en demande un.
+  Un appareil injoignable, une absence de réponse, une réponse inattendue, un
+  401 / 403 à l'identité de l'appareil (aucun identifiant n'y est envoyé),
+  une erreur de protocole JSON-RPC, un filtre inconnu ou un KM2 sans mot de
+  passe n'est pas un refus : nouvel essai après 1 min, puis jusqu'à toutes les 15 min.
+- **Identité** : les valeurs ne vont qu'aux appareils du numéro de série lu
+  dans la même lecture. Un autre numéro de série à la même adresse a ses
+  propres appareils.
+- **Valeurs figées** : un paquet VBus dont l'horodatage ne bouge plus depuis
+  15 min (le régulateur ne l'envoie plus) n'est plus publié, aussi après un
+  redémarrage de l'intégration (les horodatages sont gardés dans `/data`) ;
+  l'état le signale.
+- Une valeur que l'appareil marque comme absente (texte vide) n'est jamais
+  publiée comme 0.
+
+## Compteurs à vie
+
+Une quantité de chaleur, un compteur d'heures ou un volume total ne fait que
+monter. Chaque compteur passe par une garde :
+
+- 0, une valeur manquante ou un texte n'est jamais publié ;
+- une **baisse** (remise à zéro, régulateur remplacé) ou un **saut** (plus de
+  200 kW en moyenne plus 2 kWh pour la chaleur, plus d'une heure par heure plus
+  2 h pour les heures, plus de 20 m³ par heure plus 100 l pour les volumes)
+  depuis la dernière valeur est **retenu** : la dernière
+  valeur acceptée est renvoyée, l'état l'affiche, et le temps ne le confirme
+  jamais (la garde compte le temps écoulé de l'intégration : une horloge
+  corrigée pendant qu'elle tourne n'y change rien ; à son redémarrage, elle
+  repart de l'heure du système, et une date enregistrée dans le futur est
+  ramenée à maintenant) ;
+- s'il est juste, cliquez deux fois sur **Accepter le compteur retenu** (le
+  premier clic liste, le second, de 3 s à 5 min plus tard, accepte exactement
+  ce qui a été listé). Acceptée, la valeur devient le nouveau plancher : une
+  valeur plus basse est de nouveau retenue. Enregistrer la configuration
+  n'accepte rien.
+
+Pour les régulateurs et modules que décrit le VSF de resol-vbus, la nature de
+chaque compteur (à vie, de période, réglage) vient d'une table tirée de ses
+noms en anglais, allemand et français : elle ne dépend pas de la langue de
+l'enregistreur. La table est cherchée comme le fait resol-vbus, masques
+d'adresse compris : un modèle de paquet du VSF couvre souvent plusieurs
+adresses (les modules de calorimétrie HQM #0 à #15 d'un DeltaSol MX, 0x7E30 à
+0x7E3F, partagent le même). Pour un paquet qu'aucun modèle du VSF ne couvre,
+les noms sont lus mot à mot (aussi `Wmz1_ValueToday_Wh`) ; un compteur de
+période dont le nom n'est pas reconnu (les mots « aujourd'hui », « hier »,
+« semaine », « mois », « année » et les précédents en français, anglais,
+allemand, italien, néerlandais et espagnol) est traité comme un compteur à
+vie : sa remise à 0 est alors retenue, jamais publiée comme une baisse.
+
+## Confidentialité et sécurité
+
+Le mot de passe est gardé par Gladys dans sa base, jamais réaffiché, envoyé
+seulement à l'appareil sur votre réseau. Il n'est jamais écrit dans les
+journaux, dans `/data` ni dans un état. Après un refus, `/data` garde une
+empreinte salée de 8 bits (pour voir après un redémarrage si le formulaire a
+changé), effacée à la lecture réussie suivante. La connexion est en HTTP
+simple sur votre réseau, comme l'interface web de l'appareil.
+
+## Limites
+
+- Un KM2 / DL2 / DL3 par intégration.
+- Aucune commande (lecture seule).
+- Les noms des valeurs sont ceux du VSF de l'appareil : ni traduits ni
+  devinés.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par RESOL dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| RESOL KM2 / DL2 / DL3 | `section` | Non | Connecteur non officiel, sans lien avec RESOL. Il lit vos régulateurs solaires et de chauffage RESOL (DeltaSol et les autres sur le VBus) par l'API HTTP locale d'un KM2, DL2, DL2Plus ou DL3 sur votre réseau, toutes les 60 s par défaut : températures, vitesses des pompes, heures de fonctionnement, quantités de chaleur, pressions, débits. Un appareil par régulateur ou module sur le VBus, avec les noms de son fichier de spécification VBus (VSF). Sans cloud : VBus.net n'est jamais contacté. Lecture seule : il ne change jamais un réglage. Un KM1 ou un adaptateur VBus/LAN ne fonctionne qu'à travers le json-live-data-server de resol-vbus. Jamais testé avec un vrai appareil. |
+| Adresse du KM2 / DL2 / DL3 | `string` | Oui | L'adresse IP du KM2, DL2, DL2Plus ou DL3 sur votre réseau (visible dans votre box), avec un port seulement s'il n'est pas 80 (3333 pour le json-live-data-server de resol-vbus). Donnez-lui de préférence une adresse fixe dans votre box. |
+| Identifiant | `string` | Non | L'identifiant de l'interface web de l'appareil (« admin » s'il est laissé vide). Il n'est jamais écrit dans les journaux ni affiché dans un état. |
+| Mot de passe | `secret` | Non | Le mot de passe de l'interface web de l'appareil : nécessaire pour un KM2 ou un DL2Plus ; pour un DL2 ou un DL3, seulement s'il ne laisse pas un invité lire les données en direct (laissez vide pour le json-live-data-server). Gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement à l'appareil sur votre réseau. |
+| Filtre (DL2 / DL3, facultatif) | `string` | Non | L'identifiant d'un filtre défini sur le DL2 ou le DL3, pour ne lire que ses valeurs. Laissez vide pour tout lire. Ignoré par un KM2 et un DL2Plus. |
+| Intervalle de lecture (secondes) | `number` | Non | Fréquence de lecture de l'appareil, de 60 à 900 secondes. Jamais plus vite, sauf juste après l'enregistrement d'une nouvelle adresse, d'un nouvel identifiant ou d'un nouveau mot de passe. |
+
+## Comment installer RESOL dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : RESOL apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-resol:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-resol](https://github.com/LM1LC3N7/gladys-resol).
+
+RESOL nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+RESOL est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-resol) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-resol/blob/HEAD/docs/fr.md)

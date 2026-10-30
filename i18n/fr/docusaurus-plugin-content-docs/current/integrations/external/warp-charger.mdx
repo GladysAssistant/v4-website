@@ -1,0 +1,210 @@
+---
+title: "Intégration domotique WARP Charger, gratuite et open source"
+sidebar_label: "WARP Charger"
+description: "Bornes Tinkerforge WARP en HTTP local : état, puissance, énergie ; démarrage et courant en option. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-warp-charger.png"
+keywords:
+  - "warp charger"
+  - "domotique warp charger"
+  - "gladys warp charger"
+  - "warp charger gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-warp-charger instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"WARP Charger","description":"Bornes Tinkerforge WARP en HTTP local : état, puissance, énergie ; démarrage et courant en option.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-warp-charger","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-warp-charger.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-28T21:45:03Z"}} />
+
+Affiche votre borne de recharge **Tinkerforge WARP** (WARP1, WARP2, WARP3 ou
+WARP4, firmware 2.x) dans Gladys par son **API HTTP locale** : sans cloud,
+sans compte, directement sur votre réseau.
+
+> **Jamais testé avec une vraie borne.** Sans lien avec Tinkerforge.
+> L'intégration suit la documentation officielle de l'API
+> (docs.warp-charger.com) et l'intégration Home Assistant
+> HomeAssistant-Tinkerforge-Warp-Wallbox-Custom-Component. Une mise à jour du
+> firmware peut changer l'API.
+
+## Ce que vous obtenez
+
+Un appareil par borne (repérée par son UID, pas par son adresse IP), avec :
+
+| Fonctionnalité              | Contenu                                                                                 |
+| --------------------------- | --------------------------------------------------------------------------------------- |
+| État                        | Aucun véhicule, branché en attente de libération, prête, en charge, défaut              |
+| Connecteur                  | Disponible, occupé, en défaut ou indisponible (catégorie « borne de recharge »)         |
+| État de charge              | En charge, en pause par la borne, en pause par le véhicule, inactif                     |
+| Véhicule branché            | Oui / non                                                                               |
+| Puissance                   | En W (compteur de la borne, « soutirage moins injection »)                              |
+| Courant autorisé            | En A, le courant que la borne autorise au véhicule                                      |
+| Énergie de la session       | En kWh, un capteur simple (pendant une session)                                         |
+| Index d'énergie             | En kWh, l'énergie soutirée depuis la fabrication du compteur, protégé (voir plus bas)   |
+| Mode de charge              | Rapide, désactivé, surplus solaire… (gestionnaire d'énergie de la borne, lecture seule) |
+| Défaut signalé              | Oui / non                                                                               |
+| Démarrer la charge          | Bouton (commandes autorisées seulement)                                                 |
+| Arrêter la charge           | Bouton, **toujours disponible**                                                         |
+| Régler le courant de charge | Liste de 6 A au plafond (commandes autorisées seulement)                                |
+
+Lecture toutes les 30 secondes par défaut (de 10 s à 10 min, réglable), une
+requête à la fois. La puissance, l'énergie, la session, le courant réglé et le
+mode de charge sont secondaires : si l'un ne répond pas, les autres valeurs
+sont quand même publiées et l'état de l'intégration indique « Non lu cette
+fois : … ».
+
+## Installation
+
+1. Donnez une adresse IP fixe à la borne dans votre box.
+2. Dans Gladys, installez l'intégration, saisissez l'adresse IP de la borne
+   (ou son nom, `warp3-xxxx.local`, éventuellement suivi d'un port).
+3. Si vous avez créé des utilisateurs sur la borne (page Utilisateurs), donnez
+   le nom et le mot de passe de l'un d'eux : l'intégration répond au défi
+   Digest de la borne, le mot de passe lui-même ne circule pas. Le mot de
+   passe est gardé par Gladys dans sa base, jamais réaffiché, envoyé
+   seulement à la borne.
+4. Enregistrez, puis ajoutez la borne depuis l'onglet **Découverte**.
+
+HTTP seulement : si la borne est réglée en HTTPS seul (réglages Réseau),
+l'état de l'intégration le dit ; autorisez HTTP. Le WARP Energy Manager n'est
+pas une borne et n'est pas pris en charge.
+
+## Arrêter la charge
+
+Le bouton **Arrêter la charge** fait comme le bouton physique de la borne
+(`evse/stop_charging`). Il ne dépend pas de l'option des commandes, ni d'une
+lecture ou d'une commande en cours (il les interrompt), ni d'une pause après
+une erreur 429 ou 5xx, ni d'identifiants refusés, ni de la configuration :
+juste après un redémarrage, il part vers l'adresse de la dernière borne lue
+(gardée dans `/data`), et un arrêt pas encore vu appliqué avant un
+redémarrage est renvoyé dès le démarrage du conteneur. Une commande arrivée
+avant lui et pas encore partie est abandonnée.
+
+Il est réussi quand la relecture montre la charge bloquée (ou aucun
+véhicule). Sinon la réponse dit pourquoi, et l'arrêt est gardé (dans
+`/data`) et vérifié toutes les 15 s :
+
+- **aucune adresse connue** (ni configuration ni borne lue auparavant) :
+  rien n'est envoyé ;
+- **la borne ne répond pas** pendant 3 s : réessayé toutes les 15 s ;
+- **identifiants refusés** : réessayé toutes les 15 s, et tout de suite après
+  l'enregistrement de nouveaux identifiants ;
+- **pas encore appliqué** (la borne autorise encore la charge) : renvoyé au
+  plus 3 fois (écritures acceptées par la borne), puis gardé sans nouvel
+  envoi jusqu'à un nouveau clic, redémarrage compris ; l'état de
+  l'intégration le signale ;
+- **sans confirmation** à temps (4,3 s) : vérifié de la même façon.
+
+Un arrêt qui n'est jamais parti n'est jamais abandonné : réessayé toutes les
+15 s, et tout de suite à l'enregistrement de nouveaux identifiants ou au clic
+sur **Tester la connexion**.
+
+L'arrêt gardé est levé quand la borne montre la charge bloquée, quand le
+véhicule est débranché, ou quand un démarrage cliqué dans Gladys après lui
+(option activée) est parti sans refus net (un 401, un autre 4xx, un 429 ou
+une redirection le garde ; un 5xx ou une absence de réponse le lève : le
+démarrage a pu s'appliquer). Un démarrage encore en route quand l'arrêt est
+cliqué ne lève jamais cet arrêt : l'arrêt le coupe et le surveille. Tant
+qu'un arrêt est gardé, Démarrer écrit toujours, même si la borne montre déjà
+la charge autorisée. Jamais par le temps. Un démarrage envoyé moins de 90 s
+avant l'arrêt et arrivé après lui est contré par un nouvel envoi.
+
+## Démarrer la charge et régler le courant (option)
+
+Désactivés par défaut : activez **Autoriser les commandes**. Ce sont un bouton
+et une liste, jamais un interrupteur (un « tout éteindre » ne les atteint
+pas). Chaque commande relit la borne juste avant (identité, état, emplacements
+de courant), part dans les 3,5 s ou pas du tout, et n'est réussie que si la
+relecture montre la valeur demandée (« envoyée, pas encore appliquée »
+sinon, puis relectures à 5 et 20 s).
+
+- **Démarrer** : refusé sans véhicule, sur un défaut, ou si les réglages de
+  la borne (câbles, son courant de charge, commande externe) permettent un
+  courant au-dessus du plafond : réglez d'abord le courant. Avec les réglages
+  d'usine (32 A) et le plafond par défaut (16 A), le premier démarrage est
+  refusé tant que le courant n'est pas réglé. Avec la commande externe
+  activée, le contrôleur externe (gestionnaire d'énergie, surplus solaire)
+  peut remonter son emplacement après le démarrage, au-dessus du plafond :
+  Gladys ne borne pas ce contrôleur.
+- **Courant** : de 6 A au plus bas du plafond (16 A par défaut, 32 A au plus)
+  et des limites des câbles lues sur la borne. Avec la commande externe
+  activée sur la borne, l'intégration écrit son emplacement
+  (`evse/external_current`) ; sinon le courant de l'interface web
+  (`evse/global_current`), gardé en mémoire flash par la borne : **une
+  hausse par minute** au plus (heure gardée dans `/data`), une baisse jamais
+  limitée.
+
+Refusés aussi : pendant une pause 429/5xx, avec des identifiants refusés,
+avant la lecture de la configuration, pendant une autre commande, ou si un
+arrêt a été cliqué entre-temps.
+
+## Index d'énergie (protégé)
+
+L'**index d'énergie** est le compteur de la borne (MeterValueID 209) : Gladys
+en tire la consommation et le coût dans son onglet Énergie. Comme Gladys
+compte chaque hausse en entier, il passe par une **garde** (celle de
+l'intégration P1 Monitor) :
+
+- un index à 0 ou absent n'est jamais publié ;
+- une hausse plausible (au plus 25 kW en moyenne depuis la dernière valeur,
+  sur l'horloge de la session, qu'un réglage NTP ne déplace pas) passe ;
+- un **saut** ou une **baisse** (compteur remis à zéro ou remplacé) est
+  **retenu** : rien n'est publié, l'état de l'intégration l'affiche, la
+  retenue est gardée dans `/data`. Ni le temps ni la répétition ne la
+  confirment ;
+- le bouton **Accepter l'index retenu** la prend en **deux clics** : le
+  premier montre la valeur, le second (3 s à 5 min après) prend exactement
+  cette valeur (plus ce que la borne a pu consommer depuis). Une baisse
+  acceptée ne compte rien.
+
+La borne est déjà comptée par votre compteur principal : dans les réglages
+Énergie de Gladys, rangez-la **sous** votre compteur principal.
+
+## Bon à savoir
+
+- La borne n'est jamais lue avant l'intervalle : ni par le bouton **Tester la
+  connexion**, ni par une Découverte, ni après une reconnexion à Gladys ou un
+  redémarrage (l'heure de la dernière lecture est gardée dans `/data`).
+  Seules les relectures qui suivent une commande (5 et 20 s) font exception.
+- Une valeur de plus de 2 minutes n'est jamais renvoyée comme nouvelle.
+- Rien de secret n'est écrit dans `/data` ni dans les journaux.
+- La commande OCPP de la borne, l'intégration MQTT de la borne ou une autre
+  domotique peuvent aussi la piloter : la dernière écriture gagne.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par WARP Charger dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre borne WARP | `section` | Non | Affiche votre borne Tinkerforge WARP (WARP1 à WARP4, firmware 2.x) dans Gladys par son API HTTP locale, sans cloud : état, véhicule branché, puissance, courant autorisé, énergie de la session, index d'énergie, mode de charge. Saisissez l'adresse IP de la borne (donnez-lui une adresse fixe dans votre box), et un nom d'utilisateur et un mot de passe de son interface web si vous y avez créé des utilisateurs, enregistrez, puis ajoutez-la depuis l'onglet Découverte. Le bouton d'arrêt fonctionne toujours ; le démarrage et le courant de charge ne se changent depuis Gladys que si vous autorisez les commandes ci-dessous. Jamais testé avec une vraie borne. Sans lien avec Tinkerforge. |
+| Adresse IP de la borne | `string` | Oui | Une adresse IPv4 ou un nom d'hôte (warp3-xxxx.local), éventuellement suivi d'un port (80 par défaut). HTTP seulement : HTTPS n'est pas pris en charge dans cette version. |
+| Nom d'utilisateur de l'interface web | `string` | Non | Seulement si des utilisateurs sont créés sur la borne (page Utilisateurs) : l'un d'eux. Laissez vide sinon. Jamais dans le champ de l'adresse. |
+| Mot de passe de l'interface web | `secret` | Non | Avec le nom d'utilisateur ci-dessus. Gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement à la borne, sous forme de réponse Digest (le mot de passe lui-même ne circule pas). Des identifiants refusés sont réessayés après 15 min, 1 h, puis toutes les 6 h. |
+| Autoriser les commandes | `boolean` | Non | Désactivé par défaut. Activé : Gladys peut démarrer la charge (bouton) et régler le courant de charge (liste, de 6 A au plafond ci-dessous). Désactivé : ces deux fonctionnalités refusent toute commande. Le bouton d'arrêt fonctionne dans les deux cas. |
+| Plafond du courant de charge (A) | `number` | Non | Le courant le plus élevé que Gladys peut régler, et un démarrage est refusé tant que la borne donnerait davantage : le plus bas de cette valeur (16 A par défaut) et des limites des câbles lues sur la borne. |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture de la borne, en secondes. |
+| Langue des noms des fonctionnalités | `select` | Non | Sert aux noms des fonctionnalités des appareils ajoutés désormais, aux textes d'état et aux erreurs des commandes. |
+
+## Comment installer WARP Charger dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : WARP Charger apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-warp-charger:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-warp-charger](https://github.com/LM1LC3N7/gladys-warp-charger).
+
+WARP Charger nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+WARP Charger est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-warp-charger) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-warp-charger/blob/HEAD/docs/fr.md)
