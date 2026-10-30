@@ -56,7 +56,7 @@ Open the **Console** of the VM. The menu of Gladys Assistant OS appears, with **
 
 Then answer the installer's questions exactly as on a mini-PC: language, keyboard, your account and SSH. See [step 4 of the mini-PC guide](/docs/installation/mini-pc/#installer-questions) for the details. The virtual disk of the VM is its only disk, so there is nothing to choose: when the installer asks you to confirm the erasure of the disk, only this virtual disk is erased, never the disks of your Proxmox server.
 
-At the end of the installation, the VM restarts. Remove the image from the VM first, so it does not start the installer again: in the **Hardware** tab, double-click on **CD/DVD Drive** and choose **Do not use any media**. Then, if the console asks you to remove the installation medium, press **Enter**.
+When the console shows **Installation complete!**, remove the image from the VM first, so it does not start the installer again: in the **Hardware** tab, double-click on **CD/DVD Drive** and choose **Do not use any media**. Then select **Reboot Now** in the console and press **Enter** (and **Enter** again if it asks you to remove the installation medium). If the console stays black, click on **Reset** at the top right of the VM: the installation is already finished.
 
 On this first boot, Gladys Assistant OS installs Docker, downloads Gladys and starts it: follow the progress in the console. When it shows **Gladys Assistant is ready**, open **`http://gladysassistant.local`** from a computer on the same network. If that name does not open, use the IP address displayed in the console instead: `http://VM-IP`.
 

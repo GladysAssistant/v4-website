@@ -145,7 +145,9 @@ A partir de ahí, la instalación continúa por sí sola durante unos minutos.
 
 ## Paso 5: dejar que Gladys se instale
 
-Al final de la instalación, el mini-PC se reinicia: **retira la memoria USB** (si un mensaje te pide que retires el medio de instalación, retíralo y pulsa **Intro**).
+Cuando la pantalla muestre **Installation complete!**, selecciona **Reboot Now** con las flechas, pulsa **Intro** y después **retira la memoria USB** (si un mensaje te pide que retires el medio de instalación, retíralo y pulsa **Intro**).
+
+![El final de la instalación, con Reboot Now seleccionado](../../../../../static/img/docs/en/installation/gladys-assistant-os/install-complete.png)
 
 En este primer arranque, Gladys Assistant OS instala Docker, descarga Gladys y lo pone en marcha. Puedes seguir el progreso:
 
@@ -204,6 +206,8 @@ docker compose -f /opt/gladys/compose.yaml up -d gladys
 **La pantalla muestra "Se requiere conexión a Internet"**: el mini-PC no tiene acceso a internet. Comprueba el cable Ethernet y tu router: la configuración se reanuda por sí sola, sin reiniciar, en cuanto la conexión funciona.
 
 **`gladysassistant.local` no se abre**: tu red no admite los nombres locales. Usa la dirección que aparece en la pantalla del mini-PC.
+
+**La pantalla se queda en negro después de Reboot Now**: la instalación ya ha terminado. Retira la memoria USB y reinicia el mini-PC con su botón de encendido.
 
 **El navegador sigue mostrando la página de configuración**: Gladys todavía no está listo. Espera a que aparezca **Gladys Assistant está listo** en la pantalla y luego actualiza la página.
 

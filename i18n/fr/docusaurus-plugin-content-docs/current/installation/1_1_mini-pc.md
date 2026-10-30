@@ -147,7 +147,9 @@ L'installation se déroule ensuite toute seule pendant quelques minutes.
 
 ## Étape 5 : laisser Gladys s'installer
 
-À la fin de l'installation, le mini-PC redémarre : **retirez la clé USB** (si un message vous demande de retirer le support d'installation, retirez-la, puis appuyez sur **Entrée**).
+Quand l'écran affiche **Installation complete!**, sélectionnez **Reboot Now** avec les flèches, appuyez sur **Entrée**, puis **retirez la clé USB** (si un message vous demande de retirer le support d'installation, retirez-la, puis appuyez sur **Entrée**).
+
+![La fin de l'installation, avec Reboot Now sélectionné](../../../../../static/img/docs/en/installation/gladys-assistant-os/install-complete.png)
 
 Lors de ce premier démarrage, Gladys Assistant OS installe Docker, télécharge Gladys et la lance. Vous pouvez suivre la progression :
 
@@ -206,6 +208,8 @@ docker compose -f /opt/gladys/compose.yaml up -d gladys
 **L'écran affiche « Connexion Internet requise »** : le mini-PC n'a pas accès à Internet. Vérifiez le câble Ethernet et votre box : l'installation reprend toute seule, sans redémarrage, dès que la connexion fonctionne.
 
 **`gladysassistant.local` ne s'ouvre pas** : votre réseau ne gère pas les noms locaux. Utilisez l'adresse affichée sur l'écran du mini-PC.
+
+**L'écran reste noir après Reboot Now** : l'installation est déjà terminée. Retirez la clé USB et redémarrez le mini-PC avec son bouton d'alimentation.
 
 **Le navigateur affiche toujours la page de configuration** : Gladys n'est pas encore prête. Attendez **Gladys Assistant est prêt** à l'écran, puis rafraîchissez la page.
 
