@@ -137,7 +137,7 @@ El instalador solo hace unas pocas preguntas. Muévete con las **flechas** del t
 4. **Tu cuenta**: introduce tu nombre, un nombre de usuario y una contraseña. Es la única cuenta de la máquina (no hay ninguna contraseña por defecto): apunta la contraseña en un lugar seguro, la necesitarás para el mantenimiento. El instalador también te pide un nombre de servidor (_server name_), pero la máquina siempre se llama `gladys`, así que puedes escribir lo que quieras.
 
    ![La pantalla de la cuenta](../../../../../static/img/docs/en/installation/gladys-assistant-os/account.png)
-5. **SSH**: la opción **Instalar el servidor OpenSSH** (_Install OpenSSH server_) viene marcada por defecto. Déjala marcada para poder conectarte más adelante al mini-PC a distancia desde tu ordenador. Si nunca vas a necesitarlo, puedes desmarcarla.
+5. **SSH**: la opción **Instalar el servidor OpenSSH** (_Install OpenSSH server_) viene marcada por defecto. Déjala marcada para poder conectarte más adelante al mini-PC a distancia desde tu ordenador.
 
    ![La pantalla SSH, con Install OpenSSH server marcado](../../../../../static/img/docs/en/installation/gladys-assistant-os/ssh.png)
 

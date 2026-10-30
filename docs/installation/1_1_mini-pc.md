@@ -137,7 +137,7 @@ The installer only asks a few questions. Move with the **arrow keys** and **Tab*
 4. **Your account**: enter your name, a username and a password. This is the only account of the machine (there is no default password): write it down somewhere safe, you will need it for maintenance. The installer also asks for a server name, but the machine is always named `gladys`, so you can type anything.
 
    ![The account screen](../../static/img/docs/en/installation/gladys-assistant-os/account.png)
-5. **SSH**: **Install OpenSSH server** is checked by default. Keep it to be able to log in to the mini-PC remotely from your computer later. You can uncheck it if you never want to.
+5. **SSH**: **Install OpenSSH server** is checked by default. Keep it to be able to log in to the mini-PC remotely from your computer later.
 
    ![The SSH screen, with Install OpenSSH server checked](../../static/img/docs/en/installation/gladys-assistant-os/ssh.png)
 
