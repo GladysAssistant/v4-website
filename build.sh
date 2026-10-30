@@ -31,6 +31,29 @@ for locale in $LOCALES; do
   npm run build -- --locale "$locale"
 done
 
+# Every locale build copies static/ into its own folder, so the ~2,000 images of
+# static/img were deployed four times, and Cloudflare Pages refuses a
+# deployment of more than 20,000 files. The translated locales drop their copy:
+# the /<locale>/img/* rules at the end of ./_redirects serve those URLs from
+# /img/* with a 200 rewrite, so the URLs the pages use do not change. Only
+# Cloudflare applies that rewrite (`npm run serve` does not), so the copies are
+# removed on Cloudflare Pages builds only (CF_PAGES=1); the checks run everywhere.
+DEFAULT_LOCALE=${LOCALES%% *}
+for locale in $LOCALES; do
+  [ "$locale" = "$DEFAULT_LOCALE" ] && continue
+  if ! diff -rq "./build/img" "./build/$locale/img" > /dev/null; then
+    echo ">> build/$locale/img differs from build/img: keeping it"
+    exit 1
+  fi
+  if ! grep -q "^/$locale/img/\* /img/:splat 200$" ./_redirects; then
+    echo ">> Add \"/$locale/img/* /img/:splat 200\" at the end of ./_redirects"
+    exit 1
+  fi
+  if [ -n "$CF_PAGES" ]; then
+    rm -rf "./build/$locale/img"
+  fi
+done
+
 # Writing Cloudflare Pages _redirects file, with the trailing-slash spelling of
 # every rule (see the script)
 node scripts/build_redirects.js ./build/_redirects

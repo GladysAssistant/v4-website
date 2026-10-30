@@ -157,7 +157,7 @@ const philipsHueWithoutBridgeContent = {
     faqTitle: "Frequently asked questions",
     cta: {
       title: "Put your Hue bulbs on one open network",
-      text: "Gladys is free, open source and installs with a single Docker command. Plug in a Zigbee dongle and pair your first Hue bulb.",
+      text: "Gladys is free, open source and installs on a mini-PC from a USB drive. Plug in a Zigbee dongle and pair your first Hue bulb.",
       primary: { label: "Get started", href: "/docs/" },
       secondary: { label: "Zigbee2MQTT guide", href: "/docs/integrations/zigbee2mqtt/" },
     },
@@ -313,7 +313,7 @@ const philipsHueWithoutBridgeContent = {
     faqTitle: "Questions fréquentes",
     cta: {
       title: "Mettez vos ampoules Hue sur un réseau ouvert",
-      text: "Gladys est gratuite, open source et s'installe en une seule commande Docker. Branchez une clé Zigbee et associez votre première ampoule Hue.",
+      text: "Gladys est gratuite, open source et s'installe sur un mini-PC depuis une clé USB. Branchez une clé Zigbee et associez votre première ampoule Hue.",
       primary: { label: "Commencer", href: "/docs/" },
       secondary: { label: "Guide Zigbee2MQTT", href: "/docs/integrations/zigbee2mqtt/" },
     },
@@ -469,7 +469,7 @@ const philipsHueWithoutBridgeContent = {
     faqTitle: "Häufige Fragen",
     cta: {
       title: "Hol deine Hue-Lampen in ein offenes Netz",
-      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl installiert. Zigbee-Stick einstecken und die erste Hue-Lampe koppeln.",
+      text: "Gladys ist kostenlos, Open Source und lässt sich von einem USB-Stick auf einem Mini-PC installieren. Zigbee-Stick einstecken und die erste Hue-Lampe koppeln.",
       primary: { label: "Jetzt starten", href: "/docs/" },
       secondary: { label: "Zigbee2MQTT-Anleitung", href: "/docs/integrations/zigbee2mqtt/" },
     },
@@ -624,7 +624,7 @@ const philipsHueWithoutBridgeContent = {
     faqTitle: "Preguntas frecuentes",
     cta: {
       title: "Pon tus bombillas Hue en una única red abierta",
-      text: "Gladys es gratuito, de código abierto y se instala con un solo comando Docker. Conecta un dongle Zigbee y empareja tu primera bombilla Hue.",
+      text: "Gladys es gratuito, de código abierto y se instala en un mini-PC desde una memoria USB. Conecta un dongle Zigbee y empareja tu primera bombilla Hue.",
       primary: { label: "Empezar", href: "/docs/" },
       secondary: { label: "Guía de Zigbee2MQTT", href: "/docs/integrations/zigbee2mqtt/" },
     },

@@ -107,19 +107,19 @@ const miniPcHomeAutomationContent = {
       intro: "Once you have the machine:",
       points: [
         "Plug it into your router with an Ethernet cable.",
-        "Install Ubuntu Server, with the OpenSSH server option checked.",
-        "Install Docker and start Gladys with a single command.",
+        "Write Gladys Assistant OS, our official installer, to a USB drive and start the mini-PC from it.",
+        "Answer a few questions: Gladys installs itself, automatic updates included.",
         "Plug in your Zigbee dongle on a short USB 2.0 extension cable, and enable Zigbee2MQTT in Gladys.",
         "Open Gladys from your phone or computer and add your devices.",
       ],
       outro:
-        "The step-by-step installation guide covers each step, with a video.",
+        "The step-by-step installation guide covers each step.",
     },
     solution: {
       title: "Small hardware, big smart home",
       paragraphs: [
         "A mini-PC that costs about as much as a smart speaker can run your whole home locally: dashboards, automations, history, cameras, energy monitoring, and AI if you want it. It sips power, makes no noise, and doesn't depend on any cloud.",
-        "Gladys is free and open source, and runs on any of these machines with Docker.",
+        "Gladys is free and open source: on a mini-PC, Gladys Assistant OS installs it from a USB drive, and it also runs with Docker on the other machines.",
       ],
       link: {
         label: "Home Assistant Green alternative →",
@@ -139,7 +139,7 @@ const miniPcHomeAutomationContent = {
     faqTitle: "Frequently asked questions",
     cta: {
       title: "Turn a mini-PC into your smart home hub",
-      text: "Gladys is free, open source and installs with a single Docker command on any of these machines.",
+      text: "Gladys is free, open source and installs on a mini-PC from a USB drive, with Gladys Assistant OS, our official installer.",
       primary: { label: "Install Gladys", href: "/docs/installation/mini-pc/" },
       secondary: { label: "Recommended hardware", href: "/docs/installation/recommended-hardware/" },
     },
@@ -244,19 +244,19 @@ const miniPcHomeAutomationContent = {
       intro: "Une fois la machine en main :",
       points: [
         "Branchez-la à votre box avec un câble Ethernet.",
-        "Installez Ubuntu Server, en cochant l'option OpenSSH server.",
-        "Installez Docker et lancez Gladys en une seule commande.",
+        "Écrivez Gladys Assistant OS, notre installeur officiel, sur une clé USB et démarrez le mini-PC dessus.",
+        "Répondez à quelques questions : Gladys s'installe toute seule, mises à jour automatiques comprises.",
         "Branchez votre clé Zigbee sur une courte rallonge USB 2.0, et activez Zigbee2MQTT dans Gladys.",
         "Ouvrez Gladys depuis votre téléphone ou votre ordinateur et ajoutez vos appareils.",
       ],
       outro:
-        "Le guide d'installation pas à pas couvre chaque étape, avec une vidéo. Ou prenez le kit de démarrage : tout est déjà fait.",
+        "Le guide d'installation pas à pas couvre chaque étape. Ou prenez le kit de démarrage : tout est déjà fait.",
     },
     solution: {
       title: "Un petit matériel, une grande maison connectée",
       paragraphs: [
         "Un mini-PC qui coûte à peu près le prix d'une enceinte connectée peut faire tourner toute votre maison en local : tableaux de bord, automatisations, historique, caméras, suivi d'énergie, et IA si vous le souhaitez. Il consomme peu, ne fait pas de bruit et ne dépend d'aucun cloud.",
-        "Gladys est gratuite et open source, et tourne sur toutes ces machines avec Docker.",
+        "Gladys est gratuite et open source : sur un mini-PC, Gladys Assistant OS l'installe depuis une clé USB, et elle tourne aussi avec Docker sur les autres machines.",
       ],
       link: {
         label: "Découvrir le kit de démarrage →",
@@ -276,7 +276,7 @@ const miniPcHomeAutomationContent = {
     faqTitle: "Questions fréquentes",
     cta: {
       title: "Transformez un mini-PC en box domotique",
-      text: "Gladys est gratuite, open source et s'installe en une seule commande Docker sur toutes ces machines. Ou prenez le kit de démarrage, prêt à l'emploi.",
+      text: "Gladys est gratuite, open source et s'installe sur un mini-PC depuis une clé USB, avec Gladys Assistant OS, notre installeur officiel. Ou prenez le kit de démarrage, prêt à l'emploi.",
       primary: { label: "Installer Gladys", href: "/docs/installation/mini-pc/" },
       secondary: { label: "Kit de démarrage", href: "/starter-kit/" },
     },
@@ -381,19 +381,19 @@ const miniPcHomeAutomationContent = {
       intro: "Sobald du den Rechner hast:",
       points: [
         "Verbinde ihn per Ethernet-Kabel mit deinem Router.",
-        "Installiere Ubuntu Server und aktiviere dabei die Option OpenSSH-Server.",
-        "Installiere Docker und starte Gladys mit einem einzigen Befehl.",
+        "Schreib Gladys Assistant OS, unser offizielles Installationsprogramm, auf einen USB-Stick und starte den Mini-PC davon.",
+        "Beantworte ein paar Fragen: Gladys installiert sich von selbst, inklusive automatischer Updates.",
         "Steck deinen Zigbee-Stick über ein kurzes USB-2.0-Verlängerungskabel ein und aktiviere Zigbee2MQTT in Gladys.",
         "Öffne Gladys auf deinem Smartphone oder Computer und füge deine Geräte hinzu.",
       ],
       outro:
-        "Die Schritt-für-Schritt-Installationsanleitung erklärt jeden Schritt – inklusive Video.",
+        "Die Schritt-für-Schritt-Installationsanleitung erklärt jeden Schritt.",
     },
     solution: {
       title: "Kleine Hardware, großes Smart Home",
       paragraphs: [
         "Ein Mini-PC, der etwa so viel kostet wie ein smarter Lautsprecher, kann dein ganzes Zuhause lokal steuern: Dashboards, Automatisierungen, Verlauf, Kameras, Energie-Monitoring und auf Wunsch KI. Er braucht kaum Strom, ist lautlos und hängt von keiner Cloud ab.",
-        "Gladys ist kostenlos und Open Source und läuft mit Docker auf jedem dieser Rechner.",
+        "Gladys ist kostenlos und Open Source: Auf einem Mini-PC installierst du sie mit Gladys Assistant OS von einem USB-Stick, auf den anderen Rechnern läuft sie mit Docker.",
       ],
       link: {
         label: "Alternative zu Home Assistant Green →",
@@ -413,7 +413,7 @@ const miniPcHomeAutomationContent = {
     faqTitle: "Häufige Fragen",
     cta: {
       title: "Mach einen Mini-PC zur Zentrale deines Smart Home",
-      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl auf jedem dieser Rechner installiert.",
+      text: "Gladys ist kostenlos, Open Source und lässt sich mit Gladys Assistant OS, unserem offiziellen Installationsprogramm, von einem USB-Stick auf einem Mini-PC installieren.",
       primary: { label: "Gladys installieren", href: "/de/docs/installation/mini-pc/" },
       secondary: { label: "Empfohlene Hardware", href: "/de/docs/installation/recommended-hardware/" },
     },
@@ -517,19 +517,19 @@ const miniPcHomeAutomationContent = {
       intro: "Una vez que tengas el equipo:",
       points: [
         "Conéctalo a tu router con un cable Ethernet.",
-        "Instala Ubuntu Server, marcando la opción del servidor OpenSSH.",
-        "Instala Docker e inicia Gladys con un solo comando.",
+        "Graba Gladys Assistant OS, nuestro instalador oficial, en una memoria USB y arranca el mini-PC desde ella.",
+        "Responde a unas pocas preguntas: Gladys se instala sola, con actualizaciones automáticas.",
         "Conecta tu dongle Zigbee con un cable alargador USB 2.0 corto y activa Zigbee2MQTT en Gladys.",
         "Abre Gladys desde tu móvil o tu ordenador y añade tus dispositivos.",
       ],
       outro:
-        "La guía de instalación paso a paso cubre cada etapa, con un vídeo.",
+        "La guía de instalación paso a paso cubre cada etapa.",
     },
     solution: {
       title: "Hardware pequeño, gran hogar inteligente",
       paragraphs: [
         "Un mini-PC que cuesta más o menos lo mismo que un altavoz inteligente puede gestionar toda tu casa en local: paneles, automatizaciones, historial, cámaras, seguimiento del consumo de energía e IA si la quieres. Consume muy poco, no hace ruido y no depende de ninguna nube.",
-        "Gladys es gratis y de código abierto, y funciona con Docker en cualquiera de estos equipos.",
+        "Gladys es gratis y de código abierto: en un mini-PC, Gladys Assistant OS la instala desde una memoria USB, y en los demás equipos también funciona con Docker.",
       ],
       link: {
         label: "Alternativa a Home Assistant Green →",
@@ -549,7 +549,7 @@ const miniPcHomeAutomationContent = {
     faqTitle: "Preguntas frecuentes",
     cta: {
       title: "Convierte un mini-PC en el hub de tu hogar inteligente",
-      text: "Gladys es gratis, de código abierto y se instala con un solo comando Docker en cualquiera de estos equipos.",
+      text: "Gladys es gratis, de código abierto y se instala en un mini-PC desde una memoria USB, con Gladys Assistant OS, nuestro instalador oficial.",
       primary: { label: "Instalar Gladys", href: "/es/docs/installation/mini-pc/" },
       secondary: { label: "Hardware recomendado", href: "/es/docs/installation/recommended-hardware/" },
     },

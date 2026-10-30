@@ -172,7 +172,7 @@ const nestThermostatAlternativeContent = {
     faqTitle: "Frequently asked questions",
     cta: {
       title: "Take back control of your heating",
-      text: "Gladys is free, open source and installs with a single Docker command. Pair a Matter or Zigbee thermostat and run your heating at home.",
+      text: "Gladys is free, open source and installs on a mini-PC from a USB drive. Pair a Matter or Zigbee thermostat and run your heating at home.",
       primary: { label: "Get started", href: "/docs/" },
       secondary: { label: "Build a local smart home", href: "/local-smart-home/" },
     },
@@ -340,7 +340,7 @@ const nestThermostatAlternativeContent = {
     faqTitle: "Questions fréquentes",
     cta: {
       title: "Reprenez le contrôle de votre chauffage",
-      text: "Gladys est gratuite, open source et s'installe en une seule commande Docker. Associez un thermostat Matter ou Zigbee et pilotez votre chauffage à la maison.",
+      text: "Gladys est gratuite, open source et s'installe sur un mini-PC depuis une clé USB. Associez un thermostat Matter ou Zigbee et pilotez votre chauffage à la maison.",
       primary: { label: "Commencer", href: "/docs/" },
       secondary: { label: "Créer une maison locale", href: "/local-smart-home/" },
     },
@@ -508,7 +508,7 @@ const nestThermostatAlternativeContent = {
     faqTitle: "Häufige Fragen",
     cta: {
       title: "Hol dir die Kontrolle über deine Heizung zurück",
-      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl installiert. Kopple ein Matter- oder Zigbee-Thermostat und steuere deine Heizung bei dir zu Hause.",
+      text: "Gladys ist kostenlos, Open Source und lässt sich von einem USB-Stick auf einem Mini-PC installieren. Kopple ein Matter- oder Zigbee-Thermostat und steuere deine Heizung bei dir zu Hause.",
       primary: { label: "Jetzt starten", href: "/docs/" },
       secondary: { label: "Ein lokales Smart Home aufbauen", href: "/local-smart-home/" },
     },
@@ -675,7 +675,7 @@ const nestThermostatAlternativeContent = {
     faqTitle: "Preguntas frecuentes",
     cta: {
       title: "Recupera el control de tu calefacción",
-      text: "Gladys es gratuito, de código abierto y se instala con un solo comando Docker. Vincula un termostato Matter o Zigbee y gestiona tu calefacción desde casa.",
+      text: "Gladys es gratuito, de código abierto y se instala en un mini-PC desde una memoria USB. Vincula un termostato Matter o Zigbee y gestiona tu calefacción desde casa.",
       primary: { label: "Empezar", href: "/docs/" },
       secondary: { label: "Crea un hogar inteligente local", href: "/local-smart-home/" },
     },

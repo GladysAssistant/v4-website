@@ -102,7 +102,7 @@ const openhabAlternativeContent = {
         {
           icon: "⚡",
           title: "Minutes to the first device",
-          text: "Install with one Docker command, add a device, see it on your dashboard.",
+          text: "Install from a USB drive, add a device, see it on your dashboard.",
         },
         {
           icon: "🐝",
@@ -184,7 +184,7 @@ const openhabAlternativeContent = {
     faqTitle: "Frequently asked questions",
     cta: {
       title: "Open source, local, and simple",
-      text: "Gladys is free and installs with a single Docker command. Try it next to openHAB and see the difference.",
+      text: "Gladys is free and installs on a mini-PC from a USB drive, or with Docker on the machine you already have. Try it next to openHAB and see the difference.",
       primary: { label: "Get started", href: "/docs/" },
       secondary: { label: "Works with Gladys", href: "/works-with/" },
     },
@@ -284,7 +284,7 @@ const openhabAlternativeContent = {
         {
           icon: "⚡",
           title: "Quelques minutes jusqu'au premier appareil",
-          text: "Installez en une commande Docker, ajoutez un appareil, voyez-le sur votre tableau de bord.",
+          text: "Installez depuis une clé USB, ajoutez un appareil, voyez-le sur votre tableau de bord.",
         },
         {
           icon: "🐝",
@@ -366,7 +366,7 @@ const openhabAlternativeContent = {
     faqTitle: "Questions fréquentes",
     cta: {
       title: "Open source, local, et simple",
-      text: "Gladys est gratuite et s'installe en une seule commande Docker. Essayez-la à côté d'openHAB et voyez la différence.",
+      text: "Gladys est gratuite et s'installe sur un mini-PC depuis une clé USB, ou avec Docker sur la machine que vous avez déjà. Essayez-la à côté d'openHAB et voyez la différence.",
       primary: { label: "Commencer", href: "/docs/" },
       secondary: { label: "Appareils compatibles", href: "/works-with/" },
     },
@@ -466,7 +466,7 @@ const openhabAlternativeContent = {
         {
           icon: "⚡",
           title: "In Minuten zum ersten Gerät",
-          text: "Mit einem Docker-Befehl installieren, ein Gerät hinzufügen, es auf deinem Dashboard sehen.",
+          text: "Per USB-Stick installieren, ein Gerät hinzufügen, es auf deinem Dashboard sehen.",
         },
         {
           icon: "🐝",
@@ -548,7 +548,7 @@ const openhabAlternativeContent = {
     faqTitle: "Häufige Fragen",
     cta: {
       title: "Open Source, lokal und einfach",
-      text: "Gladys ist kostenlos und mit einem einzigen Docker-Befehl installiert. Probier es neben openHAB aus und sieh selbst den Unterschied.",
+      text: "Gladys ist kostenlos und lässt sich von einem USB-Stick auf einem Mini-PC installieren, oder mit Docker auf dem Rechner, den du schon hast. Probier es neben openHAB aus und sieh selbst den Unterschied.",
       primary: { label: "Jetzt starten", href: "/docs/" },
       secondary: { label: "Funktioniert mit Gladys", href: "/works-with/" },
     },
@@ -647,7 +647,7 @@ const openhabAlternativeContent = {
         {
           icon: "⚡",
           title: "Tu primer dispositivo en minutos",
-          text: "Instálalo con un solo comando Docker, añade un dispositivo y míralo en tu panel.",
+          text: "Instálalo desde una memoria USB, añade un dispositivo y míralo en tu panel.",
         },
         {
           icon: "🐝",
@@ -729,7 +729,7 @@ const openhabAlternativeContent = {
     faqTitle: "Preguntas frecuentes",
     cta: {
       title: "Código abierto, local y sencillo",
-      text: "Gladys es gratuito y se instala con un solo comando Docker. Pruébalo junto a openHAB y comprueba la diferencia.",
+      text: "Gladys es gratuito y se instala en un mini-PC desde una memoria USB, o con Docker en el equipo que ya tienes. Pruébalo junto a openHAB y comprueba la diferencia.",
       primary: { label: "Empezar", href: "/docs/" },
       secondary: { label: "Compatible con Gladys", href: "/works-with/" },
     },

@@ -3,7 +3,7 @@ id: hardware
 title: Commencer avec Gladys
 sidebar_label: Commencer
 slug: /
-description: "Comment installer Gladys Assistant : sur mini-PC, Raspberry Pi, NAS Synology ou toute machine Linux avec Docker. Domotique gratuite, open-source et auto-hébergée."
+description: "Comment installer Gladys Assistant : sur mini-PC avec Gladys Assistant OS, notre installeur officiel, sur Raspberry Pi, ou sur toute machine Linux avec Docker. Domotique gratuite, open-source et auto-hébergée."
 ---
 
 Il peut être difficile de savoir par où commencer lorsque l'on débute en domotique. Quel matériel choisir ? Quel budget prévoir ? Quel protocole domotique adopter ?
@@ -16,26 +16,19 @@ Gladys Assistant est un logiciel auto-hébergé, ce qui signifie que tout foncti
 
 La grande majorité des utilisateurs installent Gladys **eux-mêmes** sur un mini-PC. Le kit de démarrage Gladys n'est qu'une option pour ceux qui préfèrent une solution clé en main.
 
-### Option recommandée : un mini-PC sous Linux
+### Option recommandée : un mini-PC avec Gladys Assistant OS
 
-C'est le meilleur rapport qualité/prix pour une installation durable. Vous installez Ubuntu Server, puis Gladys via Docker. Notre documentation vous guide à chaque étape.
+C'est le meilleur rapport qualité/prix pour une installation durable.
+
+Et l'installation est simple grâce à **Gladys Assistant OS**, notre installeur officiel : vous l'écrivez sur une clé USB, vous démarrez le mini-PC dessus et vous répondez à quelques questions. Gladys s'installe toute seule, puis se met à jour automatiquement. Aucune ligne de commande n'est nécessaire.
 
 **Où trouver le matériel ?**
 
 - **Mini-PC neuf** (Beelink, Intel NUC…) : comptez entre 330 € et 430 € pour un modèle performant comme le Beelink S13. Exemple : [Beelink Mini S13 sur Amazon](https://amzn.to/4hRtIE3)
 - **Mini-PC reconditionné** : souvent nettement moins cher sur Leboncoin, eBay ou chez les revendeurs spécialisés. Vérifiez qu'il a au moins 8 Go de RAM et un SSD.
-- **Matériel que vous avez déjà** : un vieux PC, un Intel NUC qui traîne… Si Docker tourne dessus, Gladys tourne dessus.
+- **Un ordinateur que vous avez déjà** : un vieux PC, un Intel NUC qui traîne… Un ordinateur avec un processeur Intel ou AMD qui démarre en mode UEFI, un SSD d'au moins 16 Go et un port Ethernet peut devenir votre box Gladys (son disque sera effacé).
 
-👉 [Tutoriel d'installation sur mini-PC](/fr/docs/installation/mini-pc/)
-
-### Réutiliser un NAS ou un serveur existant
-
-Si vous avez déjà un NAS Synology, un serveur Linux ou tout autre matériel compatible Docker, vous pouvez y installer Gladys sans acheter de nouvelle machine.
-
-- [Installer sur un NAS Synology](/fr/docs/installation/synology/)
-- [Installer sur un NAS Unraid](/fr/docs/installation/unraid/)
-- [Installer sur un serveur Proxmox](/fr/docs/installation/proxmox/)
-- [Installer sur une Freebox Delta](/fr/docs/installation/freebox-delta/)
+👉 [Installer Gladys sur un mini-PC avec Gladys Assistant OS](/fr/docs/installation/mini-pc/)
 
 ### Raspberry Pi : pour découvrir
 
@@ -45,11 +38,21 @@ Idéal pour tester Gladys si vous avez déjà un Raspberry Pi (3, 4 ou 5). L'ins
 
 Pour une utilisation au quotidien sur le long terme, un mini-PC reste préférable (plus de RAM, SSD plus rapide, plus stable).
 
+### Réutiliser un NAS ou un serveur existant
+
+Si vous avez déjà un NAS Synology, un serveur Linux ou une autre machine qui fait tourner d'autres services, vous pouvez y installer Gladys, à côté de ce qui s'y trouve déjà, sans acheter de nouvelle machine.
+
+- [Installer avec Docker sur Debian, Ubuntu ou tout serveur Linux](/fr/docs/installation/docker/)
+- [Installer sur un serveur Proxmox](/fr/docs/installation/proxmox/)
+- [Installer sur un NAS Synology](/fr/docs/installation/synology/)
+- [Installer sur un NAS Unraid](/fr/docs/installation/unraid/)
+- [Installer sur une Freebox Delta](/fr/docs/installation/freebox-delta/)
+
 ### Option clé en main : le kit de démarrage Gladys
 
 Vous ne voulez pas vous occuper de l'installation ? Le **[kit de démarrage Gladys](/fr/starter-kit/)** est un mini-PC avec Gladys déjà pré-installé, livré avec formation et 6 mois de Gladys Plus.
 
-C'est une option **premium et optionnelle**, pensée pour ceux qui préfèrent brancher et configurer leur maison connectée sans passer par Ubuntu ni Docker. Ce n'est en aucun cas obligatoire pour utiliser Gladys.
+C'est une option **premium et optionnelle**, pensée pour ceux qui préfèrent recevoir une box prête à brancher. Ce n'est en aucun cas obligatoire pour utiliser Gladys.
 
 [Découvrir le kit de démarrage →](/fr/starter-kit/)
 
@@ -78,12 +81,13 @@ L'idée n'est pas nécessairement d'acheter tout d'un coup, mais plutôt de plan
 
 Selon le matériel choisi, vous pouvez suivre l'un des tutoriels suivants :
 
-- [Installer Gladys Assistant sur un mini-PC](/fr/docs/installation/mini-pc/)
-- [Installer Gladys Assistant sur une Freebox Delta](/fr/docs/installation/freebox-delta/)
+- **Recommandé :** [Installer Gladys Assistant sur un mini-PC avec Gladys Assistant OS](/fr/docs/installation/mini-pc/)
+- [Installer Gladys Assistant sur un Raspberry Pi](/fr/docs/installation/raspberry-pi/)
+- [Installer Gladys Assistant avec Docker sur Debian, Ubuntu ou toute machine Linux](/fr/docs/installation/docker/)
+- [Installer Gladys Assistant sur Proxmox VE](/fr/docs/installation/proxmox/)
 - [Installer Gladys Assistant sur un NAS Synology](/fr/docs/installation/synology/)
 - [Installer Gladys Assistant sur un NAS Unraid](/fr/docs/installation/unraid/)
-- [Installer Gladys Assistant sur Proxmox VE](/fr/docs/installation/proxmox/)
-- [Installer Gladys Assistant sur un Raspberry Pi](/fr/docs/installation/raspberry-pi/)
+- [Installer Gladys Assistant sur une Freebox Delta](/fr/docs/installation/freebox-delta/)
 
 ## Configuration de votre maison connectée
 

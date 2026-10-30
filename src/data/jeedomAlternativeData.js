@@ -119,7 +119,7 @@ const alternativeContent = {
     faqTitle: "Frequently asked questions",
     cta: {
       title: "Try the simple Jeedom alternative",
-      text: "Gladys is free, open-source, and installs in a single Docker command. Privacy-first, self-hosted, no cloud required, and every integration is free.",
+      text: "Gladys is free, open-source, and installs on a mini-PC from a USB drive. Privacy-first, self-hosted, no cloud required, and every integration is free.",
       primary: { label: "Get started", href: "/docs/" },
       secondary: {
         label: "Compare with Jeedom",
@@ -241,7 +241,7 @@ const alternativeContent = {
     faqTitle: "Questions fréquentes",
     cta: {
       title: "Essayez l'alternative simple à Jeedom",
-      text: "Gladys est gratuite, open source, et s'installe en une seule commande Docker. Auto-hébergée, respectueuse de votre vie privée, sans cloud obligatoire, et toutes les intégrations sont gratuites.",
+      text: "Gladys est gratuite, open source, et s'installe sur un mini-PC depuis une clé USB. Auto-hébergée, respectueuse de votre vie privée, sans cloud obligatoire, et toutes les intégrations sont gratuites.",
       primary: { label: "Commencer", href: "/docs/" },
       secondary: {
         label: "Comparer avec Jeedom",

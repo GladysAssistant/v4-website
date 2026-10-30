@@ -135,7 +135,7 @@ const shellyWithoutCloudContent = {
     faqTitle: "Frequently asked questions",
     cta: {
       title: "Run your Shelly devices locally",
-      text: "Gladys is free, open source and installs with a single Docker command. Install the Shelly integration and scan your network.",
+      text: "Gladys is free, open source and installs on a mini-PC from a USB drive. Install the Shelly integration and scan your network.",
       primary: { label: "Get started", href: "/docs/" },
       secondary: { label: "Shelly integration", href: "/docs/integrations/external/shelly/" },
     },
@@ -267,7 +267,7 @@ const shellyWithoutCloudContent = {
     faqTitle: "Questions fréquentes",
     cta: {
       title: "Faites tourner vos Shelly en local",
-      text: "Gladys est gratuite, open source et s'installe en une seule commande Docker. Installez l'intégration Shelly et scannez votre réseau.",
+      text: "Gladys est gratuite, open source et s'installe sur un mini-PC depuis une clé USB. Installez l'intégration Shelly et scannez votre réseau.",
       primary: { label: "Commencer", href: "/docs/" },
       secondary: { label: "Intégration Shelly", href: "/docs/integrations/external/shelly/" },
     },
@@ -399,7 +399,7 @@ const shellyWithoutCloudContent = {
     faqTitle: "Häufige Fragen",
     cta: {
       title: "Betreibe deine Shelly-Geräte lokal",
-      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl installiert. Installiere die Shelly-Integration und scanne dein Netzwerk.",
+      text: "Gladys ist kostenlos, Open Source und lässt sich von einem USB-Stick auf einem Mini-PC installieren. Installiere die Shelly-Integration und scanne dein Netzwerk.",
       primary: { label: "Jetzt starten", href: "/docs/" },
       secondary: { label: "Shelly-Integration", href: "/docs/integrations/external/shelly/" },
     },
@@ -531,7 +531,7 @@ const shellyWithoutCloudContent = {
     faqTitle: "Preguntas frecuentes",
     cta: {
       title: "Usa tus dispositivos Shelly en local",
-      text: "Gladys es gratis, de código abierto y se instala con un solo comando de Docker. Instala la integración Shelly y escanea tu red.",
+      text: "Gladys es gratis, de código abierto y se instala en un mini-PC desde una memoria USB. Instala la integración Shelly y escanea tu red.",
       primary: { label: "Empezar", href: "/docs/" },
       secondary: { label: "Integración Shelly", href: "/docs/integrations/external/shelly/" },
     },

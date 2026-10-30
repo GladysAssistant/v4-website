@@ -186,17 +186,17 @@ const FAQQuestions = {
       response: (
         <>
           <b>Oui, 100% gratuite et open-source !</b> Gladys Assistant est un
-          logiciel libre que vous pouvez installer{" "}
-          <Link href="/fr/docs/installation/docker/#lancer-un-container-gladys-assistant">
-            en une seule commande Docker
-          </Link>
+          logiciel libre que vous installez sur un mini-PC depuis une clé USB
+          avec{" "}
+          <Link href="/fr/docs/installation/mini-pc/">Gladys Assistant OS</Link>
           . Aucun abonnement requis pour utiliser Gladys, aucune limitation,
           aucune carte bancaire demandée.
           <br />
           <br />
-          Vous pouvez l'installer sur n'importe quelle machine Linux : mini-PC,
-          NAS Synology, Raspberry Pi, serveur, ou même un vieux PC. Si Docker
-          tourne dessus, Gladys tourne dessus ! 🚀
+          Gladys tourne aussi avec{" "}
+          <Link href="/fr/docs/installation/docker/">Docker</Link> sur le
+          matériel que vous avez déjà : NAS Synology, Raspberry Pi, serveur, ou
+          même un vieux PC. Si Docker tourne dessus, Gladys tourne dessus ! 🚀
         </>
       ),
     },
@@ -204,10 +204,12 @@ const FAQQuestions = {
       title: <>Est-ce compliqué à installer ?</>,
       response: (
         <>
-          <b>Cela demande un peu de technique, mais c'est guidé.</b> Il faut
-          d'abord préparer une machine Linux (Ubuntu Server, par exemple), puis
-          lancer Gladys via Docker. Notre documentation vous accompagne pas à
-          pas, avec des captures d'écran et des vidéos.
+          <b>C'est guidé pas à pas.</b> Sur un mini-PC,{" "}
+          <Link href="/fr/docs/installation/mini-pc/">Gladys Assistant OS</Link>
+          , notre installeur officiel, s'occupe de tout : vous l'écrivez sur une
+          clé USB, vous démarrez le mini-PC dessus, vous répondez à quelques
+          questions, et Gladys s'installe toute seule, mises à jour automatiques
+          comprises. Aucune ligne de commande.
           <br />
           <br />
           <b>Pour aller plus vite :</b> le{" "}
@@ -286,17 +288,16 @@ const FAQQuestions = {
       response: (
         <>
           <b>Yes, 100% free and open-source!</b> Gladys Assistant is free
-          software you can install with{" "}
-          <Link href="/docs/installation/docker/#start-gladys">
-            a single Docker command
-          </Link>
-          . No subscription is required to use Gladys, no limitations, no credit
+          software you install on a mini-PC from a USB drive with{" "}
+          <Link href="/docs/installation/mini-pc/">Gladys Assistant OS</Link>.
+          No subscription is required to use Gladys, no limitations, no credit
           card needed.
           <br />
           <br />
-          You can install it on any Linux machine: mini-PC, Synology NAS,
-          Raspberry Pi, server, or even an old computer. If Docker runs on it,
-          Gladys runs on it! 🚀
+          Gladys also runs with{" "}
+          <Link href="/docs/installation/docker/">Docker</Link> on hardware you
+          already own: Synology NAS, Raspberry Pi, server, or even an old
+          computer. If Docker runs on it, Gladys runs on it! 🚀
         </>
       ),
     },
@@ -304,10 +305,15 @@ const FAQQuestions = {
       title: <>Is it hard to install?</>,
       response: (
         <>
-          <b>It takes some technical steps, but we guide you through them.</b>{" "}
-          You first need a Linux machine (Ubuntu Server, for example), then you
-          run Gladys via Docker. Our documentation walks you through each step
-          with screenshots and videos.
+          <b>It's guided step by step.</b> On a mini-PC,{" "}
+          <Link href="/docs/installation/mini-pc/">Gladys Assistant OS</Link>,
+          our official installer, does everything for you: write it to a USB
+          drive, start the mini-PC from it, answer a few questions, and Gladys
+          installs itself, automatic updates included. No command line needed.
+          <br />
+          <br />
+          Already have a server or a NAS? Gladys also installs there with{" "}
+          <Link href="/docs/installation/docker/">Docker</Link>.
         </>
       ),
     },
@@ -386,16 +392,16 @@ const FAQQuestions = {
         <>
           <b>Ja, 100 % kostenlos und Open Source!</b> Gladys Assistant ist freie
           Software, die du mit{" "}
-          <Link href="/de/docs/installation/docker/#start-gladys">
-            einem einzigen Docker-Befehl
-          </Link>{" "}
-          installieren kannst. Für Gladys brauchst du kein Abo, es gibt keine
-          Einschränkungen und du musst keine Kreditkarte angeben.
+          <Link href="/de/docs/installation/mini-pc/">Gladys Assistant OS</Link>{" "}
+          von einem USB-Stick auf einem Mini-PC installierst. Für Gladys
+          brauchst du kein Abo, es gibt keine Einschränkungen und du musst keine
+          Kreditkarte angeben.
           <br />
           <br />
-          Du kannst Gladys auf jedem Linux-Rechner installieren: Mini-PC,
-          Synology-NAS, Raspberry Pi, Server oder sogar ein alter Computer. Wenn
-          Docker darauf läuft, läuft auch Gladys darauf! 🚀
+          Gladys läuft auch mit{" "}
+          <Link href="/de/docs/installation/docker/">Docker</Link> auf Hardware,
+          die du schon hast: Synology-NAS, Raspberry Pi, Server oder sogar ein
+          alter Computer. Wenn Docker darauf läuft, läuft auch Gladys darauf! 🚀
         </>
       ),
     },
@@ -403,13 +409,17 @@ const FAQQuestions = {
       title: <>Ist die Installation kompliziert?</>,
       response: (
         <>
-          <b>
-            Ein paar technische Schritte sind nötig, aber wir begleiten dich
-            dabei.
-          </b>{" "}
-          Zuerst brauchst du einen Linux-Rechner (zum Beispiel Ubuntu Server),
-          dann startest du Gladys über Docker. Unsere Dokumentation führt dich
-          Schritt für Schritt durch alles, mit Screenshots und Videos.
+          <b>Wir führen dich Schritt für Schritt.</b> Auf einem Mini-PC
+          erledigt{" "}
+          <Link href="/de/docs/installation/mini-pc/">Gladys Assistant OS</Link>
+          , unser offizielles Installationsprogramm, alles für dich: Du
+          schreibst es auf einen USB-Stick, startest den Mini-PC davon,
+          beantwortest ein paar Fragen, und Gladys installiert sich von selbst,
+          inklusive automatischer Updates. Keine Kommandozeile nötig.
+          <br />
+          <br />
+          Du hast schon einen Server oder ein NAS? Dann installierst du Gladys
+          dort mit <Link href="/de/docs/installation/docker/">Docker</Link>.
         </>
       ),
     },
@@ -496,17 +506,16 @@ const FAQQuestions = {
       response: (
         <>
           <b>¡Sí, 100 % gratis y de código abierto!</b> Gladys Assistant es
-          software libre que puedes instalar con{" "}
-          <Link href="/es/docs/installation/docker/#start-gladys">
-            un solo comando Docker
-          </Link>
+          software libre que instalas en un mini-PC desde una memoria USB con{" "}
+          <Link href="/es/docs/installation/mini-pc/">Gladys Assistant OS</Link>
           . No necesitas ninguna suscripción para usar Gladys, no hay
           limitaciones y no te pedimos tarjeta de crédito.
           <br />
           <br />
-          Puedes instalarla en cualquier máquina Linux: mini-PC, NAS Synology,
-          Raspberry Pi, servidor o incluso un ordenador antiguo. Si Docker
-          funciona en ella, ¡Gladys también! 🚀
+          Gladys también funciona con{" "}
+          <Link href="/es/docs/installation/docker/">Docker</Link> en el equipo
+          que ya tienes: NAS Synology, Raspberry Pi, servidor o incluso un
+          ordenador antiguo. Si Docker funciona en él, ¡Gladys también! 🚀
         </>
       ),
     },
@@ -514,10 +523,16 @@ const FAQQuestions = {
       title: <>¿Es difícil de instalar?</>,
       response: (
         <>
-          <b>Requiere algunos pasos técnicos, pero te guiamos en cada uno.</b>{" "}
-          Primero necesitas una máquina Linux (Ubuntu Server, por ejemplo) y
-          después ejecutas Gladys con Docker. Nuestra documentación te acompaña
-          paso a paso, con capturas de pantalla y vídeos.
+          <b>Te guiamos paso a paso.</b> En un mini-PC,{" "}
+          <Link href="/es/docs/installation/mini-pc/">Gladys Assistant OS</Link>
+          , nuestro instalador oficial, se encarga de todo: lo grabas en una
+          memoria USB, arrancas el mini-PC desde ella, respondes a unas pocas
+          preguntas y Gladys se instala sola, con actualizaciones automáticas.
+          Sin línea de comandos.
+          <br />
+          <br />
+          ¿Ya tienes un servidor o un NAS? Gladys también se instala ahí con{" "}
+          <Link href="/es/docs/installation/docker/">Docker</Link>.
         </>
       ),
     },
@@ -834,10 +849,10 @@ function Home({ lang }) {
           <span>
             <i className={styles.heroTrustDot} />
             <Translate
-              id="home.horizon.trustDocker"
-              description="Homepage hero reassurance: one Docker command"
+              id="home.horizon.trustUsbInstall"
+              description="Homepage hero reassurance: installs from a USB drive with Gladys Assistant OS"
             >
-              One Docker command
+              Installs from a USB drive
             </Translate>
           </span>
         </div>
@@ -1261,7 +1276,7 @@ function Home({ lang }) {
                   description="Characteristics ease of use title on the homepage"
                 >
                   No terminal for day-to-day use: a clear interface to control
-                  your home. Installation is guided via Docker.
+                  your home. Installation is guided from a USB drive.
                 </Translate>
               }
             />

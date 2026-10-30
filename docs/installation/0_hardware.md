@@ -3,7 +3,7 @@ id: hardware
 title: Getting started with Gladys Assistant
 sidebar_label: Getting started
 slug: /
-description: "How to install Gladys Assistant: run it on a mini-PC, Raspberry Pi, Synology NAS, or any Linux machine with Docker. Free, open-source, self-hosted home automation."
+description: "How to install Gladys Assistant: on a mini-PC with Gladys Assistant OS, our official installer, on a Raspberry Pi, or on any Linux machine with Docker. Free, open-source, self-hosted home automation."
 ---
 
 It can be difficult to know where to start when you're new to home automation.
@@ -14,41 +14,43 @@ Gladys Assistant is a self-hosted software, which means everything works locally
 
 You have several options to run Gladys:
 
-### Option 1: Mini-PC (Recommended)
+### Option 1: Mini-PC with Gladys Assistant OS (Recommended)
 
-Most users install Gladys themselves on a mini-PC running Linux. It's the best price/performance ratio for a long-term setup.
+Most users run Gladys on a mini-PC. It's the best price/performance ratio for a long-term setup.
 
-- **New mini-PC** (Beelink, Intel NUC…): install Ubuntu Server, then Gladys via Docker. Example: [Beelink Mini S13 on Amazon](https://www.amazon.com/s?k=Beelink+Mini+S13&tag=gladproj-21)
+Installing it is easy with **Gladys Assistant OS**, our official installer: write it to a USB drive, start the mini-PC from it and answer a few questions. Gladys installs itself, then stays up to date automatically. No command line needed.
+
+- **New mini-PC** (Beelink, Intel NUC…), for example the [Beelink Mini S13 on Amazon](https://www.amazon.com/s?k=Beelink+Mini+S13&tag=gladproj-21)
 - **Refurbished mini-PC**: often cheaper on second-hand marketplaces. Look for at least 8 GB RAM and an SSD.
-- **Hardware you already own**: an old PC, an Intel NUC gathering dust… If Docker runs on it, Gladys runs on it.
+- **A computer you already own**: an old PC, an Intel NUC gathering dust… A computer with an Intel or AMD processor that starts in UEFI mode, an SSD of at least 16 GB and an Ethernet port can become your Gladys box (its disk will be erased).
 
-👉 [Mini-PC installation guide](/docs/installation/mini-pc/)
+👉 [Install Gladys on a mini-PC with Gladys Assistant OS](/docs/installation/mini-pc/)
 
-### Option 2: Existing Hardware
-
-If you already have compatible hardware:
-
-- **Synology NAS, Intel NUC, or any Docker-compatible Linux server**
-  - Reuse your existing hardware
-  - Follow our installation guides below
-- **Proxmox VE server**: run Gladys in a Debian VM, see the [Proxmox installation guide](/docs/installation/proxmox/)
-
-### Option 3: Raspberry Pi
+### Option 2: Raspberry Pi
 
 - A great way to discover Gladys if you already have one on hand
 - Simplified setup with our official 64-bit image (Pi 3, 4, and 5)
 - 👉 [Raspberry Pi installation guide](/docs/installation/raspberry-pi/)
 - For everyday long-term use, a mini-PC is still the better choice
 
+### Option 3: A Server or NAS You Already Run
+
+If you already have a machine running other services, you can install Gladys on it, next to what is already there:
+
+- **Any Linux server with Debian or Ubuntu**: see the [Docker installation guide](/docs/installation/docker/)
+- **Synology or Unraid NAS**: see the [Synology](/docs/installation/synology/) and [Unraid](/docs/installation/unraid/) guides
+- **Proxmox VE server**: run Gladys in a VM installed with Gladys Assistant OS, see the [Proxmox installation guide](/docs/installation/proxmox/)
+
 ## Installing Gladys Assistant
 
 Depending on the hardware chosen, you can follow one of the following tutorials:
 
-- [Install Gladys Assistant on a Mini-PC](/docs/installation/mini-pc/)
+- **Recommended:** [Install Gladys Assistant on a mini-PC with Gladys Assistant OS](/docs/installation/mini-pc/)
+- [Install Gladys Assistant on a Raspberry Pi](/docs/installation/raspberry-pi/)
+- [Install Gladys Assistant with Docker on Debian, Ubuntu or any Linux machine](/docs/installation/docker/)
+- [Install Gladys Assistant on Proxmox VE](/docs/installation/proxmox/)
 - [Install Gladys Assistant on a Synology NAS](/docs/installation/synology/)
 - [Install Gladys Assistant on an Unraid NAS](/docs/installation/unraid/)
-- [Install Gladys Assistant on Proxmox VE](/docs/installation/proxmox/)
-- [Install Gladys Assistant on a Raspberry Pi](/docs/installation/raspberry-pi/)
 
 ## Define Your Smart Home Project
 

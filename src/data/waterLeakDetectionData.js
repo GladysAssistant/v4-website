@@ -130,7 +130,7 @@ const waterLeakDetectionContent = {
     faqTitle: "Frequently asked questions",
     cta: {
       title: "Stop leaks before they become floods",
-      text: "Gladys is free, open source and installs with a single Docker command. Pair your sensors and your valve, and let the scene watch your home.",
+      text: "Gladys is free, open source and installs on a mini-PC from a USB drive. Pair your sensors and your valve, and let the scene watch your home.",
       primary: { label: "Get started", href: "/docs/" },
       secondary: { label: "Zigbee2MQTT guide", href: "/docs/integrations/zigbee2mqtt/" },
     },
@@ -259,7 +259,7 @@ const waterLeakDetectionContent = {
     faqTitle: "Questions fréquentes",
     cta: {
       title: "Arrêtez les fuites avant l'inondation",
-      text: "Gladys est gratuite, open source et s'installe en une seule commande Docker. Associez vos détecteurs et votre vanne, et laissez la scène veiller sur la maison.",
+      text: "Gladys est gratuite, open source et s'installe sur un mini-PC depuis une clé USB. Associez vos détecteurs et votre vanne, et laissez la scène veiller sur la maison.",
       primary: { label: "Commencer", href: "/docs/" },
       secondary: { label: "Guide Zigbee2MQTT", href: "/docs/integrations/zigbee2mqtt/" },
     },
@@ -388,7 +388,7 @@ const waterLeakDetectionContent = {
     faqTitle: "Häufige Fragen",
     cta: {
       title: "Stopp Lecks, bevor sie zur Überschwemmung werden",
-      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl installiert. Kopple deine Melder und dein Ventil und lass die Szene über dein Zuhause wachen.",
+      text: "Gladys ist kostenlos, Open Source und lässt sich von einem USB-Stick auf einem Mini-PC installieren. Kopple deine Melder und dein Ventil und lass die Szene über dein Zuhause wachen.",
       primary: { label: "Jetzt loslegen", href: "/de/docs/" },
       secondary: { label: "Zigbee2MQTT-Anleitung", href: "/de/docs/integrations/zigbee2mqtt/" },
     },
@@ -516,7 +516,7 @@ const waterLeakDetectionContent = {
     faqTitle: "Preguntas frecuentes",
     cta: {
       title: "Detén las fugas antes de que se conviertan en inundaciones",
-      text: "Gladys es gratuito, de código abierto y se instala con un solo comando Docker. Empareja tus sensores y tu válvula, y deja que la escena vigile tu casa.",
+      text: "Gladys es gratuito, de código abierto y se instala en un mini-PC desde una memoria USB. Empareja tus sensores y tu válvula, y deja que la escena vigile tu casa.",
       primary: { label: "Empezar", href: "/es/docs/" },
       secondary: { label: "Guía de Zigbee2MQTT", href: "/es/docs/integrations/zigbee2mqtt/" },
     },

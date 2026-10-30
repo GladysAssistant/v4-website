@@ -194,7 +194,7 @@ const hubitatAlternativeContent = {
     faqTitle: "Frequently asked questions",
     cta: {
       title: "A local smart home, open source",
-      text: "Gladys is free, open source and installs with a single Docker command. Try it next to your Hubitat and move at your own pace.",
+      text: "Gladys is free, open source and installs on a mini-PC from a USB drive. Try it next to your Hubitat and move at your own pace.",
       primary: { label: "Get started", href: "/docs/" },
       secondary: { label: "Works with Gladys", href: "/works-with/" },
     },
@@ -384,7 +384,7 @@ const hubitatAlternativeContent = {
     faqTitle: "Questions fréquentes",
     cta: {
       title: "Une maison locale, en open source",
-      text: "Gladys est gratuite, open source et s'installe en une seule commande Docker. Essayez-la à côté de votre Hubitat et migrez à votre rythme.",
+      text: "Gladys est gratuite, open source et s'installe sur un mini-PC depuis une clé USB. Essayez-la à côté de votre Hubitat et migrez à votre rythme.",
       primary: { label: "Commencer", href: "/docs/" },
       secondary: { label: "Appareils compatibles", href: "/works-with/" },
     },
@@ -574,7 +574,7 @@ const hubitatAlternativeContent = {
     faqTitle: "Häufige Fragen",
     cta: {
       title: "Ein lokales Smart Home, Open Source",
-      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl installiert. Probier es neben deinem Hubitat aus und zieh in deinem Tempo um.",
+      text: "Gladys ist kostenlos, Open Source und lässt sich von einem USB-Stick auf einem Mini-PC installieren. Probier es neben deinem Hubitat aus und zieh in deinem Tempo um.",
       primary: { label: "Jetzt starten", href: "/docs/" },
       secondary: { label: "Funktioniert mit Gladys", href: "/works-with/" },
     },
@@ -764,7 +764,7 @@ const hubitatAlternativeContent = {
     faqTitle: "Preguntas frecuentes",
     cta: {
       title: "Un hogar inteligente local y de código abierto",
-      text: "Gladys es gratis, de código abierto y se instala con un solo comando de Docker. Pruébalo junto a tu Hubitat y migra a tu ritmo.",
+      text: "Gladys es gratis, de código abierto y se instala en un mini-PC desde una memoria USB. Pruébalo junto a tu Hubitat y migra a tu ritmo.",
       primary: { label: "Empezar", href: "/docs/" },
       secondary: { label: "Funciona con Gladys", href: "/works-with/" },
     },
@@ -795,7 +795,7 @@ export const hubitatAlternativeFaqEn = [
   {
     question: "Which hardware do I need to replace a Hubitat hub?",
     answer:
-      "A mini-PC or a Raspberry Pi running Docker, plus a Zigbee USB dongle and a US 908 MHz Z-Wave stick if you use those protocols. Matter and Wi-Fi devices don't need any extra radio.",
+      "A mini-PC or a Raspberry Pi, plus a Zigbee USB dongle and a US 908 MHz Z-Wave stick if you use those protocols. Matter and Wi-Fi devices don't need any extra radio.",
   },
 ];
 
@@ -823,7 +823,7 @@ export const hubitatAlternativeFaqFr = [
   {
     question: "Quel matériel pour remplacer une box Hubitat ?",
     answer:
-      "Un mini-PC ou un Raspberry Pi avec Docker, plus une clé Zigbee USB et une clé Z-Wave de la bonne fréquence si vous utilisez ces protocoles. Les appareils Matter et Wi-Fi n'ont besoin d'aucune radio supplémentaire.",
+      "Un mini-PC ou un Raspberry Pi, plus une clé Zigbee USB et une clé Z-Wave de la bonne fréquence si vous utilisez ces protocoles. Les appareils Matter et Wi-Fi n'ont besoin d'aucune radio supplémentaire.",
   },
 ];
 
@@ -851,7 +851,7 @@ export const hubitatAlternativeFaqDe = [
   {
     question: "Welche Hardware brauche ich, um einen Hubitat Hub zu ersetzen?",
     answer:
-      "Einen Mini-PC oder Raspberry Pi mit Docker, dazu einen Zigbee-USB-Stick und einen Z-Wave-Stick in der passenden Frequenz, falls du diese Protokolle nutzt. Matter- und WLAN-Geräte brauchen kein zusätzliches Funkmodul.",
+      "Einen Mini-PC oder Raspberry Pi, dazu einen Zigbee-USB-Stick und einen Z-Wave-Stick in der passenden Frequenz, falls du diese Protokolle nutzt. Matter- und WLAN-Geräte brauchen kein zusätzliches Funkmodul.",
   },
 ];
 
@@ -879,7 +879,7 @@ export const hubitatAlternativeFaqEs = [
   {
     question: "¿Qué hardware necesito para sustituir un hub Hubitat?",
     answer:
-      "Un mini-PC o una Raspberry Pi con Docker, más un dongle USB Zigbee y un stick Z-Wave de la frecuencia adecuada para tu región si usas esos protocolos. Los dispositivos Matter y wifi no necesitan ninguna radio adicional.",
+      "Un mini-PC o una Raspberry Pi, más un dongle USB Zigbee y un stick Z-Wave de la frecuencia adecuada para tu región si usas esos protocolos. Los dispositivos Matter y wifi no necesitan ninguna radio adicional.",
   },
 ];
 
