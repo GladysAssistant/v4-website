@@ -93,7 +93,7 @@ const localSmartHomeContent = {
     gladys: {
       title: "Gladys Assistant: a local-first foundation",
       paragraphs: [
-        "Gladys Assistant is a free, open-source, self-hosted smart home platform built exactly on these principles. It installs in a single Docker command on a Raspberry Pi, mini-PC or NAS, and runs entirely on your local network.",
+        "Gladys Assistant is a free, open-source, self-hosted smart home platform built exactly on these principles. It installs on a mini-PC from a USB drive, also works on a Raspberry Pi or a NAS, and runs entirely on your local network.",
         "Everything is configured from a clean interface, with no configuration files. It's built around open standards (Zigbee, Matter, MQTT) and a full local automation engine, so your everyday scenes run entirely at home. Optional features like voice, AI and remote access do rely on the cloud, but a private, secure one from an independent project: no ads, no data resale, and end-to-end encrypted remote access.",
       ],
       link: { label: "Get started with Gladys →", href: "/docs/" },
@@ -133,7 +133,7 @@ const localSmartHomeContent = {
     faqTitle: "Frequently asked questions",
     cta: {
       title: "Start building your local smart home",
-      text: "Gladys is free, open-source, and installs in a single Docker command. Local-first, self-hosted, no cloud required.",
+      text: "Gladys is free, open-source, and installs on a mini-PC from a USB drive. Local-first, self-hosted, no cloud required.",
       primary: { label: "Get started", href: "/docs/" },
       secondary: { label: "Discover Gladys Plus", href: "/plus/" },
     },
@@ -226,7 +226,7 @@ const localSmartHomeContent = {
     gladys: {
       title: "Gladys Assistant : une fondation locale d'abord",
       paragraphs: [
-        "Gladys Assistant est une plateforme domotique gratuite, open source et auto-hébergée, bâtie exactement sur ces principes. Elle s'installe en une seule commande Docker sur un Raspberry Pi, un mini-PC ou un NAS, et tourne entièrement sur votre réseau local.",
+        "Gladys Assistant est une plateforme domotique gratuite, open source et auto-hébergée, bâtie exactement sur ces principes. Elle s'installe sur un mini-PC depuis une clé USB, fonctionne aussi sur un Raspberry Pi ou un NAS, et tourne entièrement sur votre réseau local.",
         "Tout se configure depuis une interface épurée, sans fichiers de configuration. Elle repose sur des standards ouverts (Zigbee, Matter, MQTT) et un vrai moteur d'automatisation local : vos scènes du quotidien tournent entièrement chez vous. Les fonctions optionnelles comme le vocal, l'IA et l'accès distant reposent, elles, sur le cloud, mais un cloud souverain hébergé en France, porté par un projet indépendant : sans publicité, sans revente de données, et un accès distant chiffré de bout en bout.",
       ],
       link: { label: "Commencer avec Gladys →", href: "/docs/" },
@@ -266,7 +266,7 @@ const localSmartHomeContent = {
     faqTitle: "Questions fréquentes",
     cta: {
       title: "Lancez-vous dans votre maison connectée locale",
-      text: "Gladys est gratuite, open source, et s'installe en une seule commande Docker. Locale d'abord, auto-hébergée, sans cloud obligatoire.",
+      text: "Gladys est gratuite, open source, et s'installe sur un mini-PC depuis une clé USB. Locale d'abord, auto-hébergée, sans cloud obligatoire.",
       primary: { label: "Commencer", href: "/docs/" },
       secondary: { label: "Découvrir Gladys Plus", href: "/plus/" },
     },
@@ -359,7 +359,7 @@ const localSmartHomeContent = {
     gladys: {
       title: "Gladys Assistant: ein lokales Fundament",
       paragraphs: [
-        "Gladys Assistant ist eine kostenlose, quelloffene und selbst gehostete Smart-Home-Plattform, die genau auf diesen Prinzipien aufbaut. Sie wird mit einem einzigen Docker-Befehl auf einem Raspberry Pi, Mini-PC oder NAS installiert und läuft vollständig in deinem lokalen Netzwerk.",
+        "Gladys Assistant ist eine kostenlose, quelloffene und selbst gehostete Smart-Home-Plattform, die genau auf diesen Prinzipien aufbaut. Sie lässt sich von einem USB-Stick auf einem Mini-PC installieren, funktioniert auch auf einem Raspberry Pi oder NAS und läuft vollständig in deinem lokalen Netzwerk.",
         "Alles wird über eine aufgeräumte Oberfläche eingerichtet, ohne Konfigurationsdateien. Gladys setzt auf offene Standards (Zigbee, Matter, MQTT) und eine vollwertige lokale Automations-Engine, sodass deine alltäglichen Szenen komplett zu Hause laufen. Optionale Funktionen wie Sprachsteuerung, KI und Fernzugriff nutzen zwar die Cloud, aber eine private, sichere Cloud eines unabhängigen Projekts: keine Werbung, kein Datenverkauf und ein Ende-zu-Ende-verschlüsselter Fernzugriff.",
       ],
       link: { label: "Mit Gladys starten →", href: "/de/docs/" },
@@ -399,7 +399,7 @@ const localSmartHomeContent = {
     faqTitle: "Häufige Fragen",
     cta: {
       title: "Bau jetzt dein lokales Smart Home",
-      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl installiert. Lokal zuerst, selbst gehostet, keine Cloud nötig.",
+      text: "Gladys ist kostenlos, Open Source und lässt sich von einem USB-Stick auf einem Mini-PC installieren. Lokal zuerst, selbst gehostet, keine Cloud nötig.",
       primary: { label: "Jetzt starten", href: "/de/docs/" },
       secondary: { label: "Gladys Plus entdecken", href: "/de/plus/" },
     },
@@ -491,7 +491,7 @@ const localSmartHomeContent = {
     gladys: {
       title: "Gladys Assistant: una base local ante todo",
       paragraphs: [
-        "Gladys Assistant es una plataforma domótica gratuita, de código abierto y autoalojada, construida precisamente sobre estos principios. Se instala con un solo comando Docker en una Raspberry Pi, un mini-PC o un NAS, y funciona íntegramente en tu red local.",
+        "Gladys Assistant es una plataforma domótica gratuita, de código abierto y autoalojada, construida precisamente sobre estos principios. Se instala en un mini-PC desde una memoria USB, también es compatible con una Raspberry Pi o un NAS, y funciona íntegramente en tu red local.",
         "Todo se configura desde una interfaz clara, sin archivos de configuración. Se basa en estándares abiertos (Zigbee, Matter, MQTT) y en un motor de automatización local completo, así que tus escenas del día a día se ejecutan íntegramente en casa. Las funciones opcionales, como la voz, la IA y el acceso remoto, sí dependen de la nube, pero de una nube privada y segura de un proyecto independiente: sin anuncios, sin reventa de datos y con acceso remoto cifrado de extremo a extremo.",
       ],
       link: { label: "Empieza con Gladys →", href: "/es/docs/" },
@@ -531,7 +531,7 @@ const localSmartHomeContent = {
     faqTitle: "Preguntas frecuentes",
     cta: {
       title: "Empieza a crear tu hogar inteligente local",
-      text: "Gladys es gratuito, de código abierto y se instala con un solo comando Docker. Local ante todo, autoalojado, sin necesidad de nube.",
+      text: "Gladys es gratuito, de código abierto y se instala en un mini-PC desde una memoria USB. Local ante todo, autoalojado, sin necesidad de nube.",
       primary: { label: "Empezar", href: "/es/docs/" },
       secondary: { label: "Descubre Gladys Plus", href: "/es/plus/" },
     },
@@ -562,7 +562,7 @@ export const localSmartHomeFaqEn = [
   {
     question: "Do I need to be technical to build a local smart home?",
     answer:
-      "Less than you might think. Gladys installs in a single Docker command, everything is configured by clicking in the interface. You mainly need a small machine (Raspberry Pi, mini-PC or NAS) and devices that use open standards.",
+      "Less than you might think. Gladys installs on a mini-PC from a USB drive with no command line, and everything is configured by clicking in the interface. You mainly need a small machine (Raspberry Pi, mini-PC or NAS) and devices that use open standards.",
   },
   {
     question: "Can I still access my smart home remotely if it's local?",
@@ -595,7 +595,7 @@ export const localSmartHomeFaqFr = [
   {
     question: "Faut-il être technique pour construire une maison connectée locale ?",
     answer:
-      "Moins que vous ne le pensez. Gladys s'installe en une seule commande Docker, tout se configure au clic dans l'interface, et un kit de démarrage est livré avec Gladys pré-installée. Il vous faut surtout une petite machine (Raspberry Pi, mini-PC ou NAS) et des appareils utilisant des standards ouverts.",
+      "Moins que vous ne le pensez. Gladys s'installe sur un mini-PC depuis une clé USB sans ligne de commande, tout se configure au clic dans l'interface, et un kit de démarrage est livré avec Gladys pré-installée. Il vous faut surtout une petite machine (Raspberry Pi, mini-PC ou NAS) et des appareils utilisant des standards ouverts.",
   },
   {
     question: "Puis-je quand même accéder à ma maison connectée à distance si elle est locale ?",
@@ -628,7 +628,7 @@ export const localSmartHomeFaqDe = [
   {
     question: "Muss ich technisch versiert sein, um ein lokales Smart Home zu bauen?",
     answer:
-      "Weniger, als du denkst. Gladys wird mit einem einzigen Docker-Befehl installiert, und alles wird per Klick in der Oberfläche eingerichtet. Du brauchst vor allem einen kleinen Rechner (Raspberry Pi, Mini-PC oder NAS) und Geräte, die offene Standards nutzen.",
+      "Weniger, als du denkst. Gladys lässt sich ohne Kommandozeile von einem USB-Stick auf einem Mini-PC installieren, und alles wird per Klick in der Oberfläche eingerichtet. Du brauchst vor allem einen kleinen Rechner (Raspberry Pi, Mini-PC oder NAS) und Geräte, die offene Standards nutzen.",
   },
   {
     question: "Kann ich auf ein lokales Smart Home trotzdem von unterwegs zugreifen?",
@@ -661,7 +661,7 @@ export const localSmartHomeFaqEs = [
   {
     question: "¿Necesito conocimientos técnicos para crear un hogar inteligente local?",
     answer:
-      "Menos de lo que crees. Gladys se instala con un solo comando Docker y todo se configura con clics en la interfaz. Básicamente necesitas una máquina pequeña (Raspberry Pi, mini-PC o NAS) y dispositivos que usen estándares abiertos.",
+      "Menos de lo que crees. Gladys se instala en un mini-PC desde una memoria USB, sin línea de comandos, y todo se configura con clics en la interfaz. Básicamente necesitas una máquina pequeña (Raspberry Pi, mini-PC o NAS) y dispositivos que usen estándares abiertos.",
   },
   {
     question: "¿Puedo acceder a mi hogar inteligente a distancia si es local?",

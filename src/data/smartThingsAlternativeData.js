@@ -192,7 +192,7 @@ const smartThingsAlternativeContent = {
     faqTitle: "Frequently asked questions",
     cta: {
       title: "Move your smart home back home",
-      text: "Gladys is free, open-source and installs in a single Docker command. Keep your devices, run them locally, and stay in control.",
+      text: "Gladys is free, open-source and installs on a mini-PC from a USB drive. Keep your devices, run them locally, and stay in control.",
       primary: { label: "Get started", href: "/docs/" },
       secondary: { label: "Works with Gladys", href: "/works-with/" },
     },
@@ -383,7 +383,7 @@ const smartThingsAlternativeContent = {
     faqTitle: "Questions fréquentes",
     cta: {
       title: "Ramenez votre maison connectée à la maison",
-      text: "Gladys est gratuite, open source et s'installe en une seule commande Docker. Gardez vos appareils, faites-les tourner en local, et restez maître de votre installation.",
+      text: "Gladys est gratuite, open source et s'installe sur un mini-PC depuis une clé USB. Gardez vos appareils, faites-les tourner en local, et restez maître de votre installation.",
       primary: { label: "Commencer", href: "/docs/" },
       secondary: { label: "Compatible Gladys", href: "/works-with/" },
     },
@@ -574,7 +574,7 @@ const smartThingsAlternativeContent = {
     faqTitle: "Häufige Fragen",
     cta: {
       title: "Hol dein Smart Home zurück nach Hause",
-      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl installiert. Behalte deine Geräte, steuere sie lokal und behalte die Kontrolle.",
+      text: "Gladys ist kostenlos, Open Source und lässt sich von einem USB-Stick auf einem Mini-PC installieren. Behalte deine Geräte, steuere sie lokal und behalte die Kontrolle.",
       primary: { label: "Jetzt starten", href: "/docs/" },
       secondary: { label: "Funktioniert mit Gladys", href: "/works-with/" },
     },
@@ -764,7 +764,7 @@ const smartThingsAlternativeContent = {
     faqTitle: "Preguntas frecuentes",
     cta: {
       title: "Devuelve tu hogar inteligente a casa",
-      text: "Gladys es gratuito, de código abierto y se instala con un solo comando Docker. Conserva tus dispositivos, contrólalos en local y mantén el control.",
+      text: "Gladys es gratuito, de código abierto y se instala en un mini-PC desde una memoria USB. Conserva tus dispositivos, contrólalos en local y mantén el control.",
       primary: { label: "Empezar", href: "/docs/" },
       secondary: { label: "Compatible con Gladys", href: "/works-with/" },
     },

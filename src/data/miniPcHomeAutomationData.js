@@ -119,7 +119,7 @@ const miniPcHomeAutomationContent = {
       title: "Small hardware, big smart home",
       paragraphs: [
         "A mini-PC that costs about as much as a smart speaker can run your whole home locally: dashboards, automations, history, cameras, energy monitoring, and AI if you want it. It sips power, makes no noise, and doesn't depend on any cloud.",
-        "Gladys is free and open source, and runs on any of these machines with Docker.",
+        "Gladys is free and open source: on a mini-PC, Gladys Assistant OS installs it from a USB drive, and it also runs with Docker on the other machines.",
       ],
       link: {
         label: "Home Assistant Green alternative →",
@@ -256,7 +256,7 @@ const miniPcHomeAutomationContent = {
       title: "Un petit matériel, une grande maison connectée",
       paragraphs: [
         "Un mini-PC qui coûte à peu près le prix d'une enceinte connectée peut faire tourner toute votre maison en local : tableaux de bord, automatisations, historique, caméras, suivi d'énergie, et IA si vous le souhaitez. Il consomme peu, ne fait pas de bruit et ne dépend d'aucun cloud.",
-        "Gladys est gratuite et open source, et tourne sur toutes ces machines avec Docker.",
+        "Gladys est gratuite et open source : sur un mini-PC, Gladys Assistant OS l'installe depuis une clé USB, et elle tourne aussi avec Docker sur les autres machines.",
       ],
       link: {
         label: "Découvrir le kit de démarrage →",
@@ -393,7 +393,7 @@ const miniPcHomeAutomationContent = {
       title: "Kleine Hardware, großes Smart Home",
       paragraphs: [
         "Ein Mini-PC, der etwa so viel kostet wie ein smarter Lautsprecher, kann dein ganzes Zuhause lokal steuern: Dashboards, Automatisierungen, Verlauf, Kameras, Energie-Monitoring und auf Wunsch KI. Er braucht kaum Strom, ist lautlos und hängt von keiner Cloud ab.",
-        "Gladys ist kostenlos und Open Source und läuft mit Docker auf jedem dieser Rechner.",
+        "Gladys ist kostenlos und Open Source: Auf einem Mini-PC installierst du sie mit Gladys Assistant OS von einem USB-Stick, auf den anderen Rechnern läuft sie mit Docker.",
       ],
       link: {
         label: "Alternative zu Home Assistant Green →",
@@ -529,7 +529,7 @@ const miniPcHomeAutomationContent = {
       title: "Hardware pequeño, gran hogar inteligente",
       paragraphs: [
         "Un mini-PC que cuesta más o menos lo mismo que un altavoz inteligente puede gestionar toda tu casa en local: paneles, automatizaciones, historial, cámaras, seguimiento del consumo de energía e IA si la quieres. Consume muy poco, no hace ruido y no depende de ninguna nube.",
-        "Gladys es gratis y de código abierto, y funciona con Docker en cualquiera de estos equipos.",
+        "Gladys es gratis y de código abierto: en un mini-PC, Gladys Assistant OS la instala desde una memoria USB, y en los demás equipos también funciona con Docker.",
       ],
       link: {
         label: "Alternativa a Home Assistant Green →",

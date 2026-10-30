@@ -59,7 +59,8 @@ const comparisonContent = {
       { feature: "Frontend", gladys: "Preact", ha: "Lit + Web Components" },
       {
         feature: "Installation",
-        gladys: "One Docker command, rich docs and videos",
+        gladys:
+          "Gladys Assistant OS (USB drive) or Docker, rich docs and videos",
         ha: "Home Assistant OS, the HA Green box, or Docker",
       },
       {
@@ -129,7 +130,7 @@ const comparisonContent = {
         id: "installation",
         title: "Installation",
         gladys: [
-          "Gladys is genuinely simple to install. It runs with a single Docker command (a `docker run` line or a `docker-compose` file you copy, paste and launch), and the documentation walks you through every step with screenshots and installation videos.",
+          "Gladys is genuinely simple to install. On a mini-PC, Gladys Assistant OS, our official installer, does everything from a USB drive: answer a few questions and Gladys installs itself, automatic updates included, with no command line. Already have a NAS or a server? Gladys runs there with Docker. Either way, the documentation walks you through every step with screenshots and installation videos.",
           "And because Gladys is just a container, you stay free to use your mini-PC, NAS or Raspberry Pi for other things too.",
         ],
         ha: [
@@ -137,7 +138,7 @@ const comparisonContent = {
           "It's straightforward if you buy their box. Without it, though, it's not always obvious which installation method is the simplest, since they tend to push Home Assistant OS over the plain Docker route.",
         ],
         takeaway:
-          "Both are beginner-friendly if you buy their hardware. But Gladys is especially easy to install yourself, thanks to a one-line Docker setup, rich documentation and step-by-step videos.",
+          "Both are beginner-friendly if you buy their hardware. But Gladys is especially easy to install yourself, thanks to Gladys Assistant OS (a USB installer, no command line), rich documentation and step-by-step videos.",
       },
       {
         id: "interface",
@@ -228,7 +229,7 @@ const comparisonContent = {
     faqTitle: "Frequently asked questions",
     cta: {
       title: "Ready to try Gladys Assistant?",
-      text: "Gladys is free, open-source, and installs in a single Docker command. Privacy-first, self-hosted, no cloud required.",
+      text: "Gladys is free, open-source, and installs on a mini-PC from a USB drive. Privacy-first, self-hosted, no cloud required.",
       primary: { label: "Get started", href: "/docs/" },
       secondary: { label: "See the integrations", href: "/docs/integrations/" },
     },
@@ -286,7 +287,8 @@ const comparisonContent = {
       { feature: "Frontend", gladys: "Preact", ha: "Lit + Web Components" },
       {
         feature: "Installation",
-        gladys: "Une commande Docker, doc et vidéos riches, ou un kit de démarrage pré-installé",
+        gladys:
+          "Gladys Assistant OS (clé USB), Docker ou un kit de démarrage pré-installé, doc et vidéos riches",
         ha: "Home Assistant OS, la box HA Green, ou Docker",
       },
       {
@@ -356,7 +358,7 @@ const comparisonContent = {
         id: "installation",
         title: "Installation",
         gladys: [
-          "Gladys est vraiment simple à installer. Elle se lance en une seule commande Docker (une ligne `docker run` ou un fichier `docker-compose` que vous copiez, collez et lancez), et la documentation vous guide à chaque étape avec des captures d'écran et des vidéos d'installation.",
+          "Gladys est vraiment simple à installer. Sur un mini-PC, Gladys Assistant OS, notre installeur officiel, s'occupe de tout depuis une clé USB : vous répondez à quelques questions, et Gladys s'installe toute seule, mises à jour automatiques comprises, sans aucune ligne de commande. Vous avez déjà un NAS ou un serveur ? Gladys y tourne avec Docker. Dans tous les cas, la documentation vous guide à chaque étape avec des captures d'écran et des vidéos d'installation.",
           "Et si vous préférez éviter toute installation, le kit de démarrage officiel est un mini-PC Beelink qui arrive avec Gladys déjà installée et configurée. Vous le branchez, suivez le guide de démarrage rapide, et c'est opérationnel en quelques minutes.",
           "Comme Gladys n'est qu'un conteneur, vous restez libre d'utiliser votre mini-PC, NAS ou Raspberry Pi pour autre chose en parallèle.",
         ],
@@ -365,7 +367,7 @@ const comparisonContent = {
           "C'est simple si vous achetez leur box. Sans elle, en revanche, ce n'est pas toujours clair quelle est la méthode la plus simple, car ils mettent un peu de côté la voie Docker pour pousser Home Assistant OS.",
         ],
         takeaway:
-          "Les deux sont accessibles si vous achetez leur matériel. Mais Gladys est particulièrement facile à installer soi-même, grâce à une commande Docker unique, une documentation riche et des vidéos pas à pas.",
+          "Les deux sont accessibles si vous achetez leur matériel. Mais Gladys est particulièrement facile à installer soi-même, grâce à Gladys Assistant OS (un installeur sur clé USB, sans ligne de commande), une documentation riche et des vidéos pas à pas.",
       },
       {
         id: "interface",
@@ -456,7 +458,7 @@ const comparisonContent = {
     faqTitle: "Questions fréquentes",
     cta: {
       title: "Prêt à essayer Gladys Assistant ?",
-      text: "Gladys est gratuite, open source, et s'installe en une seule commande Docker. Auto-hébergée, respectueuse de votre vie privée, sans cloud obligatoire.",
+      text: "Gladys est gratuite, open source, et s'installe sur un mini-PC depuis une clé USB. Auto-hébergée, respectueuse de votre vie privée, sans cloud obligatoire.",
       primary: { label: "Commencer", href: "/docs/" },
       secondary: { label: "Voir les intégrations", href: "/docs/integrations/" },
     },
@@ -514,7 +516,8 @@ const comparisonContent = {
       { feature: "Frontend", gladys: "Preact", ha: "Lit + Web Components" },
       {
         feature: "Installation",
-        gladys: "Ein Docker-Befehl, ausführliche Doku und Videos",
+        gladys:
+          "Gladys Assistant OS (USB-Stick) oder Docker, ausführliche Doku und Videos",
         ha: "Home Assistant OS, die HA-Green-Box oder Docker",
       },
       {
@@ -584,7 +587,7 @@ const comparisonContent = {
         id: "installation",
         title: "Installation",
         gladys: [
-          "Gladys ist wirklich einfach zu installieren. Es läuft mit einem einzigen Docker-Befehl (eine `docker run`-Zeile oder eine `docker-compose`-Datei, die du kopierst, einfügst und startest), und die Dokumentation begleitet dich bei jedem Schritt mit Screenshots und Installationsvideos.",
+          "Gladys ist wirklich einfach zu installieren. Auf einem Mini-PC erledigt Gladys Assistant OS, unser offizielles Installationsprogramm, alles von einem USB-Stick aus: Du beantwortest ein paar Fragen, und Gladys installiert sich von selbst, inklusive automatischer Updates, ganz ohne Kommandozeile. Du hast schon ein NAS oder einen Server? Dann läuft Gladys dort mit Docker. In jedem Fall begleitet dich die Dokumentation bei jedem Schritt mit Screenshots und Installationsvideos.",
           "Und weil Gladys nur ein Container ist, kannst du deinen Mini-PC, dein NAS oder deinen Raspberry Pi weiterhin auch für andere Dinge nutzen.",
         ],
         ha: [
@@ -592,7 +595,7 @@ const comparisonContent = {
           "Mit ihrer Box ist das unkompliziert. Ohne sie ist aber nicht immer klar, welche Installationsmethode die einfachste ist, da eher Home Assistant OS als der reine Docker-Weg empfohlen wird.",
         ],
         takeaway:
-          "Beide sind einsteigerfreundlich, wenn du ihre Hardware kaufst. Gladys lässt sich aber besonders leicht selbst installieren – dank Docker-Setup in einer Zeile, ausführlicher Dokumentation und Schritt-für-Schritt-Videos.",
+          "Beide sind einsteigerfreundlich, wenn du ihre Hardware kaufst. Gladys lässt sich aber besonders leicht selbst installieren – dank Gladys Assistant OS (Installation per USB-Stick, ohne Kommandozeile), ausführlicher Dokumentation und Schritt-für-Schritt-Videos.",
       },
       {
         id: "interface",
@@ -683,7 +686,7 @@ const comparisonContent = {
     faqTitle: "Häufig gestellte Fragen",
     cta: {
       title: "Bereit, Gladys Assistant auszuprobieren?",
-      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl installiert. Datenschutz zuerst, selbst gehostet, keine Cloud nötig.",
+      text: "Gladys ist kostenlos, Open Source und lässt sich von einem USB-Stick auf einem Mini-PC installieren. Datenschutz zuerst, selbst gehostet, keine Cloud nötig.",
       primary: { label: "Jetzt loslegen", href: "/de/docs/" },
       secondary: { label: "Zu den Integrationen", href: "/de/docs/integrations/" },
     },
@@ -740,7 +743,8 @@ const comparisonContent = {
       { feature: "Frontend", gladys: "Preact", ha: "Lit + Web Components" },
       {
         feature: "Instalación",
-        gladys: "Un solo comando Docker, documentación completa y vídeos",
+        gladys:
+          "Gladys Assistant OS (memoria USB) o Docker, documentación completa y vídeos",
         ha: "Home Assistant OS, la caja HA Green o Docker",
       },
       {
@@ -810,7 +814,7 @@ const comparisonContent = {
         id: "installation",
         title: "Instalación",
         gladys: [
-          "Gladys es realmente fácil de instalar. Funciona con un solo comando Docker (una línea `docker run` o un archivo `docker-compose` que copias, pegas y lanzas), y la documentación te acompaña en cada paso con capturas de pantalla y vídeos de instalación.",
+          "Gladys es realmente fácil de instalar. En un mini-PC, Gladys Assistant OS, nuestro instalador oficial, se encarga de todo desde una memoria USB: respondes a unas pocas preguntas y Gladys se instala sola, con actualizaciones automáticas y sin línea de comandos. ¿Ya tienes un NAS o un servidor? Gladys funciona ahí con Docker. En ambos casos, la documentación te acompaña en cada paso con capturas de pantalla y vídeos de instalación.",
           "Y como Gladys es simplemente un contenedor, sigues siendo libre de usar tu mini-PC, tu NAS o tu Raspberry Pi para otras cosas.",
         ],
         ha: [
@@ -818,7 +822,7 @@ const comparisonContent = {
           "Es sencillo si compras su caja. Sin ella, en cambio, no siempre está claro qué método de instalación es el más simple, ya que tienden a promover Home Assistant OS antes que la vía Docker clásica.",
         ],
         takeaway:
-          "Ambos son aptos para principiantes si compras su hardware. Pero Gladys es especialmente fácil de instalar por tu cuenta, gracias a una instalación Docker de una sola línea, una documentación completa y vídeos paso a paso.",
+          "Ambos son aptos para principiantes si compras su hardware. Pero Gladys es especialmente fácil de instalar por tu cuenta, gracias a Gladys Assistant OS (un instalador en memoria USB, sin línea de comandos), una documentación completa y vídeos paso a paso.",
       },
       {
         id: "interface",
@@ -909,7 +913,7 @@ const comparisonContent = {
     faqTitle: "Preguntas frecuentes",
     cta: {
       title: "¿Listo para probar Gladys Assistant?",
-      text: "Gladys es gratuito, de código abierto y se instala con un solo comando Docker. Privacidad ante todo, autoalojado, sin necesidad de nube.",
+      text: "Gladys es gratuito, de código abierto y se instala en un mini-PC desde una memoria USB. Privacidad ante todo, autoalojado, sin necesidad de nube.",
       primary: { label: "Empezar", href: "/es/docs/" },
       secondary: { label: "Ver las integraciones", href: "/es/docs/integrations/" },
     },

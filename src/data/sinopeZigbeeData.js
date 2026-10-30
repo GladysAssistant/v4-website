@@ -180,7 +180,7 @@ const sinopeZigbeeContent = {
     faqTitle: "Frequently asked questions",
     cta: {
       title: "Take back control of your heating",
-      text: "Gladys is free, open source and installs with a single Docker command. Pair your Sinopé thermostats and automate the peaks.",
+      text: "Gladys is free, open source and installs on a mini-PC from a USB drive. Pair your Sinopé thermostats and automate the peaks.",
       primary: { label: "Get started", href: "/docs/" },
       secondary: { label: "Zigbee2MQTT guide", href: "/docs/integrations/zigbee2mqtt/" },
     },
@@ -356,7 +356,7 @@ const sinopeZigbeeContent = {
     faqTitle: "Questions fréquentes",
     cta: {
       title: "Reprenez le contrôle de votre chauffage",
-      text: "Gladys est gratuite, open source et s'installe en une seule commande Docker. Associez vos thermostats Sinopé et automatisez les pointes.",
+      text: "Gladys est gratuite, open source et s'installe sur un mini-PC depuis une clé USB. Associez vos thermostats Sinopé et automatisez les pointes.",
       primary: { label: "Commencer", href: "/docs/" },
       secondary: { label: "Guide Zigbee2MQTT", href: "/docs/integrations/zigbee2mqtt/" },
     },

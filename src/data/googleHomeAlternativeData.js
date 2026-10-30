@@ -115,7 +115,7 @@ const alternativeContent = {
     faqTitle: "Frequently asked questions",
     cta: {
       title: "Try the privacy-friendly Google Home alternative",
-      text: "Gladys is free, open-source, and installs in a single Docker command. Local-first, self-hosted, no cloud required, no recordings on someone else's servers.",
+      text: "Gladys is free, open-source, and installs on a mini-PC from a USB drive. Local-first, self-hosted, no cloud required, no recordings on someone else's servers.",
       primary: { label: "Get started", href: "/docs/" },
       secondary: {
         label: "Discover Gladys Plus",
@@ -232,7 +232,7 @@ const alternativeContent = {
     faqTitle: "Questions fréquentes",
     cta: {
       title: "Essayez l'alternative à Google Home respectueuse de la vie privée",
-      text: "Gladys est gratuite, open source, et s'installe en une seule commande Docker. Locale d'abord, auto-hébergée, sans cloud obligatoire, sans enregistrements sur les serveurs de quelqu'un d'autre.",
+      text: "Gladys est gratuite, open source, et s'installe sur un mini-PC depuis une clé USB. Locale d'abord, auto-hébergée, sans cloud obligatoire, sans enregistrements sur les serveurs de quelqu'un d'autre.",
       primary: { label: "Commencer", href: "/docs/" },
       secondary: {
         label: "Découvrir Gladys Plus",
@@ -348,7 +348,7 @@ const alternativeContent = {
     faqTitle: "Häufig gestellte Fragen",
     cta: {
       title: "Teste die Google Home Alternative mit Datenschutz",
-      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl installiert. Lokal, selbst gehostet, keine Cloud nötig und keine Aufnahmen auf fremden Servern.",
+      text: "Gladys ist kostenlos, Open Source und lässt sich von einem USB-Stick auf einem Mini-PC installieren. Lokal, selbst gehostet, keine Cloud nötig und keine Aufnahmen auf fremden Servern.",
       primary: { label: "Jetzt loslegen", href: "/de/docs/" },
       secondary: {
         label: "Gladys Plus entdecken",
@@ -464,7 +464,7 @@ const alternativeContent = {
     faqTitle: "Preguntas frecuentes",
     cta: {
       title: "Prueba la alternativa a Google Home que respeta tu privacidad",
-      text: "Gladys es gratuito, de código abierto y se instala con un solo comando Docker. Local ante todo, autoalojado, sin necesidad de nube y sin grabaciones en servidores ajenos.",
+      text: "Gladys es gratuito, de código abierto y se instala en un mini-PC desde una memoria USB. Local ante todo, autoalojado, sin necesidad de nube y sin grabaciones en servidores ajenos.",
       primary: { label: "Empezar", href: "/es/docs/" },
       secondary: {
         label: "Descubrir Gladys Plus",

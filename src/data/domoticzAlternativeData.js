@@ -169,7 +169,7 @@ const domoticzAlternativeContent = {
     faqTitle: "Frequently asked questions",
     cta: {
       title: "Open source, local, and modern",
-      text: "Gladys is free and installs with a single Docker command. Try it next to Domoticz and see the difference.",
+      text: "Gladys is free and installs on a mini-PC from a USB drive, or with Docker on the machine you already have. Try it next to Domoticz and see the difference.",
       primary: { label: "Get started", href: "/docs/" },
       secondary: { label: "Works with Gladys", href: "/works-with/" },
     },
@@ -338,7 +338,7 @@ const domoticzAlternativeContent = {
     faqTitle: "Questions fréquentes",
     cta: {
       title: "Open source, local, et moderne",
-      text: "Gladys est gratuite et s'installe en une seule commande Docker. Essayez-la à côté de Domoticz et voyez la différence.",
+      text: "Gladys est gratuite et s'installe sur un mini-PC depuis une clé USB, ou avec Docker sur la machine que vous avez déjà. Essayez-la à côté de Domoticz et voyez la différence.",
       primary: { label: "Commencer", href: "/docs/" },
       secondary: { label: "Appareils compatibles", href: "/works-with/" },
     },
@@ -507,7 +507,7 @@ const domoticzAlternativeContent = {
     faqTitle: "Häufige Fragen",
     cta: {
       title: "Open Source, lokal und modern",
-      text: "Gladys ist kostenlos und mit einem einzigen Docker-Befehl installiert. Probier es neben Domoticz aus und sieh selbst den Unterschied.",
+      text: "Gladys ist kostenlos und lässt sich von einem USB-Stick auf einem Mini-PC installieren, oder mit Docker auf dem Rechner, den du schon hast. Probier es neben Domoticz aus und sieh selbst den Unterschied.",
       primary: { label: "Jetzt starten", href: "/docs/" },
       secondary: { label: "Funktioniert mit Gladys", href: "/works-with/" },
     },
@@ -676,7 +676,7 @@ const domoticzAlternativeContent = {
     faqTitle: "Preguntas frecuentes",
     cta: {
       title: "Código abierto, local y moderno",
-      text: "Gladys es gratis y se instala con un solo comando de Docker. Pruébalo junto a Domoticz y comprueba la diferencia.",
+      text: "Gladys es gratis y se instala en un mini-PC desde una memoria USB, o con Docker en el equipo que ya tienes. Pruébalo junto a Domoticz y comprueba la diferencia.",
       primary: { label: "Empezar", href: "/docs/" },
       secondary: { label: "Funciona con Gladys", href: "/works-with/" },
     },

@@ -186,7 +186,7 @@ const homeyAlternativeContent = {
     faqTitle: "Frequently asked questions",
     cta: {
       title: "A friendly smart home, free and open source",
-      text: "Gladys installs with a single Docker command on the hardware you choose. Try it next to your Homey and move at your own pace.",
+      text: "Gladys installs on a mini-PC from a USB drive, or with Docker on the hardware you choose. Try it next to your Homey and move at your own pace.",
       primary: { label: "Get started", href: "/docs/" },
       secondary: { label: "Works with Gladys", href: "/works-with/" },
     },
@@ -369,7 +369,7 @@ const homeyAlternativeContent = {
     faqTitle: "Questions fréquentes",
     cta: {
       title: "Une maison conviviale, gratuite et open source",
-      text: "Gladys s'installe en une seule commande Docker sur le matériel de votre choix. Essayez-la à côté de votre Homey et migrez à votre rythme.",
+      text: "Gladys s'installe sur un mini-PC depuis une clé USB, ou avec Docker sur le matériel de votre choix. Essayez-la à côté de votre Homey et migrez à votre rythme.",
       primary: { label: "Commencer", href: "/docs/" },
       secondary: { label: "Appareils compatibles", href: "/works-with/" },
     },
@@ -552,7 +552,7 @@ const homeyAlternativeContent = {
     faqTitle: "Häufige Fragen",
     cta: {
       title: "Ein einfaches Smart Home, kostenlos und Open Source",
-      text: "Gladys installierst du mit einem einzigen Docker-Befehl auf der Hardware deiner Wahl. Probier es neben deinem Homey aus und zieh in deinem Tempo um.",
+      text: "Gladys installierst du von einem USB-Stick auf einem Mini-PC oder mit Docker auf der Hardware deiner Wahl. Probier es neben deinem Homey aus und zieh in deinem Tempo um.",
       primary: { label: "Jetzt starten", href: "/docs/" },
       secondary: { label: "Funktioniert mit Gladys", href: "/works-with/" },
     },
@@ -735,7 +735,7 @@ const homeyAlternativeContent = {
     faqTitle: "Preguntas frecuentes",
     cta: {
       title: "Un hogar inteligente fácil, gratis y de código abierto",
-      text: "Gladys se instala con un solo comando de Docker en el hardware que elijas. Pruébalo junto a tu Homey y migra a tu ritmo.",
+      text: "Gladys se instala en un mini-PC desde una memoria USB, o con Docker en el hardware que elijas. Pruébalo junto a tu Homey y migra a tu ritmo.",
       primary: { label: "Empezar", href: "/docs/" },
       secondary: { label: "Funciona con Gladys", href: "/works-with/" },
     },

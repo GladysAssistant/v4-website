@@ -183,7 +183,7 @@ const bestZigbeeDongleContent = {
     faqTitle: "Frequently asked questions",
     cta: {
       title: "Build your local Zigbee network",
-      text: "Gladys is free, open-source, and installs in a single Docker command. Plug in a dongle and control your Zigbee devices locally, no hub required.",
+      text: "Gladys is free, open-source, and installs on a mini-PC from a USB drive. Plug in a dongle and control your Zigbee devices locally, no hub required.",
       primary: { label: "Get started", href: "/docs/" },
       secondary: {
         label: "Set up Zigbee2MQTT",
@@ -346,7 +346,7 @@ const bestZigbeeDongleContent = {
     faqTitle: "Questions fréquentes",
     cta: {
       title: "Montez votre réseau Zigbee local",
-      text: "Gladys est gratuite, open source, et s'installe en une seule commande Docker. Branchez une clé et pilotez vos appareils Zigbee en local, sans box.",
+      text: "Gladys est gratuite, open source, et s'installe sur un mini-PC depuis une clé USB. Branchez une clé Zigbee et pilotez vos appareils en local, sans box.",
       primary: { label: "Commencer", href: "/fr/docs/" },
       secondary: { label: "Découvrir le kit de démarrage", href: "/fr/starter-kit/" },
     },
@@ -506,7 +506,7 @@ const bestZigbeeDongleContent = {
     faqTitle: "Häufige Fragen",
     cta: {
       title: "Bau dein lokales Zigbee-Netz auf",
-      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl installiert. Steck einen Stick ein und steuere deine Zigbee-Geräte lokal – ganz ohne Hub.",
+      text: "Gladys ist kostenlos, Open Source und lässt sich von einem USB-Stick auf einem Mini-PC installieren. Steck einen Zigbee-Stick ein und steuere deine Geräte lokal – ganz ohne Hub.",
       primary: { label: "Jetzt starten", href: "/de/docs/" },
       secondary: {
         label: "Zigbee2MQTT einrichten",
@@ -668,7 +668,7 @@ const bestZigbeeDongleContent = {
     faqTitle: "Preguntas frecuentes",
     cta: {
       title: "Crea tu red Zigbee local",
-      text: "Gladys es gratuito, de código abierto y se instala con un solo comando Docker. Conecta un dongle y controla tus dispositivos Zigbee en local, sin necesidad de hub.",
+      text: "Gladys es gratuito, de código abierto y se instala en un mini-PC desde una memoria USB. Conecta un dongle y controla tus dispositivos Zigbee en local, sin necesidad de hub.",
       primary: { label: "Empezar", href: "/es/docs/" },
       secondary: {
         label: "Configurar Zigbee2MQTT",

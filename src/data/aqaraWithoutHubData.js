@@ -133,7 +133,7 @@ const aqaraWithoutHubContent = {
     faqTitle: "Frequently asked questions",
     cta: {
       title: "Free your Aqara sensors",
-      text: "Gladys is free, open source and installs with a single Docker command. Plug in a Zigbee dongle and pair your first Aqara sensor.",
+      text: "Gladys is free, open source and installs on a mini-PC from a USB drive. Plug in a Zigbee dongle and pair your first Aqara sensor.",
       primary: { label: "Get started", href: "/docs/" },
       secondary: { label: "Zigbee2MQTT guide", href: "/docs/integrations/zigbee2mqtt/" },
     },
@@ -265,7 +265,7 @@ const aqaraWithoutHubContent = {
     faqTitle: "Questions fréquentes",
     cta: {
       title: "Libérez vos capteurs Aqara",
-      text: "Gladys est gratuite, open source et s'installe en une seule commande Docker. Branchez une clé Zigbee et associez votre premier capteur Aqara.",
+      text: "Gladys est gratuite, open source et s'installe sur un mini-PC depuis une clé USB. Branchez une clé Zigbee et associez votre premier capteur Aqara.",
       primary: { label: "Commencer", href: "/docs/" },
       secondary: { label: "Guide Zigbee2MQTT", href: "/docs/integrations/zigbee2mqtt/" },
     },
@@ -397,7 +397,7 @@ const aqaraWithoutHubContent = {
     faqTitle: "Häufige Fragen",
     cta: {
       title: "Befreie deine Aqara-Sensoren",
-      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl installiert. Zigbee-Stick einstecken und den ersten Aqara-Sensor koppeln.",
+      text: "Gladys ist kostenlos, Open Source und lässt sich von einem USB-Stick auf einem Mini-PC installieren. Zigbee-Stick einstecken und den ersten Aqara-Sensor koppeln.",
       primary: { label: "Jetzt starten", href: "/docs/" },
       secondary: { label: "Zigbee2MQTT-Anleitung", href: "/docs/integrations/zigbee2mqtt/" },
     },
@@ -528,7 +528,7 @@ const aqaraWithoutHubContent = {
     faqTitle: "Preguntas frecuentes",
     cta: {
       title: "Libera tus sensores Aqara",
-      text: "Gladys es gratuito, de código abierto y se instala con un solo comando Docker. Conecta un dongle Zigbee y vincula tu primer sensor Aqara.",
+      text: "Gladys es gratuito, de código abierto y se instala en un mini-PC desde una memoria USB. Conecta un dongle Zigbee y vincula tu primer sensor Aqara.",
       primary: { label: "Empezar", href: "/docs/" },
       secondary: { label: "Guía de Zigbee2MQTT", href: "/docs/integrations/zigbee2mqtt/" },
     },

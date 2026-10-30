@@ -121,7 +121,7 @@ const smartHomeMcpContent = {
       title: "How to connect Claude to your smart home",
       intro: "Four steps, on any Gladys installation:",
       points: [
-        "Install Gladys on a mini-PC, a Raspberry Pi or a NAS with Docker, and add your devices.",
+        "Install Gladys on a mini-PC from a USB drive (or on a Raspberry Pi or a NAS), and add your devices.",
         "In Gladys, open Integrations → MCP and generate an API key for your client.",
         "Add the Gladys MCP server to your client: the local URL and the key in the Authorization header (through mcp-proxy for Claude Desktop).",
         "Restart the client and ask: \"What's the temperature in the bedroom?\"",
@@ -169,7 +169,7 @@ const smartHomeMcpContent = {
     faqTitle: "Frequently asked questions",
     cta: {
       title: "Plug your AI agent into your home",
-      text: "Gladys is free, open source and installs with a single Docker command. Its MCP server is built in.",
+      text: "Gladys is free, open source and installs on a mini-PC from a USB drive. Its MCP server is built in.",
       primary: { label: "Get started", href: "/docs/" },
       secondary: { label: "MCP documentation", href: "/docs/integrations/mcp/" },
     },
@@ -287,7 +287,7 @@ const smartHomeMcpContent = {
       title: "Comment connecter Claude à sa maison",
       intro: "Quatre étapes, sur n'importe quelle installation de Gladys :",
       points: [
-        "Installez Gladys sur un mini-PC, un Raspberry Pi ou un NAS avec Docker, et ajoutez vos appareils.",
+        "Installez Gladys sur un mini-PC depuis une clé USB (ou sur un Raspberry Pi ou un NAS), et ajoutez vos appareils.",
         "Dans Gladys, ouvrez Intégrations → MCP et générez une clé d'API pour votre client.",
         "Ajoutez le serveur MCP de Gladys à votre client : l'URL locale et la clé dans l'en-tête Authorization (via mcp-proxy pour Claude Desktop).",
         "Redémarrez le client et demandez : « Quelle température fait-il dans la chambre ? »",
@@ -335,7 +335,7 @@ const smartHomeMcpContent = {
     faqTitle: "Questions fréquentes",
     cta: {
       title: "Branchez votre agent IA sur votre maison",
-      text: "Gladys est gratuite, open source et s'installe en une seule commande Docker. Son serveur MCP est intégré.",
+      text: "Gladys est gratuite, open source et s'installe sur un mini-PC depuis une clé USB. Son serveur MCP est intégré.",
       primary: { label: "Commencer", href: "/docs/" },
       secondary: { label: "Documentation MCP", href: "/docs/integrations/mcp/" },
     },
@@ -455,7 +455,7 @@ const smartHomeMcpContent = {
       title: "So verbindest du Claude mit deinem Smart Home",
       intro: "Vier Schritte, auf jeder Gladys-Installation:",
       points: [
-        "Installiere Gladys mit Docker auf einem Mini-PC, einem Raspberry Pi oder einem NAS und füge deine Geräte hinzu.",
+        "Installiere Gladys von einem USB-Stick auf einem Mini-PC (oder auf einem Raspberry Pi oder NAS) und füge deine Geräte hinzu.",
         "Öffne in Gladys Integrationen → MCP und erzeuge einen API-Schlüssel für deinen Client.",
         "Füge den MCP-Server von Gladys in deinem Client hinzu: die lokale URL und den Schlüssel im Authorization-Header (über mcp-proxy für Claude Desktop).",
         "Starte den Client neu und frag: „Wie warm ist es im Schlafzimmer?“",
@@ -503,7 +503,7 @@ const smartHomeMcpContent = {
     faqTitle: "Häufige Fragen",
     cta: {
       title: "Verbinde deinen KI-Agenten mit deinem Zuhause",
-      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl installiert. Der MCP-Server ist bereits integriert.",
+      text: "Gladys ist kostenlos, Open Source und lässt sich von einem USB-Stick auf einem Mini-PC installieren. Der MCP-Server ist bereits integriert.",
       primary: { label: "Jetzt starten", href: "/de/docs/" },
       secondary: { label: "MCP-Dokumentation", href: "/de/docs/integrations/mcp/" },
     },
@@ -623,7 +623,7 @@ const smartHomeMcpContent = {
       title: "Cómo conectar Claude a tu hogar inteligente",
       intro: "Cuatro pasos, en cualquier instalación de Gladys:",
       points: [
-        "Instala Gladys con Docker en un mini-PC, una Raspberry Pi o un NAS, y añade tus dispositivos.",
+        "Instala Gladys en un mini-PC desde una memoria USB (o en una Raspberry Pi o un NAS), y añade tus dispositivos.",
         "En Gladys, abre Integraciones → MCP y genera una clave API para tu cliente.",
         "Añade el servidor MCP de Gladys a tu cliente: la URL local y la clave en la cabecera Authorization (a través de mcp-proxy para Claude Desktop).",
         "Reinicia el cliente y pregunta: \"¿Qué temperatura hace en el dormitorio?\"",
@@ -671,7 +671,7 @@ const smartHomeMcpContent = {
     faqTitle: "Preguntas frecuentes",
     cta: {
       title: "Conecta tu agente de IA a tu casa",
-      text: "Gladys es gratuito, de código abierto y se instala con un solo comando Docker. Su servidor MCP viene integrado.",
+      text: "Gladys es gratuito, de código abierto y se instala en un mini-PC desde una memoria USB. Su servidor MCP viene integrado.",
       primary: { label: "Empezar", href: "/es/docs/" },
       secondary: { label: "Documentación de MCP", href: "/es/docs/integrations/mcp/" },
     },
