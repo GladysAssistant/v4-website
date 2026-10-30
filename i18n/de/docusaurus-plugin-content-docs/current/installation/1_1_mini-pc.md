@@ -145,7 +145,7 @@ Die Installation läuft dann ein paar Minuten lang von selbst.
 
 ## Schritt 5: Gladys installiert sich von selbst
 
-Wenn der Bildschirm meldet, dass die Installation abgeschlossen ist (*Installation complete!*), wähle mit den Pfeiltasten **Jetzt neu starten** (*Reboot Now*), drücke **Enter** und **zieh dann den USB-Stick ab** (wenn eine Meldung dich auffordert, das Installationsmedium zu entfernen, entferne es und drücke dann **Enter**).
+Wenn der Bildschirm meldet, dass die Installation abgeschlossen ist (*Installation complete!*), wähle mit den Pfeiltasten **Jetzt neustarten** (*Reboot Now*), drücke **Enter** und **zieh dann den USB-Stick ab** (wenn eine Meldung dich auffordert, das Installationsmedium zu entfernen, entferne es und drücke dann **Enter**).
 
 ![Das Ende der Installation, mit ausgewähltem Reboot Now](../../../../../static/img/docs/en/installation/gladys-assistant-os/install-complete.png)
 
