@@ -22,7 +22,7 @@ Instalarlo es muy sencillo con **Gladys Assistant OS**, nuestro instalador ofici
 
 - **Mini-PC nuevo** (Beelink, Intel NUC…), por ejemplo el [Beelink Mini S13 en Amazon](https://www.amazon.com/s?k=Beelink+Mini+S13&tag=gladproj-21)
 - **Mini-PC reacondicionado**: suele ser más barato en las webs de segunda mano. Busca al menos 8 GB de RAM y un SSD.
-- **Un ordenador que ya tienes**: un PC antiguo, un Intel NUC cogiendo polvo… Cualquier ordenador con un procesador Intel o AMD puede convertirse en tu central Gladys (su disco se borrará).
+- **Un ordenador que ya tienes**: un PC antiguo, un Intel NUC cogiendo polvo… Un ordenador con un procesador Intel o AMD que arranque en modo UEFI, un SSD de al menos 16 GB y un puerto Ethernet puede convertirse en tu central Gladys (su disco se borrará).
 
 👉 [Instalar Gladys en un mini-PC con Gladys Assistant OS](/es/docs/installation/mini-pc/)
 

@@ -26,7 +26,7 @@ Et l'installation est simple grâce à **Gladys Assistant OS**, notre installeur
 
 - **Mini-PC neuf** (Beelink, Intel NUC…) : comptez entre 330 € et 430 € pour un modèle performant comme le Beelink S13. Exemple : [Beelink Mini S13 sur Amazon](https://amzn.to/4hRtIE3)
 - **Mini-PC reconditionné** : souvent nettement moins cher sur Leboncoin, eBay ou chez les revendeurs spécialisés. Vérifiez qu'il a au moins 8 Go de RAM et un SSD.
-- **Un ordinateur que vous avez déjà** : un vieux PC, un Intel NUC qui traîne… Tout ordinateur avec un processeur Intel ou AMD peut devenir votre box Gladys (son disque sera effacé).
+- **Un ordinateur que vous avez déjà** : un vieux PC, un Intel NUC qui traîne… Un ordinateur avec un processeur Intel ou AMD qui démarre en mode UEFI, un SSD d'au moins 16 Go et un port Ethernet peut devenir votre box Gladys (son disque sera effacé).
 
 👉 [Installer Gladys sur un mini-PC avec Gladys Assistant OS](/fr/docs/installation/mini-pc/)
 
