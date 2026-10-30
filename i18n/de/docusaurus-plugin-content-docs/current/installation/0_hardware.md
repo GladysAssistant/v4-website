@@ -39,7 +39,7 @@ Wenn du bereits einen Rechner hast, auf dem andere Dienste laufen, kannst du Gla
 
 - **Jeder Linux-Server mit Debian oder Ubuntu**: siehe die [Anleitung zur Docker-Installation](/de/docs/installation/docker/)
 - **Synology- oder Unraid-NAS**: siehe die Anleitungen für [Synology](/de/docs/installation/synology/) und [Unraid](/de/docs/installation/unraid/)
-- **Proxmox-VE-Server**: Betreibe Gladys in einer Debian-VM, siehe die [Anleitung zur Installation auf Proxmox](/de/docs/installation/proxmox/)
+- **Proxmox-VE-Server**: Betreibe Gladys in einer VM, installiert mit Gladys Assistant OS, siehe die [Anleitung zur Installation auf Proxmox](/de/docs/installation/proxmox/)
 
 ## Gladys Assistant installieren
 

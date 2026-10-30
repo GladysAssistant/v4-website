@@ -114,17 +114,17 @@ Aparece el menú de Gladys Assistant OS, con la opción **Install Gladys Assista
 Abre los ajustes de la BIOS (normalmente con **Supr** (_Del_) o **F2** al encender), comprueba que el ordenador arranca en modo **UEFI** (y no en modo "Legacy" o "CSM") y pon la memoria USB en primer lugar en el orden de arranque. Si sigue sin arrancar, desactiva el **Secure Boot** en esos mismos ajustes.
 :::
 
-## Paso 4: responder a las preguntas del instalador
+## Paso 4: responder a las preguntas del instalador {/* #installer-questions */}
 
 El instalador solo hace unas pocas preguntas. Muévete con las **flechas** del teclado y la tecla **Tab**, marca o desmarca una opción con la **barra espaciadora** y confirma con **Intro** (_Enter_).
 
 1. **Idioma**: el inglés está preseleccionado. Elige tu idioma: lo usarán las pantallas siguientes y, después, la página de configuración de Gladys.
 2. **Teclado**: se te propone la distribución de tu idioma (por ejemplo, la distribución española si eliges el español). Revísala con atención, porque vas a escribir tu contraseña.
 3. **Disco**:
-   - si el mini-PC tiene **un solo disco interno**, no hay nada que elegir: Gladys Assistant OS se instala en él automáticamente y ocupa todo el disco;
+   - si el mini-PC tiene **un solo disco interno** (los discos de menos de 16 GB no cuentan), no hay nada que elegir: Gladys Assistant OS se instala en él automáticamente y ocupa todo el disco;
    - si tiene **varios discos**, el instalador te pregunta cuál usar: deja seleccionada la opción que usa todo el disco (_Use an entire disk_), elige el disco, deja la opción LVM como está y valida la pantalla de resumen con **Hecho** (_Done_).
 
-   En ambos casos, aparece a continuación una ventana de confirmación (_Confirm destructive action_): elige **Continuar** (_Continue_) para borrar el disco e iniciar la instalación. No se borra nada antes de este paso.
+   En ambos casos, el instalador te pide después que confirmes en una ventana (_Confirm destructive action_), que puede aparecer un poco más tarde, después de la pantalla de la cuenta. **No** (_No_) está seleccionado por defecto: baja hasta **Continuar** (_Continue_) con las flechas y pulsa **Intro** para borrar el disco e iniciar la instalación. No se borra nada antes de este paso.
 
 4. **Tu cuenta**: introduce tu nombre, un nombre de usuario y una contraseña. Es la única cuenta de la máquina (no hay ninguna contraseña por defecto): apunta la contraseña en un lugar seguro, la necesitarás para el mantenimiento. El instalador también te pide un nombre de servidor (_server name_), pero la máquina siempre se llama `gladys`, así que puedes escribir lo que quieras.
 5. **SSH**: la opción **Instalar el servidor OpenSSH** (_Install OpenSSH server_) viene marcada por defecto. Déjala marcada para poder conectarte más adelante al mini-PC a distancia desde tu ordenador. Si nunca vas a necesitarlo, puedes desmarcarla.
@@ -143,7 +143,7 @@ En este primer arranque, Gladys Assistant OS instala Docker, descarga Gladys y l
 La descarga de Gladys es el paso más largo y su duración depende de tu conexión a internet. Deja el mini-PC conectado al cable Ethernet hasta el final.
 
 :::note[Nada de qué preocuparse]
-Si el mini-PC no tiene acceso a internet, la configuración se queda en **Esperando una conexión a Internet…** y se reanuda por sí sola en cuanto vuelve la conexión. Si se va la luz, basta con volver a encender el mini-PC: la configuración continúa donde se quedó.
+Si el mini-PC no tiene acceso a internet, su pantalla muestra **Se requiere conexión a Internet** y la configuración espera: se reanuda por sí sola en cuanto vuelve la conexión. Si se va la luz, basta con volver a encender el mini-PC: la configuración continúa donde se quedó.
 :::
 
 ## Paso 6: abrir Gladys
@@ -168,9 +168,10 @@ Asigna al mini-PC una dirección IP fija con una reserva DHCP en los ajustes de 
 
 Gladys Assistant OS es un Ubuntu Server estándar, así que sigues teniendo el control de tu máquina. Algunas cosas útiles si te manejas con la terminal:
 
-- **Conectarte a distancia** (si mantuviste OpenSSH): `ssh tu-usuario@gladys.local`, o con la dirección IP del mini-PC.
+- **Conectarte a distancia** (si mantuviste OpenSSH): `ssh tu-usuario@gladysassistant.local`, o con la dirección IP del mini-PC.
 - **Los datos de Gladys** se guardan en `/var/lib/gladysassistant`.
 - **Gladys y Watchtower** se ejecutan con Docker Compose, a partir de `/opt/gladys/compose.yaml`. Tu cuenta puede usar `docker` sin `sudo` (si te pide `sudo`, cierra la sesión y vuelve a entrar una vez después de la instalación).
+- **Bluetooth**: para usar sensores Bluetooth o emparejar dispositivos Matter por Bluetooth, instala BlueZ en el mini-PC: `sudo apt install -y bluez`.
 - **Diagnóstico**: `sudo gladys-diagnostics` muestra el estado de la máquina. Su salida no contiene ninguna contraseña ni ningún secreto, así que puedes compartirla en [el foro](https://community.gladysassistant.com/) si necesitas ayuda.
 - **Zona horaria**: se detecta automáticamente. Para cambiarla, por ejemplo a `Europe/Madrid`:
 
@@ -188,7 +189,7 @@ docker compose -f /opt/gladys/compose.yaml up -d gladys
 
 ## Solución de problemas
 
-**La pantalla se queda en "Esperando una conexión a Internet…"**: el mini-PC no tiene acceso a internet. Comprueba el cable Ethernet y tu router: la configuración se reanuda por sí sola, sin reiniciar, en cuanto la conexión funciona.
+**La pantalla muestra "Se requiere conexión a Internet"**: el mini-PC no tiene acceso a internet. Comprueba el cable Ethernet y tu router: la configuración se reanuda por sí sola, sin reiniciar, en cuanto la conexión funciona.
 
 **`gladysassistant.local` no se abre**: tu red no admite los nombres locales. Usa la dirección que aparece en la pantalla del mini-PC.
 
@@ -226,7 +227,7 @@ Sí. Gladys Assistant OS borra el disco interno en el que se instala, después d
 
 ### ¿Puedo seguir usando el mini-PC para otras cosas?
 
-Sí. Gladys Assistant OS es un Ubuntu Server estándar: puedes conectarte por SSH y ejecutar otros contenedores Docker junto a Gladys. Las actualizaciones automáticas solo se aplican a Gladys y a Watchtower, nunca a tus otros contenedores.
+Sí. Gladys Assistant OS es un Ubuntu Server estándar: puedes conectarte por SSH y ejecutar otros contenedores Docker junto a Gladys. Las actualizaciones automáticas solo se aplican a Gladys y a Watchtower: tus otros contenedores nunca se actualizan, salvo que les añadas la etiqueta de Watchtower.
 
 <JsonLd
   data={{
@@ -278,7 +279,7 @@ Sí. Gladys Assistant OS es un Ubuntu Server estándar: puedes conectarte por SS
         name: "¿Puedo seguir usando el mini-PC para otras cosas?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Sí. Gladys Assistant OS es un Ubuntu Server estándar: puedes conectarte por SSH y ejecutar otros contenedores Docker junto a Gladys. Las actualizaciones automáticas solo se aplican a Gladys y a Watchtower, nunca a tus otros contenedores.",
+          text: "Sí. Gladys Assistant OS es un Ubuntu Server estándar: puedes conectarte por SSH y ejecutar otros contenedores Docker junto a Gladys. Las actualizaciones automáticas solo se aplican a Gladys y a Watchtower: tus otros contenedores nunca se actualizan, salvo que les añadas la etiqueta de Watchtower.",
         },
       },
     ],

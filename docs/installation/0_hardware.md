@@ -39,7 +39,7 @@ If you already have a machine running other services, you can install Gladys on 
 
 - **Any Linux server with Debian or Ubuntu**: see the [Docker installation guide](/docs/installation/docker/)
 - **Synology or Unraid NAS**: see the [Synology](/docs/installation/synology/) and [Unraid](/docs/installation/unraid/) guides
-- **Proxmox VE server**: run Gladys in a Debian VM, see the [Proxmox installation guide](/docs/installation/proxmox/)
+- **Proxmox VE server**: run Gladys in a VM installed with Gladys Assistant OS, see the [Proxmox installation guide](/docs/installation/proxmox/)
 
 ## Installing Gladys Assistant
 

@@ -39,7 +39,7 @@ Si ya tienes una máquina que ejecuta otros servicios, puedes instalar Gladys en
 
 - **Cualquier servidor Linux con Debian o Ubuntu**: consulta la [guía de instalación con Docker](/es/docs/installation/docker/)
 - **NAS Synology o Unraid**: consulta las guías de [Synology](/es/docs/installation/synology/) y de [Unraid](/es/docs/installation/unraid/)
-- **Servidor Proxmox VE**: ejecuta Gladys en una VM Debian, consulta la [guía de instalación en Proxmox](/es/docs/installation/proxmox/)
+- **Servidor Proxmox VE**: ejecuta Gladys en una VM instalada con Gladys Assistant OS, consulta la [guía de instalación en Proxmox](/es/docs/installation/proxmox/)
 
 ## Instalar Gladys Assistant
 
