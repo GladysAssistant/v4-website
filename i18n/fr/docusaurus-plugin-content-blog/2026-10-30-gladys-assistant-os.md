@@ -33,8 +33,8 @@ Sous le capot, Gladys Assistant OS est un **Ubuntu Server 26.04 LTS** standard, 
 - L'installeur ne vous demande que votre **langue**, votre **clavier** et votre **compte**. Avec un seul disque, il n'y a même pas de disque à choisir.
 - Au premier démarrage, il installe **Docker**, télécharge la **dernière version de Gladys** et la lance. Vous suivez la progression sur l'écran du mini-PC, ou depuis votre téléphone à l'adresse qu'il affiche.
 - **Gladys se met à jour toute seule** dès qu'une nouvelle version sort, et Ubuntu installe automatiquement ses **mises à jour de sécurité**.
-- Il détecte votre **fuseau horaire**, et Gladys est accessible à l'adresse **`http://gladysassistant.local`** depuis n'importe quel appareil de votre réseau.
-- Il est conçu pour être robuste : si la connexion Internet saute ou si le courant est coupé pendant l'installation, il reprend simplement là où il s'était arrêté.
+- Il détecte votre **fuseau horaire**, et Gladys est accessible à l'adresse **`http://gladysassistant.local`** depuis n'importe quel appareil de votre réseau, ou à l'adresse IP affichée sur l'écran du mini-PC si ce nom ne s'ouvre pas.
+- Il est conçu pour être robuste : si la connexion Internet saute ou si le courant est coupé pendant qu'il installe Gladys au premier démarrage, il reprend simplement là où il s'était arrêté.
 
 ![Le premier démarrage de Gladys Assistant OS](../../../static/img/articles/gladys-assistant-os/setup-page.jpg)
 
