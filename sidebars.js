@@ -72,6 +72,7 @@ module.exports = {
         },
         "installation/raspberry-pi",
         "installation/phone",
+        "installation/windows",
         "installation/logs",
         "installation/faq",
       ],
