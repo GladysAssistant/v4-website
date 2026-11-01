@@ -7,6 +7,10 @@ sidebar_label: Install with Docker Compose
 
 This tutorial explains how to manually install Gladys using Docker Compose, regardless of the machine you are running Gladys on: a mini-PC, a Synology NAS, a Linux VM, or any other setup.
 
+:::tip[Installing Gladys on a dedicated mini-PC?]
+[Gladys Assistant OS](/docs/installation/mini-pc/) installs Ubuntu Server, Docker, Gladys and automatic updates for you from a USB drive, without any command line.
+:::
+
 ## Prerequisites
 
 To install Docker Compose, you just need to install Docker:

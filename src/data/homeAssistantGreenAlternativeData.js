@@ -184,7 +184,7 @@ const homeAssistantGreenAlternativeContent = {
     faqTitle: "Frequently asked questions",
     cta: {
       title: "Build your own smart home box",
-      text: "Gladys is free, open-source and installs in a single Docker command, on a mini-PC, a Raspberry Pi or the machine you already own.",
+      text: "Gladys is free, open-source and installs on a mini-PC from a USB drive. It also runs on a Raspberry Pi, or with Docker on the machine you already own.",
       primary: { label: "Get started", href: "/docs/" },
       secondary: { label: "Install on a mini-PC", href: "/docs/installation/mini-pc/" },
     },
@@ -366,7 +366,7 @@ const homeAssistantGreenAlternativeContent = {
     faqTitle: "Questions fréquentes",
     cta: {
       title: "Construisez votre propre box domotique",
-      text: "Gladys est gratuite, open source et s'installe en une seule commande Docker, sur un mini-PC, un Raspberry Pi ou la machine que vous avez déjà.",
+      text: "Gladys est gratuite, open source et s'installe sur un mini-PC depuis une clé USB. Elle tourne aussi sur un Raspberry Pi, ou avec Docker sur la machine que vous avez déjà.",
       primary: { label: "Commencer", href: "/docs/" },
       secondary: { label: "Installer sur un mini-PC", href: "/docs/installation/mini-pc/" },
     },
@@ -548,7 +548,7 @@ const homeAssistantGreenAlternativeContent = {
     faqTitle: "Häufig gestellte Fragen",
     cta: {
       title: "Bau dir deine eigene Smart-Home-Box",
-      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl installiert – auf einem Mini-PC, einem Raspberry Pi oder dem Rechner, den du schon hast.",
+      text: "Gladys ist kostenlos, Open Source und lässt sich von einem USB-Stick auf einem Mini-PC installieren. Sie läuft auch auf einem Raspberry Pi oder mit Docker auf dem Rechner, den du schon hast.",
       primary: { label: "Jetzt loslegen", href: "/de/docs/" },
       secondary: { label: "Auf einem Mini-PC installieren", href: "/de/docs/installation/mini-pc/" },
     },
@@ -729,7 +729,7 @@ const homeAssistantGreenAlternativeContent = {
     faqTitle: "Preguntas frecuentes",
     cta: {
       title: "Monta tu propia caja domótica",
-      text: "Gladys es gratis, de código abierto y se instala con un solo comando Docker, en un mini-PC, una Raspberry Pi o el equipo que ya tienes.",
+      text: "Gladys es gratis, de código abierto y se instala en un mini-PC desde una memoria USB. También funciona en una Raspberry Pi, o con Docker en el equipo que ya tienes.",
       primary: { label: "Empezar", href: "/es/docs/" },
       secondary: { label: "Instalar en un mini-PC", href: "/es/docs/installation/mini-pc/" },
     },

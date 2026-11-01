@@ -137,7 +137,7 @@ const bestSmartHomeHubContent = {
     faqTitle: "Frequently asked questions",
     cta: {
       title: "Build your hub on hardware you own",
-      text: "Gladys is free, open source and installs with a single Docker command on a mini-PC or a Raspberry Pi.",
+      text: "Gladys is free, open source and installs on a mini-PC from a USB drive, or on a Raspberry Pi.",
       primary: { label: "Get started", href: "/docs/" },
       secondary: { label: "Best mini-PC", href: "/mini-pc-home-automation/" },
     },
@@ -273,7 +273,7 @@ const bestSmartHomeHubContent = {
     faqTitle: "Questions fréquentes",
     cta: {
       title: "Une box domotique qui vous appartient",
-      text: "Gladys est gratuite, open source et s'installe en une commande Docker. Ou prenez le kit de démarrage, prêt à l'emploi.",
+      text: "Gladys est gratuite, open source et s'installe sur un mini-PC depuis une clé USB. Ou prenez le kit de démarrage, prêt à l'emploi.",
       primary: { label: "Installer Gladys", href: "/docs/" },
       secondary: { label: "Le kit de démarrage", href: "/starter-kit/" },
     },
@@ -410,7 +410,7 @@ const bestSmartHomeHubContent = {
     faqTitle: "Häufige Fragen",
     cta: {
       title: "Bau deinen Hub auf Hardware, die dir gehört",
-      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl auf einem Mini-PC oder Raspberry Pi installiert.",
+      text: "Gladys ist kostenlos, Open Source und lässt sich von einem USB-Stick auf einem Mini-PC installieren, oder auf einem Raspberry Pi.",
       primary: { label: "Jetzt starten", href: "/de/docs/" },
       secondary: { label: "Der beste Mini-PC", href: "/de/mini-pc-home-automation/" },
     },
@@ -547,7 +547,7 @@ const bestSmartHomeHubContent = {
     faqTitle: "Preguntas frecuentes",
     cta: {
       title: "Monta tu hub en un hardware que sea tuyo",
-      text: "Gladys es gratis, de código abierto y se instala con un solo comando de Docker en un mini-PC o una Raspberry Pi.",
+      text: "Gladys es gratis, de código abierto y se instala en un mini-PC desde una memoria USB, o en una Raspberry Pi.",
       primary: { label: "Empezar", href: "/es/docs/" },
       secondary: { label: "El mejor mini-PC", href: "/es/mini-pc-home-automation/" },
     },

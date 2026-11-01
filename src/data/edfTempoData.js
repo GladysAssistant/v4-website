@@ -115,7 +115,7 @@ const edfTempoContent = {
     faqTitle: "Frequently asked questions",
     cta: {
       title: "Turn the Tempo colour into automatic savings",
-      text: "Gladys is free, open-source, and installs in a single Docker command. Automate your home around Tempo, locally and privately.",
+      text: "Gladys is free, open-source, and installs on a mini-PC from a USB drive. Automate your home around Tempo, locally and privately.",
       primary: { label: "Get started", href: "/docs/" },
       secondary: { label: "Reduce your electricity bill", href: "/home-energy-monitoring/" },
     },
@@ -226,7 +226,7 @@ const edfTempoContent = {
     faqTitle: "Questions fréquentes",
     cta: {
       title: "Transformez la couleur Tempo en économies automatiques",
-      text: "Gladys est gratuite, open source, et s'installe en une seule commande Docker. Automatisez votre maison autour de Tempo, en local et en privé.",
+      text: "Gladys est gratuite, open source, et s'installe sur un mini-PC depuis une clé USB. Automatisez votre maison autour de Tempo, en local et en privé.",
       primary: { label: "Commencer", href: "/fr/docs/" },
       secondary: { label: "Réduire sa facture d'électricité", href: "/home-energy-monitoring/" },
     },

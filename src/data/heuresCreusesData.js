@@ -125,7 +125,7 @@ const heuresCreusesContent = {
     faqTitle: "Frequently asked questions",
     cta: {
       title: "Adapt to the new off-peak hours automatically",
-      text: "Gladys is free, open source and installs with a single Docker command. Read your Linky and schedule your appliances around your new hours.",
+      text: "Gladys is free, open source and installs on a mini-PC from a USB drive. Read your Linky and schedule your appliances around your new hours.",
       primary: { label: "Get started", href: "/docs/" },
       secondary: { label: "Energy monitoring", href: "/home-energy-monitoring/" },
     },
@@ -243,7 +243,7 @@ const heuresCreusesContent = {
     faqTitle: "Questions fréquentes",
     cta: {
       title: "Adaptez-vous aux nouvelles heures creuses automatiquement",
-      text: "Gladys est gratuite, open source et s'installe en une seule commande Docker. Lisez votre Linky et programmez vos appareils selon vos nouveaux horaires.",
+      text: "Gladys est gratuite, open source et s'installe sur un mini-PC depuis une clé USB. Lisez votre Linky et programmez vos appareils selon vos nouveaux horaires.",
       primary: { label: "Commencer", href: "/docs/" },
       secondary: { label: "Suivi d'énergie", href: "/home-energy-monitoring/" },
     },

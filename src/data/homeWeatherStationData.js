@@ -159,7 +159,7 @@ const homeWeatherStationContent = {
     faqTitle: "Frequently asked questions",
     cta: {
       title: "Build your local weather station",
-      text: "Gladys is free, open-source, and installs in a single Docker command. Pair a few sensors and read your home's climate locally, with automations that react to it.",
+      text: "Gladys is free, open-source, and installs on a mini-PC from a USB drive. Pair a few sensors and read your home's climate locally, with automations that react to it.",
       primary: { label: "Get started", href: "/docs/" },
       secondary: {
         label: "Set up Zigbee2MQTT",
@@ -311,7 +311,7 @@ const homeWeatherStationContent = {
     faqTitle: "Questions fréquentes",
     cta: {
       title: "Montez votre station météo locale",
-      text: "Gladys est gratuit, open source, et s'installe en une seule commande Docker. Appairez quelques capteurs et lisez le climat de votre maison en local, avec des automatisations qui y réagissent.",
+      text: "Gladys est gratuit, open source, et s'installe sur un mini-PC depuis une clé USB. Appairez quelques capteurs et lisez le climat de votre maison en local, avec des automatisations qui y réagissent.",
       primary: { label: "Commencer", href: "/fr/docs/" },
       secondary: {
         label: "Configurer Zigbee2MQTT",
@@ -465,7 +465,7 @@ const homeWeatherStationContent = {
     faqTitle: "Häufige Fragen",
     cta: {
       title: "Bau deine lokale Wetterstation",
-      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl installiert. Kopple ein paar Sensoren, lies das Raumklima deines Zuhauses lokal aus und lass Automatisierungen darauf reagieren.",
+      text: "Gladys ist kostenlos, Open Source und lässt sich von einem USB-Stick auf einem Mini-PC installieren. Kopple ein paar Sensoren, lies das Raumklima deines Zuhauses lokal aus und lass Automatisierungen darauf reagieren.",
       primary: { label: "Jetzt loslegen", href: "/de/docs/" },
       secondary: {
         label: "Zigbee2MQTT einrichten",
@@ -618,7 +618,7 @@ const homeWeatherStationContent = {
     faqTitle: "Preguntas frecuentes",
     cta: {
       title: "Crea tu estación meteorológica local",
-      text: "Gladys es gratuito, de código abierto y se instala con un solo comando Docker. Empareja unos cuantos sensores y consulta el clima de tu casa en local, con automatizaciones que reaccionan a él.",
+      text: "Gladys es gratuito, de código abierto y se instala en un mini-PC desde una memoria USB. Empareja unos cuantos sensores y consulta el clima de tu casa en local, con automatizaciones que reaccionan a él.",
       primary: { label: "Empezar", href: "/es/docs/" },
       secondary: {
         label: "Configurar Zigbee2MQTT",

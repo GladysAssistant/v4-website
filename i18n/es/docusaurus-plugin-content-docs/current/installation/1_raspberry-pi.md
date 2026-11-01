@@ -10,7 +10,7 @@ Si ya tienes una Raspberry Pi, puedes instalar Gladys Assistant en solo unos min
 Es la forma más sencilla de descubrir Gladys, sin tener que instalar tú mismo Raspberry Pi OS y Docker.
 
 :::info
-**Para una instalación a largo plazo**, te recomiendo un mini-PC (mejor relación calidad-precio, SSD NVMe integrado y más fiable con los dongles Zigbee/Z-Wave).
+**Para una instalación a largo plazo**, te recomiendo un mini-PC (mejor relación calidad-precio, SSD NVMe integrado y más fiable con los dongles Zigbee/Z-Wave). Y es igual de fácil de instalar con [Gladys Assistant OS](/es/docs/installation/mini-pc/), nuestro instalador oficial para mini-PC.
 
 Pero si ya tienes una Raspberry Pi a mano, úsala para probar Gladys. ¡Precisamente por eso hemos hecho esta instalación tan sencilla!
 :::
@@ -135,4 +135,4 @@ La página se recargará automáticamente cuando Gladys esté lista. ¡Después 
 
 - Consulta la guía de [hardware recomendado](/es/docs/installation/recommended-hardware/) para elegir tus dispositivos conectados
 - Aprende a [instalar integraciones](/es/docs/integrations/) (Zigbee, Z-Wave, etc.)
-- Si quieres pasar a una configuración más potente, consulta la [guía de instalación en un mini-PC](/es/docs/installation/mini-pc/)
+- Si quieres pasar a una configuración más potente, instala Gladys en un mini-PC con [Gladys Assistant OS](/es/docs/installation/mini-pc/)

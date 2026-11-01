@@ -119,7 +119,7 @@ const ikeaSmartHomeContent = {
     faqTitle: "Frequently asked questions",
     cta: {
       title: "Bring your IKEA devices home",
-      text: "Gladys is free, open-source, and installs in a single Docker command. Pair your Tradfri devices locally and automate your whole home, IKEA and beyond.",
+      text: "Gladys is free, open-source, and installs on a mini-PC from a USB drive. Pair your Tradfri devices locally and automate your whole home, IKEA and beyond.",
       primary: { label: "Get started", href: "/docs/" },
       secondary: {
         label: "Set up Zigbee2MQTT",
@@ -240,7 +240,7 @@ const ikeaSmartHomeContent = {
     faqTitle: "Questions fréquentes",
     cta: {
       title: "Ramenez vos appareils IKEA à la maison",
-      text: "Gladys est gratuit, open source, et s'installe en une seule commande Docker. Appairez vos appareils Tradfri en local et automatisez toute votre maison, IKEA et au-delà.",
+      text: "Gladys est gratuit, open source, et s'installe sur un mini-PC depuis une clé USB. Appairez vos appareils Tradfri en local et automatisez toute votre maison, IKEA et au-delà.",
       primary: { label: "Commencer", href: "/fr/docs/" },
       secondary: {
         label: "Configurer Zigbee2MQTT",
@@ -361,7 +361,7 @@ const ikeaSmartHomeContent = {
     faqTitle: "Häufige Fragen",
     cta: {
       title: "Hol deine IKEA-Geräte nach Hause",
-      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl installiert. Kopple deine Tradfri-Geräte lokal und automatisiere dein ganzes Zuhause, mit IKEA und weit darüber hinaus.",
+      text: "Gladys ist kostenlos, Open Source und lässt sich von einem USB-Stick auf einem Mini-PC installieren. Kopple deine Tradfri-Geräte lokal und automatisiere dein ganzes Zuhause, mit IKEA und weit darüber hinaus.",
       primary: { label: "Jetzt loslegen", href: "/de/docs/" },
       secondary: {
         label: "Zigbee2MQTT einrichten",
@@ -481,7 +481,7 @@ const ikeaSmartHomeContent = {
     faqTitle: "Preguntas frecuentes",
     cta: {
       title: "Trae tus dispositivos IKEA a casa",
-      text: "Gladys es gratuito, de código abierto y se instala con un solo comando Docker. Empareja tus dispositivos Tradfri en local y automatiza toda tu casa, IKEA y mucho más.",
+      text: "Gladys es gratuito, de código abierto y se instala en un mini-PC desde una memoria USB. Empareja tus dispositivos Tradfri en local y automatiza toda tu casa, IKEA y mucho más.",
       primary: { label: "Empezar", href: "/es/docs/" },
       secondary: {
         label: "Configurar Zigbee2MQTT",

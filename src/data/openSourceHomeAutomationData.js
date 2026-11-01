@@ -76,7 +76,7 @@ const openSourceHomeAutomationContent = {
           logo: "/img/external/open-source-platforms/gladys-assistant.png",
           logoAlt: "Gladys Assistant logo",
           title: "Gladys Assistant",
-          text: "A self-hosted platform (Apache 2.0) focused on simplicity: a clean interface, no configuration files, scenes built by clicking, and a one-command Docker install. Its external integrations let anyone publish an integration on GitHub, installable in one click and sandboxed. Great if you want open source without the steep learning curve.",
+          text: "A self-hosted platform (Apache 2.0) focused on simplicity: a clean interface, no configuration files, scenes built by clicking, and an installer that sets up a mini-PC from a USB drive. Its external integrations let anyone publish an integration on GitHub, installable in one click and sandboxed. Great if you want open source without the steep learning curve.",
         },
         {
           logo: "/img/external/open-source-platforms/home-assistant.png",
@@ -130,7 +130,7 @@ const openSourceHomeAutomationContent = {
     gladys: {
       title: "Gladys Assistant: open source, made simple",
       paragraphs: [
-        "Gladys Assistant is a free, open-source (Apache 2.0), self-hosted home automation platform. The full source code is on GitHub, it installs in a single Docker command on a Raspberry Pi, mini-PC or NAS, and it runs entirely on your local network.",
+        "Gladys Assistant is a free, open-source (Apache 2.0), self-hosted home automation platform. The full source code is on GitHub, it installs on a mini-PC from a USB drive, also works on a Raspberry Pi or a NAS, and it runs entirely on your local network.",
         "Where it stands out is simplicity. Everything is configured from a clean interface, with no configuration files and no YAML, and scenes are built by clicking. It's based on open standards (Zigbee, Matter, MQTT) with a full local automation engine, so your everyday scenes run at home. Optional features like voice, AI and remote access rely on a private, secure cloud from the same independent project: no ads, no data resale, and end-to-end encrypted remote access.",
       ],
       link: { label: "Get started with Gladys →", href: "/docs/" },
@@ -170,7 +170,7 @@ const openSourceHomeAutomationContent = {
     faqTitle: "Frequently asked questions",
     cta: {
       title: "Start with open-source home automation",
-      text: "Gladys is free, open-source (Apache 2.0), and installs in a single Docker command. Self-hosted, local-first, no cloud required.",
+      text: "Gladys is free, open-source (Apache 2.0), and installs on a mini-PC from a USB drive. Self-hosted, local-first, no cloud required.",
       primary: { label: "Get started", href: "/docs/" },
       secondary: { label: "Discover Gladys Plus", href: "/plus/" },
     },
@@ -245,7 +245,7 @@ const openSourceHomeAutomationContent = {
           logo: "/img/external/open-source-platforms/gladys-assistant.png",
           logoAlt: "Logo Gladys Assistant",
           title: "Gladys Assistant",
-          text: "Une plateforme auto-hébergée (Apache 2.0) axée sur la simplicité : interface épurée, aucun fichier de configuration, scènes créées au clic et installation en une commande Docker. Ses intégrations externes permettent à n'importe qui de publier une intégration sur GitHub, installable en un clic et isolée dans son bac à sable. Idéale pour faire de l'open source sans la courbe d'apprentissage raide.",
+          text: "Une plateforme auto-hébergée (Apache 2.0) axée sur la simplicité : interface épurée, aucun fichier de configuration, scènes créées au clic et installation sur mini-PC depuis une clé USB. Ses intégrations externes permettent à n'importe qui de publier une intégration sur GitHub, installable en un clic et isolée dans son bac à sable. Idéale pour faire de l'open source sans la courbe d'apprentissage raide.",
         },
         {
           logo: "/img/external/open-source-platforms/home-assistant.png",
@@ -299,7 +299,7 @@ const openSourceHomeAutomationContent = {
     gladys: {
       title: "Gladys Assistant : l'open source, en plus simple",
       paragraphs: [
-        "Gladys Assistant est une plateforme domotique gratuite, open source (Apache 2.0) et auto-hébergée. Tout le code source est sur GitHub, elle s'installe en une seule commande Docker sur un Raspberry Pi, un mini-PC ou un NAS, et tourne entièrement sur votre réseau local.",
+        "Gladys Assistant est une plateforme domotique gratuite, open source (Apache 2.0) et auto-hébergée. Tout le code source est sur GitHub, elle s'installe sur un mini-PC depuis une clé USB, fonctionne aussi sur un Raspberry Pi ou un NAS, et tourne entièrement sur votre réseau local.",
         "Sa force, c'est la simplicité. Tout se configure depuis une interface épurée, sans fichiers de configuration ni YAML, et les scènes se créent au clic. Elle repose sur des standards ouverts (Zigbee, Matter, MQTT) avec un vrai moteur d'automatisation local : vos scènes du quotidien tournent chez vous. Les fonctions optionnelles comme le vocal, l'IA et l'accès distant reposent sur un cloud souverain hébergé en France, porté par ce même projet indépendant : sans publicité, sans revente de données, et un accès distant chiffré de bout en bout.",
       ],
       link: { label: "Commencer avec Gladys →", href: "/docs/" },
@@ -339,7 +339,7 @@ const openSourceHomeAutomationContent = {
     faqTitle: "Questions fréquentes",
     cta: {
       title: "Lancez-vous dans la domotique open source",
-      text: "Gladys est gratuite, open source (Apache 2.0), et s'installe en une seule commande Docker. Auto-hébergée, locale d'abord, sans cloud obligatoire.",
+      text: "Gladys est gratuite, open source (Apache 2.0), et s'installe sur un mini-PC depuis une clé USB. Auto-hébergée, locale d'abord, sans cloud obligatoire.",
       primary: { label: "Commencer", href: "/docs/" },
       secondary: { label: "Découvrir Gladys Plus", href: "/plus/" },
     },
@@ -414,7 +414,7 @@ const openSourceHomeAutomationContent = {
           logo: "/img/external/open-source-platforms/gladys-assistant.png",
           logoAlt: "Logo von Gladys Assistant",
           title: "Gladys Assistant",
-          text: "Eine selbst gehostete Plattform (Apache 2.0) mit Fokus auf Einfachheit: aufgeräumte Oberfläche, keine Konfigurationsdateien, Szenen per Klick und Installation mit einem einzigen Docker-Befehl. Über externe Integrationen kann jeder eine Integration auf GitHub veröffentlichen, die sich mit einem Klick installieren lässt und isoliert in einer Sandbox läuft. Ideal, wenn du Open Source ohne steile Lernkurve willst.",
+          text: "Eine selbst gehostete Plattform (Apache 2.0) mit Fokus auf Einfachheit: aufgeräumte Oberfläche, keine Konfigurationsdateien, Szenen per Klick und Installation per USB-Stick auf einem Mini-PC. Über externe Integrationen kann jeder eine Integration auf GitHub veröffentlichen, die sich mit einem Klick installieren lässt und isoliert in einer Sandbox läuft. Ideal, wenn du Open Source ohne steile Lernkurve willst.",
         },
         {
           logo: "/img/external/open-source-platforms/home-assistant.png",
@@ -468,7 +468,7 @@ const openSourceHomeAutomationContent = {
     gladys: {
       title: "Gladys Assistant: Open Source, ganz einfach",
       paragraphs: [
-        "Gladys Assistant ist eine kostenlose, quelloffene (Apache 2.0) und selbst gehostete Plattform für Hausautomation. Der komplette Quellcode liegt auf GitHub, die Installation erfolgt mit einem einzigen Docker-Befehl auf einem Raspberry Pi, Mini-PC oder NAS, und alles läuft vollständig in deinem lokalen Netzwerk.",
+        "Gladys Assistant ist eine kostenlose, quelloffene (Apache 2.0) und selbst gehostete Plattform für Hausautomation. Der komplette Quellcode liegt auf GitHub, die Installation erfolgt von einem USB-Stick auf einem Mini-PC (Raspberry Pi und NAS werden ebenfalls unterstützt), und alles läuft vollständig in deinem lokalen Netzwerk.",
         "Ihre Stärke ist die Einfachheit. Alles wird über eine aufgeräumte Oberfläche eingerichtet, ohne Konfigurationsdateien und ohne YAML, und Szenen erstellst du per Klick. Gladys setzt auf offene Standards (Zigbee, Matter, MQTT) und bringt eine vollwertige lokale Automations-Engine mit, sodass deine alltäglichen Szenen zu Hause laufen. Optionale Funktionen wie Sprachsteuerung, KI und Fernzugriff nutzen eine private, sichere Cloud desselben unabhängigen Projekts: keine Werbung, kein Datenverkauf und ein Ende-zu-Ende-verschlüsselter Fernzugriff.",
       ],
       link: { label: "Mit Gladys starten →", href: "/de/docs/" },
@@ -508,7 +508,7 @@ const openSourceHomeAutomationContent = {
     faqTitle: "Häufige Fragen",
     cta: {
       title: "Starte mit Open-Source-Hausautomation",
-      text: "Gladys ist kostenlos, Open Source (Apache 2.0) und mit einem einzigen Docker-Befehl installiert. Selbst gehostet, lokal zuerst, keine Cloud nötig.",
+      text: "Gladys ist kostenlos, Open Source (Apache 2.0) und lässt sich von einem USB-Stick auf einem Mini-PC installieren. Selbst gehostet, lokal zuerst, keine Cloud nötig.",
       primary: { label: "Jetzt starten", href: "/de/docs/" },
       secondary: { label: "Gladys Plus entdecken", href: "/de/plus/" },
     },
@@ -582,7 +582,7 @@ const openSourceHomeAutomationContent = {
           logo: "/img/external/open-source-platforms/gladys-assistant.png",
           logoAlt: "Logo de Gladys Assistant",
           title: "Gladys Assistant",
-          text: "Una plataforma autoalojada (Apache 2.0) centrada en la sencillez: una interfaz limpia, sin archivos de configuración, escenas creadas con unos clics y una instalación con un solo comando Docker. Sus integraciones externas permiten a cualquiera publicar una integración en GitHub, que se instala con un clic y se ejecuta de forma aislada. Ideal si quieres código abierto sin una curva de aprendizaje empinada.",
+          text: "Una plataforma autoalojada (Apache 2.0) centrada en la sencillez: una interfaz limpia, sin archivos de configuración, escenas creadas con unos clics y una instalación en mini-PC desde una memoria USB. Sus integraciones externas permiten a cualquiera publicar una integración en GitHub, que se instala con un clic y se ejecuta de forma aislada. Ideal si quieres código abierto sin una curva de aprendizaje empinada.",
         },
         {
           logo: "/img/external/open-source-platforms/home-assistant.png",
@@ -636,7 +636,7 @@ const openSourceHomeAutomationContent = {
     gladys: {
       title: "Gladys Assistant: código abierto, hecho sencillo",
       paragraphs: [
-        "Gladys Assistant es una plataforma de domótica gratuita, de código abierto (Apache 2.0) y autoalojada. Todo el código fuente está en GitHub, se instala con un solo comando Docker en una Raspberry Pi, un mini-PC o un NAS, y funciona por completo en tu red local.",
+        "Gladys Assistant es una plataforma de domótica gratuita, de código abierto (Apache 2.0) y autoalojada. Todo el código fuente está en GitHub, se instala en un mini-PC desde una memoria USB, también es compatible con una Raspberry Pi o un NAS, y funciona por completo en tu red local.",
         "Donde destaca es en la sencillez. Todo se configura desde una interfaz limpia, sin archivos de configuración ni YAML, y las escenas se crean con unos clics. Se basa en estándares abiertos (Zigbee, Matter, MQTT) con un motor de automatización totalmente local, así que tus escenas del día a día se ejecutan en casa. Las funciones opcionales como la voz, la IA y el acceso remoto se apoyan en una nube privada y segura del mismo proyecto independiente: sin anuncios, sin reventa de datos y con acceso remoto cifrado de extremo a extremo.",
       ],
       link: { label: "Empieza con Gladys →", href: "/es/docs/" },
@@ -676,7 +676,7 @@ const openSourceHomeAutomationContent = {
     faqTitle: "Preguntas frecuentes",
     cta: {
       title: "Empieza con la domótica de código abierto",
-      text: "Gladys es gratuito, de código abierto (Apache 2.0) y se instala con un solo comando Docker. Autoalojado, local por defecto, sin necesidad de nube.",
+      text: "Gladys es gratuito, de código abierto (Apache 2.0) y se instala en un mini-PC desde una memoria USB. Autoalojado, local por defecto, sin necesidad de nube.",
       primary: { label: "Empezar", href: "/es/docs/" },
       secondary: { label: "Descubre Gladys Plus", href: "/es/plus/" },
     },
@@ -692,7 +692,7 @@ export const openSourceHomeAutomationFaqEn = [
   {
     question: "What is the best open-source home automation software?",
     answer:
-      "The main open-source platforms are Gladys Assistant, Home Assistant, openHAB, Jeedom and Domoticz. Home Assistant has the largest integration catalog, while Gladys Assistant focuses on simplicity with a clean interface, no configuration files and a one-command install, plus external integrations that anyone can publish and that install in one click. The best choice depends on whether you prioritize raw flexibility or ease of use.",
+      "The main open-source platforms are Gladys Assistant, Home Assistant, openHAB, Jeedom and Domoticz. Home Assistant has the largest integration catalog, while Gladys Assistant focuses on simplicity with a clean interface, no configuration files and an installer that runs from a USB drive, plus external integrations that anyone can publish and that install in one click. The best choice depends on whether you prioritize raw flexibility or ease of use.",
   },
   {
     question: "Do you need a hub for open-source home automation?",
@@ -712,7 +712,7 @@ export const openSourceHomeAutomationFaqEn = [
   {
     question: "Do I need to be a developer to use open-source home automation?",
     answer:
-      "No. While some platforms are quite technical, Gladys Assistant is designed for non-developers: it installs in a single Docker command, everything is configured by clicking in the interface with no configuration files.",
+      "No. While some platforms are quite technical, Gladys Assistant is designed for non-developers: it installs on a mini-PC from a USB drive, and everything is configured by clicking in the interface with no configuration files.",
   },
   {
     question: "What license is Gladys Assistant released under?",
@@ -730,7 +730,7 @@ export const openSourceHomeAutomationFaqFr = [
   {
     question: "Quel est le meilleur logiciel domotique open source ?",
     answer:
-      "Les principales plateformes open source sont Gladys Assistant, Home Assistant, openHAB, Jeedom et Domoticz. Home Assistant possède le plus grand catalogue d'intégrations, tandis que Gladys Assistant mise sur la simplicité avec une interface épurée, sans fichiers de configuration, une installation en une commande, et des intégrations externes que n'importe qui peut publier et qui s'installent en un clic. Le meilleur choix dépend de si vous privilégiez la flexibilité maximale ou la facilité d'usage.",
+      "Les principales plateformes open source sont Gladys Assistant, Home Assistant, openHAB, Jeedom et Domoticz. Home Assistant possède le plus grand catalogue d'intégrations, tandis que Gladys Assistant mise sur la simplicité avec une interface épurée, sans fichiers de configuration, une installation depuis une clé USB, et des intégrations externes que n'importe qui peut publier et qui s'installent en un clic. Le meilleur choix dépend de si vous privilégiez la flexibilité maximale ou la facilité d'usage.",
   },
   {
     question: "Faut-il un hub pour la domotique open source ?",
@@ -750,7 +750,7 @@ export const openSourceHomeAutomationFaqFr = [
   {
     question: "Faut-il être développeur pour utiliser la domotique open source ?",
     answer:
-      "Non. Si certaines plateformes sont assez techniques, Gladys Assistant est pensée pour les non-développeurs : elle s'installe en une seule commande Docker, tout se configure au clic dans l'interface sans fichiers de configuration, et un kit de démarrage est livré avec Gladys pré-installée.",
+      "Non. Si certaines plateformes sont assez techniques, Gladys Assistant est pensée pour les non-développeurs : elle s'installe sur un mini-PC depuis une clé USB, tout se configure au clic dans l'interface sans fichiers de configuration, et un kit de démarrage est livré avec Gladys pré-installée.",
   },
   {
     question: "Sous quelle licence Gladys Assistant est-elle publiée ?",
@@ -768,7 +768,7 @@ export const openSourceHomeAutomationFaqDe = [
   {
     question: "Was ist die beste Open-Source-Software für Hausautomation?",
     answer:
-      "Die wichtigsten Open-Source-Plattformen sind Gladys Assistant, Home Assistant, openHAB, Jeedom und Domoticz. Home Assistant hat den größten Integrationskatalog, während Gladys Assistant auf Einfachheit setzt: aufgeräumte Oberfläche, keine Konfigurationsdateien, Installation mit einem Befehl und externe Integrationen, die jeder veröffentlichen kann und die sich mit einem Klick installieren lassen. Die beste Wahl hängt davon ab, ob dir maximale Flexibilität oder einfache Bedienung wichtiger ist.",
+      "Die wichtigsten Open-Source-Plattformen sind Gladys Assistant, Home Assistant, openHAB, Jeedom und Domoticz. Home Assistant hat den größten Integrationskatalog, während Gladys Assistant auf Einfachheit setzt: aufgeräumte Oberfläche, keine Konfigurationsdateien, Installation per USB-Stick und externe Integrationen, die jeder veröffentlichen kann und die sich mit einem Klick installieren lassen. Die beste Wahl hängt davon ab, ob dir maximale Flexibilität oder einfache Bedienung wichtiger ist.",
   },
   {
     question: "Brauche ich für Open-Source-Hausautomation einen Hub?",
@@ -788,7 +788,7 @@ export const openSourceHomeAutomationFaqDe = [
   {
     question: "Muss ich Entwickler sein, um Open-Source-Hausautomation zu nutzen?",
     answer:
-      "Nein. Manche Plattformen sind recht technisch, aber Gladys Assistant ist für Nicht-Entwickler gemacht: Die Installation erfolgt mit einem einzigen Docker-Befehl, und alles wird per Klick in der Oberfläche eingerichtet, ganz ohne Konfigurationsdateien.",
+      "Nein. Manche Plattformen sind recht technisch, aber Gladys Assistant ist für Nicht-Entwickler gemacht: Die Installation erfolgt von einem USB-Stick auf einem Mini-PC, und alles wird per Klick in der Oberfläche eingerichtet, ganz ohne Konfigurationsdateien.",
   },
   {
     question: "Unter welcher Lizenz steht Gladys Assistant?",
@@ -806,7 +806,7 @@ export const openSourceHomeAutomationFaqEs = [
   {
     question: "¿Cuál es el mejor software de domótica de código abierto?",
     answer:
-      "Las principales plataformas de código abierto son Gladys Assistant, Home Assistant, openHAB, Jeedom y Domoticz. Home Assistant tiene el mayor catálogo de integraciones, mientras que Gladys Assistant apuesta por la sencillez con una interfaz limpia, sin archivos de configuración y con una instalación de un solo comando, además de integraciones externas que cualquiera puede publicar y que se instalan con un clic. La mejor opción depende de si priorizas la flexibilidad pura o la facilidad de uso.",
+      "Las principales plataformas de código abierto son Gladys Assistant, Home Assistant, openHAB, Jeedom y Domoticz. Home Assistant tiene el mayor catálogo de integraciones, mientras que Gladys Assistant apuesta por la sencillez con una interfaz limpia, sin archivos de configuración y con una instalación desde una memoria USB, además de integraciones externas que cualquiera puede publicar y que se instalan con un clic. La mejor opción depende de si priorizas la flexibilidad pura o la facilidad de uso.",
   },
   {
     question: "¿Se necesita un hub para la domótica de código abierto?",
@@ -826,7 +826,7 @@ export const openSourceHomeAutomationFaqEs = [
   {
     question: "¿Hay que ser desarrollador para usar la domótica de código abierto?",
     answer:
-      "No. Aunque algunas plataformas son bastante técnicas, Gladys Assistant está pensado para quienes no son desarrolladores: se instala con un solo comando Docker y todo se configura con unos clics en la interfaz, sin archivos de configuración.",
+      "No. Aunque algunas plataformas son bastante técnicas, Gladys Assistant está pensado para quienes no son desarrolladores: se instala en un mini-PC desde una memoria USB y todo se configura con unos clics en la interfaz, sin archivos de configuración.",
   },
   {
     question: "¿Bajo qué licencia se publica Gladys Assistant?",
