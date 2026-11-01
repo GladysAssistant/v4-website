@@ -149,7 +149,12 @@ module.exports = {
     {
       type: "category",
       label: "Gladys Plus",
-      items: ["plus/intro", "plus/connect-gladys-plus", "plus/open-api"],
+      items: [
+        "plus/intro",
+        "plus/connect-gladys-plus",
+        "plus/two-factor-authentication",
+        "plus/open-api",
+      ],
     },
   ],
 };
