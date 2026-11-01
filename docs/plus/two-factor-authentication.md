@@ -30,7 +30,7 @@ Then try again with a new code. Only the clock of your phone matters: the clock 
 
 If you configured 2FA several times (for example after a reset, or when testing), your authenticator app may contain **several entries related to Gladys**. Only the most recent one works: the older ones generate codes that are refused.
 
-Try the codes of each Gladys entry, one after the other. Once you found the right one, you can delete the others from your app to avoid any confusion.
+Try the codes of each Gladys entry, one after the other. Once you found the right one, you can delete the obsolete Gladys entries of this same account from your app, to avoid any confusion. Keep the entries of your other Gladys Plus accounts, if you have several.
 
 Also check that you are logging in with the right email address: each Gladys Plus account has its own 2FA.
 
@@ -48,7 +48,13 @@ After several wrong codes in a row, Gladys Plus may temporarily refuse new attem
 
 ## I changed phone or reinstalled my authenticator app
 
-2FA codes are generated from a secret stored **only in your authenticator app**. If you change phone, or uninstall the app, this secret is not automatically transferred: the new app won't generate valid codes.
+2FA codes are generated from a secret stored **in your authenticator app**. If you change phone, or uninstall the app, this secret only follows you if your app synchronizes or backs up your accounts: otherwise, the new app won't generate valid codes.
+
+### First, check if your app can restore your accounts
+
+Some authenticator apps save your accounts online: for example Google Authenticator when it is linked to your Google account, Microsoft Authenticator with its cloud backup, Ente Auth, or 2FAS with its backup. Install the same app on your new phone, then sign in or restore the backup. If your Gladys entry comes back, its codes work as before: you have nothing else to do.
+
+Otherwise, it depends on whether you still have your old phone.
 
 ### You still have your old phone
 
@@ -61,7 +67,7 @@ Keep your old phone until the change is confirmed!
 
 ### You no longer have your old phone
 
-You can't generate 2FA codes anymore, but you can still log in with a **recovery code** (see below). Then [contact us](#contact-us) so that we reset the 2FA of your account: you will be able to configure your new app at your next login.
+If your app could not restore your Gladys entry, you can't generate 2FA codes anymore, but you can still log in with a **recovery code** (see below). Then [contact us](#contact-us) so that we reset the 2FA of your account: you will be able to configure your new app at your next login.
 
 ## Using a recovery code
 

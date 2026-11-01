@@ -30,7 +30,7 @@ Versuche es dann mit einem neuen Code. Nur die Uhr deines Handys zählt: Die Uhr
 
 Wenn du die 2FA mehrmals eingerichtet hast (zum Beispiel nach einem Zurücksetzen oder zum Testen), enthält deine Authenticator-App vielleicht **mehrere Einträge zu Gladys**. Nur der neueste funktioniert: Die älteren erzeugen Codes, die abgelehnt werden.
 
-Probiere die Codes jedes Gladys-Eintrags nacheinander aus. Sobald du den richtigen gefunden hast, kannst du die anderen aus deiner App löschen, um Verwechslungen zu vermeiden.
+Probiere die Codes jedes Gladys-Eintrags nacheinander aus. Sobald du den richtigen gefunden hast, kannst du die veralteten Gladys-Einträge desselben Kontos aus deiner App löschen, um Verwechslungen zu vermeiden. Behalte die Einträge deiner anderen Gladys-Plus-Konten, falls du mehrere hast.
 
 Prüfe auch, ob du dich mit der richtigen E-Mail-Adresse anmeldest: Jedes Gladys-Plus-Konto hat seine eigene 2FA.
 
@@ -48,7 +48,13 @@ Nach mehreren falschen Codes hintereinander kann Gladys Plus neue Versuche vorü
 
 ## Ich habe mein Handy gewechselt oder meine App neu installiert
 
-2FA-Codes werden aus einem Geheimnis erzeugt, das **nur in deiner Authenticator-App** gespeichert ist. Wenn du dein Handy wechselst oder die App deinstallierst, wird dieses Geheimnis nicht automatisch übertragen: Die neue App erzeugt keine gültigen Codes.
+2FA-Codes werden aus einem Geheimnis erzeugt, das **in deiner Authenticator-App** gespeichert ist. Wenn du dein Handy wechselst oder die App deinstallierst, kommt dieses Geheimnis nur mit, wenn deine App deine Konten synchronisiert oder sichert: Andernfalls erzeugt die neue App keine gültigen Codes.
+
+### Prüfe zuerst, ob deine App deine Konten wiederherstellen kann
+
+Manche Authenticator-Apps speichern deine Konten online: zum Beispiel Google Authenticator, wenn es mit deinem Google-Konto verknüpft ist, Microsoft Authenticator mit seiner Cloud-Sicherung, Ente Auth oder 2FAS mit seiner Sicherung. Installiere dieselbe App auf deinem neuen Handy und melde dich an oder stelle die Sicherung wieder her. Wenn dein Gladys-Eintrag wieder erscheint, funktionieren seine Codes wie vorher: Du musst nichts weiter tun.
+
+Andernfalls hängt es davon ab, ob du dein altes Handy noch hast.
 
 ### Du hast dein altes Handy noch
 
@@ -61,7 +67,7 @@ Behalte dein altes Handy, bis der Wechsel bestätigt ist!
 
 ### Du hast dein altes Handy nicht mehr
 
-Du kannst keine 2FA-Codes mehr erzeugen, dich aber weiterhin mit einem **Wiederherstellungscode** anmelden (siehe unten). [Kontaktiere uns](#kontakt) danach, damit wir die 2FA deines Kontos zurücksetzen: Bei deiner nächsten Anmeldung kannst du dann deine neue App einrichten.
+Wenn deine App deinen Gladys-Eintrag nicht wiederherstellen konnte, kannst du keine 2FA-Codes mehr erzeugen, dich aber weiterhin mit einem **Wiederherstellungscode** anmelden (siehe unten). [Kontaktiere uns](#kontakt) danach, damit wir die 2FA deines Kontos zurücksetzen: Bei deiner nächsten Anmeldung kannst du dann deine neue App einrichten.
 
 ## Einen Wiederherstellungscode verwenden
 

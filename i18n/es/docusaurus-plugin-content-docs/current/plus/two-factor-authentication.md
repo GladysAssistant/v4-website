@@ -30,7 +30,7 @@ Después, vuelve a intentarlo con un código nuevo. Solo cuenta el reloj de tu t
 
 Si has configurado la 2FA varias veces (por ejemplo, tras un restablecimiento o para hacer una prueba), es posible que tu aplicación de autenticación contenga **varias entradas relacionadas con Gladys**. Solo la más reciente funciona: las antiguas generan códigos que son rechazados.
 
-Prueba los códigos de cada entrada de Gladys, una tras otra. Cuando encuentres la correcta, puedes borrar las demás de tu aplicación para evitar confusiones.
+Prueba los códigos de cada entrada de Gladys, una tras otra. Cuando encuentres la correcta, puedes borrar de tu aplicación las entradas de Gladys obsoletas de esa misma cuenta, para evitar confusiones. Conserva las entradas de tus otras cuentas de Gladys Plus, si tienes varias.
 
 Comprueba también que inicias sesión con la dirección de correo correcta: cada cuenta de Gladys Plus tiene su propia 2FA.
 
@@ -48,7 +48,13 @@ Tras varios códigos erróneos seguidos, Gladys Plus puede rechazar temporalment
 
 ## He cambiado de teléfono o he reinstalado mi aplicación
 
-Los códigos 2FA se generan a partir de un secreto guardado **únicamente en tu aplicación de autenticación**. Si cambias de teléfono o desinstalas la aplicación, este secreto no se transfiere automáticamente: la nueva aplicación no generará códigos válidos.
+Los códigos 2FA se generan a partir de un secreto guardado **en tu aplicación de autenticación**. Si cambias de teléfono o desinstalas la aplicación, este secreto solo te acompaña si tu aplicación sincroniza o hace copia de seguridad de tus cuentas: si no, la nueva aplicación no generará códigos válidos.
+
+### Comprueba primero si tu aplicación puede restaurar tus cuentas
+
+Algunas aplicaciones de autenticación guardan tus cuentas en línea: por ejemplo, Google Authenticator cuando está vinculado a tu cuenta de Google, Microsoft Authenticator con su copia de seguridad en la nube, Ente Auth o 2FAS con su copia de seguridad. Instala la misma aplicación en tu nuevo teléfono y después inicia sesión o restaura la copia de seguridad. Si tu entrada de Gladys vuelve a aparecer, sus códigos funcionan como antes: no tienes que hacer nada más.
+
+Si no, depende de si todavía tienes tu antiguo teléfono.
 
 ### Todavía tienes tu antiguo teléfono
 
@@ -61,7 +67,7 @@ Es el caso más sencillo. Tienes dos opciones:
 
 ### Ya no tienes tu antiguo teléfono
 
-Ya no puedes generar códigos 2FA, pero todavía puedes iniciar sesión con un **código de recuperación** (ver más abajo). Después, [contáctanos](#contacto) para que restablezcamos la 2FA de tu cuenta: podrás configurar tu nueva aplicación en tu próximo inicio de sesión.
+Si tu aplicación no ha podido restaurar tu entrada de Gladys, ya no puedes generar códigos 2FA, pero todavía puedes iniciar sesión con un **código de recuperación** (ver más abajo). Después, [contáctanos](#contacto) para que restablezcamos la 2FA de tu cuenta: podrás configurar tu nueva aplicación en tu próximo inicio de sesión.
 
 ## Usar un código de recuperación
 
