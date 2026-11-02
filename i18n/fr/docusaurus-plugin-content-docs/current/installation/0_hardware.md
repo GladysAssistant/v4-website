@@ -3,7 +3,7 @@ id: hardware
 title: Commencer avec Gladys Assistant
 sidebar_label: Commencer
 slug: /
-description: "Installez Gladys Assistant en 30 minutes environ, sans ligne de commande : Gladys Assistant OS sur un mini-PC, un Raspberry Pi, ou Docker sur votre serveur. Puis connectez vos appareils et créez votre première scène. Gratuit, open-source et local."
+description: "Installez Gladys Assistant en 30 minutes environ : Gladys Assistant OS sur un mini-PC ou notre image Raspberry Pi, sans ligne de commande, ou Docker sur votre serveur. Puis connectez vos appareils et créez votre première scène. Gratuit, open-source et local."
 ---
 
 import {
@@ -16,6 +16,7 @@ import {
   Highlights,
 } from "@site/src/components/docs/GettingStarted";
 import GladysScreenshot from "@site/src/components/horizon/GladysScreenshot";
+import JsonLd from "@site/src/components/seo/JsonLd";
 
 **Gladys Assistant est un logiciel de domotique gratuit et open-source.** Il réunit tous vos appareils dans une seule application, vous permet de les piloter depuis votre téléphone et d'automatiser votre maison, tout en fonctionnant **chez vous**, et non dans le cloud de quelqu'un d'autre.
 
@@ -43,7 +44,7 @@ De zéro à votre première automatisation, voici tout le parcours :
   ]}
 >
 
-Gladys est **auto-hébergé** : au lieu de vous abonner à un cloud, vous l'installez une fois pour toutes sur un petit ordinateur chez vous. C'est pour cela qu'il y a une étape d'installation, et c'est ce qui rend Gladys **privé** (vos données ne quittent jamais votre maison) et **fiable** (votre maison continue de fonctionner même quand Internet est coupé).
+Gladys est **auto-hébergé** : au lieu de vous abonner à un cloud, vous l'installez une fois pour toutes sur un petit ordinateur chez vous. C'est pour cela qu'il y a une étape d'installation, et c'est ce qui rend Gladys **privé** (par défaut, vos données restent chez vous) et **fiable** (votre maison continue de fonctionner même quand Internet est coupé).
 
 </HowItWorks>
 
@@ -66,7 +67,7 @@ Notre installeur officiel fait tout le travail : vous l'écrivez sur une clé US
 
 - **Un mini-PC neuf** : petit, silencieux et économe. Je recommande le [Beelink Mini S13](https://amzn.to/4hRtIE3), voir aussi notre [guide d'achat des mini-PC](/fr/mini-pc-home-automation/).
 - **Un mini-PC reconditionné** : souvent nettement moins cher sur Leboncoin, eBay ou chez les revendeurs spécialisés. Vérifiez qu'il a au moins 8 Go de RAM et un SSD.
-- **Un ordinateur que vous avez déjà** : un vieux PC avec un processeur Intel ou AMD, un SSD d'au moins 16 Go et un port Ethernet peut devenir votre box Gladys (son disque sera effacé).
+- **Un ordinateur que vous avez déjà** : un vieux PC avec un processeur Intel ou AMD qui démarre en mode UEFI, un SSD d'au moins 16 Go et un port Ethernet peut devenir votre box Gladys (son disque sera effacé).
 
 </InstallOption>
 
@@ -85,13 +86,13 @@ Vous avez déjà un Raspberry Pi 3, 4 ou 5 ? Flashez notre image officielle 64 b
 <InstallOption
   icon="server"
   title="Sur un serveur ou un NAS que vous avez déjà"
-  facts={[["clock", "10 minutes environ"], ["terminal", "Pour les habitués de Docker"]]}
+  facts={[["clock", "10 minutes environ avec Docker"], ["terminal", "Pour les habitués de l'auto-hébergement"]]}
 >
 
 Gladys s'installe à côté de vos autres services, sans nouvelle machine à acheter :
 
 - [Docker sur Debian, Ubuntu ou tout Linux](/fr/docs/installation/docker/)
-- [Proxmox VE](/fr/docs/installation/proxmox/)
+- [Proxmox VE](/fr/docs/installation/proxmox/), dans une VM installée avec Gladys Assistant OS
 - [NAS Synology](/fr/docs/installation/synology/)
 - [NAS Unraid](/fr/docs/installation/unraid/)
 - [Freebox Delta](/fr/docs/installation/freebox-delta/)
@@ -115,8 +116,8 @@ Vous ne voulez pas vous occuper de l'installation ? Le kit de démarrage est un 
 
 Une fois Gladys démarré, ouvrez-le dans votre navigateur, depuis un ordinateur ou un téléphone connecté au même réseau :
 
-- avec Gladys Assistant OS ou l'image Raspberry Pi : **[http://gladysassistant.local](http://gladysassistant.local)**,
-- sinon : l'adresse IP de la machine, par exemple `http://192.168.1.42`.
+- **[http://gladysassistant.local](http://gladysassistant.local)** : Gladys annonce ce nom sur votre réseau, avec Gladys Assistant OS, l'image Raspberry Pi, Proxmox, Docker ou la Freebox Delta. Sur un NAS Synology, ajoutez le port choisi, par exemple `http://gladysassistant.local:8420` ;
+- sinon (Unraid, certains téléphones Android, réseaux invités…) : l'adresse IP de la machine, par exemple `http://192.168.1.42`, suivie du port sur un NAS.
 
 Un court assistant vous guide : créez le compte administrateur, choisissez vos préférences (langue, unités), puis nommez votre maison et ses pièces. C'est l'affaire de deux minutes, et tout ce que vous saisissez reste dans la base de données locale de Gladys.
 
@@ -202,6 +203,47 @@ Oui. Gladys fonctionne en local : vos appareils, votre tableau de bord et vos sc
 Oui, et Gladys peut même tourner à côté le temps de migrer vos appareils. La plupart des appareils Zigbee, Matter, Philips Hue ou Shelly s'appairent directement avec Gladys. Voyez comment Gladys se compare à [Jeedom](/fr/jeedom-alternative/) ou à [Home Assistant](/fr/home-assistant-alternative/).
 
 </details>
+
+<JsonLd
+  data={{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "Gladys est-il vraiment gratuit ?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Oui. Gladys est open-source (licence Apache 2.0) et gratuit, sans limite d'appareils ni de fonctionnalités. Gladys Plus est un service payant et optionnel en complément (accès à distance, sauvegardes quotidiennes, Google Home et Alexa, IA) ; il finance le développement du projet.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Faut-il savoir coder ou utiliser un terminal ?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Non. Avec Gladys Assistant OS ou l'image Raspberry Pi, vous installez Gladys sans taper une seule commande, et tout le reste se fait depuis l'interface de Gladys.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Gladys fonctionne-t-il sans Internet ?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Oui. Gladys fonctionne en local : vos appareils, votre tableau de bord et vos scènes continuent de fonctionner sans Internet. La connexion n'est nécessaire que pour installer Gladys, récupérer les mises à jour, et pour les intégrations de services cloud.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "J'utilise déjà un autre logiciel de domotique, puis-je changer ?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Oui, et Gladys peut même tourner à côté le temps de migrer vos appareils. La plupart des appareils Zigbee, Matter, Philips Hue ou Shelly s'appairent directement avec Gladys.",
+        },
+      },
+    ],
+  }}
+/>
 
 ## Besoin d'aide ?
 
