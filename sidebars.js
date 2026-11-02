@@ -71,6 +71,7 @@ module.exports = {
           type: "doc",
           className: "fr-only",
         },
+        "installation/migrate",
         "installation/phone",
         "installation/logs",
         "installation/faq",

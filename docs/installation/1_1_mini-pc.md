@@ -176,7 +176,7 @@ All that's left is to create your account and set up your home: see [Create your
 
 ![The welcome screen of Gladys](../../static/img/docs/en/installation/gladys-assistant-os/gladys-welcome.jpg)
 
-Already using Gladys Plus? The **Gladys Plus backup restore** button of this screen lets you restore the backup of your previous installation instead of starting from scratch.
+Already using Gladys Plus? The **Gladys Plus backup restore** button of this screen lets you restore the backup of your previous installation instead of starting from scratch. Moving from another machine? Follow the [move to a new machine guide](/docs/installation/migrate/).
 
 :::tip
 Give the mini-PC a fixed IP address with a DHCP reservation in the settings of your router: its address will then never change.
