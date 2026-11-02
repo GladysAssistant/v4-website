@@ -13,7 +13,7 @@ keywords:
 
 Replacing the machine that runs Gladys (an old mini-PC, a Raspberry Pi, a NAS...) with a new one? With a **Gladys Plus backup**, you get your instance back as it was on the new machine: users, houses and rooms, devices, scenes, dashboards, integration settings and the whole sensor history.
 
-Zigbee2mqtt and Matter are restored too: Gladys stores their configuration in its database every night, so **you don't need to pair your devices again**.
+Zigbee2mqtt and the Matter integration are restored too: Gladys stores their configuration in its database every night, so **you don't need to pair your devices again**.
 
 There are just a few precautions to take. Here is the procedure, step by step.
 
@@ -38,7 +38,8 @@ Don't disconnect Gladys Plus on the old instance before you have written the key
 
 ### Write down what is not in the backup
 
-- **Node-RED**: if you use it, export your flows (**☰ menu > Export > All flows**). They are not part of the Gladys backup.
+- **Node-RED**: if you use it, export your flows (**☰ menu > Export > All flows**). They are not part of the Gladys backup. The export contains neither the credentials of your nodes (passwords, tokens) nor the nodes you installed from the palette: write down the extra nodes you installed, to install them again on the new machine, and have your credentials at hand to enter them again.
+- **Matterbridge**: if you use it, its plugins and its Matter identity (in `/var/lib/gladysassistant/matterbridge`) are not in the backup either. On the new machine, you will have to install its plugins again and pair the bridge again with your Matter controllers (Apple Home, Google Home...).
 - **MQTT**: if you use the MQTT integration with the broker installed by Gladys (for Tasmota, Shelly devices, etc.), write down the MQTT username and password as a precaution (**Integrations > MQTT > Setup**).
 
 ### Don't pair new devices right before the move
@@ -75,10 +76,11 @@ Check that the key you entered is the one of the old instance: Gladys lets you c
 ## 3. Checks after the restore
 
 - **Zigbee2mqtt**: Gladys reinstalls it automatically with its restored configuration (Zigbee network and devices), with no new pairing. Still, go to **Integrations > Zigbee2mqtt** and check the USB port of the dongle: it may have another name on the new machine. If so, select the right one.
-- **Matter**: the controller is restored automatically from its backup.
+- **Matter**: the controller of the Matter integration is restored automatically from its backup.
+- **Matterbridge** (if you use it): install its plugins again and pair the bridge again with your Matter controllers.
 - **Catalog integrations**: they are reinstalled automatically at startup. Gladys downloads their images again, which can take a few minutes.
 - **MQTT** (if you use the broker installed by Gladys): since Gladys 5.3.1, Gladys recreates the broker automatically with your stored credentials, so your MQTT devices reconnect without any change. Check in **Integrations > MQTT** that Gladys is connected to the broker.
-- **Node-RED**: import your flows again.
+- **Node-RED**: install the extra nodes you used, import your flows again and enter your credentials again.
 - **IP address**: the new machine has a new IP address. Everything that reaches Gladys by its IP (MQTT devices, etc.) must use the new one. The easiest way: once the old machine is off, give the new one, in your router settings, the fixed IP address the old one had (DHCP reservation).
 - **Gladys Plus**: your Gladys Plus connection is part of the backup, so the new machine takes the place of the old one. Check that the instance is connected in **Settings > Gladys Plus**, and test remote access on [plus.gladysassistant.com](https://plus.gladysassistant.com). The next day, check that a new backup shows up in **Settings > Backups**.
 
@@ -86,20 +88,30 @@ Check that the key you entered is the one of the old instance: Gladys lets you c
 
 Keep it turned off for a few days, while you check that everything works: it is your plan B. **Never turn it back on with Gladys running while the new machine is running.**
 
+Gladys starts again by itself when the machine boots. So before turning the old machine back on to clean it up, **unplug its network cable** (and its USB dongles), and work directly on it, with a screen and a keyboard.
+
 After that, remember that its disk still holds your Gladys database (users, Gladys Plus keys, access to your integrations). So:
 
 - **if you give it away or sell it**, reinstall a system and fully erase the disk;
-- **if you keep it for something else**, remove the Gladys containers and data:
+- **if you keep it for something else**, remove the Gladys containers, then its data. On Gladys Assistant OS, first stop Gladys and Watchtower:
 
 ```bash
-docker rm -f gladys gladys-z2m-zigbee2mqtt gladys-z2m-mqtt eclipse-mosquitto gladys-node-red gladys-matterbridge
+sudo docker compose -f /opt/gladys/compose.yaml down
 ```
+
+Then remove the containers:
+
+```bash
+sudo docker rm -f gladys gladys-z2m-zigbee2mqtt gladys-z2m-mqtt eclipse-mosquitto gladys-node-red gladys-matterbridge
+```
+
+Once the containers are removed, delete the data:
 
 ```bash
 sudo rm -rf /var/lib/gladysassistant
 ```
 
-Adapt the list of containers to what the `docker ps -a` command shows on your machine (for example, add `watchtower` if it is installed). If you installed Gladys yourself with Docker in another folder than `/var/lib/gladysassistant`, delete that folder instead.
+Adapt the list of containers to what the `sudo docker ps -a` command shows on your machine: remove only the containers installed by Gladys (for example, add `watchtower` if it is installed, but keep a Mosquitto broker you installed yourself). If you installed Gladys yourself with Docker in another folder than `/var/lib/gladysassistant`, delete that folder instead.
 
 No need to disconnect Gladys Plus on the old machine: the new one has taken over the connection.
 
