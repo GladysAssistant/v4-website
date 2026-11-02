@@ -67,13 +67,23 @@ Keep your old phone until the change is confirmed!
 
 ### You no longer have your old phone
 
-If your app could not restore your Gladys entry, you can't generate 2FA codes anymore, but you can still log in with a **recovery code** (see below). Then [contact us](#contact-us) so that we reset the 2FA of your account: you will be able to configure your new app at your next login.
+If your app could not restore your Gladys entry, you can't generate 2FA codes anymore. You can still replace your app yourself, with your **recovery codes**:
+
+1. Log in on [plus.gladysassistant.com](https://plus.gladysassistant.com) with a recovery code (see [Using a recovery code](#using-a-recovery-code) below).
+2. Go to **Settings > Security**, card **"Your two-factor app"**, and click on **"Change my two-factor app"**.
+3. Scan the QR code with your new app, and enter the code it displays.
+4. For the code of the current app, click on **"Lost your current app? Use a recovery code instead."**, then enter **another** one of your recovery codes.
+5. Click on **"Replace my two-factor app"**.
+
+So you need two recovery codes: one to log in, one to replace the app. The second one is only used up if the replacement succeeds: if the code of your new app is refused, you can try again without losing a code. Your other recovery codes stay valid, but remember to [generate a new set](#generate-recovery-codes-before-you-need-them) once your new app is set up.
+
+No recovery code left, or only one? See [I have no recovery codes left](#no-recovery-codes-left).
 
 ## Using a recovery code
 
 Recovery codes are **single-use codes** that let you log in when you don't have access to your authenticator app anymore. They are displayed **only once**: when you enable 2FA, and each time you generate a new set.
 
-To use one, on the 2FA code screen, look for **"Lost access to your two-factor app?"** and click on on **"Use a recovery code"**, and enter one of your codes. Each code can only be used once: cross it out once used.
+To use one, on the 2FA code screen, look for **"Lost access to your two-factor app?"** and click on **"Use a recovery code"**, and enter one of your codes. Each code can only be used once: cross it out once used.
 
 ### Generate recovery codes (before you need them!)
 
@@ -86,11 +96,66 @@ If you never saved your recovery codes, or if you used most of them, generate a 
 
 Generating a new set immediately invalidates your previous recovery codes.
 
-## After a 2FA reset
+## I have no recovery codes left {#no-recovery-codes-left}
 
-Gladys Plus is end-to-end encrypted. When your 2FA is reset, your encryption keys change, so **your access to your Gladys instance is automatically revoked**, for security reasons: your instance only accepts the keys you authorized at your home.
+You lost both your authenticator app and your recovery codes? Since Gladys 5.3.1, you can get back into your account without writing to support. Pick the solution that matches your situation:
 
-This is expected: on plus.gladysassistant.com, you will see the "One last step!" page again. To get your access back, open your Gladys instance **locally**, log in again in **Settings > Gladys Plus**, and authorize your user again in the "Remote users" section. The [connection tutorial](/docs/plus/connect-gladys-plus/) explains each step with screenshots.
+- **Your Gladys is at home and connected to Gladys Plus**: [generate new recovery codes from your Gladys](#recovery-codes-from-gladys).
+- **Someone else on your Gladys Plus account is an admin**, and still has access to their 2FA app: they can [reset your two-factor authentication](#reset-by-another-admin).
+- **No Gladys is connected to your account** (Gladys turned off, broken, lost, or never installed): [reset your two-factor authentication by email](#reset-by-email).
+
+### Generate new codes from your Gladys {#recovery-codes-from-gladys}
+
+Your Gladys, physically at your home, is already a trusted device of your Gladys Plus account: it can stand in for your 2FA app, just long enough to give you a new set of recovery codes.
+
+1. Open your Gladys **locally**, from your home network, with its local address (for example its IP address). This action is not available from plus.gladysassistant.com: the whole point is to be at home.
+2. Log in with an **admin** account of your Gladys.
+3. Go to **Settings > Users**. Under your user, in the **"Remote access · Gladys Plus"** section, click on **"Recovery codes"**.
+4. Enter **your Gladys password** (the one of your local instance, not your Gladys Plus password), then click on **"Generate"**.
+5. Gladys displays **10 new recovery codes, only once**: copy or download them, and save them somewhere safe. Nothing is kept on your Gladys.
+
+Your previous recovery codes stop working right away, and Gladys Plus notifies you by email. Your Gladys Plus password is still needed to log in: these codes only stand in for your 2FA app. Then log in on [plus.gladysassistant.com](https://plus.gladysassistant.com) with one of these codes, and replace your 2FA app as explained in [You no longer have your old phone](#you-no-longer-have-your-old-phone).
+
+Good to know:
+
+- The **"Recovery codes"** button only shows up if your Gladys already knows your Gladys Plus account, that is if the fingerprints of your encryption keys are displayed under your user.
+- You are not an admin of your Gladys? Ask the person who manages Gladys at your home: they can generate these codes for you, by entering **their own** Gladys password, and then pass them on to you.
+
+### Have another admin reset your 2FA {#reset-by-another-admin}
+
+If your Gladys Plus account has another admin who still has access to their 2FA app, they can reset your two-factor authentication from Gladys Plus:
+
+1. They log in on [plus.gladysassistant.com](https://plus.gladysassistant.com) and go to **Settings > Users**.
+2. Under your user, in the **"Remote access · Gladys Plus"** section, they click on **"Reset two-factor authentication"**.
+3. They enter the code of **their own** 2FA app, then click on **"Reset"**.
+
+You are notified by email. Then log in with your password: Gladys Plus immediately asks you to set up a new authenticator app, then to save new recovery codes. Your encryption keys and your access to your Gladys don't change.
+
+An admin can't reset their own two-factor authentication this way.
+
+### Reset your 2FA by email, when no Gladys is connected {#reset-by-email}
+
+If no Gladys is connected to your Gladys Plus account (never installed, broken or lost hardware, long power cut...), you can reset your two-factor authentication by email, right away:
+
+1. On [plus.gladysassistant.com](https://plus.gladysassistant.com), log in with your email address and your password.
+2. On the 2FA code screen, under **"Lost access to your two-factor app?"**, click on **"No Gladys connected? Reset your two-factor authentication by email."**
+3. Open the email you receive, and click on the link. It only works **once** and expires after **one hour** (you can only request one per minute: remember to check your spam folder).
+4. On the page that opens, click on **"Reset my two-factor authentication"**.
+5. Log in with your password: Gladys Plus asks you to set up a new authenticator app, then to save new recovery codes.
+
+Your old app and your old recovery codes don't work anymore, and you are notified by email once the reset is done. Your encryption keys don't change.
+
+**You also forgot your password?** Start with "I forgot my password": the reset password page, opened from the email you receive, offers the same link under the two-factor fields. Once your 2FA is reset, come back to this page to choose your new password: the reset password link stays valid for two hours.
+
+**Your Gladys is connected?** The reset by email is then refused, on purpose: your Gladys, at home, is the last resort of your account, and an admin of your Gladys can [generate new recovery codes](#recovery-codes-from-gladys) instead. This check is done when you request the link and when you click on it: if your Gladys comes back online in between, the link is refused, but it stays usable as long as no Gladys is connected.
+
+## After a password or 2FA reset
+
+**Resetting your two-factor authentication** (by an admin or by email) changes neither your encryption keys nor your access to your Gladys: once your new app is set up, everything works as before.
+
+**Resetting your Gladys Plus password** ("I forgot my password"), on the other hand, generates new encryption keys. Gladys Plus is end-to-end encrypted, and your Gladys only accepts the keys you authorized at your home: **your remote access is therefore automatically revoked**, for security reasons. This is expected, nothing is broken: on plus.gladysassistant.com, a page explains what to do.
+
+To get your access back, an admin of your Gladys opens your instance **locally** and goes to **Settings > Users**. Under your user, in the **"Remote access · Gladys Plus"** section, they check that the fingerprints of your new keys match the ones displayed on your Gladys Plus page, then turn on the **"Authorized"** switch.
 
 ## Contact us
 
