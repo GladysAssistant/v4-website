@@ -172,7 +172,7 @@ Sobald auf dem Bildschirm **Gladys Assistant ist bereit** steht, öffne **`http:
 
 Falls sich `gladysassistant.local` nicht öffnet, verwende stattdessen die Adresse, die auf dem Bildschirm des Mini-PCs darunter angezeigt wird (zum Beispiel `http://192.168.1.42`). Manche Netzwerke unterstützen diese lokalen Namen nicht, zum Beispiel manche Android-Smartphones, Gastnetzwerke oder Router mit Client-Isolation.
 
-Jetzt musst du nur noch dein Konto anlegen und dein Zuhause einrichten: siehe [Dein Smart Home konfigurieren](/de/docs/#configuring-your-smart-home). Bildschirm und Tastatur kannst du abziehen, der Mini-PC braucht sie nicht mehr.
+Jetzt musst du nur noch dein Konto anlegen und dein Zuhause einrichten: siehe [Dein Konto anlegen](/de/docs/#create-account). Bildschirm und Tastatur kannst du abziehen, der Mini-PC braucht sie nicht mehr.
 
 ![Der Willkommensbildschirm von Gladys](../../../../../static/img/docs/en/installation/gladys-assistant-os/gladys-welcome.jpg)
 
