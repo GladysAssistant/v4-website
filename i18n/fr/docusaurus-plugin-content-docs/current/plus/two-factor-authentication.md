@@ -67,7 +67,17 @@ Gardez votre ancien téléphone tant que le changement n'est pas confirmé !
 
 ### Vous n'avez plus votre ancien téléphone
 
-Si votre application n'a pas pu restaurer votre entrée Gladys, vous ne pouvez plus générer de codes 2FA, mais vous pouvez toujours vous connecter avec un **code de récupération** (voir ci-dessous). [Contactez-nous](#nous-contacter) ensuite pour que nous réinitialisions la 2FA de votre compte : vous pourrez configurer votre nouvelle application lors de votre prochaine connexion.
+Si votre application n'a pas pu restaurer votre entrée Gladys, vous ne pouvez plus générer de codes 2FA. Vous pouvez tout de même remplacer votre application vous-même, avec vos **codes de récupération** :
+
+1. Connectez-vous sur [plus.gladysassistant.com](https://plus.gladysassistant.com) avec un code de récupération (voir [Utiliser un code de récupération](#utiliser-un-code-de-récupération) ci-dessous).
+2. Allez dans **Paramètres > Sécurité**, carte **« Votre application 2FA »**, et cliquez sur **« Changer mon application 2FA »**.
+3. Scannez le QR code avec votre nouvelle application, et entrez le code qu'elle affiche.
+4. Pour le code de l'application actuelle, cliquez sur **« Vous avez perdu votre application actuelle ? Utilisez plutôt un code de récupération. »**, puis entrez **un autre** de vos codes de récupération.
+5. Cliquez sur **« Remplacer mon application 2FA »**.
+
+Il vous faut donc deux codes de récupération : un pour vous connecter, un pour remplacer l'application. Le second n'est consommé que si le remplacement réussit : si le code de votre nouvelle application est refusé, vous pouvez réessayer sans perdre de code. Vos autres codes de récupération restent valables, mais pensez à [en générer un nouveau jeu](#générer-des-codes-de-récupération-avant-den-avoir-besoin-) une fois votre nouvelle application en place.
+
+Vous n'avez plus de codes de récupération, ou plus qu'un seul ? Voir [Je n'ai plus de codes de récupération](#no-recovery-codes-left).
 
 ## Utiliser un code de récupération
 
@@ -86,11 +96,66 @@ Si vous n'avez jamais enregistré vos codes de récupération, ou si vous en ave
 
 Générer un nouveau jeu de codes invalide immédiatement vos anciens codes de récupération.
 
-## Après une réinitialisation de la 2FA
+## Je n'ai plus de codes de récupération {/* #no-recovery-codes-left */}
 
-Gladys Plus est chiffré de bout en bout. Quand votre 2FA est réinitialisée, vos clés de chiffrement changent, donc **votre accès à votre instance Gladys est automatiquement révoqué**, pour des raisons de sécurité : votre instance n'accepte que les clés que vous avez autorisées chez vous.
+Vous avez perdu à la fois votre application d'authentification et vos codes de récupération ? Depuis Gladys 5.3.1, vous pouvez retrouver l'accès à votre compte sans écrire au support. Choisissez la solution qui correspond à votre situation :
 
-C'est normal : sur plus.gladysassistant.com, la page « Plus qu'une étape ! » s'affiche à nouveau. Pour retrouver votre accès, ouvrez votre instance Gladys **en local**, reconnectez-vous dans **Paramètres > Gladys Plus**, puis autorisez à nouveau votre utilisateur dans la section « Utilisateurs distants ». Le [tutoriel de connexion](/fr/docs/plus/connect-gladys-plus/) détaille chaque étape avec des captures d'écran.
+- **Votre Gladys est chez vous et connectée à Gladys Plus** : [générez de nouveaux codes de récupération depuis votre Gladys](#recovery-codes-from-gladys).
+- **Une autre personne de votre compte Gladys Plus est administrateur**, et a toujours accès à son application 2FA : elle peut [réinitialiser votre double authentification](#reset-by-another-admin).
+- **Aucune Gladys n'est connectée à votre compte** (Gladys éteinte, en panne, perdue, ou jamais installée) : [réinitialisez votre double authentification par e-mail](#reset-by-email).
+
+### Générer de nouveaux codes depuis votre Gladys {/* #recovery-codes-from-gladys */}
+
+Votre Gladys, physiquement chez vous, est déjà un appareil de confiance de votre compte Gladys Plus : elle peut remplacer votre application 2FA, le temps de vous donner un nouveau jeu de codes de récupération.
+
+1. Ouvrez votre Gladys **en local**, depuis votre réseau domestique, avec son adresse locale (par exemple son adresse IP). Cette action n'est pas disponible depuis plus.gladysassistant.com : l'objectif est justement d'être chez vous.
+2. Connectez-vous avec un compte **administrateur** de votre Gladys.
+3. Allez dans **Paramètres > Utilisateurs**. Sous votre utilisateur, dans la section **« Accès à distance · Gladys Plus »**, cliquez sur **« Codes de récupération »**.
+4. Saisissez **votre mot de passe Gladys** (celui de votre instance locale, pas celui de Gladys Plus), puis cliquez sur **« Générer »**.
+5. Gladys affiche **10 nouveaux codes de récupération, une seule fois** : copiez-les ou téléchargez-les, et enregistrez-les en lieu sûr. Rien n'est conservé sur votre Gladys.
+
+Vos anciens codes de récupération cessent aussitôt de fonctionner, et Gladys Plus vous prévient par e-mail. Votre mot de passe Gladys Plus reste nécessaire pour vous connecter : ces codes remplacent seulement votre application 2FA. Connectez-vous ensuite sur [plus.gladysassistant.com](https://plus.gladysassistant.com) avec l'un de ces codes, puis remplacez votre application 2FA comme expliqué dans [Vous n'avez plus votre ancien téléphone](#vous-navez-plus-votre-ancien-téléphone).
+
+Bon à savoir :
+
+- Le bouton **« Codes de récupération »** n'apparaît que si votre Gladys connaît déjà votre compte Gladys Plus, c'est-à-dire si les empreintes de vos clés de chiffrement sont affichées sous votre utilisateur.
+- Vous n'êtes pas administrateur de votre Gladys ? Demandez à la personne qui gère Gladys chez vous : elle peut générer ces codes pour vous, en saisissant **son propre** mot de passe Gladys, puis vous les transmettre.
+
+### Faire réinitialiser votre 2FA par un autre administrateur {/* #reset-by-another-admin */}
+
+Si votre compte Gladys Plus a un autre administrateur qui a toujours accès à son application 2FA, il peut réinitialiser votre double authentification depuis Gladys Plus :
+
+1. Il se connecte sur [plus.gladysassistant.com](https://plus.gladysassistant.com) et va dans **Paramètres > Utilisateurs**.
+2. Sous votre utilisateur, dans la section **« Accès à distance · Gladys Plus »**, il clique sur **« Réinitialiser la double authentification »**.
+3. Il saisit le code de **sa propre** application 2FA, puis clique sur **« Réinitialiser »**.
+
+Vous êtes prévenu par e-mail. Connectez-vous ensuite avec votre mot de passe : Gladys Plus vous demande aussitôt de configurer une nouvelle application d'authentification, puis d'enregistrer de nouveaux codes de récupération. Vos clés de chiffrement et votre accès à votre Gladys ne changent pas.
+
+Un administrateur ne peut pas réinitialiser sa propre double authentification de cette façon.
+
+### Réinitialiser votre 2FA par e-mail, quand aucune Gladys n'est connectée {/* #reset-by-email */}
+
+Si aucune Gladys n'est connectée à votre compte Gladys Plus (jamais installée, matériel en panne ou perdu, longue coupure de courant...), vous pouvez réinitialiser votre double authentification par e-mail, immédiatement :
+
+1. Sur [plus.gladysassistant.com](https://plus.gladysassistant.com), connectez-vous avec votre adresse e-mail et votre mot de passe.
+2. Sur l'écran du code 2FA, sous **« Vous avez perdu l'accès à votre application 2FA ? »**, cliquez sur **« Pas de Gladys connectée ? Réinitialisez votre double authentification par email. »**
+3. Ouvrez l'e-mail que vous recevez, et cliquez sur le lien. Il ne fonctionne qu'**une seule fois** et expire au bout d'**une heure** (vous ne pouvez en demander qu'un par minute : pensez à vérifier vos spams).
+4. Sur la page qui s'ouvre, cliquez sur **« Réinitialiser ma double authentification »**.
+5. Connectez-vous avec votre mot de passe : Gladys Plus vous demande de configurer une nouvelle application d'authentification, puis d'enregistrer de nouveaux codes de récupération.
+
+Votre ancienne application et vos anciens codes de récupération ne fonctionnent plus, et vous êtes prévenu par e-mail une fois la réinitialisation faite. Vos clés de chiffrement ne changent pas.
+
+**Vous avez aussi oublié votre mot de passe ?** Commencez par « J'ai oublié mon mot de passe » : la page de réinitialisation du mot de passe, ouverte depuis l'e-mail reçu, propose le même lien sous les champs de double authentification. Une fois votre 2FA réinitialisée, revenez sur cette page pour choisir votre nouveau mot de passe : le lien de réinitialisation du mot de passe reste valable deux heures.
+
+**Votre Gladys est connectée ?** La réinitialisation par e-mail est alors refusée, et c'est voulu : votre Gladys, chez vous, est le dernier recours de votre compte, et un administrateur de votre Gladys peut [générer de nouveaux codes de récupération](#recovery-codes-from-gladys) à la place. Cette vérification est faite à la demande et au clic sur le lien : si votre Gladys se reconnecte entre les deux, le lien est refusé, mais reste utilisable tant qu'aucune Gladys n'est connectée.
+
+## Après une réinitialisation de votre mot de passe ou de votre 2FA
+
+**Réinitialiser votre double authentification** (par un administrateur ou par e-mail) ne change ni vos clés de chiffrement, ni votre accès à votre Gladys : une fois votre nouvelle application configurée, tout fonctionne comme avant.
+
+**Réinitialiser votre mot de passe Gladys Plus** (« J'ai oublié mon mot de passe »), en revanche, génère de nouvelles clés de chiffrement. Gladys Plus est chiffré de bout en bout, et votre Gladys n'accepte que les clés que vous avez autorisées chez vous : **votre accès à distance est donc automatiquement révoqué**, par sécurité. C'est normal, rien n'est cassé : sur plus.gladysassistant.com, une page vous explique ce qu'il faut faire.
+
+Pour retrouver votre accès, un administrateur de votre Gladys ouvre votre instance **en local** et va dans **Paramètres > Utilisateurs**. Sous votre utilisateur, dans la section **« Accès à distance · Gladys Plus »**, il vérifie que les empreintes de vos nouvelles clés correspondent à celles affichées sur votre page Gladys Plus, puis active l'interrupteur **« Autorisé »**.
 
 ## Nous contacter
 
