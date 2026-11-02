@@ -174,7 +174,7 @@ Quand l'écran affiche **Gladys Assistant est prêt**, ouvrez **`http://gladysas
 
 Si `gladysassistant.local` ne s'ouvre pas, utilisez plutôt l'adresse affichée juste en dessous sur l'écran du mini-PC (par exemple `http://192.168.1.42`). Certains réseaux, par exemple certains téléphones Android, les réseaux invités ou les box avec l'isolation des clients activée, ne gèrent pas ces noms locaux.
 
-Il ne vous reste plus qu'à créer votre compte et à configurer votre maison : voir [Configuration de votre maison connectée](/fr/docs/#configuration-de-votre-maison-connectée). Vous pouvez débrancher l'écran et le clavier, le mini-PC n'en a plus besoin.
+Il ne vous reste plus qu'à créer votre compte et à configurer votre maison : voir [Créer votre compte](/fr/docs/#create-account). Vous pouvez débrancher l'écran et le clavier, le mini-PC n'en a plus besoin.
 
 ![L'écran d'accueil de Gladys](../../../../../static/img/docs/en/installation/gladys-assistant-os/gladys-welcome.jpg)
 
