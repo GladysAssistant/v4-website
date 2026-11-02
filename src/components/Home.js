@@ -8,6 +8,11 @@ import styles from "./horizon/styles.module.css";
 import YoutubeEmbedVideo from "./YoutubeEmbedVideo";
 import { TestimonialHomeSection } from "./Testimonial";
 import SubcribeNewsletter from "./home/SubcribeNewsletter";
+import {
+  IntegrationsMarquee,
+  IntegrationsSection,
+  useIntegrationsSummary,
+} from "./home/Integrations";
 
 import testimonialFr from "./testimonials/testimonial.fr.json";
 import testimonialEn from "./testimonials/testimonial.en.json";
@@ -17,17 +22,6 @@ import testimonialEs from "./testimonials/testimonial.es.json";
 import { BLACK_FRIDAY_CONFIG } from "../config/blackFriday";
 
 const DEMO_URL = "https://demo.gladysassistant.com/dashboard";
-
-const COMPATIBILITIES = [
-  { title: "Zigbee", imgSrc: "zigbee2mqtt.jpg", docKey: "zigbee2mqtt" },
-  { title: "Matter", imgSrc: "matter.jpg", docKey: "matter" },
-  { title: "MQTT", imgSrc: "mqtt.jpg", docKey: "mqtt" },
-  { title: "Tuya", imgSrc: "tuya.jpg", docKey: "external/tuya/" },
-  { title: "Netatmo", imgSrc: "netatmo.jpg", docKey: "external/netatmo/" },
-  { title: "Sonos", imgSrc: "sonos.jpg", docKey: "sonos" },
-  { title: "Zendure", imgSrc: "zendure.jpg", docKey: "external/zendure/" },
-  { title: "Camera", imgSrc: "rtsp-camera.jpg", docKey: "camera" },
-];
 
 const testimonials = {
   fr: testimonialFr,
@@ -239,18 +233,16 @@ const FAQQuestions = {
       title: <>Gladys fonctionne-t-elle avec mes appareils ?</>,
       response: (
         <>
-          <b>Très probablement !</b> Gladys supporte{" "}
-          <Link href="/fr/docs/integrations/">des milliers d'appareils</Link> via
-          les protocoles ouverts Zigbee, Matter et MQTT, ainsi que des
-          intégrations natives (Sonos, caméras RTSP, et bien d'autres).
+          <b>Très probablement !</b> Gladys compte{" "}
+          <Link href="/fr/docs/integrations/">plus de 1 000 intégrations</Link>,
+          installables en un clic : les grandes marques comme Philips Hue,
+          SmartThings, Tapo, Shelly, Sonos, Netatmo ou les caméras Reolink, et
+          les protocoles ouverts Zigbee, Z-Wave, Matter et MQTT, qui couvrent
+          des milliers d'appareils de toutes marques.
           <br />
           <br />
-          Votre appareil n'est pas encore listé ? Découvrez les{" "}
-          <Link href="/fr/docs/integrations/?origin=community">
-            intégrations externes
-          </Link>{" "}
-          : des intégrations créées par la communauté, installables en un clic,
-          dont la liste s'agrandit en continu. Et si la vôtre manque,{" "}
+          La plupart sont créées par la communauté, et la liste s'agrandit
+          chaque semaine. Si la vôtre manque encore,{" "}
           <Link href="/fr/docs/dev/external-integrations/">
             créez-la vous-même
           </Link>{" "}
@@ -336,18 +328,16 @@ const FAQQuestions = {
       title: <>Does Gladys work with my devices?</>,
       response: (
         <>
-          <b>Very likely!</b> Gladys supports{" "}
-          <Link href="/docs/integrations/">thousands of devices</Link> through
-          open protocols like Zigbee, Z-Wave, Matter, and MQTT, plus
-          integrations for popular brands: Philips Hue, SmartThings, TP-Link
-          Kasa and Tapo, Shelly, Sonos, Reolink cameras, LG ThinQ, and many
-          more.
+          <b>Very likely!</b> Gladys has{" "}
+          <Link href="/docs/integrations/">more than 1,000 integrations</Link>,
+          each installed in one click: popular brands like Philips Hue,
+          SmartThings, TP-Link Kasa and Tapo, Shelly, Sonos, Reolink cameras and
+          LG ThinQ, and open protocols like Zigbee, Z-Wave, Matter and MQTT
+          that cover thousands of devices from any brand.
           <br />
           <br />
-          Device not listed yet? Have a look at{" "}
-          <Link href="/docs/integrations/?origin=community">external integrations</Link>{" "}
-          : community-built integrations you can install in one click, and the
-          list keeps growing. If yours is missing,{" "}
+          Most of them are built by the community, and the list grows every
+          week. If yours is still missing,{" "}
           <Link href="/docs/dev/external-integrations/">build it yourself</Link>{" "}
           in the language of your choice, or{" "}
           <a href="https://community.gladysassistant.com/">ask on the forum</a>.
@@ -442,20 +432,16 @@ const FAQQuestions = {
       title: <>Funktioniert Gladys mit meinen Geräten?</>,
       response: (
         <>
-          <b>Sehr wahrscheinlich!</b> Gladys unterstützt{" "}
-          <Link href="/de/docs/integrations/">tausende Geräte</Link> über offene
-          Protokolle wie Zigbee, Z-Wave, Matter und MQTT sowie Integrationen für
-          beliebte Marken: Philips Hue, SmartThings, TP-Link Kasa und Tapo,
-          Shelly, Sonos, Reolink-Kameras, LG ThinQ und viele mehr.
+          <b>Sehr wahrscheinlich!</b> Gladys bietet{" "}
+          <Link href="/de/docs/integrations/">über 1.000 Integrationen</Link>,
+          jede mit einem Klick installiert: beliebte Marken wie Philips Hue,
+          SmartThings, TP-Link Kasa und Tapo, Shelly, Sonos, Reolink-Kameras und
+          LG ThinQ, und offene Protokolle wie Zigbee, Z-Wave, Matter und MQTT,
+          die tausende Geräte jeder Marke abdecken.
           <br />
           <br />
-          Dein Gerät ist noch nicht dabei? Schau dir die{" "}
-          <Link href="/de/docs/integrations/?origin=community">
-            externen Integrationen
-          </Link>{" "}
-          an: Von der Community entwickelte Integrationen, die du mit einem
-          Klick installieren kannst, und die Liste wächst ständig. Fehlt deine
-          trotzdem,{" "}
+          Die meisten werden von der Community entwickelt, und die Liste wächst
+          jede Woche. Fehlt deine trotzdem,{" "}
           <Link href="/de/docs/dev/external-integrations/">
             entwickle sie einfach selbst
           </Link>{" "}
@@ -555,20 +541,16 @@ const FAQQuestions = {
       title: <>¿Gladys funciona con mis dispositivos?</>,
       response: (
         <>
-          <b>¡Muy probablemente!</b> Gladys es compatible con{" "}
-          <Link href="/es/docs/integrations/">miles de dispositivos</Link> a
-          través de protocolos abiertos como Zigbee, Z-Wave, Matter y MQTT,
-          además de integraciones con marcas populares: Philips Hue,
-          SmartThings, TP-Link Kasa y Tapo, Shelly, Sonos, cámaras Reolink, LG
-          ThinQ y muchas más.
+          <b>¡Muy probablemente!</b> Gladys tiene{" "}
+          <Link href="/es/docs/integrations/">más de 1.000 integraciones</Link>,
+          que se instalan con un clic: marcas populares como Philips Hue,
+          SmartThings, TP-Link Kasa y Tapo, Shelly, Sonos, cámaras Reolink y LG
+          ThinQ, y protocolos abiertos como Zigbee, Z-Wave, Matter y MQTT, que
+          cubren miles de dispositivos de cualquier marca.
           <br />
           <br />
-          ¿Tu dispositivo aún no aparece? Echa un vistazo a las{" "}
-          <Link href="/es/docs/integrations/?origin=community">
-            integraciones externas
-          </Link>
-          : integraciones creadas por la comunidad que puedes instalar con un
-          clic, y la lista no para de crecer. Si aun así falta la tuya,{" "}
+          La mayoría las crea la comunidad, y la lista crece cada semana. Si aun
+          así falta la tuya,{" "}
           <Link href="/es/docs/dev/external-integrations/">
             desarróllala tú mismo
           </Link>{" "}
@@ -679,8 +661,7 @@ function Home({ lang }) {
   const asset = (path) => `${siteConfig.baseUrl}${path.replace(/^\//, "")}`;
 
   const docsUrl = lang === "en" ? "/docs" : `/${lang}/docs`;
-  const integrationsUrl =
-    lang === "en" ? "/docs/integrations" : `/${lang}/docs/integrations`;
+  const integrations = useIntegrationsSummary(lang);
 
   // The starter kit is a French-market offer: keep it out of the English page.
   const shouldDisplayStarterKitLink = lang === "fr";
@@ -790,10 +771,11 @@ function Home({ lang }) {
         <span className={styles.badge}>
           <span className={styles.badgeDot}>{ICONS.sparkle}</span>
           <Translate
-            id="home.horizon.badge"
-            description="Small badge above the homepage title"
+            id="home.horizon.badgeIntegrations"
+            description="Small badge above the homepage title. {count} is the number of integrations rounded down to the hundred (e.g. 1,000)."
+            values={{ count: integrations.rounded }}
           >
-            Gladys Assistant 5 · New design
+            {"Gladys Assistant 5 · {count}+ integrations"}
           </Translate>
         </span>
 
@@ -814,11 +796,25 @@ function Home({ lang }) {
 
         <p className={styles.heroSubtitle}>
           <Translate
-            id="home.description"
-            description="The home page description"
+            id="home.horizon.heroSubtitle"
+            description="The homepage subtitle, under the title. {integrations} is the number of integrations, in bold (home.horizon.heroSubtitleCount)."
+            values={{
+              integrations: (
+                <b>
+                  <Translate
+                    id="home.horizon.heroSubtitleCount"
+                    description="The bold part of the homepage subtitle. {count} is the number of integrations rounded down to the hundred (e.g. 1,000)."
+                    values={{ count: integrations.rounded }}
+                  >
+                    {"{count}+ integrations"}
+                  </Translate>
+                </b>
+              ),
+            }}
           >
-            Open-source, local smart home. Integrations install in one click,
-            and anyone can create one.
+            {
+              "The open-source, local smart home that works with what you already own: {integrations}, each installed in one click."
+            }
           </Translate>
         </p>
 
@@ -857,6 +853,8 @@ function Home({ lang }) {
           </span>
         </div>
 
+        <IntegrationsMarquee lang={lang} />
+
         <div className={styles.heroShot}>
           <Shot
             asset={asset}
@@ -875,6 +873,8 @@ function Home({ lang }) {
       </header>
 
       <main>
+        <IntegrationsSection lang={lang} />
+
         <section className={styles.section}>
           <div className={styles.sectionHeader}>
             <span className={styles.eyebrow}>
@@ -1153,69 +1153,6 @@ function Home({ lang }) {
                 </Translate>
               </span>
             </div>
-          </div>
-        </section>
-
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <span className={styles.eyebrow}>
-              <Translate
-                id="home.horizon.compatibilitiesEyebrow"
-                description="Eyebrow above the compatibilities section"
-              >
-                Compatibility
-              </Translate>
-            </span>
-            <h2 className={styles.sectionTitle}>
-              <Translate
-                id="home.compatibilities.title"
-                description="Cool features chat title on the homepage"
-              >
-                Works With Everything You Own
-              </Translate>
-            </h2>
-            <p className={styles.sectionLead}>
-              <Translate
-                id="home.integrations.description"
-                description="Integrations description of the homepage"
-              >
-                Open protocols, native integrations, and community external
-                integrations for everything else.
-              </Translate>
-            </p>
-          </div>
-
-          <div className={styles.compatGrid}>
-            {COMPATIBILITIES.map((item) => (
-              <a
-                key={item.title}
-                className={styles.compatTile}
-                href={asset(`docs/integrations/${item.docKey}`)}
-              >
-                <img
-                  src={asset(`img/home/compatibilities/${item.imgSrc}`)}
-                  width="254"
-                  height="169"
-                  loading="lazy"
-                  alt={item.title}
-                />
-                <span className={styles.compatTileLabel}>{item.title}</span>
-              </a>
-            ))}
-          </div>
-
-          <div style={{ textAlign: "center", marginTop: "2.5rem" }}>
-            <Link
-              className={classnames(styles.btn, styles.btnQuiet)}
-              href={integrationsUrl}
-            >
-              <Translate
-                id="home.ctaAfterIntegrations"
-                description="CTA after integrations section"
-              >
-                Browse All Integrations →
-              </Translate>
-            </Link>
           </div>
         </section>
 
