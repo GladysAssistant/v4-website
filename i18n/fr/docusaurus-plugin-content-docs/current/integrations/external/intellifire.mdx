@@ -1,0 +1,233 @@
+---
+title: "Intégration domotique IntelliFire, gratuite et open source"
+sidebar_label: "IntelliFire"
+description: "Foyers au gaz IntelliFire en réseau local : flamme, ventilateur, thermostat ; extinction. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-intellifire.png"
+keywords:
+  - "intellifire"
+  - "domotique intellifire"
+  - "gladys intellifire"
+  - "intellifire gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-intellifire instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"IntelliFire","description":"Foyers au gaz IntelliFire en réseau local : flamme, ventilateur, thermostat ; extinction.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-intellifire","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-intellifire.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-01T12:28:51Z"}} />
+
+Intégration Gladys pour les foyers au gaz **IntelliFire** (Hearth & Home Technologies : Heat & Glo,
+Heatilator, Majestic, Monessen, Quadra-Fire) équipés du module Wi-Fi IFT, par l'**API locale** de ce
+module. Jamais testé avec un vrai foyer : construit et testé sur un faux module d'après la bibliothèque
+intellifire4py (celle de Home Assistant). Sans lien avec Hearth & Home Technologies.
+
+> Une flamme de gaz allumée à distance est un risque. N'autorisez l'allumage depuis Gladys que si
+> rien ne repose près du foyer et que personne ne peut être surpris par la flamme.
+
+## Ce que vous obtenez
+
+Un appareil par foyer, identifié par son numéro de série (jamais par son adresse IP) :
+
+- état (texte), flamme allumée, veilleuse permanente, vitre chaude, température de la pièce (°C, telle
+  que le module la donne), mode thermostat, consigne du thermostat, minuterie restante (min),
+  niveau d'éclairage (0 à 3, lecture seule), défaut signalé et liste des défauts ;
+- **Éteindre** (bouton), jamais soumis à l'option ;
+- **Allumer** (bouton), **Hauteur de flamme** (1 à 5), **Vitesse du ventilateur** (arrêt, 1 à 4) et
+  **Consigne du thermostat** (°C entiers) : désactivés tant que l'option « Autoriser l'allumage, la
+  flamme, le ventilateur et la consigne » n'est pas cochée.
+
+Aucun de ces réglages n'est un interrupteur : un « tout éteindre » (assistant vocal, scène) n'atteint
+jamais la flamme.
+
+## Installation
+
+1. Donnez au module Wi-Fi du foyer une adresse fixe dans votre box.
+2. Saisissez cette adresse, enregistrez : le foyer est lu, l'appareil apparaît dans l'onglet Découverte.
+3. Pour les commandes (extinction comprise), il faut la **clé** du foyer et l'**identifiant
+   utilisateur** de votre compte IntelliFire : saisissez l'adresse e-mail et le mot de passe du
+   compte, enregistrez, puis cliquez sur **Récupérer la clé**. Gladys se connecte une seule fois au
+   cloud IntelliFire (iftapi.net, en HTTPS), prend la clé du foyer dont le numéro de série a été lu à
+   l'adresse et l'enregistre. Vous pouvez ensuite effacer le mot de passe. Vous pouvez aussi saisir
+   la clé et l'identifiant vous-même : si le foyer est déjà dans Home Assistant (intégration
+   IntelliFire), ce sont les valeurs `api_key` et `user_id` de son entrée de configuration. Ni l'API
+   locale du foyer ni sa découverte ne donnent la clé.
+
+Le mot de passe, la clé et l'identifiant sont gardés par Gladys dans sa base, jamais réaffichés, jamais
+écrits dans les journaux ni dans /data. Le mot de passe n'est envoyé qu'à iftapi.net et seulement au
+clic ; l'identifiant n'est envoyé qu'au foyer ; la clé ne quitte pas Gladys (elle signe les commandes).
+Les lectures de l'API locale ne demandent aucun mot de passe : gardez le foyer sur un réseau de
+confiance.
+
+## Lectures
+
+Le foyer est lu toutes les 15 s par défaut (10 à 600 s), pas plus souvent, même après un redémarrage
+(l'heure de la dernière lecture est gardée dans /data), puis 5 s et 20 s après chaque commande. Une
+seule requête à la fois vers le module. Une valeur absente ou illisible n'est pas publiée (jamais comme 0) ; rien de plus vieux que 2 minutes n'est envoyé comme neuf. Quand /data ne peut pas être lu,
+l'heure de la dernière lecture est inconnue : le foyer est lu une fois au démarrage (une requête
+locale par démarrage, même en boucle de redémarrage).
+
+## Éteindre
+
+Le bouton **Éteindre** envoie l'extinction (puissance 0), puis remet la consigne du thermostat à 0 (pour
+qu'aucun thermostat ne rallume la flamme). Chaque envoi demande un défi au module ; un refus HTTP 403 est,
+comme le lit intellifire4py, un défi expiré : un nouveau défi est demandé, jusqu'à 10 fois. Elle ne
+dépend ni de l'option, ni d'une lecture préalable, ni d'une pause demandée par le module, ni d'une
+commande en cours (elle l'interrompt : une commande cliquée avant elle et pas encore partie est
+abandonnée), ni d'une lecture bloquée (elle la coupe). Elle part vers l'adresse saisie, ou celle de la
+dernière lecture gardée dans /data si la configuration n'est pas lue.
+
+Une extinction appartient à son foyer (son numéro de série) : celui de l'appareil dont le bouton a été
+cliqué, jamais le dernier foyer lu. Chaque foyer a sa propre extinction gardée, 4 au plus : jusqu'à 4,
+un clic sur l'extinction d'un autre appareil n'en lève jamais une. Pour un 5e foyer, une extinction
+n'est levée que si elle peut l'être (dit dans le statut et les journaux) : jamais celle du foyer à qui
+appartient la clé, d'un foyer lu allumé à sa dernière lecture, ni du foyer lu à l'adresse ; d'abord une
+qui ne peut pas partir avec la clé saisie, puis une d'un foyer lu éteint, puis une jamais lue, la plus
+ancienne d'abord. Si aucune ne peut l'être, la nouvelle extinction n'est pas gardée : elle est quand
+même envoyée une fois (dans ses 3 s) si elle peut être signée et qu'aucun autre foyer n'est lu à
+l'adresse, et la réponse et le statut disent ce qui s'est passé (éteignez ce foyer au foyer s'il n'a pas
+été vu éteint). Si vous saisissez une nouvelle adresse, les extinctions gardées la suivent. Si la
+dernière lecture de l'adresse montre un autre IntelliFire (aussi quand une vérification ne lit ensuite
+aucun numéro de série), rien ne lui est envoyé ; si un autre y répond avant d'avoir été lu, les envois
+partent vers l'adresse, il les refuse (403) et ce refus ne compte jamais contre la clé. Dans les deux
+cas, ses lectures ne lèvent pas l'extinction, le statut le dit, et l'extinction part dès que ce foyer
+est relu à l'adresse.
+
+Une extinction n'est signée qu'avec la clé de son propre foyer. Pour autant que Gladys le sache pendant
+cette exécution, la clé saisie appartient au foyer qui a accepté un envoi signé avec elle, son numéro de
+série lu sur la ligne de cet envoi (la lecture juste avant ou la relecture juste après ; aucun numéro lu,
+ou deux différents : attribué à personne), ou à celui pour lequel elle a été récupérée par « Récupérer
+la clé ». C'est gardé en mémoire seulement, jamais dans /data. Les foyers qui l'ont acceptée sont oubliés
+quand une clé est enregistrée (la même aussi) ou qu'un test de la connexion réussit ; celui pour lequel
+elle a été récupérée, quand une autre clé est enregistrée. L'extinction d'un autre foyer n'est alors
+jamais signée avec elle. Tant que Gladys ne le sait pas (après un redémarrage, avant tout envoi
+accepté), l'extinction part avec la clé saisie.
+
+L'extinction ne peut pas partir, et elle est **gardée** (dans /data) jusqu'à ce qu'elle parte, dans ces
+cas exactement :
+
+- aucune adresse connue (ni saisie, ni gardée) : refusée, rien n'est gardé ;
+- pas de clé ou d'identifiant valides : elle part dès qu'ils sont enregistrés (bouton ou saisie) ;
+- le foyer refuse la clé ou l'identifiant, sur preuve seulement (10 défis refusés en 403 dans un même
+  envoi, le numéro de série de ce foyer lu à l'adresse, une clé qu'il n'a jamais acceptée et dont on ne
+  sait pas qu'elle appartient à un autre foyer) : elle n'est plus essayée d'elle-même ; elle part dès que
+  la clé est enregistrée (la même aussi), à un succès du bouton « Tester la connexion », ou à un nouveau
+  clic. Ce refus ne concerne que ce foyer : l'extinction et les commandes d'un autre foyer ne sont
+  jamais retenues par lui. Des 403 quand le temps manque, ou avec une clé déjà acceptée par ce foyer, ne
+  sont jamais un refus : elle est réessayée ;
+- la clé saisie est connue pour appartenir à un autre foyer (voir plus haut) : rien envoyé ; elle part
+  dès que ce n'est plus connu (une clé enregistrée, la même aussi, ou un test réussi, sauf si la clé a
+  été récupérée pour cet autre foyer : alors dès qu'une autre clé est enregistrée) ;
+- 4 autres foyers ont une extinction gardée, toutes nécessaires (voir plus haut) : pas gardée ;
+  envoyée une fois quand elle peut l'être ;
+- un autre foyer (autre numéro de série) a été lu à l'adresse : rien envoyé, elle attend le sien ;
+- après un redémarrage, elle attend la lecture de la configuration (la clé est un secret, jamais dans
+  /data) ;
+- le module ne répond pas : essayée toutes les 250 ms pendant 3 s, puis toutes les 15 s (elle part dans
+  les 15 s qui suivent son retour) ; un module qui ne répond que 403 : toutes les 15 s quatre fois, puis
+  espacé jusqu'à 1 h ;
+- l'intégration s'arrête (Gladys lui a demandé de s'arrêter) : rien envoyé ; elle est gardée dans /data
+  et part au démarrage suivant.
+
+Une extinction est confirmée seulement par une lecture qui montre la flamme éteinte et le thermostat
+arrêté. Sinon elle est relue toutes les 15 s et renvoyée tant que la flamme est allumée, 3 fois au plus ;
+ensuite elle est retenue (dit dans le statut) sans nouvel envoi jusqu'à un nouveau clic. Elle est
+levée par une lecture de son foyer le montrant éteint (deux lectures de suite si elle n'est jamais
+partie), ou par un allumage de ce foyer cliqué ensuite depuis Gladys avec l'option ; jamais par le
+temps, ni par l'extinction ou l'allumage d'un autre foyer (sauf au-delà de 4 foyers, comme dit plus
+haut).
+
+## Allumer, flamme, ventilateur, consigne
+
+Désactivés par défaut. Avec l'option, chaque commande lit d'abord le foyer (lecture fraîche, jamais
+l'état en mémoire) et vérifie de nouveau l'option juste avant chaque envoi. **Allumer** envoie la
+flamme puis, aussitôt, une **minuterie** (60 min par défaut, 10 à 180) : le foyer s'éteint de lui-même
+à son terme. Si la minuterie ne peut pas être posée, Gladys éteint le foyer aussitôt (la réponse dit si
+l'extinction est partie). Ensuite, les lectures surveillent la séance, sans limite de durée et même
+après un redémarrage (elle est gardée dans /data) : la minuterie lue (pas plus longue que la séance)
+ou le foyer lu éteint la terminent ; un foyer lu éteint puis rallumé à la main n'est jamais éteint par
+Gladys. La flamme lue sans cette minuterie 10 s après l'envoi : la minuterie est envoyée une seconde
+fois, puis, toujours absente, Gladys éteint le foyer.
+
+La **consigne** met le foyer en mode thermostat, qui n'a pas d'arrêt de sécurité de 9 h (réponse de
+Hearth & Home dans intellifire4py, ticket 312) : Gladys envoie donc d'abord la minuterie de la séance,
+puis la consigne, et surveille la séance comme un allumage ; à la fin de la séance (plus 2 min), si la
+flamme ou le thermostat sont encore lus allumés, Gladys éteint le foyer. Si la consigne relue n'est
+pas celle envoyée, Gladys remet aussitôt la consigne à 0 (thermostat arrêté). Une minuterie déjà en
+cours et pas plus longue que la séance est gardée (jamais allongée) : la consigne part seule et la
+séance finit avec cette minuterie ; une minuterie plus longue, ou aucune, est remplacée par celle de la
+séance. À vérifier sur un vrai foyer : la fin de la minuterie
+arrête-t-elle le mode thermostat.
+
+Une commande est refusée, sans rien envoyer, quand :
+
+- l'option est décochée, ou la configuration pas encore lue ;
+- l'intégration s'arrête (Gladys lui a demandé de s'arrêter) ;
+- la clé ou l'identifiant manquent, ou ce foyer les a refusés (sur preuve, voir plus haut ; levé par
+  un enregistrement de la clé ou un succès de « Tester la connexion »), ou la clé saisie est connue
+  pour appartenir à un autre foyer (voir plus haut) ;
+- une autre commande est en cours, une extinction est en cours d'envoi, ou (sauf pour Allumer) une
+  extinction de ce foyer est gardée ;
+- le module a demandé d'attendre (HTTP 429 ou 503) ;
+- la lecture fraîche échoue ou ne vient pas à temps (la commande doit partir dans les 3,5 s) ;
+- le foyer lu n'est pas cet appareil (autre numéro de série) ;
+- une valeur nécessaire manque à la lecture ;
+- Allumer : un défaut qui désactive le foyer est signalé (veilleuse, flamme, appareil désactivé,
+  verrouillage, hors ligne, ECM hors ligne, ou un code inconnu), ou /data ne peut pas être écrit ;
+- Hauteur de flamme et Consigne : le foyer est éteint (Gladys ne les envoie pas à un foyer éteint) ;
+- Ventilateur : le foyer n'a pas de ventilateur ; Consigne : il n'a pas de thermostat ;
+- la valeur sort des bornes : hauteur 1 à 5, ventilateur 0 à 4, consigne de 5 °C à la « consigne la
+  plus haute » (26 °C par défaut, 37 °C au plus, la limite de l'API).
+
+Une commande est réussie seulement si la relecture montre la valeur demandée ; sinon Gladys répond
+« envoyé, pas encore appliqué », « envoyé, sans confirmation » ou « rien envoyé », selon ce qui s'est
+passé.
+
+## Statut
+
+L'écran de configuration dit l'état du foyer, chaque extinction gardée ou retenue (nommée par la fin du
+numéro de série de son foyer, 4 caractères, quand il y en a plusieurs, ou quand ce n'est pas le foyer
+lu), une extinction levée ou non gardée pour un 5e foyer (jusqu'à ce que ce foyer en ait de nouveau une
+gardée ou que la configuration soit enregistrée), une clé refusée ou absente, un module injoignable
+(prochain essai), une pause demandée par le module.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par IntelliFire dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre foyer IntelliFire | `section` | Non | Affiche un foyer au gaz IntelliFire (Hearth & Home Technologies, avec son module Wi-Fi IFT) dans Gladys par l'API locale de son module : flamme, veilleuse, vitre chaude, température de la pièce, thermostat, minuterie, éclairage, défauts. L'extinction ne dépend pas de l'option ci-dessous ; l'allumage, la hauteur de flamme, le ventilateur et la consigne restent désactivés tant que vous ne les autorisez pas, et chaque allumage depuis Gladys pose une minuterie. Les commandes sont signées avec la clé de votre compte IntelliFire : saisissez-la, ou laissez le bouton ci-dessous la récupérer une fois. Saisissez l'adresse du foyer, enregistrez, puis ajoutez-le depuis l'onglet Découverte. Une flamme de gaz allumée à distance est un risque : ne l'allumez jamais sans vous assurer que rien ne repose à proximité. Jamais testé avec un vrai appareil. Sans lien avec Hearth & Home Technologies. |
+| Adresse du foyer | `string` | Oui | L'adresse IPv4 de son module Wi-Fi (à fixer de préférence dans votre box) ou son nom d'hôte, suivi éventuellement de « :port » (80 par défaut). L'API locale n'a pas de mot de passe pour les lectures : gardez le foyer sur un réseau de confiance. |
+| Clé du foyer | `secret` | Non | La « apikey » de ce foyer dans votre compte IntelliFire (caractères hexadécimaux), remplie par le bouton « Récupérer la clé » ou saisie. Gardée par Gladys dans sa base, jamais réaffichée, jamais envoyée nulle part : elle sert seulement à signer les commandes envoyées au foyer. |
+| Identifiant utilisateur du compte | `secret` | Non | L'identifiant utilisateur de votre compte IntelliFire, rempli avec la clé. Gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement au foyer avec chaque commande. |
+| Adresse e-mail du compte IntelliFire | `string` | Non | Seulement pour le bouton « Récupérer la clé » (le compte de l'application IntelliFire). |
+| Mot de passe du compte IntelliFire | `secret` | Non | Gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement au cloud IntelliFire (iftapi.net, en HTTPS), et seulement quand vous cliquez sur « Récupérer la clé ». Vous pouvez l'effacer une fois la clé récupérée. |
+| Autoriser l'allumage, la flamme, le ventilateur et la consigne | `boolean` | Non | Désactivé par défaut. Activé : le bouton « Allumer », la hauteur de flamme, la vitesse du ventilateur et la consigne du thermostat peuvent être envoyés, après une lecture fraîche du foyer (le guide liste tous les refus). Désactivé : ils refusent toute demande. L'extinction ne dépend pas de cette option. |
+| Minuterie d'un allumage ou d'une consigne (min) | `number` | Non | Posée juste après chaque allumage depuis Gladys, et avant chaque consigne (le mode thermostat n'a pas d'arrêt de sécurité à lui) : le foyer s'éteint de lui-même à son terme (60 min par défaut, de 10 à 180). Sans elle, Gladys éteint le foyer. |
+| Consigne la plus haute (°C) | `number` | Non | Gladys ne demande jamais plus (26 °C par défaut ; 37 °C, la limite de l'API, au plus ; 5 °C au moins). |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture du foyer, en secondes (pas plus souvent après un redémarrage ; relu 5 s et 20 s après chaque commande). |
+| Langue des noms des fonctionnalités | `select` | Non | Sert aux noms des fonctionnalités des appareils ajoutés désormais, aux textes d'état et aux erreurs des commandes. |
+
+## Comment installer IntelliFire dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : IntelliFire apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-intellifire:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-intellifire](https://github.com/LM1LC3N7/gladys-intellifire).
+
+IntelliFire nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+IntelliFire est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-intellifire) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-intellifire/blob/HEAD/docs/fr.md)

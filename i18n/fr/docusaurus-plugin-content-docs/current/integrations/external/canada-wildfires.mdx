@@ -1,0 +1,229 @@
+---
+title: "Intégration domotique Canada wildfires, gratuite et open source"
+sidebar_label: "Canada wildfires"
+description: "Non officiel : feux de forêt près de chez vous au Canada, indice forêt-météo, danger (RNCan). Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-feux-canada.png"
+keywords:
+  - "canada wildfires"
+  - "domotique canada wildfires"
+  - "gladys canada wildfires"
+  - "canada wildfires gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-feux-canada instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Canada wildfires","description":"Non officiel : feux de forêt près de chez vous au Canada, indice forêt-météo, danger (RNCan).","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-feux-canada","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-feux-canada.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-30T05:55:22Z"}} />
+
+Connecteur **non officiel**, sans lien avec Ressources naturelles Canada. Il lit
+les couches publiques du **Système canadien d'information sur les feux de
+végétation** (SCIFV, `cwfis.cfs.nrcan.gc.ca`), sans compte ni clé, et donne pour
+chaque maison localisée de Gladys :
+
+| Fonction                        | Ce que c'est                                                                                                  |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Points chauds satellite (24 h)  | nombre de détections de chaleur des dernières 24 heures dans le rayon                                         |
+| Point chaud le plus proche (km) | sa distance ; s'il n'y en a aucun dans le rayon, **le rayon lui-même** (« aucun plus proche »), jamais 0      |
+| Périmètres de feu actifs        | périmètres estimés (couche M3) touchés par un point chaud depuis 72 h, dans le rayon (Canada seulement)       |
+| Périmètre actif le plus proche  | distance à son contour, 0 si la maison est dedans ; sans périmètre, le rayon                                  |
+| Indice forêt-météo (IFM)        | l'IFM (FWI) de la station météo-feu la plus proche avec un relevé de moins de 36 h, à 200 km au plus, arrondi |
+| Station météo-feu               | nom, province, distance et heure du relevé de cette station                                                   |
+| Danger d'incendie               | classe de la carte nationale à la maison : 1 bas, 2 modéré, 3 élevé, 4 très élevé, 5 extrême (Canada)         |
+
+Et deux déclencheurs de scène : **point chaud à moins d'une distance** et
+**danger d'incendie en hausse**.
+
+**Les points chauds sont des détections de chaleur par satellite, pas des feux
+confirmés** : une torchère, une usine, un brûlage agricole en donnent aussi, et
+leur heure a quelques heures de retard sur le passage du satellite. La couche
+couvre l'Amérique du Nord ; les périmètres et la carte du danger couvrent le
+Canada. C'est une information, pas un système d'alerte ni d'évacuation : suivez
+les consignes de votre province et de votre municipalité.
+
+Jamais testé avec un vrai appareil (il n'y en a pas : c'est un service public).
+Le module a été essayé contre le vrai service le 2026-10-29 (Fredericton,
+Kamloops, Portland) et ses tests rejouent des réponses réelles de ce jour-là.
+
+Contient des informations visées par la Licence du gouvernement ouvert – Canada
+(Ressources naturelles Canada, SCIFV).
+
+## Installation
+
+1. Installez l'intégration depuis le magasin de Gladys. Elle demande l'accès à
+   la **position des maisons** (Paramètres > Maisons) : c'est ce qui place les
+   maisons sur la carte.
+2. Renseignez la position d'au moins une maison dans Gladys.
+3. Facultatif : changez le **rayon** (50 km par défaut, de 5 à 300 km),
+   l'**intervalle de lecture** (30 minutes par défaut, de 15 à 180) et la
+   **langue** des noms d'appareils et des directions.
+4. Ouvrez la **Découverte** : une maison localisée y est proposée (5 au plus).
+   Créez l'appareil : les lectures commencent alors, à la prochaine échéance.
+
+## Ce qui est lu, et quand
+
+À chaque lecture, une requête à la fois, une seconde au moins entre deux :
+
+- la date du point chaud le plus récent de toute la couche, et de la dernière
+  mise à jour des périmètres : la fraîcheur des deux couches ;
+- la date de la carte du danger (légende du serveur cartographique) ;
+- sans appareil créé, ou si la maison d'un appareil a disparu, rien n'est
+  envoyé : les maisons de Gladys sont regardées de nouveau chaque minute ;
+- pour chaque maison qui a son appareil : les points chauds et les périmètres
+  dans une boîte qui contient le rayon, les stations à 200 km, et la carte du
+  danger à 25 km autour de la case de la maison (relue avec une nouvelle date de
+  carte, ou après 6 heures). Pour une maison hors du Canada, ni les périmètres
+  ni la carte du danger ne sont demandés.
+
+Votre position exacte n'est pas envoyée : toutes les boîtes sont construites à
+partir de la seule case de 0,1° × 0,1° qui contient la maison (environ 11 km ×
+7 km), si bien que les recouper ne dit rien de plus fin que cette case ; les
+distances sont calculées dans Gladys. Près de la ligne de changement de date
+(Aléoutiennes), la boîte fait le tour de la Terre.
+Le serveur ne propose ni `ETag` ni `Last-Modified` : l'intervalle est le seul
+frein, et la lecture suivante ne part pas plus tôt que l'intervalle, ni après
+un redémarrage (l'heure de la dernière lecture est gardée dans `/data`), ni
+par le bouton **Tester**, la Découverte ou la création d'un appareil.
+
+## Pas de valeur inventée
+
+- Couche des points chauds vide, ou point chaud le plus récent de plus de 18 h :
+  la source est muette ou périmée, les points chauds ne sont **pas publiés** (ni 0) et le statut le dit.
+- Périmètres sans mise à jour depuis 7 jours (fin de saison) : non publiés.
+- Les périmètres et la carte du danger couvrent le Canada seulement. « Au
+  Canada » est décidé dans Gladys, sur un contour du Canada et des États-Unis
+  embarqué (Natural Earth 1:10m, domaine public, simplifié : 217 Ko) : exact le
+  long du 49e parallèle, et une maison à moins de 1 km de la frontière ailleurs
+  (rivières Sainte-Croix, Détroit, Saint-Clair, Niagara, Saint-Laurent,
+  Sainte-Marie, à la Pluie ; Stanstead), ou entre deux rives des deux pays à
+  moins de 2 km sur un détroit (Lubec et Campobello), est
+  « impossible à dire ». Hors du Canada ou dans le doute : ni périmètres ni
+  danger (rien plutôt qu'un faux 0), et le statut dit pourquoi. Une rive
+  canadienne (à moins de 10 km du contour) compte comme le Canada. Une **petite
+  île** ou une côte que le contour simplifié dessine grossièrement, à plus de
+  10 km de lui, compte comme « hors du Canada » : ni périmètres ni danger, les
+  points chauds restent lus (environ 0,5 % des stations météo-feu du Canada :
+  îles Brier, du Cap-de-Sable et Saint-Paul en Nouvelle-Écosse, île Sagona à
+  Terre-Neuve, île aux Perroquets et île Rouge au Québec, îles Sartine, Herbert
+  et Digby (l'aéroport de Prince Rupert, pas la ville) et îles Lucy en
+  Colombie-Britannique).
+- Classe de danger : celle de la zone de la carte qui contient la maison, sinon
+  celle de la zone la plus proche à moins de 25 km (la carte laisse de côté les
+  rives et les grandes villes : Toronto est à 1,5 km de la zone la plus proche,
+  Montréal à 0,4 km), la distance étant dite dans le statut. Au-delà de 25 km
+  (le Grand Nord peut ne pas être couvert, Iqaluit par exemple) : pas de classe,
+  et le statut le dit.
+- Un enregistrement illisible (champ renommé, date sans fuseau, géométrie sans
+  contour, classe de danger inconnue) ou une réponse coupée à sa taille de page :
+  pour les périmètres et la carte du danger, la partie n'est pas publiée et le
+  statut dit pourquoi. Pour les points chauds, jusqu'à un dixième
+  d'enregistrements illisibles, ou plus de 20 000 points chauds dans la boîte :
+  les points lisibles dans le rayon sont publiés comme un **minimum** (« au
+  moins N » dans le statut) s'il y en a au moins un ; s'il n'y en a aucun, le
+  décompte est inconnu (un point illisible peut être à 1 km) et **rien** n'est
+  publié, jamais 0 ; le plus proche n'est publié dans aucun des deux cas.
+  Au-delà d'un dixième, rien.
+- Aucune station avec un relevé de moins de 36 h et un IFM à 200 km : IFM et
+  station non publiés (hors saison, de novembre à mars, c'est le cas normal).
+- Carte du danger datée de plus de 2 jours : danger non publié. Si sa date est
+  illisible, la carte est lue quand même (une date inconnue ne la rend pas
+  périmée).
+- Une partie qui échoue (erreur HTTP, réponse trop grosse, rapport d'erreur du
+  serveur) n'empêche pas les autres d'être lues et publiées.
+- Les valeurs qui n'ont pas changé sont renvoyées toutes les 3 heures, pour
+  rester datées.
+- `/data` illisible au démarrage, impossible à écrire ou qui ne répond plus : les
+  lectures continuent (une écriture est attendue 2 secondes au plus) et le statut
+  le dit, car un redémarrage ne garderait alors ni l'intervalle ni la pause.
+- Une configuration enregistrée pendant une lecture l'abandonne (rien n'en est
+  publié) : la suivante vient à l'échéance de l'intervalle, avec la nouvelle
+  configuration.
+
+## Déclencheurs de scène
+
+- **Point chaud à moins d'une distance** (5 à 300 km) : un point chaud apparaît
+  plus près que la distance choisie alors qu'il n'y en avait aucun à la lecture
+  précédente. Une seule fois par épisode : il se réarme après deux lectures de
+  suite sans aucun point chaud à cette distance (une lecture à enregistrements
+  manquants sans point lisible à cette distance ne compte pas, comme une
+  lecture échouée : un point chaud illisible ne fait jamais alerter deux fois
+  pour le même feu). Au-delà du rayon de la configuration, c'est le rayon qui
+  compte. Variables : distance (km), direction
+  (N, NE...), cap, nombre, heure de la détection, satellite.
+- **Danger d'incendie en hausse** : la classe atteint le niveau choisi (modéré,
+  élevé, très élevé, extrême) en venant d'en dessous ; un saut de bas à élevé
+  déclenche « modéré » et « élevé ». Variables : niveau actuel et son nom,
+  niveau précédent, IFM de la station, date de la carte.
+
+Rien ne se déclenche à la première lecture d'une maison (pas de valeur d'avant
+connue). La mémoire des déclencheurs est gardée dans `/data` 48 heures, ce qui
+permet à un redémarrage de voir une hausse survenue entre-temps.
+
+## Statut
+
+Le statut de la page de configuration dit l'heure de la dernière lecture, ce qui
+a été lu pour chaque maison, ce qui ne l'a pas été et pourquoi (couche périmée,
+hors saison, hors du Canada, erreur), et rappelle que les points chauds ne sont
+pas des feux confirmés. Le serveur qui demande d'attendre (HTTP 429 ou 5xx) met
+les lectures en pause de 1 minute à 6 heures (doublée à chaque fois, ou le
+`Retry-After` s'il est plus long), pause gardée dans `/data`. Serveur
+injoignable : nouvel essai à l'intervalle suivant.
+
+Le bouton **Tester** lit tout de suite si une lecture est due, sinon il montre
+la dernière et l'heure de la suivante. Sans appareil créé, il fait une seule
+petite requête (la fraîcheur des points chauds), comptée comme la lecture.
+
+## Dépannage
+
+- **« Aucune maison localisée »** : renseignez la position d'une maison dans
+  Gladys (Paramètres > Maisons), puis relancez la Découverte.
+- **« Les maisons de Gladys n'ont pas pu être lues »** : l'accès à la position
+  a été refusé à l'intégration ; nouvel essai chaque minute, sans requête au
+  SCIFV.
+- **IFM absent en hiver** : normal, les stations météo-feu ne publient que
+  pendant la saison des feux.
+
+## Données et licence
+
+Source : Ressources naturelles Canada, Système canadien d'information sur les
+feux de végétation ([https://cwfis.cfs.nrcan.gc.ca/](https://cwfis.cfs.nrcan.gc.ca/)), couches WFS
+`hotspots_last24hrs`, `m3_polygons_current`, `firewx_stns_current`,
+`fdr_current_shp`. Licence du gouvernement ouvert – Canada
+([https://ouvert.canada.ca/fr/licence-du-gouvernement-ouvert-canada](https://ouvert.canada.ca/fr/licence-du-gouvernement-ouvert-canada)).
+L'intégration s'annonce au serveur sous son nom (`User-Agent:
+gladys-feux-canada/0.1.0`), jamais comme un navigateur.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Canada wildfires dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Les feux de forêt autour de vos maisons | `section` | Non | Non officiel, sans lien avec Ressources naturelles Canada. Lit les couches publiques du SCIFV (sans compte ni clé) : un appareil par maison localisée avec les points chauds satellite des dernières 24 h dans le rayon, les périmètres de feu actifs, l’indice forêt-météo (IFM) de la station la plus proche et la classe de danger (Canada), et deux déclencheurs de scène. Les points chauds sont des détections de chaleur, pas des feux confirmés, avec quelques heures de retard. Information seulement, jamais un système d’évacuation : suivez les consignes de votre province. Hors saison (novembre à mars), les couches sont périmées ou vides : le statut le dit, rien n’est publié à 0. Votre position exacte n’est jamais envoyée. Contient des informations visées par la Licence du gouvernement ouvert - Canada. Jamais testé avec un vrai appareil (un service public), essayé contre le vrai service. |
+| Rayon autour de la maison (km) | `number` | Non | Seuls les points chauds et périmètres plus proches comptent. S'il n'y en a aucun, la distance affichée est le rayon lui-même (« aucun plus proche »). Le déclencheur « point chaud à moins de X km » ne voit pas au-delà. |
+| Intervalle de lecture (minutes) | `number` | Non | Les points chauds sont mis à jour plusieurs fois par jour, le danger et l'IFM une fois par jour : 30 minutes suffisent. Une requête à la fois, quelques-unes par maison. |
+| Langue des noms d'appareils et des directions | `select` | Non | Les noms des appareils proposés dans la Découverte, et la direction du point chaud le plus proche dans les scènes (N, NE, E... français : O pour ouest). |
+
+## Comment installer Canada wildfires dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Canada wildfires apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-feux-canada:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-feux-canada](https://github.com/LM1LC3N7/gladys-feux-canada).
+
+Canada wildfires nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Canada wildfires est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-feux-canada) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-feux-canada/blob/HEAD/docs/fr.md)

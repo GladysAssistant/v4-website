@@ -1,0 +1,199 @@
+---
+title: "Zammad smart home integration, free and open source"
+sidebar_label: "Zammad"
+description: "Zammad helpdesk: open, new, pending and escalated tickets, new ticket events, tickets from scenes. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-zammad.png"
+keywords:
+  - "zammad"
+  - "zammad smart home"
+  - "gladys zammad"
+  - "zammad gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-zammad instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Zammad","description":"Zammad helpdesk: open, new, pending and escalated tickets, new ticket events, tickets from scenes.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-zammad","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-zammad.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-31T06:26:49Z"}} />
+
+Bring your [Zammad](https://zammad.org) helpdesk into Gladys: the number of
+open, new, pending and escalated tickets, the unassigned ones, those assigned
+to you and those created today, for the whole instance and for the groups you
+choose. A scene reacts to a new ticket or to a ticket that passed its SLA
+escalation time, another one opens a ticket from a sensor or a button, and the
+dashboard lists the latest open tickets.
+
+> **Feedback welcome.** This integration was tested against a real Zammad
+> server (Docker image `ghcr.io/zammad/zammad` 7.2.2, October 2026), not yet
+> in everyday use. If something does not work as described, please say so on
+> the [Gladys forum](https://community.gladysassistant.com) or in the
+> [issues](https://github.com/guim31/gladys-zammad/issues).
+
+## What you need
+
+- Gladys Assistant 5.1.0 or later.
+- A **Zammad** reachable from Gladys: self-hosted, or hosted by Zammad
+  (`*.zammad.com`). Tested with Zammad 7.2; Elasticsearch is not needed.
+- A **personal access token** of a Zammad agent. In Zammad: your avatar →
+  **Profile** → **Token Access** → **Create**, with the permission **Agent
+  tickets** (`ticket.agent`). Copy it: Zammad shows it only once. If the menu
+  is missing, an administrator enables **API Token Access** in **System** →
+  **API**.
+
+The integration sees the tickets of the groups this agent has access to, and
+creates tickets **as this agent**. A dedicated agent, member of the groups to
+follow, keeps things clear.
+
+## Set up
+
+1. In Gladys, **Integrations** → install **Zammad**.
+2. In its **Configuration** screen:
+   - **Address**: the address of Zammad, as in the browser, e.g.
+     `https://helpdesk.example.org` (with `:port` if needed);
+   - **Access token**: the token created above;
+   - **Followed groups** (optional): group names separated by commas, e.g.
+     `Users, Hardware`. Each one gets a device of its own with its counters.
+     Empty: the instance device only;
+   - **Accept self-signed certificates**: only for your own server with a
+     self-signed certificate;
+   - **Refresh interval**: 1, 2 (default), 5 or 10 minutes;
+   - **Language of the feature names**: the names given to the features when
+     a device is added (French by default).
+3. Click **Test the connection**: it tells how many tickets are open and
+   escalated, and the followed groups that do not exist.
+4. In **Discovery**, add the devices you want.
+
+Each reading costs six small requests (the user, the states, the groups, the
+open tickets, the escalated ones and those created today), and one more per
+100 tickets beyond the first 100 of a search, 1000 tickets at most per search.
+
+## Devices
+
+- **Zammad**: the whole instance (the groups of the agent).
+- **Zammad \<group>**: one per followed group.
+
+Features (counters, with history):
+
+| Feature                | Meaning                                                     |
+| ---------------------- | ----------------------------------------------------------- |
+| Open tickets           | state new, open, pending reminder or pending close          |
+| New tickets            | state new                                                   |
+| Pending tickets        | state pending reminder or pending close                     |
+| Escalated tickets      | open, past the escalation time of their SLA                 |
+| Unassigned tickets     | open, no owner                                              |
+| Tickets assigned to me | open, owned by the agent of the token (instance only)       |
+| Tickets created today  | created since midnight (time of Gladys), whatever its state |
+
+Escalation times come from the **SLAs** of Zammad: without an SLA, no ticket
+escalates. The counters move at each reading, at midnight and at the next
+escalation time.
+
+## Dashboard
+
+The **Open tickets** widget shows the 10 latest open tickets, with their
+number, title, state and group; escalated ones in red, new ones in orange.
+Above them, two tiles: open and escalated tickets.
+
+Settings: **Device** (empty: the whole instance; a group device: only that
+group) and **Show the counters** (untick to keep the list only).
+
+## Scenes
+
+### Triggers
+
+- **New Zammad ticket**: a ticket was created in a group of the agent, seen at
+  the next reading (even if it was closed meanwhile).
+- **Zammad ticket escalated**: an open ticket passed its SLA escalation time
+  (first response, update or solution). It fires once per escalation time: if
+  an answer sets a new time and that one passes too, it fires again.
+
+Both can be filtered by **Group** (exactly as written in Zammad) and
+**Priority** (the default priorities `1 low`, `2 normal`, `3 high`). They pass
+on to the scene the title, ticket number, ticket id, group, priority, state,
+customer and ticket address; the escalation time too for the second one.
+
+### Actions
+
+- **Create a Zammad ticket**: opens a ticket with a **Title**, in a **Group**
+  (name or id; empty: the first followed group, else the first group of the
+  agent), with a **Text** (empty: the title), a **Priority** (empty: the
+  default one of Zammad) and a **Customer e-mail** (empty: the agent of the
+  token; an unknown address creates the customer). The following steps get
+  the ticket id, ticket number, title, group and ticket address.
+
+### Scene ideas
+
+- A leak sensor in the server room: **Create a Zammad ticket** "Water
+  detected" in the `Hardware` group, priority `3 high`.
+- **Zammad ticket escalated** in group `Support`: flash the office light and
+  send a message with the title and the ticket address.
+- **New Zammad ticket** with priority `3 high` out of office hours: notify the
+  person on call.
+
+## Troubleshooting
+
+- **"access token refused"**: the token is wrong, expired or was deleted:
+  create a new one.
+- **"the token lacks the Agent tickets permission"**: create the token again
+  with the **Agent tickets** permission.
+- **"this address does not answer like Zammad"**: check the address; behind a
+  reverse proxy under a path, give that path too
+  (`https://example.org/zammad`).
+- **"redirected"**: give the `https://` address directly.
+- **"certificate refused"**: tick **Accept self-signed certificates** (your
+  own server only).
+- **No escalated ticket ever**: Zammad sets escalation times only through an
+  **SLA** (**Manage** → **SLAs**) with a calendar.
+- A group of **Followed groups** that does not exist is ignored: **Test the
+  connection** names it.
+
+## Limits
+
+- Read every 1 to 10 minutes: a new ticket triggers its scene at the next
+  reading, not instantly (Zammad webhooks are not used).
+- 1000 tickets at most per search: beyond, the oldest open tickets are not
+  counted. The escalated ones are read apart, and always counted.
+- The priority filter offers the default priorities of Zammad; renamed
+  priorities cannot be chosen there.
+- A ticket created while the integration or Zammad was stopped for more than
+  an hour does not trigger its scene.
+- Not affiliated with Zammad GmbH or the Zammad Foundation.
+
+## Configuration settings
+
+These are the settings Zammad asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Zammad | `section` | No | A Zammad, self-hosted or hosted by Zammad. In Zammad: avatar, Profile, Token Access, Create, with the permission “Agent tickets” (ticket.agent). The counters are those of this agent's groups. |
+| Address | `string` | Yes | Address of Zammad, as in the browser, with https:\/\/ for HTTPS and :port if not the default. |
+| Access token | `secret` | Yes | Profile, Token Access in Zammad, permission “Agent tickets”. |
+| Options | `section` | No |  |
+| Followed groups | `string` | No | Names separated by commas: one more device per group, with its own counters. Empty: the instance device only. |
+| Accept self-signed certificates | `boolean` | No | For an https:\/\/ address whose certificate is self-signed. Tick only for your own server. |
+| Refresh interval | `select` | No | How often Zammad is read (six requests). Escalation times and midnight are always followed on time. |
+| Language of the feature names | `select` | No | Names given to the features when a device is added, and texts sent to scenes. |
+
+## How to install Zammad in Gladys
+
+1. In Gladys, open **Integrations**: Zammad appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-zammad:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-zammad](https://github.com/guim31/gladys-zammad).
+
+Zammad requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Zammad is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-zammad) — [source of this documentation](https://github.com/guim31/gladys-zammad/blob/HEAD/docs/en.md)

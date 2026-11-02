@@ -1,0 +1,245 @@
+---
+title: "USGS Water Data smart home integration, free and open source"
+sidebar_label: "USGS Water Data"
+description: "Unofficial. U.S. rivers and wells: discharge, level and temperature (USGS). Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-usgs-eau.png"
+keywords:
+  - "usgs water data"
+  - "usgs water data smart home"
+  - "gladys usgs water data"
+  - "usgs water data gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-usgs-eau instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"USGS Water Data","description":"Unofficial. U.S. rivers and wells: discharge, level and temperature (USGS).","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-usgs-eau","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-usgs-eau.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-31T04:31:38Z"}} />
+
+Unofficial integration, not affiliated with the U.S. Geological Survey (USGS).
+It reads the **latest values of the USGS monitoring stations** you choose, in
+the United States, from the new USGS Water Data APIs
+(`api.waterdata.usgs.gov`, public domain): no account, no key. Read-only:
+nothing is ever sent to the USGS but GET requests.
+
+Tried against the real USGS Water Data API on 30 October 2026 (six stations:
+rivers, a dry well, a groundwater well); never tested with a real Gladys
+installation yet: tell us what you see.
+
+This is **not a warning system**. Most values are **provisional** (the USGS
+may revise them), measured every 15 minutes and sent about every hour. For
+floods, follow the National Weather Service and your local authorities.
+
+## Setup
+
+1. Find the station numbers: the **Search stations** button of the
+   configuration (words of the name, e.g. `potomac dc`), or the map at
+   [https://waterdata.usgs.gov/](https://waterdata.usgs.gov/).
+2. Type them in **Stations** (8 to 15 digits, separated by commas or spaces,
+   20 at most). A station of another agency: its full id, such as
+   `AR008-343826091361301`.
+3. Pick the units, the language of the texts, the read interval (15 to 120
+   minutes, 15 by default) and the maximum age (1 to 48 hours, 3 by default),
+   then save.
+4. After the first read, open the **Discovery** tab: one device per station,
+   with the features of what the station measured recently. Create the ones you
+   want.
+
+## What you get
+
+| Feature                           | U.S. units | Metric units | USGS parameter |
+| --------------------------------- | ---------- | ------------ | -------------- |
+| Discharge                         | ft³/s      | m³/s         | 00060, 30208   |
+| Gage height                       | ft         | m            | 00065          |
+| Water temperature                 | °F         | °C           | 00010          |
+| Depth to water below land surface | ft         | m            | 72019          |
+| Status                            | text       | text         |                |
+
+- A feature is offered only once the station gave a current value of it. A
+  kind that shows up later (a well no longer dry, a gauge after the ice) is
+  added to the device in the Discovery tab: its **Update** button gives the
+  device the new feature, keeping the others and their history. So a device
+  created while its station is dry, iced or out of service has only its
+  **Status** feature until you click **Update** once the value is back.
+- Parameter 30208 is the discharge in m³/s that a few stations publish instead
+  of (or beside) 00060; it fills the same feature. Not read: the measured
+  discharge 00061 (no continuous series on the service on 30 October 2026) and
+  the elevation of lakes and reservoirs (62614).
+- Conversions are exact (1 ft = 0.3048 m, 1 ft³/s = 0.028316846592 m³/s,
+  °F = °C × 9/5 + 32), then rounded (0.001 for ft, ft³/s and m, 0.0001 for
+  m³/s, 0.01 for degrees).
+- The unit is part of the feature: a device keeps the units it was created
+  with, even when the form changes them. To change units, delete the device and
+  create it again from Discovery, or use **Update** in Discovery: either way the
+  features of the old units, and their history, go.
+- Gladys has no unit for a flow: the discharge is a plain number, its unit in
+  its name.
+- The **Status** gives the time of the measurement in the time zone of the
+  station ("Measured Oct 30, 1:50 AM EDT"), then what the USGS says of the
+  values published: when they are all provisional (the usual case),
+  "provisional" once, then each kind with its codes ("Measured Oct 30, 1:50 AM
+  EDT, provisional; discharge: estimated"); otherwise each kind once, the
+  provisional ones first ("Measured Oct 30, 1:50 AM EDT; discharge:
+  provisional, estimated; gage height: revised"); then the kinds late with
+  their reason ("late: temperature (equipment fault)"; the text is cut at 120
+  characters, from the end), or why there is no value: "No value (dry)", "No value (ice)", "No value (below the
+  minimum measurable)", "Unreadable value at the source", "No current value;
+  last one …", "No continuous data at this station", "Station unknown to the
+  USGS". The connection status says how many stations have qualified values.
+- The time zone of a station comes from the USGS (its abbreviation). Its
+  daylight saving flag is wrong for many stations (most of Florida says "no
+  daylight saving"): it is only used to tell Arizona from the rest of the
+  Mountain zone; every other station follows the daylight saving time of its
+  zone. American Samoa (`ZP-11`) shows its own time; an unknown zone, UTC.
+
+## Freshness
+
+- Each measurement is published **once** (deduplicated on its time, kept in
+  /data), without a creation date: a scene "gage height above X" fires on a
+  new measurement, not at every read. The point in the Gladys history is dated
+  when it is published, not when it was measured: later by the transmission
+  delay of the station plus up to one read interval (at most the maximum age).
+  The SDK can date a state, but a dated state does not fire scenes.
+- A measurement older than the **maximum age** of the form is not current: it
+  is not published, the status says when it was measured. The age is counted
+  from the `Date` of the USGS answer (from our clock when that header is
+  missing or more than a day away from it), plus the time since the read.
+- A value dated more than 15 minutes in the future, a value that is not a
+  plain number (a text, an empty value), out of the plausible range of its kind
+  (for example a "-999999") or in an unknown unit is unreadable: never
+  published.
+- **Qualifiers.** The USGS sends codes with a value. Those that only nuance
+  it (`ESTIMATED`, `REVISED`, `BACKWATER`, `REGULATED`, `DEBRIS`, `DIFFDATUM`,
+  `RATINGDEV`, `TIDE`, `URBAN`, `OTHERAGENCY`, `OPPORTUNISTIC`,
+  `FORCEINTERPOLATION`): the value is published, the status says the code.
+  Every other code (`DRY`, `ICE`, `EQUIP`, `MAINT`, `UNAVAIL`, `TEST`,
+  `DISCONTINUED`, `SEASONAL`, `FLOOD`, `DAMFAILURE`, `ZEROFLOW`, `LESSTHAN`,
+  `GREATERTHAN`, `BLWMIN`, `GHNOTASSCPKQ`, and any code not in these lists)
+  means the number is not a measurement of the water: it is not published,
+  even when the USGS gives one (a dry well's number is the depth of its
+  sensor; a dry or zero-flow stream gauge's `0.00` is not published either;
+  "less than" is a bound), and the status gives the reason. The list is the
+  one the real service sent on 30 October 2026.
+- Most values are provisional (not yet approved by the USGS): the status says
+  "provisional".
+- A station with several series of one kind (two sensors, a series stopped in
+  2019): among the current ones, the one of smallest series id (the same one from read to read while it stays current).
+- Gladys keeps the last value published: when a value is no longer current,
+  the **Status** says it; the value shown keeps its own date in Gladys.
+- The status texts follow the ages at each read, and at every interval during a
+  long pause.
+
+## Flood thresholds and scenes
+
+The USGS API gives no flood stage (the flood categories belong to the National
+Weather Service). Use the thresholds you know for your river in a scene: the
+**Device state change** trigger on the gage height or the discharge, with the
+condition "greater than X". It fires on the first current measurement above X.
+
+## Pace and requests
+
+- **One request for all the stations** at every read (`latest-continuous`),
+  followed by at most 2 more pages if the answer has some (never another
+  address), then, once a week, one request for the names and time zones of the
+  stations (`monitoring-locations`). One request at a time, the search button
+  included.
+- One read per interval, whatever asks: saving the form unchanged, a
+  reconnection, the Discovery tab, a device created or a restart read nothing
+  sooner (the time of the read is written to /data before the request).
+  Exceptions:
+  - the first start (no /data file yet) reads at once;
+  - a **new station list** is read a minute after the last read at the
+    earliest;
+  - a read cut before its values came (the form saved, a reconnection) is
+    read again a minute after it;
+  - when /data cannot be read, or holds a date that is invalid or in the
+    future, the first read comes one interval after the start;
+  - an interval shortened in the form brings the next read closer (the new
+    interval after the last read).
+- Each request is bounded: 20 seconds, 2 MB for a page of values, 512 KB for
+  the names or a search.
+- User-Agent: `gladys-usgs-eau/<version> (+repository address)`; `Accept`
+  `application/geo+json`. The USGS answers `no-cache` without ETag nor
+  Last-Modified: no conditional request.
+- **429** (too many requests): every request to the USGS is paused, 5 minutes
+  doubled at each new one, `Retry-After` honoured, between 60 seconds and 6
+  hours, kept across a restart; the next read comes at the end of the pause,
+  not a round later. A **5xx** of the values pauses the reads the same way; a
+  5xx of the names or of a search pauses nothing.
+- A failure of the names and time zones never stops the values (a 429 is
+  the limit of the whole service: it pauses every request, as above): the
+  station number is then the name, the times are in UTC, they are tried again
+  an hour later.
+- Gladys accepts 300 states a minute: the module sends 250 at most over a
+  rolling minute; beyond, the rest comes first at the next read, in turn.
+
+## Search stations
+
+The button asks the USGS for the stations whose name holds every word typed
+(letters and digits only, 2 to 30 characters, 4 words at most) and lists 15 of
+them with the number to copy. One search every 10 seconds at most, none during
+a pause; a search waiting more than 45 seconds behind a read gives up.
+
+## Status of the integration
+
+"Connected" only when the last read succeeded **and** at least one station has
+a current value. Otherwise the message says why: the USGS answers but no
+station has a current value, the last read failed (network, no answer in time,
+refused, answer too large, incomplete or unexpected), paused until a time
+(UTC); and also stations typed that are not station numbers, a value of the
+form replaced, stations unknown to the USGS, names not read, /data unreadable
+(set aside under another name) or not writable, values put off to the next
+read. Before the first read: "Waiting for the first read".
+
+## Data and licence
+
+- USGS data, in the public domain. Most real-time values are provisional.
+- No personal data is read nor kept. /data keeps the time of the last read,
+  the pause, the names, time zones and kinds of the stations, and the time of
+  the last measurement published per feature.
+- /data is only read and written as a regular file: a FIFO, a link or a
+  device in place of the file is unreadable (set aside) and in place of its
+  temporary file makes /data not writable (said in the status); it is never
+  waited on.
+- When Gladys stops the integration, it waits 3 seconds at most for the read
+  running, 5 seconds at most for /data, and exits 9 seconds after the stop at
+  the latest. Docker, which Gladys asks for the stop, ends it after 10 seconds
+  whatever holds it (a /data frozen by the system). Nothing is ever run
+  outside its process.
+
+## Configuration settings
+
+These are the settings USGS Water Data asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| U.S. rivers and groundwater | `section` | No | Open data of the U.S. Geological Survey (Water Data APIs), public domain, no account, no key. Unofficial integration, not affiliated with the USGS; not a warning system: follow the National Weather Service for floods. For each station you choose: discharge, gage height, water temperature and depth to groundwater, as the station measures them (most values are provisional). A value older than the maximum age is never published. After saving and the first read, open the Discovery tab and create the stations: one device per station. |
+| Stations | `string` | No | USGS station numbers (8 to 15 digits), separated by commas or spaces, 20 at most. Another agency: its id, such as AR008-343826091361301. The "Search stations" button finds the numbers. |
+| Units | `select` | No | U.S. units (ft³/s, ft, °F, as the USGS gives them) or metric (m³/s, m, °C, converted exactly). A device keeps the units it was created with; to change them, delete it and create it again from Discovery. |
+| Language of the texts | `select` | No | Language of the feature names given in Discovery and of the status texts. The station names come from the USGS, in English. |
+| Read every (minutes) | `number` | No | Time between two reads, from 15 to 120 minutes. All the stations are read in one request. Most stations measure every 15 minutes and send their data every hour. |
+| Maximum age (hours) | `number` | No | A measurement older than this is not current: never published, the status says so. From 1 to 48 hours; raise it for a well that sends once a day. |
+
+## How to install USGS Water Data in Gladys
+
+1. In Gladys, open **Integrations**: USGS Water Data appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-usgs-eau:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-usgs-eau](https://github.com/LM1LC3N7/gladys-usgs-eau).
+
+USGS Water Data requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+USGS Water Data is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-usgs-eau) — [source of this documentation](https://github.com/LM1LC3N7/gladys-usgs-eau/blob/HEAD/docs/en.md)

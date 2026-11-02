@@ -1,0 +1,211 @@
+---
+title: "Listmonk smart home integration, free and open source"
+sidebar_label: "Listmonk"
+description: "Subscribers, campaigns and their opens from your Listmonk in Gladys, with scenes on new subscribers. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-listmonk.png"
+keywords:
+  - "listmonk"
+  - "listmonk smart home"
+  - "gladys listmonk"
+  - "listmonk gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-listmonk instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Listmonk","description":"Subscribers, campaigns and their opens from your Listmonk in Gladys, with scenes on new subscribers.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-listmonk","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-listmonk.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-31T06:17:18Z"}} />
+
+[Listmonk](https://listmonk.app/) is a self-hosted newsletter and mailing list
+manager, open source (AGPL-3.0). This integration brings your newsletter into
+Gladys: the Listmonk instance becomes a device (reachable or not, subscribers,
+newcomers and unsubscriptions of the day, messages sent, the campaign being
+sent and its progress, the open and click rates of the last campaign), and each
+mailing list you choose becomes a device with its subscribers and its
+unsubscriptions. Scenes can react to a new subscriber, an unsubscription or a
+campaign finished, and a scene action starts or pauses a campaign. A dashboard
+widget shows the figures and the latest campaigns.
+
+Tested against a real self-hosted Listmonk 6.2.0 (Docker, PostgreSQL), with a
+campaign really sent, paused and resumed; feedback welcome on
+[the issues](https://github.com/guim31/gladys-listmonk/issues).
+
+## What you need
+
+- Gladys Assistant 5.1.0 or later.
+- Listmonk 4.0 or later (API users), reachable from the Gladys machine.
+- An **API user** of Listmonk and its token.
+
+At each refresh the integration sends six light requests (dashboard counts,
+lists, the 20 newest campaigns, the 20 newest subscribers, two counts of the
+day), whatever the size of your instance.
+
+## Getting started
+
+### 1. Create an API user
+
+In Listmonk, open **Admin → Users → New**, choose the type **API**, a name (for
+example `gladys`) and a role, then save: Listmonk shows the token once, copy it.
+
+The role decides what the integration sees and does. Reading needs the
+permissions `subscribers:get_all`, `lists:get_all`, `campaigns:get_all`; the
+counts of the day need `subscribers:sql_query` (without it, everything else
+works); starting and pausing a campaign needs `campaigns:send` and
+`campaigns:manage_all`.
+
+### 2. Configure the integration
+
+In Gladys, open **Integrations → Listmonk → Configuration**:
+
+- **Listmonk address**: the address you open Listmonk with, for example
+  `http://192.168.1.10:9000` or `https://lists.example.org`. An address copied
+  with `/admin/...` is understood.
+- **API user** and **API token**: the ones of step 1.
+- **Refresh interval**: from 1 to 10 minutes (2 minutes by default).
+- **Allow starting and pausing campaigns**: off by default. Without it, the
+  scene action is refused.
+- **Language of the names**: the language of the feature names, set when a
+  device is added, of the campaign status and of the scene messages.
+
+**Test the connection** reads Listmonk and answers with the number of
+subscribers, lists and campaigns.
+
+### 3. Add the instance and the lists
+
+Open the **Discover** tab of the integration: it lists the Listmonk instance and
+your mailing lists. Add the instance, and the lists you want to follow.
+
+## The devices
+
+The Listmonk instance:
+
+| Feature                    | What it shows                                                                           |
+| -------------------------- | --------------------------------------------------------------------------------------- |
+| Reachable                  | 1 when Listmonk answers, 0 after two failed reads in a row                              |
+| Subscribers                | every subscriber of the instance                                                        |
+| Blocklisted                | the blocklisted subscribers                                                             |
+| New subscribers today      | the subscribers created today (from midnight)                                           |
+| Unsubscriptions today      | the subscribers who left at least one list today                                        |
+| Messages sent              | the campaign messages sent since Listmonk counts                                        |
+| Campaign                   | the campaign being sent or paused, else the last one sent or cancelled, with its status |
+| Campaign progress          | its messages sent, in percent of the messages to send                                   |
+| Open rate (last campaign)  | opens of the last campaign sent, in percent of its messages (repeated opens count)      |
+| Click rate (last campaign) | clicks of the last campaign sent, in percent of its messages                            |
+
+Each added list:
+
+| Feature      | What it shows                                   |
+| ------------ | ----------------------------------------------- |
+| Subscribers  | the confirmed and unconfirmed subscriptions     |
+| Unsubscribed | the subscribers who unsubscribed from this list |
+
+"Today" starts at midnight in the time zone of Gladys.
+
+## Dashboard
+
+The **Listmonk campaigns** widget shows the subscribers, the newcomers and the
+departures of the day, then the latest campaigns: being sent (messages sent /
+to send), paused, sent (messages and open rate), draft. Its settings choose how
+many campaigns (3, 5 or 8) and hide the figures or the **Refresh** button,
+which reads Listmonk again.
+
+## Scenes
+
+### Triggers
+
+- **New subscriber**: a subscriber is added to Listmonk (subscription form,
+  import, API), once per list joined. Choose the lists (empty: any). Variables:
+  name, email address, list. Up to 20 new subscribers per refresh are
+  announced: after a large import, the others are counted, not announced.
+- **Unsubscription**: subscribers leave a list (or are blocklisted). Choose the
+  lists (empty: any). Variables: list, new unsubscriptions, unsubscribed in
+  all, subscribers left.
+- **Campaign finished**: a campaign has been sent to all its subscribers.
+  Variables: campaign, subject, lists, messages sent, opens, clicks.
+
+### Actions
+
+- **Start or pause a campaign**: starts a draft or a paused campaign, or pauses
+  a campaign being sent. Give its exact name, or its ID with a `#` (shown in
+  Listmonk, `#12`). A bare number such as `2025` is read as a name or an ID: the
+  action refuses when both exist. Starting a campaign already being sent, or pausing a
+  campaign already paused, does nothing. Outputs: campaign, campaign ID, new
+  status. **Refused until "Allow starting and pausing campaigns" is on**:
+  starting a campaign sends real emails to every subscriber of its lists.
+
+### Scene ideas
+
+- A notification for each new member of your club: trigger **New subscriber** on
+  the list "Club members", message with the name.
+- Send the newsletter prepared in advance on Saturday at 9 am: **Start or pause
+  a campaign**, campaign name, command Start.
+- Pause a campaign when the mail server is under maintenance, and announce the
+  end of the sending: trigger **Campaign finished**, message with the messages
+  sent.
+
+## Troubleshooting
+
+- **"Listmonk does not answer"**: check the address and that Gladys can reach
+  the server (same network, firewall, port).
+- **"API user or token refused, or a permission is missing"**: check the name
+  of the API user and its token (Listmonk shows it only at creation: create a
+  new one if lost), and the role of the user.
+- **No counts of the day**: the role of the API user lacks
+  `subscribers:sql_query`; **Test the connection** says so.
+- **"no Listmonk API at this address"**: the address points to something else:
+  use the one you open Listmonk with.
+- **"the address redirects"**: enter the `https://` address directly.
+- **"certificate refused"**: the HTTPS certificate is self-signed or expired:
+  use the `http://` address on your local network, or a trusted certificate.
+- The logs never show a subscriber: no name, no email address.
+
+## Limits
+
+- Listmonk 4.0 or later only (API users). The open rate counts the opens Listmonk
+  records (a tracking pixel): repeated opens count, mail apps that block images
+  are not counted.
+- A subscriber added to a list after their creation does not fire **New
+  subscriber**: only new subscribers do. **Unsubscription** gives the number of
+  departures, not who left.
+- **Campaign finished** follows the 20 newest campaigns.
+- Developed with a Listmonk in Docker and the Gladys test tools, not on a Gladys
+  instance in production: feedback welcome.
+
+## Configuration settings
+
+These are the settings Listmonk asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Listmonk | `section` | No | The address of your Listmonk and an API user: in Listmonk, Admin → Users → New, type "API", then copy its token. Then add the instance and the lists to follow from the Discover tab. |
+| Listmonk address | `string` | Yes | The address you open Listmonk with in a browser. |
+| API user | `string` | Yes | The name of an API user of Listmonk (Admin → Users). |
+| API token | `secret` | Yes | Shown once when the API user is created. The daily counts need the subscribers:sql_query permission. |
+| Options | `section` | No |  |
+| Refresh interval | `select` | No | How often Listmonk is read: six light API requests each time. |
+| Allow starting and pausing campaigns | `boolean` | No | Off: the scene action "Start or pause a campaign" is refused. Starting a campaign sends real emails to every subscriber of its lists. |
+| Language of the names | `select` | No | Language of the feature names (set when a device is added), of the campaign status and of the scene messages. |
+
+## How to install Listmonk in Gladys
+
+1. In Gladys, open **Integrations**: Listmonk appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-listmonk:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-listmonk](https://github.com/guim31/gladys-listmonk).
+
+Listmonk requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Listmonk is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-listmonk) — [source of this documentation](https://github.com/guim31/gladys-listmonk/blob/HEAD/docs/en.md)

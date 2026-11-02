@@ -19,7 +19,7 @@ https://github.com/prohand/gladys-agorafamille instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Agora Famille","description":"Comedor, actividades extraescolares, facturas y mensajes del portal Agora Famille.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-agorafamille","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-agorafamille.png","type":"device","version":"2.0.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-10-27T15:52:56Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Agora Famille","description":"Comedor, actividades extraescolares, facturas y mensajes del portal Agora Famille.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-agorafamille","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-agorafamille.png","type":"device","version":"2.0.3","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-10-30T10:13:46Z"}} />
 
 Esta integración conecta Gladys con el **portal familiar Agora Famille**
 (editado por Agora Plus) de su municipio francés: comedor escolar,
@@ -60,6 +60,8 @@ En Gladys: **Integraciones → Agora Famille → Configuración**.
 | **Días de planificación seguidos**         | Cuántos días por adelantado se leen y vigilan (14 por defecto).                                                                                                                            |
 | **Aviso de factura (días)**                | El disparador «factura a punto de vencer» se activa estos días antes del vencimiento (3 por defecto, 0 lo desactiva).                                                                      |
 | **Facturas transmitidas al Trésor public** | Números de las facturas que el municipio transmitió al Trésor public, separados por comas (p. ej. `164513`). Vea más abajo.                                                                |
+| **Pago por domiciliación bancaria**        | Márquelo si el banco paga sus facturas solo (SEPA). Vea más abajo.                                                                                                                         |
+| **Día del cargo**                          | Día del mes en que el banco carga las facturas (p. ej. `10`). Vea más abajo. 0 = desconocido.                                                                                              |
 | **Registros detallados**                   | Registra cada petición al portal, para diagnosticar. Nunca la contraseña.                                                                                                                  |
 
 Pulse después **Probar la conexión**: la respuesta indica sus hijos, el
@@ -102,12 +104,12 @@ se puede leer el portal.
 
 ### Disparadores
 
-| Disparador                     | Cuándo                                                                                                             | Variables                                                             |
-| ------------------------------ | ------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------- |
-| **Se emite una nueva factura** | Aparece una factura impagada.                                                                                      | `label`, `amount`, `due_date`, `invoice_id`                           |
-| **Una factura vence pronto**   | Una factura impagada vence dentro de los días fijados. Una sola vez.                                               | `label`, `amount`, `due_date`, `days_left`, `invoice_id`              |
-| **Se recibe un mensaje**       | El municipio envió un mensaje.                                                                                     | `subject`, `sender`, `date`                                           |
-| **Una reserva cambia**         | Un día reservado o solicitado cambia de estado (aceptado, rechazado, cancelado…). Filtrable por niño y por estado. | `child_name`, `activity`, `date`, `status`, `previous_status`, `meal` |
+| Disparador                     | Cuándo                                                                                                             | Variables                                                                 |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
+| **Se emite una nueva factura** | Aparece una factura impagada.                                                                                      | `label`, `amount`, `due_date`, `invoice_id`, `direct_debit`, `debit_date` |
+| **Una factura vence pronto**   | Una factura impagada vence dentro de los días fijados. Una sola vez. No si está domiciliada.                       | `label`, `amount`, `due_date`, `days_left`, `invoice_id`                  |
+| **Se recibe un mensaje**       | El municipio envió un mensaje.                                                                                     | `subject`, `sender`, `date`                                               |
+| **Una reserva cambia**         | Un día reservado o solicitado cambia de estado (aceptado, rechazado, cancelado…). Filtrable por niño y por estado. | `child_name`, `activity`, `date`, `status`, `previous_status`, `meal`     |
 
 Las variables se usan en las acciones siguientes, p. ej.
 `{{triggerEvent.data.amount}}`.
@@ -168,6 +170,38 @@ Se reconocen de dos formas:
 - **por su número**, en el campo **Facturas transmitidas al Trésor public**
   (el número que muestra el portal, p. ej. `164513`).
 
+## Domiciliación bancaria
+
+Cuando el banco paga sus facturas solo (prélèvement automatique, SEPA), no hay
+nada que pagar en el portal. Marque **Pago por domiciliación bancaria**:
+
+- el widget muestra **A domiciliar** en lugar de **A pagar**, y cada factura
+  con una insignia azul;
+- la **próxima factura** ya no indica «avant le …» (pagar antes del);
+- «factura vence pronto» ya no se dispara para ellas;
+- «nueva factura» se sigue disparando, con `direct_debit` a verdadero;
+- siguen contando en el **saldo pendiente**: el dinero se debe hasta que el
+  banco paga.
+
+### El día del cargo
+
+El portal no da el día del cargo: su única fecha es el **último día de pago**.
+Indique el día del mes en que su banco carga las facturas en **Día del cargo**
+(p. ej. `10`). Se toma en el mes del último día de pago: una factura a pagar
+antes del 24/11 se carga el 10/11.
+
+| Día del cargo     | Widget                                                   | Próxima factura                                      |
+| ----------------- | -------------------------------------------------------- | ---------------------------------------------------- |
+| `10`              | insignia **Cargo el 10/11**, el importe                  | «45,20 € prélevés le 10/11/2026 — …»                 |
+| `0` (desconocido) | insignia **Domiciliación**, «45,20 € · vence 24/11/2026» | «45,20 € en prélèvement, échéance le 24/11/2026 — …» |
+
+El disparador «nueva factura» da ese día en `debit_date` (vacío si se
+desconoce).
+
+El portal no lo indica en su lista de facturas. Si algún día lo escribe en el
+estado de una factura («prélèvement»…), se reconoce sin la casilla. Una
+factura transmitida al Trésor public nunca lo es: el banco ya no la paga.
+
 ## Solución de problemas
 
 - **«El portal rechazó el usuario o la contraseña»**: compruébelos iniciando
@@ -212,12 +246,14 @@ Estos son los parámetros que Agora Famille te pide en su pantalla de configurac
 | Días de planificación seguidos | `number` | No | Cuántos días por adelantado se leen y vigilan las reservas. |
 | Aviso de factura (días) | `number` | No | El disparador «factura a punto de vencer» se activa estos días antes del vencimiento. 0 lo desactiva. |
 | Facturas transmitidas al Trésor public | `string` | No | Números de las facturas que el municipio transmitió al Trésor public («mise en impayé»), separados por comas. El portal las sigue mostrando impagadas: se muestran aparte y no se cuentan en el saldo pendiente. Las que el propio portal marca se detectan sin esto. |
+| Pago por domiciliación bancaria | `boolean` | No | El banco paga las facturas solo. Se muestran como «Domiciliación» en lugar de «A pagar», siguen contando en el saldo pendiente y el disparador «factura vence pronto» ya no se lanza para ellas. |
+| Día del cargo | `number` | No | Día del mes en que el banco carga la factura, en el mes de su vencimiento (p. ej. 10: una factura que vence el 24/11 se carga el 10/11). El portal no lo da: su fecha es el último día de pago. 0 = desconocido. |
 | Registros detallados | `boolean` | No | Registra cada petición al portal (nunca la contraseña). Para diagnosticar. |
 
 ## Cómo instalar Agora Famille en Gladys
 
 1. En Gladys, abre **Integraciones**: Agora Famille aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
-2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/prohand/gladys-agorafamille:2.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/prohand/gladys-agorafamille:2.0.3`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
 3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
 4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/prohand/gladys-agorafamille](https://github.com/prohand/gladys-agorafamille).
 

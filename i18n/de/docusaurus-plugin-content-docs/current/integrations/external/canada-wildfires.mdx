@@ -1,0 +1,226 @@
+---
+title: "Canada wildfires Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Canada wildfires"
+description: "Unofficial: wildfires near your home in Canada, fire weather index and danger (NRCan). Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-feux-canada.png"
+keywords:
+  - "canada wildfires"
+  - "canada wildfires smart home"
+  - "gladys canada wildfires"
+  - "canada wildfires gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-feux-canada instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Canada wildfires","description":"Unofficial: wildfires near your home in Canada, fire weather index and danger (NRCan).","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-feux-canada","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-feux-canada.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-30T05:55:22Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+**Unofficial** connector, not affiliated with Natural Resources Canada. It reads
+the public layers of the **Canadian Wildland Fire Information System** (CWFIS,
+`cwfis.cfs.nrcan.gc.ca`), no account, no key, and gives for each located house
+of Gladys:
+
+| Feature                   | What it is                                                                                             |
+| ------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Satellite hotspots (24 h) | number of heat detections of the last 24 hours within the radius                                       |
+| Nearest hotspot (km)      | its distance; with none within the radius, **the radius itself** ("none closer"), never 0              |
+| Active fire perimeters    | estimated perimeters (M3 layer) touched by a hotspot in the last 72 h, within the radius (Canada only) |
+| Nearest active perimeter  | distance to its outline, 0 when the house is inside; with none, the radius                             |
+| Fire Weather Index (FWI)  | the FWI of the nearest fire weather station with a report under 36 h old, 200 km at most, rounded      |
+| Fire weather station      | name, province, distance and time of the report of that station                                        |
+| Fire danger               | class of the national map at the house: 1 low, 2 moderate, 3 high, 4 very high, 5 extreme (Canada)     |
+
+And two scene triggers: **hotspot within a distance** and **fire danger
+raised**.
+
+**Hotspots are satellite heat detections, not confirmed fires**: a gas flare, a
+factory, an agricultural burn give some too, and their time lags a few hours
+behind the satellite pass. The layer covers North America; the perimeters and
+the danger map cover Canada. This is information, not an alert nor an
+evacuation system: follow the orders of your province and your municipality.
+
+Never tested with a real device (there is none: it is a public service). The
+module was tried against the real service on 2026-10-29 (Fredericton,
+Kamloops, Portland) and its tests replay real answers of that day.
+
+Contains information licensed under the Open Government Licence – Canada
+(Natural Resources Canada, CWFIS).
+
+## Installation
+
+1. Install the integration from the Gladys store. It asks for the **location of
+   the houses** (Settings > Houses): that is what puts the houses on the map.
+2. Set the location of at least one house in Gladys.
+3. Optional: change the **radius** (50 km by default, 5 to 300 km), the **read
+   interval** (30 minutes by default, 15 to 180) and the **language** of the
+   device names and directions.
+4. Open **Discovery**: each located house is offered (5 at most). Create the
+   device: the reads then start, at the next due time.
+
+## What is read, and when
+
+At each read, one request at a time, at least a second between two:
+
+- the date of the newest hotspot of the whole layer, and of the last update of
+  the perimeters: how fresh both layers are;
+- the date of the danger map (legend of the map server);
+- with no device created, or when the house of a device is gone, nothing is
+  sent: the houses of Gladys are looked at again every minute;
+- for each house with its device: the hotspots and perimeters in a box holding
+  the radius, the stations within 200 km, and the danger map within 25 km of
+  the cell of the house (read again with a new map date, or after 6 hours).
+  For a house outside Canada, neither the perimeters nor the danger map are
+  asked.
+
+Your exact location is not sent: every box is built from the 0.1° × 0.1° cell
+holding the house only (about 11 km × 7 km), so that crossing them tells
+nothing finer than that cell; the distances are computed in Gladys. Near the
+date line (the Aleutians), the box goes round the Earth. The server offers neither
+`ETag` nor `Last-Modified`: the interval is the only brake, and the next read
+does not come sooner than the interval, neither after a restart (the time of the
+last read is kept in `/data`), nor through the **Test** button, Discovery or
+the creation of a device.
+
+## No invented value
+
+- Hotspot layer empty, or its newest hotspot over 18 h old: the source is
+  silent or stale, the hotspots are **not published** (not 0 either) and the
+  status says so.
+- Perimeters not updated for 7 days (season over): not published.
+- The perimeters and the danger map cover Canada only. "In Canada" is decided
+  in Gladys, on a bundled outline of Canada and the United States (Natural
+  Earth 1:10m, public domain, simplified: 217 KB): exact along the 49th
+  parallel, and elsewhere a house within 1 km of the border (the St. Croix,
+  Detroit, St. Clair, Niagara, St. Lawrence, St. Marys and Rainy rivers;
+  Stanstead), or with both countries within 2 km across a strait (Lubec and
+  Campobello), is "cannot tell". Outside Canada or in doubt:
+  neither perimeters nor danger (nothing rather than a false 0), and the
+  status says why. A Canadian shore (within 10 km of the outline) counts as
+  Canada. A **small island** or a coast drawn coarsely by the simplified
+  outline, more than 10 km off it, counts as "outside Canada": no perimeters
+  nor danger there, the hotspots are still read (about 0.5 % of the fire
+  weather stations of Canada: Brier Island, Cape Sable Island and St. Paul
+  Island in Nova Scotia, Sagona Island in Newfoundland, Île aux Perroquets and
+  Île Rouge in Quebec, Sartine, Herbert and Digby islands (the Prince Rupert
+  airport, not the town) and the Lucy Islands in British Columbia).
+- Danger class: that of the area of the map holding the house, else that of
+  the nearest area within 25 km (the map leaves out shores and large cities:
+  Toronto is 1.5 km from the nearest area, Montréal 0.4 km), its distance said
+  in the status. Beyond 25 km (the far North may be uncovered, Iqaluit for
+  instance): no class, and the status says so.
+- An unreadable record (a field renamed, a date without zone, a geometry
+  without outline, an unknown danger class) or an answer cut at its page size:
+  for the perimeters and the danger map, the part is not published and the
+  status says why. For the hotspots, up to a tenth of unreadable records, or
+  over 20,000 hotspots in the box: the readable ones within the radius are
+  published as a **minimum** ("at least N" in the status) when there is one
+  at least; with none readable within the radius, the count is unknown (an
+  unreadable one may be 1 km away) and **nothing** is published, never 0; the
+  nearest is not published either way. Beyond a tenth, nothing.
+- No station with a report under 36 h old and an FWI within 200 km: FWI and
+  station not published (off season, November to March, this is the normal
+  case).
+- Danger map dated more than 2 days ago: danger not published. When its date is
+  unreadable, the map is read anyway (an unknown date does not make it stale).
+- A part that fails (HTTP error, answer too large, error report of the server)
+  does not keep the others from being read and published.
+- Unchanged values are sent again every 3 hours, so that they stay dated.
+- `/data` unreadable at the start, not writable or not answering: the reads go
+  on (a write is waited for 2 seconds at most) and the status says so, since a
+  restart would then keep neither the interval nor the pause.
+- A configuration saved during a read drops it (nothing of it is published):
+  the next one comes when the interval is due, with the new configuration.
+
+## Scene triggers
+
+- **Hotspot within a distance** (5 to 300 km): a hotspot appears closer than
+  the chosen distance where there was none at the previous read. Once per
+  episode: it re-arms after two reads in a row without any hotspot at that
+  distance (a read with records missing and none readable at that distance
+  does not count, as a failed read: an unreadable hotspot never makes the same
+  fire alert twice). Beyond the radius of the configuration, the radius
+  applies.
+  Variables: distance (km), direction (N, NE...), bearing, count, time of the
+  detection, satellite.
+- **Fire danger raised**: the class reaches the chosen level (moderate, high,
+  very high, extreme) coming from below it; a jump from low to high fires
+  "moderate" and "high". Variables: current level and its name, previous level,
+  FWI of the station, date of the map.
+
+Nothing fires at the first read of a house (no known value before). The memory
+of the triggers is kept in `/data` for 48 hours, so that a restart sees a rise
+that happened meanwhile.
+
+## Status
+
+The status of the configuration page gives the time of the last read, what was
+read for each house, what was not and why (stale layer, off season, outside
+Canada, error), and recalls that hotspots are not confirmed fires. A server
+asking to wait (HTTP 429 or 5xx) pauses the reads from 1 minute to 6 hours
+(doubled each time, or its `Retry-After` when longer), a pause kept in `/data`.
+Server unreachable: new try at the next interval.
+
+The **Test** button reads at once when a read is due, else it shows the last
+one and the time of the next. Without any device created, it makes one small
+request (the freshness of the hotspots), counted as the read.
+
+## Troubleshooting
+
+- **"No located house"**: set the location of a house in Gladys (Settings >
+  Houses), then run Discovery again.
+- **"The houses of Gladys could not be read"**: the integration was refused
+  the location; new try every minute, without any request to the CWFIS.
+- **No FWI in winter**: normal, the fire weather stations publish during the
+  fire season only.
+
+## Data and licence
+
+Source: Natural Resources Canada, Canadian Wildland Fire Information System
+([https://cwfis.cfs.nrcan.gc.ca/](https://cwfis.cfs.nrcan.gc.ca/)), WFS layers `hotspots_last24hrs`,
+`m3_polygons_current`, `firewx_stns_current`, `fdr_current_shp`. Open
+Government Licence – Canada
+([https://open.canada.ca/en/open-government-licence-canada](https://open.canada.ca/en/open-government-licence-canada)). The integration
+introduces itself to the server under its own name (`User-Agent:
+gladys-feux-canada/0.1.0`), never as a browser.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Canada wildfires in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Wildfires around your houses | `section` | Nein | Unofficial, not affiliated with Natural Resources Canada. Reads the public CWFIS layers (no account, no key): one device per located house with the satellite hotspots of the last 24 h within the radius, active fire perimeters, the Fire Weather Index (FWI) of the nearest station and the fire danger class (Canada), plus two scene triggers. Hotspots are heat detections, not confirmed fires, a few hours late. Information only, never an evacuation system: follow the orders of your province. Off season (November to March) the layers are stale or empty: the status says so, nothing is published as 0. Your exact location is never sent. Contains information licensed under the Open Government Licence - Canada. Never tested with a real device (a public service), tried against the real service. |
+| Radius around the house (km) | `number` | Nein | Only the hotspots and perimeters closer than this count. With none, the distance shown is the radius itself ("none closer"). The "hotspot within X km" trigger cannot see beyond it. |
+| Read interval (minutes) | `number` | Nein | The hotspots are updated several times a day, the danger and the FWI once a day: 30 minutes is plenty. One request at a time, a few per house. |
+| Language of the device names and directions | `select` | Nein | The names of the devices offered in Discovery, and the direction of the nearest hotspot in the scenes (N, NE, E... English: W for west). |
+
+## So installierst du Canada wildfires in Gladys
+
+1. Öffne in Gladys **Integrationen**: Canada wildfires erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-feux-canada:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-feux-canada](https://github.com/LM1LC3N7/gladys-feux-canada).
+
+Canada wildfires benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Canada wildfires ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-feux-canada) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-feux-canada/blob/HEAD/docs/en.md)
