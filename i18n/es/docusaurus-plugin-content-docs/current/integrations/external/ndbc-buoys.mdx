@@ -1,0 +1,173 @@
+---
+title: "Integración domótica NDBC buoys, gratuita y de código abierto"
+sidebar_label: "NDBC buoys"
+description: "Unofficial. NOAA buoys and coastal stations: waves, wind, water and air temperature. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ndbc.png"
+keywords:
+  - "ndbc buoys"
+  - "domótica ndbc buoys"
+  - "gladys ndbc buoys"
+  - "ndbc buoys gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-ndbc instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"NDBC buoys","description":"Unofficial. NOAA buoys and coastal stations: waves, wind, water and air temperature.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-ndbc","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ndbc.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-31T04:15:03Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+Unofficial integration: the observations of the buoys and coastal stations of the **National Data Buoy
+Center** (NDBC, NOAA) in Gladys: waves, wind, water and air temperature, pressure. The NDBC covers the US
+coasts, the Great Lakes, the Gulf of Mexico, Hawaii, Alaska and the Pacific, and relays a few Canadian buoys
+(Environment and Climate Change Canada).
+
+The data comes from the public realtime files of the NDBC (no account, no key): US government data in the
+public domain (source: NOAA National Data Buoy Center), except the stations of partners that the NDBC relays,
+which keep their owner's terms (for example the buoys of Environment and Climate Change Canada, under the Open
+Government Licence – Canada; the owner is on the NDBC page of each station). **This integration is not an official source, and not for navigation**: check the NDBC and
+the official marine forecasts before going out on the water. It has never been tested on a real Gladys
+installation by its author; it was tested against the live NDBC files.
+
+## What you get
+
+One device per station, named "NDBC buoy 46026" (rename it as you like in Gladys). Every device has the same
+14 features; a variable the station does not measure never gets a value (a coastal C-MAN station has no
+waves, many buoys have no visibility nor tide):
+
+| Feature                                             | Column     | Unit                                            |
+| --------------------------------------------------- | ---------- | ----------------------------------------------- |
+| Wind direction (degrees, where the wind comes from) | WDIR       | 0 to 360 (no unit in Gladys)                    |
+| Wind speed, wind gust                               | WSPD, GST  | m/s                                             |
+| Significant wave height                             | WVHT       | m                                               |
+| Dominant wave period, average wave period           | DPD, APD   | s                                               |
+| Wave direction (degrees, where the waves come from) | MWD        | 0 to 360 (no unit in Gladys)                    |
+| Sea level pressure, pressure tendency over 3 h      | PRES, PTDY | hPa                                             |
+| Air temperature                                     | ATMP       | °C                                              |
+| Water temperature, dew point                        | WTMP, DEWP | °C (type "probe": kept out of the room average) |
+| Visibility                                          | VIS        | km (from nautical miles, 1 nmi = 1.852 km)      |
+| Water level (tide)                                  | TIDE       | m (from feet, 1 ft = 0.3048 m)                  |
+
+What is published, and when:
+
+- each feature gets the **newest value** of its column among the lines read (a buoy often reports the wind
+  every 10 minutes and the waves every 30 or 60 minutes: each one has its own time);
+- a value is published **only if its observation is less than 2 hours old**, the age being taken against the
+  time of the NDBC server (its `Date` header, plus its `Age` when the answer is a copy kept by the CDN), never
+  against the clock of your Gladys;
+- each observation is published **once**: the time of the last one published for each feature is kept in
+  `/data`, so neither the next read, nor a restart, publishes it again; an older observation is never
+  published after a newer one;
+- `MM` in a file means **missing**: nothing is published, never 0. A value outside the plausible range of its
+  variable (or a "9" fill value: 99, 999, 9999), or a wave period of 0 s, is not a measure either;
+- a device created after a read gets right away the values of that read still under 2 hours old;
+- in the history of Gladys, a value is dated when it is published, not when it was observed (up to about an
+  hour later for an hourly station): the time of the observation is in the status.
+
+## Configuration
+
+- **Station ids**: up to 10 ids of 4 or 5 letters or digits (as `46026`, `44025`, `PSBM1`, or `KATP` for an oil platform of the Gulf of Mexico), separated by commas.
+  Find them on the NDBC map (https://www.ndbc.noaa.gov/). An entry that is not an id is left out and named in
+  the status; past 10, the first 10 are read.
+- **Language of the names**: English or French, for the names proposed in Discovery.
+- **Read interval**: from 10 to 180 minutes, 30 by default.
+
+After saving, open Discovery to create the devices.
+
+## Pace and courtesy toward the NDBC
+
+- one request at a time, 3 s at least between two, with a User-Agent naming the integration;
+- only the head of each file is asked for (`Range`, 16 KiB, about 15 hours of 10-minute lines): never the
+  whole file (up to 1 MB). A server that would ignore the range is cut there too;
+- `If-None-Match`: a file read in this run of the integration, unchanged since, answers 304 (nothing
+  downloaded);
+- a round of reads starts every interval: a reconnection to Gladys, a saved but unchanged configuration,
+  Discovery or the test button never read sooner, nor a restart while `/data` works (the time of the last
+  attempt is kept there; when `/data` cannot be read or written, a restart waits 10 minutes, see Limits). The
+  stations added to the list are read alone right away, at most once a minute (the others keep their turn),
+  and a failed read may be retried sooner (below);
+- a 429 (too many requests) pauses every read 5 minutes, doubled when it comes again, at most 6 hours,
+  `Retry-After` honoured within that bound; the pause is kept in `/data` and holds after a restart;
+- a 5xx or another unexpected answer on the file of one station backs that station off alone: read again
+  2 minutes later, then 4, 8... up to 6 hours (`Retry-After` honoured), while the other stations are read at
+  their pace. When every station read in a round answers so, every read also pauses 2 minutes (doubled, in
+  `/data`);
+- a station whose read failed for a passing cause (network, timeout, pause) is read again before the next
+  round: at the end of the pause, else 2 minutes later, doubled at each new failure, as long as that comes
+  before the next round;
+- a round interrupted by a saved configuration or a reconnection keeps the answer of the request that went
+  (shown at once in the status, it counts as the read of that station); the stations it had not read yet are
+  read right after, not at the next interval;
+- a station without realtime file (404) is tried again 1 hour later, then 2, 4... up to 24 hours, on its own
+  timer (the other stations are read as usual).
+
+## Status
+
+The configuration screen shows, for each station: how many values are under 2 hours old and the time of its
+newest observation (UTC); or "silent" when its newest value is older than 2 hours; or "every value missing
+(MM)"; or why the read failed (with the HTTP status) and what the last good read said, followed by "nothing
+published since". When a value turns 2 hours old the status is updated at once, even between two reads.
+Gladys shows the integration as connected only when the last read of at least one station gave a value under
+2 hours old. The "Show the last read" button gives the same text and never reads.
+
+## Limits
+
+- The NDBC files are near real time, not real time: a buoy observation usually reaches the file 10 to 60
+  minutes after it was made, sometimes more. A station that sends nothing for 2 hours gets nothing published.
+- Some buoys are seasonal (Great Lakes buoys are taken out in winter): their file stops, the station turns
+  "silent", then the file may disappear (404).
+- The station lines of the status are shortened when 10 stations would not fit in it (the global lines, next
+  read and `/data` warnings, always stay).
+- A copy kept by a cache and served without an `Age` header would look newer than it is: it cannot be
+  detected (the NDBC CDN always sends `Age`; seen up to about 10 minutes).
+- The age of an observation needs the time of the NDBC server: an answer without a readable `Date`, or one
+  more than a day away from the clock of your Gladys, publishes nothing ("the server time cannot be read").
+- A column whose unit on the second header line is not the expected one (for example knots instead of m/s) is
+  never used, and the status says so.
+- If `/data` cannot be read (or does not answer within 2 s), it is left untouched and the integration runs
+  from memory: the first read waits 10 minutes after the start, and a restart may publish the newest
+  observations once more.
+- At most 250 values are published per minute: in the rare case of more (10 stations and a burst of device
+  creations), the rest is published at the next read if still under 2 hours old.
+- Only the standard meteorological file (`.txt`) is read: no spectral wave data, no currents, no DART
+  (tsunami) data, no ocean or water quality data.
+
+## Parámetros de configuración
+
+Estos son los parámetros que NDBC buoys te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| NOAA buoys (NDBC) | `section` | No | Observations of the buoys and coastal stations of the National Data Buoy Center (NOAA): US coasts, Great Lakes, Gulf of Mexico, Pacific, and a few Canadian buoys. Read from the public realtime files, no account, no key; US government data in the public domain, except the partner stations relayed by the NDBC, which keep their owner's terms (Environment and Climate Change Canada buoys: Open Government Licence – Canada). One device per station; a value is published only when the observation is less than 2 hours old. Not an official source, not for navigation. |
+| Station ids | `string` | Sí | Up to 10 NDBC station ids (4 or 5 letters or digits, as on the NDBC map: 46026, KATP), separated by commas. |
+| Language of the names | `select` | No | Language of the device and feature names proposed in Discovery. |
+| Read interval (minutes) | `number` | No | From 10 to 180 minutes. Most buoys report every 10 to 60 minutes; the stations are read one after the other, 3 s apart. |
+
+## Cómo instalar NDBC buoys en Gladys
+
+1. En Gladys, abre **Integraciones**: NDBC buoys aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-ndbc:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-ndbc](https://github.com/LM1LC3N7/gladys-ndbc).
+
+NDBC buoys requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+NDBC buoys es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-ndbc) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-ndbc/blob/HEAD/docs/en.md)

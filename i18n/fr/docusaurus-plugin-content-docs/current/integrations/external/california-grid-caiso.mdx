@@ -1,0 +1,257 @@
+---
+title: "Intégration domotique California grid (CAISO), gratuite et open source"
+sidebar_label: "California grid (CAISO)"
+description: "Non officiel. Réseau californien (CAISO) : prix de gros, demande, renouvelables, CO2, alertes. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-caiso.png"
+keywords:
+  - "california grid (caiso)"
+  - "domotique california grid (caiso)"
+  - "gladys california grid (caiso)"
+  - "california grid (caiso) gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-caiso instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"California grid (CAISO)","description":"Non officiel. Réseau californien (CAISO) : prix de gros, demande, renouvelables, CO2, alertes.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-caiso","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-caiso.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-31T02:43:43Z"}} />
+
+Intégration non officielle. Elle lit les fichiers publics du California
+Independent System Operator (CAISO), l'opérateur de la plus grande partie du
+réseau électrique californien, sans compte ni clé, et publie dans Gladys :
+
+- **le réseau** : demande et demande nette (MW), part renouvelable (%),
+  intensité carbone (g/kWh), émissions de CO2 (t/h), les conditions du réseau
+  publiées par l'opérateur (Normal, Flex Alert, EEA…) et un niveau d'alerte
+  de 0 à 6 ;
+- **les prix de gros temps réel** des trois hubs NP15 (nord de la Californie),
+  SP15 (sud) et ZP26 (centre), en $/MWh, par intervalles de 5 minutes.
+
+**Les prix de gros ne sont pas votre tarif.** Ce sont les prix du marché où
+l'opérateur équilibre le réseau (prix marginal local, LMP). Votre fournisseur
+(PG&E, SCE, SDG&E…) vous facture un tarif de détail qui ne les suit pas minute
+par minute. Servez-vous-en comme d'un signal (bas, souvent négatif, quand le
+solaire inonde le réseau), pas comme d'une facture.
+
+Essayée contre les vrais fichiers de CAISO (Today's Outlook et OASIS) le
+2026-10-30, et dans le bac à sable Gladys ; jamais testée avec un vrai Gladys
+à la maison, ni pendant une vraie Flex Alert ou EEA (voir « Conditions du
+réseau »).
+
+## Mise en route
+
+1. Installez l'intégration depuis le store, ouvrez sa page.
+2. Choisissez la langue des textes, l'intervalle de lecture (5 à 60 minutes,
+   5 par défaut : l'opérateur met les deux sources à jour toutes les 5
+   minutes) et, pour le déclencheur de scène, le seuil de prix bas.
+3. Dans l'onglet **Découverte**, créez les appareils voulus : le réseau, un ou
+   plusieurs hubs. **Une source n'est lue que si un appareil en a besoin** : le
+   réseau a besoin de Today's Outlook, un hub d'OASIS. Rien n'est lu avant.
+
+## Appareils
+
+### Réseau électrique californien (CAISO)
+
+| Fonction                              | Unité          | Source                                         |
+| ------------------------------------- | -------------- | ---------------------------------------------- |
+| Demande                               | MW (dans nom)  | `CurrentSystemDemand`, avec sa propre heure    |
+| Demande nette, hors éolien et solaire | MW (dans nom)  | `CurrentNetDemand`, avec sa propre heure       |
+| Part renouvelable                     | %              | `renewablesPercent` (au-delà de 100 % : 100)   |
+| Intensité carbone                     | g/kWh          | `currentCo2intensity` (t/MWh × 1000, exact)    |
+| Émissions de CO2                      | t/h (dans nom) | `currentCo2`                                   |
+| Niveau d'alerte                       | 0 à 6          | les conditions du réseau, voir plus bas        |
+| Conditions du réseau                  | texte          | les mots de l'opérateur, tels que publiés      |
+| État des données                      | texte          | heure du relevé, ou pourquoi rien n'est montré |
+
+La part renouvelable est celle que publie l'opérateur : renouvelables
+(solaire, éolien, géothermie, biomasse, biogaz, petite hydraulique ; la grande
+hydraulique exclue, comme dans les règles californiennes) sur la demande.
+Quand les renouvelables dépassent la demande (le reste exporté ou stocké),
+toute l'électricité consommée est renouvelable : 100. L'intensité carbone et
+les émissions sont les chiffres de CO2 de l'opérateur (importations
+comprises), pas des équivalents CO2.
+
+Les valeurs de demande ne sont pas des capteurs `energy` : un réseau entier
+n'est pas un compteur de maison, et elles n'entrent pas dans les tableaux de
+bord d'énergie de Gladys.
+
+### Prix de gros CAISO NP15 / SP15 / ZP26
+
+| Fonction                | Unité | Source                                        |
+| ----------------------- | ----- | --------------------------------------------- |
+| Prix de gros temps réel | $/MWh | OASIS `PRC_INTVL_LMP`, marché RTM, LMP du hub |
+| État des données        | texte | l'intervalle de 5 minutes montré, ou pourquoi |
+
+Une seule requête OASIS lit les trois hubs (l'opérateur accepte une requête
+toutes les 5 secondes ; l'intégration n'en envoie jamais deux à moins d'un
+intervalle). La réponse contient toujours l'intervalle en cours, et parfois le
+suivant quand l'opérateur l'a déjà fixé : cet intervalle suivant est publié à
+son début, sans requête. Un prix reste montré 10 minutes après la fin de son
+intervalle : **avec un intervalle de lecture de 30 à 60 minutes, le prix est
+« périmé » la plupart du temps ; gardez 5 minutes (le défaut) pour les prix.**
+
+## Fraîcheur : rien d'ancien montré comme neuf, jamais 0 pour une inconnue
+
+- Une valeur est publiée **une fois par relevé de la source**, seulement tant
+  qu'elle est fraîche : un relevé de Today's Outlook de **20 minutes** au plus
+  (sa propre heure, passée en UTC grâce au Last-Modified du fichier), un prix
+  dont l'intervalle s'est terminé il y a **10 minutes** au plus (les heures
+  d'OASIS sont en UTC). L'âge se compte depuis l'heure du serveur plus l'`Age`
+  qu'ajoute un cache (CloudFront) : une copie gardée des heures par un cache
+  est périmée, jamais fraîche.
+- Une valeur absente, illisible, hors bornes ou périmée **n'est pas publiée**,
+  et jamais comme 0 : le texte « État des données » et l'état de
+  l'intégration le disent (« Périmé, rien publié : dernier relevé du 29/10
+  22:55 PDT », « non publié : demande »). Les textes sont mis
+  à jour quand un relevé devient périmé, même sans nouvelle lecture.
+- Après un redémarrage, rien n'est publié avant un nouveau relevé (un relevé
+  déjà publié avant le redémarrage n'est jamais renvoyé).
+- Les heures sont celles du Pacifique (celles de l'opérateur), passées en UTC
+  exactement aux changements d'heure, affichées avec PDT ou PST (l'heure
+  répétée de novembre se lit deux fois, distinguée) ; dans cette heure, une
+  heure sans le Last-Modified de son fichier est illisible (jamais devinée).
+
+## Conditions du réseau et niveau d'alerte
+
+Les conditions du réseau sont la liste `gridstatus` de `stats.txt`. **La page
+Today's Outlook de l'opérateur n'affiche plus ce champ** (depuis novembre
+2023, elle montre les avis d'un autre service, non documenté comme flux
+ouvert) : il est toujours dans le fichier, mais il **peut être en retard sur
+un avis, ou le manquer**. La référence pour les avis d'urgence est la page de
+l'opérateur [https://www.caiso.com/emergency-notifications](https://www.caiso.com/emergency-notifications). L'état le dit.
+
+Chaque élément est comparé en entier (sans tenir compte des majuscules ni des
+espaces, « EEA 1 » ou « EEA1 » ; un commentaire après un tiret, comme dans
+« EEA 3 - Load shed », est ignoré, sauf s'il commence par un mot disant que
+l'avis est terminé : « - cancelled », « - expired »…) aux sept avis de
+l'opérateur et à
+« Normal » :
+
+| Niveau | Conditions                                                   |
+| ------ | ------------------------------------------------------------ |
+| 0      | Normal                                                       |
+| 1      | Restricted Maintenance Operations (RMO)                      |
+| 2      | Flex Alert                                                   |
+| 3      | EEA Watch (Energy Emergency Alert Watch)                     |
+| 4-6    | EEA 1, EEA 2, EEA 3 (Energy Emergency Alert 1, 2, 3 ; EEA1…) |
+| aucun  | Transmission Emergency (seul dans la liste : 0)              |
+
+Le niveau est **le plus haut des éléments reconnus** : le 6 septembre 2022, la
+liste « EEA 3, EEA 2, EEA 1, EEA Watch, Flex Alert, Restricted Maintenance
+Operations, Transmission Emergency » donne 6. « Transmission Emergency » est
+un avis régional : il apparaît dans « Conditions du réseau » et n'élève
+jamais le niveau ; seul dans la liste (rien d'autre que Transmission
+Emergency), le niveau est 0, pour que le niveau ne reste pas sur une
+ancienne EEA. Un élément non reconnu (un nouveau libellé, ou un avis dit
+terminé, comme « EEA 3 cancelled ») est laissé hors du niveau et cité dans
+l'état : **le niveau publié est alors un minimum, et peut être sous le niveau
+réel** (un élément non reconnu pourrait être un avis plus haut). Le niveau 0
+exige que tous les éléments soient reconnus : « Transmission Emergency » ou
+« Normal » à côté d'un élément non reconnu (« EEA-3, EEA-2, Transmission
+Emergency ») donne un niveau inconnu, jamais 0 : un élément non reconnu ne
+ramène jamais le niveau à la normale, ni ne déclenche de « retour à la
+normale ». Quand le niveau est inconnu (aucun élément ne porte de niveau, ou 0
+à côté d'un élément non reconnu), il n'est pas publié et « Conditions du
+réseau changées » ne part pas : Gladys garde le dernier niveau publié, le
+texte « Conditions du réseau » et l'état disent ce qu'a écrit l'opérateur, et
+l'état cite les éléments non reconnus.
+
+## Déclencheurs de scène
+
+- **Prix de gros bas (CAISO)** : le prix d'un hub est passé sous le « Seuil
+  de prix bas » de la configuration (`phase` = `started`), ou revenu au-dessus
+  ou à égalité (`ended`). Filtres : le hub, la phase. Variables : hub, phase,
+  prix, seuil. Seulement pour un hub dont l'appareil est créé.
+- **Conditions du réseau changées (CAISO)** : le niveau d'alerte a changé
+  (`level`, `previous_level`, `conditions` = les mots de l'opérateur). Filtre :
+  le nouveau niveau. Seulement si l'appareil du réseau est créé.
+
+Chacun part une fois par changement, sur un relevé frais seulement. La première
+valeur vue après l'installation (ou après un nouveau seuil) sert de référence,
+jamais d'événement ; le dernier état est gardé dans /data, un redémarrage ne
+relance donc jamais un déclencheur. Un niveau inconnu, ou un relevé périmé,
+n'est jamais un changement. Un événement que Gladys n'accepte pas est renvoyé
+avec le relevé suivant si le changement tient toujours.
+
+Pour une condition sur la valeur elle-même (« prix sous X pendant que… »), la
+fonction de prix marche avec les déclencheurs habituels des appareils Gladys.
+
+## Rythme, erreurs et état
+
+- Chaque source à son rythme : jamais deux requêtes à moins d'un intervalle
+  (gardé d'un redémarrage à l'autre), une requête à la fois, un User-Agent
+  honnête, l'ETag et le Last-Modified de Today's Outlook renvoyés (un 304 garde
+  le relevé et son âge). L'onglet Découverte, un appareil modifié, une
+  reconnexion à Gladys n'envoient aucune requête ; enregistrer le formulaire
+  n'en envoie une que si un intervalle raccourci rend une source due ; un
+  appareil créé n'en envoie une que si sa source n'a pas été interrogée dans
+  l'intervalle.
+- HTTP 429 ou 5xx : la source se met en pause 5 minutes, doublées à chaque
+  nouveau refus, de 60 secondes à 6 heures, `Retry-After` respecté ; gardée
+  d'un redémarrage à l'autre ; l'autre source continue. Elle est relue dès la
+  fin de la pause.
+- L'état n'est « connecté » que si une source a répondu et a des données
+  fraîches (juste après un redémarrage, avant la première lecture due : si une
+  source a été bien lue dans l'intervalle avant le redémarrage). Il liste, en
+  français et en anglais : la source injoignable, en pause (aussi juste après
+  un redémarrage, avec sa cause), en refus, périmée, des valeurs non publiées,
+  des conditions non reconnues (citées), le « pas de données » ou un code
+  d'erreur d'OASIS, /data illisible, non inscriptible ou qui ne répond pas,
+  d'où vient le niveau d'alerte, et « les prix sont des prix de gros du
+  marché, pas votre tarif ».
+- `getConfig` en échec à une connexion à Gladys : nouvel essai après 5 s,
+  doublé jusqu'à 5 minutes, sans fin ; l'état le dit.
+- /data (le rythme, les pauses, ce qui a été publié, l'état des
+  déclencheurs) : chaque attente est bornée (5 s), une sauvegarde à la fois
+  (une sauvegarde qui ne répond pas est dite, et les suivantes se fondent en
+  une seule au lieu de s'empiler) ; un fichier illisible est mis de côté,
+  jamais écrasé, et c'est dit (et s'il ne peut même pas être mis de côté, rien
+  n'est écrit dans /data). **Tant que /data n'est pas
+  inscriptible** (l'état le dit), tout cela n'est gardé qu'en mémoire : un
+  redémarrage lit alors aussitôt, peut republier le dernier relevé et relancer
+  un déclencheur ; les promesses sur les redémarrages ci-dessus ne valent que
+  si /data est inscriptible.
+
+## Sources et limites
+
+- Today's Outlook : `https://www.caiso.com/outlook/current/stats.txt`.
+- OASIS : `https://oasis.caiso.com/oasisapi/SingleZip` (interface publique,
+  documentée par l'opérateur, sans clé).
+- Données © California ISO. Cette intégration n'est ni affiliée à l'opérateur
+  ni approuvée par lui.
+- Lecture seule : l'intégration n'envoie que des requêtes GET.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par California grid (CAISO) dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Réseau californien (CAISO) | `section` | Non | Lit les fichiers publics de l'opérateur du réseau californien, sans compte ni clé : Today's Outlook (demande, part renouvelable, CO2, conditions du réseau comme Flex Alert) et OASIS (prix de gros temps réel des hubs NP15, SP15 et ZP26). Créez les appareils voulus depuis l'onglet Découverte : une source n'est lue que si un appareil en a besoin. Les prix de gros ne sont pas votre tarif d'électricité. |
+| Langue des textes des appareils | `select` | Non | Langue des noms d'appareils et des textes d'état. |
+| Intervalle de lecture (minutes) | `number` | Non | Temps entre deux lectures de chaque source, de 5 à 60 minutes. L'opérateur met les deux à jour toutes les 5 minutes. |
+| Seuil de prix bas ($/MWh) | `number` | Non | Le déclencheur de scène « Prix de gros bas » part quand le prix d'un hub passe sous cette valeur, et de nouveau quand il revient au-dessus ou à égalité. 0 = prix négatifs. |
+
+## Comment installer California grid (CAISO) dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : California grid (CAISO) apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-caiso:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-caiso](https://github.com/LM1LC3N7/gladys-caiso).
+
+California grid (CAISO) nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+California grid (CAISO) est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-caiso) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-caiso/blob/HEAD/docs/fr.md)

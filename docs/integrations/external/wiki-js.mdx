@@ -1,0 +1,188 @@
+---
+title: "Wiki.js smart home integration, free and open source"
+sidebar_label: "Wiki.js"
+description: "Your Wiki.js in Gladys: page counters, changed pages, pages and journal lines from scenes. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-wikijs.png"
+keywords:
+  - "wiki.js"
+  - "wiki.js smart home"
+  - "gladys wiki.js"
+  - "wiki.js gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-wikijs instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Wiki.js","description":"Your Wiki.js in Gladys: page counters, changed pages, pages and journal lines from scenes.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-wikijs","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-wikijs.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-31T06:25:59Z"}} />
+
+Connect Gladys to [Wiki.js](https://js.wiki), the self-hosted wiki: follow its
+counters, react when a page is created or updated, write pages from your
+scenes, and keep a journal (the boiler, the alarm, the garden…) that Gladys
+fills in line by line. Everything stays on your local network: Gladys talks
+directly to your Wiki.js.
+
+Tested against a real Wiki.js 2.5.317 (the official Docker image). Feedback
+welcome on the Gladys forum.
+
+## Prerequisites
+
+- Gladys Assistant 5.1 or later.
+- Wiki.js 2.x reachable from the Gladys machine. Wiki.js 3 is not supported.
+- An API key: in Wiki.js, open **Administration → API Access**, click **Enable
+  API** if it is off, then **New API Key**. A **Full Access** key works. A key
+  limited to a group sees what the group sees: it needs to read the pages, and
+  to write them for the scene actions. Copy the key: it is shown once.
+
+## Configuration
+
+1. Open the **Configuration** tab of the integration.
+2. In **Wiki.js address**, enter the address you open Wiki.js at, for example
+   `192.168.1.50:3000` or `https://wiki.example.org`.
+3. Paste the **API key**.
+4. **Read Wiki.js every**: 5, 15 (default), 30 or 60 minutes. Changed pages are
+   announced at the next read.
+5. **Language of names and messages** sets the feature names (fixed when a
+   device is added) and the texts of the integration. French by default.
+6. Save, then use **Test the connection**: it shows the number of pages.
+7. In the **Discovery** tab, add the **Wiki.js** device.
+
+## Devices
+
+**Wiki.js** (one device):
+
+| Feature             | Value                                          |
+| ------------------- | ---------------------------------------------- |
+| Pages               | number of pages                                |
+| Pages changed today | pages created or saved since midnight          |
+| Latest changed page | title of the page created or saved most lately |
+
+The counters keep their history. The device keeps its identity when the
+address of Wiki.js changes.
+
+## Dashboard widget
+
+**Wiki.js**: two tiles (pages, pages changed today) and the eight pages changed
+last, with their path and the time of the change. In the widget settings,
+**Folder** keeps the pages under a path (e.g. `house`) and **Tag** the pages
+carrying a tag; the tile then counts them. **Hide the counters** keeps the list
+only. When Wiki.js is reached over https, each page opens in Wiki.js.
+
+## Scene triggers
+
+- **Wiki.js page created or updated**: a page is created or saved in Wiki.js.
+  Filters: **Folder** (the first part of the path, e.g. `house` for
+  `house/boiler`), **Page path** (a single page, e.g. `house/boiler`) and
+  **Change** (created, updated, or empty: both). Empty filters match every
+  page.
+- **Tagged Wiki.js page changed**: the same, for the pages carrying a tag:
+  **Tag** (required, in lower case as Wiki.js stores it, e.g. `journal`),
+  **Folder** and **Change**. A page with several tags fires once per tag, so a
+  scene set on one tag runs once.
+
+Paths are written as in the address of the page, without the language (`/en/`)
+and without the slashes at either end.
+
+Variables: **Page title**, **Page path**, **Folder**, **Change** (`created` or
+`updated`), **Page address**, **Updated by**, **Tags** (separated by commas),
+**Page id**, and **Tag** for the second trigger.
+
+The first read after the installation is silent: the pages already there are
+not announced. The pages written by this integration are never announced. At
+most ten pages are announced per read, the oldest first; the next ones wait for
+the next read. Past 50 changes between two reads (an import), ten are announced
+and the rest is counted as seen.
+
+## Scene actions
+
+- **Create a Wiki.js page**: **Page path** (e.g. `reports/2026-10`), **Title**,
+  and optionally **Content** (Markdown) and **Tags** (separated by commas). The
+  page is published, in the language most pages of the wiki use. A page
+  already at that path is an error: it is never overwritten.
+- **Add a line to a Wiki.js page**: **Page path** and **Line**. The line is
+  added at the end of the page, as a new paragraph, starting with the date and
+  time unless **Start with the date and time** is off. The page is created at
+  its first line, titled with the end of its path unless **Title if the page is
+  created** is filled in. Markdown pages take the line as Markdown, pages of the
+  visual editor as plain text. Everything else in the page (title, tags,
+  publication, scripts) is kept.
+
+Both return **Page id**, **Page path** and **Page address**; the second one
+also **Page created**.
+
+## Scene examples
+
+- **Boiler log**: when the boiler pressure drops below 1 bar → **Add a line to
+  a Wiki.js page**, path `journal/boiler`, line "Pressure below 1 bar".
+- **Know what changed**: trigger **Wiki.js page created or updated**, folder
+  `procedures` → send a message "\{\{triggerEvent.data.updated_by\}\} updated
+  \{\{triggerEvent.data.title\}\}".
+- **Shopping list on the wiki**: trigger **Wiki.js page created or updated**,
+  page path `home/shopping` → send the page address to the family.
+- **Holiday report**: when the alarm is turned off after a holiday → **Create a
+  Wiki.js page** at `reports/holidays-2026`, tagged `report`.
+
+## Troubleshooting
+
+- **"Wiki.js did not accept the API key"**: the key was revoked, has expired or
+  was mistyped, or the API is disabled. Wiki.js then answers as a visitor that
+  is not logged in: check **Administration → API Access**.
+- **"The API key may not write this page"**: the group of the key lacks the
+  write permission on that path. Use a Full Access key, or extend the group.
+- **"Wiki.js does not answer"**: check the address and the port from the Gladys
+  machine. The container uses a bridge network: `localhost` is the container
+  itself, enter the IP address of the server instead.
+- **"This address does not answer like Wiki.js"**: a proxy login page answers
+  instead of Wiki.js, or the address holds the path of a page. Enter the
+  address of the home of the wiki.
+- The version shows `?` on the device: the key may not read the system
+  information (only a Full Access key can). Nothing else is affected.
+- To see more in the logs of the integration, set `LOG_LEVEL=debug`.
+
+## Limits
+
+- One Wiki.js, seen with the permissions of its API key.
+- The triggers fire at the next read (15 minutes by default), not instantly:
+  Wiki.js pushes nothing. Pages deleted, moved or only commented are not
+  announced; a page saved several times between two reads is announced once.
+- A read is one request listing every page (a few hundred kB for thousands of
+  pages), plus one per announced page. Wiki.js sets no request quota.
+- Unpublished pages are counted and announced like the others: the key sees them.
+- The integration never deletes nor moves anything in Wiki.js.
+- Not affiliated with Wiki.js or Requarks.
+
+## Configuration settings
+
+These are the settings Wiki.js asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Connect Wiki.js | `section` | No | Enter the address of your Wiki.js (version 2) and an API key: in Wiki.js, open Administration → API Access, enable the API, then create a key. A "Full Access" key works; a group key needs to read pages, and to write them for the scene actions. |
+| Wiki.js address | `string` | Yes | The address you open Wiki.js at. |
+| API key | `secret` | Yes | Shown once, when the key is created. |
+| Read Wiki.js every | `select` | No | Changed pages are announced at the next read. |
+| Language of names and messages | `select` | No | Feature names are set when a device is added to Gladys. |
+
+## How to install Wiki.js in Gladys
+
+1. In Gladys, open **Integrations**: Wiki.js appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-wikijs:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-wikijs](https://github.com/guim31/gladys-wikijs).
+
+Wiki.js requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Wiki.js is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-wikijs) — [source of this documentation](https://github.com/guim31/gladys-wikijs/blob/HEAD/docs/en.md)

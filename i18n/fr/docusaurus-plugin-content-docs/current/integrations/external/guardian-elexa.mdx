@@ -1,0 +1,220 @@
+---
+title: "Intégration domotique Guardian (Elexa), gratuite et open source"
+sidebar_label: "Guardian (Elexa)"
+description: "Vannes d'eau et détecteurs de fuite Guardian par l'API locale. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-guardian.png"
+keywords:
+  - "guardian (elexa)"
+  - "domotique guardian (elexa)"
+  - "gladys guardian (elexa)"
+  - "guardian (elexa) gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-guardian instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Guardian (Elexa)","description":"Vannes d'eau et détecteurs de fuite Guardian par l'API locale.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-guardian","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-guardian.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-31T19:09:27Z"}} />
+
+Affiche votre **contrôleur de vanne Guardian** (Elexa, GVC1) et les
+**détecteurs de fuite** appairés dans Gladys par son **API locale** (UDP port 7777) : sans le cloud Guardian, directement sur votre réseau.
+
+> **Jamais testé avec un vrai appareil.** Sans lien avec Elexa.
+> L'intégration suit aioguardian, la bibliothèque Guardian de Home Assistant,
+> et les captures de ses tests. Une mise à jour du firmware peut changer
+> l'API.
+
+> **L'API locale n'a pas de mot de passe.** Toute personne sur votre réseau
+> peut ouvrir ou fermer la vanne avec, avec ou sans Gladys, et peut tout
+> aussi facilement falsifier ses réponses (la fuite, l'état de la vanne,
+> l'UID : de l'UDP sans aucune authentification). Le verrou d'ouverture de
+> Gladys et la confirmation « vue fermée » ne sont pas plus sûrs que votre
+> réseau. Gardez le contrôleur sur un réseau de confiance (pas de Wi-Fi
+> invité, pas de redirection de port).
+
+## Ce que vous obtenez
+
+Un appareil par contrôleur et un par détecteur de fuite appairé, identifiés
+par l'UID que donne l'appareil (jamais par son adresse IP) :
+
+| Appareil            | Fonctionnalité          | Contenu                                                                |
+| ------------------- | ----------------------- | ---------------------------------------------------------------------- |
+| Contrôleur de vanne | Vanne                   | Texte : ouverte, fermée, en ouverture, en fermeture, bloquée...        |
+| Contrôleur de vanne | Vanne ouverte           | 1 ouverte, 0 fermée (inchangé pendant un mouvement ou un défaut)       |
+| Contrôleur de vanne | Fermer la vanne         | Bouton, **toujours disponible**                                        |
+| Contrôleur de vanne | Ouvrir la vanne         | Bouton, seulement avec « Autoriser l'ouverture de la vanne »           |
+| Contrôleur de vanne | Fuite (capteur intégré) | 1 fuite, 0 sec                                                         |
+| Contrôleur de vanne | Température             | °C (le contrôleur donne des °F, convertis exactement : (F - 32) x 5/9) |
+| Détecteur de fuite  | Fuite, Température      | Comme ci-dessus                                                        |
+| Détecteur de fuite  | Pile                    | %                                                                      |
+| Détecteur de fuite  | Déplacé                 | 1 quand le détecteur signale avoir été déplacé                         |
+
+Chaque contrôleur est lu toutes les 30 secondes par défaut (10 s à 1 h), une
+requête à la fois. Le capteur intégré, la liste des détecteurs appairés
+(toutes les 10 minutes), chaque détecteur et le diagnostic (firmware, toutes
+les 6 heures) sont secondaires : quand l'un ne répond pas, la vanne est
+publiée quand même et le statut dit « Non lu : ... ». Une valeur inconnue
+n'est jamais publiée comme 0 ; une valeur lue il y a plus de 2 minutes n'est
+jamais envoyée comme neuve.
+
+Le contrôleur garde les dernières valeurs de chaque détecteur ; l'API ne les
+date pas : un détecteur dont la pile est vide peut continuer d'afficher ses
+dernières valeurs.
+
+## Installation
+
+1. Donnez au contrôleur une adresse IP fixe dans votre box.
+2. Dans Gladys, installez l'intégration et saisissez l'adresse IP du
+   contrôleur (éventuellement suivie d'un port, 7777 par défaut). Plusieurs
+   contrôleurs : leurs adresses séparées par des virgules (8 au plus).
+3. Enregistrez, puis ajoutez les appareils depuis l'onglet **Découverte**.
+
+Le contrôleur n'est jamais cherché sur le réseau : ni diffusion, ni multicast.
+
+## Fermer la vanne (toujours)
+
+« Fermer la vanne » est l'arrêt de cette intégration : il n'est retenu par
+rien, ni option, ni lecture ou ouverture en cours (il les interrompt), ni
+contrôleur qui n'a pas répondu à la dernière lecture, ni configuration pas
+encore lue, ni disque lent. Il part :
+
+- vers l'adresse où cette vanne a répondu depuis le démarrage ;
+- sinon vers l'adresse où elle a été lue avant un redémarrage (gardée dans
+  `/data`) ;
+- sinon vers chaque adresse configurée dont le contrôleur n'a jamais été
+  identifié (l'adresse que vous avez saisie).
+
+Il est envoyé tout de suite. Un essai attend sa réponse 1,2 s : après un
+silence il est renvoyé aussitôt, après une réponse « en mouvement » (le
+contrôleur refuse toute commande pendant un mouvement) 250 ms plus tard,
+pendant 3 secondes. La première réponse « en mouvement » fait lire la vanne
+une fois : en fermeture (une fermeture déjà en route, d'une vérification,
+d'un clic juste avant ou du bouton), le clic est une fermeture en cours,
+répondue comme une fermeture acceptée, jamais « refusée » ; fermée, la réponse
+est « pas encore confirmée », la fermeture est gardée et la vérification
+suivante (5 s plus tard) le confirme (un état lu juste après « en mouvement »
+peut retarder sur une ouverture qui démarre). Il est
+ensuite **gardé** dans `/data` et revérifié toutes
+les 15 secondes (5 secondes pendant la fermeture), même après un redémarrage,
+avant même que Gladys donne la configuration, jusqu'à ce qu'une lecture
+montre la vanne **fermée**. Il est renvoyé tant que la vanne reste ouverte ou
+en défaut : 3 fois rapidement (chaque envoi accepté par le contrôleur, à
+2,4 s d'intervalle) ; puis, retenu, toutes les 30 secondes, puis de plus en
+plus espacé (10 minutes au plus), jusqu'à la fermeture, et le statut demande
+de vérifier la vanne. Une vanne qui change (sortie de défaut, bougée à la
+main), un contrôleur qui répond de nouveau après un silence ou qui a redémarré
+(sa durée de fonctionnement baisse) ou un redémarrage de l'intégration
+redonnent 3 renvois rapides. Un silence, un
+contrôleur injoignable ou une réponse « en mouvement » ne comptent jamais
+comme essai.
+
+Quand une autre vanne (un autre UID) répond à l'adresse où la fermeture est
+partie (adresses changées par la box), cette autre vanne se ferme aussi (le
+côté sûr), et la fermeture de la vanne demandée est **gardée** : elle part là
+où cette vanne répond depuis le démarrage, sinon vers chaque adresse
+configurée pas encore identifiée depuis le démarrage ; s'il n'y en a aucune,
+elle attend (dans `/data`, dit dans le statut) que cette vanne réponde à une
+adresse configurée. L'identité de chaque adresse configurée est alors lue
+tout de suite (quel que soit l'intervalle), et dès que cette vanne répond à
+une adresse, toute fermeture d'elle gardée pour une autre adresse y part.
+Supprimer cette vanne dans Gladys abandonne une fermeture encore cherchée.
+Une fermeture gardée dans `/data` dont l'UID est illisible part à son adresse
+quelle que soit la vanne qui y répond (le côté sûr).
+
+La fermeture est refusée, rien envoyé, dans deux cas seulement :
+
+- aucune adresse n'est connue (rien de configuré, rien dans `/data`) ;
+- chaque adresse connue répond avec une autre vanne (un autre UID).
+
+Une fermeture gardée est abandonnée seulement quand : une lecture montre la
+vanne fermée ; une ouverture demandée dans Gladys (avec l'option) est partie
+avant que cette fermeture soit demandée ; deux lectures de suite montrent la
+vanne rouverte après l'avoir vue se fermer (ouverte depuis l'application ou le
+bouton du contrôleur). Jamais par le temps ; jamais parce qu'une autre vanne
+répond à son adresse (voir plus haut).
+
+Gladys reçoit sa réponse en 3,5 secondes au plus : succès seulement si la
+relecture a lu la vanne demandée (son UID), en fermeture ou fermée ; sinon le
+message dit exactement ce qui s'est passé (envoyée sans réponse, pas encore
+envoyée, refusée, en mouvement, autre vanne à cette adresse, identité pas
+encore lue), et la fermeture reste gardée.
+
+## Ouvrir la vanne (désactivé par défaut)
+
+« Autoriser l'ouverture de la vanne » est **désactivé** par défaut : le bouton
+refuse alors toute commande. Activé, une ouverture est décidée sur une
+**lecture fraîche** (jamais sur les valeurs en mémoire) et refusée quand :
+
+- le contrôleur à l'adresse n'est pas le même (UID), ou ne peut pas le dire ;
+- la vanne bouge, ou est en défaut (bloquée, moteur libre, arrêtée à
+  mi-course, position inconnue) ;
+- le capteur intégré détecte une fuite, ou ne peut pas être lu ;
+- un détecteur appairé détecte une fuite, ou ne peut pas être lu à temps
+  (chaque détecteur listé est lu ; un détecteur à la pile vide bloque
+  l'ouverture : retirez-le dans l'application Guardian), ou la liste des
+  détecteurs appairés ne peut pas être lue ;
+- une fermeture de ce contrôleur est en cours d'envoi (une fermeture demandée
+  après une ouverture gagne toujours : l'ouverture ne part jamais après elle,
+  et une ouverture déjà partie n'abandonne jamais cette fermeture) ;
+- l'option est désactivée avant le départ du datagramme ;
+- une fermeture est gardée pour cette vanne et `/data` ne peut pas être écrit
+  (un redémarrage la refermerait) ;
+- `/data` est encore en lecture (une fermeture qui y est gardée pourrait
+  revenir et refermer la vanne) ;
+- le contrôleur ne répond pas à temps (rien envoyé après 2,7 s).
+
+Une ouverture n'est confirmée que par une relecture montrant la vanne en
+ouverture ou ouverte ; sinon « envoyée, sans confirmation », et la vanne est
+relue après 5 et 20 secondes. L'intégration n'arrête jamais la vanne à
+mi-course (un Guardian arrêté ne réagit plus à ses détecteurs de fuite).
+
+## Statut
+
+L'écran de configuration montre, pour chaque contrôleur : son UID, la vanne,
+le nombre de détecteurs appairés, une fuite, les parties non lues, et pour
+chaque fermeture gardée où elle en est. « Tester la connexion » lit chaque
+contrôleur une fois, jamais avant l'intervalle de rafraîchissement.
+
+## Limites
+
+- Testé seulement contre un faux contrôleur construit d'après aioguardian
+  2026.1.1 et ses fixtures ; jamais avec un vrai appareil.
+- Ni mise à jour du firmware, ni réglage Wi-Fi, ni appairage, ni redémarrage,
+  ni remise à zéro depuis Gladys : utilisez l'application Guardian.
+- L'API n'a pas d'authentification (voir plus haut) : pas de mot de passe.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Guardian (Elexa) dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre contrôleur de vanne Guardian | `section` | Non | Affiche votre contrôleur de vanne Guardian (Elexa, GVC1) et les détecteurs de fuite appairés dans Gladys par son API locale, sans le cloud Guardian : état de la vanne, fuites, températures, piles des détecteurs. Fermer la vanne marche toujours depuis Gladys ; l'ouvrir seulement si vous l'autorisez ci-dessous. L'API locale n'a pas de mot de passe : toute personne sur votre réseau peut commander la vanne et falsifier ses réponses, gardez-la sur un réseau de confiance. Donnez au contrôleur une adresse fixe dans votre box, saisissez-la, enregistrez, puis ajoutez les appareils depuis l'onglet Découverte. Jamais testé avec un vrai appareil. Sans lien avec Elexa. |
+| Adresse IP du contrôleur | `string` | Oui | Une adresse IPv4 ou un nom d'hôte, éventuellement suivi d'un port (7777 par défaut). Plusieurs contrôleurs : leurs adresses séparées par des virgules (8 au plus). Jamais d'adresse de diffusion ni de multicast : le contrôleur n'est pas cherché sur le réseau. |
+| Autoriser l'ouverture de la vanne | `boolean` | Non | Désactivé par défaut. Activé : le bouton « Ouvrir la vanne » laisse passer l'eau, après une lecture fraîche montrant la vanne immobile (fermée ; ou ouverte alors qu'une fermeture est gardée, que l'ouverture abandonne alors), sans fuite sur le contrôleur ni sur aucun détecteur appairé (chacun lu). Désactivé : il refuse toute commande. La fermeture marche toujours. |
+| Intervalle de rafraîchissement (secondes) | `number` | Non | Fréquence de lecture de chaque contrôleur, de 10 à 3600 secondes (30 par défaut). |
+| Langue des noms des fonctionnalités | `select` | Non | La langue des noms donnés aux appareils et à leurs fonctionnalités. |
+
+## Comment installer Guardian (Elexa) dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Guardian (Elexa) apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-guardian:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-guardian](https://github.com/LM1LC3N7/gladys-guardian).
+
+Guardian (Elexa) nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Guardian (Elexa) est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-guardian) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-guardian/blob/HEAD/docs/fr.md)
