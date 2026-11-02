@@ -178,7 +178,7 @@ Il ne vous reste plus qu'à créer votre compte et à configurer votre maison : 
 
 ![L'écran d'accueil de Gladys](../../../../../static/img/docs/en/installation/gladys-assistant-os/gladys-welcome.jpg)
 
-Vous utilisez déjà Gladys Plus ? Le bouton de restauration d'une sauvegarde Gladys Plus, sur cet écran, vous permet de restaurer la sauvegarde de votre ancienne installation au lieu de repartir de zéro.
+Vous utilisez déjà Gladys Plus ? Le bouton de restauration d'une sauvegarde Gladys Plus, sur cet écran, vous permet de restaurer la sauvegarde de votre ancienne installation au lieu de repartir de zéro. Vous changez de machine ? Suivez le [guide pour changer de machine](/fr/docs/installation/migrate/).
 
 :::tip
 Donnez une adresse IP fixe au mini-PC avec une réservation DHCP dans les réglages de votre box : son adresse ne changera plus jamais.

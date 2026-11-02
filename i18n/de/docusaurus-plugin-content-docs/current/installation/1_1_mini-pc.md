@@ -176,7 +176,7 @@ Jetzt musst du nur noch dein Konto anlegen und dein Zuhause einrichten: siehe [D
 
 ![Der Willkommensbildschirm von Gladys](../../../../../static/img/docs/en/installation/gladys-assistant-os/gladys-welcome.jpg)
 
-Du nutzt bereits Gladys Plus? Mit der Schaltfläche zur Wiederherstellung eines Gladys-Plus-Backups auf diesem Bildschirm kannst du das Backup deiner bisherigen Installation wiederherstellen, statt bei null anzufangen.
+Du nutzt bereits Gladys Plus? Mit der Schaltfläche zur Wiederherstellung eines Gladys-Plus-Backups auf diesem Bildschirm kannst du das Backup deiner bisherigen Installation wiederherstellen, statt bei null anzufangen. Du ziehst von einem anderen Rechner um? Folge der [Anleitung zum Umzug auf einen neuen Rechner](/de/docs/installation/migrate/).
 
 :::tip
 Gib dem Mini-PC eine feste IP-Adresse, indem du in den Einstellungen deines Routers eine DHCP-Reservierung anlegst: Dann ändert sich seine Adresse nie.

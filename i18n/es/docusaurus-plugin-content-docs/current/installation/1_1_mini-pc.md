@@ -176,7 +176,7 @@ Solo te queda crear tu cuenta y configurar tu casa: consulta [Configurar tu hoga
 
 ![La pantalla de bienvenida de Gladys](../../../../../static/img/docs/en/installation/gladys-assistant-os/gladys-welcome.jpg)
 
-¿Ya usas Gladys Plus? El botón de restauración de una copia de seguridad de Gladys Plus, en esta pantalla, te permite restaurar la copia de seguridad de tu instalación anterior en lugar de empezar de cero.
+¿Ya usas Gladys Plus? El botón de restauración de una copia de seguridad de Gladys Plus, en esta pantalla, te permite restaurar la copia de seguridad de tu instalación anterior en lugar de empezar de cero. ¿Vienes de otra máquina? Sigue la [guía para cambiar de máquina](/es/docs/installation/migrate/).
 
 :::tip
 Asigna al mini-PC una dirección IP fija con una reserva DHCP en los ajustes de tu router: así su dirección no cambiará nunca.
