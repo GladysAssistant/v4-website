@@ -96,7 +96,7 @@ If you never saved your recovery codes, or if you used most of them, generate a 
 
 Generating a new set immediately invalidates your previous recovery codes.
 
-## I have no recovery codes left {#no-recovery-codes-left}
+## I have no recovery codes left {/* #no-recovery-codes-left */}
 
 You lost both your authenticator app and your recovery codes? Since Gladys 5.3.1, you can get back into your account without writing to support. Pick the solution that matches your situation:
 
@@ -104,7 +104,7 @@ You lost both your authenticator app and your recovery codes? Since Gladys 5.3.1
 - **Someone else on your Gladys Plus account is an admin**, and still has access to their 2FA app: they can [reset your two-factor authentication](#reset-by-another-admin).
 - **No Gladys is connected to your account** (Gladys turned off, broken, lost, or never installed): [reset your two-factor authentication by email](#reset-by-email).
 
-### Generate new codes from your Gladys {#recovery-codes-from-gladys}
+### Generate new codes from your Gladys {/* #recovery-codes-from-gladys */}
 
 Your Gladys, physically at your home, is already a trusted device of your Gladys Plus account: it can stand in for your 2FA app, just long enough to give you a new set of recovery codes.
 
@@ -121,7 +121,7 @@ Good to know:
 - The **"Recovery codes"** button only shows up if your Gladys already knows your Gladys Plus account, that is if the fingerprints of your encryption keys are displayed under your user.
 - You are not an admin of your Gladys? Ask the person who manages Gladys at your home: they can generate these codes for you, by entering **their own** Gladys password, and then pass them on to you.
 
-### Have another admin reset your 2FA {#reset-by-another-admin}
+### Have another admin reset your 2FA {/* #reset-by-another-admin */}
 
 If your Gladys Plus account has another admin who still has access to their 2FA app, they can reset your two-factor authentication from Gladys Plus:
 
@@ -133,7 +133,7 @@ You are notified by email. Then log in with your password: Gladys Plus immediate
 
 An admin can't reset their own two-factor authentication this way.
 
-### Reset your 2FA by email, when no Gladys is connected {#reset-by-email}
+### Reset your 2FA by email, when no Gladys is connected {/* #reset-by-email */}
 
 If no Gladys is connected to your Gladys Plus account (never installed, broken or lost hardware, long power cut...), you can reset your two-factor authentication by email, right away:
 

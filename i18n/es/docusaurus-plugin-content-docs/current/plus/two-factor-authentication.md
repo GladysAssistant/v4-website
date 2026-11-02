@@ -96,7 +96,7 @@ Si nunca guardaste tus códigos de recuperación, o si ya has usado la mayoría,
 
 Generar un nuevo juego de códigos invalida inmediatamente tus códigos de recuperación anteriores.
 
-## Ya no me quedan códigos de recuperación {#no-recovery-codes-left}
+## Ya no me quedan códigos de recuperación {/* #no-recovery-codes-left */}
 
 ¿Has perdido a la vez tu aplicación de autenticación y tus códigos de recuperación? Desde Gladys 5.3.1, puedes recuperar el acceso a tu cuenta sin escribir al soporte. Elige la solución que corresponde a tu situación:
 
@@ -104,7 +104,7 @@ Generar un nuevo juego de códigos invalida inmediatamente tus códigos de recup
 - **Otra persona de tu cuenta de Gladys Plus es administradora** y todavía tiene acceso a su aplicación 2FA: puede [restablecer tu doble autenticación](#reset-by-another-admin).
 - **Ninguna Gladys está conectada a tu cuenta** (Gladys apagada, averiada, perdida o nunca instalada): [restablece tu doble autenticación por correo electrónico](#reset-by-email).
 
-### Generar nuevos códigos desde tu Gladys {#recovery-codes-from-gladys}
+### Generar nuevos códigos desde tu Gladys {/* #recovery-codes-from-gladys */}
 
 Tu Gladys, físicamente en tu casa, ya es un dispositivo de confianza de tu cuenta de Gladys Plus: puede sustituir a tu aplicación 2FA, el tiempo justo para darte un nuevo juego de códigos de recuperación.
 
@@ -121,7 +121,7 @@ Bueno saberlo:
 - El botón **"Códigos de recuperación"** solo aparece si tu Gladys ya conoce tu cuenta de Gladys Plus, es decir, si las huellas de tus claves de cifrado se muestran debajo de tu usuario.
 - ¿No eres administrador de tu Gladys? Pídeselo a la persona que gestiona Gladys en tu casa: puede generar estos códigos por ti, introduciendo **su propia** contraseña de Gladys, y después dártelos.
 
-### Hacer que otro administrador restablezca tu 2FA {#reset-by-another-admin}
+### Hacer que otro administrador restablezca tu 2FA {/* #reset-by-another-admin */}
 
 Si tu cuenta de Gladys Plus tiene otro administrador que todavía tiene acceso a su aplicación 2FA, puede restablecer tu doble autenticación desde Gladys Plus:
 
@@ -133,7 +133,7 @@ Recibes un aviso por correo electrónico. Después, inicia sesión con tu contra
 
 Un administrador no puede restablecer su propia doble autenticación de esta forma.
 
-### Restablecer tu 2FA por correo electrónico, cuando ninguna Gladys está conectada {#reset-by-email}
+### Restablecer tu 2FA por correo electrónico, cuando ninguna Gladys está conectada {/* #reset-by-email */}
 
 Si ninguna Gladys está conectada a tu cuenta de Gladys Plus (nunca instalada, hardware averiado o perdido, corte de luz prolongado...), puedes restablecer tu doble autenticación por correo electrónico, de inmediato:
 

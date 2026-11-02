@@ -96,7 +96,7 @@ Wenn du deine Wiederherstellungscodes nie gespeichert oder die meisten schon ver
 
 Wenn du einen neuen Satz erzeugst, werden deine bisherigen Wiederherstellungscodes sofort ungültig.
 
-## Ich habe keine Wiederherstellungscodes mehr {#no-recovery-codes-left}
+## Ich habe keine Wiederherstellungscodes mehr {/* #no-recovery-codes-left */}
 
 Du hast sowohl deine Authenticator-App als auch deine Wiederherstellungscodes verloren? Seit Gladys 5.3.1 kommst du wieder in dein Konto, ohne dem Support zu schreiben. Wähle die Lösung, die zu deiner Situation passt:
 
@@ -104,7 +104,7 @@ Du hast sowohl deine Authenticator-App als auch deine Wiederherstellungscodes ve
 - **Eine andere Person deines Gladys-Plus-Kontos ist Administrator** und hat noch Zugriff auf ihre 2FA-App: Sie kann [deine Zwei-Faktor-Authentifizierung zurücksetzen](#reset-by-another-admin).
 - **Keine Gladys ist mit deinem Konto verbunden** (Gladys ausgeschaltet, defekt, verloren oder nie installiert): [Setze deine Zwei-Faktor-Authentifizierung per E-Mail zurück](#reset-by-email).
 
-### Neue Codes über deine Gladys erzeugen {#recovery-codes-from-gladys}
+### Neue Codes über deine Gladys erzeugen {/* #recovery-codes-from-gladys */}
 
 Deine Gladys, die physisch bei dir zu Hause steht, ist bereits ein vertrauenswürdiges Gerät deines Gladys-Plus-Kontos: Sie kann deine 2FA-App vertreten, gerade lange genug, um dir einen neuen Satz Wiederherstellungscodes zu geben.
 
@@ -121,7 +121,7 @@ Gut zu wissen:
 - Die Schaltfläche **„Wiederherstellungscodes“** erscheint nur, wenn deine Gladys dein Gladys-Plus-Konto bereits kennt, also wenn die Fingerabdrücke deiner Verschlüsselungsschlüssel unter deinem Benutzer angezeigt werden.
 - Du bist kein Administrator deiner Gladys? Frag die Person, die Gladys bei dir zu Hause verwaltet: Sie kann diese Codes für dich erzeugen, indem sie **ihr eigenes** Gladys-Passwort eingibt, und sie dir dann weitergeben.
 
-### Deine 2FA von einem anderen Administrator zurücksetzen lassen {#reset-by-another-admin}
+### Deine 2FA von einem anderen Administrator zurücksetzen lassen {/* #reset-by-another-admin */}
 
 Wenn dein Gladys-Plus-Konto einen weiteren Administrator hat, der noch Zugriff auf seine 2FA-App hat, kann er deine Zwei-Faktor-Authentifizierung über Gladys Plus zurücksetzen:
 
@@ -133,7 +133,7 @@ Du wirst per E-Mail benachrichtigt. Melde dich danach mit deinem Passwort an: Gl
 
 Ein Administrator kann seine eigene Zwei-Faktor-Authentifizierung nicht auf diese Weise zurücksetzen.
 
-### Deine 2FA per E-Mail zurücksetzen, wenn keine Gladys verbunden ist {#reset-by-email}
+### Deine 2FA per E-Mail zurücksetzen, wenn keine Gladys verbunden ist {/* #reset-by-email */}
 
 Wenn keine Gladys mit deinem Gladys-Plus-Konto verbunden ist (nie installiert, defekte oder verlorene Hardware, längerer Stromausfall ...), kannst du deine Zwei-Faktor-Authentifizierung sofort per E-Mail zurücksetzen:
 

@@ -96,7 +96,7 @@ Si vous n'avez jamais enregistré vos codes de récupération, ou si vous en ave
 
 Générer un nouveau jeu de codes invalide immédiatement vos anciens codes de récupération.
 
-## Je n'ai plus de codes de récupération {#no-recovery-codes-left}
+## Je n'ai plus de codes de récupération {/* #no-recovery-codes-left */}
 
 Vous avez perdu à la fois votre application d'authentification et vos codes de récupération ? Depuis Gladys 5.3.1, vous pouvez retrouver l'accès à votre compte sans écrire au support. Choisissez la solution qui correspond à votre situation :
 
@@ -104,7 +104,7 @@ Vous avez perdu à la fois votre application d'authentification et vos codes de 
 - **Une autre personne de votre compte Gladys Plus est administrateur**, et a toujours accès à son application 2FA : elle peut [réinitialiser votre double authentification](#reset-by-another-admin).
 - **Aucune Gladys n'est connectée à votre compte** (Gladys éteinte, en panne, perdue, ou jamais installée) : [réinitialisez votre double authentification par e-mail](#reset-by-email).
 
-### Générer de nouveaux codes depuis votre Gladys {#recovery-codes-from-gladys}
+### Générer de nouveaux codes depuis votre Gladys {/* #recovery-codes-from-gladys */}
 
 Votre Gladys, physiquement chez vous, est déjà un appareil de confiance de votre compte Gladys Plus : elle peut remplacer votre application 2FA, le temps de vous donner un nouveau jeu de codes de récupération.
 
@@ -121,7 +121,7 @@ Bon à savoir :
 - Le bouton **« Codes de récupération »** n'apparaît que si votre Gladys connaît déjà votre compte Gladys Plus, c'est-à-dire si les empreintes de vos clés de chiffrement sont affichées sous votre utilisateur.
 - Vous n'êtes pas administrateur de votre Gladys ? Demandez à la personne qui gère Gladys chez vous : elle peut générer ces codes pour vous, en saisissant **son propre** mot de passe Gladys, puis vous les transmettre.
 
-### Faire réinitialiser votre 2FA par un autre administrateur {#reset-by-another-admin}
+### Faire réinitialiser votre 2FA par un autre administrateur {/* #reset-by-another-admin */}
 
 Si votre compte Gladys Plus a un autre administrateur qui a toujours accès à son application 2FA, il peut réinitialiser votre double authentification depuis Gladys Plus :
 
@@ -133,7 +133,7 @@ Vous êtes prévenu par e-mail. Connectez-vous ensuite avec votre mot de passe :
 
 Un administrateur ne peut pas réinitialiser sa propre double authentification de cette façon.
 
-### Réinitialiser votre 2FA par e-mail, quand aucune Gladys n'est connectée {#reset-by-email}
+### Réinitialiser votre 2FA par e-mail, quand aucune Gladys n'est connectée {/* #reset-by-email */}
 
 Si aucune Gladys n'est connectée à votre compte Gladys Plus (jamais installée, matériel en panne ou perdu, longue coupure de courant...), vous pouvez réinitialiser votre double authentification par e-mail, immédiatement :
 
