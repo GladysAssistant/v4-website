@@ -13,7 +13,7 @@ keywords:
 
 Vous remplacez la machine qui fait tourner Gladys (un vieux mini-PC, un Raspberry Pi, un NAS...) par une nouvelle ? Avec une **sauvegarde Gladys Plus**, vous retrouvez votre instance telle quelle sur la nouvelle machine : utilisateurs, maisons et pièces, appareils, scènes, tableaux de bord, configuration des intégrations et tout l'historique des capteurs.
 
-Zigbee2mqtt et Matter sont aussi restaurés : Gladys enregistre leur configuration dans sa base chaque nuit, vous n'avez donc **pas besoin de ré-appairer vos appareils**.
+Zigbee2mqtt et l'intégration Matter sont aussi restaurés : Gladys enregistre leur configuration dans sa base chaque nuit, vous n'avez donc **pas besoin de ré-appairer vos appareils**.
 
 Il y a juste quelques précautions à prendre. Voici la procédure, dans l'ordre.
 
@@ -38,7 +38,8 @@ Ne déconnectez pas Gladys Plus sur l'ancienne instance avant d'avoir noté la c
 
 ### Notez ce qui n'est pas dans la sauvegarde
 
-- **Node-RED** : si vous l'utilisez, exportez vos flows (menu **☰ > Exporter > Tous les flux**). Ils ne font pas partie de la sauvegarde Gladys.
+- **Node-RED** : si vous l'utilisez, exportez vos flows (menu **☰ > Exporter > Tous les flux**). Ils ne font pas partie de la sauvegarde Gladys. L'export ne contient ni les identifiants de vos nœuds (mots de passe, jetons), ni les nœuds que vous avez installés depuis la palette : notez les nœuds supplémentaires que vous avez installés, pour les réinstaller sur la nouvelle machine, et gardez vos identifiants sous la main pour les ressaisir.
+- **Matterbridge** : si vous l'utilisez, ses plugins et son identité Matter (dans `/var/lib/gladysassistant/matterbridge`) ne sont pas non plus dans la sauvegarde. Sur la nouvelle machine, il faudra réinstaller ses plugins et ré-appairer le pont avec vos contrôleurs Matter (Apple Maison, Google Home...).
 - **MQTT** : si vous utilisez l'intégration MQTT avec le broker installé par Gladys (pour des Tasmota, des Shelly, etc.), notez par précaution le nom d'utilisateur et le mot de passe MQTT (**Intégrations > MQTT > Configuration**).
 
 ### N'appairez pas de nouvel appareil juste avant la migration
@@ -75,10 +76,11 @@ Vérifiez que la clé de restauration saisie est bien celle de l'ancienne instan
 ## 3. Vérifications après la restauration
 
 - **Zigbee2mqtt** : Gladys le réinstalle automatiquement avec sa configuration restaurée (réseau Zigbee et appareils), sans ré-appairage. Allez quand même dans **Intégrations > Zigbee2mqtt** vérifier le port USB du dongle : il peut porter un autre nom sur la nouvelle machine. Dans ce cas, sélectionnez le bon.
-- **Matter** : le contrôleur est restauré automatiquement depuis sa sauvegarde.
+- **Matter** : le contrôleur de l'intégration Matter est restauré automatiquement depuis sa sauvegarde.
+- **Matterbridge** (si vous l'utilisez) : réinstallez ses plugins et ré-appairez le pont avec vos contrôleurs Matter.
 - **Intégrations du catalogue** : elles sont réinstallées automatiquement au démarrage. Gladys retélécharge leurs images, ce qui peut prendre quelques minutes.
 - **MQTT** (si vous utilisez le broker installé par Gladys) : depuis Gladys 5.3.1, Gladys recrée automatiquement le broker avec vos identifiants enregistrés, vos appareils MQTT se reconnectent donc sans rien changer. Vérifiez dans **Intégrations > MQTT** que Gladys est bien connectée au broker.
-- **Node-RED** : réimportez vos flows.
+- **Node-RED** : réinstallez les nœuds supplémentaires que vous utilisiez, réimportez vos flows et ressaisissez vos identifiants.
 - **Adresse IP** : la nouvelle machine a une nouvelle adresse IP. Tout ce qui contacte Gladys par son IP (appareils MQTT, etc.) doit utiliser la nouvelle. Le plus simple : une fois l'ancienne machine éteinte, donnez à la nouvelle, dans les réglages de votre box, l'adresse IP fixe qu'avait l'ancienne (réservation DHCP).
 - **Gladys Plus** : votre connexion Gladys Plus fait partie de la sauvegarde, c'est donc la nouvelle machine qui prend la place de l'ancienne. Vérifiez que l'instance est bien connectée dans **Paramètres > Gladys Plus**, et testez l'accès à distance sur [plus.gladysassistant.com](https://plus.gladysassistant.com). Le lendemain, vérifiez qu'une nouvelle sauvegarde apparaît dans **Paramètres > Sauvegardes**.
 
@@ -86,20 +88,30 @@ Vérifiez que la clé de restauration saisie est bien celle de l'ancienne instan
 
 Gardez-la éteinte quelques jours, le temps de vérifier que tout fonctionne : c'est votre plan B. **Ne la rallumez jamais avec Gladys qui tourne pendant que la nouvelle machine fonctionne.**
 
+Gladys redémarre toute seule quand la machine démarre. Avant de rallumer l'ancienne machine pour l'effacer, **débranchez donc son câble réseau** (et ses dongles USB), et travaillez directement dessus, avec un écran et un clavier.
+
 Ensuite, n'oubliez pas que son disque contient toujours votre base Gladys (utilisateurs, clés Gladys Plus, accès de vos intégrations). Donc :
 
 - **si vous la donnez ou la revendez**, réinstallez un système en effaçant complètement le disque ;
-- **si vous la gardez pour autre chose**, supprimez les conteneurs et les données de Gladys :
+- **si vous la gardez pour autre chose**, supprimez les conteneurs de Gladys, puis ses données. Sur Gladys Assistant OS, arrêtez d'abord Gladys et Watchtower :
 
 ```bash
-docker rm -f gladys gladys-z2m-zigbee2mqtt gladys-z2m-mqtt eclipse-mosquitto gladys-node-red gladys-matterbridge
+sudo docker compose -f /opt/gladys/compose.yaml down
 ```
+
+Supprimez ensuite les conteneurs :
+
+```bash
+sudo docker rm -f gladys gladys-z2m-zigbee2mqtt gladys-z2m-mqtt eclipse-mosquitto gladys-node-red gladys-matterbridge
+```
+
+Une fois les conteneurs supprimés, effacez les données :
 
 ```bash
 sudo rm -rf /var/lib/gladysassistant
 ```
 
-Adaptez la liste des conteneurs à ce que la commande `docker ps -a` affiche chez vous (par exemple, ajoutez `watchtower` s'il est installé). Si vous avez installé Gladys vous-même avec Docker dans un autre dossier que `/var/lib/gladysassistant`, supprimez ce dossier-là.
+Adaptez la liste des conteneurs à ce que la commande `sudo docker ps -a` affiche chez vous : ne supprimez que les conteneurs installés par Gladys (par exemple, ajoutez `watchtower` s'il est installé, mais gardez un broker Mosquitto que vous auriez installé vous-même). Si vous avez installé Gladys vous-même avec Docker dans un autre dossier que `/var/lib/gladysassistant`, supprimez ce dossier-là.
 
 Pas besoin de déconnecter Gladys Plus sur l'ancienne machine : c'est la nouvelle qui a repris la connexion.
 
