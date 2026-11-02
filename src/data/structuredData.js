@@ -32,7 +32,7 @@ const homepageFaqEn = [
   {
     question: "Does Gladys work with my devices?",
     answer:
-      "Very likely. Gladys supports thousands of devices through Zigbee (Zigbee2MQTT), Z-Wave, Matter, MQTT, and integrations for popular brands: Philips Hue, SmartThings, TP-Link Kasa and Tapo, Shelly, Sonos, Reolink cameras, LG ThinQ and many more. Anything else is covered by external integrations, community-built integrations installable in one click, and anyone can create one.",
+      "Very likely. Gladys has more than 1,000 integrations, each installed in one click: popular brands like Philips Hue, SmartThings, TP-Link Kasa and Tapo, Shelly, Sonos, Reolink cameras and LG ThinQ, and open protocols like Zigbee (Zigbee2MQTT), Z-Wave, Matter and MQTT that cover thousands of devices from any brand. Most of them are built by the community, the list grows every week, and anyone can create one.",
   },
   {
     question: "How much does Gladys Plus cost?",
@@ -65,7 +65,7 @@ const homepageFaqFr = [
   {
     question: "Gladys fonctionne-t-elle avec mes appareils ?",
     answer:
-      "Très probablement. Gladys supporte des milliers d'appareils via Zigbee (Zigbee2MQTT), Matter, MQTT et des intégrations natives (Sonos, caméras RTSP). Tout le reste est couvert par les intégrations externes, des intégrations communautaires installables en un clic, et n'importe qui peut en créer une.",
+      "Très probablement. Gladys compte plus de 1 000 intégrations, installables en un clic : les grandes marques comme Philips Hue, SmartThings, Tapo, Shelly, Sonos, Netatmo ou les caméras Reolink, et les protocoles ouverts Zigbee (Zigbee2MQTT), Z-Wave, Matter et MQTT, qui couvrent des milliers d'appareils de toutes marques. La plupart sont créées par la communauté, la liste s'agrandit chaque semaine, et n'importe qui peut en créer une.",
   },
   {
     question: "Puis-je accéder à Gladys depuis l'extérieur ?",
@@ -93,7 +93,7 @@ const homepageFaqDe = [
   {
     question: "Funktioniert Gladys mit meinen Geräten?",
     answer:
-      "Sehr wahrscheinlich. Gladys unterstützt tausende Geräte über Zigbee (Zigbee2MQTT), Z-Wave, Matter, MQTT sowie Integrationen für beliebte Marken: Philips Hue, SmartThings, TP-Link Kasa und Tapo, Shelly, Sonos, Reolink-Kameras, LG ThinQ und viele mehr. Alles andere wird von externen Integrationen abgedeckt: von der Community entwickelte Integrationen, die sich mit einem Klick installieren lassen, und jeder kann selbst eine erstellen.",
+      "Sehr wahrscheinlich. Gladys bietet über 1.000 Integrationen, jede mit einem Klick installiert: beliebte Marken wie Philips Hue, SmartThings, TP-Link Kasa und Tapo, Shelly, Sonos, Reolink-Kameras und LG ThinQ, und offene Protokolle wie Zigbee (Zigbee2MQTT), Z-Wave, Matter und MQTT, die tausende Geräte jeder Marke abdecken. Die meisten werden von der Community entwickelt, die Liste wächst jede Woche, und jeder kann selbst eine erstellen.",
   },
   {
     question: "Was kostet Gladys Plus?",
@@ -126,7 +126,7 @@ const homepageFaqEs = [
   {
     question: "¿Gladys funciona con mis dispositivos?",
     answer:
-      "Muy probablemente. Gladys es compatible con miles de dispositivos a través de Zigbee (Zigbee2MQTT), Z-Wave, Matter, MQTT e integraciones con marcas populares: Philips Hue, SmartThings, TP-Link Kasa y Tapo, Shelly, Sonos, cámaras Reolink, LG ThinQ y muchas más. Todo lo demás lo cubren las integraciones externas, integraciones creadas por la comunidad que se instalan con un clic, y cualquiera puede crear la suya.",
+      "Muy probablemente. Gladys tiene más de 1.000 integraciones, que se instalan con un clic: marcas populares como Philips Hue, SmartThings, TP-Link Kasa y Tapo, Shelly, Sonos, cámaras Reolink y LG ThinQ, y protocolos abiertos como Zigbee (Zigbee2MQTT), Z-Wave, Matter y MQTT, que cubren miles de dispositivos de cualquier marca. La mayoría las crea la comunidad, la lista crece cada semana, y cualquiera puede crear la suya.",
   },
   {
     question: "¿Cuánto cuesta Gladys Plus?",
