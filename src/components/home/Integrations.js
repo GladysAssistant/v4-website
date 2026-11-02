@@ -295,13 +295,19 @@ export function IntegrationsSection({ lang }) {
                   {label[lang] || label.en}
                 </span>
                 <span className={styles.categoryCount}>
-                  <Translate
-                    id="home.integrations.categoryCount"
-                    description="Number of integrations of a category card, homepage. {count} is a number."
-                    values={{ count: format(countByCategory[key]) }}
-                  >
-                    {"{count} integrations"}
-                  </Translate>
+                  {/* the pills of phones only carry the number */}
+                  <span className={styles.categoryCountLong}>
+                    <Translate
+                      id="home.integrations.categoryCount"
+                      description="Number of integrations of a category card, homepage. {count} is a number."
+                      values={{ count: format(countByCategory[key]) }}
+                    >
+                      {"{count} integrations"}
+                    </Translate>
+                  </span>
+                  <span className={styles.categoryCountShort}>
+                    {format(countByCategory[key])}
+                  </span>
                 </span>
               </span>
               <span className={styles.categoryArrow}>

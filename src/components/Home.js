@@ -6,7 +6,6 @@ import Translate, { translate } from "@docusaurus/Translate";
 
 import styles from "./horizon/styles.module.css";
 import YoutubeEmbedVideo from "./YoutubeEmbedVideo";
-import { TestimonialHomeSection } from "./Testimonial";
 import SubcribeNewsletter from "./home/SubcribeNewsletter";
 import {
   IntegrationsMarquee,
@@ -164,6 +163,61 @@ const FeatureRow = ({ reversed, eyebrow, title, text, shot }) => (
     <div>{shot}</div>
   </div>
 );
+
+/**
+ * One testimonial. On phones the text is cut after a few lines, with a
+ * button to read the rest: the testimonials then sit side by side in a
+ * swipeable row instead of a 3,000px column (see `.rail`).
+ */
+const Quote = ({ asset, username, content }) => {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <figure className={styles.quoteCard}>
+      <figcaption className={styles.quoteAuthor}>
+        <img
+          src={asset(`img/testimonials/${username}.png`)}
+          alt=""
+          width="44"
+          height="44"
+          loading="lazy"
+        />
+        <span>
+          <strong>{username}</strong>
+          <span>@{username}</span>
+        </span>
+      </figcaption>
+      <blockquote
+        className={classnames(styles.quoteText, {
+          [styles.quoteTextClamped]: !expanded,
+        })}
+      >
+        {content}
+      </blockquote>
+      <button
+        type="button"
+        className={styles.quoteMore}
+        aria-expanded={expanded}
+        onClick={() => setExpanded(!expanded)}
+      >
+        {expanded ? (
+          <Translate
+            id="home.horizon.testimonialLess"
+            description="Button that collapses a long testimonial, on phones"
+          >
+            Show less
+          </Translate>
+        ) : (
+          <Translate
+            id="home.horizon.testimonialMore"
+            description="Button that expands a long testimonial, on phones"
+          >
+            Read more
+          </Translate>
+        )}
+      </button>
+    </figure>
+  );
+};
 
 const GlassCard = ({ icon, title, text }) => (
   <div className={styles.glassCard}>
@@ -1318,8 +1372,15 @@ function Home({ lang }) {
               </Translate>
             </h2>
           </div>
-          <div className={styles.testimonials}>
-            <TestimonialHomeSection lang={lang} testimonials={testimonials} />
+          <div className={classnames(styles.quoteGrid, styles.rail)}>
+            {(testimonials[lang] || testimonials.en).map((testimonial) => (
+              <Quote
+                key={testimonial.username}
+                asset={asset}
+                username={testimonial.username}
+                content={testimonial.content}
+              />
+            ))}
           </div>
         </section>
 
@@ -1333,7 +1394,7 @@ function Home({ lang }) {
                 Assistant. Découvre leurs avis.
               </p>
             </div>
-            <div className={styles.pressGrid}>
+            <div className={classnames(styles.pressGrid, styles.rail)}>
               {PRESS.map((item) => (
                 <a
                   key={item.url}
@@ -1394,7 +1455,7 @@ function Home({ lang }) {
                 </Translate>
               </p>
             </div>
-            <div className={styles.videoGrid}>
+            <div className={classnames(styles.videoGrid, styles.rail)}>
               {YOUTUBE_VIDEOS.map((video) => (
                 <div key={video.id}>
                   <div className={styles.videoFrame}>
@@ -1421,10 +1482,12 @@ function Home({ lang }) {
           </div>
           <div className={styles.faqGrid}>
             {(FAQQuestions[lang] || FAQQuestions.en).map((oneElement, index) => (
-              <div className={styles.faqItem} key={index}>
-                <h3 className={styles.faqQuestion}>{oneElement.title}</h3>
+              <details className={styles.faqItem} key={index}>
+                <summary className={styles.faqSummary}>
+                  <h3 className={styles.faqQuestion}>{oneElement.title}</h3>
+                </summary>
                 <p className={styles.faqAnswer}>{oneElement.response}</p>
-              </div>
+              </details>
             ))}
           </div>
         </section>
