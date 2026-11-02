@@ -193,7 +193,7 @@ const Stat = ({ value, label }) => (
 export function IntegrationsSection({ lang }) {
   const {
     categories,
-    local,
+    localOnly,
     addedLast30Days,
     format,
     rounded,
@@ -253,11 +253,11 @@ export function IntegrationsSection({ lang }) {
           }
         />
         <Stat
-          value={format(local)}
+          value={format(localOnly)}
           label={
             <Translate
               id="home.integrations.statLocal"
-              description="Label under the number of integrations that work locally, homepage"
+              description="Label under the number of integrations that work locally only, without any cloud connection, homepage"
             >
               run 100% locally, no cloud
             </Translate>

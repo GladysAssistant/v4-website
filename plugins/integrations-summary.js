@@ -76,7 +76,13 @@ function summarize() {
     total: items.length,
     native: native.length,
     community: community.integrations.length,
-    local: items.filter((item) => item.transports.includes("local")).length,
+    // Local and nothing else: an integration that also declares `cloud` has a
+    // path through someone's servers, so it is not counted as cloud-free.
+    localOnly: items.filter(
+      (item) =>
+        item.transports.includes("local") &&
+        !item.transports.includes("cloud")
+    ).length,
     addedLast30Days: community.integrations.filter(
       (item) =>
         item.first_seen_at &&
