@@ -74,6 +74,7 @@ module.exports = {
         "installation/migrate",
         "installation/phone",
         "installation/logs",
+        "installation/troubleshooting",
         "installation/faq",
       ],
     },
