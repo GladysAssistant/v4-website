@@ -93,6 +93,14 @@ Rendez-vous dans la partie `Configuration` et cliquez sur le bouton **Activer Zi
 
 ![Etat des services Zigbee2Mqtt](../../../../../static/img/docs/fr/configuration/zigbee2mqtt/z2m_etat_services_fr.png)
 
+Gladys n'affiche Zigbee2MQTT au vert qu'une fois qu'il a réellement démarré et répondu à Gladys. En attendant, un message sous le schéma vous dit où il en est :
+
+- **Zigbee2MQTT démarre** : il est affiché « Redémarrage ». Patientez, il passera au vert dès qu'il répondra à Gladys.
+- **Zigbee2MQTT n'arrive pas à démarrer** : Gladys affiche l'erreur rencontrée au-dessus du schéma. Reportez-vous à [Résoudre les erreurs Zigbee2MQTT les plus fréquentes](#résoudre-les-erreurs-zigbee2mqtt-les-plus-fréquentes).
+- **Zigbee2MQTT ne répond pas** : Gladys n'obtient pas de réponse ; il est peut-être arrêté, ou plante au démarrage. Reportez-vous à la même section.
+
+Tant que Zigbee2MQTT ne répond pas, les pages `Découverte Zigbee` et `Appareils` affichent le bandeau « Zigbee2mqtt ne répond pas » et l'association d'appareils est désactivée. Le bandeau disparaît de lui-même dès que Zigbee2MQTT est prêt.
+
 ## Autorisez l'association d'appareils
 
 Pour permettre aux périphériques d'êtres associés à votre réseau Zigbee, il faut autoriser l'association dans la configuration de Zigbee.
