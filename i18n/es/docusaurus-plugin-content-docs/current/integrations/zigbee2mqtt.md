@@ -90,7 +90,7 @@ Ve a la sección `Configuración` y haz clic en el botón **Activar Zigbee2mqtt*
 
 Gladys solo muestra Zigbee2MQTT en verde cuando realmente se ha iniciado y ha respondido a Gladys. Mientras tanto, un mensaje bajo el esquema te indica en qué punto está:
 
-- **Zigbee2MQTT se está iniciando**: aparece como "Reiniciando". Espera un momento, se pondrá en verde en cuanto se conecte al broker MQTT.
+- **Zigbee2MQTT se está iniciando**: aparece como "Reiniciando". Espera un momento, se pondrá en verde en cuanto responda a Gladys.
 - **Zigbee2MQTT no consigue iniciarse**: Gladys muestra el error encontrado encima del esquema. Consulta [Solucionar los errores habituales de Zigbee2MQTT](#solucionar-los-errores-habituales-de-zigbee2mqtt).
 
 Mientras Zigbee2MQTT no responda, las páginas `Descubrir` y `Dispositivos` muestran el aviso "Zigbee2mqtt no responde" y el emparejamiento de dispositivos está desactivado. El aviso desaparece por sí solo en cuanto Zigbee2MQTT está listo.
