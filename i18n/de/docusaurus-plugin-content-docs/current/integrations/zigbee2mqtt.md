@@ -92,6 +92,7 @@ Gladys zeigt Zigbee2MQTT erst dann grün an, wenn es wirklich gestartet ist und 
 
 - **Zigbee2MQTT startet**: Es wird als „Startet neu“ angezeigt. Warte einen Moment, es wird grün, sobald es Gladys antwortet.
 - **Zigbee2MQTT kann nicht starten**: Gladys zeigt den aufgetretenen Fehler über dem Schema an. Sieh dir dazu [Häufige Zigbee2MQTT-Fehler beheben](#häufige-zigbee2mqtt-fehler-beheben) an.
+- **Zigbee2MQTT antwortet nicht**: Es ist gestoppt oder ohne bekannten Fehler in seinen Logs abgestürzt. Sieh dir dazu denselben Abschnitt an.
 
 Solange Zigbee2MQTT nicht antwortet, zeigen die Seiten `Geräte in der Nähe` und `Meine Geräte` den Hinweis „Zigbee2MQTT antwortet nicht“ an, und das Koppeln von Geräten ist deaktiviert. Der Hinweis verschwindet von selbst, sobald Zigbee2MQTT bereit ist.
 
