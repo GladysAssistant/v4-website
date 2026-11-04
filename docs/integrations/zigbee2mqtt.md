@@ -92,7 +92,7 @@ Gladys only shows Zigbee2MQTT in green once it has really started and answered G
 
 - **Zigbee2MQTT is starting**: it is shown as "Restarting". Wait a moment, it will turn green as soon as it answers Gladys.
 - **Zigbee2MQTT fails to start**: Gladys shows the error it hit above the diagram. See [Troubleshooting common Zigbee2MQTT errors](#troubleshooting-common-zigbee2mqtt-errors).
-- **Zigbee2MQTT is not responding**: it is stopped, or crashed without any known error in its logs. See the same section.
+- **Zigbee2MQTT is not answering**: Gladys gets no answer from it; it may be stopped, or crashing on startup. See the same section.
 
 As long as Zigbee2MQTT is not responding, the `Discover` and `Devices` pages show a "Zigbee2mqtt is not responding" banner, and device pairing is disabled. The banner goes away on its own as soon as Zigbee2MQTT is ready.
 
