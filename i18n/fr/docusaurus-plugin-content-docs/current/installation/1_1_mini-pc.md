@@ -122,7 +122,7 @@ Ouvrez les réglages du BIOS (en général avec **Suppr** ou **F2** au démarrag
 
 L'installeur ne pose que quelques questions. Déplacez-vous avec les **flèches** et **Tab**, cochez ou décochez une option avec **Espace**, et validez avec **Entrée**.
 
-1. **Langue** : l'anglais est présélectionné. Choisissez **Français** : les écrans suivants, puis la page d'installation de Gladys, seront en français.
+1. **Langue** : l'anglais est présélectionné. Choisissez **Français** : les écrans suivants, puis la page d'installation de Gladys, seront en français. La traduction de l'installeur d'Ubuntu est incomplète : certains textes de ses écrans restent en anglais, c'est normal.
 
    ![L'écran de choix de la langue](../../../../../static/img/docs/en/installation/gladys-assistant-os/language.png)
 2. **Clavier** : la disposition de votre langue est proposée (AZERTY français si vous avez choisi le français). Vérifiez-la bien, vous allez taper votre mot de passe juste après.
