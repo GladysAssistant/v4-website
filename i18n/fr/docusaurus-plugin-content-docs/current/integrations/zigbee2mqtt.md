@@ -57,7 +57,7 @@ Si Zigbee2Mqtt ne démarre pas chez vous, je vous recommande de lire la FAQ sur 
 
 Connectez votre dongle USB Zigbee à votre machine faisant tourner Gladys (Raspberry Pi, NAS).
 
-Dans Gladys, rendez-vous dans `Intégrations / Zigbee2Mqtt`, puis cliquez dans le menu sur `Paramètres`.
+Dans Gladys, rendez-vous dans `Intégrations / Zigbee2Mqtt`, puis cliquez dans le menu sur `Configuration`.
 
 Gladys liste les ports USB de la machine, avec le nom de l'appareil branché sur chacun, par exemple `ITead Sonoff Zigbee 3.0 USB Dongle Plus (/dev/ttyUSB0)`. Les ports série internes de la machine sont masqués : cliquez sur **Afficher aussi les ports série de la machine** pour les voir.
 
@@ -133,7 +133,7 @@ La grande majorité des problèmes Zigbee2MQTT vient de trois causes : le mauvai
 
 Zigbee2MQTT n'a pas réussi à dialoguer avec votre clé. Vérifiez, dans cet ordre :
 
-1. Le **port USB** sélectionné dans `Intégrations / Zigbee2Mqtt / Paramètres` est bien celui de votre clé. Si vous avez changé la clé de port, ou redémarré avec un disque branché, le nom du port a pu changer.
+1. Le **port USB** sélectionné dans `Intégrations / Zigbee2Mqtt / Configuration` est bien celui de votre clé. Si vous avez changé la clé de port, ou redémarré avec un disque branché, le nom du port a pu changer.
 2. Le **modèle de clé** sélectionné dans les paramètres correspond bien à votre matériel. Une clé Silicon Labs configurée comme une Texas Instruments (ou l'inverse) échoue ici.
 3. Rien d'autre n'utilise la clé : une seule instance de Zigbee2MQTT peut prendre la main sur le coordinateur.
 4. La clé est suffisamment alimentée. Débranchez-la, rebranchez-la via un **hub USB alimenté** ou une courte rallonge USB, et redémarrez l'intégration.

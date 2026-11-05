@@ -42,7 +42,7 @@ Connect your Zigbee USB dongle to your machine running Gladys (your Raspberry Pi
 
 ![Sonoff USB Zigbee 3.0](../../static/img/docs/en/configuration/zigbee2mqtt/zigbee-raspberry-pi-usb-sonoff.jpg)
 
-In Gladys, go to `Integrations / Zigbee2Mqtt`, then click on `Settings` in the menu.
+In Gladys, go to `Integrations / Zigbee2Mqtt`, then click on `Setup` in the menu.
 
 Gladys lists the USB ports of the machine, with the name of the device plugged in each one, for example `ITead Sonoff Zigbee 3.0 USB Dongle Plus (/dev/ttyUSB0)`. The serial ports of the machine itself are hidden: click on **Also show the serial ports of the machine** to see them.
 
@@ -126,7 +126,7 @@ Most Zigbee2MQTT problems come from three things: the wrong USB port, the wrong 
 
 Zigbee2MQTT could not talk to your dongle at all. Check, in this order:
 
-1. The **USB port** selected in `Integrations / Zigbee2Mqtt / Settings` is the one your dongle is on. If you moved the dongle to another port, or rebooted with a disk plugged in, the port name may have changed.
+1. The **USB port** selected in `Integrations / Zigbee2Mqtt / Setup` is the one your dongle is on. If you moved the dongle to another port, or rebooted with a disk plugged in, the port name may have changed.
 2. The **dongle model** selected in the settings matches your hardware. A Silicon Labs dongle configured as a Texas Instruments one (or the opposite) fails here.
 3. Nothing else is using the dongle. Only one Zigbee2MQTT instance can hold the adapter.
 4. The dongle has enough power. Unplug it, plug it back in through a **powered USB hub** or a short USB extension cable, and restart the integration.
@@ -172,7 +172,7 @@ Yes. Zigbee2MQTT runs locally on your own hardware and talks to your devices thr
 
 ### Which port and settings should I select for my Zigbee dongle?
 
-In Gladys go to `Integrations / Zigbee2Mqtt`, then `Settings`. Gladys scans your USB ports and suggests them in a drop-down, so you simply pick the one matching your dongle and select your dongle model so Zigbee2MQTT loads the right configuration.
+In Gladys go to `Integrations / Zigbee2Mqtt`, then `Setup`. Gladys lists your USB ports with the name of the device plugged in each one, and recognizes the most common dongles: their port and model are already selected. Otherwise, pick the port matching your dongle and select your dongle model so Zigbee2MQTT loads the right configuration.
 
 ### Why does Zigbee2MQTT fail to start?
 
@@ -216,7 +216,7 @@ Interference on the 2.4 GHz band is the main cause, and it shows up as `MAC chan
         name: "Which port and settings should I select for my Zigbee dongle?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "In Gladys go to Integrations then Zigbee2Mqtt, then Settings. Gladys scans your USB ports and suggests them in a drop-down, so you pick the one matching your dongle and select your dongle model so Zigbee2MQTT loads the right configuration.",
+          text: "In Gladys go to Integrations then Zigbee2Mqtt, then Setup. Gladys lists your USB ports with the name of the device plugged in each one, and recognizes the most common dongles: their port and model are already selected. Otherwise, pick the port matching your dongle and select your dongle model so Zigbee2MQTT loads the right configuration.",
         },
       },
       {
