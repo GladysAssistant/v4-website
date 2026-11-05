@@ -120,7 +120,7 @@ Abre los ajustes de la BIOS (normalmente con **Supr** (_Del_) o **F2** al encend
 
 El instalador solo hace unas pocas preguntas. Muévete con las **flechas** del teclado y la tecla **Tab**, marca o desmarca una opción con la **barra espaciadora** y confirma con **Intro** (_Enter_).
 
-1. **Idioma**: el inglés está preseleccionado. Elige tu idioma: lo usarán las pantallas siguientes y, después, la página de configuración de Gladys.
+1. **Idioma**: el inglés está preseleccionado. Elige tu idioma: lo usarán las pantallas siguientes y, después, la página de configuración de Gladys. El instalador de Ubuntu solo está traducido en parte: algunos textos de sus pantallas siguen en inglés, es normal.
 
    ![La pantalla de elección del idioma](../../../../../static/img/docs/en/installation/gladys-assistant-os/language.png)
 2. **Teclado**: se te propone la distribución de tu idioma (por ejemplo, la distribución española si eliges el español). Revísala con atención, porque vas a escribir tu contraseña.
