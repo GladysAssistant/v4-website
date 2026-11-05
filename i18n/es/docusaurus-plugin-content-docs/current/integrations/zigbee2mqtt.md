@@ -42,22 +42,22 @@ Conecta tu dongle USB Zigbee a la máquina en la que funciona Gladys (tu Raspber
 
 ![Sonoff USB Zigbee 3.0](../../../../../static/img/docs/en/configuration/zigbee2mqtt/zigbee-raspberry-pi-usb-sonoff.jpg)
 
-En Gladys, ve a `Integraciones / Zigbee2Mqtt`.
+En Gladys, ve a `Integraciones / Zigbee2Mqtt` y después haz clic en `Ajustes` en el menú.
 
-Después, haz clic en `Ajustes` en el menú. Gladys escaneará automáticamente los distintos puertos USB para proponértelos en una lista desplegable.
-
-Selecciona el puerto USB que debe usar Gladys para comunicarse con Zigbee.
+Gladys muestra los puertos USB de la máquina, cada uno con el nombre del dispositivo conectado, por ejemplo `ITead Sonoff Zigbee 3.0 USB Dongle Plus (/dev/ttyUSB0)`. Los puertos serie propios de la máquina están ocultos: haz clic en **Mostrar también los puertos serie de la máquina** para verlos.
 
 ![Ajustes del dongle USB](../../../../../static/img/docs/en/configuration/zigbee2mqtt/z2m_parameter_dongle_usb_en.png)
 
-**13 de mayo de 2023:** ahora puedes seleccionar el modelo de dongle Zigbee que utilizas:
+Gladys reconoce los dongles más habituales (SONOFF ZBDongle-P y ZBDongle-E, Home Assistant Connect ZBT-1 y ZBT-2, ConBee II y III, SMLIGHT SLZB-06M y SLZB-07…). Si reconoce tu dongle, su puerto y su modelo ya están seleccionados: no tienes que elegir nada.
+
+Si no, selecciona el puerto y después el modelo de tu dongle en la lista:
 
 ![Modelo del dongle USB](../../../../../static/img/docs/en/configuration/zigbee2mqtt/zigbee-dongle.jpg)
 
-Así Zigbee2mqtt sabe qué configuración debe usar.
+El modelo es obligatorio: así Zigbee2mqtt sabe qué configuración debe usar.
 
 :::warning
-Si tienes un dongle basado en [EmberZNet](https://www.zigbee2mqtt.io/guide/adapters/emberznet.html) (como por ejemplo el Sonoff Zigbee 3.0 ZBDongle-E), te recomendamos [actualizar](https://www.zigbee2mqtt.io/guide/adapters/emberznet.html#firmware-flashing) el firmware del dongle. Si no, elige la opción `(legacy ezsp)` en la lista.
+Si tienes un dongle basado en [EmberZNet](https://www.zigbee2mqtt.io/guide/adapters/emberznet.html) (como por ejemplo el Sonoff Zigbee 3.0 ZBDongle-E), te recomendamos [actualizar](https://www.zigbee2mqtt.io/guide/adapters/emberznet.html#firmware-flashing) el firmware del dongle. Si no, elige la opción `(legacy ezsp)` en la lista, aunque Gladys haya seleccionado por ti el modelo de tu dongle.
 :::
 
 :::warning

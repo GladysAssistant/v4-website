@@ -42,22 +42,22 @@ Stecke deinen Zigbee-USB-Dongle in den Rechner, auf dem Gladys läuft (deinen Ra
 
 ![Sonoff USB Zigbee 3.0](../../../../../static/img/docs/en/configuration/zigbee2mqtt/zigbee-raspberry-pi-usb-sonoff.jpg)
 
-Gehe in Gladys zu `Integrationen / Zigbee2Mqtt`.
+Gehe in Gladys zu `Integrationen / Zigbee2Mqtt` und klicke dann im Menü auf `Einstellungen`.
 
-Klicke dann im Menü auf `Einstellungen`. Gladys durchsucht automatisch die verschiedenen USB-Ports und schlägt sie dir in einer Auswahlliste vor.
-
-Wähle den USB-Port aus, über den Gladys mit Zigbee kommunizieren soll.
+Gladys listet die USB-Ports des Rechners auf, jeweils mit dem Namen des eingesteckten Geräts, zum Beispiel `ITead Sonoff Zigbee 3.0 USB Dongle Plus (/dev/ttyUSB0)`. Die seriellen Ports des Rechners selbst sind ausgeblendet: Klicke auf **Auch die seriellen Ports des Rechners anzeigen**, um sie zu sehen.
 
 ![Einstellungen des USB-Dongles](../../../../../static/img/docs/en/configuration/zigbee2mqtt/z2m_parameter_dongle_usb_en.png)
 
-**13. Mai 2023:** Du kannst jetzt das Modell deines Zigbee-Dongles auswählen:
+Gladys erkennt die gängigsten Dongles (SONOFF ZBDongle-P und ZBDongle-E, Home Assistant Connect ZBT-1 und ZBT-2, ConBee II und III, SMLIGHT SLZB-06M und SLZB-07…). Wird dein Dongle erkannt, sind sein Port und sein Modell bereits ausgewählt: Du musst nichts auswählen.
+
+Andernfalls wähle den Port und dann das Modell deines Dongles aus der Liste:
 
 ![Modell des USB-Dongles](../../../../../static/img/docs/en/configuration/zigbee2mqtt/zigbee-dongle.jpg)
 
-So weiß Zigbee2mqtt, welche Konfiguration es verwenden soll.
+Das Modell ist erforderlich: So weiß Zigbee2mqtt, welche Konfiguration es verwenden soll.
 
 :::warning
-Wenn du einen Dongle auf Basis von [EmberZNet](https://www.zigbee2mqtt.io/guide/adapters/emberznet.html) besitzt (zum Beispiel den Sonoff Zigbee 3.0 ZBDongle-E), solltest du die Firmware des Dongles [aktualisieren](https://www.zigbee2mqtt.io/guide/adapters/emberznet.html#firmware-flashing). Andernfalls wähle in der Liste die Option `(legacy ezsp)`.
+Wenn du einen Dongle auf Basis von [EmberZNet](https://www.zigbee2mqtt.io/guide/adapters/emberznet.html) besitzt (zum Beispiel den Sonoff Zigbee 3.0 ZBDongle-E), solltest du die Firmware des Dongles [aktualisieren](https://www.zigbee2mqtt.io/guide/adapters/emberznet.html#firmware-flashing). Andernfalls wähle in der Liste die Option `(legacy ezsp)`, auch wenn Gladys das Modell deines Dongles bereits für dich ausgewählt hat.
 :::
 
 :::warning
