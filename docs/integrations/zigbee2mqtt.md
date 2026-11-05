@@ -44,7 +44,7 @@ Connect your Zigbee USB dongle to your machine running Gladys (your Raspberry Pi
 
 In Gladys, go to `Integrations / Zigbee2Mqtt`, then click on `Setup` in the menu.
 
-Gladys lists the USB ports of the machine, with the name of the device plugged in each one, for example `ITead Sonoff Zigbee 3.0 USB Dongle Plus (/dev/ttyUSB0)`. The serial ports of the machine itself are hidden: click on **Also show the serial ports of the machine** to see them.
+Gladys lists the USB ports of the machine, with the name of the device plugged in each one, for example `ITead Sonoff Zigbee 3.0 USB Dongle Plus (/dev/ttyUSB0)`. The other serial ports, those of the machine itself and of the GPIO HATs (like the RaspBee), are hidden: click on **Show the other serial ports (GPIO HAT, ports of the machine)** to see them.
 
 ![USB dongle settings](../../static/img/docs/en/configuration/zigbee2mqtt/z2m_parameter_dongle_usb_en.png)
 

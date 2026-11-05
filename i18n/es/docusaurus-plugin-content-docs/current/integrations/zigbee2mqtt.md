@@ -44,7 +44,7 @@ Conecta tu dongle USB Zigbee a la máquina en la que funciona Gladys (tu Raspber
 
 En Gladys, ve a `Integraciones / Zigbee2Mqtt` y después haz clic en `Configuración` en el menú.
 
-Gladys muestra los puertos USB de la máquina, cada uno con el nombre del dispositivo conectado, por ejemplo `ITead Sonoff Zigbee 3.0 USB Dongle Plus (/dev/ttyUSB0)`. Los puertos serie propios de la máquina están ocultos: haz clic en **Mostrar también los puertos serie de la máquina** para verlos.
+Gladys muestra los puertos USB de la máquina, cada uno con el nombre del dispositivo conectado, por ejemplo `ITead Sonoff Zigbee 3.0 USB Dongle Plus (/dev/ttyUSB0)`. Los demás puertos serie, los de la propia máquina y los de los HAT GPIO (como la RaspBee), están ocultos: haz clic en **Mostrar los demás puertos serie (HAT GPIO, puertos de la máquina)** para verlos.
 
 ![Ajustes del dongle USB](../../../../../static/img/docs/en/configuration/zigbee2mqtt/z2m_parameter_dongle_usb_en.png)
 

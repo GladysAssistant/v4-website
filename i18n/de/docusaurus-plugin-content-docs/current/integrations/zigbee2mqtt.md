@@ -44,7 +44,7 @@ Stecke deinen Zigbee-USB-Dongle in den Rechner, auf dem Gladys läuft (deinen Ra
 
 Gehe in Gladys zu `Integrationen / Zigbee2Mqtt` und klicke dann im Menü auf `Einrichtung`.
 
-Gladys listet die USB-Ports des Rechners auf, jeweils mit dem Namen des eingesteckten Geräts, zum Beispiel `ITead Sonoff Zigbee 3.0 USB Dongle Plus (/dev/ttyUSB0)`. Die seriellen Ports des Rechners selbst sind ausgeblendet: Klicke auf **Auch die seriellen Ports des Rechners anzeigen**, um sie zu sehen.
+Gladys listet die USB-Ports des Rechners auf, jeweils mit dem Namen des eingesteckten Geräts, zum Beispiel `ITead Sonoff Zigbee 3.0 USB Dongle Plus (/dev/ttyUSB0)`. Die anderen seriellen Ports, die des Rechners selbst und der GPIO-HATs (wie das RaspBee), sind ausgeblendet: Klicke auf **Weitere serielle Ports anzeigen (GPIO-HAT, Ports des Rechners)**, um sie zu sehen.
 
 ![Einstellungen des USB-Dongles](../../../../../static/img/docs/en/configuration/zigbee2mqtt/z2m_parameter_dongle_usb_en.png)
 
