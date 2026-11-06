@@ -355,6 +355,25 @@ const nativeIntegrations = [
     },
   },
   {
+    key: "matter-bridge",
+    doc: "matter-bridge",
+    cover: "matter-bridge.jpg",
+    categories: ["assistants"],
+    transports: ["local"],
+    name: {
+      en: "Matter Bridge",
+      fr: "Bridge Matter",
+      de: "Matter-Bridge",
+      es: "Puente Matter",
+    },
+    description: {
+      en: "Expose your Gladys devices over Matter to Apple Home, Google Home, Alexa, SmartThings or Home Assistant.",
+      fr: "Exposez vos appareils Gladys en Matter à Apple Maison, Google Home, Alexa, SmartThings ou Home Assistant.",
+      de: "Stelle deine Gladys-Geräte über Matter für Apple Home, Google Home, Alexa, SmartThings oder Home Assistant bereit.",
+      es: "Expón tus dispositivos de Gladys por Matter a Apple Home, Google Home, Alexa, SmartThings o Home Assistant.",
+    },
+  },
+  {
     key: "openai",
     doc: "openai",
     cover: "openai.jpg",
