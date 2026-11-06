@@ -13,6 +13,8 @@ Most of the devices Matterbridge used to be recommended for now have an external
 
 [Matterbridge](https://github.com/Luligu/matterbridge) is a Matter bridge that allows you to connect non-Matter devices to a Matter ecosystem. Thanks to its many plugins, Matterbridge can expose devices from various manufacturers to Gladys via the Matter protocol.
 
+Matterbridge brings devices **into** Gladys. To do the opposite, and expose your Gladys devices to Apple Home, Google Home or Alexa, use the [Matter Bridge](/docs/integrations/matter-bridge/) integration.
+
 ## Enable Matterbridge
 
 In Gladys, go to `Integrations / Matterbridge`.
