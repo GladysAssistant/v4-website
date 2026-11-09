@@ -1,0 +1,219 @@
+---
+title: "Integración domótica LOQED, gratuita y de código abierto"
+sidebar_label: "LOQED"
+description: "LOQED Touch smart lock through the local API of its bridge. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-loqed.png"
+keywords:
+  - "loqed"
+  - "domótica loqed"
+  - "gladys loqed"
+  - "loqed gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-loqed instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"LOQED","description":"LOQED Touch smart lock through the local API of its bridge.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-loqed","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-loqed.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-06T00:55:49Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+Unofficial integration, not affiliated with LOQED. It brings a **LOQED Touch**
+smart lock into Gladys through the **local API of its bridge** (the small box
+plugged in near the door), on your network, without the LOQED cloud.
+
+**Never tested with a real lock**: it was written from the loqedAPI library
+(used by Home Assistant) and tested against a fake bridge. Your feedback is
+welcome.
+
+## What you get
+
+One device per bridge (one lock), with:
+
+| Feature       | Type         | Detail                                                        |
+| ------------- | ------------ | ------------------------------------------------------------- |
+| Lock state    | lock / state | 1 locked (night lock), 0 unlocked or open, 2 moving, 3 jammed |
+| Position      | text         | the position in words                                         |
+| Battery       | battery (%)  | never published while the lock is out of reach of the bridge  |
+| Lock          | button       | always allowed                                                |
+| Unlock        | button       | refused until the option is on                                |
+| Open the door | button       | pulls the latch; refused without both options                 |
+| Last command  | text         | the last command and how it ended                             |
+
+The commands are **buttons**, never a switch: a "turn everything off" (voice
+assistant, scene on switches) cannot unlock the door.
+
+## Setup
+
+1. In the LOQED web app, create a **local API key** for your lock. The page
+   shows (names to check on a real installation): `bridge_ip`,
+   `lock_key_local_id`, `lock_key_key` and `bridge_key`.
+2. Give the bridge a fixed IP address in your router.
+3. In Gladys, **Integrations → LOQED → Configuration**:
+   - **IP address of the bridge**: `bridge_ip` (an IP address, not a name);
+   - **Key id**: `lock_key_local_id` (0 to 255);
+   - **Local key**: `lock_key_key`;
+   - **Bridge key**: `bridge_key` (optional: without it, no webhook).
+4. Save, then **Discovery**: the lock appears after the first read of the
+   bridge; add it.
+
+Both keys are kept by Gladys in its database, never shown again, never written
+to the logs nor to `/data`. They never travel on the network: only the
+signatures they make go to the bridge. The bridge speaks plain HTTP (no HTTPS):
+someone who sees the traffic of your network sees the lock state and the signed
+commands (dated, so stale after a short time).
+
+The clock of the Gladys machine must be right: each command carries the time,
+and the bridge probably refuses a command too far off (to check).
+
+### Instant updates (webhooks)
+
+The bridge can tell Gladys each change at once. Enter the **IP address of
+Gladys** as the bridge sees it: the integration starts a small receiver next to
+it (Gladys picks its port) and registers its address at the bridge by itself,
+signed with the bridge key. Each webhook received is checked before it counts:
+
+- the exact address (with a random token) and the POST method;
+- the signature of the bridge (`HASH`, made with the bridge key);
+- the bridge time within 30 s of the receiver time; a webhook kept more than
+  60 s in the receiver is ignored; a replayed webhook is refused; a webhook
+  dated before the last start of the integration only triggers a read;
+- the address of the sender, equal to the bridge's (option "Accept webhooks
+  only from the address of the bridge", on by default);
+- the MAC address of the bridge when the webhook gives it.
+
+The receiver bounds everything: 4 KB per webhook, 16 connections (4 per
+address), 10 s per request, 120 webhooks a minute (30 for an address other than
+the bridge's). The integration only withdraws from the bridge the addresses it
+registered itself (those of other software stay).
+
+Without the address of Gladys or the bridge key, the bridge is only read at the
+chosen interval (30 s by default, 10 to 600 s).
+
+## Locking
+
+Locking (night lock) leaves **at once**, whatever the options, a read in flight
+(it is cut), a pause asked by the bridge, the identity of the bridge, or `/data`
+(never awaited on this path). Then:
+
+- if it could not leave (bridge unreachable), it is tried again for 250 ms,
+  then kept in `/data` and sent again every 10 s until it leaves; it is never
+  given up for that reason, and it leaves again when the integration restarts,
+  before any read;
+- it is confirmed by a read of the bridge **started after it** that shows the
+  lock locked; until then, it is sent again (at most every 6 s);
+- only a send the bridge answered "OK" counts as a try: after 3 accepted sends
+  without the lock reporting it locked, it is given up and "Last command" says
+  so. A cut, a timeout, an error of the bridge or a refused key do not count;
+- a movement made afterwards with another key (app, keypad), reported by a
+  signed webhook at least 2 s after the send, ends the resends.
+
+Locking waits, without leaving, in these cases only:
+
+- no bridge address, or an invalid key id or local key: it leaves as soon as
+  they are saved;
+- the bridge refused the local key: each click still sends it once, but it no
+  longer leaves by itself until another key is saved or "Test the connection"
+  succeeds (it then leaves first).
+
+A lock clicked before `/data` is read (at the start) is kept and merged with
+what `/data` holds. If `/data` cannot be read, locking still leaves; `/data` is
+read again every 10 s, and once readable the lock is written there (or the
+one it held leaves at once).
+
+The status says where a waiting lock stands: not left yet, being sent, sent
+without confirmation, or held by a refused key.
+
+## Unlocking and opening
+
+Off by default: **Allow unlocking** allows Unlock (day lock); **Open the door**
+(pulling the latch) needs that option **and** "Allow opening the door". One
+command at a time. Each one is refused, with nothing sent, when:
+
+- the option is missing (checked again right before the first byte);
+- another unlock or open is in progress;
+- the key id or the local key is missing, or the bridge refused them;
+- `/data` cannot be read, or the guard of the command could not be written
+  there within 2 s (and 3.2 s after the click at most);
+- the bridge asked for a pause (429 or 5xx error): the reason gives the time
+  left;
+- a lock is waiting, or was asked during the command;
+- the bridge is not identified yet, or another bridge answers at the address;
+- the read of the bridge made after the click failed or did not come within
+  2.5 s;
+- the lock is not connected to the bridge, or it is moving, jammed or in an
+  unknown state;
+- it could not leave within 3.5 s of the click.
+
+Unlocking a lock already unlocked sends nothing. A command that left without an
+answer from the bridge is reported "sent, without confirmation" (the lock may
+move) and the lock is read again.
+
+## Status and actions
+
+The status of the Configuration screen says whether the bridge answers, whether
+the webhooks are on, whether a lock is waiting, whether the lock is out of
+reach, and why something is refused. A bridge answering a 429 or 5xx error
+pauses (1 min to 6 h) the reads, unlocking, opening and the actions; only
+locking and the reads that confirm it still go.
+
+- **Test the connection**: reads the bridge (once at most, never more often than
+  the interval: a newer read is used), registers the webhook, and lifts a
+  refusal of the local key (a waiting lock then leaves first). The local key
+  can only be checked by a real command.
+- **Use the bridge now answering**: only after replacing the bridge. Press
+  twice within a minute; its lock becomes a new device (the device id is the
+  MAC address of the bridge).
+
+## Known limits
+
+- One bridge (one lock) per installation of the integration.
+- No Bluetooth, no LOQED cloud.
+- The settings of the lock (party mode, guest access) are not read.
+
+## Parámetros de configuración
+
+Estos son los parámetros que LOQED te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Your LOQED bridge, on your local network | `section` | No | Brings a LOQED Touch smart lock into Gladys through the local API of its bridge, without the LOQED cloud: lock state (locked, unlocked, open, moving, jammed), battery, Lock, Unlock and Open buttons. In the LOQED web app, create a local API key: it shows the bridge IP address, the key id, the local key and the bridge key; copy them here. Locking is always possible; unlocking and opening the door stay off until you allow them below. Never tested with a real lock. Unofficial, not affiliated with LOQED. |
+| IP address of the bridge | `string` | Sí | An IP address (bridge_ip in the LOQED web app), not a name; give the bridge a fixed address in your router. |
+| Key id | `number` | Sí | lock_key_local_id in the LOQED web app (0 to 255). |
+| Local key | `secret` | Sí | lock_key_key in the LOQED web app: signs the commands. Kept by Gladys in its database, never shown again, never sent on the network (only the signatures it makes go to the bridge). |
+| Bridge key | `secret` | No | bridge_key in the LOQED web app: signs the webhooks of the bridge and their registration. Kept by Gladys in its database, never shown again, never sent on the network. Without it, the bridge is only read. |
+| Allow unlocking from Gladys | `boolean` | No | Off by default: Gladys can lock, never unlock. |
+| Allow opening the door from Gladys | `boolean` | No | Off by default. Opening pulls the latch: the door opens. It also needs the unlocking option. |
+| Instant updates (webhooks) | `section` | No | The bridge can tell Gladys each change at once. Enter the IP address of the Gladys machine as the bridge sees it (often \{\{gladys_host\}\}); the integration then registers the address http:\/\/\<that address>:\{\{port:loqed_webhook\}\}/loqed/… at the bridge by itself, signed with the bridge key. Without it, the bridge is read at the interval below. |
+| IP address of Gladys (for the bridge) | `string` | No |  |
+| Accept webhooks only from the address of the bridge | `boolean` | No | On by default. Turn it off only if your Docker setup hides the address of the sender (the signature is checked anyway). |
+| Refresh interval (s) | `number` | No | How often the bridge is read, in seconds (10 to 600). |
+| Language of the feature names | `select` | No | Used for the names of the features of the devices added from now on, and for the status texts. |
+
+## Cómo instalar LOQED en Gladys
+
+1. En Gladys, abre **Integraciones**: LOQED aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-loqed:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-loqed](https://github.com/LM1LC3N7/gladys-loqed).
+
+LOQED requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+LOQED es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-loqed) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-loqed/blob/HEAD/docs/en.md)

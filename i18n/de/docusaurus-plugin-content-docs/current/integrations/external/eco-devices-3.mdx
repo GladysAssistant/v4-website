@@ -19,7 +19,7 @@ https://github.com/LM1LC3N7/gladys-ecodevices-ed3 instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Eco-Devices 3","description":"GCE Eco-Devices 3: energy, water and gas counters, current clamps, relays, X-THL sensors.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-ecodevices-ed3","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ecodevices-ed3.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-01T01:52:05Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Eco-Devices 3","description":"GCE Eco-Devices 3: energy, water and gas counters, current clamps, relays, X-THL sensors.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-ecodevices-ed3","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ecodevices-ed3.png","type":"device","version":"0.2.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-06T12:45:02Z"}} />
 
 :::info
 
@@ -33,11 +33,15 @@ production, injection, storage, water, gas), the power of their current
 clamps, the mains voltage, their two relays, the outputs of their X-8R
 extensions and their X-THL sensors (temperature, humidity, luminosity).
 
-> Never tested with a real device: written from GCE's documentation of the
-> ED3 API (Postman "API ED3", linked from the ED3) and cce66's free tools
-> (ED3 Api-Deck and Mqtt-Deck). The answers of one real ED3 (cce66's,
-> firmware 1.3.0) are replayed in the tests: its MAC address, its counters,
-> the units of the teleinfo and water counters. Tell us what you see on
+> Readings checked against a real ED3: cce66's, a member of the Gladys
+> forum (firmware 1.3.0), who recorded its answers; they are replayed in the
+> tests: its MAC address (an invented one of the same form in the tests),
+> its counters and the clamps and pulse inputs feeding them, the units of
+> the teleinfo, clamp and water counters, the clamp power. The commands
+> (relays R1 and R2) were not tested on a real device, and no X-8R nor
+> X-THL extension has been seen on a real ED3 yet. Written from GCE's
+> documentation of the ED3 API (Postman "API ED3", linked from the ED3) and
+> cce66's free tools (ED3 Api-Deck and Mqtt-Deck). Tell us what you see on
 > yours. Not affiliated with GCE Electronics.
 
 ## Setup
@@ -85,22 +89,43 @@ kept are dropped. Use the integration of that box.
 | Counters 1 to 10 (teleinfo tariffs)        | plain sensor "Tariff index (kWh)", never counted twice       | `C1`               |
 | Counters 22 to 24 (storage) (¹)            | plain sensor "Storage index (kWh)"                           | `C22`              |
 | Counters 25 to 27 (water), 28 and 29 (gas) | volume (m³), out of the energy monitoring                    | `C25`, `C28`       |
-| Clamp linked to a counter                  | power (W)                                                    | `T1`               |
+| Clamp linked to a counter                  | power (W), signed (²)                                        | `T1`               |
 | Supply voltage                             | voltage (V)                                                  | `U`                |
 | X-THL                                      | temperature (°C), humidity (%), luminosity (lux)             | `XTHL4325376`      |
 
-The counter numbers are the ED3's (GCE assigns them by category). The names
-you gave them on the ED3 are used in Discover (read again every 10
-minutes); a name changed later on the ED3 does not rename a device already
-created. A counter at 0 (not set up, or not read by the ED3 yet) is not
-offered; a clamp without a counter neither. The ED3 may list fewer than 30
+The counter numbers are the ED3's (GCE assigns them by category). A counter
+fed by a clamp or a pulse input is named after it in Discover, as the ED3
+lists them (`ID_Logger_tore`, `ID_Logger_tore_neg`, `ID_Logger_pulse`,
+`ToreName`, `PulseName`): "T1-EDF · Consumption (C11)", "T1-EDF (negative)
+· Injection (C19)" for the counter of the clamp's other direction, "Eau ·
+Water (C25)". The others take the name you gave the counter on the ED3
+(read again every 10 minutes). A name changed later on the ED3 does not
+rename a device already created. A counter at 0 (not set up, or not read by
+the ED3 yet) is not offered; a clamp that feeds no counter (0 in both
+lists) neither. The ED3 may list fewer than 30
 counters (a real one listed 26): a counter is known by its ED3 id, never
 by its place in the list, and one not listed is not offered.
 
-Units: the teleinfo indexes are in Wh on the ED3 (checked on a real one:
-its counter 0 matched, within a few minutes, the same Linky read by an
-Eco-Devices RT2), published in kWh; water and gas in mL, published in m³
-(a real water counter: 60,707,000 mL = 60.707 m³).
+Units: the teleinfo and clamp indexes are in Wh on the ED3, published in
+kWh. Checked on a real one: its counter 0 (teleinfo) matched, within a few
+minutes, the same Linky read by an Eco-Devices RT2; the counter of its
+battery clamp grew at 56.7 W on average over 71 hours in Wh, while the
+clamp read about 60 W at both readings (57 W on average at the first; 64 W
+from its power and 59 W in the ED3's page data at the second): in mWh it
+would be 0.06 W. That second reading came from address .161, the others
+from .162 (the same ED3 by its indexes; asked). Water and gas in mL,
+published in m³: compared with a real water meter (61,503.0 L on the
+meter, 61,503,000 on the ED3). When the ED3 gives `ID_Logger_pulse` (the
+counters its pulse inputs feed), an electricity counter fed by a pulse
+input is not offered (its unit is not checked; the status names it), nor
+one listed both by a clamp and by a pulse input. Without that list (absent:
+an older firmware), which counters the pulse inputs feed is not known, and
+such a counter is published in kWh as any other, its unit not checked.
+When the ED3 gives that list in another form (another firmware), no
+electricity counter that a clamp is not known to feed is offered, the
+teleinfo (C0 to C10) included, and one already created in Gladys is no
+longer updated while it lasts (the status names them). The counters 11 to 24 are not offered when a clamp is linked to a
+counter outside 11 to 24 (see (¹)).
 
 The ED3 is read every 15 seconds by default (10 s at least). A value the
 ED3 does not give (absent, a text, out of range, a voltage of 0 V) is not
@@ -109,20 +134,27 @@ publishes nothing while it does, and the status names it. An X-8R or X-THL
 without an extension code (an object created, nothing paired) is not
 offered.
 
-(¹) **A counter fed by a clamp is not offered in this version** (those the
-ED3 links to a clamp in `ID_Logger_tore`): the unit of its index is not
-confirmed (Wh says GCE, but GCE's own example suggests mWh, which would make
-values 1000 times too large). The values of a real ED3 lean to Wh, but were
-not compared with the ED3's own page, and that ED3 did not say which
-counters its clamps feed: a lifetime index 1000 times off would stay in the
-energy history of Gladys, so they wait for that check. The power of the
-clamp is confirmed (mW, published in W). They will be offered once the unit
-is checked on a real ED3.
-The status names those holding an index ("C12, C13 (fed by a clamp): not
-offered until their unit is confirmed"). An ED3 that does not give that list
-does not say which counters its clamps feed: the source of counters 11 to 24
-is then unknown, and all of them are held the same way, the status saying so
-("C11, C19 (source unknown: …)").
+(¹) The counters a clamp may feed (11 to 24) are offered only when the ED3
+lists its clamp links in the form a real one gives (`ID_Logger_tore`: 8
+entries, each 0 or a counter id; `ID_Logger_tore_neg` the same when given):
+that is how their unit (Wh) was checked. An ED3 that does not give that
+list, or gives it in another form (another firmware), does not say which
+counters its clamps feed: counters 11 to 24 are then held, and the status
+names those holding an index ("C11, C19 not offered: this ED3 does not list
+the counters its clamps feed in the expected form…"). Nothing is guessed
+from a list of another form.
+
+(²) The clamp power is the ED3's `puissance` (mW, published in W, one
+decimal): on a real ED3 it equals current × voltage × power factor for each
+clamp (1,455,467 mW for 6.58 A × 235.5 V × 0.94). Its sign is kept: positive
+in the direction of the clamp's `ID_Logger_tore` counter, negative in that
+of its `ID_Logger_tore_neg` counter. Which direction is consumption or
+production depends on how the clamp is set up on the ED3: the counter's
+number and name say it (on a real ED3, a solar clamp produces in the
+positive direction, towards its production counter C20, and three other
+clamps have their negative direction towards consumption counters). A
+clamp listed for one direction only still shows the other one, as a power
+counted by no counter.
 
 ## Counters: lifetime indexes, never 0, a drop or a jump held
 
@@ -299,10 +331,11 @@ bring them back. They come back with the first read that succeeds.
 
 - Relays R1 and R2, counters, clamps, voltage, X-8R (read only) and X-THL;
   not the detailed teleinfo frame (apparent power, current tariff), the
-  pulse inputs, the X-8R commands, the schedules, the virtual variables nor
+  states of the pulse inputs themselves (the counters they feed are read),
+  the X-8R commands, the schedules, the virtual variables nor
   Modbus in this version.
-- The sign of the power of a clamp reading a production is not documented:
-  the power is published as the ED3 gives it (in W).
+- The clamp power is one signed value (W): Gladys gets no separate
+  production feature; the counters of each direction carry the energy.
 - The integration reads the local HTTP API, not the MQTT of the ED3.
 - Three ED3 at most per integration.
 - http only (the ED3 answers over http on the local network).
@@ -313,7 +346,7 @@ Diese Einstellungen fragt Eco-Devices 3 in seinem Konfigurationsbildschirm in Gl
 
 | Einstellung | Typ | Pflichtfeld | Beschreibung |
 | --- | --- | --- | --- |
-| Your Eco-Devices 3 | `section` | Nein | Brings up to three GCE Electronics Eco-Devices 3 into Gladys through their local HTTP API and their API key: the counters (teleinfo, consumption, production, injection, water, gas: lifetime indexes, a jump or a drop held back until you accept it; those fed by a clamp not yet, their unit unconfirmed), the power of the current clamps, the mains voltage, the two relays (read only unless you list them below), the X-8R outputs (read only) and the X-THL sensors. Each Eco-Devices 3 keeps its own devices: another one never gets their values nor their commands. Never tested with a real device. Not affiliated with GCE Electronics. |
+| Your Eco-Devices 3 | `section` | Nein | Brings up to three GCE Electronics Eco-Devices 3 into Gladys through their local HTTP API and their API key: the counters (teleinfo, consumption, production, injection, water, gas: lifetime indexes, a jump or a drop held back until you accept it), the power of the current clamps, the mains voltage, the two relays (read only unless you list them below), the X-8R outputs (read only) and the X-THL sensors. Each Eco-Devices 3 keeps its own devices: another one never gets their values nor their commands. Answers recorded on a real Eco-Devices 3 (firmware 1.3.0) and replayed in the tests: counters, clamps, voltage; X-8R, X-THL, gas and tariff indexes not seen there (at 0 or absent); commands not tested on a real device. Not affiliated with GCE Electronics. |
 | Address of the Eco-Devices 3 | `string` | Ja | Its IP address (or name) on your network, without path nor key, with ":port" only if you changed the port of its web server (80); give it a fixed address in your router. |
 | API key | `secret` | Ja | Set in the Eco-Devices 3 (Configuration menu, API key). The Eco-Devices 3 wants it in the address of every request, over plain http: anyone who can watch your network can read it, as with the Eco-Devices 3’s own page. Kept by Gladys in its database, never shown again, sent only to the Eco-Devices 3, never written in the logs. |
 | Relays Gladys may drive | `string` | Nein | The other relays are read only (the X-8R outputs too, in this version). R1 and R2, the two relays of the Eco-Devices 3; add :light for a light, e.g. "R1, R2:light". A relay listed here obeys every "turn everything off" of Google, Alexa, the MCP and the scenes: never list a pump, a freezer, a ventilation, a heating, a door strike nor a valve. List them before creating them in Discover; a relay already created stays read only until you click "Update" on it in Discover. |
@@ -332,7 +365,7 @@ Diese Einstellungen fragt Eco-Devices 3 in seinem Konfigurationsbildschirm in Gl
 ## So installierst du Eco-Devices 3 in Gladys
 
 1. Öffne in Gladys **Integrationen**: Eco-Devices 3 erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
-2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-ecodevices-ed3:0.1.2`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-ecodevices-ed3:0.2.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
 3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
 4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-ecodevices-ed3](https://github.com/LM1LC3N7/gladys-ecodevices-ed3).
 

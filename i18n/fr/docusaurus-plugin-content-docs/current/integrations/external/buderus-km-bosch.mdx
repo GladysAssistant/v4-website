@@ -1,0 +1,263 @@
+---
+title: "Intégration domotique Buderus KM (Bosch), gratuite et open source"
+sidebar_label: "Buderus KM (Bosch)"
+description: "Passerelles Buderus KM50/KM100/KM200 en local : chauffage, eau chaude, commandes au choix. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-bosch-thermostat.png"
+keywords:
+  - "buderus km (bosch)"
+  - "domotique buderus km (bosch)"
+  - "gladys buderus km (bosch)"
+  - "buderus km (bosch) gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-bosch-thermostat instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Buderus KM (Bosch)","description":"Passerelles Buderus KM50/KM100/KM200 en local : chauffage, eau chaude, commandes au choix.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-bosch-thermostat","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-bosch-thermostat.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-06T04:07:02Z"}} />
+
+Cette intégration affiche dans Gladys une chaudière ou une pompe à chaleur
+**Buderus** (groupe Bosch) par sa passerelle réseau **KM50, KM100 ou KM200**
+(et les passerelles IVT qui parlent le même protocole), sur votre réseau
+local, sans cloud.
+
+**Jamais testé avec une vraie passerelle** : le protocole local n'est pas
+documenté par Buderus ; l'intégration suit bosch-thermostat-client (la
+bibliothèque utilisée par l'intégration Bosch de Home Assistant) et ses bases
+de régulateurs (RC300, RC200, RC35, CAN, iCom). Sans lien avec Bosch ni
+Buderus. Vos retours sont les bienvenus.
+
+Les passerelles récentes (MX300, MX400, appli MyBuderus / HomeCom Easy)
+passent par le cloud de Bosch et ne sont pas lues ici : l'intégration
+[gladys-bosch-homecom](https://github.com/guim31/gladys-bosch-homecom) de
+guim31 s'en charge.
+
+## Ce que vous obtenez
+
+Un appareil Gladys par passerelle, lu toutes les 60 s par défaut :
+
+- températures extérieure et de départ, pression de l'installation ;
+- pour chaque **circuit de chauffage** (hc1 à hc4) : température ambiante,
+  consigne ambiante, mode (manuel, automatique, jour, nuit... selon le
+  régulateur) ;
+- pour chaque **circuit d'eau chaude** (dhw1, dhw2) : température de l'eau,
+  consigne, mode (Arrêt, Confort, Réduit, Éco, programme...) ;
+- état de la liaison (« OK », « Passerelle injoignable », un arrêt depuis
+  Gladys en cours...).
+
+Une fonctionnalité apparaît dès que la passerelle donne sa valeur (un circuit
+listé mais sans mode, une sonde absente n'en créent pas) et ne disparaît plus
+ensuite. Les modes proposés sont ceux que liste le circuit lors de l'ajout de
+l'appareil.
+
+## Configuration
+
+1. Trouvez l'adresse de la passerelle sur votre réseau (dans votre box), par
+   exemple `192.168.1.50`. Fixez-la (bail DHCP réservé).
+2. Relevez le **code d'accès** (« Access token » ou « Login token ») imprimé
+   sur l'étiquette de la passerelle, et le **mot de passe** choisi dans
+   l'application Buderus (MyDevice, EasyControl) à la mise en service.
+3. Dans Gladys, ouvrez la configuration de l'intégration, saisissez
+   l'adresse (avec `:port` si ce n'est pas 80), le code d'accès et le mot de
+   passe. Un mot de passe sans code d'accès est refusé.
+4. Enregistrez, puis ajoutez l'appareil depuis l'onglet **Découverte**.
+
+Le code d'accès et le mot de passe sont gardés par Gladys dans sa base,
+jamais réaffichés ; ils ne circulent pas sur le réseau : ils forment la clé
+AES des échanges. La passerelle et l'intégration échangent en http simple sur
+votre réseau, chaque message passant en AES avec cette clé (le protocole de
+la passerelle). Une erreur de l'un ou de l'autre se voit tout de
+suite : les réponses ne s'ouvrent pas, l'état le dit et les lectures
+s'arrêtent jusqu'à ce que vous les corrigiez.
+
+L'intégration se présente à la passerelle avec l'en-tête
+`User-Agent: TeleHeater`, celui de l'application Buderus, que la passerelle
+attend (comme bosch-thermostat-client) ; Louis l'a accepté pour cette
+intégration seulement, le 2026-11-05.
+
+Le bouton **Tester la connexion** lit la passerelle une fois, mais jamais
+plus tôt que l'intervalle de rafraîchissement après la lecture précédente.
+
+## Les commandes
+
+Par défaut, Gladys ne fait que lire. L'option **Autoriser les modes et les
+consignes** (désactivée par défaut) permet au tableau de bord, aux scènes et
+aux assistants vocaux de :
+
+- changer le **mode** d'un circuit, parmi ceux qu'il liste ;
+- changer la **consigne ambiante** d'un circuit de chauffage, par demi-degré,
+  entre 5 et 30 °C et dans les bornes que la passerelle donne pour la
+  consigne du mode en cours (manuel : consigne manuelle ; automatique :
+  consigne temporaire jusqu'au prochain changement du programme ; jour ou
+  nuit sur les régulateurs RC35) ;
+- changer la **consigne d'eau chaude**, en degrés entiers, celle du mode en
+  cours (Confort, Réduit, Éco, Marche), dans les bornes de la passerelle,
+  entre 20 °C et le plafond configuré : **65 °C par défaut, de 40 à 65 °C,
+  65 °C au plus** quoi qu'on saisisse ou que la passerelle autorise (risque
+  de brûlure).
+
+Dans un mode sans consigne propre (un programme, l'arrêt), la consigne est
+refusée sans rien envoyer : choisissez d'abord un mode fixe.
+
+Ce ne sont ni des interrupteurs ni des binaires : un « tout éteindre » d'une
+scène ou d'un assistant vocal n'atteint pas la chaudière.
+
+Chaque commande relit d'abord la passerelle (son identité, le mode du
+circuit, la consigne de ce mode avec ses bornes) et décide sur cette lecture,
+jamais sur les valeurs gardées en mémoire ; les commandes arrivées ensemble
+(une scène) partagent cette relecture, partent une à une, puis chacune est
+relue. Une commande part au plus tard 3,5 s après le clic, sinon elle est
+refusée sans rien envoyer. Elle n'est annoncée réussie que si une lecture
+faite après elle, avant 4,3 s, montre la valeur demandée ; sinon Gladys
+affiche « envoyée et acceptée, pas encore appliquée » (ou « envoyée, sans
+confirmation » si la passerelle n'a pas répondu), et les lectures de suivi,
+5 s et 20 s plus tard, publient la valeur dès qu'elle apparaît. Au-delà de 4
+commandes en attente, elles sont refusées. Un refus HTTP 4xx d'une commande
+ne concerne qu'elle : les lectures continuent.
+
+Une consigne est refusée tant qu'un arrêt de son circuit envoyé depuis
+Gladys tient (voir ci-dessous) : choisissez d'abord un autre mode. Quand
+/data ne peut être lu, modes et consignes sont refusés (un arrêt gardé y
+serait inconnu).
+
+## L'arrêt
+
+Choisir un mode **« Arrêt »** (`off`, `Off`, `Always_Off`, `heating_off` selon
+le régulateur, surtout pour l'eau chaude) n'a pas besoin de l'option.
+
+**Le chauffage d'un régulateur RC300 ou RC200 ne peut pas être arrêté depuis
+Gladys dans cette version** : ses circuits ne proposent pas de mode arrêt
+(seulement manuel et automatique). Baissez sa consigne (avec l'option), ou
+arrêtez-le sur le régulateur ou dans l'application.
+
+L'arrêt part sans attendre une
+lecture, devant toute autre requête : une lecture en cours est interrompue,
+les commandes pas encore envoyées sont annulées (rien de ce qui a été demandé
+avant l'arrêt ne part après lui). Ni l'option, ni les bornes, ni une pause
+demandée par la passerelle (HTTP 429/5xx), ni des identifiants refusés
+auparavant (un essai), ni /data illisible ou bloqué, ni un appareil pas
+encore lu ne le retiennent.
+
+Il est refusé dans ces trois cas seulement :
+
+- la configuration de l'intégration n'est pas valide, ou n'a pas encore pu
+  être lue depuis le démarrage de l'intégration ;
+- la valeur n'est pas un mode que le circuit liste (ceux du sélecteur créé,
+  ou de la dernière lecture) ;
+- la dernière lecture a montré une **autre** passerelle à cette adresse (un
+  identifiant différent).
+
+Seule une réponse de la passerelle compte comme un essai. Quand il ne peut
+pas partir (passerelle injoignable, coupure), il est retenté pendant 250 ms,
+puis gardé dans /data et renvoyé en tête de chaque lecture suivante, sans
+limite, jusqu'à ce que la passerelle y réponde : il part donc à la première
+lecture qui la joint, et dès le redémarrage de l'intégration ou un
+changement de configuration. Parti sans réponse (délai dépassé, coupure) ou
+refusé en HTTP 429/5xx, il est renvoyé de même, sans être compté. Il n'est
+pas renvoyé à une autre passerelle lue à l'adresse. Quand la passerelle le
+refuse en HTTP 4xx alors qu'elle accepte les lectures, il est renvoyé 2 fois
+au plus, puis l'état le dit. Cliqué alors que le code d'accès ou le mot de
+passe sont refusés, il est envoyé une fois (la passerelle ne peut peut-être
+pas le lire), gardé, et renvoyé en tête dès que d'autres identifiants sont
+enregistrés ou que le bouton passe.
+
+Il est annoncé réussi quand une lecture partie après lui montre le circuit
+en mode arrêt. Une fois vu appliqué, plus rien n'est renvoyé. Si une lecture
+partie après lui montre encore un autre mode, il est renvoyé, 3 fois au plus
+(seuls les envois qui ont reçu une réponse comptent), puis l'état le dit.
+
+L'arrêt depuis Gladys est gardé dans /data, sans limite de durée. Il est levé
+seulement par le choix d'un autre mode depuis Gladys (avec l'option ; la
+levée est écrite dans /data avant l'envoi), ou quand, une fois l'arrêt vu
+appliqué, un autre mode est lu deux fois de suite (changé sur le régulateur
+ou par l'application).
+
+## État et erreurs
+
+- **Code d'accès ou mot de passe refusés** (réponses qui ne s'ouvrent pas
+  avec la clé) : les lectures s'arrêtent, sans nouvel essai automatique ;
+  enregistrez d'autres identifiants ou utilisez « Tester la connexion ».
+- **La passerelle demande de ralentir** (HTTP 429 ou 5xx) : pause de 1 min à
+  6 h, gardée dans /data, pour tout sauf l'arrêt.
+- **Passerelle injoignable** : nouvel essai après 1, 2, 5 puis 10 min, jamais
+  plus tôt que l'intervalle ; l'état de la liaison le dit, et les valeurs de
+  plus de deux intervalles ne sont plus republiées.
+- **Valeur absente** (HTTP 404 d'un chemin que le régulateur n'a pas) : la
+  valeur est laissée de côté, les autres sont lues.
+- **Une autre passerelle répond à l'adresse** : ses valeurs ne vont pas sur
+  l'appareil créé ; elle apparaît comme un nouvel appareil dans Découverte.
+
+L'identité de l'appareil est une empreinte de l'identifiant (`uuid`, le
+numéro de série) de la passerelle ; l'identifiant lui-même n'est ni publié ni
+gardé.
+
+## Ce qui est gardé dans /data
+
+`bosch-km-state.json` : une pause en cours, un refus des identifiants (avec
+8 bits d'une empreinte salée, de quoi savoir s'ils ont changé, pas de quoi
+retrouver un mot de passe), l'heure de la dernière lecture (un redémarrage ne
+relit pas plus tôt que l'intervalle), les arrêts envoyés depuis Gladys. Aucun
+secret. Une lecture ou une écriture de /data n'est pas attendue plus de
+1,5 s : un volume bloqué compte comme illisible et ne retient pas un arrêt.
+
+## Limites connues
+
+- Une requête par valeur : une quinzaine par lecture pour un circuit de
+  chauffage et un d'eau chaude. Mesuré sur un faux serveur : une scène de
+  quatre commandes (deux modes, deux consignes) est envoyée et confirmée
+  jusqu'à 300 ms par requête ; une commande seule jusqu'à 800 ms. Au-delà,
+  Gladys affiche « pas encore appliquée » ou « rien envoyé », et les lectures
+  de suivi publient la valeur.
+- Le chauffage des régulateurs RC300/RC200 ne peut pas être arrêté depuis
+  Gladys (pas de mode arrêt dans leurs circuits ; le mode été/hiver qui le
+  ferait n'est pas dans cette version).
+- Programmes horaires, mode été/hiver, charge unique d'eau chaude, énergie,
+  circuits solaires, passerelles EasyControl et Nefit : pas dans cette
+  version.
+
+## Crédits
+
+Le protocole local (clé, AES, chemins, consignes par mode) est porté de
+[bosch-thermostat-client](https://github.com/bosch-thermostat/bosch-thermostat-client-python)
+(Pawel Szafer et contributeurs, licence Apache 2.0) ; voir
+THIRD_PARTY_NOTICES.md.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Buderus KM (Bosch) dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre passerelle Buderus KM | `section` | Non | Affiche dans Gladys une chaudière ou une pompe à chaleur Buderus (groupe Bosch) par sa passerelle KM50, KM100 ou KM200 (et les passerelles IVT du même protocole), sur votre réseau local, sans cloud : températures extérieure et de départ, pression, et pour chaque circuit de chauffage et d'eau chaude sa température, sa consigne et son mode, modifiables depuis Gladys en option. Saisissez l'adresse de la passerelle, le code d'accès imprimé dessus et le mot de passe défini dans l'application Buderus, enregistrez, puis ajoutez l'appareil depuis l'onglet Découverte. Jamais testé avec une vraie passerelle. Sans lien avec Bosch ni Buderus. |
+| Adresse de la passerelle | `string` | Oui | Son adresse IPv4 ou son nom d'hôte sur votre réseau, avec un port s'il n'est pas 80 (http simple, comme la passerelle répond). Donnez-lui une adresse fixe dans votre box. |
+| Code d'accès (imprimé sur la passerelle) | `secret` | Oui | Le « Access token » (ou « Login token ») de l'étiquette de la passerelle, par exemple AbCd-EfGh-IjKl-MnOp ; les tirets sont facultatifs. Gardé par Gladys dans sa base, jamais réaffiché, jamais envoyé : il sert seulement à former la clé des échanges avec la passerelle. |
+| Mot de passe défini dans l'application Buderus | `secret` | Oui | Le mot de passe choisi dans l'application Buderus (MyDevice, EasyControl) à la première mise en service de la passerelle. Gardé par Gladys dans sa base, jamais réaffiché, jamais envoyé : il sert seulement à former la clé des échanges avec la passerelle. |
+| Commandes | `section` | Non | Par défaut Gladys ne fait que lire. Une fois autorisés, le tableau de bord, les scènes et les assistants vocaux peuvent changer le mode de chaque circuit et les consignes de pièce et d'eau chaude, toujours dans les bornes que donne la passerelle et celles ci-dessous. Un mode « Arrêt » (off, Off, Always_Off, heating_off, proposé par certains circuits, surtout l'eau chaude) n'a pas besoin d'option : il arrête ce circuit ; le guide liste les cas où il est encore refusé. Le chauffage d'un régulateur RC300/RC200 ne propose pas de mode arrêt : il ne peut pas être arrêté depuis Gladys dans cette version (baissez sa consigne, ou passez par le régulateur ou l'application). |
+| Autoriser les modes et les consignes | `boolean` | Non | Désactivé par défaut. Désactivé : tout mode autre que « Arrêt » et tout changement de consigne sont refusés. Un mode « Arrêt » n'est jamais refusé pour cette raison. |
+| Plafond des consignes d'eau chaude (°C) | `number` | Non | Gladys ne règle jamais l'eau chaude au-dessus de cette température (risque de brûlure). 65 °C par défaut, de 40 à 65 °C (jamais plus de 65 °C, quoi qu'on saisisse ; le maximum de la passerelle s'applique s'il est plus bas). Le plancher est de 20 °C. |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture de la passerelle, en secondes (une requête par valeur : une quinzaine pour un circuit de chauffage et un d'eau chaude). |
+| Langue des noms des fonctionnalités | `select` | Non | Sert aux noms de l'appareil et des fonctionnalités ajoutés désormais, aux libellés des modes, aux textes d'état et aux erreurs des commandes. |
+
+## Comment installer Buderus KM (Bosch) dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Buderus KM (Bosch) apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-bosch-thermostat:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-bosch-thermostat](https://github.com/LM1LC3N7/gladys-bosch-thermostat).
+
+Buderus KM (Bosch) nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Buderus KM (Bosch) est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-bosch-thermostat) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-bosch-thermostat/blob/HEAD/docs/fr.md)

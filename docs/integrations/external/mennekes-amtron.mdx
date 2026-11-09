@@ -1,0 +1,226 @@
+---
+title: "MENNEKES AMTRON smart home integration, free and open source"
+sidebar_label: "MENNEKES AMTRON"
+description: "MENNEKES AMTRON charger over Modbus TCP: state, power, energy, pause; optional commands. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-mennekes-amtron.png"
+keywords:
+  - "mennekes amtron"
+  - "mennekes amtron smart home"
+  - "gladys mennekes amtron"
+  - "mennekes amtron gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-mennekes-amtron instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"MENNEKES AMTRON","description":"MENNEKES AMTRON charger over Modbus TCP: state, power, energy, pause; optional commands.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-mennekes-amtron","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-mennekes-amtron.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-05T19:39:30Z"}} />
+
+This integration shows a **MENNEKES AMTRON 4You 400/500 or 4Business 600/700**
+EV charger in Gladys, read on your local network through **Modbus TCP**
+(port 502), without any cloud. It can pause the charge, and, only if you allow
+it, resume it and set the charging current.
+
+> **Never tested with a real device.** It was built from the register document
+> MENNEKES publishes ("AMTRON 4You 500 / 4Business 700 - Modbus TCP Server -
+> Data Points", protocol 1.5, firmware 1.5.21) and from mennekes-amtron-ha
+> (MIT), and tested against a simulated charger. Unofficial:
+> **not affiliated with MENNEKES**.
+
+## Before you start
+
+1. In the **installer menu** of the charger, enable the **Modbus TCP server**
+   in **"HEMS read and write"** mode (register 2010 = 2). In "read only" mode
+   Gladys shows the values but the charger refuses the pause and the commands
+   (the status says so).
+2. Give the charger a **fixed IP address** on your router.
+3. The charger serves **one Modbus client at a time**: Gladys opens one short
+   connection per read and closes it, but do not let another energy manager
+   hold the connection.
+4. Modbus TCP has **no password**: anyone on your network can read and
+   control the charger. Keep it on a **trusted network** (no port forwarding
+   to the internet).
+
+## Configuration
+
+| Field                        | Meaning                                                                                   |
+| ---------------------------- | ----------------------------------------------------------------------------------------- |
+| IP address of the charger    | Modbus port 502 unless you add one (`192.168.1.80:502`).                                  |
+| Port of the web interface    | 80 unless changed: Gladys reads the serial number there (`/api/v1/PublicInfo`, no login). |
+| Allow resume and current     | Off by default: see "Resume and current" below.                                           |
+| Highest charging current (A) | 6 to 16 A (16 by default): the most Gladys may set (the document's range, every model).   |
+| Refresh interval             | Seconds between two reads (30 by default, 10 at least); see "Safe Current" below.         |
+| Language                     | Names of the device and features added from now on, status and errors.                    |
+
+Save, then add the charger from the **Discovery** tab.
+
+The Modbus map has no serial number: Gladys reads it on the web interface of
+the charger (no login) with **every read** and before every command, at the
+very address the Modbus connection reached, and keeps it with the model name
+the charger gives over Modbus. The device is keyed on that **serial number**:
+another serial number at the address is another device (the old one shows
+unreachable), and its values never go to the first one. When the web page
+cannot be read, that is not another charger: the read is published if the
+device says over Modbus it is an AMTRON (register 141 = "AM") with the same
+model, else nothing is published until the serial number is read again.
+Until the serial number has been read once, nothing is published (the status
+says why).
+
+The **Test the connection** button reads the charger once, never sooner than
+the refresh interval after the last read (it then shows the last result).
+
+## What you get
+
+| Feature                        | Gladys category               | Note                                                      |
+| ------------------------------ | ----------------------------- | --------------------------------------------------------- |
+| Charge point status            | text                          | OCPP status: Available, Preparing, Charging, SuspendedEV… |
+| Connector, charging state      | charging station              | from the OCPP status                                      |
+| Vehicle plugged in             | EV charge                     | from the control pilot (A: no vehicle)                    |
+| Error                          | binary sensor                 | 1 when an error code is set                               |
+| Paused by the limit            | binary sensor                 | the HEMS current limit is below 6 A                       |
+| Charging power                 | energy sensor, W              |                                                           |
+| Current and voltage L1, L2, L3 | energy sensor, A and V        | a phase at 0 V (not connected) is left unknown            |
+| Energy meter                   | energy sensor, index (kWh)    | the meter total of the charger, guarded (below)           |
+| Energy of the session          | EV charge, kWh                | stays at its maximum until the next session               |
+| Duration of the session        | duration, minutes             |                                                           |
+| Current offered to the vehicle | EV charge, A                  |                                                           |
+| Current limit set (HEMS)       | EV charge, A                  | register 2000                                             |
+| Pause / Resume charging        | buttons                       | see below                                                 |
+| Charging current               | selection, 6 A to the ceiling | see below                                                 |
+
+A value that is implausible or not read is left unknown, never published as 0
+or as an old value. If an optional block (session, Safe Current, minimum
+current…) does not answer, the other values are published all the same (the
+status lists what was not read).
+
+### Energy meter
+
+Gladys counts every rise of an index as consumption. So the meter is **never
+published at 0**, and a **drop** (reset, charger replaced) or a **jump** larger
+than the charger can draw (25 kW) is **held back**: nothing is published for
+it, the status says so with its values, whatever the time. If it is real,
+press **Accept the held index**: the first press shows it, a second press 3 s
+to 5 minutes later accepts exactly that value.
+
+## Pause charging
+
+**Pause charging** writes the HEMS current limit to 0 A (register 2000). It
+**does not depend on the option**, nor on the value sent by the button, a read
+in progress (it ends it), a command waiting (it goes first; the commands
+clicked before it and not sent yet are dropped), a failed read, a backoff, an
+identity that cannot be read, nor a configuration Gladys cannot read yet (it
+then goes to the charger of the last read).
+
+The pause answers an error only in these cases:
+
+- no address is known (none in the configuration, or the configuration cannot
+  be read and no charger was ever read);
+- the charger cannot be reached for 3 s (connection tried again every
+  250 ms): "could not leave yet", the pause is **kept** and tried again every
+  15 s;
+- the charger refuses the write (Modbus TCP server not in "HEMS read and
+  write" mode, or a firmware without register 2000): kept and written again
+  every 15 s;
+- it was sent but the read back does not show it yet: "sent, without
+  confirmation".
+
+A pause not seen applied is **kept** in `/data`, one per charger (also across
+a restart: it is written again at the start, before anything else, even when
+`/data` is slow to read) and checked every 15 s: written again while the
+charger shows the limit it replaced, an unknown limit or nothing. It is let go
+only in these three cases:
+
+- the charger it was sent to shows the pause (a limit below 6 A);
+- another limit set elsewhere is read twice in a row on that charger after
+  the pause was written (a newer choice is respected; a pause not written yet
+  is never let go this way);
+- a newer current or resume clicked in Gladys left for that same charger.
+
+It is never let go by time, because it could not leave (charger down,
+`/data` stuck), nor by a pause or a command sent to another address: a pause
+held for an old address (the configuration changed) is still checked every
+15 s, with its note in the status, until it is seen applied. While a
+pause is held, "Charging current" and "Resume" always write (never "already
+done"), and that write lets the pause go.
+
+### Safe Current
+
+In "HEMS read and write" mode the charger watches the communication: after
+its **communication timeout** (register 132) without a read or a write, it
+applies its **Safe Current** (register 131). If the Safe Current is above the
+limit set (a pause included), the charge would start again. So, while that is
+the case (or while 131 and 132 cannot be read during a pause), Gladys reads
+the charger at least every half timeout, a failed read tried again within 5 s, a read
+that finds the line taken tried again within a second,
+and at once after a restart (the pace is kept in `/data`), and the status
+warns that the pause holds only while Gladys reads the charger. The half
+timeout is taken as 5 s at the least: a communication timeout under 10 s
+cannot be kept. To keep a pause even when Gladys is stopped, set
+the Safe Current to 0 A in the installer menu. Gladys never writes these two
+registers.
+
+## Resume and current
+
+Off by default. With **Allow resume and current** on, Gladys may:
+
+- **Resume charging**: writes back the charging current read before the
+  pause (refused when none was read; choose one with the selection);
+- set the **charging current**: 6 A up to the configured ceiling, 16 A at
+  most for every model, never below the minimum current the charger gives
+  (register 712). The MENNEKES document gives 6 A to 16 A for register 2000;
+  above 16 A on a 22 kW model is not in it, so Gladys never writes it.
+
+Before each command Gladys reads the serial number on the web interface
+(another charger, or one that cannot be read, refuses the command), then, in
+the same Modbus connection, the Device Id, the model, the HEMS mode and the
+current limit. It refuses while a pause is being sent, checks the option and
+the configuration again right before the write, and **confirms only by a read
+back** showing the value asked. Otherwise it says "sent, without confirmation"
+(check in a few seconds) or "nothing sent". Commands go one at a time, in
+their order of arrival; one waiting its turn starts within 15 s or not at all.
+
+## Data kept
+
+`/data/mennekes-amtron-state.json` (readable by the integration only): the
+time of the last read, the charger of the last read, its serial number and
+model, the pauses not seen applied, the pace of reads while a limit below the
+Safe Current is set, the guard of the energy meter and the current "Resume"
+sets again. No password, no personal data.
+
+## Configuration settings
+
+These are the settings MENNEKES AMTRON asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your MENNEKES AMTRON charger | `section` | No | Shows your AMTRON 4You 400/500 or 4Business 600/700 charger in Gladys over Modbus TCP on your local network, without any cloud: state, vehicle plugged in, power, current and voltage per phase, energy meter, energy and duration of the session. In the installer menu of the charger, set the Modbus TCP server to "HEMS read and write"; give the charger a fixed address, enter it below, save, then add it from the Discovery tab. Pausing the charge is always possible; resuming it and the charging current only if you allow them below. The charger serves one Modbus client at a time and Modbus TCP has no password: keep it on a trusted network. Never tested with a real device. Not affiliated with MENNEKES. |
+| IP address of the charger | `string` | Yes | An IPv4 address or a host name (Modbus port 502 unless you add one, for example 192.168.1.80:502). |
+| Port of the web interface | `number` | No | The HTTP port of the charger's web interface, where Gladys reads its serial number (no login): 80 unless changed. |
+| Allow resume and current | `boolean` | No | Off by default. On: Gladys may resume the charge and set the charging current (6 A up to the ceiling below). Off: these commands are refused. Pausing the charge never depends on this option. |
+| Highest charging current (A) | `number` | No | The highest current Gladys may set, 6 to 16 A (16 by default): the range the MENNEKES document gives for every model, a 22 kW one included. The charger also applies the limit of its installation. |
+| Refresh interval (s) | `number` | No | How often the charger is read, in seconds. While a limit below the Safe Current is set, Gladys reads it at least every half communication timeout of the charger (5 s at the least), also after a failed read and a restart. |
+| Language of the feature names | `select` | No | Used for the names of the device and features added from now on, the status and the command errors. |
+
+## How to install MENNEKES AMTRON in Gladys
+
+1. In Gladys, open **Integrations**: MENNEKES AMTRON appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-mennekes-amtron:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-mennekes-amtron](https://github.com/LM1LC3N7/gladys-mennekes-amtron).
+
+MENNEKES AMTRON requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+MENNEKES AMTRON is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-mennekes-amtron) — [source of this documentation](https://github.com/LM1LC3N7/gladys-mennekes-amtron/blob/HEAD/docs/en.md)

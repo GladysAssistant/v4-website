@@ -19,40 +19,41 @@ https://github.com/guim31/gladys-ista instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"ista Web'conso (France)","description":"Heat cost allocators and water meters read by ista in France, from the Web'conso resident portal.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-ista","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-ista.png","type":"device","version":"1.0.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-29T19:23:21Z"}} />
+<ExternalIntegrationHeader integration={{"name":"ista Web'conso (France)","description":"Heat cost allocators and water meters read by ista in France, from the Web'conso resident portal.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-ista","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-ista.png","type":"device","version":"1.1.3","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-08T23:12:50Z"}} />
 
 Brings into Gladys the readings that **ista** takes remotely in your building:
-the **heat cost allocators** on your radiators and, when the portal provides
-them, your **water meters**. The data comes from the ista resident portal
+your **water meters** and, when the portal offers them, the **heat cost
+allocators** on your radiators. The data comes from the ista resident portal
 [ista-webconso.fr](https://www.ista-webconso.fr) ("Mon espace résident").
 
 > **Not affiliated with ista.** ista and Web'conso are trademarks of their
 > owners. This integration is an independent project.
 >
-> **Developed without an account: feedback welcome.** Nobody has tested it
-> against a real Web'conso account yet. It is the most fragile kind of
-> integration: there is no public API, so it reads the portal the way your
-> browser does, and it can stop working the day ista changes its website.
+> **Water checked on a real account, heating not yet.** The water readings
+> follow pages a resident shared in November 2026; the heating readings have
+> not been seen working yet. It is the most fragile kind of integration: there
+> is no public API, so it reads the portal the way your browser does, and it
+> can stop working the day ista changes its website.
 
 ## What you get
 
 One device, **ista dwelling**, with:
 
-| Feature                                | Gladys type | Unit | What it is                                                                                        |
-| -------------------------------------- | ----------- | ---- | ------------------------------------------------------------------------------------------------- |
-| Heating units of the day               | Counter     | none | The units of all your radiators for the day, weighted by each radiator's coefficient (as billed). |
-| Radiator _room_ — no. _serial_ (each)  | Counter     | none | The index shown on that radiator's allocator.                                                     |
-| Cold water / Hot water _room_ (each)   | Volume      | m³   | The cumulative index of that meter. **Unverified**, see the limits.                               |
-| Cold water — total / Hot water — total | Volume      | m³   | The sum of the indexes, when the dwelling has several meters of that fluid.                       |
+| Feature                                             | Gladys type | Unit | What it is                                                                                |
+| --------------------------------------------------- | ----------- | ---- | ----------------------------------------------------------------------------------------- |
+| Heating units of the day                            | Counter     | none | The units of all your radiators over the latest day read. **Unverified**, see the limits. |
+| Radiator _room_ — no. _serial_ (each)               | Counter     | none | The index shown on that radiator's allocator. **Unverified**, see the limits.             |
+| Cold water / Hot water _room_ — no. _number_ (each) | Volume      | m³   | The cumulative index of that meter, as the portal reads it (real or estimated).           |
+| Cold water — total / Hot water — total              | Volume      | m³   | The sum of the indexes, when the dwelling has several meters of that fluid.               |
 
 Heating units have **no physical unit**: an allocator does not measure
 energy, it only shares the building's heating bill out between dwellings. So
 they are shown as plain counters, without kWh.
 
-Each reading is **dated with its own day**, even when the portal publishes it
-several days late: the Gladys charts show the consumption on the day it
-happened, not on the day it was fetched. When the device is created, the last
-7 days already read are sent to it.
+Each reading is **dated with its reading date**, which is usually a few days
+old: the Gladys charts show the index on the day it was read, not on the day
+it was fetched. When the device is created, the recent readings already
+fetched are sent to it.
 
 A **dashboard widget**, "ista consumption", shows the heating units of the
 latest day, the water indexes, a bar chart of the heating units per day and
@@ -88,27 +89,30 @@ sign out, or after some time without activity), and you must paste a new one.
 5. In Gladys: **Sign-in method** → **Session cookie**, paste the text in
    **Session cookie**, save, and click **Test the connection and read now**.
 
-Since each run catches up on the last 7 days, pasting a fresh cookie once a
-week is enough to keep the history complete.
+The indexes are cumulative: after an expired cookie, the next reading catches
+up on the consumption; only the days in between have no point in the charts.
 
 ## How often the portal is read
 
 The portal is read every **12 hours** by default, adjustable from **3 to 24
 hours** (**Reading interval**). ista updates the readings **once a day at
-most**, and many buildings are only read **once a week**: reading more often
-brings nothing and only loads the portal. Each run asks only for the days not
-read yet, one small request per day and per fluid, with a pause between them.
+most**, usually with a delay of a few days: reading more often brings nothing
+and only loads the portal. Each run opens the portal's **index on demand**
+page and, when it offers a newer reading date, asks for the indexes of that
+date: two small requests (three with heating), only one when nothing is new.
 
 ## Limits
 
-- **Sign-in partly verified.** The portal sends the browser to ista's sign-in
-  page (`login.ista.com`). The integration follows the same steps, and this
-  was checked on the live portal up to the refusal of a made-up account (no
-  captcha). A successful sign-in with a real account has not been seen yet.
-- **Water not verified.** The heating page is known from a public project
-  that read it in 2025. The water pages are a guess: when the portal refuses
-  them, no water feature appears, and the connection test counts 0 water meters. If your water does not
-  show up, please report it.
+- **Sign-in verified.** The portal sends the browser to ista's sign-in page
+  (`login.ista.com`); the integration follows the same steps. A resident
+  signed in with it in November 2026, with the password and with the cookie.
+- **Heating not verified.** The heating readings use the heating tab of the
+  same page, known from the portal's script only: nobody has seen it answer
+  yet. If heating is listed for your dwelling but does not show up, the logs
+  say so: please report it.
+- **Estimated indexes.** The portal marks some indexes as estimated (a meter
+  that did not answer the radio reading); they are published as the portal
+  shows them, and the next real reading takes over.
 - **One dwelling per account.** An account with several dwellings shows their
   meters in one device.
 - **Index reset.** Allocators usually restart from zero at the yearly reading:
@@ -160,7 +164,7 @@ These are the settings ista Web'conso (France) asks for in its configuration scr
 ## How to install ista Web'conso (France) in Gladys
 
 1. In Gladys, open **Integrations**: ista Web'conso (France) appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-ista:1.0.2`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-ista:1.1.3`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-ista](https://github.com/guim31/gladys-ista).
 

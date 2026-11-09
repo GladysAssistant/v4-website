@@ -19,7 +19,7 @@ https://github.com/gboulvin/Gladys-Tasmota instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Tasmota","description":"Pilotez vos appareils Tasmota en local (MQTT ou HTTP) : relais, lampes, énergie, capteurs.","owner":"gboulvin","owner_avatar_url":"https://avatars.githubusercontent.com/u/78817935?v=4","repo_url":"https://github.com/gboulvin/Gladys-Tasmota","cover_url":"https://integration-store-storage.gladysassistant.com/covers/gboulvin--Gladys-Tasmota.png","type":"device","version":"1.1.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-10-26T08:43:51Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Tasmota","description":"Pilotez vos appareils Tasmota en local (MQTT ou HTTP) : relais, lampes, énergie, capteurs.","owner":"gboulvin","owner_avatar_url":"https://avatars.githubusercontent.com/u/78817935?v=4","repo_url":"https://github.com/gboulvin/Gladys-Tasmota","cover_url":"https://integration-store-storage.gladysassistant.com/covers/gboulvin--Gladys-Tasmota.png","type":"device","version":"1.2.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-06T10:34:59Z"}} />
 
 Pilotez vos appareils [Tasmota](https://tasmota.github.io/) depuis Gladys, **100 % en local** :
 prises, relais, ampoules et rubans LED, variateurs, volets, ventilateurs, compteurs d'énergie et
@@ -41,7 +41,8 @@ capteurs. Aucun cloud.
   indice UV, humidité du sol, entrées analogiques, compteurs d'impulsions, entrées interrupteur,
   température de la puce, signal Wi-Fi et durée de fonctionnement.
 - **Déclencheurs de scène** : bouton appuyé (simple, double, triple… appui long), entrée
-  interrupteur changée, code RF reçu (Sonoff RF Bridge), code IR reçu, appareil en ligne / hors
+  interrupteur changée, code RF reçu (Sonoff RF Bridge), code IR reçu, **badge RFID lu** (RC522, PN532, RDM6300,
+  Wiegand), appareil en ligne / hors
   ligne.
 - **Actions de scène** : envoyer n'importe quelle commande Tasmota (Backlog, RfSend, IRSend,
   Rule…), allumer un relais un moment, faire clignoter une lampe, redémarrer un appareil.
@@ -144,12 +145,37 @@ D'ici là, les deux intégrations peuvent fonctionner côte à côte.
      modules de lampe, les autres arrivaient comme interrupteur. Cette intégration reconnaît la
      lampe : associez _Switch_ à _Light_.
 
+   Astuce : avant de migrer, donnez à chaque relais le type qu'il avait dans l'intégration du cœur
+   avec l'action **Personnaliser une fonctionnalité** : il est alors associé automatiquement.
+
    Une fonctionnalité laissée sans association perd son historique, et les scènes qui l'utilisent
    sont à modifier.
 
 6. Sur un gros historique, la migration prend quelques minutes : suivez-la dans **Paramètres → Tâches**. Si elle s'interrompt, relancez-la : elle ne déplace que ce qui reste.
 
 Une fois tous les appareils migrés, l'intégration Tasmota du cœur n'a plus aucun appareil.
+
+## Renommer une fonctionnalité, faire d'un relais un interrupteur ou une lampe
+
+Gladys permet de renommer un appareil, pas ses fonctionnalités. L'action **Personnaliser une
+fonctionnalité** de l'écran de configuration fait ce que faisait la page d'édition de
+l'intégration du cœur :
+
+- **Appareil** : l'appareil à personnaliser.
+- **Fonctionnalité** : son nom actuel (`Switch 2`, `Power`…) ou, pour un relais, son numéro (`2`).
+- **Nouveau nom** : laissé vide, le nom ne change pas ; `-` remet le nom par défaut.
+- **Type** (relais uniquement) : _Interrupteur_, _Lampe_, ou _Automatique_ pour suivre ce
+  qu'indique Tasmota.
+
+C'est la même fonctionnalité, simplement redéfinie : son historique, les scènes et les tableaux de
+bord qui l'utilisent sont conservés. Gladys applique un changement de type via le bouton **Mettre à
+jour** qui apparaît alors sur l'appareil dans l'onglet **Découverte**. Gladys ne propose ce bouton
+que pour un changement de type : un nouveau nom seul s'applique à la prochaine mise à jour de
+l'appareil, ou quand vous l'ajoutez.
+
+Un appareil réglé dans Tasmota avec `SetOption30 1` (la façon Tasmota de dire « mes relais pilotent
+des lampes ») publie ses relais comme lampes, sauf si vous les avez personnalisés. Un relais devenu
+lampe peut être identifié (il clignote deux fois) comme les ampoules.
 
 ## Actions de l'écran de configuration
 
@@ -163,18 +189,27 @@ Une fois tous les appareils migrés, l'intégration Tasmota du cœur n'a plus au
   bouton.
 - **Redémarrer un appareil**.
 - **Passer un appareil en MQTT** — envoie `MqttHost`, `MqttPort`, `MqttUser`, `MqttPassword`.
+- **Personnaliser une fonctionnalité** — renommer une fonctionnalité, faire d'un relais un
+  interrupteur ou une lampe (voir ci-dessus).
 
 ## Scènes
 
 Dans la catégorie **Intégrations** de l'éditeur de scènes (Gladys 5.1 ou plus récent) :
 
-| Déclencheur                            | Réglage Tasmota nécessaire                            | Variables          |
-| -------------------------------------- | ----------------------------------------------------- | ------------------ |
-| Bouton Tasmota appuyé                  | `SetOption73 1` (boutons découplés des relais)        | `button`, `action` |
-| Entrée interrupteur Tasmota changée    | `SetOption114 1` (interrupteurs découplés des relais) | `switch`, `action` |
-| Code RF reçu                           | un RF Bridge (`RfReceived`)                           | `code`, `rf_key`   |
-| Code IR reçu                           | un récepteur IR (`IrReceived`)                        | `code`, `protocol` |
-| Appareil Tasmota en ligne / hors ligne | aucun (LWT en MQTT, échecs de lecture en HTTP)        | `status`           |
+| Déclencheur                            | Réglage Tasmota nécessaire                            | Variables               |
+| -------------------------------------- | ----------------------------------------------------- | ----------------------- |
+| Bouton Tasmota appuyé                  | `SetOption73 1` (boutons découplés des relais)        | `button`, `action`      |
+| Entrée interrupteur Tasmota changée    | `SetOption114 1` (interrupteurs découplés des relais) | `switch`, `action`      |
+| Code RF reçu                           | un RF Bridge (`RfReceived`)                           | `code`, `rf_key`        |
+| Code IR reçu                           | un récepteur IR (`IrReceived`)                        | `code`, `protocol`      |
+| Badge RFID lu                          | un lecteur RC522, PN532, RDM6300 ou Wiegand           | `uid`, `data`, `reader` |
+| Appareil Tasmota en ligne / hors ligne | aucun (LWT en MQTT, échecs de lecture en HTTP)        | `status`                |
+
+Un lecteur RFID reçoit aussi une fonctionnalité texte **Last badge (RC522)** (le dernier badge lu, du nom du lecteur), ajoutée à son appareil à
+la première lecture (cliquez sur **Mettre à jour** dans l'onglet Découverte). L'UID est en
+majuscules (`BA839D07`) : saisissez-le ainsi dans le filtre. Le RC522 demande une version de
+Tasmota compilée avec `USE_RC522` (`Data` et `Type` demandent `USE_RC522_DATA_FUNCTION` et
+`USE_RC522_TYPE_INFORMATION`).
 
 Chaque filtre est facultatif : laissé vide, il accepte tout. Lisez les valeurs dans les actions
 suivantes avec `{{triggerEvent.data.code}}`, par exemple.
@@ -234,7 +269,7 @@ Voici les paramètres demandés par Tasmota dans son écran de configuration dan
 ## Comment installer Tasmota dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Tasmota apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/gboulvin/gladys-tasmota:1.1.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/gboulvin/gladys-tasmota:1.2.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/gboulvin/Gladys-Tasmota](https://github.com/gboulvin/Gladys-Tasmota).
 

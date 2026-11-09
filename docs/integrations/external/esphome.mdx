@@ -19,7 +19,7 @@ https://github.com/William-De71/gladys-esphome instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"ESPHome","description":"Control your ESPHome devices (ESP32/ESP8266) locally, over the native API.","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-esphome","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-esphome.jpg","type":"device","version":"1.3.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-01T20:16:49Z"}} />
+<ExternalIntegrationHeader integration={{"name":"ESPHome","description":"Control your ESPHome devices (ESP32/ESP8266) locally, over the native API.","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-esphome","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-esphome.jpg","type":"device","version":"1.4.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-04T07:24:53Z"}} />
 
 This integration controls your **ESPHome** devices (ESP32, ESP8266) from Gladys Assistant, directly on your local network, through the ESPHome **native API**. No cloud, no MQTT broker, no Home Assistant required.
 
@@ -29,25 +29,36 @@ This integration controls your **ESPHome** devices (ESP32, ESP8266) from Gladys 
 
 Unlike an off-the-shelf device, an ESPHome node exposes exactly what **you** declared in its YAML file. The integration therefore adapts to whatever each node announces:
 
-| ESPHome component | What you get in Gladys                                  |
-| ----------------- | ------------------------------------------------------- |
-| `sensor`          | Numeric sensor (temperature, humidity, power, battery…) |
-| `binary_sensor`   | Binary sensor (motion, opening, presence, leak, smoke…) |
-| `text_sensor`     | Text sensor (read-only)                                 |
-| `text`            | Writable text: send a message to a node (display)       |
-| `switch`          | Switch (on/off)                                         |
-| `light`           | Light: on/off, brightness, color, color temperature     |
-| `cover`           | Cover or curtain: open, close, stop, position           |
-| `fan`             | Fan: on/off and speed                                   |
-| `lock`            | Lock: lock / unlock                                     |
-| `siren`           | Siren: on / off                                         |
-| `valve`           | Valve: open / closed                                    |
-| `button`          | Push button                                             |
-| `number`          | Writable numeric setting (slider)                       |
-| `climate`         | Thermostat: setpoint (single) and measured temperature  |
-| `event`           | No feature: the scene trigger "ESPHome event"           |
+| ESPHome component | What you get in Gladys                                                                 |
+| ----------------- | -------------------------------------------------------------------------------------- |
+| `sensor`          | Numeric sensor (temperature, humidity, power, battery…)                                |
+| `binary_sensor`   | Binary sensor (motion, opening, presence, leak, smoke…)                                |
+| `text_sensor`     | Text sensor (read-only)                                                                |
+| `text`            | Writable text: send a message to a node (display)                                      |
+| `switch`          | Switch (on/off)                                                                        |
+| `light`           | Light: on/off, brightness, color, color temperature                                    |
+| `cover`           | Cover or curtain: open, close, stop, position                                          |
+| `fan`             | Fan: on/off and speed                                                                  |
+| `lock`            | Lock: lock / unlock                                                                    |
+| `siren`           | Siren: on / off                                                                        |
+| `valve`           | Valve: open / closed                                                                   |
+| `button`          | Push button                                                                            |
+| `number`          | Writable numeric setting (slider)                                                      |
+| `climate`         | Thermostat or air conditioner: setpoint, measured temperature, power, mode, fan, swing |
+| `event`           | No feature: the scene trigger "ESPHome event"                                          |
 
 Types Gladys has no equivalent for (`media_player`, `camera`, `select`, `date`…) are simply left out of discovery. An `energy` sensor (in kWh or Wh) is a cumulative index: Gladys computes the consumption and its cost from it.
+
+### Air conditioning (`climate`)
+
+A `climate` entity keeps its setpoint (a single one) and its measured temperature, and also gets the controls of the Gladys **Air conditioning** category, each one only when the firmware declares it:
+
+- **Power**: ESPHome has no separate "on", a unit is on as soon as its mode is not `off`. Turning it on from Gladys resumes the last mode it ran in (or the auto mode when the integration never saw it on).
+- **Mode**: auto, cool, heat, dry, fan (`heat_cool` or `auto`, `cool`, `heat`, `dry`, `fan_only` in ESPHome). Only the modes of your unit are offered. Choosing a mode while the unit is off does not turn it on: it is the mode it will start in.
+- **Fan speed**: auto, quiet, low, medium, high (`auto`, `quiet`, `low`, `medium`, `high`, and `middle` in between). Custom fan modes (`custom_fan_modes`) are not included.
+- **Vertical** and **horizontal swing**: one control per axis, the other axis keeps its setting.
+
+A thermostat already added to Gladys keeps its features: to get the new ones, open the ESPHome discovery and click **Update** on the device.
 
 ### States arrive in real time
 
@@ -79,14 +90,18 @@ If **all** your nodes share the same key (the common case when using a shared `!
 
 ### 2. Nodes with a different key
 
-If some nodes have their own key, fill in **Keys per node**, one node per line:
+If some nodes have their own key, use the **Set a node key** button at the bottom of the integration's configuration page: type the node name (the one from `esphome: name:`) and its key, then confirm. The node is reconnected with that key right away, and the message tells whether it answered. Repeat for each node: the keys already saved are kept.
 
-```
-living_room|kBv1s2f3G4h5J6k7L8m9N0p1Q2r3S4t5U6v7W8x9Y0=
-kitchen|9xQm4Zt6R8s0T2u4V6w8X0y2Z4a6B8c0D2e4F6g8H0=
-```
+- **List the node keys** shows the nodes with a specific key, the key masked (`kBv1…=`), and whether each one is connected.
+- **Remove a node key** puts it back on the default key.
 
-The node name is the one declared in `esphome: name:`. These keys take precedence over the default key.
+These keys take precedence over the default key.
+
+> The **Keys per node** field of the configuration is still there, but it is **a single line**: separate the `node|key` pairs with a space, a comma or a semicolon. On every save, the typed pairs **are added** to the keys already saved, then the field is emptied: typing a new node later no longer makes the others disappear. Quotes copied from the YAML (`key: "…"`) are removed. To remove a key, use **Remove a node key**.
+>
+> ```
+> living_room|kBv1s2f3G4h5J6k7L8m9N0p1Q2r3S4t5U6v7W8x9Y0= kitchen|9xQm4Zt6R8s0T2u4V6w8X0y2Z4a6B8c0D2e4F6g8H0=
+> ```
 
 ### 3. Discover your devices
 
@@ -96,7 +111,7 @@ Discovery uses mDNS (the protocol ESPHome announces itself with). Gladys perform
 
 ### 4. If a node is not found
 
-Some networks block mDNS (separate VLANs, Wi-Fi with client isolation, a router filtering multicast). In that case, declare the node by hand under **Nodes added by hand**, one address per line:
+Some networks block mDNS (separate VLANs, Wi-Fi with client isolation, a router filtering multicast). In that case, declare the node by hand under **Nodes added by hand**, addresses separated by a space, a comma or a semicolon:
 
 ```
 living-room.local
@@ -108,10 +123,10 @@ living-room.local
 
 The port is optional (6053 by default). Once connected, the node reports its real name itself: a node added by IP address still shows up under its ESPHome name, and it keeps working even if its IP address changes later.
 
-> **If that node has an encryption key of its own**, declare it under **Keys per node** using **the same address** you typed here, not its ESPHome name:
+> **If that node has an encryption key of its own**, set it with the **Set a node key** button, typing as the node **the same address** you typed here, not its ESPHome name:
 >
 > ```
-> 192.168.1.42|kBv1s2f3G4h5J6k7L8m9N0p1Q2r3S4t5U6v7W8x9Y0=
+> Node: 192.168.1.42
 > ```
 >
 > The reason is simple: its name is only known once the connection succeeds, and the connection needs the key in the first place. This does not apply to nodes found by the scan, nor to nodes using the default key.
@@ -120,6 +135,7 @@ The port is optional (6053 by default). Once connected, the node reports its rea
 
 - **Test the connection**: runs a full discovery and tells you how many nodes answered and how many features are available.
 - **Reconnect the nodes**: closes every connection and reopens them. Useful after reflashing a node or changing a key.
+- **Set a node key**, **Remove a node key**, **List the node keys**: the keys specific to some nodes, one node at a time (see above).
 
 ## Scenes
 
@@ -210,7 +226,7 @@ Recognized `device_class` values include: `temperature`, `humidity`, `pressure`,
 Check that your nodes are powered on and connected to Wi-Fi. If your network blocks mDNS, add them by hand (see above).
 
 **A node is found but does not show up in the list**
-This is almost always a mismatched encryption key. The node is visible on the network but refuses the connection. Check the key in its YAML, and use **Keys per node** if it differs from the default key.
+This is almost always a mismatched encryption key. The node is visible on the network but refuses the connection. Check the key in its YAML, and use **Set a node key** if it differs from the default key. **List the node keys** shows which nodes have a specific key and whether they are connected.
 
 **A node disappears then comes back**
 That is expected after a node reboot (OTA update, power cut). The integration reconnects on its own, with a growing delay so it never floods the network.
@@ -235,16 +251,16 @@ These are the settings ESPHome asks for in its configuration screen in Gladys.
 | --- | --- | --- | --- |
 | Getting started | `section` | No | This integration talks to your ESPHome nodes on your local network, through their native API (port 6053). Paste your encryption key below, then go to the Discover screen and run a scan: the nodes found on your network appear there with all their entities, ready to be added. No IP address to type. |
 | Encryption key | `secret` | No | The base64 key declared under `api: encryption: key:` in your ESPHome YAML. Used for every node that has no specific key below. Leave empty only if your nodes have no encryption. |
-| Nodes with a different key | `section` | No | Fill the two fields below only if some nodes do not share the key above, or if a node is not found by the network scan (another VLAN, mDNS filtered by your router). |
-| Keys per node | `secret` | No | One node per line, in the form `node\|key`. The node name is the one from your ESPHome YAML (`esphome: name:`), or its address. These keys take precedence over the key above. |
-| Nodes added by hand | `string` | No | One address per line (`salon.local`, `192.168.1.42`, or `192.168.1.42:6053`), for the nodes the network scan does not find. Nodes found by the scan need nothing here. |
+| Nodes with a different key | `section` | No | Only needed if some nodes do not share the key above, or if a node is not found by the network scan (another VLAN, mDNS filtered by your router). With several nodes, prefer the "Set a node key" button at the bottom of this page: it adds or replaces one key without touching the others. |
+| Keys per node | `secret` | No | `node\|key` pairs separated by a space, a comma or a semicolon (this field is a single line). The node name is the one from your ESPHome YAML (`esphome: name:`), or its address. These keys take precedence over the key above. On every save, the pairs typed here are added to the keys already saved and the field is emptied: the node key buttons below list and remove them. |
+| Nodes added by hand | `string` | No | Addresses separated by a space, a comma or a semicolon (`salon.local`, `192.168.1.42`, or `192.168.1.42:6053`), for the nodes the network scan does not find. Nodes found by the scan need nothing here. |
 | Discovery duration (s) | `number` | No | How long the mDNS scan listens for ESPHome nodes on the network. |
 | Connection timeout (s) | `number` | No | How long to wait for a node to answer before giving up on it. |
 
 ## How to install ESPHome in Gladys
 
 1. In Gladys, open **Integrations**: ESPHome appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/william-de71/gladys-esphome:1.3.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/william-de71/gladys-esphome:1.4.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/William-De71/gladys-esphome](https://github.com/William-De71/gladys-esphome).
 
