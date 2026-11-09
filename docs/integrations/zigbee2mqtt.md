@@ -88,6 +88,14 @@ Go to the `Setup` section and click on the **Enable Zigbee2mqtt** button. After 
 
 ![Zigbee2Mqtt services status](../../static/img/docs/en/configuration/zigbee2mqtt/z2m_services_state_en.png)
 
+Gladys only shows Zigbee2MQTT in green once it has really started and answered Gladys. Until then, a message below the diagram tells you where it stands:
+
+- **Zigbee2MQTT is starting**: it is shown as "Restarting". Wait a moment, it will turn green as soon as it answers Gladys.
+- **Zigbee2MQTT fails to start**: Gladys shows the error it hit above the diagram. See [Troubleshooting common Zigbee2MQTT errors](#troubleshooting-common-zigbee2mqtt-errors).
+- **Zigbee2MQTT is not answering**: Gladys gets no answer from it; it may be stopped, or crashing on startup. See the same section.
+
+As long as Zigbee2MQTT is not responding, the `Discover` and `Devices` pages show a "Zigbee2mqtt is not responding" banner, and device pairing is disabled. The banner goes away on its own as soon as Zigbee2MQTT is ready.
+
 ## Allow device association
 
 To allow devices to be associated to your Zigbee network, you must allow `joining in` the Zigbee configuration.
