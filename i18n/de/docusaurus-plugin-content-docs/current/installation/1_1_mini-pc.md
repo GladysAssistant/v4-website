@@ -120,7 +120,7 @@ Das Menü von Gladys Assistant OS erscheint, der Eintrag **Install Gladys Assist
 
 Der Installer stellt nur ein paar Fragen. Du bewegst dich mit den **Pfeiltasten** und **Tab**, setzt oder entfernst einen Haken mit der **Leertaste** und bestätigst mit **Enter**.
 
-1. **Sprache**: Englisch ist vorausgewählt. Wähle deine Sprache: Die folgenden Bildschirme und danach auch die Einrichtungsseite von Gladys verwenden sie.
+1. **Sprache**: Englisch ist vorausgewählt. Wähle deine Sprache: Die folgenden Bildschirme und danach auch die Einrichtungsseite von Gladys verwenden sie. Der Ubuntu-Installer ist nur teilweise übersetzt: Einige Texte auf seinen Bildschirmen bleiben auf Englisch, das ist normal.
 
    ![Der Bildschirm zur Sprachauswahl](../../../../../static/img/docs/en/installation/gladys-assistant-os/language.png)
 2. **Tastatur**: Das Tastaturlayout deiner Sprache wird vorgeschlagen (wenn du Deutsch wählst, zum Beispiel das deutsche QWERTZ-Layout). Prüfe es sorgfältig, denn gleich gibst du dein Passwort ein.

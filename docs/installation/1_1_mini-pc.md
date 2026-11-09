@@ -120,7 +120,7 @@ Open the BIOS settings (usually with **Del** or **F2** at startup), check that t
 
 The installer only asks a few questions. Move with the **arrow keys** and **Tab**, check or uncheck an option with **Space**, and confirm with **Enter**.
 
-1. **Language**: English is preselected. Choose your language: the next screens, then the setup page of Gladys, will use it.
+1. **Language**: English is preselected. Choose your language: the next screens, then the setup page of Gladys, will use it. The Ubuntu installer is only partly translated: some text on its screens stays in English, which is expected.
 
    ![The language screen of the installer](../../static/img/docs/en/installation/gladys-assistant-os/language.png)
 2. **Keyboard**: the layout of your language is suggested (for example French AZERTY for French). Check it carefully, you are about to type your password.
