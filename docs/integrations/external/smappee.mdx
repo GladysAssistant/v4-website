@@ -19,7 +19,7 @@ https://github.com/guim31/gladys-smappee instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Smappee","description":"Smappee energy monitors: consumption, solar, sub-meters and plugs, read locally or from the cloud.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-smappee","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-smappee.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-02T06:21:42Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Smappee","description":"Smappee energy monitors: consumption, solar, sub-meters and plugs, read locally or from the cloud.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-smappee","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-smappee.png","type":"device","version":"1.3.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-09T06:22:00Z"}} />
 
 > **Developed without the hardware: feedback welcome.** This integration was written from the
 > Smappee library of Home Assistant (pysmappee) and the official API, and tested against simulated
@@ -37,6 +37,7 @@ monitors on your local network first, and through the Smappee cloud the ones who
 | Smappee Energy, Solar, Pro/Plus     | local web API (HTTP), every 5 to 60 seconds |
 | Smappee Infinity, Genius, Connect   | local MQTT broker (port 1883), pushed live  |
 | Any monitor of your Smappee account | Smappee cloud (optional), every 5 minutes   |
+| Charging stations of your account   | Smappee cloud, every 5 minutes, read-only   |
 
 ## Requirements
 
@@ -66,6 +67,8 @@ network, and to control the plugs known to the cloud. A monitor whose address is
 - **Local refresh interval**: how often the local readings are sent to Gladys (10 seconds by
   default). The energy indexes are always computed from every reading.
 - **Control the Smappee plugs and switches**: off, they are shown read only.
+- **Cost the monitor's consumption in the energy tab** (on by default): turn it off when another
+  meter already measures the whole home, see [Energy tab](#energy-tab).
 - **Language of the device names**: the names given to the features when a device is added.
 
 Then open the **Discovery** tab and add the devices you want.
@@ -97,11 +100,60 @@ One device per Smappee Switch, Comfort Plug or cloud output module, with an **On
 (named as in the app, else **Smappee plug** and its number). A Comfort Plug (433 MHz) never tells
 its state: Gladys shows the last command sent.
 
+### Charging stations
+
+One read-only device per connector of a Smappee charging station (EV Wall...), named as in the app, else
+**Smappee charger** and its number.
+Only the Smappee cloud gives them: fill in the cloud section, even if the monitor is read locally.
+All the values are refreshed every 5 minutes.
+
+- **Connector**: free, or occupied while a vehicle is connected;
+- **Charging state**: charging, vehicle connected, paused by the charger, or idle;
+- **Charging power** (kW): the average of the last 5 minutes, for a monitor read through the cloud,
+  and 0 when no session is under way;
+- **Last session energy** (kWh) and **Last session duration**: the session under way, else the last
+  one. During a charge, the energy is the one measured on the charger, a few minutes late;
+- **Total charged energy** (kWh): the meter of the charger, as read in the sessions. It moves when a
+  session stops, and stays empty until the first session of the last 30 days;
+- **Charging station energy index** (kWh): the energy measured on the charger's channel by the
+  Smappee monitor (not the meter of the charger), added up block by block from the cloud's 5-minute
+  data, a few minutes late. Only for a charger whose monitor is read through the cloud and that has a
+  measuring channel. It starts at 0 when the integration is updated: no history before.
+
+Only the **Charging station energy index** is costed in the energy tab: it shows, day by day and
+half-hour by half-hour, what the car takes. That energy is already counted by the main meter: in the
+energy settings of Gladys, place the charger's index **under the main meter** (the index of the
+monitor, or a Linky/Lixee meter), or it is counted twice.
+
+A charger added before the update gets the new index from the **Discovery** tab of the integration:
+click **Update** on the charger's device. Its other features, history and scenes are kept.
+
+Use the standard trigger on a device value to start a scene, for example when the
+**Charging state** changes.
+
 ## Energy tab
 
 The energy tab of Gladys 5.2 prices what the grid delivers: the **Consumption index** of a monitor without solar panels, the **Grid import index** of a monitor with solar panels (its **Consumption index**, which includes the solar energy used at home, is shown but not priced). The **Energy index** of the sub-meters is a consumption counter too, and the **Solar production index** a production counter.
-Set the sub-meters as children of the monitor in the energy settings, so they are not counted twice.
+Set the sub-meters, and the **Charging station energy index** of the chargers, under the main meter
+in the energy settings, so they are not counted twice.
 The grid export is shown, never added up again.
+
+### With another main meter (charging station)
+
+You already have a main meter in Gladys (Linky through Lixee, Enedis...) and the Smappee is there
+mostly to isolate what the car takes? Left as is, the home is counted twice: by the Linky and by
+the index of the monitor.
+
+1. In the configuration of the integration, turn off **Cost the monitor's consumption in the
+   energy tab** and save.
+2. Open the **Discovery** tab and click **Update** on the monitor. The **Grid import index** (or
+   the **Consumption index** without solar panels) becomes a grid index: still shown, with its
+   history, but no longer costed. Its derived consumption and cost leave the energy tab.
+3. In the energy settings, place the **Charging station energy index** under your main meter: the
+   energy tab then isolates what the car takes, day by day. The sub-meters stay costed the same
+   way.
+
+Without another meter, leave the option on: the monitor stays your main meter.
 
 ## Widget
 
@@ -145,6 +197,8 @@ and tells what answered, how, and what went wrong (password, address, cloud cred
 
 ## Limits
 
+- Charging stations: read-only, no start, pause or charging mode from Gladys. Only sessions of the
+  last 30 days are read the first time.
 - Developed without the hardware: the message formats come from pysmappee and the official
   documentation. Feedback welcome.
 - Energy, Solar and Pro give no voltage and no sub-meter over their local API.
@@ -162,7 +216,7 @@ These are the settings Smappee asks for in its configuration screen in Gladys.
 | Your Smappee monitors | `section` | No | Type the IP address of each Smappee: Energy, Solar and Pro are read over their local web API, Infinity, Genius and Connect over their local MQTT broker. Give it a fixed address in your router. |
 | IP addresses of the Smappee monitors | `string` | No | Separated by commas. Leave empty to use the cloud only. |
 | Local web interface password | `secret` | No | Energy, Solar and Pro only. Empty: the factory password (admin). |
-| Smappee cloud (optional) | `section` | No | For a monitor not reachable on your network, and for the plugs of the cloud account. Ask Smappee support for an API client id and secret, then type them with your Smappee account. Read every 5 minutes. |
+| Smappee cloud (optional) | `section` | No | For a monitor not reachable on your network, and for the plugs and charging stations of the cloud account. Ask Smappee support for an API client id and secret, then type them with your Smappee account. Read every 5 minutes. |
 | API client id | `string` | No |  |
 | API client secret | `secret` | No |  |
 | Smappee account user name | `string` | No |  |
@@ -170,12 +224,13 @@ These are the settings Smappee asks for in its configuration screen in Gladys.
 | Options | `section` | No |  |
 | Local refresh interval | `select` | Yes | How often the local readings are sent to Gladys. |
 | Control the Smappee plugs and switches | `boolean` | No | Off: they are shown, read only. |
+| Cost the monitor's consumption in the energy tab | `boolean` | No | Turn off when another meter (Linky, Lixee...) already measures the whole home. The monitor's indexes stay shown and keep their history, but are no longer costed; the charging stations and sub-meters stay costed. Then click Update on the monitor in the Discovery tab. |
 | Language of the device names | `select` | Yes | Used when a device is added to Gladys. |
 
 ## How to install Smappee in Gladys
 
 1. In Gladys, open **Integrations**: Smappee appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-smappee:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-smappee:1.3.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-smappee](https://github.com/guim31/gladys-smappee).
 

@@ -1,0 +1,208 @@
+---
+title: "Intégration domotique Becker CentralControl, gratuite et open source"
+sidebar_label: "Becker CentralControl"
+description: "Volets, stores et capteurs météo Becker par la CentralControl, en local. Non officiel. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-becker.png"
+keywords:
+  - "becker centralcontrol"
+  - "domotique becker centralcontrol"
+  - "gladys becker centralcontrol"
+  - "becker centralcontrol gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-becker instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Becker CentralControl","description":"Volets, stores et capteurs météo Becker par la CentralControl, en local. Non officiel.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-becker","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-becker.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-06T01:03:37Z"}} />
+
+Pilotez vos volets roulants, brise-soleil orientables, screens, stores bannes et
+voiles d'ombrage Becker (radio Centronic, CentronicPLUS et B-Tronic) par votre
+**CentralControl CC31, CC41 ou CC51**, et lisez ses capteurs soleil, vent, pluie
+et température, depuis Gladys. Tout reste sur votre réseau local : l'intégration
+parle à l'API JSON-RPC de la box (`http://<box>/cgi-bin/cc51rpc.cgi`), jamais au
+cloud Becker ni à son relais.
+
+> Cette intégration n'a **jamais été testée avec une vraie box pour
+> l'instant** : elle a été construite d'après l'intégration Home Assistant de
+> Becker (becker_centralcontrol_has, MIT) et testée contre une box simulée. Non
+> officiel, sans lien avec Becker-Antriebe GmbH.
+
+## Configuration
+
+1. Donnez à votre CentralControl une adresse fixe dans votre box internet
+   (réservation DHCP).
+2. Dans l'onglet Configuration de l'intégration, saisissez cette adresse (par
+   exemple `192.168.1.70` ; ajoutez `:port` si la box répond sur un autre port
+   que 80). Les noms en `.local` ne se résolvent pas dans le conteneur :
+   utilisez l'adresse IP.
+3. Changez si besoin l'intervalle de lecture (60 s par défaut, de 30 s à 1 h)
+   et la langue des noms des fonctionnalités.
+4. Enregistrez, puis **Tester la connexion** : elle liste les volets que la box
+   annonce.
+5. Ajoutez vos volets et capteurs depuis l'onglet **Découverte**.
+
+## Ce que vous obtenez
+
+- **Chaque volet** (volet roulant, brise-soleil, screen, store banne, voile
+  d'ombrage, store, volet battant) devient un volet avec une fonctionnalité
+  **Ouverture / fermeture** (ouvrir, fermer, arrêter). Quand le moteur renvoie
+  sa position (B-Tronic, CentronicPLUS : « feedback » dans la box), une
+  fonctionnalité **Position** (0 % fermé, 100 % ouvert) est lue à chaque
+  intervalle et peut être réglée. Les moteurs Centronic ne renvoient aucun
+  état : seulement les commandes, jamais de position.
+- Un **store banne** est inversé, comme dans l'intégration de Becker :
+  « fermer » le replie, et sa position est celle que donne la box.
+- **Chaque capteur** (soleil, vent, pluie, crépuscule, température) devient un
+  capteur en lecture seule. Soleil et crépuscule sont des niveaux de 0 à 15, le
+  vent un niveau de 0 à 11 (l'échelle du capteur, pas des km/h), la pluie 0
+  (sec) ou 1 (pluie), la température en °C. Une valeur hors de ces plages n'est
+  pas publiée.
+- Les portes, portes de garage, fenêtres de toit et oscillantes, lampes,
+  prises, chauffages et scènes de la box ne sont pas proposés dans cette
+  version.
+
+## L'arrêt
+
+L'**arrêt** n'est jamais bloqué : ni par une lecture en cours (il la coupe), ni
+par une pause demandée par la box, ni par une autre commande en attente, ni par
+la liste de la box pas encore lue, ni par une configuration illisible (il part
+vers la dernière adresse connue), ni par un `/data` lent ou illisible. Il part
+aussitôt et attend la réponse jusqu'à 3,3 s (une réponse lente est une
+réponse) ; si la connexion elle-même échoue, il est réécrit toutes les 250 ms
+pendant ces 3,3 s. **Toute réponse de la box compte** (acceptation, refus, page
+d'erreur) ; un 429 ou un 5xx, un délai dépassé ou une coupure ne comptent pas.
+
+L'arrêt est gardé (en mémoire, et dans `/data` sans l'attendre) jusqu'à ce
+qu'une lecture du volet, partie après la réponse de la box, montre qu'il ne
+bouge plus :
+
+- un arrêt auquel la box n'a pas répondu est renvoyé après 5 s, 10 s, 20 s,
+  30 s, puis chaque minute et à chaque lecture réussie, **sans fin et sans
+  limite d'âge** : seul un envoi qui a reçu une réponse compte comme essai ;
+- un arrêt auquel la box a répondu sans l'accepter (refus, page d'erreur) est
+  acquitté en échec, et la relecture décide comme pour un arrêt accepté ;
+- la relecture attend la fin d'une pause demandée par la box (429, 5xx) ; sans
+  réponse, elle est retentée après 5 s, 10 s, 20 s… jusqu'à chaque minute ; si
+  la box refuse de donner cet état (groupe supprimé), l'arrêt prend fin ;
+- répondu mais le volet bouge encore dans le même sens : renvoyé, **3 essais
+  répondus au plus**, puis « toujours en mouvement » sur le badge ;
+- le volet bouge **dans l'autre sens** : un mouvement lancé ailleurs
+  (application, télécommande) est laissé tranquille ;
+- un moteur sans retour d'état, ou une box qui ne dit pas s'il bouge : un arrêt
+  répondu suffit ;
+- une **commande plus récente** de ce volet (ouvrir, fermer, position)
+  acceptée par la box remplace l'arrêt ; une commande plus récente sans réponse
+  ne le remplace pas (l'arrêt part) ;
+- après un redémarrage, les arrêts gardés dans `/data` partent aussitôt, avant
+  même de joindre Gladys.
+
+Un arrêt ne part pas seulement tant qu'**aucune adresse de box n'est connue du
+tout** (jamais configurée, rien dans `/data`) : il est gardé et part dès qu'une
+adresse est enregistrée. Cliquer sur arrêt abandonne aussi les commandes de ce
+volet pas encore parties : rien de ce qui a été cliqué avant un arrêt ne part
+après lui.
+
+## La fermeture
+
+**Fermer** suit le même chemin (devant tout, coupe les lectures, ni retenue par
+une pause, ni par la liste pas encore lue, ni par une nouvelle adresse pas
+encore confirmée, budget de 3,3 s), mais elle n'est jamais renvoyée après un
+redémarrage. Son sens vient du type que la box liste maintenant, sinon du type
+avec lequel l'appareil a été créé, sinon d'un volet (vers le bas). Elle n'est
+refusée que si la box liste cet identifiant comme autre chose qu'un volet (une
+porte, une lampe).
+
+## Ouvrir et position
+
+Ils sont refusés, avec la raison sur le badge de l'appareil, quand : la
+configuration n'est pas valide ; la box a demandé de ralentir (429, 5xx ; la
+pause est gardée au redémarrage, de 1 min à 6 h) ; le volet n'a pas été listé
+par la box depuis le démarrage (ou depuis qu'elle ne répondait plus) ; la box
+liste cet identifiant avec un autre type ; l'adresse de la box a changé sans
+être encore confirmée ; le moteur ne donne pas de position (position
+seulement) ; la valeur n'est pas un nombre entier de 0 à 100 ; 32 commandes
+attendent déjà ; la commande ne peut pas partir dans les 2,5 s (sa réponse est
+attendue jusqu'à 3,5 s) ; ou un arrêt ou une fermeture de ce volet est arrivé
+après elle.
+
+**Nouvelle adresse de box** : une autre box peut avoir des volets aux mêmes
+identifiants et types. Après un changement d'adresse, seuls l'arrêt et la
+fermeture partent jusqu'à ce que vous appuyiez sur **Tester la connexion** et
+que la box réponde (gardé au redémarrage).
+
+Plusieurs volets bougent en même temps (8 au plus ; une scène de cinq volets
+les règle tous les cinq). Si une commande reste sans réponse pendant que
+d'autres sont en vol, la box ne sert peut-être qu'une requête à la fois : les
+volets sont alors commandés l'un après l'autre jusqu'au redémarrage de
+l'intégration ; dans ce mode une commande peut partir jusqu'à 3,8 s et sa
+réponse est attendue jusqu'à 4,7 s, pour qu'une scène de cinq volets à 0,9 s
+chacun les règle tous les cinq (la première scène, qui le découvre, peut voir
+les deux derniers sans réponse). Sur une telle box, un arrêt peut aussi attendre derrière une
+commande que la box est en train de servir. Une commande n'est dite **appliquée** que si une lecture après elle
+montre la position demandée (5 s et 20 s après) ; sinon le badge dit « acceptée,
+en attente de relecture », « pas encore appliquée », « envoyée, sans
+confirmation » (pas de réponse) ou « rien envoyé ».
+
+## Lectures
+
+Les positions et les capteurs sont lus à l'intervalle choisi, une requête à la
+fois ; les listes de la box toutes les 10 minutes. Un volet absent d'une liste
+(la box peut n'en lister qu'une partie) est gardé jusqu'à la liste suivante,
+relue à la lecture suivante ; absent deux fois, il est affiché « n'est plus
+listé ». Quand toutes les lectures de volets échouent, l'intégration n'est pas
+affichée connectée et chaque volet dit « Non lu ». Une lecture partie avant une
+commande d'un volet ne s'applique jamais après elle, et les lectures
+s'appliquent dans l'ordre de leur départ. Un volet ou la liste des capteurs en
+échec n'arrête jamais les autres. Un redémarrage (même box) ne lit jamais les états plus tôt que l'intervalle ;
+les listes (deux requêtes) sont lues aussitôt, si bien qu'ouvrir et position
+marchent juste après.
+
+## Dépannage
+
+- **« pas encore relu sur la box »** : la box n'a pas encore été listée dans
+  cette session (injoignable au démarrage) ; appuyez sur Tester la connexion :
+  dès qu'elle répond, les volets sont connus.
+- **« un autre type de volet »** : l'identifiant de cet appareil désigne
+  maintenant un autre volet dans la box (reconfigurée). Supprimez l'appareil et
+  ajoutez-le de nouveau depuis la Découverte.
+- **« /data pas encore lu »** : le fichier `/data/becker-state.json` n'a pas
+  pu être lu (ou a pris plus de 2 s) ; il est laissé tel quel, relu toutes les
+  30 s, et les arrêts qu'il garde partent dès qu'il est lu. Rien n'y est écrit
+  d'ici là : les arrêts ne sont donc pas gardés au redémarrage jusque-là.
+- Les journaux ne contiennent jamais une adresse saisie par erreur.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Becker CentralControl dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Vos volets Becker dans Gladys | `section` | Non | Chaque volet roulant, brise-soleil orientable, screen, store banne ou voile d'ombrage réglé dans votre CentralControl CC31, CC41 ou CC51 (Centronic, CentronicPLUS, B-Tronic) devient un volet dans l'onglet Découverte (ouvrir, fermer, arrêter, et la position quand le moteur la renvoie), et chaque capteur soleil, vent, pluie ou température un capteur en lecture seule. Tout reste sur votre réseau local (l'API JSON-RPC de la box), sans cloud Becker. L'arrêt n'est jamais bloqué. Jamais testée avec une vraie box pour l'instant. Non officiel, sans lien avec Becker-Antriebe. |
+| Adresse de la CentralControl | `string` | Oui | L'adresse IP locale de votre CentralControl, par exemple 192.168.1.70 (port 80, sauf si vous en ajoutez un autre, par exemple 192.168.1.70:8080). Donnez-lui une adresse fixe dans votre box internet (réservation DHCP). |
+| Intervalle de lecture (s) | `number` | Non | Fréquence de lecture des positions et des capteurs sur la box (30 à 3600 s). |
+| Langue des noms des fonctionnalités | `select` | Non | Sert aux noms des fonctionnalités des appareils ajoutés désormais. |
+
+## Comment installer Becker CentralControl dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Becker CentralControl apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-becker:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-becker](https://github.com/LM1LC3N7/gladys-becker).
+
+Becker CentralControl nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Becker CentralControl est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-becker) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-becker/blob/HEAD/docs/fr.md)

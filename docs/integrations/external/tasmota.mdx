@@ -19,7 +19,7 @@ https://github.com/gboulvin/Gladys-Tasmota instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Tasmota","description":"Control your Tasmota devices locally over MQTT or HTTP: relays, lights, energy, sensors.","owner":"gboulvin","owner_avatar_url":"https://avatars.githubusercontent.com/u/78817935?v=4","repo_url":"https://github.com/gboulvin/Gladys-Tasmota","cover_url":"https://integration-store-storage.gladysassistant.com/covers/gboulvin--Gladys-Tasmota.png","type":"device","version":"1.1.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-10-26T08:43:51Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Tasmota","description":"Control your Tasmota devices locally over MQTT or HTTP: relays, lights, energy, sensors.","owner":"gboulvin","owner_avatar_url":"https://avatars.githubusercontent.com/u/78817935?v=4","repo_url":"https://github.com/gboulvin/Gladys-Tasmota","cover_url":"https://integration-store-storage.gladysassistant.com/covers/gboulvin--Gladys-Tasmota.png","type":"device","version":"1.2.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-06T10:34:59Z"}} />
 
 Control your [Tasmota](https://tasmota.github.io/) devices from Gladys, **100 % locally**: plugs,
 relays, bulbs and LED strips, dimmers, shutters, fans, energy meters and sensors. No cloud.
@@ -39,7 +39,8 @@ relays, bulbs and LED strips, dimmers, shutters, fans, energy meters and sensors
   UV index, soil moisture, analog inputs, pulse counters, switch inputs, chip temperature, Wi-Fi
   signal and uptime.
 - **Scene triggers**: button pressed (single, double, triple… hold), switch input changed,
-  RF code received (Sonoff RF Bridge), IR code received, device online / offline.
+  RF code received (Sonoff RF Bridge), IR code received, **RFID badge read** (RC522, PN532,
+  RDM6300, Wiegand), device online / offline.
 - **Scene actions**: send any Tasmota command (Backlog, RfSend, IRSend, Rule…), turn a relay on
   for a while, make a light blink, restart a device.
 - **Dashboard widgets**: fleet overview, device card, energy card.
@@ -135,11 +136,33 @@ Until then, both integrations can run side by side.
      the others came in as a switch. This integration recognises the light: pair _Switch_ with
      _Light_.
 
+   Tip: before migrating, give each relay the type it had in the native integration with the
+   **Customize a feature** action: it is then paired automatically.
+
    A feature left unpaired loses its history, and the scenes that use it must be edited.
 
 6. On a large history the migration takes a few minutes: follow it in **Settings → Tasks**. If it stops, run it again: it only moves what is left.
 
 Once every device is migrated, the native Tasmota integration has no device left.
+
+## Rename a feature, make a relay a switch or a light
+
+Gladys lets you rename a device, not its features. The **Customize a feature** action of the
+Configuration screen does what the edit page of the native integration did:
+
+- **Device**: the device to customize.
+- **Feature**: its current name (`Switch 2`, `Power`…) or, for a relay, its number (`2`).
+- **New name**: left empty, the name does not change; `-` brings the default name back.
+- **Type** (relays only): _Switch_, _Light_, or _Automatic_ to follow what Tasmota reports.
+
+It is the same feature, only redefined: its history, the scenes and the dashboards that use it are
+kept. A type change is applied by Gladys through the **Update** button that then shows on the
+device in the **Discovery** tab. Gladys offers that button for a type change only: a new name alone
+applies at the next update of the device, or when you add it.
+
+A device set in Tasmota with `SetOption30 1` (the Tasmota way of saying "my relays drive lights")
+publishes its relays as lights, unless you customized them. A relay made a light can be
+identified (it blinks twice) like the bulbs.
 
 ## Actions of the Configuration screen
 
@@ -151,18 +174,25 @@ Once every device is migrated, the native Tasmota integration has no device left
 - **Send a command** — any Tasmota command, the answer is shown under the button.
 - **Restart a device**.
 - **Move a device to MQTT** — sends `MqttHost`, `MqttPort`, `MqttUser`, `MqttPassword`.
+- **Customize a feature** — rename a feature, make a relay a switch or a light (see above).
 
 ## Scenes
 
 Under the **Integrations** category of the scene editor (Gladys 5.1 or later):
 
-| Trigger                         | Tasmota setting needed                                | Variables          |
-| ------------------------------- | ----------------------------------------------------- | ------------------ |
-| Tasmota button pressed          | `SetOption73 1` (buttons decoupled from the relays)   | `button`, `action` |
-| Tasmota switch input changed    | `SetOption114 1` (switches decoupled from the relays) | `switch`, `action` |
-| RF code received                | an RF Bridge (`RfReceived`)                           | `code`, `rf_key`   |
-| IR code received                | an IR receiver (`IrReceived`)                         | `code`, `protocol` |
-| Tasmota device online / offline | none (LWT over MQTT, failed polls over HTTP)          | `status`           |
+| Trigger                         | Tasmota setting needed                                | Variables               |
+| ------------------------------- | ----------------------------------------------------- | ----------------------- |
+| Tasmota button pressed          | `SetOption73 1` (buttons decoupled from the relays)   | `button`, `action`      |
+| Tasmota switch input changed    | `SetOption114 1` (switches decoupled from the relays) | `switch`, `action`      |
+| RF code received                | an RF Bridge (`RfReceived`)                           | `code`, `rf_key`        |
+| IR code received                | an IR receiver (`IrReceived`)                         | `code`, `protocol`      |
+| RFID badge read                 | an RC522, PN532, RDM6300 or Wiegand reader            | `uid`, `data`, `reader` |
+| Tasmota device online / offline | none (LWT over MQTT, failed polls over HTTP)          | `status`                |
+
+An RFID reader also gets a **Last badge (RC522)** text feature (named after the reader), added to its device on the first read
+(click **Update** in the Discovery tab). The UID is upper-case (`BA839D07`): type it that way in
+the filter. The RC522 needs a Tasmota build with `USE_RC522` (`Data` and `Type` need
+`USE_RC522_DATA_FUNCTION` and `USE_RC522_TYPE_INFORMATION`).
 
 Every filter is optional: left empty, it matches everything. Read the values in the next actions
 with `{{triggerEvent.data.code}}`, for instance.
@@ -219,7 +249,7 @@ These are the settings Tasmota asks for in its configuration screen in Gladys.
 ## How to install Tasmota in Gladys
 
 1. In Gladys, open **Integrations**: Tasmota appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/gboulvin/gladys-tasmota:1.1.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/gboulvin/gladys-tasmota:1.2.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/gboulvin/Gladys-Tasmota](https://github.com/gboulvin/Gladys-Tasmota).
 

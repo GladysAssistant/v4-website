@@ -19,7 +19,7 @@ https://github.com/guim31/gladys-smappee instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Smappee","description":"Monitores de energía Smappee: consumo, solar, submedidores y enchufes, en local o por la nube.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-smappee","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-smappee.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-02T06:21:42Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Smappee","description":"Monitores de energía Smappee: consumo, solar, submedidores y enchufes, en local o por la nube.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-smappee","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-smappee.png","type":"device","version":"1.3.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-09T06:22:00Z"}} />
 
 > **Desarrollada sin el hardware: sus comentarios son bienvenidos.** Esta integración se escribió a
 > partir de la biblioteca Smappee de Home Assistant (pysmappee) y la API oficial, y se probó con
@@ -37,6 +37,7 @@ monitores de su red local, y por la nube Smappee aquellos cuya dirección no int
 | Smappee Energy, Solar, Pro/Plus   | API web local (HTTP), cada 5 a 60 segundos  |
 | Smappee Infinity, Genius, Connect | broker MQTT local (puerto 1883), en directo |
 | Cualquier monitor de su cuenta    | nube Smappee (opcional), cada 5 minutos     |
+| Cargadores de su cuenta           | nube Smappee, cada 5 minutos, solo lectura  |
 
 ## Requisitos
 
@@ -67,6 +68,8 @@ red, y controlar los enchufes conocidos por la nube. Un monitor cuya dirección 
 - **Intervalo de actualización local**: frecuencia de envío de las mediciones locales a Gladys (10
   segundos por defecto). Los índices de energía se calculan siempre con cada medición.
 - **Controlar los enchufes e interruptores Smappee**: desactivado, se muestran en solo lectura.
+- **Calcular el coste del monitor en la pestaña de energía** (activado por defecto):
+  desactívelo cuando otro contador ya mide toda la casa, vea [Pestaña de energía](#pestaña-de-energía).
 - **Idioma de los nombres de dispositivos**: los nombres de las funciones al añadir un dispositivo.
 
 Abra luego la pestaña **Descubrir** y añada los dispositivos que desee.
@@ -100,10 +103,59 @@ Un dispositivo por Smappee Switch, Comfort Plug o módulo de salida de la nube, 
 **Encendido/Apagado** (con el nombre de la aplicación, si no **Enchufe Smappee** y su número). Un
 Comfort Plug (433 MHz) nunca indica su estado: Gladys muestra la última orden enviada.
 
+### Cargadores
+
+Un dispositivo de solo lectura por conector de un cargador Smappee (EV Wall...), con el nombre de la
+aplicación, si no **Cargador Smappee** y su número. Solo la nube Smappee los proporciona: rellene la sección de la nube, aunque el monitor se
+lea en local. Todos los valores se actualizan cada 5 minutos.
+
+- **Conector**: libre, u ocupado mientras haya un vehículo conectado;
+- **Estado de la recarga**: cargando, vehículo conectado, en pausa por el cargador, o en reposo;
+- **Potencia de carga** (kW): la media de los últimos 5 minutos, para un monitor leído por la nube,
+  y 0 cuando no hay ninguna sesión en curso;
+- **Energía de la última sesión** (kWh) y **Duración de la última sesión**: la sesión en curso, si no
+  la anterior. Durante una carga, la energía es la medida en el cargador, con unos minutos de retraso;
+- **Energía total cargada** (kWh): el contador del cargador, leído en las sesiones. Cambia al terminar
+  una sesión, y queda vacía hasta la primera sesión de los últimos 30 días;
+- **Índice de energía del cargador** (kWh): la energía medida por el monitor Smappee en el canal del
+  cargador (no el contador del cargador), sumada bloque a bloque a partir de los datos de 5 minutos
+  de la nube, con unos minutos de retraso. Solo para un cargador cuyo monitor se lee por la nube y
+  que tiene un canal de medida. Empieza en 0 al actualizar la integración: sin historial anterior.
+
+Solo el **Índice de energía del cargador** se factura en la pestaña de energía: muestra, día a día y
+por media hora, lo que consume el coche. Esa energía ya la cuenta el contador principal: en los
+ajustes de energía de Gladys, coloque el índice del cargador **bajo el contador principal** (el
+índice del monitor, o un contador Linky/Lixee), si no se cuenta dos veces.
+
+Un cargador añadido antes de la actualización recibe el nuevo índice desde la pestaña
+**Descubrimiento** de la integración: haga clic en **Actualizar** en el dispositivo del cargador. Sus
+demás funciones, su historial y sus escenas se conservan.
+
+Para iniciar una escena, use el disparador estándar sobre el valor
+de un dispositivo, por ejemplo cuando cambie el **Estado de la recarga**.
+
 ## Pestaña de energía
 
-La pestaña de energía de Gladys 5.2 calcula el coste de lo que entrega la red: el **Índice de consumo** de un monitor sin paneles solares, el **Índice de importación** de un monitor con paneles solares (su **Índice de consumo**, que incluye la energía solar usada en casa, se muestra pero sin coste). El **Índice de energía** de los submedidores también es un contador de consumo, y el **Índice de producción solar** un contador de producción. Coloque los submedidores bajo el monitor en los ajustes de energía, para no
-contarlos dos veces. La exportación se muestra, nunca se vuelve a sumar.
+La pestaña de energía de Gladys 5.2 calcula el coste de lo que entrega la red: el **Índice de consumo** de un monitor sin paneles solares, el **Índice de importación** de un monitor con paneles solares (su **Índice de consumo**, que incluye la energía solar usada en casa, se muestra pero sin coste). El **Índice de energía** de los submedidores también es un contador de consumo, y el **Índice de producción solar** un contador de producción. Coloque los submedidores, y el **Índice de energía del cargador** de los
+cargadores, bajo el contador principal en los ajustes de energía, para no contarlos dos veces. La exportación se muestra, nunca se vuelve a sumar.
+
+### Con otro contador principal (cargador)
+
+¿Ya tiene un contador principal en Gladys (Linky mediante Lixee, Enedis…) y el Smappee sirve sobre
+todo para aislar lo que consume el coche? Sin ajuste, la casa se cuenta dos veces: por el Linky y
+por el índice del monitor.
+
+1. En la configuración de la integración, desactive **Calcular el coste del monitor en la pestaña
+   de energía** y guarde.
+2. Abra la pestaña **Descubrimiento** y haga clic en **Actualizar** en el monitor. El **Índice de
+   importación** (o el **Índice de consumo** sin paneles solares) pasa a ser un índice de red:
+   sigue mostrándose, con su historial, pero ya sin coste. Su consumo y su coste derivados
+   desaparecen de la pestaña de energía.
+3. En los ajustes de energía, coloque el **Índice de energía del cargador** bajo su contador
+   principal: la pestaña de energía aísla entonces lo que consume el coche, día a día. Los
+   submedidores siguen calculándose igual.
+
+Sin otro contador, deje la opción activada: el monitor sigue siendo su contador principal.
 
 ## Widget
 
@@ -147,6 +199,8 @@ nube, e indica qué respondió, cómo, y qué falla (contraseña, dirección, cr
 
 ## Limitaciones
 
+- Cargadores: solo lectura, sin inicio, pausa ni modo de carga desde Gladys. La primera lectura solo
+  recupera las sesiones de los últimos 30 días.
 - Desarrollada sin el hardware: los formatos de mensajes vienen de pysmappee y de la documentación
   oficial. Sus comentarios son bienvenidos.
 - Energy, Solar y Pro no dan ni tensión ni submedidores por su API local.
@@ -164,7 +218,7 @@ Estos son los parámetros que Smappee te pide en su pantalla de configuración e
 | Sus monitores Smappee | `section` | No | Introduzca la dirección IP de cada Smappee: Energy, Solar y Pro se leen por su API web local, Infinity, Genius y Connect por su broker MQTT local. Fíjele una dirección en su router. |
 | Direcciones IP de los monitores Smappee | `string` | No | Separadas por comas. Déjelo vacío para usar solo la nube. |
 | Contraseña de la interfaz web local | `secret` | No | Solo Energy, Solar y Pro. Vacío: la contraseña de fábrica (admin). |
-| Nube Smappee (opcional) | `section` | No | Para un monitor no accesible en su red, y para los enchufes de la cuenta en la nube. Pida al soporte de Smappee un identificador y un secreto de API, e introdúzcalos con su cuenta Smappee. Leído cada 5 minutos. |
+| Nube Smappee (opcional) | `section` | No | Para un monitor no accesible en su red, y para los enchufes y cargadores de la cuenta en la nube. Pida al soporte de Smappee un identificador y un secreto de API, e introdúzcalos con su cuenta Smappee. Leído cada 5 minutos. |
 | Identificador de cliente de la API | `string` | No |  |
 | Secreto de cliente de la API | `secret` | No |  |
 | Usuario de la cuenta Smappee | `string` | No |  |
@@ -172,12 +226,13 @@ Estos son los parámetros que Smappee te pide en su pantalla de configuración e
 | Opciones | `section` | No |  |
 | Intervalo de actualización local | `select` | Sí | Frecuencia de envío de las mediciones locales a Gladys. |
 | Controlar los enchufes e interruptores Smappee | `boolean` | No | Desactivado: se muestran, solo lectura. |
+| Calcular el coste del monitor en la pestaña de energía | `boolean` | No | Desactívelo cuando otro contador (Linky, Lixee…) ya mide el consumo total. Los índices del monitor siguen mostrándose y conservan su historial, pero ya no se calcula su coste; los cargadores y los submedidores siguen calculándose. Después pulse Actualizar en el monitor en la pestaña Descubrimiento. |
 | Idioma de los nombres de dispositivos | `select` | Sí | Se usa cuando se añade un dispositivo a Gladys. |
 
 ## Cómo instalar Smappee en Gladys
 
 1. En Gladys, abre **Integraciones**: Smappee aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
-2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-smappee:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-smappee:1.3.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
 3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
 4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-smappee](https://github.com/guim31/gladys-smappee).
 

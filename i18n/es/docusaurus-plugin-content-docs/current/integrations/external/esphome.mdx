@@ -19,7 +19,7 @@ https://github.com/William-De71/gladys-esphome instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"ESPHome","description":"Controle sus dispositivos ESPHome (ESP32/ESP8266) en local, mediante la API nativa.","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-esphome","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-esphome.jpg","type":"device","version":"1.3.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-01T20:16:49Z"}} />
+<ExternalIntegrationHeader integration={{"name":"ESPHome","description":"Controle sus dispositivos ESPHome (ESP32/ESP8266) en local, mediante la API nativa.","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-esphome","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-esphome.jpg","type":"device","version":"1.4.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-04T07:24:53Z"}} />
 
 Esta integración permite controlar sus dispositivos **ESPHome** (ESP32, ESP8266) desde Gladys Assistant, directamente en su red local, mediante la **API nativa** de ESPHome. Sin nube, sin broker MQTT y sin necesidad de Home Assistant.
 
@@ -29,25 +29,36 @@ Esta integración permite controlar sus dispositivos **ESPHome** (ESP32, ESP8266
 
 A diferencia de un aparato comercial, un nodo ESPHome expone exactamente lo que **usted** ha declarado en su archivo YAML. Por eso la integración se adapta a lo que anuncia cada nodo:
 
-| Componente ESPHome | Lo que obtiene en Gladys                                           |
-| ------------------ | ------------------------------------------------------------------ |
-| `sensor`           | Sensor numérico (temperatura, humedad, potencia, batería…)         |
-| `binary_sensor`    | Sensor binario (movimiento, apertura, presencia, fuga, humo…)      |
-| `text_sensor`      | Sensor de texto (solo lectura)                                     |
-| `text`             | Texto editable: enviar un mensaje al nodo (pantalla)               |
-| `switch`           | Interruptor (encendido/apagado)                                    |
-| `light`            | Lámpara: encendido/apagado, brillo, color, temperatura de color    |
-| `cover`            | Persiana o cortina: abrir, cerrar, detener, posición               |
-| `fan`              | Ventilador: encendido/apagado y velocidad                          |
-| `lock`             | Cerradura: bloquear / desbloquear                                  |
-| `siren`            | Sirena: encendida / apagada                                        |
-| `valve`            | Válvula: abierta / cerrada                                         |
-| `button`           | Pulsador                                                           |
-| `number`           | Ajuste numérico editable (control deslizante)                      |
-| `climate`          | Termostato: consigna (una sola) y temperatura medida               |
-| `event`            | Ninguna funcionalidad: el disparador de escena «Evento de ESPHome» |
+| Componente ESPHome | Lo que obtiene en Gladys                                                                               |
+| ------------------ | ------------------------------------------------------------------------------------------------------ |
+| `sensor`           | Sensor numérico (temperatura, humedad, potencia, batería…)                                             |
+| `binary_sensor`    | Sensor binario (movimiento, apertura, presencia, fuga, humo…)                                          |
+| `text_sensor`      | Sensor de texto (solo lectura)                                                                         |
+| `text`             | Texto editable: enviar un mensaje al nodo (pantalla)                                                   |
+| `switch`           | Interruptor (encendido/apagado)                                                                        |
+| `light`            | Lámpara: encendido/apagado, brillo, color, temperatura de color                                        |
+| `cover`            | Persiana o cortina: abrir, cerrar, detener, posición                                                   |
+| `fan`              | Ventilador: encendido/apagado y velocidad                                                              |
+| `lock`             | Cerradura: bloquear / desbloquear                                                                      |
+| `siren`            | Sirena: encendida / apagada                                                                            |
+| `valve`            | Válvula: abierta / cerrada                                                                             |
+| `button`           | Pulsador                                                                                               |
+| `number`           | Ajuste numérico editable (control deslizante)                                                          |
+| `climate`          | Termostato o aire acondicionado: consigna, temperatura medida, encendido, modo, ventilador, oscilación |
+| `event`            | Ninguna funcionalidad: el disparador de escena «Evento de ESPHome»                                     |
 
 Los tipos que no tienen equivalente en Gladys (`media_player`, `camera`, `select`, `date`…) simplemente se omiten en la búsqueda. Un sensor `energy` (en kWh o Wh) es un índice acumulado: Gladys calcula a partir de él el consumo y su coste.
+
+### Aire acondicionado (`climate`)
+
+Una entidad `climate` conserva su consigna (una sola) y su temperatura medida, y recibe además los controles de la categoría **Aire acondicionado** de Gladys, cada uno solo si el firmware lo declara:
+
+- **Encendido / apagado**: ESPHome no tiene un «encendido» separado, un equipo está encendido en cuanto su modo no es `off`. Encenderlo desde Gladys retoma el último modo usado (o el modo automático si la integración nunca lo vio encendido).
+- **Modo**: automático, frío, calor, deshumidificación, ventilación (`heat_cool` o `auto`, `cool`, `heat`, `dry`, `fan_only` en ESPHome). Solo se proponen los modos de su equipo. Elegir un modo con el equipo apagado no lo enciende: es el modo en el que arrancará.
+- **Velocidad del ventilador**: automática, silenciosa, baja, media, alta (`auto`, `quiet`, `low`, `medium`, `high`, y `middle` como intermedia). Los modos personalizados (`custom_fan_modes`) no se incluyen.
+- **Oscilación vertical** y **horizontal**: un control por eje, el otro eje conserva su ajuste.
+
+Un termostato ya añadido en Gladys conserva sus funciones: para obtener las nuevas, abra el descubrimiento ESPHome y pulse **Actualizar** en el dispositivo.
 
 ### Los estados llegan en tiempo real
 
@@ -79,14 +90,18 @@ Si **todos** sus nodos comparten la misma clave (el caso más habitual cuando se
 
 ### 2. Los nodos con una clave distinta
 
-Si algunos nodos tienen su propia clave, rellene **Claves por nodo**, un nodo por línea:
+Si algunos nodos tienen su propia clave, use el botón **Definir la clave de un nodo**, al final de la página de configuración de la integración: escriba el nombre del nodo (el de `esphome: name:`) y su clave, y valide. El nodo se reconecta al instante con esa clave, y el mensaje indica si ha respondido. Repita para cada nodo: las claves ya guardadas se conservan.
 
-```
-salon|kBv1s2f3G4h5J6k7L8m9N0p1Q2r3S4t5U6v7W8x9Y0=
-cocina|9xQm4Zt6R8s0T2u4V6w8X0y2Z4a6B8c0D2e4F6g8H0=
-```
+- **Listar las claves por nodo** muestra los nodos con una clave específica, la clave oculta (`kBv1…=`), y si cada uno está conectado.
+- **Eliminar la clave de un nodo** lo devuelve a la clave por defecto.
 
-El nombre del nodo es el declarado en `esphome: name:`. Estas claves tienen prioridad sobre la clave por defecto.
+Estas claves tienen prioridad sobre la clave por defecto.
+
+> El campo **Claves por nodo** de la configuración sigue existiendo, pero es de **una sola línea**: separe los pares `nodo|clave` con un espacio, una coma o un punto y coma. En cada guardado, los pares escritos **se añaden** a las claves ya guardadas y luego el campo se vacía: escribir un nodo nuevo más adelante ya no hace desaparecer los demás. Las comillas copiadas del YAML (`key: "…"`) se eliminan. Para quitar una clave, use **Eliminar la clave de un nodo**.
+>
+> ```
+> salon|kBv1s2f3G4h5J6k7L8m9N0p1Q2r3S4t5U6v7W8x9Y0= cocina|9xQm4Zt6R8s0T2u4V6w8X0y2Z4a6B8c0D2e4F6g8H0=
+> ```
 
 ### 3. Descubra sus dispositivos
 
@@ -96,7 +111,7 @@ La búsqueda utiliza mDNS (el protocolo con el que ESPHome se anuncia en la red)
 
 ### 4. Si no se encuentra un nodo
 
-Algunas redes bloquean el mDNS (VLAN separadas, Wi-Fi con aislamiento de clientes, router que filtra el multicast). En ese caso, declare el nodo a mano en **Nodos añadidos a mano**, una dirección por línea:
+Algunas redes bloquean el mDNS (VLAN separadas, Wi-Fi con aislamiento de clientes, router que filtra el multicast). En ese caso, declare el nodo a mano en **Nodos añadidos a mano**, direcciones separadas por un espacio, una coma o un punto y coma:
 
 ```
 salon.local
@@ -108,10 +123,10 @@ salon.local
 
 El puerto es opcional (6053 por defecto). Una vez conectado, el nodo anuncia él mismo su nombre real: un nodo añadido por su dirección IP aparecerá con su nombre ESPHome, y seguirá funcionando aunque su dirección IP cambie después.
 
-> **Si ese nodo tiene una clave de cifrado propia**, indíquela en **Claves por nodo** usando **la misma dirección** que ha escrito aquí, y no su nombre ESPHome:
+> **Si ese nodo tiene una clave de cifrado propia**, defínala con el botón **Definir la clave de un nodo** escribiendo como nodo **la misma dirección** que ha escrito aquí, y no su nombre ESPHome:
 >
 > ```
-> 192.168.1.42|kBv1s2f3G4h5J6k7L8m9N0p1Q2r3S4t5U6v7W8x9Y0=
+> Nodo: 192.168.1.42
 > ```
 >
 > El motivo es sencillo: su nombre solo se conoce una vez establecida la conexión, y la conexión necesita precisamente la clave. Esto no afecta a los nodos encontrados por la búsqueda ni a los que usan la clave por defecto.
@@ -120,6 +135,7 @@ El puerto es opcional (6053 por defecto). Una vez conectado, el nodo anuncia él
 
 - **Probar la conexión**: vuelve a lanzar una búsqueda completa y le indica cuántos nodos han respondido y cuántas funcionalidades están disponibles.
 - **Reconectar los nodos**: cierra todas las conexiones y las vuelve a abrir. Útil tras reprogramar un nodo o cambiar una clave.
+- **Definir la clave de un nodo**, **Eliminar la clave de un nodo**, **Listar las claves por nodo**: las claves propias de algunos nodos, un nodo cada vez (ver más arriba).
 
 ## Escenas
 
@@ -210,7 +226,7 @@ Entre los `device_class` reconocidos están: `temperature`, `humidity`, `pressur
 Compruebe que sus nodos estén encendidos y conectados al Wi-Fi. Si su red bloquea el mDNS, añádalos a mano (ver más arriba).
 
 **Se encuentra un nodo, pero no aparece en la lista**
-Casi siempre se trata de una clave de cifrado que no coincide. El nodo es visible en la red, pero rechaza la conexión. Compruebe la clave en su YAML y utilice **Claves por nodo** si difiere de la clave por defecto.
+Casi siempre se trata de una clave de cifrado que no coincide. El nodo es visible en la red, pero rechaza la conexión. Compruebe la clave en su YAML y utilice **Definir la clave de un nodo** si difiere de la clave por defecto. **Listar las claves por nodo** muestra qué nodos tienen una clave específica y si están conectados.
 
 **Un nodo desaparece y vuelve a aparecer**
 Es normal tras un reinicio del nodo (actualización OTA, corte de corriente). La integración se reconecta automáticamente, con un retardo creciente para no saturar la red.
@@ -235,16 +251,16 @@ Estos son los parámetros que ESPHome te pide en su pantalla de configuración e
 | --- | --- | --- | --- |
 | Primeros pasos | `section` | No | Esta integración se comunica con sus nodos ESPHome en su red local, a través de su API nativa (puerto 6053). Pegue su clave de cifrado a continuación y luego vaya a la pantalla Descubrir e inicie una búsqueda: los nodos encontrados en su red aparecen allí con todas sus entidades, listos para añadirse. Sin ninguna dirección IP que escribir. |
 | Clave de cifrado | `secret` | No | La clave base64 declarada en `api: encryption: key:` de su YAML de ESPHome. Se usa para todos los nodos que no tengan una clave específica más abajo. Déjela vacía solo si sus nodos no tienen cifrado. |
-| Nodos con una clave distinta | `section` | No | Rellene los dos campos siguientes solo si algunos nodos no comparten la clave anterior, o si la búsqueda en la red no encuentra un nodo (otra VLAN, mDNS filtrado por su router). |
-| Claves por nodo | `secret` | No | Un nodo por línea, con el formato `nodo\|clave`. El nombre del nodo es el de su YAML de ESPHome (`esphome: name:`), o su dirección. Estas claves tienen prioridad sobre la clave anterior. |
-| Nodos añadidos a mano | `string` | No | Una dirección por línea (`salon.local`, `192.168.1.42` o `192.168.1.42:6053`), para los nodos que la búsqueda en la red no encuentra. Los nodos encontrados por la búsqueda no necesitan nada aquí. |
+| Nodos con una clave distinta | `section` | No | Solo es necesario si algunos nodos no comparten la clave anterior, o si la búsqueda en la red no encuentra un nodo (otra VLAN, mDNS filtrado por su router). Con varios nodos, mejor use el botón «Definir la clave de un nodo» al final de esta página: añade o sustituye una clave sin tocar las demás. |
+| Claves por nodo | `secret` | No | Pares `nodo\|clave` separados por un espacio, una coma o un punto y coma (este campo es de una sola línea). El nombre del nodo es el de su YAML de ESPHome (`esphome: name:`), o su dirección. Estas claves tienen prioridad sobre la clave anterior. En cada guardado, los pares escritos aquí se añaden a las claves ya guardadas y el campo se vacía: los botones de claves por nodo de más abajo permiten listarlas y eliminarlas. |
+| Nodos añadidos a mano | `string` | No | Direcciones separadas por un espacio, una coma o un punto y coma (`salon.local`, `192.168.1.42` o `192.168.1.42:6053`), para los nodos que la búsqueda en la red no encuentra. Los nodos encontrados por la búsqueda no necesitan nada aquí. |
 | Duración de la búsqueda (s) | `number` | No | Tiempo durante el cual la búsqueda mDNS escucha los nodos ESPHome en la red. |
 | Tiempo de espera de conexión (s) | `number` | No | Tiempo de espera de la respuesta de un nodo antes de abandonarlo. |
 
 ## Cómo instalar ESPHome en Gladys
 
 1. En Gladys, abre **Integraciones**: ESPHome aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
-2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/william-de71/gladys-esphome:1.3.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/william-de71/gladys-esphome:1.4.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
 3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
 4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/William-De71/gladys-esphome](https://github.com/William-De71/gladys-esphome).
 

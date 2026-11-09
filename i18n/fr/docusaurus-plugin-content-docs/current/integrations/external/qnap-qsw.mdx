@@ -1,0 +1,192 @@
+---
+title: "Intégration domotique QNAP QSW, gratuite et open source"
+sidebar_label: "QNAP QSW"
+description: "Commutateurs QNAP QSW : ports, vitesse, débits, température, ventilateurs, firmware. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-qnap-qsw.png"
+keywords:
+  - "qnap qsw"
+  - "domotique qnap qsw"
+  - "gladys qnap qsw"
+  - "qnap qsw gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-qnap-qsw instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"QNAP QSW","description":"Commutateurs QNAP QSW : ports, vitesse, débits, température, ventilateurs, firmware.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-qnap-qsw","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-qnap-qsw.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-06T09:21:23Z"}} />
+
+Les commutateurs administrables QNAP **QSW** (QSW-M408, QSW-M2116 et les
+autres modèles QSW-M sous **QSS**) dans Gladys, par l'API de l'interface web
+locale du commutateur. Pratique pour surveiller le réseau de la maison : un
+port qui tombe, un lien qui retombe à 100 Mbit/s, un commutateur qui chauffe :
+
+- le commutateur devient un appareil Gladys (onglet Découverte) : **ports
+  connectés**, **température**, vitesse des **ventilateurs 1** et **2** (tr/min,
+  quand le commutateur en a), **débits reçu** et **émis** de tous les ports
+  ensemble, **temps de fonctionnement**, **firmware** ; et pour chaque port :
+  **connecté** (oui / non), **vitesse du lien** (0 quand rien n'est branché),
+  **débits reçu** et **émis** ;
+- un bouton **Redémarrer le commutateur**, inactif tant que vous ne
+  l'autorisez pas.
+
+Les débits sont calculés à partir des compteurs d'octets de deux lectures
+successives (aucun à la première lecture, aucun quand les compteurs
+repartent de zéro, après un redémarrage du commutateur). Les agrégats de
+liens (LACP) ne sont pas lus, seulement les ports physiques. Le PoE n'est pas
+lu : la bibliothèque que suit cette intégration ne le lit pas, et ses routes
+ne sont pas devinées. Les commutateurs QSW non administrables n'ont pas
+d'interface et ne peuvent pas être lus.
+
+Ce n'est pas l'intégration des **NAS** QNAP (QTS, QuTS hero) : celle-ci est
+une autre intégration du store.
+
+> **Cette intégration n'a jamais été testée avec un vrai commutateur.** Cette
+> première version suit aioqsw, la bibliothèque qu'utilise Home Assistant, et
+> n'a été testée que contre un faux commutateur. Dites sur le forum Gladys ce
+> qui marche et ce qui ne marche pas, avec le modèle et la version de QSS.
+
+Intégration non officielle, sans lien avec QNAP.
+
+## Avant de commencer
+
+1. Le commutateur doit être un QSW **administrable** (avec une interface web,
+   QSS).
+2. Gladys a besoin d'un compte d'administration de l'interface web (`admin`
+   par défaut). Son mot de passe est gardé par Gladys dans sa base, jamais
+   réaffiché, et envoyé seulement au commutateur.
+3. Ajoutez une intégration par commutateur.
+
+## Réglages
+
+- **Adresse du commutateur** : son adresse IP ou son nom d'hôte, tel que vous
+  le saisissez pour ouvrir son interface. HTTPS par défaut (port 443, ou
+  `:port`). Si votre commutateur ne sert son interface qu'en HTTP simple,
+  saisissez `http://` devant l'adresse : le mot de passe (en base64, lisible
+  par tous) traverse alors votre réseau lisible par quiconque s'y trouve.
+- **Nom d'utilisateur**, **Mot de passe**.
+- **Empreinte du certificat** (facultatif, HTTPS seulement) : voir plus bas.
+- **Rafraîchissement** : 30 s, 1 min (par défaut), 2 ou 5 min. Le bouton de
+  test, l'enregistrement du formulaire et un redémarrage de Gladys ou du
+  conteneur ne lisent pas plus tôt (l'heure de la dernière tentative est
+  gardée, écrite avant la lecture). Un appui sur **Redémarrer le
+  commutateur** fait sa propre lecture fraîche, hors rafraîchissement.
+- **Autoriser le redémarrage du commutateur** : désactivé par défaut.
+
+## Le certificat HTTPS
+
+Le commutateur a un certificat auto-signé, qu'aucune autorité ne garantit.
+Gladys le vérifie par son empreinte SHA-256, juste après la négociation TLS
+et **avant** d'envoyer le mot de passe :
+
+- champ vide, à la première connexion : Gladys écrit le certificat rencontré
+  dans son stockage, **puis** envoie le mot de passe. Si son stockage ne peut
+  être lu ou écrit, rien n'est appris et rien n'est envoyé (le statut montre
+  l'empreinte rencontrée ; le stockage est relu toutes les 10 s) ;
+- ensuite, un autre certificat arrête tout (rien n'est envoyé) et le statut
+  montre son empreinte. Réenregistrer le formulaire ne change rien. Si vous
+  avez remplacé ou réinitialisé le commutateur, saisissez dans **Empreinte du
+  certificat** l'empreinte que votre navigateur montre pour lui (cadenas,
+  certificat, SHA-256) : elle devient celle de confiance.
+
+## Le redémarrage
+
+**Redémarrer le commutateur** est un bouton, jamais un interrupteur : un
+« tout éteindre » d'un assistant vocal ou d'une scène ne l'atteint jamais.
+Tout appareil branché sur le commutateur perd le réseau pendant 1 à
+3 minutes. Un appui est refusé, rien n'étant envoyé, dans ces cas :
+
+- **Autoriser le redémarrage du commutateur** est désactivé (revérifié juste
+  avant l'écriture de la requête) ;
+- la configuration est incomplète, la connexion ou le certificat a été
+  refusé, un autre commutateur répond à l'adresse, ou Gladys est dans une
+  pause demandée par le commutateur (HTTP 429 ou 5xx) ;
+- un redémarrage a été envoyé il y a moins de 10 minutes (gardé entre les
+  redémarrages), ou ce délai ne peut pas être écrit dans le stockage de
+  l'intégration (/data), ou ce stockage est illisible ;
+- un redémarrage est déjà en cours d'envoi, ou une lecture en cours ne
+  finit pas dans les 2,5 s suivant l'appui ;
+- le commutateur ne répond pas en 2,5 s à la lecture faite juste avant, ou un
+  autre commutateur répond (autre MAC), ou sa MAC est illisible ou n'a jamais
+  été lue avant à cette adresse ;
+- la requête n'a pas pu être écrite dans les 3,5 s suivant l'appui.
+
+Un appui n'attend pas le retour des lectures après une panne : sa propre
+lecture fraîche décide. Quand la requête est partie sans réponse du
+commutateur, Gladys dit « envoyé, sans réponse » : le commutateur redémarre
+peut-être. Pendant 5 minutes, une lecture qui échoue dit qu'il redémarre.
+
+## Pannes
+
+- **Identifiants refusés** (par la page de connexion du commutateur
+  seulement) : plus rien n'est envoyé tant que le nom d'utilisateur ou le mot
+  de passe n'est pas réenregistré dans le formulaire (le mot de passe
+  enregistré est alors essayé une fois, même identique) ; le bouton
+  **Tester la connexion** essaie une fois de plus, quand une lecture est due
+  (jamais avant le rafraîchissement suivant la dernière tentative). Gladys garde une marque de
+  8 bits du mot de passe refusé (partagée par 1 mot de passe sur 256, jamais
+  le mot de passe) pour qu'un redémarrage ne le réessaie pas.
+- **HTTP 429 ou 5xx** sur la connexion, la carte ou l'état des ports : une
+  pause de toute requête (1 min à 6 h), gardée entre les redémarrages. Les autres routes
+  (débits, capteurs, temps de fonctionnement, firmware) ne mettent jamais en
+  pause ni n'arrêtent la lecture (hors certificat ou connexion refusés, qui
+  arrêtent tout où qu'ils soient rencontrés) : ce qu'elles n'ont pas donné
+  cette fois est dit dans le statut. L'une d'elles qui refuse la session
+  (HTTP 401/403, un compte sans le droit d'y accéder) n'ouvre pas de nouvelle
+  session : elle est redemandée 1, 2, 4… lectures plus tard, au plus une heure
+  après.
+- **Pas de réponse** : nouvel essai après 1 minute ou l'intervalle de
+  rafraîchissement s'il est plus long, puis deux fois plus long à chaque fois,
+  jusqu'à 30 minutes.
+- **Autre commutateur** à l'adresse (autre MAC) : rien n'est publié ni
+  envoyé ; enregistrez le formulaire pour le prendre comme le nouveau.
+
+Ni le mot de passe, ni le jeton de session, ni l'adresse MAC ou le numéro de
+série ne sont journalisés ou publiés. Le stockage garde l'empreinte du
+certificat, la marque de 8 bits ci-dessus et une empreinte salée de la MAC du
+commutateur (pas la MAC en clair).
+
+## Pas encore fait
+
+Le PoE (puissance par port), les agrégats de liens, les compteurs d'erreurs,
+la recherche de mise à jour du firmware : dites-le sur le forum si vous en
+avez besoin.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par QNAP QSW dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Fonctionnement | `section` | Non | Gladys lit un commutateur administrable QNAP QSW (QSW-M408, QSW-M2116 et les autres modèles QSW-M sous QSS) par l'API de son interface web locale, avec un compte d'administration. Le commutateur devient un appareil : ports connectés, température, vitesse des ventilateurs, débits totaux reçu et émis, temps de fonctionnement, firmware, et pour chaque port : connecté, vitesse du lien, débits reçu et émis ; plus un bouton Redémarrer, inactif tant que vous ne l'autorisez pas plus bas. Le PoE n'est pas lu (absent de la bibliothèque de référence, pas deviné). Les commutateurs QSW non administrables n'ont pas d'interface et ne peuvent pas être lus. Ajoutez une intégration par commutateur. Ce n'est pas l'intégration des NAS QNAP. Intégration non officielle, sans lien avec QNAP. |
+| Adresse du commutateur | `string` | Oui | L'adresse IP (ou le nom d'hôte) du commutateur sur votre réseau local, telle que vous la saisissez pour ouvrir son interface web. HTTPS par défaut (certificat vérifié, voir plus bas). Si le commutateur ne sert son interface qu'en HTTP simple, commencez l'adresse par http:\/\/ : le mot de passe traverse alors votre réseau lisible par quiconque s'y trouve. |
+| Nom d'utilisateur | `string` | Oui | Un compte d'administration de l'interface web du commutateur (admin par défaut sous QSS). |
+| Mot de passe | `secret` | Oui | Le mot de passe de ce compte. Gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement au commutateur (en HTTPS, sur une connexion dont le certificat a été vérifié avant). |
+| Empreinte du certificat (facultatif, HTTPS) | `string` | Non | Le commutateur a un certificat HTTPS auto-signé. Vide : Gladys épingle le certificat rencontré à la première connexion (écrit dans son stockage avant l'envoi du mot de passe) puis refuse tout autre, en donnant son empreinte. Pour faire confiance à un nouveau certificat (commutateur remplacé ou réinitialisé), ou pour l'épingler vous-même, saisissez ici son empreinte SHA-256 (telle que votre navigateur l'affiche). Laissez-le vide avec une adresse http:\/\/. |
+| Rafraîchissement | `select` | Oui | Fréquence de lecture du commutateur. Le bouton de test, l'enregistrement du formulaire ou un redémarrage ne lisent pas plus tôt ; un appui sur Redémarrer fait sa propre lecture fraîche. |
+| Commande | `section` | Non | Lecture seule par défaut. La seule commande est le redémarrage, un bouton (jamais un interrupteur : un « tout éteindre » ne l'atteint jamais), refusé tant qu'il n'est pas autorisé ici, au plus un toutes les 10 minutes. Tout appareil branché sur le commutateur perd le réseau pendant le redémarrage (1 à 3 minutes). |
+| Autoriser le redémarrage du commutateur | `boolean` | Non | Désactivé : le bouton Redémarrer est refusé et rien n'est envoyé. |
+
+## Comment installer QNAP QSW dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : QNAP QSW apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-qnap-qsw:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-qnap-qsw](https://github.com/LM1LC3N7/gladys-qnap-qsw).
+
+QNAP QSW nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+QNAP QSW est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-qnap-qsw) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-qnap-qsw/blob/HEAD/docs/fr.md)

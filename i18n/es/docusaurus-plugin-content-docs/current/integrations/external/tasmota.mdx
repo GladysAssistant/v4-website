@@ -19,7 +19,7 @@ https://github.com/gboulvin/Gladys-Tasmota instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Tasmota","description":"Controle sus dispositivos Tasmota en local por MQTT o HTTP: relés, luces, energía, sensores.","owner":"gboulvin","owner_avatar_url":"https://avatars.githubusercontent.com/u/78817935?v=4","repo_url":"https://github.com/gboulvin/Gladys-Tasmota","cover_url":"https://integration-store-storage.gladysassistant.com/covers/gboulvin--Gladys-Tasmota.png","type":"device","version":"1.1.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-10-26T08:43:51Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Tasmota","description":"Controle sus dispositivos Tasmota en local por MQTT o HTTP: relés, luces, energía, sensores.","owner":"gboulvin","owner_avatar_url":"https://avatars.githubusercontent.com/u/78817935?v=4","repo_url":"https://github.com/gboulvin/Gladys-Tasmota","cover_url":"https://integration-store-storage.gladysassistant.com/covers/gboulvin--Gladys-Tasmota.png","type":"device","version":"1.2.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-06T10:34:59Z"}} />
 
 Controle sus dispositivos [Tasmota](https://tasmota.github.io/) desde Gladys, **100 % en local**:
 enchufes, relés, bombillas y tiras LED, reguladores, persianas, ventiladores, medidores de energía
@@ -41,7 +41,8 @@ y sensores. Sin nube.
   índice UV, humedad del suelo, entradas analógicas, contadores de impulsos, entradas de
   interruptor, temperatura del chip, señal Wi-Fi y tiempo activo.
 - **Disparadores de escena**: botón pulsado (simple, doble, triple… mantenido), entrada de
-  interruptor cambiada, código RF recibido (Sonoff RF Bridge), código IR recibido, dispositivo en
+  interruptor cambiada, código RF recibido (Sonoff RF Bridge), código IR recibido, **tarjeta RFID leída** (RC522,
+  PN532, RDM6300, Wiegand), dispositivo en
   línea / desconectado.
 - **Acciones de escena**: enviar cualquier comando Tasmota (Backlog, RfSend, IRSend, Rule…),
   encender un relé un tiempo, hacer parpadear una luz, reiniciar un dispositivo.
@@ -143,12 +144,35 @@ Mientras tanto, las dos integraciones pueden funcionar en paralelo.
      los demás llegaban como interruptor. Esta integración reconoce la luz: asocie _Switch_ con
      _Light_.
 
+   Consejo: antes de migrar, dé a cada relé el tipo que tenía en la integración nativa con la
+   acción **Personalizar una función**: entonces se asocia automáticamente.
+
    Una función sin asociar pierde su historial, y las escenas que la usan deben modificarse.
 
 6. Con un historial grande, la migración tarda unos minutos: sígala en **Configuración → Tareas**. Si se interrumpe, vuelva a lanzarla: solo mueve lo que queda.
 
 Una vez migrados todos los dispositivos, la integración Tasmota nativa ya no tiene ningún
 dispositivo.
+
+## Cambiar el nombre de una función, convertir un relé en interruptor o luz
+
+Gladys permite cambiar el nombre de un dispositivo, no el de sus funciones. La acción
+**Personalizar una función** de la pantalla de configuración hace lo que hacía la página de
+edición de la integración nativa:
+
+- **Dispositivo**: el dispositivo que personalizar.
+- **Función**: su nombre actual (`Switch 2`, `Power`…) o, para un relé, su número (`2`).
+- **Nuevo nombre**: vacío, el nombre no cambia; `-` vuelve al nombre por defecto.
+- **Tipo** (solo relés): _Interruptor_, _Luz_ o _Automático_ para seguir lo que indica Tasmota.
+
+Es la misma función, solo redefinida: se conservan su historial y las escenas y paneles que la
+usan. Gladys aplica un cambio de tipo con el botón **Actualizar** que aparece entonces en el
+dispositivo, en la pestaña **Descubrimiento**. Gladys solo ofrece ese botón para un cambio de tipo:
+un nombre nuevo por sí solo se aplica en la próxima actualización del dispositivo, o al añadirlo.
+
+Un dispositivo configurado en Tasmota con `SetOption30 1` (la forma de Tasmota de decir «mis relés
+controlan luces») publica sus relés como luces, salvo que los haya personalizado. Un relé
+convertido en luz se puede identificar (parpadea dos veces) como las bombillas.
 
 ## Acciones de la pantalla de configuración
 
@@ -161,18 +185,27 @@ dispositivo.
 - **Enviar un comando** — cualquier comando Tasmota, la respuesta aparece bajo el botón.
 - **Reiniciar un dispositivo**.
 - **Pasar un dispositivo a MQTT** — envía `MqttHost`, `MqttPort`, `MqttUser`, `MqttPassword`.
+- **Personalizar una función** — cambiar el nombre de una función, convertir un relé en
+  interruptor o luz (ver arriba).
 
 ## Escenas
 
 En la categoría **Integraciones** del editor de escenas (Gladys 5.1 o posterior):
 
-| Disparador                                  | Ajuste de Tasmota necesario                                | Variables          |
-| ------------------------------------------- | ---------------------------------------------------------- | ------------------ |
-| Botón Tasmota pulsado                       | `SetOption73 1` (botones desacoplados de los relés)        | `button`, `action` |
-| Entrada de interruptor Tasmota cambiada     | `SetOption114 1` (interruptores desacoplados de los relés) | `switch`, `action` |
-| Código RF recibido                          | un RF Bridge (`RfReceived`)                                | `code`, `rf_key`   |
-| Código IR recibido                          | un receptor IR (`IrReceived`)                              | `code`, `protocol` |
-| Dispositivo Tasmota en línea / desconectado | ninguno (LWT por MQTT, lecturas fallidas por HTTP)         | `status`           |
+| Disparador                                  | Ajuste de Tasmota necesario                                | Variables               |
+| ------------------------------------------- | ---------------------------------------------------------- | ----------------------- |
+| Botón Tasmota pulsado                       | `SetOption73 1` (botones desacoplados de los relés)        | `button`, `action`      |
+| Entrada de interruptor Tasmota cambiada     | `SetOption114 1` (interruptores desacoplados de los relés) | `switch`, `action`      |
+| Código RF recibido                          | un RF Bridge (`RfReceived`)                                | `code`, `rf_key`        |
+| Código IR recibido                          | un receptor IR (`IrReceived`)                              | `code`, `protocol`      |
+| Tarjeta RFID leída                          | un lector RC522, PN532, RDM6300 o Wiegand                  | `uid`, `data`, `reader` |
+| Dispositivo Tasmota en línea / desconectado | ninguno (LWT por MQTT, lecturas fallidas por HTTP)         | `status`                |
+
+Un lector RFID recibe también una función de texto **Last badge (RC522)** (la última tarjeta leída, con el nombre del lector), que se añade a su
+dispositivo en la primera lectura (pulse **Actualizar** en la pestaña Descubrimiento). El UID va en
+mayúsculas (`BA839D07`): escríbalo así en el filtro. El RC522 necesita un Tasmota compilado con
+`USE_RC522` (`Data` y `Type` necesitan `USE_RC522_DATA_FUNCTION` y
+`USE_RC522_TYPE_INFORMATION`).
 
 Cada filtro es opcional: vacío, acepta todo. Lea los valores en las acciones siguientes con
 `{{triggerEvent.data.code}}`, por ejemplo.
@@ -231,7 +264,7 @@ Estos son los parámetros que Tasmota te pide en su pantalla de configuración e
 ## Cómo instalar Tasmota en Gladys
 
 1. En Gladys, abre **Integraciones**: Tasmota aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
-2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/gboulvin/gladys-tasmota:1.1.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/gboulvin/gladys-tasmota:1.2.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
 3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
 4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/gboulvin/Gladys-Tasmota](https://github.com/gboulvin/Gladys-Tasmota).
 

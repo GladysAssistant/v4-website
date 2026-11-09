@@ -19,7 +19,7 @@ https://github.com/guim31/gladys-smappee instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Smappee","description":"Smappee-Energiemonitore: Verbrauch, Solar, Unterzähler und Steckdosen, lokal oder per Cloud.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-smappee","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-smappee.png","type":"device","version":"1.0.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-02T06:21:42Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Smappee","description":"Smappee-Energiemonitore: Verbrauch, Solar, Unterzähler und Steckdosen, lokal oder per Cloud.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-smappee","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-smappee.png","type":"device","version":"1.3.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-09T06:22:00Z"}} />
 
 > **Ohne die Hardware entwickelt: Rückmeldungen willkommen.** Diese Integration wurde nach der
 > Smappee-Bibliothek von Home Assistant (pysmappee) und der offiziellen API geschrieben und an
@@ -37,6 +37,7 @@ Integration liest die Messgeräte zuerst im lokalen Netz und über die Smappee-C
 | Smappee Energy, Solar, Pro/Plus   | lokale Web-API (HTTP), alle 5 bis 60 Sekunden |
 | Smappee Infinity, Genius, Connect | lokaler MQTT-Broker (Port 1883), live         |
 | Jedes Messgerät deines Kontos     | Smappee-Cloud (optional), alle 5 Minuten      |
+| Ladestationen deines Kontos       | Smappee-Cloud, alle 5 Minuten, nur Lesen      |
 
 ## Voraussetzungen
 
@@ -67,6 +68,8 @@ lesen und die in der Cloud bekannten Steckdosen zu steuern. Ein Messgerät mit e
 - **Lokales Aktualisierungsintervall**: wie oft die lokalen Messwerte an Gladys gesendet werden
   (standardmäßig 10 Sekunden). Die Energiezähler werden immer aus jedem Messwert berechnet.
 - **Smappee-Steckdosen und -Schalter steuern**: aus, werden sie nur angezeigt.
+- **Verbrauch des Messgeräts im Energie-Tab berechnen** (standardmäßig an): ausschalten, wenn ein
+  anderer Zähler schon das ganze Haus misst, siehe [Energie-Tab](#energie-tab).
 - **Sprache der Gerätenamen**: die Namen der Funktionen beim Hinzufügen eines Geräts.
 
 Öffne dann den Tab **Entdecken** und füge die gewünschten Geräte hinzu.
@@ -99,10 +102,61 @@ Ein Gerät pro Smappee Switch, Comfort Plug oder Cloud-Ausgangsmodul, mit einer 
 (benannt wie in der App, sonst **Smappee-Steckdose** und ihre Nummer). Eine Comfort Plug (433 MHz)
 meldet ihren Zustand nie: Gladys zeigt den zuletzt gesendeten Befehl.
 
+### Ladestationen
+
+Ein Gerät nur zum Lesen pro Anschluss einer Smappee-Ladestation (EV Wall...), benannt wie in der App,
+sonst **Smappee-Ladestation** und ihre Nummer.
+Nur die Smappee-Cloud liefert sie: Füll den Cloud-Abschnitt aus, auch wenn das Messgerät lokal gelesen
+wird. Alle Werte werden alle 5 Minuten aktualisiert.
+
+- **Anschluss**: frei oder belegt, solange ein Fahrzeug angeschlossen ist;
+- **Ladevorgang**: lädt, Fahrzeug angeschlossen, von der Ladestation pausiert oder inaktiv;
+- **Ladeleistung** (kW): der Mittelwert der letzten 5 Minuten, für ein über die Cloud gelesenes Messgerät,
+  und 0, wenn keine Sitzung läuft;
+- **Energie der letzten Sitzung** (kWh) und **Dauer der letzten Sitzung**: die laufende Sitzung, sonst
+  die vorherige. Während des Ladens ist die Energie die an der Ladestation gemessene, einige Minuten
+  verzögert;
+- **Gesamte Ladeenergie** (kWh): der Zähler der Ladestation, aus den Sitzungen gelesen. Der Wert ändert
+  sich am Ende einer Sitzung und bleibt leer bis zur ersten Sitzung der letzten 30 Tage;
+- **Energiezähler der Ladestation** (kWh): die Energie, die das Smappee-Messgerät auf dem Kanal der
+  Ladestation misst (nicht der Zähler der Ladestation), Block für Block aus den 5-Minuten-Daten der
+  Cloud addiert, einige Minuten verzögert. Nur für eine Ladestation, deren Messgerät über die Cloud
+  gelesen wird und die einen Messkanal hat. Er beginnt bei 0 mit dem Update der Integration: kein
+  Verlauf davor.
+
+Nur der **Energiezähler der Ladestation** wird im Energie-Tab berechnet: Er zeigt Tag für Tag und pro
+halbe Stunde, was das Auto lädt. Diese Energie zählt bereits der Hauptzähler: Ordne in den
+Energie-Einstellungen von Gladys den Zähler der Ladestation **unter dem Hauptzähler** ein (dem Zähler
+des Messgeräts oder einem Linky/Lixee-Zähler), sonst wird sie doppelt gezählt.
+
+Eine vor dem Update hinzugefügte Ladestation bekommt den neuen Zähler über den Tab **Entdecken** der
+Integration: Klick auf dem Gerät der Ladestation auf **Aktualisieren**. Die anderen Funktionen, der Verlauf und die Szenen der Ladestation bleiben erhalten.
+
+Um eine Szene zu starten, nimm den Standard-Auslöser auf einen Gerätewert, zum
+Beispiel wenn sich der **Ladevorgang** ändert.
+
 ## Energie-Tab
 
-Der Energie-Tab von Gladys 5.2 bepreist, was das Netz liefert: den **Verbrauchszähler** eines Messgeräts ohne Solarmodule, den **Bezugszähler** eines Messgeräts mit Solarmodulen (sein **Verbrauchszähler**, der den selbst genutzten Solarstrom enthält, wird angezeigt, aber nicht bepreist). Der **Energiezähler** der Unterzähler ist ebenfalls ein Verbrauchszähler, der **Solarproduktionszähler** ein Produktionszähler. Ordne die Unterzähler in den Energie-Einstellungen dem Messgerät unter, damit sie
-nicht doppelt gezählt werden. Die Einspeisung wird angezeigt, nie noch einmal addiert.
+Der Energie-Tab von Gladys 5.2 bepreist, was das Netz liefert: den **Verbrauchszähler** eines Messgeräts ohne Solarmodule, den **Bezugszähler** eines Messgeräts mit Solarmodulen (sein **Verbrauchszähler**, der den selbst genutzten Solarstrom enthält, wird angezeigt, aber nicht bepreist). Der **Energiezähler** der Unterzähler ist ebenfalls ein Verbrauchszähler, der **Solarproduktionszähler** ein Produktionszähler. Ordne die Unterzähler und den **Energiezähler der Ladestation** in den
+Energie-Einstellungen dem Hauptzähler unter, damit sie nicht doppelt gezählt werden. Die Einspeisung wird angezeigt, nie noch einmal addiert.
+
+### Mit einem anderen Hauptzähler (Ladestation)
+
+Du hast schon einen Hauptzähler in Gladys (Linky über Lixee, Enedis…) und der Smappee soll vor
+allem zeigen, was das Auto verbraucht? Ohne Einstellung wird das Haus doppelt gezählt: vom Linky
+und vom Zähler des Messgeräts.
+
+1. Schalte in der Konfiguration der Integration **Verbrauch des Messgeräts im Energie-Tab
+   berechnen** aus und speichere.
+2. Öffne den Tab **Entdecken** und klicke beim Messgerät auf **Aktualisieren**. Der
+   **Bezugszähler** (oder der **Verbrauchszähler** ohne Solarmodule) wird ein Netzzähler: weiter
+   angezeigt, mit seinem Verlauf, aber nicht mehr bepreist. Sein abgeleiteter Verbrauch und seine
+   Kosten verschwinden aus dem Energie-Tab.
+3. Ordne in den Energie-Einstellungen den **Energiezähler der Ladestation** deinem Hauptzähler
+   unter: Der Energie-Tab zeigt dann Tag für Tag, was das Auto verbraucht. Die Unterzähler werden
+   weiter genauso bepreist.
+
+Ohne anderen Zähler lässt du die Option an: Das Messgerät bleibt dein Hauptzähler.
 
 ## Widget
 
@@ -147,6 +201,8 @@ Cloud-Zugangsdaten).
 
 ## Grenzen
 
+- Ladestationen: nur Lesen, kein Start, keine Pause, kein Lademodus aus Gladys. Beim ersten Lesen
+  werden nur die Sitzungen der letzten 30 Tage geholt.
 - Ohne die Hardware entwickelt: Die Nachrichtenformate stammen aus pysmappee und der offiziellen
   Dokumentation. Rückmeldungen willkommen.
 - Energy, Solar und Pro liefern über ihre lokale API weder Spannung noch Unterzähler.
@@ -164,7 +220,7 @@ Diese Einstellungen fragt Smappee in seinem Konfigurationsbildschirm in Gladys a
 | Deine Smappee-Messgeräte | `section` | Nein | Gib die IP-Adresse jedes Smappee ein: Energy, Solar und Pro werden über ihre lokale Web-API gelesen, Infinity, Genius und Connect über ihren lokalen MQTT-Broker. Gib ihm im Router eine feste Adresse. |
 | IP-Adressen der Smappee-Messgeräte | `string` | Nein | Durch Kommas getrennt. Leer lassen, um nur die Cloud zu nutzen. |
 | Passwort der lokalen Weboberfläche | `secret` | Nein | Nur Energy, Solar und Pro. Leer: das Werkspasswort (admin). |
-| Smappee-Cloud (optional) | `section` | Nein | Für ein Messgerät, das in deinem Netz nicht erreichbar ist, und für die Steckdosen des Cloud-Kontos. Frag den Smappee-Support nach einer API-Client-ID und einem Secret und gib sie mit deinem Smappee-Konto ein. Alle 5 Minuten gelesen. |
+| Smappee-Cloud (optional) | `section` | Nein | Für ein Messgerät, das in deinem Netz nicht erreichbar ist, und für die Steckdosen und Ladestationen des Cloud-Kontos. Frag den Smappee-Support nach einer API-Client-ID und einem Secret und gib sie mit deinem Smappee-Konto ein. Alle 5 Minuten gelesen. |
 | API-Client-ID | `string` | Nein |  |
 | API-Client-Secret | `secret` | Nein |  |
 | Benutzername des Smappee-Kontos | `string` | Nein |  |
@@ -172,12 +228,13 @@ Diese Einstellungen fragt Smappee in seinem Konfigurationsbildschirm in Gladys a
 | Optionen | `section` | Nein |  |
 | Lokales Aktualisierungsintervall | `select` | Ja | Wie oft die lokalen Messwerte an Gladys gesendet werden. |
 | Smappee-Steckdosen und -Schalter steuern | `boolean` | Nein | Aus: nur angezeigt, nicht steuerbar. |
+| Verbrauch des Messgeräts im Energie-Tab berechnen | `boolean` | Nein | Ausschalten, wenn ein anderer Zähler (Linky, Lixee…) schon den Gesamtverbrauch misst. Die Zähler des Messgeräts bleiben mit ihrem Verlauf angezeigt, werden aber nicht mehr berechnet; Ladestationen und Unterzähler schon. Klicke danach im Tab Entdecken beim Messgerät auf Aktualisieren. |
 | Sprache der Gerätenamen | `select` | Ja | Wird verwendet, wenn ein Gerät zu Gladys hinzugefügt wird. |
 
 ## So installierst du Smappee in Gladys
 
 1. Öffne in Gladys **Integrationen**: Smappee erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
-2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-smappee:1.0.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-smappee:1.3.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
 3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
 4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-smappee](https://github.com/guim31/gladys-smappee).
 
