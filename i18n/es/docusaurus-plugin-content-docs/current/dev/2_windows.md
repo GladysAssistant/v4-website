@@ -5,6 +5,10 @@ description: "Configura un entorno de desarrollo de Gladys Assistant en Windows 
 sidebar_label: Windows
 ---
 
+:::info[¿Quieres usar Gladys en casa?]
+Esta guía sirve para contribuir al código de Gladys. Para usar Gladys en tu hogar inteligente, no recomendamos Windows: consulta [Gladys Assistant en Windows](/es/docs/installation/windows).
+:::
+
 A continuación encontrarás las instrucciones para configurar un entorno de desarrollo para Gladys 4.
 
 ## Requisitos del sistema

@@ -145,7 +145,7 @@ Der obige Befehl verwendet `TZ=Europe/Paris`. Ersetze diesen Wert durch deinen e
 
 ### Auf welchen Systemen kann ich Gladys mit Docker betreiben?
 
-Die Docker-Installation funktioniert auf jedem System, auf dem Docker läuft: einem Mini-PC, einem NAS (Synology, Unraid), einem Linux-Server, einem Raspberry Pi oder einer virtuellen Maschine. Auf allen startet derselbe einzelne Befehl Gladys. Auf einem Proxmox-Server folgst du der [Proxmox-Anleitung](/de/docs/installation/proxmox).
+Die Docker-Installation funktioniert auf jedem Linux-System, auf dem Docker läuft: einem Mini-PC, einem NAS (Synology, Unraid), einem Linux-Server, einem Raspberry Pi oder einer virtuellen Maschine. Auf allen startet derselbe einzelne Befehl Gladys. Auf einem Proxmox-Server folgst du der [Proxmox-Anleitung](/de/docs/installation/proxmox). Docker Desktop unter Windows oder macOS wird nicht unterstützt: Gladys läuft dort in einer versteckten virtuellen Maschine, ohne Zugriff auf deine USB-Dongles und dein lokales Netzwerk (siehe [Gladys Assistant unter Windows](/de/docs/installation/windows)).
 
 ### Wie aktualisiere ich Gladys unter Docker?
 
@@ -176,7 +176,7 @@ Ja, und die Schritte sind auf beiden gleich: Installiere Docker mit dem offiziel
         name: "Auf welchen Systemen kann ich Gladys mit Docker betreiben?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Die Docker-Installation funktioniert auf jedem System, auf dem Docker läuft: einem Mini-PC, einem NAS wie Synology oder Unraid, einem Linux-Server, einem Raspberry Pi oder einer virtuellen Maschine. Auf allen startet derselbe einzelne Befehl Gladys. Auf einem Proxmox-Server folgst du der Proxmox-Anleitung.",
+          text: "Die Docker-Installation funktioniert auf jedem Linux-System, auf dem Docker läuft: einem Mini-PC, einem NAS wie Synology oder Unraid, einem Linux-Server, einem Raspberry Pi oder einer virtuellen Maschine. Auf allen startet derselbe einzelne Befehl Gladys. Auf einem Proxmox-Server folgst du der Proxmox-Anleitung. Docker Desktop unter Windows oder macOS wird nicht unterstützt: Gladys läuft dort in einer versteckten virtuellen Maschine, ohne Zugriff auf deine USB-Dongles und dein lokales Netzwerk.",
         },
       },
       {

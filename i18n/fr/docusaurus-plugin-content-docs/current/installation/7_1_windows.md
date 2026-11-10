@@ -48,13 +48,13 @@ Si vous avez déjà un serveur ou un NAS à la maison, vous pouvez aussi l'utili
 Si vous voulez essayer Gladys sur le PC que vous utilisez déjà, installez Gladys Assistant OS dans une **machine virtuelle**, et non avec Docker Desktop. La machine virtuelle se comporte alors comme un mini-PC sur votre réseau. C'est aussi l'approche que Home Assistant documente pour Windows.
 
 1. Installez [VirtualBox](https://www.virtualbox.org/), puis téléchargez l'[image de Gladys Assistant OS](https://download.gladysassistant.com/gladys-assistant-installer-amd64.iso) (un fichier `.iso` d'environ 2 Go).
-2. Dans VirtualBox, cliquez sur **Nouvelle**. Sélectionnez l'image `gladys-assistant-installer-amd64.iso`, choisissez le type **Linux** et la version **Ubuntu (64-bit)**. Si VirtualBox propose une installation automatique (*Unattended Installation*), désactivez-la en cochant **Skip Unattended Installation** : l'installeur de Gladys Assistant OS pose ses propres questions. Donnez à la machine virtuelle **2 cœurs**, **4 Go de RAM** et un disque de **32 Go**.
+2. Dans VirtualBox, cliquez sur **Nouvelle**. Sélectionnez l'image `gladys-assistant-installer-amd64.iso`, choisissez le type **Linux** et la version **Ubuntu (64-bit)**. Si VirtualBox propose une installation automatique (*Unattended Installation*), désactivez-la en cochant **Skip Unattended Installation** : l'installeur de Gladys Assistant OS pose ses propres questions. Donnez à la machine virtuelle **2 cœurs**, **4 Go de RAM** (6 à 8 Go dès que vous utilisez Zigbee2MQTT et plusieurs intégrations) et un disque de **32 Go**.
 3. Avant de la démarrer, ouvrez sa **Configuration** :
    - dans **Système**, cochez l'option **EFI** (*Enable EFI*) : Gladys Assistant OS ne démarre qu'en mode UEFI ;
-   - dans **Réseau**, réglez la carte en **Accès par pont** (*Bridged Adapter*), pour que la machine virtuelle obtienne sa propre adresse sur votre réseau local.
+   - dans **Réseau**, réglez la carte en **Accès par pont** (*Bridged Adapter*), et dans **Nom**, choisissez la carte réseau qu'utilise votre PC (Ethernet ou Wi-Fi), pour que la machine virtuelle obtienne sa propre adresse sur votre réseau local.
 4. Démarrez la machine virtuelle et répondez aux questions de l'installeur comme sur un mini-PC : voir l'[étape 4 du guide mini-PC](/fr/docs/installation/mini-pc#installer-questions). Seul le disque virtuel de la machine virtuelle est effacé, jamais le disque de votre PC.
 5. Quand l'installeur affiche **Installation complete!**, retirez d'abord l'image, pour qu'elle ne relance pas l'installeur : dans le menu de la fenêtre de la machine virtuelle, **Périphériques > Lecteurs optiques** (*Devices > Optical Drives*), retirez le disque du lecteur virtuel. Sélectionnez ensuite **Reboot Now**.
-6. Gladys s'installe toute seule à ce premier démarrage. Quand la fenêtre de la machine virtuelle affiche **Gladys Assistant est prêt**, ouvrez **`http://gladysassistant.local`** dans votre navigateur sous Windows.
+6. Gladys s'installe toute seule à ce premier démarrage. Quand la fenêtre de la machine virtuelle affiche **Gladys Assistant est prêt**, ouvrez **`http://gladysassistant.local`** dans votre navigateur sous Windows. Si ce nom ne s'ouvre pas, utilisez l'adresse affichée en dessous dans la fenêtre de la machine virtuelle (par exemple `http://192.168.1.42`).
 
 Pour utiliser vos appareils :
 

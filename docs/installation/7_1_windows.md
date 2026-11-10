@@ -48,13 +48,13 @@ If you already have a home server or a NAS, you can also use it: see the [Proxmo
 If you want to try Gladys on the PC you already use, install Gladys Assistant OS in a **virtual machine**, not with Docker Desktop. The virtual machine then behaves like a mini-PC on your network. This is also the approach Home Assistant documents for Windows.
 
 1. Install [VirtualBox](https://www.virtualbox.org/), then download the [image of Gladys Assistant OS](https://download.gladysassistant.com/gladys-assistant-installer-amd64.iso) (an `.iso` file of about 2 GB).
-2. In VirtualBox, click on **New**. Select the `gladys-assistant-installer-amd64.iso` image, choose the **Linux** type and the **Ubuntu (64-bit)** version. If VirtualBox offers an unattended installation, tick **Skip Unattended Installation**: the installer of Gladys Assistant OS asks its own questions. Give the virtual machine **2 CPU cores**, **4 GB of RAM** and a **32 GB** disk.
+2. In VirtualBox, click on **New**. Select the `gladys-assistant-installer-amd64.iso` image, choose the **Linux** type and the **Ubuntu (64-bit)** version. If VirtualBox offers an unattended installation, tick **Skip Unattended Installation**: the installer of Gladys Assistant OS asks its own questions. Give the virtual machine **2 CPU cores**, **4 GB of RAM** (6 to 8 GB once you use Zigbee2MQTT and several integrations) and a **32 GB** disk.
 3. Before starting it, open its **Settings**:
    - in **System**, tick **Enable EFI**: Gladys Assistant OS only starts in UEFI mode;
-   - in **Network**, set the adapter to **Bridged Adapter**, so the virtual machine gets its own address on your home network.
+   - in **Network**, set the adapter to **Bridged Adapter**, and in **Name**, choose the network card your PC uses (Ethernet or Wi-Fi), so the virtual machine gets its own address on your home network.
 4. Start the virtual machine and answer the installer's questions as on a mini-PC: see [step 4 of the mini-PC guide](/docs/installation/mini-pc#installer-questions). Only the virtual disk of the virtual machine is erased, never the disk of your PC.
 5. When the installer shows **Installation complete!**, remove the image first, so it does not start the installer again: in the menu of the virtual machine window, choose **Devices > Optical Drives > Remove disk from virtual drive**. Then select **Reboot Now**.
-6. Gladys installs itself on this first boot. When the window of the virtual machine shows **Gladys Assistant is ready**, open **`http://gladysassistant.local`** in your browser on Windows.
+6. Gladys installs itself on this first boot. When the window of the virtual machine shows **Gladys Assistant is ready**, open **`http://gladysassistant.local`** in your browser on Windows. If that name does not open, use the address shown under it in the window of the virtual machine (for example `http://192.168.1.42`).
 
 To use your devices:
 
