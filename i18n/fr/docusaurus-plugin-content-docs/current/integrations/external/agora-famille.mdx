@@ -19,7 +19,7 @@ https://github.com/prohand/gladys-agorafamille instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Agora Famille","description":"Cantine, périscolaire, factures et messages du portail famille Agora Famille.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-agorafamille","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-agorafamille.png","type":"device","version":"2.0.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-10-27T15:52:56Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Agora Famille","description":"Cantine, périscolaire, factures et messages du portail famille Agora Famille.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-agorafamille","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-agorafamille.png","type":"device","version":"2.0.3","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-10T00:45:18Z"}} />
 
 Cette intégration relie Gladys au **portail famille Agora Famille** (édité par
 Agora Plus) de votre commune : cantine, périscolaire, accueil de loisirs,
@@ -60,6 +60,8 @@ Dans Gladys : **Intégrations → Agora Famille → Configuration**.
 | **Jours de planning suivis**             | Combien de jours à venir sont lus et surveillés (14 par défaut).                                                                                                                            |
 | **Rappel de facture (jours)**            | Le déclencheur « facture bientôt à échéance » part ce nombre de jours avant l'échéance (3 par défaut, 0 pour le couper).                                                                    |
 | **Factures transmises au Trésor public** | Numéros des factures que la commune a transmises au Trésor public, séparés par des virgules (ex. `164513`). Voir plus bas.                                                                  |
+| **Je suis en prélèvement automatique**   | À cocher si la banque paie vos factures toute seule (SEPA). Voir plus bas.                                                                                                                  |
+| **Jour du prélèvement**                  | Jour du mois où la banque prélève (ex. `10`). Voir plus bas. 0 = inconnu.                                                                                                                   |
 | **Logs détaillés**                       | Journalise chaque requête au portail, pour le dépannage. Jamais le mot de passe.                                                                                                            |
 
 Cliquez ensuite sur **Tester la connexion** : la réponse liste vos enfants, le
@@ -102,12 +104,12 @@ ne peut pas être lu.
 
 ### Déclencheurs
 
-| Déclencheur                        | Quand                                                                                                  | Variables                                                             |
-| ---------------------------------- | ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------- |
-| **Une nouvelle facture est émise** | Une facture impayée apparaît.                                                                          | `label`, `amount`, `due_date`, `invoice_id`                           |
-| **Une facture arrive à échéance**  | Une facture impayée arrive à échéance dans le délai réglé. Une seule fois.                             | `label`, `amount`, `due_date`, `days_left`, `invoice_id`              |
-| **Un message est reçu**            | La commune a envoyé un message.                                                                        | `subject`, `sender`, `date`                                           |
-| **Une réservation change**         | Un jour réservé ou demandé change d'état (accepté, refusé, annulé…). Filtrable par enfant et par état. | `child_name`, `activity`, `date`, `status`, `previous_status`, `meal` |
+| Déclencheur                        | Quand                                                                                                  | Variables                                                                 |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
+| **Une nouvelle facture est émise** | Une facture impayée apparaît.                                                                          | `label`, `amount`, `due_date`, `invoice_id`, `direct_debit`, `debit_date` |
+| **Une facture arrive à échéance**  | Une facture impayée arrive à échéance dans le délai réglé. Une seule fois. Pas en prélèvement.         | `label`, `amount`, `due_date`, `days_left`, `invoice_id`                  |
+| **Un message est reçu**            | La commune a envoyé un message.                                                                        | `subject`, `sender`, `date`                                               |
+| **Une réservation change**         | Un jour réservé ou demandé change d'état (accepté, refusé, annulé…). Filtrable par enfant et par état. | `child_name`, `activity`, `date`, `status`, `previous_status`, `meal`     |
 
 Les variables s'utilisent dans les actions suivantes, par ex.
 `{{triggerEvent.data.amount}}`.
@@ -170,6 +172,40 @@ Elles sont reconnues de deux façons :
 - **par leur numéro**, dans le champ **Factures transmises au Trésor public**
   (le numéro affiché sur le portail, ex. `164513`).
 
+## Prélèvement automatique
+
+Quand la banque paie vos factures toute seule (prélèvement automatique, SEPA),
+il n'y a rien à payer sur le portail. Cochez **Je suis en prélèvement
+automatique** :
+
+- le widget affiche **À prélever** au lieu de **À payer**, et chaque facture
+  avec un badge bleu ;
+- la **prochaine facture** n'affiche plus « avant le … » ;
+- « facture bientôt à échéance » ne part plus pour elles ;
+- « nouvelle facture » part toujours, avec `direct_debit` à vrai ;
+- elles restent comptées dans le **reste à payer** : l'argent est dû tant que
+  la banque n'a pas payé.
+
+### Le jour du prélèvement
+
+Le portail ne donne pas la date du prélèvement : sa seule date est la **date
+limite de paiement**. Indiquez le jour du mois où votre banque prélève dans
+**Jour du prélèvement** (ex. `10`). Il est pris dans le mois de la date
+limite : une facture à payer avant le 24/11 est prélevée le 10/11.
+
+| Jour du prélèvement | Widget                                                   | Prochaine facture                                      |
+| ------------------- | -------------------------------------------------------- | ------------------------------------------------------ |
+| `10`                | badge **Prélevé le 10/11**, le montant                   | « 45,20 € prélevés le 10/11/2026 — … »                 |
+| `0` (inconnu)       | badge **Prélèvement**, « 45,20 € · échéance 24/11/2026 » | « 45,20 € en prélèvement, échéance le 24/11/2026 — … » |
+
+Le déclencheur « nouvelle facture » donne ce jour dans `debit_date` (vide s'il
+est inconnu).
+
+Le portail ne le dit pas dans sa liste de factures. S'il l'écrit un jour dans
+l'état d'une facture (« prélèvement »…), elle est reconnue sans la case. Une
+facture transmise au Trésor public n'est jamais en prélèvement : la banque ne
+la paie plus.
+
 ## Dépannage
 
 - **« Le portail a refusé l'identifiant ou le mot de passe »** : vérifiez-les
@@ -216,12 +252,14 @@ Voici les paramètres demandés par Agora Famille dans son écran de configurati
 | Jours de planning suivis | `number` | Non | Nombre de jours à venir dont les réservations sont lues et surveillées. |
 | Rappel de facture (jours) | `number` | Non | Le déclencheur « facture bientôt à échéance » se déclenche ce nombre de jours avant l'échéance. 0 le désactive. |
 | Factures transmises au Trésor public | `string` | Non | Numéros des factures que la commune a transmises au Trésor public (« mise en impayé »), séparés par des virgules. Le portail les montre toujours impayées : elles sont affichées à part et pas comptées dans le reste à payer. Celles que le portail marque lui-même sont trouvées sans cela. |
+| Je suis en prélèvement automatique | `boolean` | Non | La banque paie les factures toute seule. Elles sont montrées « Prélèvement » au lieu de « À payer », toujours comptées dans le reste à payer, et le déclencheur « facture bientôt à échéance » ne part plus pour elles. |
+| Jour du prélèvement | `number` | Non | Jour du mois où la banque prélève la facture, dans le mois de son échéance (ex. 10 : une facture à échéance du 24/11 est prélevée le 10/11). Le portail ne le donne pas : sa date est la date limite de paiement. 0 = inconnu. |
 | Logs détaillés | `boolean` | Non | Journalise chaque requête au portail (jamais le mot de passe). Pour le dépannage. |
 
 ## Comment installer Agora Famille dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Agora Famille apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-agorafamille:2.0.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-agorafamille:2.0.3`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/prohand/gladys-agorafamille](https://github.com/prohand/gladys-agorafamille).
 

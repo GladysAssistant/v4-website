@@ -169,7 +169,7 @@ const zwaveJsUiWithoutHomeAssistantContent = {
     faqTitle: "Frequently asked questions",
     cta: {
       title: "Give your Z-Wave network a simple home",
-      text: "Gladys is free, open source and installs with a single Docker command. Connect Z-Wave JS UI over MQTT and start automating.",
+      text: "Gladys is free, open source and installs on a mini-PC from a USB drive. Connect Z-Wave JS UI over MQTT and start automating.",
       primary: { label: "Get started", href: "/docs/" },
       secondary: { label: "Z-Wave JS UI guide", href: "/docs/integrations/zwavejs-ui/" },
     },
@@ -338,7 +338,7 @@ const zwaveJsUiWithoutHomeAssistantContent = {
     faqTitle: "Questions fréquentes",
     cta: {
       title: "Offrez à votre réseau Z-Wave une maison simple",
-      text: "Gladys est gratuite, open source et s'installe en une seule commande Docker. Connectez Z-Wave JS UI via MQTT et commencez à automatiser.",
+      text: "Gladys est gratuite, open source et s'installe sur un mini-PC depuis une clé USB. Connectez Z-Wave JS UI via MQTT et commencez à automatiser.",
       primary: { label: "Commencer", href: "/docs/" },
       secondary: { label: "Guide Z-Wave JS UI", href: "/docs/integrations/zwavejs-ui/" },
     },
@@ -507,7 +507,7 @@ const zwaveJsUiWithoutHomeAssistantContent = {
     faqTitle: "Häufige Fragen",
     cta: {
       title: "Gib deinem Z-Wave-Netz ein einfaches Zuhause",
-      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl installiert. Verbinde Z-Wave JS UI per MQTT und leg mit dem Automatisieren los.",
+      text: "Gladys ist kostenlos, Open Source und lässt sich von einem USB-Stick auf einem Mini-PC installieren. Verbinde Z-Wave JS UI per MQTT und leg mit dem Automatisieren los.",
       primary: { label: "Jetzt starten", href: "/docs/" },
       secondary: { label: "Z-Wave JS UI-Anleitung", href: "/docs/integrations/zwavejs-ui/" },
     },
@@ -675,7 +675,7 @@ const zwaveJsUiWithoutHomeAssistantContent = {
     faqTitle: "Preguntas frecuentes",
     cta: {
       title: "Dale a tu red Z-Wave un hogar sencillo",
-      text: "Gladys es gratis, de código abierto y se instala con un solo comando Docker. Conecta Z-Wave JS UI por MQTT y empieza a automatizar.",
+      text: "Gladys es gratis, de código abierto y se instala en un mini-PC desde una memoria USB. Conecta Z-Wave JS UI por MQTT y empieza a automatizar.",
       primary: { label: "Empezar", href: "/docs/" },
       secondary: { label: "Guía de Z-Wave JS UI", href: "/docs/integrations/zwavejs-ui/" },
     },

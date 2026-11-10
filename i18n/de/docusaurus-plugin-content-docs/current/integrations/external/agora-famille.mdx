@@ -19,7 +19,7 @@ https://github.com/prohand/gladys-agorafamille instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Agora Famille","description":"Kantine, Nachmittagsbetreuung, Rechnungen und Nachrichten des Familienportals Agora Famille.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-agorafamille","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-agorafamille.png","type":"device","version":"2.0.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-10-27T15:52:56Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Agora Famille","description":"Kantine, Nachmittagsbetreuung, Rechnungen und Nachrichten des Familienportals Agora Famille.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-agorafamille","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-agorafamille.png","type":"device","version":"2.0.3","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-10T00:45:18Z"}} />
 
 Diese Integration verbindet Gladys mit dem **Familienportal Agora Famille**
 (von Agora Plus) deiner französischen Gemeinde: Schulkantine, Vor- und
@@ -59,6 +59,8 @@ In Gladys: **Integrationen → Agora Famille → Konfiguration**.
 | **Beobachtete Planungstage**                   | Wie viele Tage im Voraus gelesen und überwacht werden (standardmäßig 14).                                                                                                               |
 | **Rechnungserinnerung (Tage)**                 | Der Auslöser „Rechnung bald fällig“ wird so viele Tage vor dem Fälligkeitsdatum ausgelöst (standardmäßig 3, 0 schaltet ihn ab).                                                         |
 | **An den Trésor public übergebene Rechnungen** | Nummern der Rechnungen, die die Gemeinde an den Trésor public übergeben hat, durch Kommas getrennt (z. B. `164513`). Siehe unten.                                                       |
+| **Ich zahle per Lastschrift**                  | Ankreuzen, wenn die Bank deine Rechnungen von selbst bezahlt (SEPA). Siehe unten.                                                                                                       |
+| **Tag der Lastschrift**                        | Tag des Monats, an dem die Bank abbucht (z. B. `10`). Siehe unten. 0 = unbekannt.                                                                                                       |
 | **Ausführliche Protokolle**                    | Protokolliert jede Anfrage an das Portal, zur Fehlersuche. Nie das Passwort.                                                                                                            |
 
 Klicke dann auf **Verbindung testen**: Die Antwort nennt deine Kinder, die
@@ -101,12 +103,12 @@ solange das Portal nicht gelesen werden kann.
 
 ### Auslöser
 
-| Auslöser                                | Wann                                                                                                                         | Variablen                                                             |
-| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| **Eine neue Rechnung wird ausgestellt** | Eine unbezahlte Rechnung erscheint.                                                                                          | `label`, `amount`, `due_date`, `invoice_id`                           |
-| **Eine Rechnung wird bald fällig**      | Eine unbezahlte Rechnung wird innerhalb der eingestellten Tage fällig. Nur einmal.                                           | `label`, `amount`, `due_date`, `days_left`, `invoice_id`              |
-| **Eine Nachricht wird empfangen**       | Die Gemeinde hat eine Nachricht gesendet.                                                                                    | `subject`, `sender`, `date`                                           |
-| **Eine Buchung ändert sich**            | Ein gebuchter oder angefragter Tag ändert seinen Status (angenommen, abgelehnt, storniert…). Nach Kind und Status filterbar. | `child_name`, `activity`, `date`, `status`, `previous_status`, `meal` |
+| Auslöser                                | Wann                                                                                                                         | Variablen                                                                 |
+| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| **Eine neue Rechnung wird ausgestellt** | Eine unbezahlte Rechnung erscheint.                                                                                          | `label`, `amount`, `due_date`, `invoice_id`, `direct_debit`, `debit_date` |
+| **Eine Rechnung wird bald fällig**      | Eine unbezahlte Rechnung wird innerhalb der eingestellten Tage fällig. Nur einmal. Nicht bei Lastschrift.                    | `label`, `amount`, `due_date`, `days_left`, `invoice_id`                  |
+| **Eine Nachricht wird empfangen**       | Die Gemeinde hat eine Nachricht gesendet.                                                                                    | `subject`, `sender`, `date`                                               |
+| **Eine Buchung ändert sich**            | Ein gebuchter oder angefragter Tag ändert seinen Status (angenommen, abgelehnt, storniert…). Nach Kind und Status filterbar. | `child_name`, `activity`, `date`, `status`, `previous_status`, `meal`     |
 
 Die Variablen lassen sich in den folgenden Aktionen verwenden, z. B.
 `{{triggerEvent.data.amount}}`.
@@ -167,6 +169,40 @@ Sie werden auf zwei Arten erkannt:
 - **über ihre Nummer** im Feld **An den Trésor public übergebene Rechnungen**
   (die im Portal angezeigte Nummer, z. B. `164513`).
 
+## Zahlung per Lastschrift
+
+Wenn die Bank deine Rechnungen von selbst bezahlt (prélèvement automatique,
+SEPA), ist im Portal nichts zu bezahlen. Kreuze **Ich zahle per Lastschrift**
+an:
+
+- das Widget zeigt **Abzubuchen** statt **Zu zahlen**, und jede Rechnung mit
+  einem blauen Abzeichen;
+- die **nächste Rechnung** lautet nicht mehr „avant le …“ (zahlen bis);
+- „Rechnung bald fällig“ wird für sie nicht mehr ausgelöst;
+- „neue Rechnung“ wird weiter ausgelöst, mit `direct_debit` auf wahr;
+- sie zählen weiter zum **offenen Betrag**: Das Geld ist geschuldet, bis die
+  Bank zahlt.
+
+### Der Tag der Abbuchung
+
+Das Portal nennt den Tag der Abbuchung nicht: Sein einziges Datum ist der
+**letzte Zahltag**. Trage den Tag des Monats, an dem deine Bank abbucht, unter
+**Tag der Lastschrift** ein (z. B. `10`). Er gilt im Monat des letzten
+Zahltags: Eine bis zum 24.11. zu zahlende Rechnung wird am 10.11. abgebucht.
+
+| Tag der Lastschrift | Widget                                                   | Nächste Rechnung                                     |
+| ------------------- | -------------------------------------------------------- | ---------------------------------------------------- |
+| `10`                | Abzeichen **Abbuchung 10.11.**, der Betrag               | „45,20 € prélevés le 10/11/2026 — …“                 |
+| `0` (unbekannt)     | Abzeichen **Lastschrift**, „45,20 € · fällig 24.11.2026“ | „45,20 € en prélèvement, échéance le 24/11/2026 — …“ |
+
+Der Auslöser „neue Rechnung“ liefert diesen Tag in `debit_date` (leer, wenn
+unbekannt).
+
+Das Portal sagt es in seiner Rechnungsliste nicht. Schreibt es das eines Tages
+in den Status einer Rechnung („prélèvement“…), wird sie ohne das Kästchen
+erkannt. Eine an den Trésor public übergebene Rechnung ist nie eine: Die Bank
+zahlt sie nicht mehr.
+
 ## Fehlerbehebung
 
 - **„Das Portal hat Benutzername oder Passwort abgelehnt“**: Prüfe sie, indem
@@ -212,12 +248,14 @@ Diese Einstellungen fragt Agora Famille in seinem Konfigurationsbildschirm in Gl
 | Beobachtete Planungstage | `number` | Nein | Wie viele Tage im Voraus die Buchungen gelesen und auf Änderungen überwacht werden. |
 | Rechnungserinnerung (Tage) | `number` | Nein | Der Auslöser „Rechnung bald fällig“ wird so viele Tage vor dem Fälligkeitsdatum ausgelöst. 0 schaltet ihn ab. |
 | An den Trésor public übergebene Rechnungen | `string` | Nein | Nummern der Rechnungen, die die Gemeinde an den Trésor public übergeben hat („mise en impayé“), durch Kommas getrennt. Das Portal zeigt sie weiter als unbezahlt: Sie werden getrennt angezeigt und nicht zum offenen Betrag gezählt. Vom Portal selbst markierte werden auch ohne dies erkannt. |
+| Ich zahle per Lastschrift | `boolean` | Nein | Die Bank bezahlt die Rechnungen von selbst. Sie werden als „Lastschrift“ statt „Offen“ angezeigt, weiter zum offenen Betrag gezählt, und der Auslöser „Rechnung bald fällig“ startet für sie nicht mehr. |
+| Tag der Lastschrift | `number` | Nein | Tag des Monats, an dem die Bank die Rechnung abbucht, im Monat ihrer Fälligkeit (z. B. 10: eine am 24.11. fällige Rechnung wird am 10.11. abgebucht). Das Portal nennt ihn nicht: Sein Datum ist der letzte Zahltag. 0 = unbekannt. |
 | Ausführliche Protokolle | `boolean` | Nein | Protokolliert jede Anfrage an das Portal (nie das Passwort). Zur Fehlersuche. |
 
 ## So installierst du Agora Famille in Gladys
 
 1. Öffne in Gladys **Integrationen**: Agora Famille erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
-2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/prohand/gladys-agorafamille:2.0.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/prohand/gladys-agorafamille:2.0.3`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
 3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
 4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/prohand/gladys-agorafamille](https://github.com/prohand/gladys-agorafamille).
 

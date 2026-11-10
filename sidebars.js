@@ -58,19 +58,20 @@ module.exports = {
       label: "Installation",
       items: [
         "installation/hardware",
-        "installation/recommended-hardware",
         "installation/mini-pc",
+        "installation/raspberry-pi",
+        "installation/recommended-hardware",
         "installation/docker",
         "installation/docker-compose",
+        "installation/proxmox",
         "installation/synology",
         "installation/unraid",
-        "installation/proxmox",
         {
           id: "installation/freebox-delta",
           type: "doc",
           className: "fr-only",
         },
-        "installation/raspberry-pi",
+        "installation/migrate",
         "installation/phone",
         "installation/logs",
         "installation/troubleshooting",
@@ -150,7 +151,12 @@ module.exports = {
     {
       type: "category",
       label: "Gladys Plus",
-      items: ["plus/intro", "plus/connect-gladys-plus", "plus/open-api"],
+      items: [
+        "plus/intro",
+        "plus/connect-gladys-plus",
+        "plus/two-factor-authentication",
+        "plus/open-api",
+      ],
     },
   ],
 };

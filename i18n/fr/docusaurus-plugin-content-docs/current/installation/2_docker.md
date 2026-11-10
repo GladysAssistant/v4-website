@@ -15,6 +15,32 @@ import JsonLd from '@site/src/components/seo/JsonLd';
 
 Ce tutoriel vous explique comment installer Gladys manuellement avec Docker, quelle que soit la machine sur laquelle vous faites fonctionner Gladys. Les étapes sont les mêmes sur Debian et sur Ubuntu.
 
+:::tip[Vous installez Gladys sur un mini-PC dédié ?]
+[Gladys Assistant OS](/fr/docs/installation/mini-pc/) fait tout cela pour vous : depuis une clé USB, il installe Ubuntu Server, Docker, Gladys et les mises à jour automatiques, sans aucune ligne de commande. Ce guide sert à installer Gladys à la main, ou sur une machine qui fait déjà tourner d'autres services.
+:::
+
+## Installer le système d'exploitation
+
+Si votre machine tourne déjà sous Debian ou Ubuntu, passez directement à [Installer Docker](#installer-docker).
+
+Sur une machine neuve, commencez par installer Ubuntu Server (ou Debian). J'ai réalisé une vidéo détaillant étape par étape l'installation d'Ubuntu Server sur un mini-PC :
+
+<div class="youtubeVideoContainerInBlog">
+<iframe src="https://www.youtube.com/embed/wP61ttoDljs" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+
+:::warning[Branchez votre machine en Ethernet sur votre box avant de démarrer l'installation !]
+Si la machine n'est pas connectée au réseau pendant l'installation d'Ubuntu Server, l'installeur ne pourra pas télécharger les paquets nécessaires, et **l'option « Install OpenSSH server » ne sera pas disponible**. Sans OpenSSH, vous ne pourrez pas vous connecter à distance à la machine pour installer Docker et Gladys.
+
+Donc : branchez **d'abord** le câble Ethernet, puis lancez l'installation, et pensez bien à cocher la case **« Install OpenSSH server »** pendant la configuration.
+:::
+
+La suite de ce guide (installer Docker et lancer Gladys) existe aussi en vidéo :
+
+<div class="youtubeVideoContainerInBlog">
+<iframe src="https://www.youtube.com/embed/f82TTi8B1Oo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+
 ## Installer Docker
 
 :::tip[Sur Debian, installez d'abord `curl` et `sudo`]
@@ -123,7 +149,7 @@ L'installation avec Docker fonctionne sur tout système qui fait tourner Docker 
 
 ### Puis-je installer Gladys sur Debian ou Ubuntu ?
 
-Oui, et les étapes sont les mêmes sur les deux : installez Docker avec le script officiel, puis lancez le conteneur Gladys avec la commande ci-dessus. Toute version de Debian ou d'Ubuntu prise en charge par Docker fonctionne, sur un mini-PC, un serveur ou une machine virtuelle. Sur une installation minimale de Debian, installez d'abord `curl` et `sudo` (voir l'encadré en haut de cette page).
+Oui, et les étapes sont les mêmes sur les deux : installez Docker avec le script officiel, puis lancez le conteneur Gladys avec la commande ci-dessus. Toute version de Debian ou d'Ubuntu prise en charge par Docker fonctionne, sur un mini-PC, un serveur ou une machine virtuelle. Sur une installation minimale de Debian, installez d'abord `curl` et `sudo` (voir l'encadré de la section [Installer Docker](#installer-docker)).
 
 ### Gladys ne s'ouvre pas après l'installation : que vérifier ?
 
@@ -158,7 +184,7 @@ Oui. Tant que votre NAS peut faire tourner des conteneurs Docker, vous pouvez y 
         name: "Puis-je installer Gladys sur Debian ou Ubuntu ?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Oui, et les étapes sont les mêmes sur les deux : installez Docker avec le script officiel, puis lancez le conteneur Gladys avec la commande ci-dessus. Toute version de Debian ou d'Ubuntu prise en charge par Docker fonctionne, sur un mini-PC, un serveur ou une machine virtuelle. Sur une installation minimale de Debian, installez d'abord curl et sudo (voir l'encadré en haut de cette page).",
+          text: "Oui, et les étapes sont les mêmes sur les deux : installez Docker avec le script officiel, puis lancez le conteneur Gladys avec la commande ci-dessus. Toute version de Debian ou d'Ubuntu prise en charge par Docker fonctionne, sur un mini-PC, un serveur ou une machine virtuelle. Sur une installation minimale de Debian, installez d'abord curl et sudo (voir l'encadré de la section Installer Docker).",
         },
       },
       {

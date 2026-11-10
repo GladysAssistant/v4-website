@@ -1,0 +1,219 @@
+---
+title: "Intégration domotique LOQED, gratuite et open source"
+sidebar_label: "LOQED"
+description: "Serrure connectée LOQED Touch par l'API locale de son pont. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-loqed.png"
+keywords:
+  - "loqed"
+  - "domotique loqed"
+  - "gladys loqed"
+  - "loqed gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-loqed instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"LOQED","description":"Serrure connectée LOQED Touch par l'API locale de son pont.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-loqed","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-loqed.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-06T00:55:49Z"}} />
+
+Intégration non officielle, sans lien avec LOQED. Elle amène une serrure
+connectée **LOQED Touch** dans Gladys par l'**API locale de son pont** (le
+petit boîtier branché près de la porte), sur votre réseau, sans le cloud LOQED.
+
+**Jamais testée avec une vraie serrure** : elle a été écrite d'après la
+bibliothèque loqedAPI (utilisée par Home Assistant) et testée contre un faux
+pont. Vos retours sont les bienvenus.
+
+## Ce que vous obtenez
+
+Un appareil par pont (une serrure), avec :
+
+| Fonctionnalité     | Type           | Détail                                                                      |
+| ------------------ | -------------- | --------------------------------------------------------------------------- |
+| État de la serrure | serrure / état | 1 verrouillée (nuit), 0 déverrouillée ou ouverte, 2 en mouvement, 3 bloquée |
+| Position           | texte          | la position en toutes lettres                                               |
+| Batterie           | batterie (%)   | jamais publiée quand la serrure est hors de portée du pont                  |
+| Verrouiller        | bouton         | toujours autorisé                                                           |
+| Déverrouiller      | bouton         | refusé tant que l'option n'est pas activée                                  |
+| Ouvrir la porte    | bouton         | tire le pêne ; refusé sans les deux options                                 |
+| Dernière commande  | texte          | la dernière commande et son issue                                           |
+
+Les commandes sont des **boutons**, jamais un interrupteur : un « tout
+éteindre » (assistant vocal, scène sur les interrupteurs) ne peut pas
+déverrouiller la porte.
+
+## Configuration
+
+1. Dans l'application web LOQED, créez une **clé d'API locale** pour votre
+   serrure. La page affiche (noms à vérifier sur une vraie installation) :
+   `bridge_ip`, `lock_key_local_id`, `lock_key_key` et `bridge_key`.
+2. Donnez au pont une adresse IP fixe dans votre box.
+3. Dans Gladys, **Intégrations → LOQED → Configuration** :
+   - **Adresse IP du pont** : `bridge_ip` (une adresse IP, pas un nom) ;
+   - **Numéro de clé** : `lock_key_local_id` (0 à 255) ;
+   - **Clé locale** : `lock_key_key` ;
+   - **Clé du pont** : `bridge_key` (facultative : sans elle, pas de webhook).
+4. Enregistrez, puis **Découverte** : la serrure apparaît après la première
+   lecture du pont ; ajoutez-la.
+
+Les deux clés sont gardées par Gladys dans sa base, jamais réaffichées, jamais
+écrites dans les journaux ni dans `/data`. Elles ne circulent jamais sur le
+réseau : seules les signatures qu'elles produisent partent vers le pont. Le pont
+parle en HTTP simple (pas de HTTPS) : quelqu'un qui voit le trafic de votre
+réseau voit l'état de la serrure et les commandes signées (horodatées, donc
+périmées après peu de temps).
+
+L'heure de la machine Gladys doit être juste : chaque commande porte l'heure, et
+le pont refuse sans doute une commande trop décalée (à vérifier).
+
+### Mises à jour immédiates (webhooks)
+
+Le pont peut prévenir Gladys de chaque changement aussitôt. Saisissez
+**l'adresse IP de Gladys** telle que le pont la voit : l'intégration démarre un
+petit récepteur à côté d'elle (Gladys choisit son port) et inscrit elle-même son
+adresse sur le pont, signée avec la clé du pont. Chaque webhook reçu est vérifié
+avant de compter :
+
+- l'adresse exacte (avec un jeton aléatoire) et la méthode POST ;
+- la signature du pont (`HASH`, faite avec la clé du pont) ;
+- l'heure du pont à 30 s près de celle du récepteur ; un webhook resté plus de
+  60 s dans le récepteur est ignoré ; un webhook rejoué est refusé ; un webhook
+  daté d'avant le dernier démarrage de l'intégration déclenche seulement une
+  lecture ;
+- l'adresse de l'expéditeur, égale à celle du pont (option « N'accepter les
+  webhooks que depuis l'adresse du pont », activée par défaut) ;
+- l'adresse MAC du pont quand le webhook la donne.
+
+Le récepteur borne tout : 4 Ko par webhook, 16 connexions (4 par adresse),
+10 s par requête, 120 webhooks par minute (30 pour une autre adresse que celle
+du pont). L'intégration ne retire du pont que les adresses qu'elle y a inscrites
+elle-même (celles d'autres logiciels restent).
+
+Sans adresse de Gladys ou sans clé du pont, le pont est seulement lu à
+l'intervalle choisi (30 s par défaut, de 10 à 600 s).
+
+## Verrouiller
+
+Le verrouillage (verrou de nuit) part **tout de suite**, quelles que soient les
+options, une lecture en cours (elle est coupée), une pause demandée par le pont,
+l'identité du pont, ou `/data` (jamais attendu sur ce chemin). Ensuite :
+
+- s'il n'a pas pu partir (pont injoignable), il est réessayé pendant 250 ms,
+  puis gardé dans `/data` et renvoyé toutes les 10 s jusqu'à ce qu'il parte ; il
+  n'est jamais abandonné pour cette raison, et il repart au redémarrage de
+  l'intégration avant toute lecture ;
+- il est confirmé par une lecture du pont **partie après lui** qui montre la
+  serrure verrouillée ; tant que ce n'est pas le cas, il est renvoyé (au plus
+  toutes les 6 s) ;
+- seul un envoi auquel le pont a répondu « OK » compte comme essai : après
+  3 envois acceptés sans que la serrure se dise verrouillée, il est abandonné et
+  « Dernière commande » le dit. Une coupure, un délai, une erreur du pont ou un
+  refus de la clé ne comptent pas ;
+- une manœuvre faite ensuite avec une autre clé (application, clavier),
+  signalée par un webhook signé au moins 2 s après l'envoi, met fin aux renvois.
+
+Le verrouillage reste en attente, sans partir, dans ces cas seulement :
+
+- pas d'adresse du pont, ou numéro de clé ou clé locale invalides : il part dès
+  qu'ils sont enregistrés ;
+- le pont a refusé la clé locale : chaque clic l'envoie encore une fois, mais il
+  ne repart plus de lui-même tant qu'une autre clé n'est pas enregistrée ou que
+  « Tester la connexion » n'a pas réussi (il part alors en premier).
+
+Un verrouillage cliqué avant que `/data` soit lu (au démarrage) est gardé et
+fusionné avec ce que `/data` contient. Si `/data` est illisible, le verrouillage
+part quand même ; `/data` est relu toutes les 10 s, et dès qu'il redevient lisible
+le verrouillage y est écrit (ou celui qu'il contenait part aussitôt).
+
+Le statut dit où en est un verrouillage en attente : pas encore parti, en cours
+d'envoi, parti sans confirmation, ou retenu par une clé refusée.
+
+## Déverrouiller et ouvrir
+
+Désactivés par défaut : **Autoriser le déverrouillage** permet Déverrouiller
+(verrou de jour) ; **Ouvrir la porte** (tirer le pêne) demande cette option
+**et** « Autoriser l'ouverture de la porte ». Une commande à la fois. Chacune
+est refusée, sans rien envoyer, si :
+
+- l'option manque (vérifiée encore juste avant le premier octet) ;
+- une autre commande de déverrouillage ou d'ouverture est en cours ;
+- le numéro de clé ou la clé locale manquent, ou le pont les a refusés ;
+- `/data` est illisible, ou la garde de la commande n'a pas pu y être écrite
+  dans les 2 s (et au plus 3,2 s après le clic) ;
+- le pont a demandé une pause (erreur 429 ou 5xx) : le motif dit le temps
+  restant ;
+- un verrouillage est en attente, ou a été demandé pendant la commande ;
+- le pont n'est pas encore identifié, ou un autre pont répond à l'adresse ;
+- la lecture du pont faite après le clic a échoué ou n'est pas venue en 2,5 s ;
+- la serrure n'est pas connectée au pont, ou elle est en mouvement, bloquée ou
+  dans un état inconnu ;
+- elle n'a pas pu partir dans les 3,5 s après le clic.
+
+Déverrouiller une serrure déjà déverrouillée n'envoie rien. Une commande partie
+sans réponse du pont est signalée « envoyée, sans confirmation » (la serrure
+peut bouger) et la serrure est relue.
+
+## Statut et actions
+
+Le statut de l'écran Configuration dit si le pont répond, si les webhooks sont
+actifs, si un verrouillage attend, si la serrure est hors de portée, et pourquoi
+quelque chose est refusé. Un pont qui répond une erreur 429 ou 5xx met en pause
+(1 min à 6 h) les lectures, le déverrouillage, l'ouverture et les actions ;
+seuls le verrouillage et les lectures qui le confirment passent quand même.
+
+- **Tester la connexion** : lit le pont (une fois au plus, et jamais plus souvent
+  que l'intervalle : une lecture plus récente est reprise), inscrit le webhook, et lève un refus de
+  la clé locale (un verrouillage en attente part alors en premier). La clé
+  locale ne peut être vérifiée que par une vraie commande.
+- **Utiliser le pont qui répond maintenant** : seulement après un remplacement
+  du pont. Appuyez deux fois dans la minute ; sa serrure devient un nouvel
+  appareil (l'identifiant de l'appareil est l'adresse MAC du pont).
+
+## Limites connues
+
+- Un seul pont (une serrure) par installation de l'intégration.
+- Pas de Bluetooth, pas de cloud LOQED.
+- Les réglages de la serrure (mode fête, accès invité) ne sont pas lus.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par LOQED dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre pont LOQED, sur votre réseau local | `section` | Non | Amène une serrure connectée LOQED Touch dans Gladys par l'API locale de son pont, sans le cloud LOQED : état (verrouillée, déverrouillée, ouverte, en mouvement, bloquée), batterie, boutons Verrouiller, Déverrouiller et Ouvrir. Dans l'application web LOQED, créez une clé d'API locale : elle affiche l'adresse IP du pont, le numéro de clé, la clé locale et la clé du pont ; copiez-les ici. Le verrouillage est toujours possible ; le déverrouillage et l'ouverture de la porte restent désactivés tant que vous ne les autorisez pas ci-dessous. Jamais testé avec une vraie serrure. Non officiel, sans lien avec LOQED. |
+| Adresse IP du pont | `string` | Oui | Une adresse IP (bridge_ip dans l'application web LOQED), pas un nom ; donnez au pont une adresse fixe dans votre box. |
+| Numéro de clé | `number` | Oui | lock_key_local_id dans l'application web LOQED (0 à 255). |
+| Clé locale | `secret` | Oui | lock_key_key dans l'application web LOQED : signe les commandes. Gardée par Gladys dans sa base, jamais réaffichée, jamais envoyée sur le réseau (seules les signatures qu'elle produit vont au pont). |
+| Clé du pont | `secret` | Non | bridge_key dans l'application web LOQED : signe les webhooks du pont et leur inscription. Gardée par Gladys dans sa base, jamais réaffichée, jamais envoyée sur le réseau. Sans elle, le pont est seulement lu. |
+| Autoriser le déverrouillage depuis Gladys | `boolean` | Non | Désactivé par défaut : Gladys peut verrouiller, jamais déverrouiller. |
+| Autoriser l'ouverture de la porte depuis Gladys | `boolean` | Non | Désactivé par défaut. Ouvrir tire le pêne : la porte s'ouvre. Demande aussi l'option de déverrouillage. |
+| Mises à jour immédiates (webhooks) | `section` | Non | Le pont peut prévenir Gladys de chaque changement aussitôt. Saisissez l'adresse IP de la machine Gladys telle que le pont la voit (souvent \{\{gladys_host\}\}) ; l'intégration inscrit alors elle-même l'adresse http:\/\/\<cette adresse>:\{\{port:loqed_webhook\}\}/loqed/… sur le pont, signée avec la clé du pont. Sans elle, le pont est lu à l'intervalle ci-dessous. |
+| Adresse IP de Gladys (pour le pont) | `string` | Non |  |
+| N'accepter les webhooks que depuis l'adresse du pont | `boolean` | Non | Activé par défaut. Désactivez-le seulement si votre installation Docker masque l'adresse de l'expéditeur (la signature est vérifiée de toute façon). |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture du pont, en secondes (10 à 600). |
+| Langue des noms des fonctionnalités | `select` | Non | Sert aux noms des fonctionnalités des appareils ajoutés désormais, et aux textes de statut. |
+
+## Comment installer LOQED dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : LOQED apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-loqed:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-loqed](https://github.com/LM1LC3N7/gladys-loqed).
+
+LOQED nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+LOQED est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-loqed) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-loqed/blob/HEAD/docs/fr.md)

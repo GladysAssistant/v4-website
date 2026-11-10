@@ -1,0 +1,236 @@
+---
+title: "Integración domótica GreenEye Monitor, gratuita y de código abierto"
+sidebar_label: "GreenEye Monitor"
+description: "Brultech GreenEye Monitor: energy and power per channel, pulses, temperatures, locally. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-greeneye.png"
+keywords:
+  - "greeneye monitor"
+  - "domótica greeneye monitor"
+  - "gladys greeneye monitor"
+  - "greeneye monitor gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-greeneye instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"GreenEye Monitor","description":"Brultech GreenEye Monitor: energy and power per channel, pulses, temperatures, locally.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-greeneye","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-greeneye.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-05T05:13:32Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+This integration shows in Gladys the values of a **Brultech GreenEye Monitor**
+(GEM), the 32-channel energy monitor made in British Columbia: energy and
+power of each channel, current, voltage, pulse counters (water, gas) and
+temperatures. Everything stays on your local network, without any cloud.
+
+Unofficial integration, not affiliated with Brultech. **Never tested with a
+real GEM**: it follows the GEM packet format document of Brultech and the
+siobrultech-protocols and greeneye-monitor libraries (MIT) of Home Assistant,
+and is tested against their packet captures. Your feedback with a real
+monitor is welcome.
+
+**Read only**: nothing is ever sent to the GEM. The integration never changes
+a setting of the monitor.
+
+## What you get
+
+- one device **GreenEye \<serial>** (the monitor): voltage (V), the pulse
+  counters that counted (raw pulse counts), the temperatures (°C) once their
+  unit is chosen;
+- one device per channel, **GreenEye \<serial> channel \<n>**: energy index
+  (kWh, for the energy monitoring of Gladys), power (W) and current (A); on a
+  NET channel that produces (solar), an index of the energy produced (kWh),
+  and a negative power while it produces.
+
+A channel shows in the **Discovery** tab once it measured energy (its
+counter rose between two packets). The unused channels of a 48-channel packet
+carry fixed junk values: they never appear by themselves. To choose the
+channels yourself, type them in **Channels to show** (like `1-12, 15`).
+
+The serial number of the GEM is in every external id: a second GEM never
+takes the history of the first one.
+
+## Settings of the GEM
+
+In the web page of the GEM, in the packet sending settings ("Packet Send",
+TCP client mode):
+
+- **server**: the IP address of the Gladys machine on your network;
+- **port**: the port shown in the "How the GEM reaches Gladys" section of the
+  configuration screen (chosen by Gladys, see below);
+- **packet format**: a binary format, BIN48-NET, BIN32-NET, BIN48-NET-TIME,
+  BIN48-ABS or BIN32-ABS. Use a NET format if a channel measures a solar
+  production: with an ABS format the GEM counts the energy of both directions
+  together, and the index of such a channel adds the production to the
+  consumption. On a NET channel the GEM counts the production in its
+  "polarized" counter: the CT must face the way the GEM expects (the
+  direction set on the GEM), otherwise consumption and production swap (the
+  status says when a consumption index reads 0 or less). The ASCII formats and the ECM-1220/1240 monitors are not
+  handled (the status counts the ECM packets ignored);
+- **interval**: any (1 to 255 s). The power is the average over the last two
+  packets.
+
+### Temperatures: choose the unit of the GEM
+
+The packets carry the temperatures in the unit set on the GEM (°C or °F)
+without saying which one. Choose it in **Temperature unit set on the GEM**:
+°F values are converted exactly to °C ((°F − 32) × 5/9, rounded to 0.01),
+and the bounds (−55 to 125 °C, the range of the sensors) are checked after
+the conversion. Off (the default): no temperature is published. A sensor
+reading exactly 0 or "no sensor" (above 255) is not a value: never published.
+
+## How the GEM reaches Gladys
+
+The GEM opens the connection (TCP) itself; Gladys does not poll it. So the
+integration starts a small receiver next to it (the `gem-link` container),
+whose port Gladys publishes on the machine.
+
+1. Give the GEM a fixed IP address in your router.
+2. In the **Configuration** screen of the integration, type that address and
+   save. **Nothing listens before**: the receiver starts only once a valid
+   address is saved, and stops if you clear it.
+3. Reload the screen: the "How the GEM reaches Gladys" section shows the port
+   Gladys chose (a free port, kept afterwards).
+4. Set the GEM as above. The status turns to "GEM … connected" at the first
+   packet.
+
+The Gladys core runs on the host network of the machine
+(`network_mode: host`), but integrations run in isolated containers: they
+cannot listen on the machine themselves. The `gem-link` receiver is a
+sub-container declared in the manifest, whose TCP port 8000 Gladys publishes
+on every address of the machine. It is the same mechanism as the Wolf ISM8
+integration, checked in a test Gladys: a connection from the network keeps
+its real source address; a connection started on the Gladys machine itself
+arrives with the address of the Docker gateway. Hence:
+
+- allow this TCP port in the firewall of the machine, if it has one;
+- **Check the sender** (on by default) accepts only the address of the GEM;
+  another address is refused before a byte is read and shown in the status.
+  With Docker Desktop (Mac, Windows) or rootless Docker, Docker may replace
+  the source address: turn the option off in that case only. Any machine of
+  your network can then take the place of the GEM: it only has to copy its
+  serial number (it is in every packet) to send false values, and those
+  values go into the energy indexes (up to 100 kWh per hour per channel
+  without being held). Even with the check on, a machine that takes the IP
+  address of the GEM (the GEM switched off, an ARP spoof) gets through:
+  keep the GEM on a trusted network;
+- the receiver is started again only when it stopped or when the address or
+  the sender check changes; when the integration restarts, Gladys restarts
+  the receiver too and the GEM reconnects by itself. When the receiver runs
+  but does not answer the integration for 3 minutes (another secret, for
+  example after `/data` could not be read and a new one was made), it is
+  started again, at most every 10 minutes.
+
+## Which GEM is followed
+
+The serial number (the 8 digits the GEM shows) is read in every packet. The
+first GEM heard is followed and kept in `/data`; the packets of another serial
+number are refused and the status says so. After replacing the monitor, type
+the new serial in **Serial number of the GEM**: it gets its own devices. What
+was seen and held for each serial stays in `/data` under its serial (8 at
+most): a serial mistyped then corrected keeps every hold. Clearing the field
+follows the first GEM heard again. When `/data` cannot be read, no serial is
+pinned: only a typed serial is followed (the status gives the one heard).
+
+## Lifelong counters: never 0, no drop nor jump without you
+
+The energy index of a channel, its production index and the pulse counters
+are the values the energy monitoring of Gladys turns into consumption: it
+counts every rise in full. So:
+
+- a value of 0 is not published;
+- a value is checked against the last one accepted: not lower, and not more
+  than 100 kWh per hour on average for a channel (100 pulses a second for a
+  pulse counter), plus a small slack;
+- the energy counters of the GEM wrap around at 2^40 watt-seconds (305,420
+  kWh) and the pulse counters at 2^24 pulses: a wrap (a counter near its top
+  that starts again near 0 while the GEM ran on: its own seconds counter went
+  on with the time elapsed, and the step through the top fits the margin
+  above over those seconds) is counted on; a GEM that restarted (its seconds
+  went back or do not match the time elapsed) never wraps: its drop is held;
+  the offset is kept in `/data` (a wrap while `/data` could not
+  keep the previous value shows as a drop, held);
+- a **drop** (a GEM reset, a replaced CT) or a
+  **jump** is **held back**: the last accepted value is sent again, nothing
+  is counted, the status lists the counter with the value held, and the hold
+  is kept in `/data` across restarts. Time does not lift it, repeating the
+  same value does not either;
+- if it is real, click **Accept the held counters** twice in the
+  configuration screen: the first click lists exactly what will be taken and
+  accepts nothing; the second, after a few seconds and within 5 minutes,
+  takes exactly those values (a jump is then counted at once as
+  consumption; a drop counts nothing and the counter goes on from there). If
+  the counters held changed in between, nothing is accepted. Saving the
+  configuration accepts nothing.
+
+The checks run on the clock of the integration (the wall clock read once at
+its start plus the time elapsed since): a wall clock moved by NTP neither
+widens nor narrows them.
+
+## Freshness and status
+
+- The values are published when a packet arrives. Packets kept by the
+  receiver while the integration was away are dropped when older than a
+  minute; a repeated packet, or an older one within the same connection
+  (by the GEM's own seconds counter), is dropped. A step back of the seconds
+  counter in a new connection is a restart of the GEM: its packets are taken
+  and the status says so for 10 minutes.
+- A write to `/data` that does not end within 5 seconds (a frozen disk) is
+  said in the status; the next writes wait behind it, one at most.
+- No packet for 2 minutes (or three intervals of the GEM, up to 15 minutes):
+  the status says how long, the integration is not "connected", and nothing
+  is made up.
+- Gladys accepts 300 values a minute: with many channels and short
+  intervals, the values are sent in turn (the most recent of each), at most
+  250 a minute.
+
+## Limits
+
+- One GEM per integration.
+- The settings API of the GEM (CT types, intervals) is not used.
+- Not handled: ASCII packet formats, ECM-1220/1240 monitors, the pulse
+  counters converted into volumes (they are raw counts).
+
+## Parámetros de configuración
+
+Estos son los parámetros que GreenEye Monitor te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Your Brultech GreenEye Monitor | `section` | No | Energy (index), power and current of each channel, the voltage, the pulse counters and the temperatures a GreenEye Monitor (GEM) sends, on your local network, without any cloud. The GEM sends its packets to Gladys by itself; nothing is ever sent to it. Give it a fixed IP address in your router. Never tested with a real GEM. Unofficial integration, not affiliated with Brultech. |
+| Address of the GEM | `string` | Sí | The IP address of the GreenEye Monitor (the one of its web page), without a port. Nothing listens before it is saved. |
+| How the GEM reaches Gladys | `section` | No | The GEM opens the connection itself. In its web page, under the packet sending settings ("Packet Send", TCP client), set the server address to the IP address of the Gladys machine on your network and the port to \{\{port:gem\}\} (chosen by Gladys), and a binary packet format: BIN48-NET or BIN32-NET (NET is needed for solar channels), BIN48-NET-TIME, BIN48-ABS or BIN32-ABS. The port exists once the address of the GEM is saved: save, then reload this screen. Allow this port in the firewall of the Gladys machine if it has one. |
+| Check the sender | `boolean` | No | Accept the connection only from the address of the GEM. Turn it off only if the status says connections come from another address because Docker hides the real one on this machine: then any machine of your network that copies the serial number of the GEM can send false values, which go into the energy indexes. Even on, a machine taking the IP address of the GEM gets through: keep the GEM on a trusted network. |
+| Serial number of the GEM | `string` | No | Optional: the 8 digits the GEM shows. Empty: the first GEM heard is followed. Packets of another serial number are refused; type the new one after replacing the monitor (it gets its own devices). |
+| Channels, counters and temperatures | `section` | No | Each channel is a device with its energy index (kWh, for the energy monitoring of Gladys), its power and its current. A lifelong counter (energy, production, pulses) is never published at 0: a jump or a drop is held back, shown in the status and taken only after two clicks on "Accept the held counters". The pulse counters are published as raw pulse counts. |
+| Channels to show | `string` | No | Optional, like "1-12, 15". Empty: a channel appears once it measured energy. |
+| Temperature unit set on the GEM | `select` | No | The packets do not say it: choose the one of the GEM. °F values are converted exactly to °C. Off: no temperature is published. |
+| Language of the names | `select` | No |  |
+
+## Cómo instalar GreenEye Monitor en Gladys
+
+1. En Gladys, abre **Integraciones**: GreenEye Monitor aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-greeneye:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-greeneye](https://github.com/LM1LC3N7/gladys-greeneye).
+
+GreenEye Monitor requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+GreenEye Monitor es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-greeneye) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-greeneye/blob/HEAD/docs/en.md)

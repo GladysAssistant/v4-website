@@ -15,7 +15,27 @@ keywords:
 
 import JsonLd from '@site/src/components/seo/JsonLd';
 
-In this tutorial, we go through the instructions for installing Gladys Assistant with Docker. This tutorial works for any system (Mini-PC, NAS, Linux Server, VM...), and the steps are the same on Debian and Ubuntu.
+In this tutorial, we go through the instructions for installing Gladys Assistant manually with Docker. This tutorial works for any system (Mini-PC, NAS, Linux Server, VM...), and the steps are the same on Debian and Ubuntu.
+
+:::tip[Installing Gladys on a dedicated mini-PC?]
+[Gladys Assistant OS](/docs/installation/mini-pc/) does all of this for you: from a USB drive, it installs Ubuntu Server, Docker, Gladys and automatic updates, without any command line. This guide is for installing Gladys by hand, or on a machine that already runs other services.
+:::
+
+## Install the operating system
+
+If your machine already runs Debian or Ubuntu, skip to [Install Docker](#install-docker).
+
+On a new machine, start by installing Ubuntu Server (or Debian). There are many videos online to install Ubuntu Server on a mini-PC. I recommend this tutorial:
+
+<div class="youtubeVideoContainerInBlog">
+<iframe src="https://www.youtube.com/embed/n7aEcfDNULc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+
+:::warning[Plug your machine into your router with an Ethernet cable before starting the installation!]
+If the machine is not connected to the network during the Ubuntu Server installation, the installer cannot download the packages it needs, and **the "Install OpenSSH server" option will not be available**. Without OpenSSH, you cannot connect remotely to the machine to install Docker and Gladys.
+
+So: connect the Ethernet cable **first**, then start the installation, and check the **"Install OpenSSH server"** box during the setup.
+:::
 
 ## Install Docker
 
@@ -137,7 +157,7 @@ Yes. As long as your NAS can run Docker containers, you can run Gladys on it wit
 
 ### Can I install Gladys on Debian or Ubuntu?
 
-Yes, and the steps are the same on both: install Docker with the official script, then start the Gladys container with the command above. Any Debian or Ubuntu version supported by Docker works, on a mini-PC, a server or a virtual machine. On a minimal Debian install, install `curl` and `sudo` first (see the tip at the top of this page).
+Yes, and the steps are the same on both: install Docker with the official script, then start the Gladys container with the command above. Any Debian or Ubuntu version supported by Docker works, on a mini-PC, a server or a virtual machine. On a minimal Debian install, install `curl` and `sudo` first (see the tip in the [Install Docker](#install-docker) section).
 
 ### Gladys does not open after the installation: what should I check?
 
@@ -180,7 +200,7 @@ Yes, and the steps are the same on both: install Docker with the official script
         name: "Can I install Gladys on Debian or Ubuntu?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes, and the steps are the same on both: install Docker with the official script, then start the Gladys container with the command above. Any Debian or Ubuntu version supported by Docker works, on a mini-PC, a server or a virtual machine. On a minimal Debian install, install curl and sudo first (see the tip at the top of this page).",
+          text: "Yes, and the steps are the same on both: install Docker with the official script, then start the Gladys container with the command above. Any Debian or Ubuntu version supported by Docker works, on a mini-PC, a server or a virtual machine. On a minimal Debian install, install curl and sudo first (see the tip in the Install Docker section).",
         },
       },
       {

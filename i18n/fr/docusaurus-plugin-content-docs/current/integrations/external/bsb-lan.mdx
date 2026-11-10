@@ -19,14 +19,17 @@ https://github.com/LM1LC3N7/gladys-bsblan instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"BSB-LAN","description":"Chaudières et PAC par l'adaptateur local BSB-LAN : températures, modes, commandes en option.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-bsblan","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-bsblan.png","type":"device","version":"0.1.3","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-28T02:59:20Z"}} />
+<ExternalIntegrationHeader integration={{"name":"BSB-LAN","description":"Chaudières et PAC par l'adaptateur local BSB-LAN : températures, modes, commandes en option.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-bsblan","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-bsblan.png","type":"device","version":"0.3.2","gladys_version":">=5.1.0","stars":1,"pushed_at":"2026-11-03T19:20:57Z"}} />
 
 Affiche votre **chaudière ou pompe à chaleur à régulateur Siemens** (ELCO,
 Brötje, Baxi, MHG, Atlantic, Thision…) dans Gladys par l'adaptateur
 **BSB-LAN**, relié au bus BSB, LPB ou PPS du régulateur : sans cloud, sans
 compte, directement sur votre réseau.
 
-> **Module jamais testé avec un vrai adaptateur.**
+> **Testé sur une vraie installation** (version 0.2.0 : régulateur Siemens,
+> deux circuits de chauffage, BSB-LAN) : une quinzaine de commandes sur les
+> deux circuits, modes, consignes et commandes de protection, toutes
+> confirmées.
 > Sans lien avec le projet BSB-LAN ni avec les fabricants. Il lit l'API JSON
 > de BSB-LAN comme la bibliothèque python-bsblan (utilisée par Home
 > Assistant).
@@ -42,7 +45,7 @@ compte, directement sur votre réseau.
   versions récentes de BSB-LAN le font.
 - Son adresse IP, fixe de préférence (réglez-la dans votre box).
 - Pour les commandes : l'écriture sur le bus autorisée dans la configuration
-  de BSB-LAN.
+  de BSB-LAN (`DEFAULT_FLAG 0`, ou l'écriture activée dans ses réglages).
 
 ## Ce que vous obtenez
 
@@ -50,25 +53,88 @@ Un appareil « Chauffage (BSB-LAN) » par adaptateur, reconnu par son adresse
 MAC (il reste le même si l'adresse IP change). Chaque fonctionnalité
 n'apparaît que si le régulateur en donne la valeur :
 
-| Fonctionnalité                   | Paramètre | Contenu                                               |
-| -------------------------------- | --------- | ----------------------------------------------------- |
-| Mode de chauffage                | 700       | Liste (commandes autorisées seulement), voir plus bas |
-| Mode de chauffage (lu)           | 700       | Texte : le mode réel, y compris un mode inconnu       |
-| État du circuit de chauffage     | 8000      | Texte du régulateur (« Chauffage confort »…)          |
-| Consigne confort                 | 710       | Thermostat, circuit 1, en °C (commande)               |
-| Consigne réduite                 | 712       | En °C, lecture seule                                  |
-| Température de la pièce          | 8740      | En °C                                                 |
-| Température extérieure           | 8700      | En °C                                                 |
-| Mode de l'eau chaude             | 1600      | Texte : arrêt, marche, éco                            |
-| Consigne d'eau chaude            | 1610      | Chauffe-eau, en °C (commande, plafonnée)              |
-| Consigne réduite de l'eau chaude | 1612      | En °C, lecture seule                                  |
-| Température de l'eau chaude      | 8830      | En °C                                                 |
-| Pompe d'eau chaude en marche     | 8820      | 0 ou 1                                                |
-| Énergie apportée (kWh)           | 3113      | En kWh, simple valeur (voir plus bas)                 |
+| Fonctionnalité                         | Paramètre | Contenu                                               |
+| -------------------------------------- | --------- | ----------------------------------------------------- |
+| Mode de chauffage                      | 700       | Liste (commande), voir plus bas                       |
+| Mode de chauffage (lu)                 | 700       | Texte : le mode réel, y compris un mode inconnu       |
+| État du circuit de chauffage           | 8000      | Texte du régulateur (« Chauffage confort »…)          |
+| Consigne confort                       | 710       | Thermostat, circuit 1, en °C (commande)               |
+| Consigne réduite                       | 712       | Thermostat, circuit 1, en °C (commande)               |
+| Température de la pièce                | 8740      | En °C                                                 |
+| Consigne de départ                     | 8744      | En °C, circuit 1                                      |
+| Température de départ                  | 8743      | En °C, circuit 1                                      |
+| Mode de chauffage (circuit 2)          | 1000      | Liste (commande), si le régulateur a un circuit 2     |
+| Mode de chauffage, lu (circuit 2)      | 1000      | Texte                                                 |
+| État du circuit de chauffage 2         | 8001      | Texte du régulateur                                   |
+| Consigne confort (circuit 2)           | 1010      | Thermostat, en °C (commande)                          |
+| Consigne réduite (circuit 2)           | 1012      | Thermostat, en °C (commande)                          |
+| Température de la pièce (circuit 2)    | 8770      | En °C (sonde), si le circuit 2 a une sonde d'ambiance |
+| Consigne / température de départ (c.2) | 8774/8773 | En °C                                                 |
+| Température extérieure                 | 8700      | En °C                                                 |
+| Mode de l'eau chaude (commande)        | 1600      | Liste : marche, éco, arrêt                            |
+| Mode de l'eau chaude                   | 1600      | Texte : arrêt, marche, éco                            |
+| État de l'eau chaude                   | 8003      | Texte du régulateur                                   |
+| Consigne d'eau chaude                  | 1610      | Chauffe-eau, en °C (commande, plafonnée)              |
+| Consigne réduite de l'eau chaude       | 1612      | Chauffe-eau, en °C (commande, plafonnée)              |
+| Température de l'eau chaude            | 8830      | En °C                                                 |
+| Pompe d'eau chaude en marche           | 8820      | 0 ou 1                                                |
+| État de la chaudière                   | 8005      | Texte du régulateur                                   |
+| Température de la chaudière            | 8310      | En °C                                                 |
+| Signal 1re allure du brûleur           | 7881      | 0 ou 1 (lecture seule)                                |
+| Entrée défaut brûleur S3               | 7870      | 0 ou 1 (lecture seule)                                |
+| Dernier défaut : date / code           | 6800/6801 | Textes du régulateur                                  |
+| Énergie apportée (kWh)                 | 3113      | En kWh, simple valeur (voir plus bas)                 |
+| BSB \<numéro> \<nom>                     | au choix  | Paramètres supplémentaires, lecture seule (plus bas)  |
 
-La température extérieure, celle de l'eau et les consignes en lecture seule
-sont des « sondes » : elles ne comptent pas comme température de la pièce
-dans Gladys. Lecture toutes les 30 secondes par défaut (de 10 s à 10 min,
+**Circuit 2** : il n'apparaît que si le régulateur donne une valeur pour son
+mode (1000) ; absent ou « --- », l'intégration ne lit plus que ce seul
+paramètre à chaque lecture. Pas d'option pour le forcer : un circuit que le
+régulateur ne donne pas ne peut pas être réglé, et la détection évite
+d'écrire sur un circuit qui n'existe pas. **Eau chaude** : ses
+fonctionnalités n'apparaissent que si le régulateur en donne les valeurs.
+
+Les appareils créés avant la version 0.2.0 gardent leurs anciennes
+fonctionnalités « Consigne réduite » et « Consigne réduite de l'eau chaude »
+en lecture seule (toujours mises à jour) ; les versions réglables arrivent
+à côté, à ajouter depuis l'onglet Découverte. Les nouveaux appareils n'ont
+que les versions réglables.
+
+Les numéros 7870, 7881, 6800, 6801, 8005 et 8310 sont ceux de la liste de
+paramètres de BSB-LAN ; leur forme exacte dépend du régulateur. Chaque
+valeur est vérifiée à la lecture : une valeur absente ou d'une autre forme
+n'est pas publiée.
+
+### Paramètres supplémentaires (lecture seule)
+
+Le champ **Paramètres supplémentaires à lire** accepte jusqu'à 10 numéros de
+paramètres BSB-LAN séparés par des virgules (par exemple `8326, 8338`).
+Chacun devient une fonctionnalité **en lecture seule**, nommée « BSB
+\<numéro> \<nom donné par BSB-LAN> », d'après la réponse de BSB-LAN à sa
+première valeur : une température en °C devient une sonde, un autre nombre
+une valeur simple (l'unité dans le nom), une liste ou un texte un texte. Si
+la forme de la valeur change ensuite, elle n'est plus publiée. Ces
+paramètres ne sont **jamais écrits** : il n'y a pas d'écriture libre. Les
+numéros déjà lus par l'intégration, en double, au-delà de 10 ou mal saisis
+sont ignorés et listés dans l'état de l'intégration. Chaque paramètre
+allonge chaque lecture (l'adaptateur interroge le bus un paramètre après
+l'autre).
+
+Lire des catégories entières (`/JK=ALL`) n'est pas proposé : des centaines de
+paramètres, une réponse trop grosse, une lecture du bus de plusieurs minutes
+et autant de fonctionnalités dans Gladys.
+
+La température extérieure, celle de l'eau, la température de la pièce du
+circuit 2 (8770) et les consignes en lecture seule sont des « sondes » :
+elles ne comptent pas comme température de la pièce dans Gladys (les
+circuits 1 et 2 chauffent souvent deux zones ; Gladys en ferait la
+moyenne). Seule 8740 (circuit 1) compte. 8770 sans valeur (« --- » : pas
+de sonde d'ambiance sur le circuit 2, le cas courant) n'est relu que toutes
+les 10 minutes, pas à chaque lecture. Si vous aviez saisi 8770 dans
+« Paramètres supplémentaires » en version 0.2.0, sa fonctionnalité
+« BSB 8770 » garde sa valeur ; le statut propose d'ajouter la nouvelle
+depuis Découverte puis de retirer 8770 de la liste. Une fois retiré de la
+liste, « BSB 8770 » reste sur l'appareil sans nouvelle valeur : supprimez-la
+de l'appareil dans Gladys. Lecture toutes les 30 secondes par défaut (de 10 s à 10 min,
 réglable), quelques paramètres par requête (l'adaptateur interroge le bus un
 paramètre après l'autre).
 
@@ -105,21 +171,94 @@ les 10 secondes), même après des identifiants refusés.
 ## Commandes (désactivées par défaut)
 
 Tant que l'option **Autoriser les commandes** est désactivée, toute commande
-est refusée. Activée, Gladys peut changer :
+est refusée, **sauf Protection (hors-gel) et eau chaude à l'arrêt** (plus
+bas). Activée, Gladys peut changer :
 
-- le **mode de chauffage** du circuit 1 : automatique (programme horaire),
-  confort, réduit, protection (hors-gel) ;
-- la **consigne confort** du circuit 1, au dixième de degré, jamais sous la
-  consigne réduite (712) ni la consigne de protection (714), jamais
-  au-dessus de la consigne confort maximale (716) que le régulateur donne,
+- le **mode de chauffage** des circuits 1 et 2 : automatique (programme
+  horaire), confort, réduit, protection (hors-gel) ;
+- la **consigne confort** de chaque circuit (710, 1010), au dixième de degré,
+  jamais sous sa consigne réduite (712, 1012) ni sa consigne de protection
+  (714, 1014), jamais au-dessus de sa consigne confort maximale (716, 1016),
   et toujours entre 5 et 35 °C ;
+- la **consigne réduite** de chaque circuit (712, 1012), au dixième de degré,
+  jamais sous la consigne de protection (714, 1014), jamais au-dessus de la
+  consigne confort (710, 1010) ni du maximum (716, 1016), entre 5 et 35 °C ;
+- le **mode de l'eau chaude** (1600) : marche, éco, arrêt ;
 - la **consigne d'eau chaude** (1610), en degrés entiers, entre la consigne
-  réduite (1612) et le maximum du régulateur (1614), jusqu'au **plafond**.
+  réduite (1612) et le maximum du régulateur (1614), jusqu'au **plafond** ;
+- la **consigne réduite de l'eau chaude** (1612), en degrés entiers, de 10 °C
+  jusqu'à la plus basse de la consigne d'eau chaude (1610), du maximum
+  (1614), du plafond et de 65 °C.
+
+### Protection et eau chaude à l'arrêt : jamais bloquées
+
+Le mode **Protection (hors-gel)** des circuits 1 et 2 et le mode **Arrêt** de
+l'eau chaude font office d'arrêt : ils partent **même sans l'option**,
+pendant une pause (429/5xx), après des identifiants refusés, pendant une
+autre commande, sans relecture préalable, et depuis un mode inconnu. Ils
+passent avant toute requête en attente et annulent les commandes pas
+encore parties (« une commande de protection est arrivée après »). BSB-LAN
+ne sert qu'une requête à la fois : ils attendent la fin de celle qu'il
+traite. S'il est encore occupé au bout de 3,5 s, Gladys répond « la commande
+passe en tête et part dès qu'il est libre » et l'envoie dès que possible
+(sous 30 s).
+
+Chacun est **gardé** (aussi dans `/data`) jusqu'à ce qu'une lecture partie
+après le clic le montre appliqué. Toute décision suit l'ordre d'arrivée des
+commandes et de départ des requêtes, jamais l'ordre des réponses :
+
+- s'il n'est jamais parti (BSB-LAN injoignable, trop lent), il est réessayé
+  toutes les 10 secondes aussi longtemps qu'il le faut, jamais abandonné
+  avec le temps ;
+- une fois parti, la première lecture de son paramètre partie après lui
+  montre à quoi ressemble « pas appliqué » (BSB-LAN peut répondre statut 0,
+  ou 1 sans l'appliquer). Tant qu'une lecture périodique montre encore ce
+  mode, il est renvoyé, une fois par lecture périodique (toutes les 30 s par
+  défaut), 3 fois au plus ; il reste ensuite gardé et signalé, jamais
+  abandonné avec le temps ;
+- seules ces choses le lèvent : une commande Gladys du même mode arrivée
+  après lui et partie sans être refusée (un statut 2, un 401 ou un 429 ne
+  comptent pas), ou un autre mode que celui resté après lui, lu deux fois
+  de suite après son envoi (quelqu'un l'a changé sur la chaudière). Une
+  valeur lue avant lui ne compte jamais. Un ancien arrêt relu tard dans un
+  `/data` illisible au démarrage n'est écarté que si une commande de son
+  mode est partie sans refus, ou une Protection de son mode a été gardée,
+  entre-temps ;
+- il appartient à son adaptateur (adresse MAC) et à son adresse : une fois
+  une adresse MAC lue, il n'est écrit que sur son propre adaptateur. Deux
+  cas ne peuvent pas être vérifiés avant l'écriture, par choix (un arrêt
+  n'attend jamais une lecture) : après un redémarrage, un arrêt gardé part
+  en premier, avant toute lecture, si l'adresse est la sienne (un autre
+  appareil a pu la prendre) ; et un clic juste après un changement
+  d'adresse, avant la première lecture du nouvel adaptateur. Un arrêt
+  gardé dont l'adresse a changé attend l'adresse MAC de l'adaptateur, part
+  juste après la lecture qui la montre, et reste gardé, signalé dans
+  l'état, si c'est un autre qui répond ;
+- pendant un refus d'identifiants, il attend de nouveaux identifiants ou le
+  bouton « Tester la connexion » ;
+- `/data` n'est jamais attendu sur ce chemin : un disque lent ou bloqué ne
+  retient rien, et un `/data` illisible n'est jamais écrasé (relu plus tard ;
+  un arrêt gardé qu'il contient est écarté si une commande de son mode a été
+  faite depuis). L'état dit combien attendent, ne sont pas encore vus
+  appliqués, ou sont gardés pour un autre adaptateur.
+
+Ils sont refusés seulement quand ils ne peuvent pas partir : aucun
+adaptateur configuré, bus PPS, autre adaptateur lu à l'adresse (autre
+adresse MAC), BSB-LAN injoignable, ou BSB-LAN qui refuse l'écriture
+(paramètre en lecture seule : statut 2). Injoignable : gardés et réessayés
+(voir plus haut).
 
 BSB-LAN doit aussi autoriser l'écriture sur le bus, et nommer son bus BSB
 ou LPB : sinon l'écran de configuration l'indique et les commandes sont
-refusées. L'écriture n'est tenue pour autorisée que si BSB-LAN ne dit rien
-(anciens micrologiciels) ou dit exactement 1.
+refusées. Pour savoir si l'écriture est permise, l'intégration lit d'abord
+l'accès que BSB-LAN donne à **chaque paramètre** dans sa réponse (`readwrite` :
+0 lecture/écriture, 1 lecture seule, 2 écriture seule) : il tient compte du
+réglage d'écriture de BSB-LAN et des paramètres que le régulateur verrouille.
+Faute de cet accès, elle suit le champ `buswritable` de `/JI` (1, 2, « Yes »,
+« RW »… : autorisée ; 0, « No », « RO »… : lecture seule ; toute autre valeur :
+inconnue, commandes refusées). Jusqu'à la version 5.1.18, BSB-LAN écrit ce
+champ de travers (un nombre à virgule affiché comme un entier : il vaut
+souvent 0 alors que l'écriture est permise) : il n'est alors jamais cru.
 
 ### Plafond de l'eau chaude : 65 °C par défaut
 
@@ -130,8 +269,8 @@ chaude** l'abaisse, de 40 à 65 °C ; il n'est **jamais possible de dépasser
 avant chaque commande, s'applique toujours s'il est plus bas.
 Une consigne au-dessus du plafond est refusée dès son arrivée, sans être
 envoyée ; le plafond est revérifié après la relecture et juste avant l'envoi
-(un plafond abaissé pendant une commande l'arrête). Les consignes réduites,
-la fonction anti-légionelles et les programmes horaires ne sont jamais
+(un plafond abaissé pendant une commande l'arrête). Le maximum (1614), la
+fonction anti-légionelles et les programmes horaires ne sont jamais
 modifiés.
 
 Ce que le plafond ne fait pas :
@@ -145,8 +284,8 @@ Ce que le plafond ne fait pas :
 
 ### Ce que Gladys ne fait jamais
 
-- **Quitter un mode inconnu** du régulateur : la commande est refusée, le
-  régulateur garde la main. Dans ce cas la **liste « Mode de chauffage »
+- **Quitter un mode inconnu** du régulateur, sauf vers Protection : la
+  commande est refusée, le régulateur garde la main. Dans ce cas la **liste « Mode de chauffage »
   garde le dernier choix connu** (un mode inconnu n'y figure pas) : regardez
   « Mode de chauffage (lu) », qui affiche toujours le mode réel.
 - Proposer un interrupteur : le mode est une **liste**, les consignes sont
@@ -158,9 +297,9 @@ Ce que le plafond ne fait pas :
 
 ### Comment une commande part
 
-Avant chaque commande, l'intégration relit d'abord l'adaptateur (`/JI`) :
-il doit avoir la même adresse MAC que l'appareil, un bus BSB ou LPB et
-l'écriture autorisée, sinon rien n'est envoyé (un autre adaptateur qui a
+Avant chaque commande (sauf Protection et eau chaude à l'arrêt), l'intégration relit d'abord l'adaptateur (`/JI`) :
+il doit avoir la même adresse MAC que l'appareil et un bus BSB ou LPB, et
+la relecture doit donner le paramètre en écriture, sinon rien n'est envoyé (un autre adaptateur qui a
 pris l'adresse IP n'est jamais commandé). Puis elle **relit** la valeur
 actuelle et la plage permise par le régulateur, et décide sur cette lecture
 seule ; aucune
@@ -169,12 +308,37 @@ le plafond) est revérifiée juste avant l'envoi. Si une valeur ou la plage
 manque, la commande est refusée. Une valeur déjà en place n'est pas
 renvoyée. Une commande qui ne peut pas partir dans les 3,5 secondes est
 refusée sans être envoyée ; Gladys reçoit la réponse dans ses 5 secondes.
-BSB-LAN confirme une écriture par un statut 1 ; un statut 2 (paramètre en
+BSB-LAN accepte une écriture par un statut 1 ; l'intégration **relit alors
+le paramètre** et n'annonce un succès que si la relecture montre la valeur
+demandée (encore l'ancienne : « relue juste après, encore la précédente » ;
+pas relue à temps : « envoyée, sans confirmation »). Un statut 2 (paramètre en
 lecture seule) donne « BSB-LAN a refusé la commande » ; sans confirmation
 claire (silence, connexion coupée, erreur 5xx, statut 0), Gladys affiche
 « Commande envoyée, sans confirmation » : vérifiez la valeur, relue 5 puis
 20 secondes plus tard. Une commande à la fois, et 3 secondes au moins entre
-deux écritures (sinon « encore en cours »).
+deux écritures. Une commande qui arrive pendant une autre (ou dans ces 3
+secondes) **attend** et part après elle, avec sa propre relecture et
+toutes les vérifications à nouveau (l'option, le plafond de l'eau chaude,
+la plage, une pause, l'adaptateur) ; Gladys répond alors « celle-ci attend
+et part après elle ». Celle qui ne peut pas partir sous 30 secondes est
+abandonnée, non envoyée. Une seule attend par réglage : une valeur plus
+récente du même réglage la remplace. Une Protection ou une eau chaude à
+l'arrêt arrivée après elle l'annule (jamais envoyée après une commande de
+protection), un redémarrage de l'intégration aussi. Les commandes de
+protection n'attendent jamais derrière elle. Après une commande refusée
+avant de partir, annulée, abandonnée ou relue inchangée, la carte
+reprend tout de suite la valeur lue (sinon Gladys garde la valeur
+saisie), sauf si une commande précédente du même réglage est encore
+« envoyée, sans confirmation » et que ce réglage n'a pas été relu
+depuis : alors à la première lecture. Après « envoyée, sans
+confirmation » (le régulateur a pu l'appliquer), aucune valeur lue avant
+l'écriture n'est republiée pendant 10 minutes au plus, même après une
+reconnexion à Gladys, une modification de l'appareil ou une commande
+suivante du même réglage refusée avant sa lecture : les relectures de 5
+et 20 secondes tranchent. Dans les deux cas, la première lecture de ce
+réglage faite après l'écriture (ou le refus) le publie même inchangé ;
+si elle échoue aussi (adaptateur injoignable), la première lecture
+réussie le fait, dans les 10 minutes ; jamais après un succès confirmé.
 
 ## Erreurs et limites
 
@@ -190,6 +354,52 @@ deux écritures (sinon « encore en cours »).
 - **BSB-LAN occupé ou en erreur** (HTTP 429 ou 5xx) : pause de 1 minute à
   6 heures (selon `Retry-After`), gardée dans `/data`, pour les lectures
   comme pour les commandes.
+- **Commandes en échec quand BSB-LAN publie aussi en MQTT** : l'adaptateur
+  traite une requête à la fois. Si BSB-LAN publie en MQTT vers un broker
+  (par exemple pour Home Assistant), la charge sur l'adaptateur peut faire
+  échouer les commandes de Gladys (délais dépassés : « répondu trop
+  lentement », « envoyée, sans confirmation (timeout) » ; ces messages le
+  rappellent alors). Désactivez le MQTT sur BSB-LAN, ou allégez-le
+  (intervalle plus long, moins de paramètres), et gardez un intervalle de
+  lecture raisonnable dans Gladys (30 s ou plus). Constaté sur une vraie
+  installation : MQTT désactivé et 30 s, toutes les commandes passent. Les
+  délais des commandes et les 3 s entre deux écritures ne changent pas
+  (ils protègent le chauffage).
+- **« The state could not be saved in /data (EACCES) »** dans les journaux,
+  et « /data n'est pas accessible en écriture » dans le statut (dit dès le
+  démarrage : un fichier d'essai est écrit puis supprimé au lancement,
+  l'état lui-même n'est pas touché) : le dossier de données que Gladys
+  donne à l'intégration n'est pas inscriptible par son utilisateur
+  (`node`, uid 1000). Il lui faut **à la fois** le propriétaire 1000
+  **et** le droit d'écriture. Gladys le crée et le donne à l'uid
+  1000 en créant le conteneur ; quand cela échoue (journal Gladys « Unable
+  to prepare the data folder of integration … », disque monté sans
+  propriétaires comme NFS ou CIFS, Docker en mode rootless ou avec
+  user namespaces, dossier de données de Gladys monté ailleurs que le
+  dossier de sa base), le dossier reste à root. Constaté sur un NAS
+  Synology (DSM, Container Manager) : le dossier appartenait bien à 1000
+  mais était en `dr-xr-xr-x`, avec une ACL Synology (le `+` de `ls -l`)
+  qui ne donnait que la lecture à « everyone » ; `chown` n'a rien changé,
+  `chmod 755` a réglé. L'intégration continue de
+  fonctionner, commandes et Protection / eau chaude à l'arrêt compris :
+  elles ne sont jamais refusées ni perdues à cause de `/data`. Seul un
+  redémarrage oublie ce que `/data` garderait : une pause après un HTTP
+  429/5xx, l'attente après des identifiants refusés et les commandes de
+  protection pas encore vues appliquées (elles ne sont pas renvoyées après
+  le redémarrage). Pour corriger, sur l'hôte de Gladys, pour le dossier
+  `/var/lib/gladysassistant/external-integrations/ext-lm1lc3n7-gladys-bsblan`
+  (dans le dossier de vos données Gladys s'il est ailleurs) : regardez-le
+  avec `ls -ld`, puis `sudo chown 1000:1000` si le propriétaire n'est pas
+  1000, et `sudo chmod 755` s'il n'est pas inscriptible par son
+  propriétaire (sur Synology, vérifiez aussi son ACL dans File Station ou
+  avec `synoacltool`) ; redémarrez ensuite l'intégration. La note du statut
+  disparaît dès qu'une écriture passe.
+- **« Le fichier d'état de /data n'a pas pu être lu »** dans le statut : le
+  fichier `bsblan-state.json` est là mais illisible (ses droits, ou un
+  fichier abîmé). Il n'est jamais réécrit : corrigez ses droits
+  (propriétaire 1000, `chmod 600`), ou supprimez-le (une pause, l'attente
+  après des identifiants refusés et les commandes de protection qu'il
+  gardait sont alors oubliées), puis redémarrez l'intégration.
 - **Passkey fausse, ou IP de Gladys absente des adresses de confiance** :
   d'après la source du micrologiciel, BSB-LAN ferme alors la connexion sans
   rien répondre (jamais de 404). L'intégration ne peut pas le distinguer
@@ -200,13 +410,13 @@ deux écritures (sinon « encore en cours »).
   python-bsblan ; nouvel essai toutes les 30 minutes.
 - **Régulateur en °F** : ses températures ne sont pas affichées (les
   fonctionnalités sont en °C).
-- **Un seul adaptateur** par intégration, **circuit de chauffage 1**
-  seulement.
-- Pas encore : circuit 2, rafraîchissement, programmes horaires, commandes
-  sur bus PPS, mode de l'eau chaude en commande.
+- **Un seul adaptateur** par intégration, **circuits de chauffage 1 et 2**.
+- Pas encore : rafraîchissement, programmes horaires, commandes sur bus PPS,
+  circuit 3 (y compris sa température de pièce, 8800).
 - Les journaux ne contiennent jamais la clé de passe, l'identifiant, le mot
-  de passe ni les réponses de BSB-LAN ; `/data` ne garde que la pause et
-  l'arrêt, jamais un secret.
+  de passe ni les réponses de BSB-LAN ; `/data` ne garde que la pause,
+  l'arrêt sur identifiants refusés et les commandes de protection gardées,
+  jamais un secret.
 
 ## Crédits
 
@@ -220,22 +430,23 @@ Voici les paramètres demandés par BSB-LAN dans son écran de configuration dan
 
 | Paramètre | Type | Obligatoire | Description |
 | --- | --- | --- | --- |
-| Votre adaptateur BSB-LAN | `section` | Non | Affiche votre chaudière ou pompe à chaleur à régulateur Siemens (ELCO, Brötje, Baxi, MHG, Atlantic…) dans Gladys par l'adaptateur BSB-LAN relié à son bus BSB, LPB ou PPS, sur votre réseau local, sans cloud : températures de la pièce, extérieure et de l'eau chaude, consigne confort, mode de chauffage, eau chaude. Saisissez l'adresse IP de l'adaptateur (donnez-lui une adresse fixe dans votre box), enregistrez, puis ajoutez l'appareil depuis l'onglet Découverte. Circuit de chauffage 1 seulement. Jamais testé avec un vrai adaptateur. Sans lien avec le projet BSB-LAN ni les fabricants. |
+| Votre adaptateur BSB-LAN | `section` | Non | Affiche votre chaudière ou pompe à chaleur à régulateur Siemens (ELCO, Brötje, Baxi, MHG, Atlantic…) dans Gladys par l'adaptateur BSB-LAN relié à son bus BSB, LPB ou PPS, sur votre réseau local, sans cloud : circuits de chauffage 1 et 2 (le second si le régulateur l'a), eau chaude, chaudière, température extérieure. Saisissez l'adresse IP de l'adaptateur (donnez-lui une adresse fixe dans votre box), enregistrez, puis ajoutez l'appareil depuis l'onglet Découverte. Testé sur une vraie installation (régulateur Siemens, deux circuits). Sans lien avec le projet BSB-LAN ni les fabricants. |
 | Adresse IP de BSB-LAN | `string` | Oui | Une adresse IPv4 ou un nom d'hôte (port 80 sauf si vous en ajoutez un, par exemple 192.168.1.50:8080). En http simple : BSB-LAN n'a pas de https. |
 | Clé de passe et identifiants (facultatifs) | `section` | Non | Remplissez-les seulement s'ils sont réglés dans la configuration de BSB-LAN : la clé de passe (« Passkey », la première partie de ses adresses) et l'identifiant et le mot de passe de son authentification HTTP. Ils partent vers l'adaptateur en clair sur votre réseau local (BSB-LAN n'a pas de https). |
 | Clé de passe (facultative) | `secret` | Non | Gardée par Gladys dans sa base, jamais réaffichée, envoyée seulement à l'adaptateur BSB-LAN. |
 | Identifiant (facultatif) | `string` | Non |  |
 | Mot de passe (facultatif) | `secret` | Non | Gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement à l'adaptateur BSB-LAN. |
-| Commandes | `section` | Non | Par défaut Gladys ne fait que lire. Une fois autorisés, le tableau de bord, les scènes et les assistants vocaux peuvent changer le mode de chauffage, la consigne confort du circuit 1 et la consigne d'eau chaude, dans la plage que donne le régulateur, l'eau chaude jamais au-dessus du plafond ci-dessous. BSB-LAN doit aussi autoriser l'écriture sur le bus dans sa propre configuration. |
-| Autoriser les commandes | `boolean` | Non | Désactivé par défaut. Désactivé : toute commande est refusée. |
+| Commandes | `section` | Non | Par défaut Gladys ne fait que lire. Une fois autorisés, le tableau de bord, les scènes et les assistants vocaux peuvent changer les modes et les consignes confort et réduite des circuits 1 et 2, le mode et les consignes de l'eau chaude, dans la plage que donne le régulateur, l'eau chaude jamais au-dessus du plafond ci-dessous. Protection (hors-gel) et eau chaude à l'arrêt ne sont jamais bloqués, même sans autorisation. BSB-LAN doit aussi autoriser l'écriture sur le bus dans sa propre configuration. |
+| Autoriser les commandes | `boolean` | Non | Désactivé par défaut. Désactivé : toute commande est refusée, sauf Protection (hors-gel) et eau chaude à l'arrêt. |
 | Plafond de l'eau chaude (°C) | `number` | Non | Risque de brûlure : Gladys ne règle jamais l'eau chaude au-dessus de cette température. 65 °C par défaut, de 40 à 65 °C (jamais plus de 65 °C, quoi qu'on saisisse ; le maximum du régulateur s'applique s'il est plus bas). |
-| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture de BSB-LAN, en secondes. |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture de BSB-LAN, en secondes. L'adaptateur traite une requête à la fois : s'il publie aussi en MQTT (pour Home Assistant, par exemple), désactivez-le ou allégez-le, et gardez 30 s ou plus ici, sinon les commandes peuvent dépasser leurs délais. |
+| Paramètres supplémentaires à lire (lecture seule) | `string` | Non | Facultatif : jusqu'à 10 numéros de paramètres BSB-LAN, séparés par des virgules (par exemple 8326, 8338). Chacun devient une fonctionnalité en lecture seule, nommée et typée comme BSB-LAN la décrit ; jamais écrit. Chaque paramètre allonge chaque lecture du bus. |
 | Langue des noms des fonctionnalités | `select` | Non | Sert aux noms de l'appareil et des fonctionnalités ajoutés désormais, aux textes des modes et aux erreurs des commandes. |
 
 ## Comment installer BSB-LAN dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : BSB-LAN apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-bsblan:0.1.3`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-bsblan:0.3.2`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-bsblan](https://github.com/LM1LC3N7/gladys-bsblan).
 

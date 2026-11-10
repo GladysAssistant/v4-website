@@ -413,6 +413,11 @@ module.exports = function createConfig() {
       },
     ],
   ],
+  plugins: [
+    // The figures of the integrations catalog on the homepage, computed at
+    // build time so the catalog data stays out of the page's bundle.
+    require.resolve("./plugins/integrations-summary"),
+  ],
   clientModules: [require.resolve("./src/openpanel.js")],
   scripts: [],
   };

@@ -1,0 +1,134 @@
+---
+title: "StorCube Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "StorCube"
+description: "StorCube-Balkonbatterien: Stand, Solar, Einspeise-Sollwert und Entladegrenze. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-storcube.jpg"
+keywords:
+  - "storcube"
+  - "storcube smart home"
+  - "gladys storcube"
+  - "storcube gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/William-De71/gladys-storcube instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"StorCube","description":"StorCube-Balkonbatterien: Stand, Solar, Einspeise-Sollwert und Entladegrenze.","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-storcube","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-storcube.jpg","type":"device","version":"0.1.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-09T21:16:30Z"}} />
+
+## Überblick
+
+Diese Integration bringt eine **StorCube-Balkonbatterie** (S1000 und ihre Erweiterungsbatterien) über die StorCube-Cloud und das Konto der StorCube-App in Gladys. Du siehst den Batteriestand, die Solarleistung und die ins Haus eingespeiste Leistung, und deine Szenen können die Einspeisung ein- oder ausschalten, den Ausgangssollwert (0 bis 800 W) und die Entladegrenze ändern — zum Beispiel, um die Energie am Abend abzugeben.
+
+Gut zu wissen vor der Installation:
+
+- Die API der StorCube-Cloud ist **weder dokumentiert noch offiziell**. Die Integration folgt der Home-Assistant-Integration storcube_Ha, die echte Batterien liest; StorCube kann seine API jederzeit ändern.
+- Alles läuft über die Cloud (`baterway.com`), **unverschlüsselt**: E-Mail und Passwort gehen im Klartext, wie bei der StorCube-App selbst. Nutze ein Passwort, das du nirgends sonst verwendest.
+- Die Integration wurde **noch nicht mit einer echten Batterie getestet**. Rückmeldungen sind willkommen.
+- Nicht mit StorCube verbunden.
+
+## Voraussetzungen
+
+- Gladys Assistant 5.3.0 oder neuer.
+- Eine in der StorCube-App eingerichtete StorCube-Batterie mit WLAN-Verbindung.
+- E-Mail und Passwort des Kontos der StorCube-App.
+- Die Seriennummer der **Hauptbatterie**: die Batterie, an der Solarmodule und Mikro-Wechselrichter hängen. Sie steht auf dem Etikett der Batterie und in der App.
+
+## Konfiguration
+
+In Gladys: **Integrationen → StorCube → Konfiguration**.
+
+| Feld                           | Eingabe                                                                              |
+| ------------------------------ | ------------------------------------------------------------------------------------ |
+| E-Mail der StorCube-App        | Die E-Mail, mit der du dich in der App anmeldest                                     |
+| Passwort                       | Ihr Passwort (als Geheimnis gespeichert, nie wieder angezeigt)                       |
+| Seriennummer der Hauptbatterie | Die Ziffern auf dem Etikett; Leerzeichen und Bindestriche werden entfernt            |
+| App-Code                       | `Storcube` stehen lassen, außer deine Batterie nutzt eine andere App derselben Cloud |
+| Sprache der Texte              | Automatisch folgt der Sprache des Dashboards                                         |
+
+Speichern, dann **Verbindung testen** drücken: Sie meldet sich an und zeigt Modell, Anzahl der Batterien im Stapel, Sollwert und Grenze.
+
+Lehnt die Cloud E-Mail oder Passwort ab, versucht es die Integration nicht mehr, bis du die Konfiguration änderst — so wird dein Konto nie gesperrt.
+
+## Nutzung
+
+### Geräte
+
+Öffne **Suchen** und füge die Batterien hinzu. Die Hauptbatterie bietet:
+
+- Batteriestand (%), gespeicherte Energie (kWh), Temperatur (°C);
+- Solarleistung (W, beide Eingänge zusammen), ins Haus eingespeiste Leistung (W);
+- Lade- und Entladeleistung (W): berechnet als Solar minus eingespeiste Leistung, da die API keine Batterieleistung liefert;
+- **Ausgangssollwert (W)**: ein Schieberegler von 0 bis 800 W, die Leistung, die die Batterie ins Haus schickt;
+- **Einspeisung ins Haus**: aus setzt den Sollwert auf 0 W, ein stellt den letzten Sollwert über 0 wieder her (800 W, wenn keiner bekannt ist);
+- **Entladegrenze (%)**: der Stand, unter dem die Batterie nicht mehr einspeist.
+
+Jede Erweiterungsbatterie bietet Stand, gespeicherte Energie und Temperatur. Die Werte kommen aus dem Echtzeit-Datenstrom der StorCube-Cloud; die Einstellungen werden alle 30 Sekunden neu gelesen.
+
+### Dashboard-Widgets
+
+**StorCube jetzt** zeigt die Batterieanzeige, die Solarleistung, die Leistung ins Haus, Laden oder Entladen, den Sollwert (oder „Einspeisung aus“), wann die letzten Daten kamen, die Entladegrenze, jede Erweiterungsbatterie und ein wartendes Firmware-Update.
+
+![Das Widget StorCube jetzt (generierte Illustration, kein Screenshot)](https://raw.githubusercontent.com/William-De71/gladys-storcube/main/docs/assets/widgets.de.png)
+
+### Szenen
+
+Auslöser (einmal pro Änderung, nie beim ersten Messwert):
+
+- **StorCube: Batterie voll** — 100 %, erneut nachdem sie unter 95 % fiel;
+- **StorCube: Batterie an der Grenze** — die Batterie speist nicht mehr ein;
+- **StorCube: Batterie stumm** — seit 20 Minuten keine Daten, obwohl die Cloud antwortet; **Batterie zurück**, wenn wieder Daten kommen;
+- **StorCube: Firmware-Update** — eine neue Firmware wird angeboten (einmal pro Version);
+- **StorCube: Anmeldung abgelehnt** — die Cloud lehnt E-Mail oder Passwort ab.
+
+Die Befehle sind Gerätefunktionen: Nutze die Aktion **Ein Gerät steuern**. Beispiele:
+
+- **Abendliche Einspeisung**: jeden Tag um 19 Uhr → Ausgangssollwert = 800 W; um 23 Uhr → Einspeisung ins Haus = aus.
+- **Erst die Sonne**: wenn die Batterie voll ist → Ausgangssollwert = 300 W.
+- **Batterie überwachen**: wenn die Batterie stumm ist → eine Benachrichtigung senden.
+
+## Fehlerbehebung
+
+- **„Die StorCube-Cloud lehnt die Anmeldung ab“**: Prüfe E-Mail und Passwort in der StorCube-App und speichere die Konfiguration erneut (das erlaubt einen neuen Versuch).
+- **„kennt die Batterie nicht“**: Die Seriennummer ist nicht die der Hauptbatterie dieses Kontos. Nimm die der Batterie, an der die Module hängen.
+- **Keine Daten, „warte auf die Daten“**: Die StorCube-Cloud braucht manchmal mehrere Minuten für den ersten Datenrahmen. Prüfe in der App, ob die Batterie online ist.
+- **Die App meldet dich ab, oder Gladys empfängt nichts mehr**: Die Cloud verträgt mehrere Sitzungen eines Kontos schlecht. Vermeide andere Werkzeuge mit demselben Konto.
+- **Ein Befehl wird abgelehnt**: Nur die Hauptbatterie nimmt Befehle an; der Feldname der Grenze unterscheidet sich je nach Firmware, und die Integration probiert die bekannten.
+- Für eine Fehlermeldung **Diagnose** drücken und die Zeilen „StorCube diagnostic“ aus dem Protokoll der Integration kopieren (ohne Passwort), mit den Versionen von Gladys und der Integration sowie Modell und Firmware der Batterie.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt StorCube in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| StorCube-Konto | `section` | Nein | Verwende E-Mail und Passwort der StorCube-App. Die Daten laufen über die StorCube-Cloud (baterway.com), deren API inoffiziell und unverschlüsselt ist (reines HTTP): Nutze ein Passwort, das du nirgends sonst verwendest. Nicht mit StorCube verbunden. |
+| E-Mail der StorCube-App | `string` | Ja |  |
+| Passwort | `secret` | Ja |  |
+| Seriennummer der Hauptbatterie | `string` | Ja | Auf dem Etikett der Batterie oder in der App: die Batterie, an der Module und Mikro-Wechselrichter hängen. |
+| App-Code | `string` | Nein | Lass „Storcube“ stehen, außer deine Batterie nutzt eine andere App derselben Cloud. |
+| Sprache der Texte | `select` | Nein | Namen der Funktionen, Szenentexte und Fehler. Automatisch: die Sprache des zuletzt angezeigten Widgets. |
+
+## So installierst du StorCube in Gladys
+
+1. Öffne in Gladys **Integrationen**: StorCube erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/william-de71/gladys-storcube:0.1.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/William-De71/gladys-storcube](https://github.com/William-De71/gladys-storcube).
+
+StorCube benötigt Gladys `>=5.3.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+StorCube ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [William-De71](https://github.com/William-De71) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/William-De71/gladys-storcube) — [Quelle dieser Dokumentation](https://github.com/William-De71/gladys-storcube/blob/HEAD/docs/de.md)
