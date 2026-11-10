@@ -1,0 +1,161 @@
+---
+title: "Integración domótica Modern Forms, gratuita y de código abierto"
+sidebar_label: "Modern Forms"
+description: "Modern Forms and WAC smart ceiling fans on your network: fan, light, direction. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-modern-forms.png"
+keywords:
+  - "modern forms"
+  - "domótica modern forms"
+  - "gladys modern forms"
+  - "modern forms gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-modern-forms instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Modern Forms","description":"Modern Forms and WAC smart ceiling fans on your network: fan, light, direction.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-modern-forms","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-modern-forms.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-05T16:35:34Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+Brings **Modern Forms** and **WAC** smart ceiling fans (generations 1, 2 and 3)
+into Gladys through their local HTTP API: no account, no cloud.
+
+> Never tested with a real device: it was built from the WAC reference of the
+> API and the aiomodernforms library (used by Home Assistant). Tell us on the
+> forum how it goes with your fan. Not affiliated with WAC Lighting nor Modern
+> Forms.
+
+## What you get
+
+One device per fan, named as in the Modern Forms app, with:
+
+- **Fan speed (0 = off)**: 0 stops the fan, 1 to 6 starts it at that speed;
+- **Direction**: forward (summer) or reverse (winter);
+- **Breeze mode** (generation 3 fans): off or breeze;
+- **Light** and **Brightness** (fans with a light kit): brightness 0 turns the
+  light off, 1 to 100 % turns it on at that brightness.
+
+None of them is a switch: "turn every switch on" never starts a fan. The light
+is a light, so it follows "turn the lights off" like any other light.
+
+Not handled: the sleep timers, the schedule, the away mode, the adaptive
+learning, pairing, reboot and reset (use the app), and **generation 4** fans
+(another API; the status says "no /mf API (HTTP 404)").
+
+## Configuration
+
+1. Set up the fan with the Modern Forms or WAC app, then give it a fixed
+   address in your router (it shows as `MF_Fan_XXXXXX` or `WAC_Fan_XXXXXX`).
+2. In **Addresses of the fans**, type the address of each fan, separated by
+   commas (up to 8), with `:port` only if it is not 80.
+3. Save, then add the fans from the **Discovery** tab.
+
+The status says which fans were read, which address does not answer (and when
+it is tried again), an address where the same fan was typed twice, a device
+that answers without saying which fan it is, and the Offs not seen applied.
+
+**Test the connection** reads each fan, or shows its last read if it was read
+less than an interval ago (never faster than the interval).
+
+## Which fan a device drives
+
+A device is tied to its fan by the `clientId` the fan gives in every answer
+(the MAC address of the fan), not by its address. If the fan moves to another
+address, type the new one: the device follows it.
+
+- A start, a speed, a direction, the breeze, the light on or a brightness:
+  the fan is read first, and the command is written only if that read shows
+  the fan of the device, at an address of the configuration.
+- An Off goes to the address the fan was last read at (or kept in /data, or
+  saved with the device, or the only address typed), even if nothing was read
+  yet. It is **refused** only when:
+  - the address of the fan is not known: never read, nothing kept, no address
+    on the device and several addresses typed;
+  - another fan answered last at that address. Until a read shows it, a fan
+    swapped with another one at the same address is not seen: an Off sent
+    then may stop the other fan (its answer says so, and nothing is kept);
+  - a newer command on the same part (another Off) took its place before it
+    left.
+
+## The Offs (fan speed 0, light off, brightness 0)
+
+An Off needs no option and goes first: it does not wait for a read, a command
+in progress, a pause after failed reads, the configuration of Gladys (when the
+address is known) nor the first read after a restart. It cancels the commands
+of the same part still waiting, and cuts the request in flight to that fan.
+
+If it cannot be sent at once (the fan does not answer), it is tried for 250 ms,
+then **kept** (in /data, and in memory if /data cannot be written) and tried
+again every 10 s, whatever the pause of the reads: it leaves within about 10 s
+of the fan answering again, and again after a 429 or 503 answer, a cut or a
+send left without answer, without end: none of these is a try. Once the fan
+accepted it, a read that still shows the part on sends it again, and so does
+the same 10 s turn when no read did (reads paused by an outage never hold it):
+at most once per read interval (10 s at most) and 3 times at most; a try
+counts only when the fan accepted the Off and its answer still shows the part
+on. Only the reads judge an Off, each on its own part (the answer of the Off of
+the light never sends the Off of the fan again). The status tells where each
+Off stands.
+
+A kept Off ends when a newer command starting the same part has left (one the
+fan refused does not count), when the device is deleted, or, after a read
+showed it applied, when the part is read on twice in a row (started from the
+remote or the app: the integration never stops it again). Never by the time.
+
+## Reads and pauses
+
+Each fan is polled every interval (10 s by default, 5 s at least), never sooner,
+even after a restart or a reconnection (a command adds its own reads: the one
+before it, and those 5 s and 20 s after). A fan that does not answer is tried
+again after 10 s, 30 s, 1, 2 then 5 minutes (a minute at least when it asks to
+wait); its commands are refused meanwhile, but not its Offs. A command is
+confirmed by the state the fan answers (the commands of a scene on one fan go
+together: one read, one write): "sent, without confirmation" when no
+answer came, "does not show it yet" when the answer shows the old value; the
+fan is then read again 5 s and 20 s later.
+
+## Privacy
+
+The information the fan gives also holds the e-mail of the app account: it is
+never used, logged nor kept. /data keeps only the addresses, the ids of the
+fans, the times of the reads, the pauses and the Offs to send.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Modern Forms te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Your fans | `section` | No | Brings Modern Forms and WAC smart ceiling fans (generations 1 to 3, set up with their app) into Gladys through their local HTTP API, without account nor cloud: fan on / off and speed (0 = off), direction, breeze mode, light and brightness. An Off (speed 0, light off) needs no option and goes first, even while a fan does not answer or before the first read: it is kept and sent again until a read shows it. Generation 4 fans are not handled yet. Never tested with a real device: tell us on the forum how it goes. Not affiliated with WAC Lighting nor Modern Forms. |
+| Addresses of the fans | `string` | Sí | The IP address (or name) of each fan on your network, separated by commas (up to 8), with :port only if not 80. Give each fan a fixed address in your router; the app shows it, and so does your router (a name starting with MF_Fan or WAC). |
+| Read every (seconds) | `number` | No | How often each fan is read: 10 s by default, 5 s at least. |
+| Language of the names | `select` | No | Used for the names of the devices and features added from now on. |
+
+## Cómo instalar Modern Forms en Gladys
+
+1. En Gladys, abre **Integraciones**: Modern Forms aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-modern-forms:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-modern-forms](https://github.com/LM1LC3N7/gladys-modern-forms).
+
+Modern Forms requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Modern Forms es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-modern-forms) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-modern-forms/blob/HEAD/docs/en.md)

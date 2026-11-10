@@ -125,7 +125,7 @@ const alternativeContent = {
     faqTitle: "Frequently asked questions",
     cta: {
       title: "Try the simple Home Assistant alternative",
-      text: "Gladys is free, open-source, and installs in a single Docker command. Privacy-first, self-hosted, no cloud required.",
+      text: "Gladys is free, open-source, and installs on a mini-PC from a USB drive. Privacy-first, self-hosted, no cloud required.",
       primary: { label: "Get started", href: "/docs/" },
       secondary: {
         label: "Compare with Home Assistant",
@@ -253,7 +253,7 @@ const alternativeContent = {
     faqTitle: "Questions fréquentes",
     cta: {
       title: "Essayez l'alternative simple à Home Assistant",
-      text: "Gladys est gratuite, open source, et s'installe en une seule commande Docker. Auto-hébergée, respectueuse de votre vie privée, sans cloud obligatoire.",
+      text: "Gladys est gratuite, open source, et s'installe sur un mini-PC depuis une clé USB. Auto-hébergée, respectueuse de votre vie privée, sans cloud obligatoire.",
       primary: { label: "Commencer", href: "/docs/" },
       secondary: {
         label: "Comparer avec Home Assistant",
@@ -380,7 +380,7 @@ const alternativeContent = {
     faqTitle: "Häufig gestellte Fragen",
     cta: {
       title: "Teste die einfache Home Assistant Alternative",
-      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl installiert. Datenschutz zuerst, selbst gehostet, keine Cloud nötig.",
+      text: "Gladys ist kostenlos, Open Source und lässt sich von einem USB-Stick auf einem Mini-PC installieren. Datenschutz zuerst, selbst gehostet, keine Cloud nötig.",
       primary: { label: "Jetzt loslegen", href: "/de/docs/" },
       secondary: {
         label: "Mit Home Assistant vergleichen",
@@ -507,7 +507,7 @@ const alternativeContent = {
     faqTitle: "Preguntas frecuentes",
     cta: {
       title: "Prueba la alternativa sencilla a Home Assistant",
-      text: "Gladys es gratuito, de código abierto y se instala con un solo comando Docker. Centrado en la privacidad, autoalojado y sin nube obligatoria.",
+      text: "Gladys es gratuito, de código abierto y se instala en un mini-PC desde una memoria USB. Centrado en la privacidad, autoalojado y sin nube obligatoria.",
       primary: { label: "Empezar", href: "/es/docs/" },
       secondary: {
         label: "Comparar con Home Assistant",

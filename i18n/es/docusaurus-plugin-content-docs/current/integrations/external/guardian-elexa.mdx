@@ -1,0 +1,215 @@
+---
+title: "Integración domótica Guardian (Elexa), gratuita y de código abierto"
+sidebar_label: "Guardian (Elexa)"
+description: "Guardian water valve controllers and leak sensors over the local API. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-guardian.png"
+keywords:
+  - "guardian (elexa)"
+  - "domótica guardian (elexa)"
+  - "gladys guardian (elexa)"
+  - "guardian (elexa) gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-guardian instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Guardian (Elexa)","description":"Guardian water valve controllers and leak sensors over the local API.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-guardian","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-guardian.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-05T10:35:34Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+Shows your **Guardian valve controller** (Elexa, GVC1) and the **leak
+sensors** paired with it in Gladys through its **local API** (UDP port 7777):
+no Guardian cloud, straight on your network.
+
+> **Never tested with a real device.** Not affiliated with Elexa. The
+> integration follows aioguardian, the Guardian library of Home Assistant,
+> and the captures of its tests. A firmware update may change the API.
+
+> **The local API has no password.** Anyone on your network can open or
+> close the valve with it, with or without Gladys, and can forge its answers
+> just as easily (the leak, the valve state, the UID: UDP without any
+> authentication). The opening lock of Gladys and the confirmation "seen
+> closed" are no safer than your network. Keep the controller on a trusted
+> network (no guest Wi-Fi, no port forwarding).
+
+## What you get
+
+One device per controller and one per paired leak sensor, keyed by the UID
+the device gives (never by its IP address):
+
+| Device           | Feature               | Content                                                           |
+| ---------------- | --------------------- | ----------------------------------------------------------------- |
+| Valve controller | Valve                 | Text: open, closed, opening, closing, stalled, halted mid-way...  |
+| Valve controller | Valve open            | 1 open, 0 closed (unchanged while it moves or is in a fault)      |
+| Valve controller | Close the valve       | Button, **always available**                                      |
+| Valve controller | Open the valve        | Button, only with "Allow opening the valve"                       |
+| Valve controller | Leak (onboard sensor) | 1 leak, 0 dry                                                     |
+| Valve controller | Temperature           | °C (the controller gives °F, converted exactly: (F - 32) x 5 / 9) |
+| Leak sensor      | Leak, Temperature     | As above                                                          |
+| Leak sensor      | Battery               | %                                                                 |
+| Leak sensor      | Moved                 | 1 when the sensor reports it was moved                            |
+
+Each controller is read every 30 seconds by default (10 s to 1 h), one
+request at a time. The onboard sensor, the list of the paired sensors (every
+10 minutes), each sensor and the diagnostics (firmware, every 6 hours) are
+secondary: when one does not answer, the valve is published anyway and the
+status says "Not read: ...". A value is never published as 0 when it is
+unknown; a value read more than 2 minutes ago is never sent as new.
+
+The controller keeps the last values of each sensor; the API gives no date
+for them: a sensor whose battery is dead may keep showing its last values.
+
+## Installation
+
+1. Give the controller a fixed IP address in your router.
+2. In Gladys, install the integration and enter the IP address of the
+   controller (optionally followed by a port, 7777 by default). Several
+   controllers: their addresses separated by commas (8 at most).
+3. Save, then add the devices from the **Discovery** tab.
+
+The controller is never searched on the network: no broadcast, no multicast.
+
+## Closing the valve (always)
+
+"Close the valve" is the stop of this integration: it is never held back by
+an option, a read or an open in progress (it ends them), a controller that
+did not answer the last read, the configuration not read yet, or a slow
+disk. It goes:
+
+- to the address where that valve answered since the start;
+- else to the address where it was last read before a restart (kept in
+  `/data`);
+- else to every configured address whose controller was never identified
+  (the address you typed).
+
+It is sent at once. One try waits 1.2 s for the answer: after a silence it is
+sent again at once, after a "moving" answer (the controller refuses any
+command while its valve moves) 250 ms later, for 3 seconds. The first
+"moving" answer reads the valve once: closing (a close already on its way,
+from a check, a click just before or the button), the click is a close under
+way, answered like an accepted one, never "refused"; closed, it is answered
+"not confirmed yet", kept, and the next check (5 s later) confirms it (a
+status read right after "moving" may lag behind an open starting). Then it is
+**kept** in `/data` and checked every 15 seconds (5 seconds while the valve
+closes), also after a restart, before Gladys even gives the configuration,
+until a read shows the valve **closed**. It is sent again while the valve
+stays open or in a fault: 3 times quickly (each accepted by the controller,
+2.4 s apart); then, held, every 30 seconds, then less and less often (10
+minutes apart at most), until the valve closes, and the status asks you to
+check the valve. A valve that changes (out of its fault, moved by hand), a
+controller that answers again after a silence or restarted (its uptime drops)
+or a restart of the integration gives 3 quick resends again. A silence, an unreachable controller
+or a "moving" answer never counts as a try.
+
+When another valve (another UID) answers at the address the close went to
+(addresses moved in the router), that other valve is closed too (the safe
+side), and the close of the valve you clicked is **kept**: it goes where that
+valve answers in this run, else to every configured address not identified
+in this run; if there is none, it waits (in `/data`, said in the status)
+until that valve answers at a configured address. The identity of every
+configured address is read at once then (whatever the refresh interval), and
+as soon as that valve answers at an address, every close of it kept for
+another address goes there. Deleting that valve in Gladys gives up a close
+still searched for. A close kept in `/data` whose UID cannot be read goes to
+its address whatever valve answers there (the safe side).
+
+The close is refused, nothing sent, in two cases only:
+
+- no address is known at all (nothing configured, nothing in `/data`);
+- every known address answers with another valve (another UID).
+
+A close kept is let go only when: a read shows the valve closed; an open
+clicked in Gladys (with the option) left before that close was clicked;
+two reads in a row show the valve opened again after it was seen closing
+(opened from the app or the button of the controller). Never by time; never
+because another valve answers at its address (see above).
+
+Gladys gets its answer within 3.5 seconds: success only when the read back
+read the valve you clicked (its UID), closing or closed; otherwise the
+message says exactly what happened (sent without an answer, not sent yet,
+refused, moving, another valve at that address, identity not read yet), and
+the close stays kept.
+
+## Opening the valve (off by default)
+
+"Allow opening the valve" is **off** by default: the button then refuses
+every command. When it is on, an open is decided on a **fresh read** (never
+on the values in memory) and refused when:
+
+- the controller at the address is not the same one (UID), or cannot say;
+- the valve moves, or is in a fault (stalled, motor spinning, halted, position
+  unknown);
+- the onboard sensor reads a leak, or cannot be read;
+- a paired sensor reads a leak, or cannot be read in time (each one listed
+  is read; a sensor whose battery is dead blocks opening: remove it in the
+  Guardian app), or the list of the paired sensors cannot be read;
+- a close of that controller is being sent (a close clicked after an open
+  always wins: the open never leaves after it, and an open that already left
+  never lets that close go);
+- the option is turned off before the datagram leaves;
+- a close is kept for that valve and `/data` cannot be written (a restart
+  would close it again);
+- `/data` is still being read (a close kept there could come back and close
+  the valve again);
+- the controller does not answer in time (nothing sent after 2.7 s).
+
+An open is confirmed only by a read back showing the valve opening or open;
+otherwise "sent, without confirmation", and the valve is read again after 5
+and 20 seconds. The integration never halts the valve (a halted Guardian no
+longer reacts to its leak sensors).
+
+## Status
+
+The configuration screen shows, for each controller: its UID, the valve,
+the number of paired sensors, a leak, the parts not read, and for each close
+kept where it stands. "Test the connection" reads each controller once,
+never sooner than the refresh interval.
+
+## Limits
+
+- Tested only against a fake controller built from aioguardian 2026.1.1 and
+  its fixtures; never with a real device.
+- No firmware update, Wi-Fi setup, pairing, reboot or factory reset from
+  Gladys: use the Guardian app.
+- The API has no authentication (see above).
+
+## Parámetros de configuración
+
+Estos son los parámetros que Guardian (Elexa) te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Your Guardian valve controller | `section` | No | Shows your Guardian valve controller (Elexa, GVC1) and the leak sensors paired with it in Gladys through its local API, without the Guardian cloud: valve state, leaks, temperatures, sensor batteries. Closing the valve always works from Gladys; opening it only if you allow it below. The local API has no password: anyone on your network can command the valve and forge its answers, keep it on a trusted network. Give the controller a fixed address in your router, enter it, save, then add the devices from the Discovery tab. Never tested with a real device. Not affiliated with Elexa. |
+| IP address of the controller | `string` | Sí | An IPv4 address or a host name, optionally followed by a port (7777 by default). Several controllers: their addresses separated by commas (8 at most). Never a broadcast or multicast address: the controller is not searched on the network. |
+| Allow opening the valve | `boolean` | No | Off by default. On: the "Open the valve" button lets water in, after a fresh read shows the valve still (closed; or open while a close is kept, which the open then lets go), no leak on the controller nor on any paired sensor (each one read). Off: it refuses every command. Closing the valve always works. |
+| Refresh interval (seconds) | `number` | No | How often each controller is read, 10 to 3600 seconds (30 by default). |
+| Language of the feature names | `select` | No | The language of the names given to the devices and their features. |
+
+## Cómo instalar Guardian (Elexa) en Gladys
+
+1. En Gladys, abre **Integraciones**: Guardian (Elexa) aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-guardian:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-guardian](https://github.com/LM1LC3N7/gladys-guardian).
+
+Guardian (Elexa) requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Guardian (Elexa) es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-guardian) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-guardian/blob/HEAD/docs/en.md)

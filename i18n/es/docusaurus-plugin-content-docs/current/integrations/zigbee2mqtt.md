@@ -42,22 +42,22 @@ Conecta tu dongle USB Zigbee a la máquina en la que funciona Gladys (tu Raspber
 
 ![Sonoff USB Zigbee 3.0](../../../../../static/img/docs/en/configuration/zigbee2mqtt/zigbee-raspberry-pi-usb-sonoff.jpg)
 
-En Gladys, ve a `Integraciones / Zigbee2Mqtt`.
+En Gladys, ve a `Integraciones / Zigbee2Mqtt` y después haz clic en `Configuración` en el menú.
 
-Después, haz clic en `Ajustes` en el menú. Gladys escaneará automáticamente los distintos puertos USB para proponértelos en una lista desplegable.
-
-Selecciona el puerto USB que debe usar Gladys para comunicarse con Zigbee.
+Gladys muestra los puertos USB de la máquina, cada uno con el nombre del dispositivo conectado, por ejemplo `ITead Sonoff Zigbee 3.0 USB Dongle Plus (/dev/ttyUSB0)`. Los demás puertos serie, los de la propia máquina y los de los HAT GPIO (como la RaspBee), están ocultos: haz clic en **Mostrar los demás puertos serie (HAT GPIO, puertos de la máquina)** para verlos.
 
 ![Ajustes del dongle USB](../../../../../static/img/docs/en/configuration/zigbee2mqtt/z2m_parameter_dongle_usb_en.png)
 
-**13 de mayo de 2023:** ahora puedes seleccionar el modelo de dongle Zigbee que utilizas:
+Gladys reconoce los dongles más habituales (SONOFF ZBDongle-P y ZBDongle-E, Home Assistant Connect ZBT-1 y ZBT-2, ConBee II y III, SMLIGHT SLZB-06M y SLZB-07…). Si reconoce tu dongle, su puerto y su modelo ya están seleccionados: no tienes que elegir nada.
+
+Si no, selecciona el puerto y después el modelo de tu dongle en la lista:
 
 ![Modelo del dongle USB](../../../../../static/img/docs/en/configuration/zigbee2mqtt/zigbee-dongle.jpg)
 
-Así Zigbee2mqtt sabe qué configuración debe usar.
+El modelo es obligatorio: así Zigbee2mqtt sabe qué configuración debe usar.
 
 :::warning
-Si tienes un dongle basado en [EmberZNet](https://www.zigbee2mqtt.io/guide/adapters/emberznet.html) (como por ejemplo el Sonoff Zigbee 3.0 ZBDongle-E), te recomendamos [actualizar](https://www.zigbee2mqtt.io/guide/adapters/emberznet.html#firmware-flashing) el firmware del dongle. Si no, elige la opción `(legacy ezsp)` en la lista.
+Si tienes un dongle basado en [EmberZNet](https://www.zigbee2mqtt.io/guide/adapters/emberznet.html) (como por ejemplo el Sonoff Zigbee 3.0 ZBDongle-E), te recomendamos [actualizar](https://www.zigbee2mqtt.io/guide/adapters/emberznet.html#firmware-flashing) el firmware del dongle. Si no, elige la opción `(legacy ezsp)` en la lista, aunque Gladys haya seleccionado por ti el modelo de tu dongle.
 :::
 
 :::warning
@@ -87,6 +87,14 @@ Una vez configurado tu dongle, Gladys necesita instalar dos contenedores (MQTT y
 Ve a la sección `Configuración` y haz clic en el botón **Activar Zigbee2mqtt**. Tras unos instantes (el tiempo de espera depende del modelo de tu Raspberry Pi y de tu ancho de banda), deberías ver todos los elementos iniciados y las conexiones entre ellos en verde.
 
 ![Estado de los servicios de Zigbee2Mqtt](../../../../../static/img/docs/en/configuration/zigbee2mqtt/z2m_services_state_en.png)
+
+Gladys solo muestra Zigbee2MQTT en verde cuando realmente se ha iniciado y ha respondido a Gladys. Mientras tanto, un mensaje bajo el esquema te indica en qué punto está:
+
+- **Zigbee2MQTT se está iniciando**: aparece como "Reiniciando". Espera un momento, se pondrá en verde en cuanto responda a Gladys.
+- **Zigbee2MQTT no consigue iniciarse**: Gladys muestra el error encontrado encima del esquema. Consulta [Solucionar los errores habituales de Zigbee2MQTT](#solucionar-los-errores-habituales-de-zigbee2mqtt).
+- **Zigbee2MQTT no responde**: Gladys no obtiene respuesta; quizá esté detenido o se bloquee al iniciarse. Consulta la misma sección.
+
+Mientras Zigbee2MQTT no responda, las páginas `Descubrir` y `Dispositivos` muestran el aviso "Zigbee2mqtt no responde" y el emparejamiento de dispositivos está desactivado. El aviso desaparece por sí solo en cuanto Zigbee2MQTT está listo.
 
 ## Permitir el emparejamiento de dispositivos
 
@@ -126,7 +134,7 @@ La mayoría de los problemas de Zigbee2MQTT tienen tres causas: el puerto USB eq
 
 Zigbee2MQTT no ha podido comunicarse en absoluto con tu dongle. Comprueba, en este orden:
 
-1. El **puerto USB** seleccionado en `Integraciones / Zigbee2Mqtt / Ajustes` es aquel en el que está conectado tu dongle. Si has cambiado el dongle de puerto, o has reiniciado con un disco conectado, el nombre del puerto puede haber cambiado.
+1. El **puerto USB** seleccionado en `Integraciones / Zigbee2Mqtt / Configuración` es aquel en el que está conectado tu dongle. Si has cambiado el dongle de puerto, o has reiniciado con un disco conectado, el nombre del puerto puede haber cambiado.
 2. El **modelo de dongle** seleccionado en los ajustes corresponde a tu hardware. Un dongle Silicon Labs configurado como uno de Texas Instruments (o al revés) falla justo aquí.
 3. Nada más está usando el dongle. Solo una instancia de Zigbee2MQTT puede ocupar el adaptador.
 4. El dongle recibe suficiente alimentación. Desconéctalo, vuelve a conectarlo a través de un **hub USB alimentado** o de un cable alargador USB corto, y reinicia la integración.
@@ -172,7 +180,7 @@ Sí. Zigbee2MQTT se ejecuta en local en tu propio hardware y se comunica con tus
 
 ### ¿Qué puerto y qué ajustes debo seleccionar para mi dongle Zigbee?
 
-En Gladys, ve a `Integraciones / Zigbee2Mqtt` y después a `Ajustes`. Gladys escanea tus puertos USB y te los propone en una lista desplegable: simplemente eliges el que corresponde a tu dongle y seleccionas el modelo de dongle para que Zigbee2MQTT cargue la configuración adecuada.
+En Gladys, ve a `Integraciones / Zigbee2Mqtt` y después a `Configuración`. Gladys muestra tus puertos USB con el nombre del dispositivo conectado a cada uno y reconoce los dongles más habituales: su puerto y su modelo ya están seleccionados. Si no, eliges el puerto que corresponde a tu dongle y seleccionas el modelo de dongle para que Zigbee2MQTT cargue la configuración adecuada.
 
 ### ¿Por qué no arranca Zigbee2MQTT?
 
@@ -216,7 +224,7 @@ La causa principal son las interferencias en la banda de 2,4 GHz, que aparecen c
         name: "¿Qué puerto y qué ajustes debo seleccionar para mi dongle Zigbee?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "En Gladys, ve a Integraciones, después a Zigbee2Mqtt y luego a Ajustes. Gladys escanea tus puertos USB y te los propone en una lista desplegable: eliges el que corresponde a tu dongle y seleccionas el modelo de dongle para que Zigbee2MQTT cargue la configuración adecuada.",
+          text: "En Gladys, ve a Integraciones, después a Zigbee2Mqtt y luego a Configuración. Gladys muestra tus puertos USB con el nombre del dispositivo conectado a cada uno y reconoce los dongles más habituales: su puerto y su modelo ya están seleccionados. Si no, eliges el puerto que corresponde a tu dongle y seleccionas el modelo de dongle para que Zigbee2MQTT cargue la configuración adecuada.",
         },
       },
       {

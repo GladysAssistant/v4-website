@@ -1,3 +1,7 @@
+// Adds the affiliate partner id to every Amazon (amazon.fr, amazon.com) and
+// Domadoo link of the docs, blog posts and Markdown pages.
+const remarkAffiliateLinks = require("./plugins/remark-affiliate-links");
+
 module.exports = function createConfig() {
   const locale = process.env.DOCUSAURUS_CURRENT_LOCALE ?? "en";
 
@@ -26,18 +30,26 @@ module.exports = function createConfig() {
   i18n: {
     defaultLocale: "en",
     locales: ["en", "fr", "de", "es"],
+    // The baseUrl of each translated locale is spelled out because build.sh
+    // builds one locale per `docusaurus build --locale <locale>` call, and a
+    // single --locale otherwise drops the /<locale>/ prefix (it is meant for
+    // one domain per locale). These are the same values Docusaurus infers.
+    // build.sh refuses to start when a translated locale has no baseUrl.
     localeConfigs: {
       en: {
         label: "English",
       },
       fr: {
         label: "Français",
+        baseUrl: "/fr/",
       },
       de: {
         label: "Deutsch",
+        baseUrl: "/de/",
       },
       es: {
         label: "Español",
+        baseUrl: "/es/",
       },
     },
   },
@@ -149,6 +161,10 @@ module.exports = function createConfig() {
             {
               label: "Installing on an Unraid server",
               to: "docs/installation/unraid/",
+            },
+            {
+              label: "Installing on Proxmox",
+              to: "docs/installation/proxmox/",
             },
             {
               label: "Installation sur une Freebox Delta",
@@ -296,10 +312,12 @@ module.exports = function createConfig() {
           editUrl: "https://github.com/GladysAssistant/v4-website/edit/master/",
           editLocalizedFiles: true,
           showLastUpdateTime: true,
+          remarkPlugins: [remarkAffiliateLinks],
         },
         blog: {
           showReadingTime: true,
           showLastUpdateTime: true,
+          remarkPlugins: [remarkAffiliateLinks],
           blogDescription:
             "Follow the latest from Gladys Assistant: new releases, integrations, AI features, tutorials and updates from the open-source, privacy-first home assistant.",
           // Please change this to your repo.
@@ -309,6 +327,9 @@ module.exports = function createConfig() {
             type: "all",
             copyright: `Copyright © ${new Date().getFullYear()} Gladys Assistant.`,
           },
+        },
+        pages: {
+          remarkPlugins: [remarkAffiliateLinks],
         },
         theme: {
           customCss: [
@@ -391,6 +412,11 @@ module.exports = function createConfig() {
         },
       },
     ],
+  ],
+  plugins: [
+    // The figures of the integrations catalog on the homepage, computed at
+    // build time so the catalog data stays out of the page's bundle.
+    require.resolve("./plugins/integrations-summary"),
   ],
   clientModules: [require.resolve("./src/openpanel.js")],
   scripts: [],

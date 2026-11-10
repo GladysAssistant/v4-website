@@ -19,14 +19,16 @@ https://github.com/LM1LC3N7/gladys-bsblan instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"BSB-LAN","description":"Boilers and heat pumps through the local BSB-LAN adapter: temperatures, modes, optional commands.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-bsblan","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-bsblan.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-23T18:27:29Z"}} />
+<ExternalIntegrationHeader integration={{"name":"BSB-LAN","description":"Boilers and heat pumps through the local BSB-LAN adapter: temperatures, modes, optional commands.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-bsblan","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-bsblan.png","type":"device","version":"0.3.2","gladys_version":">=5.1.0","stars":1,"pushed_at":"2026-11-03T19:20:57Z"}} />
 
 Shows your **boiler or heat pump with a Siemens controller** (ELCO, Brötje,
 Baxi, MHG, Atlantic, Thision…) in Gladys through the **BSB-LAN** adapter,
 wired to the BSB, LPB or PPS bus of the controller: no cloud, no account,
 straight on your network.
 
-> **Never tested with a real adapter.**
+> **Tested on a real installation** (version 0.2.0: Siemens controller, two
+> heating circuits, BSB-LAN): about fifteen commands on both circuits, modes,
+> setpoints and protective commands, all confirmed.
 > Not affiliated with the BSB-LAN project nor the manufacturers. It reads the
 > JSON API of BSB-LAN as the python-bsblan library (used by Home Assistant)
 > does.
@@ -41,7 +43,7 @@ straight on your network.
   its JSON-API version (`/JV`, 1.0 at least): recent BSB-LAN versions do.
 - Its IP address, preferably fixed (set it in your router).
 - For the commands: writing to the bus allowed in the configuration of
-  BSB-LAN.
+  BSB-LAN (`DEFAULT_FLAG 0`, or writing turned on in its settings).
 
 ## What you get
 
@@ -49,24 +51,82 @@ One "Heating (BSB-LAN)" device per adapter, recognised by its MAC address
 (it stays the same when the IP address changes). Each feature appears only
 once the controller gives its value:
 
-| Feature                    | Parameter | Content                                          |
-| -------------------------- | --------- | ------------------------------------------------ |
-| Heating mode               | 700       | A list (commands allowed only), see below        |
-| Heating mode (read)        | 700       | Text: the real mode, an unknown one included     |
-| Heating circuit status     | 8000      | Text of the controller ("Heating mode comfort"…) |
-| Comfort setpoint           | 710       | Thermostat, circuit 1, in °C (command)           |
-| Reduced setpoint           | 712       | In °C, read only                                 |
-| Room temperature           | 8740      | In °C                                            |
-| Outside temperature        | 8700      | In °C                                            |
-| Hot water mode             | 1600      | Text: off, on, eco                               |
-| Hot water setpoint         | 1610      | Water heater, in °C (command, capped)            |
-| Hot water reduced setpoint | 1612      | In °C, read only                                 |
-| Hot water temperature      | 8830      | In °C                                            |
-| Hot water pump running     | 8820      | 0 or 1                                           |
-| Energy brought in (kWh)    | 3113      | In kWh, a plain value (see below)                |
+| Feature                            | Parameter | Content                                          |
+| ---------------------------------- | --------- | ------------------------------------------------ |
+| Heating mode                       | 700       | A list (command), see below                      |
+| Heating mode (read)                | 700       | Text: the real mode, an unknown one included     |
+| Heating circuit status             | 8000      | Text of the controller ("Heating mode comfort"…) |
+| Comfort setpoint                   | 710       | Thermostat, circuit 1, in °C (command)           |
+| Reduced setpoint                   | 712       | Thermostat, circuit 1, in °C (command)           |
+| Room temperature                   | 8740      | In °C                                            |
+| Flow setpoint                      | 8744      | In °C, circuit 1                                 |
+| Flow temperature                   | 8743      | In °C, circuit 1                                 |
+| Heating mode (circuit 2)           | 1000      | A list (command), when the controller has it     |
+| Heating mode, read (circuit 2)     | 1000      | Text                                             |
+| Heating circuit 2 status           | 8001      | Text of the controller                           |
+| Comfort setpoint (circuit 2)       | 1010      | Thermostat, in °C (command)                      |
+| Reduced setpoint (circuit 2)       | 1012      | Thermostat, in °C (command)                      |
+| Room temperature (circuit 2)       | 8770      | In °C (probe), when circuit 2 has a room sensor  |
+| Flow setpoint / temperature (c. 2) | 8774/8773 | In °C                                            |
+| Outside temperature                | 8700      | In °C                                            |
+| Hot water mode (command)           | 1600      | A list: on, eco, off                             |
+| Hot water mode                     | 1600      | Text: off, on, eco                               |
+| Hot water status                   | 8003      | Text of the controller                           |
+| Hot water setpoint                 | 1610      | Water heater, in °C (command, capped)            |
+| Hot water reduced setpoint         | 1612      | Water heater, in °C (command, capped)            |
+| Hot water temperature              | 8830      | In °C                                            |
+| Hot water pump running             | 8820      | 0 or 1                                           |
+| Boiler status                      | 8005      | Text of the controller                           |
+| Boiler temperature                 | 8310      | In °C                                            |
+| Burner stage 1 signal              | 7881      | 0 or 1 (read only)                               |
+| Burner fault input S3              | 7870      | 0 or 1 (read only)                               |
+| Last fault: date / code            | 6800/6801 | Texts of the controller                          |
+| Energy brought in (kWh)            | 3113      | In kWh, a plain value (see below)                |
+| BSB \<number> \<name>                | your pick | Extra parameters, read only (below)              |
 
-The outside and water temperatures and the read-only setpoints are
-"probes": they do not count as the room temperature in Gladys. Read every 30
+**Circuit 2** appears only when the controller gives a value for its mode
+(1000); missing or "---", the integration then reads that one parameter
+only at each read. No option forces it: a circuit the controller does not
+give cannot be set, and the detection avoids writing to a circuit that does
+not exist. **Hot water**: its features appear only when the controller
+gives their values.
+
+Devices created before version 0.2.0 keep their former "Reduced setpoint"
+and "Hot water reduced setpoint" features, read only (still updated); the
+settable ones come next to them, to add from the Discovery tab. New
+devices only get the settable ones.
+
+7870, 7881, 6800, 6801, 8005 and 8310 are the numbers of the BSB-LAN
+parameter list; their exact form depends on the controller. Each value is
+checked as it is read: a value missing or of another form is not published.
+
+### Extra parameters (read only)
+
+The **Extra parameters to read** field takes up to 10 BSB-LAN parameter
+numbers separated by commas (for example `8326, 8338`). Each one becomes a
+**read-only** feature named "BSB \<number> \<name given by BSB-LAN>", from
+BSB-LAN's answer at its first value: a temperature in °C becomes a probe,
+another number a plain value (its unit in the name), a list or a text a
+text. If the form of the value changes later, it is no longer published.
+These parameters are **never written**: there is no free writing. Numbers
+already read by the integration, repeated, over 10 or mistyped are ignored
+and listed in the status of the integration. Each parameter lengthens each
+read (the adapter queries the bus one parameter after the other).
+
+Reading whole categories (`/JK=ALL`) is not offered: hundreds of
+parameters, an answer too large, a bus read of several minutes, and as many
+features in Gladys.
+
+The outside and water temperatures, the room temperature of circuit 2
+(8770) and the read-only setpoints are "probes": they do not count as the
+room temperature in Gladys (circuits 1 and 2 often heat two different
+zones; Gladys would average them). Only 8740 (circuit 1) does.
+8770 without a value ("---": no room sensor on circuit 2, the usual case)
+is read again only every 10 minutes, not at every read. If you typed 8770
+in "Extra parameters" with version 0.2.0, its "BSB 8770" feature keeps its
+value; the status suggests adding the new feature from Discovery and
+removing 8770 from the list. Once removed from the list, "BSB 8770" stays
+on the device without a new value: delete it from the device in Gladys. Read every 30
 seconds by default (10 s to 10 min, configurable), a few parameters per
 request (the adapter queries the bus one parameter after the other).
 
@@ -99,33 +159,100 @@ seconds), even after refused credentials.
 
 ## Commands (off by default)
 
-While **Allow the commands** is off, every command is refused. Once on,
-Gladys may change:
+While **Allow the commands** is off, every command is refused, **except
+Protection (frost protection) and hot water Off** (below). Once on, Gladys
+may change:
 
-- the **heating mode** of circuit 1: automatic (time program), comfort,
-  reduced, protection (frost protection);
-- the **comfort setpoint** of circuit 1, to a tenth of a degree, never
-  below the reduced setpoint (712) nor the protection setpoint (714), never
-  above the comfort setpoint max (716) the controller gives, and always
-  within 5–35 °C;
+- the **heating mode** of circuits 1 and 2: automatic (time program),
+  comfort, reduced, protection (frost protection);
+- the **comfort setpoint** of each circuit (710, 1010), to a tenth of a
+  degree, never below its reduced setpoint (712, 1012) nor its protection
+  setpoint (714, 1014), never above its comfort setpoint max (716, 1016),
+  and always within 5–35 °C;
+- the **reduced setpoint** of each circuit (712, 1012), to a tenth of a
+  degree, never below the protection setpoint (714, 1014), never above the
+  comfort setpoint (710, 1010) nor the max (716, 1016), within 5–35 °C;
+- the **hot water mode** (1600): on, eco, off;
 - the **hot water setpoint** (1610), in whole degrees, between the reduced
   setpoint (1612) and the maximum of the controller (1614), up to the
-  **ceiling**.
+  **ceiling**;
+- the **hot water reduced setpoint** (1612), in whole degrees, from 10 °C up
+  to the lowest of the hot water setpoint (1610), the maximum (1614), the
+  ceiling and 65 °C.
+
+### Protection and hot water Off: never held back
+
+The **Protection (frost protection)** mode of circuits 1 and 2 and the hot
+water **Off** mode act as a stop: they leave **even without the option**,
+during a pause (429/5xx), after refused credentials, during another
+command, without a fresh read, and from an unknown mode. They pass before
+every queued request and cancel the commands not sent yet ("a protective
+command came after this one"). BSB-LAN serves one request at a time: they
+wait for the end of the one it serves. Still busy after 3.5 s, Gladys
+answers "the command is queued first and leaves as soon as it is free" and
+sends it as soon as possible (within 30 s).
+
+Each one is **kept** (in `/data` too) until a read that left after the
+click shows it applied. Every decision follows the order in which commands
+arrive and requests leave, never the order of the answers:
+
+- one that never left (BSB-LAN unreachable, too slow) is tried again every
+  10 seconds for as long as needed, never dropped with time;
+- after it left, the first read of its parameter that left after it shows
+  what "not applied" looks like (BSB-LAN may answer status 0, or 1 without
+  applying it). While a periodic read still shows that mode, it is written
+  again, once per periodic read (every 30 s by default), 3 times at most;
+  it then stays kept and shown, never dropped with time;
+- only these lift it: a later Gladys command of the same mode that
+  arrived after it and left without being refused (a status 2, a 401 or a
+  429 do not count), or another mode than the one left after it, read
+  twice in a row after it left (someone changed it at the boiler). A value
+  read before it never counts. An old stop read late from a `/data` that
+  could not be read at start is set aside only if a command of its mode
+  left unrefused, or a Protection of its mode was kept, in the meantime;
+- it belongs to its adapter (MAC address) and address: once a MAC address
+  is read, it is written only to its own adapter. Two cases cannot be
+  checked before writing, by choice (a stop is never held back for a
+  read): after a restart, a kept one leaves first, before any read, when
+  the address is its own (another device may have taken that address); and
+  a click right after the address was changed, before the first read of
+  the new adapter. A kept stop whose address changed waits for the MAC of
+  the adapter, leaves right after the read that shows it, and is held,
+  said in the status, if another one answers;
+- while credentials are refused, it waits for new credentials or the "Test
+  the connection" button;
+- `/data` is never waited for on this path: a slow or stuck disk holds
+  nothing, and a `/data` that cannot be read is never overwritten (read
+  again later; a kept stop it holds is dropped if a command of its mode was
+  made since). The status says how many are waiting, not yet seen applied,
+  or held for another adapter.
+
+They are refused only when they cannot leave: no adapter configured, a PPS
+bus, another adapter read at the address (another MAC address), BSB-LAN
+unreachable (then kept and tried again, see above), or BSB-LAN refusing the
+write (read-only parameter: status 2).
 
 BSB-LAN must also allow writing to the bus, and name its bus BSB or LPB:
 otherwise the configuration screen says so and the commands are refused.
-Writing counts as allowed only when BSB-LAN says nothing (older firmwares)
-or exactly 1.
+To know whether writing is allowed, the integration first reads the access
+BSB-LAN gives **each parameter** in its answer (`readwrite`: 0 read/write, 1
+read only, 2 write only): it folds in the write setting of BSB-LAN and the
+parameters the controller locks. Without it, it follows the `buswritable`
+field of `/JI` (1, 2, "Yes", "RW"…: allowed; 0, "No", "RO"…: read only; any
+other value: unknown, commands refused). Up to version 5.1.18, BSB-LAN prints
+that field wrongly (a decimal number printed as an integer: often 0 while
+writing is allowed): it is then never believed.
 
-### Hot water ceiling: 55 °C by default
+### Hot water ceiling: 65 °C by default
 
-Water at 60 °C scalds in seconds. Gladys therefore **never sets the hot
-water above 55 °C** by default. The **Hot water ceiling** setting changes it
-from 40 to 60 °C; it is **never possible to go above 60 °C**, whatever is
-typed (even though the controller often accepts 65 °C). A setpoint above the
+Hot water scalds in seconds. Gladys therefore **never sets the hot water
+above 65 °C** by default. The **Hot water ceiling** setting lowers it, from
+40 to 65 °C; it is **never possible to go above 65 °C**, whatever is typed.
+The controller's own nominal maximum (1614), read before each command, still
+applies when it is lower. A setpoint above the
 ceiling is refused on arrival, never sent; the ceiling is checked again
 after the fresh read and right before the request leaves (a ceiling lowered
-during a command stops it). The reduced setpoints, the anti-legionella
+during a command stops it). The maximum (1614), the anti-legionella
 function and the time programs are never changed.
 
 What the ceiling does not do:
@@ -134,13 +261,13 @@ What the ceiling does not do:
   controller (set on the boiler, or earlier): it only limits what Gladys
   sends. Lower it yourself if needed;
 - the **anti-legionella function** of the controller (1640 to 1648) heats
-  the water to its own setpoint, often 60 °C or more, above the ceiling:
+  the water to its own setpoint, possibly above the ceiling:
   Gladys neither sets it nor prevents it.
 
 ### What Gladys never does
 
-- **Leave an unknown mode** of the controller: the command is refused, the
-  controller keeps control. The **"Heating mode" list then keeps the last
+- **Leave an unknown mode** of the controller, except to Protection: the
+  command is refused, the controller keeps control. The **"Heating mode" list then keeps the last
   known choice** (an unknown mode is not in it): look at "Heating mode
   (read)", which always shows the real mode.
 - Offer a switch: the mode is a **list**, the setpoints are thermostats; a
@@ -151,21 +278,45 @@ What the ceiling does not do:
 
 ### How a command leaves
 
-Before each command, the integration first reads the adapter again
-(`/JI`): it must have the MAC address of the device, a BSB or LPB bus and
-writing allowed, otherwise nothing is sent (another adapter that took the
+Before each command (Protection and hot water Off aside), the integration first reads the adapter again
+(`/JI`): it must have the MAC address of the device and a BSB or LPB bus,
+and the fresh read must give the parameter as writable, otherwise nothing is sent (another adapter that took the
 IP address is never commanded). Then it **reads again** the current value
 and the range the controller allows, and decides on that read only; no other
 request runs between that read and the write, and the option (and the
 ceiling) is checked again right before the request leaves. A missing value
 or range refuses the command. A value already in place is not sent again. A
 command that cannot leave within 3.5 seconds is refused unsent; Gladys gets
-its answer within its 5 seconds. BSB-LAN confirms a write with a status 1; a
-status 2 (read-only parameter) gives "BSB-LAN refused the command"; without
+its answer within its 5 seconds. BSB-LAN accepts a write with a status 1;
+the integration **then reads the parameter again** and says success only
+when that read shows the value asked (still the previous one: "read again
+just after, still the previous one"; not read in time: "sent, without
+confirmation"). A status 2 (read-only parameter) gives "BSB-LAN refused the command"; without
 a clear confirmation (silence, dropped connection, 5xx error, status 0),
 Gladys shows "Command sent, without confirmation": check the value, read
 again 5 and 20 seconds later. One command at a time, and at least 3 seconds
-between two writes (otherwise "still running").
+between two writes. A command that arrives while another one runs (or
+within those 3 seconds) **waits** and leaves after it, with its own
+fresh read and every check again (the option, the hot water ceiling, the
+range, a pause, the adapter); Gladys then answers "this one waits and is
+sent after it". One that cannot leave within 30 seconds is dropped, not
+sent. At most one waits per setting: a newer value of the
+same setting replaces it. A Protection or hot water Off that arrives after
+it drops it (never sent after a protective command), and so does a
+restart of the integration. Protective commands never wait behind it.
+After a command refused before it left, cancelled, dropped or read back
+unchanged, the card shows the value read again at once (Gladys otherwise
+keeps the value typed), unless an earlier command of the same setting is
+still "sent, without confirmation" and that setting was not read since:
+then at the first read. After "sent, without confirmation" (the
+controller may have applied it), no value read before the write is
+republished for up to 10 minutes, not even after a reconnection to
+Gladys, an edit of the device or a later command of the same setting
+refused before its read: the reads 5 and 20 seconds later settle it.
+In both cases the first read of that setting made after the write (or
+the refusal) publishes it even when unchanged; if it fails too (adapter
+unreachable), the first read that succeeds does, within 10 minutes;
+never after a confirmed success.
 
 ## Errors and limits
 
@@ -179,6 +330,49 @@ between two writes (otherwise "still running").
   credentials or pressing "Test the connection" tries at once.
 - **BSB-LAN busy or failing** (HTTP 429 or 5xx): a pause of 1 minute to 6
   hours (from `Retry-After`), kept in `/data`, for reads and commands alike.
+- **Commands failing when BSB-LAN also publishes in MQTT**: the adapter
+  serves one request at a time. If BSB-LAN publishes in MQTT to a broker
+  (for Home Assistant, for example), that load can make the commands of
+  Gladys run out of time ("answered too slowly", "sent, without
+  confirmation (timeout)"; these messages then remind it). Turn MQTT off in
+  BSB-LAN, or lighten it (a longer interval, fewer parameters), and keep a
+  reasonable refresh interval in Gladys (30 s or more). Seen on a real
+  installation: with MQTT off and 30 s, every command went through. The
+  deadlines of the commands and the 3 s between two writes stay as they
+  are (they protect the heating).
+- **"The state could not be saved in /data (EACCES)"** in the logs, and
+  "/data is not writable" in the status (said from the start: a test file
+  is written then removed when the integration starts, the state itself is
+  left as it is): the data folder Gladys gives the integration is not
+  writable by its user (`node`, uid 1000). It needs **both** owner 1000
+  **and** write permission for it. Gladys
+  creates it and gives it to uid 1000 when it creates the container; when
+  that fails (Gladys log "Unable to prepare the data folder of integration
+  …", a disk mounted without owners such as NFS or CIFS, Docker in
+  rootless or user-namespace mode, a Gladys data folder mounted elsewhere
+  than the folder of its database), the folder stays owned by root. Seen
+  on a Synology NAS (DSM, Container Manager): the folder belonged to 1000
+  but was `dr-xr-xr-x`, with a Synology ACL (the `+` of `ls -l`) giving
+  only read access to "everyone"; `chown` changed nothing, `chmod 755`
+  fixed it. The
+  integration keeps working, commands and Protection / hot water Off
+  included: they are never refused nor dropped because of `/data`. Only a
+  restart forgets what `/data` would keep: a pause after HTTP 429/5xx, the
+  wait after refused credentials, and the protective commands not yet seen
+  applied (they are not sent again after the restart). To fix it, on the
+  Gladys host, for the folder
+  `/var/lib/gladysassistant/external-integrations/ext-lm1lc3n7-gladys-bsblan`
+  (in the folder of your Gladys data if it is elsewhere): `ls -ld` it,
+  then `sudo chown 1000:1000` it if the owner is not 1000, and
+  `sudo chmod 755` it if it is not writable by its owner (on Synology, also
+  check its ACL in File Station or with `synoacltool`); then restart the
+  integration. The status note goes once a write works.
+- **"The state file in /data could not be read"** in the status: the file
+  `bsblan-state.json` is there but cannot be read (its rights, or a
+  damaged file). It is never rewritten: fix its rights (owner 1000,
+  `chmod 600`), or delete it (a pause, the wait after refused credentials
+  and the protective commands it held are then forgotten), then restart
+  the integration.
 - **Wrong passkey, or Gladys's IP not among the trusted addresses**: from
   the firmware source, BSB-LAN then closes the connection without any
   answer (never a 404). The integration cannot tell it from an unreachable
@@ -188,12 +382,12 @@ between two writes (otherwise "still running").
   again every 30 minutes.
 - **Controller in °F**: its temperatures are not shown (the features are in
   °C).
-- **One adapter** per integration, **heating circuit 1** only.
-- Not yet: circuit 2, cooling, time programs, commands on a PPS bus, the hot
-  water mode as a command.
+- **One adapter** per integration, **heating circuits 1 and 2**.
+- Not yet: cooling, time programs, commands on a PPS bus, circuit 3 (its
+  room temperature, 8800, included).
 - The logs never hold the passkey, the user name, the password nor the
-  answers of BSB-LAN; `/data` keeps only the pause and the stop, never a
-  secret.
+  answers of BSB-LAN; `/data` keeps only the pause, the stop on refused
+  credentials and the kept protective commands, never a secret.
 
 ## Credits
 
@@ -207,22 +401,23 @@ These are the settings BSB-LAN asks for in its configuration screen in Gladys.
 
 | Setting | Type | Required | Description |
 | --- | --- | --- | --- |
-| Your BSB-LAN adapter | `section` | No | Shows your boiler or heat pump with a Siemens controller (ELCO, Brötje, Baxi, MHG, Atlantic…) in Gladys through the BSB-LAN adapter wired to its BSB, LPB or PPS bus, on your local network, without any cloud: room, outside and hot water temperatures, comfort setpoint, heating mode, hot water. Enter the IP address of the adapter (give it a fixed address in your router), save, then add the device from the Discovery tab. Heating circuit 1 only. Never tested with a real adapter. Not affiliated with the BSB-LAN project nor the manufacturers. |
+| Your BSB-LAN adapter | `section` | No | Shows your boiler or heat pump with a Siemens controller (ELCO, Brötje, Baxi, MHG, Atlantic…) in Gladys through the BSB-LAN adapter wired to its BSB, LPB or PPS bus, on your local network, without any cloud: heating circuits 1 and 2 (the second when the controller has it), hot water, boiler, outside temperature. Enter the IP address of the adapter (give it a fixed address in your router), save, then add the device from the Discovery tab. Tested on a real installation (Siemens controller, two circuits). Not affiliated with the BSB-LAN project nor the manufacturers. |
 | IP address of BSB-LAN | `string` | Yes | An IPv4 address or a host name (port 80 unless you add one, for example 192.168.1.50:8080). Plain http: BSB-LAN has no https. |
 | Passkey and credentials (optional) | `section` | No | Fill them only if they are set in the configuration of BSB-LAN: the passkey ("Passkey", the first part of its URLs) and the user name and password of its HTTP authentication. They go to the adapter in clear on your local network (BSB-LAN has no https). |
 | Passkey (optional) | `secret` | No | Kept by Gladys in its database, never shown again, sent only to the BSB-LAN adapter. |
 | User name (optional) | `string` | No |  |
 | Password (optional) | `secret` | No | Kept by Gladys in its database, never shown again, sent only to the BSB-LAN adapter. |
-| Commands | `section` | No | By default Gladys only reads. Once allowed, the dashboard, the scenes and the voice assistants can change the heating mode, the comfort setpoint of heating circuit 1 and the hot water setpoint, within the range the controller gives, the hot water never above the ceiling below. BSB-LAN must also allow writing to the bus in its own configuration. |
-| Allow the commands | `boolean` | No | Off by default. Off: every command is refused. |
-| Hot water ceiling (°C) | `number` | No | Scalding risk: Gladys never sets the hot water above this temperature. 55 °C by default, from 40 to 60 °C (never more than 60 °C, whatever is typed). |
-| Refresh interval (s) | `number` | No | How often BSB-LAN is read, in seconds. |
+| Commands | `section` | No | By default Gladys only reads. Once allowed, the dashboard, the scenes and the voice assistants can change the modes and the comfort and reduced setpoints of heating circuits 1 and 2, the hot water mode and setpoints, within the range the controller gives, the hot water never above the ceiling below. Protection (frost protection) and hot water Off are never held back, even when not allowed. BSB-LAN must also allow writing to the bus in its own configuration. |
+| Allow the commands | `boolean` | No | Off by default. Off: every command is refused, except Protection (frost protection) and hot water Off. |
+| Hot water ceiling (°C) | `number` | No | Scalding risk: Gladys never sets the hot water above this temperature. 65 °C by default, from 40 to 65 °C (never more than 65 °C, whatever is typed; the controller's own maximum applies when lower). |
+| Refresh interval (s) | `number` | No | How often BSB-LAN is read, in seconds. The adapter serves one request at a time: if it also publishes in MQTT (for Home Assistant, for example), turn that off or lighten it, and keep 30 s or more here, or the commands may run out of time. |
+| Extra parameters to read (read only) | `string` | No | Optional: up to 10 BSB-LAN parameter numbers, separated by commas (for example 8326, 8338). Each one becomes a read-only feature, named and typed as BSB-LAN describes it; never written. Every parameter adds time to each read of the bus. |
 | Language of the feature names | `select` | No | Used for the names of the device and features added from now on, for the mode texts and for the command errors. |
 
 ## How to install BSB-LAN in Gladys
 
 1. In Gladys, open **Integrations**: BSB-LAN appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-bsblan:0.1.2`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-bsblan:0.3.2`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-bsblan](https://github.com/LM1LC3N7/gladys-bsblan).
 

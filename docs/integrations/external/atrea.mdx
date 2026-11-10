@@ -1,0 +1,222 @@
+---
+title: "Atrea smart home integration, free and open source"
+sidebar_label: "Atrea"
+description: "Atrea heat recovery ventilation (RD5), local web page: mode, fan power, temperatures, alarms. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-atrea.png"
+keywords:
+  - "atrea"
+  - "atrea smart home"
+  - "gladys atrea"
+  - "atrea gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-atrea instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Atrea","description":"Atrea heat recovery ventilation (RD5), local web page: mode, fan power, temperatures, alarms.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-atrea","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-atrea.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-05T20:23:37Z"}} />
+
+Shows an **Atrea** heat recovery ventilation unit with an **RD5** regulation
+(Duplex, ECV…) in Gladys, through the unit's own **web page** on your local
+network, without any cloud or account. Unofficial integration, **not
+affiliated with Atrea**. **Never tested with a real device**: Atrea
+publishes no documentation of this web interface; the integration reads and
+writes the pages and registers that the open-source pyatrea library and the
+HomeAssistant-Atrea integration (Home Assistant) use; please report what you
+see.
+
+## Before you start
+
+- The unit must be on your network and its web page must open from a
+  browser (port 80). Give it a fixed IP address in your router.
+- Note the **password of the web page** (leave the field empty if the page
+  asks for none). The unit accepts only a few signed-in users at once:
+  Gladys keeps a single session and signs in again only when the unit asks
+  for it.
+- The web page is plain HTTP: the sign-in goes over your local network like
+  the one of your browser. Keep the unit on a trusted network.
+
+## Installation
+
+1. Install the integration from the Gladys store.
+2. Enter the **IP address of the unit** (port 80 unless you add one) and
+   the **password of its web page**; save.
+3. Open the **Discovery** tab and add the unit.
+
+## What you get
+
+One device, **Atrea ventilation**, with:
+
+| Feature                                                                | Notes                                                                                                                                                                                                                                                              |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Outdoor, supply, extract, exhaust, indoor, average outdoor temperature | °C                                                                                                                                                                                                                                                                 |
+| Temperature asked                                                      | °C, read only                                                                                                                                                                                                                                                      |
+| Fan power asked                                                        | %, 12 to 100, a command (see below)                                                                                                                                                                                                                                |
+| Current fan power                                                      | %, read only                                                                                                                                                                                                                                                       |
+| Ventilation mode                                                       | list: automatic, ventilation, circulation and ventilation, circulation, night precooling, disbalance, overpressure                                                                                                                                                 |
+| Current mode                                                           | text: `off`, `automatic`, `ventilation`, `circulation-ventilation`, `circulation`, `night-precooling`, `disbalance`, `overpressure`, `periodic-ventilation`, `startup`, `rundown`, `defrosting`, `external`, `hp-defrosting`, `in1`, `in2`, `d1`, `d2`, `d3`, `d4` |
+| Control program                                                        | text: `manual`, `weekly`, `temporary`                                                                                                                                                                                                                              |
+| Unit running                                                           | 1 = running; 0 = off or stopping (`rundown`)                                                                                                                                                                                                                       |
+| Heating, cooling, filters to change                                    | read only, 1 = yes                                                                                                                                                                                                                                                 |
+| Active alerts, active warnings, alarm codes                            | counts; text `none` or the codes of the unit (`D11180, D11183`)                                                                                                                                                                                                    |
+| Stop the unit                                                          | button                                                                                                                                                                                                                                                             |
+
+A value outside its range, empty or not a number is never published: Gladys
+keeps the last known value. The alert and warning lists come from a second
+page of the unit, read once an hour: when it fails, the other values are
+published anyway and the alarm features stay unknown until it is read. The
+air flows (m³/h) and the bypass are not published.
+
+The unit is read every 60 s (30 s to 1 h). The test button, a Discovery
+scan, a reconnection of Gladys or a restart of the integration never read it
+sooner than the interval. Reads outside the interval:
+
+- every command reads the unit right before writing, then reads it back;
+- "Stop the unit" and its resends;
+- 5 s then 20 s after a command or a stop not confirmed, or after a stop
+  that follows a command not confirmed;
+- a new address saved is read at once.
+
+## The password
+
+The password is kept by Gladys in its database, never shown again, sent
+only to the unit. It is never written in the logs nor in the integration's
+files. When the unit answers "denied" (wrong password, or too many users
+signed in to the unit), the next read tries once more; a second refusal in
+a row stops every sign-in: the status says so, until you save the configuration (the same password counts: one more try)
+or press **Test the connection** (one try per press). After a
+restart, the integration remembers that this password was refused (as a
+short fingerprint that cannot give the password back), so it does not try
+it again on its own.
+
+## Commands
+
+The mode and the fan power are refused unless **Allow the commands** is on
+(off by default). No switch: a voice assistant's "turn everything off" never
+reaches the ventilation.
+
+- Every command reads the unit right before writing (mode, program, fan
+  power, the modes the unit lets be chosen, unit ID), writes nothing when
+  the value already is right, and is confirmed only when the unit reads the
+  value asked back. A read back still showing the state before answers "not
+  applied yet"; a command that may have reached the unit without being
+  confirmed answers "sent, without confirmation": check the unit a few
+  seconds later. A command that cannot be sent within 3.5 s is refused and
+  nothing is sent.
+- Under the **weekly program**, a change makes the program **temporary**,
+  as the unit's web page does.
+- Refused: a mode the unit does not let be chosen (its list of writable
+  modes, read each time), when the **unit ID** read differs from the one
+  learnt or cannot be read (see below), when **/data** cannot be read or
+  written, when the state of the unit cannot be read just before, when no
+  session can be opened (no password, or refused).
+- A **mode starts a unit that is off**: with the option on, choosing a mode
+  is how the unit is started again from Gladys. It lifts a stop sent from
+  Gladys (see below).
+- The **fan power** is a whole number from 12 to 100 %; it is refused on a
+  unit that is **off or stopping**, and while a **stop sent from Gladys is
+  kept**: choose a mode first.
+
+### Stop the unit
+
+"Stop the unit" sets the manual program and the mode off (the weekly program
+would start the unit again). It does **not** depend on the option, on
+another command (a command not written yet is cancelled), on a read in
+progress or stuck (it is interrupted), on a failed read or a wait between
+two tries, on the unit ID, on /data, nor on the configuration not read
+again from Gladys yet or made invalid since (it then goes to the address of
+the kept stop, else the last valid one kept in /data). It is tried again for
+3.5 s after the press; an answer to the stop that stops coming for 1 s is
+cut and the stop sent again. When the session expired, it signs in once per
+press (the sign-in may take the whole 3.5 s: each sign-in takes a place on
+the unit). It is confirmed when the unit reads the mode off (or stopping)
+and the manual program; a unit read off but still in another program is
+never taken as stopped: the stop is sent again (three sends at most).
+
+It can fail in these cases only, and the answer says so:
+
+- no address known (never a valid one configured): "not sent";
+- the unit asks for a session and no password can be tried (none saved,
+  refused twice, or the stop goes to another address than the configured
+  one): "not sent", kept, and sent first as soon as a password is saved or
+  the test button succeeds;
+- the session expired and the sign-in of the press failed (no answer in
+  time, connection closed, unreadable answer; a sign-in that could not even
+  connect is tried again within the 3.5 s; one that left is never sent
+  twice in a press: it takes a place on the unit): "not sent", kept, sent
+  first at the next read;
+- the unit refuses the password: "not sent", kept, sent first at the next
+  read;
+- the unit cannot be reached within 3.5 s: "not sent" (or "not sent yet"
+  while it still tries), kept, sent first at the next read;
+- no answer, an error answer, or the unit read back still running: "sent,
+  without confirmation".
+
+The stop is then **kept** (in /data, with the address). A stop that never
+reached the unit is never given up: it is sent first at every read until it leaves (while no password can be
+tried, it waits for a new password or a successful test); only a send that actually left counts as a try. The kept stop is
+never lifted by the time, only by a mode chosen from Gladys (with the
+option), or when the unit is read running **twice in a row** after it was
+seen off (started from its panel). While it is kept, a read
+that finds the unit running before it was seen off (or after a command that
+could still land) sends the stop again, three sends at most; the status
+says so. A stop that may not have landed when the integration stopped is
+sent again when it restarts, before the configuration is read again when
+the unit asks for no password, else right after it.
+
+## Identity of the unit
+
+The device is tied to the **unit ID** the unit gives (registers H12300 to
+H12309), learnt at the first read; the ID is read up to
+its first empty register, trailing blanks removed (blanks inside are kept,
+shown as "-" in the device id); a unit that gives none (registers missing
+or empty) is the device "unit". When another ID is read at the address, another unit may answer
+there: its values are not written into the old device, and the mode and the
+fan power are refused until **Test the connection** accepts it; it then
+becomes a new device in Discovery (the stop never depends on it). An ID
+that cannot be read is never taken for another unit, but the commands are
+refused.
+
+## What the integration does not do
+
+It never updates the firmware, never changes the settings (but the program:
+see the stop and the weekly program above), the schedules or the
+temperature asked, never resets the alarms nor acknowledges the
+filters, never reads the translations of the web page.
+
+## Configuration settings
+
+These are the settings Atrea asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Atrea unit | `section` | No | Shows your Atrea heat recovery ventilation with an RD5 regulation (Duplex, ECV…) in Gladys through its own web page on your local network, without any cloud: current mode, program, fan power asked and current, outdoor, supply, extract, exhaust and indoor temperatures, heating and cooling, filters to change, warnings and alerts. Enter the address of the unit (give it a fixed address in your router) and the password of its web page, save, then add the unit from the Discovery tab. The mode and the fan power can be changed from Gladys only if you allow the commands below; "Stop the unit" never depends on that option (see the guide). Gladys never touches the firmware nor the settings. Never tested with a real device. Not affiliated with Atrea. |
+| IP address of the unit | `string` | Yes | The address you type to open the web page of the unit: an IPv4 address or a host name (port 80 unless you add one, for example 192.168.0.70:8080). |
+| Password of the web page | `secret` | No | The password you type on the web page of the unit (leave empty if it asks for none). Kept by Gladys in its database, never shown again, sent only to the unit, over plain HTTP like its own web page. |
+| Allow the commands | `boolean` | No | Off by default. On: Gladys may change the mode (among those the unit lets be chosen; a mode starts a unit that is off) and the fan power (12 to 100 %, refused on a unit off or stopping). Off: these commands are refused. "Stop the unit" never depends on this option. |
+| Refresh interval (s) | `number` | No | How often the unit is read, in seconds. |
+| Language of the feature names | `select` | No | Used for the names of the device and features added from now on, the status and the command errors. |
+
+## How to install Atrea in Gladys
+
+1. In Gladys, open **Integrations**: Atrea appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-atrea:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-atrea](https://github.com/LM1LC3N7/gladys-atrea).
+
+Atrea requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Atrea is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-atrea) — [source of this documentation](https://github.com/LM1LC3N7/gladys-atrea/blob/HEAD/docs/en.md)

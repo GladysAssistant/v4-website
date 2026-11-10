@@ -120,9 +120,9 @@ const zigbee2mqttWithoutHomeAssistantContent = {
     },
     how: {
       title: "Set up Zigbee2MQTT without Home Assistant, step by step",
-      intro: "On a mini-PC, a Raspberry Pi or a NAS running Docker:",
+      intro: "On a mini-PC, a Raspberry Pi or a NAS:",
       points: [
-        "Install Gladys with a single Docker command.",
+        "Install Gladys (on a mini-PC, Gladys Assistant OS does it from a USB drive).",
         "Plug a USB Zigbee coordinator (Sonoff ZBDongle-E or -P…) into the machine, or connect a network coordinator like the SMLIGHT SLZB-06 to your network.",
         "In Gladys, open Integrations → Zigbee2MQTT and select your coordinator and its model.",
         "Click Enable Zigbee2MQTT: Gladys starts the containers and shows their status.",
@@ -181,7 +181,7 @@ const zigbee2mqttWithoutHomeAssistantContent = {
     faqTitle: "Frequently asked questions",
     cta: {
       title: "Get Zigbee2MQTT running tonight",
-      text: "Gladys is free, open source and installs with a single Docker command. Plug in your dongle and pair your first devices.",
+      text: "Gladys is free, open source and installs on a mini-PC from a USB drive. Plug in your dongle and pair your first devices.",
       primary: { label: "Get started", href: "/docs/" },
       secondary: { label: "Zigbee2MQTT guide", href: "/docs/integrations/zigbee2mqtt/" },
     },
@@ -300,9 +300,9 @@ const zigbee2mqttWithoutHomeAssistantContent = {
     },
     how: {
       title: "Installer Zigbee2MQTT sans Home Assistant, pas à pas",
-      intro: "Sur un mini-PC, un Raspberry Pi ou un NAS avec Docker :",
+      intro: "Sur un mini-PC, un Raspberry Pi ou un NAS :",
       points: [
-        "Installez Gladys en une seule commande Docker.",
+        "Installez Gladys (sur un mini-PC, Gladys Assistant OS s'en charge depuis une clé USB).",
         "Branchez une clé Zigbee USB (Sonoff ZBDongle-E ou -P…) sur la machine, ou connectez un coordinateur réseau comme le SMLIGHT SLZB-06 à votre réseau.",
         "Dans Gladys, ouvrez Intégrations → Zigbee2MQTT et sélectionnez votre coordinateur et son modèle.",
         "Cliquez sur Activer Zigbee2MQTT : Gladys démarre les conteneurs et affiche leur état.",
@@ -361,7 +361,7 @@ const zigbee2mqttWithoutHomeAssistantContent = {
     faqTitle: "Questions fréquentes",
     cta: {
       title: "Zigbee2MQTT opérationnel dès ce soir",
-      text: "Gladys est gratuite, open source et s'installe en une seule commande Docker. Branchez votre clé et associez vos premiers appareils.",
+      text: "Gladys est gratuite, open source et s'installe sur un mini-PC depuis une clé USB. Branchez votre clé Zigbee et associez vos premiers appareils.",
       primary: { label: "Commencer", href: "/docs/" },
       secondary: { label: "Guide Zigbee2MQTT", href: "/docs/integrations/zigbee2mqtt/" },
     },
@@ -480,9 +480,9 @@ const zigbee2mqttWithoutHomeAssistantContent = {
     },
     how: {
       title: "Zigbee2MQTT ohne Home Assistant einrichten, Schritt für Schritt",
-      intro: "Auf einem Mini-PC, einem Raspberry Pi oder einem NAS mit Docker:",
+      intro: "Auf einem Mini-PC, einem Raspberry Pi oder einem NAS:",
       points: [
-        "Installiere Gladys mit einem einzigen Docker-Befehl.",
+        "Installiere Gladys (auf einem Mini-PC erledigt das Gladys Assistant OS von einem USB-Stick aus).",
         "Steck einen USB-Zigbee-Koordinator (Sonoff ZBDongle-E oder -P…) in den Rechner oder verbinde einen Netzwerk-Koordinator wie den SMLIGHT SLZB-06 mit deinem Netzwerk.",
         "Öffne in Gladys Integrationen → Zigbee2MQTT und wähle deinen Koordinator und sein Modell.",
         "Klick auf Zigbee2MQTT aktivieren: Gladys startet die Container und zeigt ihren Status an.",
@@ -541,7 +541,7 @@ const zigbee2mqttWithoutHomeAssistantContent = {
     faqTitle: "Häufige Fragen",
     cta: {
       title: "Zigbee2MQTT noch heute Abend am Laufen",
-      text: "Gladys ist kostenlos, Open Source und mit einem einzigen Docker-Befehl installiert. Stick einstecken und die ersten Geräte koppeln.",
+      text: "Gladys ist kostenlos, Open Source und lässt sich von einem USB-Stick auf einem Mini-PC installieren. Zigbee-Stick einstecken und die ersten Geräte koppeln.",
       primary: { label: "Jetzt starten", href: "/docs/" },
       secondary: { label: "Zigbee2MQTT-Anleitung", href: "/docs/integrations/zigbee2mqtt/" },
     },
@@ -659,9 +659,9 @@ const zigbee2mqttWithoutHomeAssistantContent = {
     },
     how: {
       title: "Configura Zigbee2MQTT sin Home Assistant, paso a paso",
-      intro: "En un mini-PC, una Raspberry Pi o un NAS con Docker:",
+      intro: "En un mini-PC, una Raspberry Pi o un NAS:",
       points: [
-        "Instala Gladys con un solo comando Docker.",
+        "Instala Gladys (en un mini-PC, Gladys Assistant OS se encarga desde una memoria USB).",
         "Conecta un coordinador Zigbee USB (Sonoff ZBDongle-E o -P…) al equipo, o conecta a tu red un coordinador de red como el SMLIGHT SLZB-06.",
         "En Gladys, abre Integraciones → Zigbee2MQTT y selecciona tu coordinador y su modelo.",
         "Haz clic en Activar Zigbee2MQTT: Gladys inicia los contenedores y muestra su estado.",
@@ -720,7 +720,7 @@ const zigbee2mqttWithoutHomeAssistantContent = {
     faqTitle: "Preguntas frecuentes",
     cta: {
       title: "Pon Zigbee2MQTT en marcha esta misma noche",
-      text: "Gladys es gratis, de código abierto y se instala con un solo comando Docker. Conecta tu dongle y empareja tus primeros dispositivos.",
+      text: "Gladys es gratis, de código abierto y se instala en un mini-PC desde una memoria USB. Conecta tu dongle y empareja tus primeros dispositivos.",
       primary: { label: "Empezar", href: "/docs/" },
       secondary: { label: "Guía de Zigbee2MQTT", href: "/docs/integrations/zigbee2mqtt/" },
     },

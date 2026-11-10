@@ -1,0 +1,215 @@
+---
+title: "Intégration domotique ETA, gratuite et open source"
+sidebar_label: "ETA"
+description: "Chaudières bois et granulés ETA, en lecture seule par les webservices locaux ETAtouch. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-eta.png"
+keywords:
+  - "eta"
+  - "domotique eta"
+  - "gladys eta"
+  - "eta gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-eta instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"ETA","description":"Chaudières bois et granulés ETA, en lecture seule par les webservices locaux ETAtouch.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-eta","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-eta.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-27T14:31:23Z"}} />
+
+Intégration non officielle, sans lien avec ETA. Elle amène dans Gladys une
+chaudière **ETA** (granulés, bûches, plaquettes : PE-K, PU, ePE-K, SH,
+HACK…) équipée de l'écran tactile **ETAtouch**, par ses **webservices REST
+locaux** officiels, **en lecture seule**.
+
+> **Attention : jamais testé avec une vraie chaudière.** Cette intégration a
+> été écrite à partir du document officiel « ETAtouch RESTful Webservices »
+> 1.2 et de l'intégration Home Assistant homeassistant_eta_integration, et
+> testée contre les réponses enregistrées d'une PE-K seulement. Les retours
+> sont les bienvenus.
+
+## Ce que vous obtenez
+
+Un appareil Gladys par bloc du menu de l'ETAtouch, avec les noms de l'écran,
+dans sa langue : **ETA Kessel** (chaudière), **ETA HK** (circuit de
+chauffage), **ETA WW** (eau chaude), **ETA Sys** (système), **ETA LagerUm.**
+(extraction des granulés)… selon votre installation.
+
+Avec **Valeurs principales** (par défaut), une trentaine de valeurs :
+
+- les états de la chaudière, des circuits, de l'eau chaude et de l'extraction
+  (« Bereit », « Heizen »…) et les modes affichés ;
+- les températures : chaudière, consigne chaudière, chaudière bas, fumées,
+  extérieure, départ des circuits, eau chaude et sa consigne ;
+- la pression de la chaudière (bar), l'oxygène résiduel, l'alimentation (%),
+  la puissance demandée (kW) ;
+- les granulés : stock, trémie, consommation totale, depuis l'entretien,
+  depuis le décendrage, depuis le dernier vidage du cendrier (kg) ;
+- les compteurs : heures à pleine charge, nombre de mises en chauffe et
+  d'allumages.
+
+Avec **Toutes les valeurs**, toutes les valeurs lisibles du menu (plusieurs
+centaines, entrées et sorties comprises ; les plages horaires ne sont pas
+reprises). La première lecture du menu prend alors quelques minutes.
+
+Seules les valeurs des appareils que vous **ajoutez** sont lues ensuite,
+une à une, à chaque rafraîchissement.
+
+Les températures sont des sondes (elles n'entrent pas dans la moyenne de la
+pièce). La pression est en bar ou en Pa, les heures en heures. Les kg, %, kW,
+W, tr/min… n'ont pas d'unité dans Gladys (le cœur ne les propose pas pour ces
+catégories) : l'unité est dans le nom, par exemple
+« Zählerstände > Gesamtverbrauch (kg) ». Les kW et kWh ne sont **pas**
+envoyés au tableau de bord énergie de Gladys (il les compterait comme de
+l'électricité). Une valeur n'est publiée que si l'écran affiche le même nombre :
+une valeur que la chaudière n'a pas pour l'instant (« xxx », « --- »), un
+texte comme « Aus », une plage horaire ne sont jamais publiés comme nombre,
+jamais un faux 0. Les compteurs à vie (consommation totale, heures à pleine
+charge, mises en chauffe, allumages) ne sont jamais publiés à 0 ni en baisse
+sur une seule lecture : une valeur plus basse est retenue (l'état et le badge
+de l'appareil le signalent) jusqu'à ce que 3 lectures de suite au-dessus de 0 la confirment (un 0 n'est jamais publié) ;
+le compteur repart alors de là. Après une remise à zéro ou un remplacement de
+chaudière, rien à faire : les nouvelles valeurs apparaissent après 3
+lectures. Les autres kWh (une quantité de chaleur du jour) sont publiés tels
+quels. La liste des erreurs est lue à part : si elle ne peut pas être lue,
+les valeurs sont lues quand même et l'état le signale.
+
+L'appareil **Erreurs ETA** donne : erreur active (0/1), nombre d'erreurs
+actives, dernière erreur (bloc, message, priorité, heure).
+
+Déclencheur de scène **Erreur de la chaudière ETA** : quand une lecture
+montre une erreur active jamais vue. Variables : `message`, `block` (la
+partie de l'installation) et `priority` (telle que l'écran l'affiche). Les
+erreurs déjà vues sont gardées (200 au plus, dans `/data`) : une erreur qui
+reste, ou revient avec la même heure, ne redéclenche pas, même après un
+redémarrage (une erreur qui revient avec une nouvelle heure est une nouvelle
+erreur et déclenche). Jamais à la
+toute première lecture (elle apprend les erreurs présentes).
+
+Le badge de chaque appareil affiche « local », « injoignable » quand
+l'ETAtouch ne répond pas, et un point orange quand une de ses valeurs n'a pas
+pu être lue au dernier rafraîchissement.
+
+## Installation
+
+1. Sur **meineta.at**, enregistrez votre ETAtouch et **demandez l'accès
+   LAN** (« LAN-Zugriff »).
+2. Sur l'écran de la chaudière, dans les **réglages système**, **activez
+   l'accès LAN** (« Webservices »). Notez l'adresse IP de l'écran (réglages
+   réseau) ; une adresse fixe (réservation DHCP) est préférable.
+3. Dans Gladys, installez l'intégration ETA, saisissez l'**adresse IP** (le
+   port est 8080) et enregistrez.
+4. Ouvrez l'onglet **Découverte** et ajoutez les appareils voulus.
+
+**Sécurité** : les webservices ETAtouch répondent **sans aucun mot de passe**
+à quiconque atteint le port 8080 de l'écran (c'est ainsi que le fabricant
+les a conçus). Gardez la chaudière sur votre réseau local : ne redirigez
+jamais ce port depuis votre box vers Internet.
+
+## Réglages
+
+| Réglage                        | Rôle                                                                                    |
+| ------------------------------ | --------------------------------------------------------------------------------------- |
+| Adresse IP de l'ETAtouch       | L'adresse de l'écran, sans chemin (`192.168.1.50`, ou `192.168.1.50:8080`).             |
+| Port des webservices           | 8080.                                                                                   |
+| Valeurs proposées              | « Valeurs principales » (une trentaine) ou « Toutes les valeurs » (tout le menu).       |
+| Intervalle de rafraîchissement | 60 s par défaut (60 à 3600).                                                            |
+| Langue des noms                | Pour l'appareil des erreurs et les messages ; les noms des valeurs viennent de l'écran. |
+
+Le bouton **Tester la connexion** lit la chaudière une fois si l'intervalle
+est écoulé depuis la dernière lecture ; sinon il affiche le temps restant et
+le dernier état.
+
+## Comment l'intégration ménage la chaudière
+
+- Lecture seulement (des requêtes GET) : rien n'est jamais écrit sur la
+  chaudière, ni valeur, ni jeu de variables.
+- Une seule requête à la fois, la suivante après la réponse de la
+  précédente.
+- Une lecture par intervalle, jamais plus tôt : ni le bouton, ni la
+  Découverte, ni un redémarrage de l'intégration ne la rapprochent (l'heure
+  de chaque lecture est gardée dans `/data` avant sa première requête ; si
+  `/data` n'est pas inscriptible, un redémarrage peut lire plus tôt). Seuls
+  une nouvelle adresse ou un nouveau port (un autre ETAtouch) lisent
+  aussitôt.
+- Le menu est lu à la première lecture, puis gardé dans `/data` ; la
+  Découverte le relit au plus toutes les 10 minutes, à la lecture suivante.
+  Au-delà de 800 entrées ou de 10 minutes, ce qui a été lu est gardé et
+  l'état le signale ; un menu de plus de 2 Mo (ou 60 000 éléments) est
+  refusé en entier (« une réponse trop grande ») et réessayé après la pause
+  d'un échec.
+- Après un échec : nouvel essai après 1, 2, 5, 10 puis 15 minutes (jamais
+  moins que l'intervalle). Si l'ETAtouch demande de ralentir (HTTP 429) :
+  pause de 1 minute à 6 heures, gardée après un redémarrage.
+
+## Firmware
+
+Les webservices existent depuis le logiciel système 1.20.0 de l'ETAtouch.
+L'API 1.2 (logiciel x.49.0 et suivants) décrit chaque valeur (`varinfo`) ;
+avant, l'intégration passe en **mode réduit** : le type d'une valeur est
+déduit de la valeur elle-même et son nom du menu, et l'état de connexion le
+signale.
+
+## Limites connues
+
+- Lecture seule : ni marche/arrêt, ni consignes, ni modes, ni plages
+  horaires, ni « charger l'eau chaude maintenant ». Une version future
+  pourrait en proposer certaines, désactivées par défaut.
+- Les identifiants des valeurs principales viennent d'une PE-K ; une autre
+  chaudière peut en avoir d'autres (ballon tampon, solaire…) : choisissez
+  alors « Toutes les valeurs ».
+- Une valeur qui affichait « --- » sans unité lors de la lecture du menu
+  n'est pas proposée ; relancez une Découverte plus tard.
+- Le nom d'une valeur est celui de l'écran au moment de la lecture du menu.
+  Une valeur numérique renommée garde son unité tant que le menu la liste ;
+  sinon elle prend l'unité envoyée par la chaudière.
+- Rien ne vérifie que l'ETAtouch à l'adresse est la même chaudière : si un
+  autre ETAtouch prend l'adresse, ses valeurs vont aux mêmes appareils.
+
+## Dépannage
+
+- **« pas de réponse de l'ETAtouch »** : vérifiez l'adresse IP, que l'accès
+  LAN est activé sur l'écran, et que Gladys et la chaudière sont sur le même
+  réseau.
+- **« pas de webservices ETAtouch sur ce port »** : le port n'est pas 8080,
+  ou l'accès LAN n'est pas activé.
+- **« une réponse qui n'est pas celle d'un ETAtouch »** : l'adresse est celle
+  d'un autre appareil.
+- **« mode réduit »** : mettez à jour le logiciel de l'ETAtouch pour avoir
+  les noms et les types exacts.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par ETA dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre chaudière ETA | `section` | Non | Amène dans Gladys une chaudière ETA à écran ETAtouch, en lecture seule : états, températures, pression, stock et consommation de granulés, cendrier, compteurs, erreurs actives et un déclencheur de scène sur une nouvelle erreur. Activez l'accès LAN (demandez-le sur meineta.at, puis activez-le dans les réglages système de l'écran) : les webservices répondent sur le port 8080, sans aucun mot de passe, à quiconque les atteint ; gardez donc la chaudière sur votre réseau local seulement. Rien ne peut être modifié sur la chaudière depuis Gladys. Jamais testé avec une vraie chaudière. Sans lien avec ETA. |
+| Adresse IP de l'ETAtouch | `string` | Oui | L'adresse de l'écran tactile de la chaudière sur votre réseau (affichée dans ses réglages réseau), sans chemin. |
+| Port des webservices | `number` | Non | 8080 sur tous les ETAtouch. |
+| Valeurs proposées dans la Découverte | `select` | Non | Valeurs principales : une trentaine (états, températures, granulés, compteurs). Toutes les valeurs : toutes les valeurs lisibles du menu (plusieurs centaines, la première lecture prend quelques minutes). Seules les valeurs des appareils ajoutés sont lues ensuite. |
+| Intervalle de rafraîchissement (s) | `number` | Non | Secondes entre deux lectures de la chaudière (60 à 3600). Chaque lecture demande les valeurs une à une. |
+| Langue des noms | `select` | Non | Sert à l'appareil des erreurs et aux messages de l'intégration. Les noms des valeurs viennent de l'écran, dans sa langue. |
+
+## Comment installer ETA dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : ETA apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-eta:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-eta](https://github.com/LM1LC3N7/gladys-eta).
+
+ETA nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+ETA est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-eta) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-eta/blob/HEAD/docs/fr.md)

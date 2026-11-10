@@ -61,7 +61,8 @@ const comparisonContent = {
       { feature: "Frontend", gladys: "Preact", ha: "jQuery / traditional web UI" },
       {
         feature: "Installation",
-        gladys: "One Docker command, rich docs and videos",
+        gladys:
+          "Gladys Assistant OS (USB drive) or Docker, rich docs and videos",
         ha: "Debian image, Raspberry Pi, or a Jeedom box (Atlas, Luna, Smart)",
       },
       {
@@ -126,7 +127,7 @@ const comparisonContent = {
         id: "installation",
         title: "Installation",
         gladys: [
-          "Gladys runs with a single Docker command (a `docker run` line or a `docker-compose` file you copy, paste and launch), and the documentation walks you through every step with screenshots and installation videos.",
+          "On a mini-PC, Gladys Assistant OS, our official installer, does everything from a USB drive: answer a few questions and Gladys installs itself, automatic updates included, with no command line. Already have a NAS or a server? Gladys runs there with Docker. Either way, the documentation walks you through every step with screenshots and installation videos.",
           "And because Gladys is just a container, you stay free to use your mini-PC, NAS or Raspberry Pi for other things too.",
         ],
         ha: [
@@ -134,7 +135,7 @@ const comparisonContent = {
           "That hardware route is genuinely convenient: buy the box, plug it in, done. Installing the core yourself on your own machine is also possible, though the Docker story is less central than it is with Gladys.",
         ],
         takeaway:
-          "Both are easy if you buy their hardware. Gladys is especially simple to install yourself thanks to a one-line Docker setup, while Jeedom's boxes are a strong plug-and-play option with radios already inside.",
+          "Both are easy if you buy their hardware. Gladys is especially simple to install yourself thanks to Gladys Assistant OS, a USB installer that needs no command line, while Jeedom's boxes are a strong plug-and-play option with radios already inside.",
       },
       {
         id: "interface",
@@ -225,7 +226,7 @@ const comparisonContent = {
     faqTitle: "Frequently asked questions",
     cta: {
       title: "Ready to try Gladys Assistant?",
-      text: "Gladys is free, open-source, and installs in a single Docker command. Privacy-first, self-hosted, no cloud required, and every integration is free.",
+      text: "Gladys is free, open-source, and installs on a mini-PC from a USB drive. Privacy-first, self-hosted, no cloud required, and every integration is free.",
       primary: { label: "Get started", href: "/docs/" },
       secondary: { label: "See the integrations", href: "/docs/integrations/" },
     },
@@ -278,7 +279,8 @@ const comparisonContent = {
       { feature: "Frontend", gladys: "Preact", ha: "jQuery / interface web classique" },
       {
         feature: "Installation",
-        gladys: "Une commande Docker, doc et vidéos riches, ou un kit de démarrage pré-installé",
+        gladys:
+          "Gladys Assistant OS (clé USB), Docker ou un kit de démarrage pré-installé, doc et vidéos riches",
         ha: "Image Debian, Raspberry Pi, ou une box Jeedom (Atlas, Luna, Smart)",
       },
       {
@@ -343,7 +345,7 @@ const comparisonContent = {
         id: "installation",
         title: "Installation",
         gladys: [
-          "Gladys se lance en une seule commande Docker (une ligne `docker run` ou un fichier `docker-compose` que vous copiez, collez et lancez), et la documentation vous guide à chaque étape avec des captures d'écran et des vidéos d'installation.",
+          "Sur un mini-PC, Gladys Assistant OS, notre installeur officiel, s'occupe de tout depuis une clé USB : vous répondez à quelques questions, et Gladys s'installe toute seule, mises à jour automatiques comprises, sans aucune ligne de commande. Vous avez déjà un NAS ou un serveur ? Gladys y tourne avec Docker. Dans tous les cas, la documentation vous guide à chaque étape avec des captures d'écran et des vidéos d'installation.",
           "Et si vous préférez éviter toute installation, le kit de démarrage officiel est un mini-PC Beelink qui arrive avec Gladys déjà installée et configurée. Vous le branchez, suivez le guide de démarrage rapide, et c'est opérationnel en quelques minutes.",
           "Comme Gladys n'est qu'un conteneur, vous restez libre d'utiliser votre mini-PC, NAS ou Raspberry Pi pour autre chose en parallèle.",
         ],
@@ -352,7 +354,7 @@ const comparisonContent = {
           "Cette voie matérielle est vraiment pratique : vous achetez la box, vous la branchez, c'est fait. Installer le cœur soi-même sur sa propre machine est aussi possible, même si la voie Docker y est moins centrale que chez Gladys.",
         ],
         takeaway:
-          "Les deux sont faciles si vous achetez leur matériel. Gladys est particulièrement simple à installer soi-même grâce à une commande Docker unique, là où les box Jeedom sont une excellente option clé en main avec les radios déjà à l'intérieur.",
+          "Les deux sont faciles si vous achetez leur matériel. Gladys est particulièrement simple à installer soi-même grâce à Gladys Assistant OS, un installeur sur clé USB sans ligne de commande, là où les box Jeedom sont une excellente option clé en main avec les radios déjà à l'intérieur.",
       },
       {
         id: "interface",
@@ -443,7 +445,7 @@ const comparisonContent = {
     faqTitle: "Questions fréquentes",
     cta: {
       title: "Prêt à essayer Gladys Assistant ?",
-      text: "Gladys est gratuite, open source, et s'installe en une seule commande Docker. Auto-hébergée, respectueuse de votre vie privée, sans cloud obligatoire, et toutes les intégrations sont gratuites.",
+      text: "Gladys est gratuite, open source, et s'installe sur un mini-PC depuis une clé USB. Auto-hébergée, respectueuse de votre vie privée, sans cloud obligatoire, et toutes les intégrations sont gratuites.",
       primary: { label: "Commencer", href: "/docs/" },
       secondary: { label: "Voir les intégrations", href: "/docs/integrations/" },
     },

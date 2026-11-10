@@ -1,0 +1,140 @@
+---
+title: "Deako smart home integration, free and open source"
+sidebar_label: "Deako"
+description: "Deako smart light switches and dimmers on your network: on, off, brightness. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-deako.png"
+keywords:
+  - "deako"
+  - "deako smart home"
+  - "gladys deako"
+  - "deako gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-deako instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Deako","description":"Deako smart light switches and dimmers on your network: on, off, brightness.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-deako","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-deako.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-06T07:23:07Z"}} />
+
+Brings **Deako smart switches and dimmers** into Gladys through the local API of
+the **Deako Connect**, without account nor cloud: on / off and brightness, and
+the changes made at the wall or in the Deako app shown at once.
+
+> Never tested with a real device: tell us on the forum how it goes. Not
+> affiliated with Deako.
+
+## Before you start
+
+- Your switches are set up with the Deako app and a **Deako Connect** (or a
+  Deako switch serving as the bridge) is on your network. The newest Deako
+  switches have no local API: they cannot be reached this way.
+- Give the Connect a fixed IP address in your router. It announces itself on
+  the network as the service `local-integration` (`_telnet._tcp`); your router
+  shows its address too.
+
+## Configuration
+
+1. **Address of the Deako Connect**: its IP address (or name), with `:port`
+   only if it is not 23.
+2. **Full read every**: how often the whole list of devices is read again (60 s
+   by default, 30 s at least). The changes come at once in between (the
+   Connect pushes them).
+3. Save, then open **Discover**: each switch and dimmer is listed with its name
+   in the Deako app. Add the ones you want.
+
+**Test the connection** opens the connection if it is closed (at most every
+10 s) and checks that the Connect answers.
+
+## Devices
+
+| Deako device | Features                                      |
+| ------------ | --------------------------------------------- |
+| Switch       | Power (0 / 1)                                 |
+| Dimmer       | Power (0 / 1), brightness (0 to 100, 0 = off) |
+
+## How commands are sent
+
+- One message at a time, 800 ms apart (as Deako asks). A command is done once
+  the Connect shows the new state; otherwise its message says why ("sent,
+  without confirmation", "refused by the Connect"…), and the devices are read
+  again 5 s later.
+- A scene on many lights sets every light: the commands wait in line (30 s at
+  most), those of one device merged. Gladys gets its answer within 3.5 s: a
+  command still in line then says "waiting in line" and still leaves.
+
+## Turning off (Off)
+
+An Off (power 0, or brightness 0) needs no option and goes first: before the
+commands waiting (it cancels those of the same device), without the 800 ms gap,
+cutting a request that has had no answer for 1 s, even before the
+configuration is read (to the address of the last session).
+
+In a scene of many Offs, each waits for its turn without the 800 ms gap (one at
+a time); one still in line after 4.3 s says so in its answer and still leaves.
+
+When it cannot leave (the Connect does not answer, or another client holds its
+only connection), it is **kept** (also across a restart) and sent again every
+10 s (one sent without an answer: 10 s after that send), at once when a
+connection opens for another command if it was never sent, and all at once when
+the Connect answers again. After connections closed at once or without a byte,
+the next automatic one (a resend, a reconnection) waits 1 s, then 2, 4, 8, up to
+10 s; a click (an Off, a command, **Test the connection**) does not wait: its
+connection is tried at once (one per click, one per second at most), and an Off
+that still cannot leave is retried within about 1 s, then kept. Accepted by the
+Connect, it is checked by a read 5 s later and sent again 10 s after its last
+send if that read still shows the device on. It ends once the device shows it
+off, when the device is turned on again at the wall or in the app (never undone),
+when a newer command of that device leaves, or when the device is deleted.
+
+An Off is refused only when the address of the Connect is not known (none typed
+and none from a previous session), or replaced by a newer click on the same
+device before it left. Once the Connect has answered it 4 times
+(accepted or refused, "busy" not counted) without the device showing it off, it
+is no longer sent again by itself: the status says so; click Off again.
+
+## Status
+
+The Configuration page shows the connection, the number of devices, the
+devices to add, and every Off held.
+
+## Troubleshooting
+
+- "unreachable": check the address and that the Connect is on the same network
+  as Gladys; new tries after 5 or 15 s, then 30 s, 1, 2, then every 5 minutes.
+- Nothing in Discover: check in the Deako app that the switches belong to the
+  profile of this Connect.
+
+## Configuration settings
+
+These are the settings Deako asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Deako lights | `section` | No | Brings Deako smart switches and dimmers (set up with the Deako app) into Gladys through the local API of the Deako Connect, without account nor cloud: on / off and brightness, the changes made at the wall or in the app shown at once. An Off (power 0, brightness 0) needs no option and goes first, even while the Connect does not answer: it is kept and sent again (every 10 s, 4 answered tries at most) until the device shows it, unless it is turned on again at the wall or in the app. The newest Deako switches have no local API: they cannot be reached this way. Never tested with a real device: tell us on the forum how it goes. Not affiliated with Deako. |
+| Address of the Deako Connect | `string` | Yes | The IP address (or name) of the Deako Connect, or of the Deako switch that serves as the bridge, with :port only if not 23. Give it a fixed address in your router; it announces itself on the network as the service local-integration (_telnet._tcp). |
+| Full read every (seconds) | `number` | No | How often the whole list of devices is read again: 60 s by default, 30 s at least. The changes come at once in between. |
+| Language of the names | `select` | No | Used for the names of the devices and features added from now on. |
+
+## How to install Deako in Gladys
+
+1. In Gladys, open **Integrations**: Deako appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-deako:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-deako](https://github.com/LM1LC3N7/gladys-deako).
+
+Deako requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Deako is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-deako) — [source of this documentation](https://github.com/LM1LC3N7/gladys-deako/blob/HEAD/docs/en.md)

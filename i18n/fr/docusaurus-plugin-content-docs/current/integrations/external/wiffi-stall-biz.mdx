@@ -1,0 +1,182 @@
+---
+title: "Intégration domotique Wiffi (stall.biz), gratuite et open source"
+sidebar_label: "Wiffi (stall.biz)"
+description: "Capteurs Wiffi de stall.biz (weatherman, rainyman, airsniffer…), en local, en lecture. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-wiffi.png"
+keywords:
+  - "wiffi (stall.biz)"
+  - "domotique wiffi (stall.biz)"
+  - "gladys wiffi (stall.biz)"
+  - "wiffi (stall.biz) gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-wiffi instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Wiffi (stall.biz)","description":"Capteurs Wiffi de stall.biz (weatherman, rainyman, airsniffer…), en local, en lecture.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-wiffi","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-wiffi.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-06T11:13:37Z"}} />
+
+Cette intégration lit les capteurs des Wiffis de [stall.biz](https://www.stall.biz)
+(weatherman, rainyman, airsniffer, wiffi-wz…) : température, humidité, pression,
+luminosité, vent, pluie, en local, sans cloud et **en lecture seule**. Chaque Wiffi
+envoie lui-même ses valeurs à Gladys, en télégrammes JSON.
+
+Intégration non officielle, sans lien avec stall.biz. **Jamais testé avec un vrai
+appareil** : elle suit la bibliothèque de référence `wiffi` 1.1.2 (utilisée par
+Home Assistant) ; vos retours sont bienvenus.
+
+## Comment ça marche
+
+Gladys lance à côté de l’intégration un petit récepteur (`wiffi-push`) qui écoute
+un port TCP choisi par Gladys. Le Wiffi ouvre une connexion vers ce port, envoie
+un télégramme JSON terminé par l’octet 0x04, puis ferme. L’intégration lit le
+télégramme, reconnaît le Wiffi par son adresse MAC et publie ses valeurs.
+
+## Mise en place
+
+1. Installez l’intégration, puis **enregistrez** sa configuration une première
+   fois (même vide) : Gladys démarre le récepteur et choisit son port.
+2. Rechargez l’écran de configuration : le port s’affiche dans la section
+   « Réglez chaque Wiffi ».
+3. Dans la page web de chaque Wiffi :
+   - mettez l’adresse de la CCU (« CCU-IP ») à l’**adresse IP de la machine Gladys**
+     sur votre réseau local (pas celle de Gladys Plus ni d’un proxy) ;
+   - mettez le port des télégrammes JSON (paramètre `send_json`) au port affiché ;
+   - choisissez l’envoi **JSON sans en-tête** (un télégramme précédé d’en-têtes HTTP
+     est lu aussi).
+4. Autorisez ce port dans le pare-feu de la machine Gladys s’il y en a un.
+5. Après le premier télégramme, le Wiffi apparaît dans l’onglet **Découverte** :
+   créez-le.
+
+## Configuration
+
+- **Expéditeurs autorisés** : les adresses IP de vos Wiffis (ou un réseau comme
+  `192.168.1.0/24`, de /16 à /32), séparées par des virgules, 16 au plus. Vide :
+  toute adresse privée de votre réseau local (10.x, 172.16-31.x, 192.168.x,
+  169.254.x, IPv6 locales) est acceptée. Une liste invalide fait refuser **tous**
+  les télégrammes jusqu’à correction (l’état indique le numéro de l’entrée fautive).
+  Donnez à vos Wiffis une adresse IP fixe dans votre box. Selon la configuration
+  réseau de Docker, le récepteur peut voir une autre adresse que celle du Wiffi :
+  l’état affiche l’adresse refusée.
+- **Muet après (minutes)** : de 2 à 60, 5 par défaut. Un Wiffi qui n’envoie rien
+  pendant cette durée est affiché injoignable et nommé dans l’état ; un capteur
+  sans valeur valable pendant cette durée (alors que son Wiffi parle) est nommé aussi.
+
+## Ce qui est publié
+
+| Unité du Wiffi                                                                                                                | Dans Gladys                                                    |
+| ----------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| `gradC`                                                                                                                       | température (°C), de -60 à 100                                 |
+| `%` dont le nom contient « feucht » ou « humid » (sauf « abs »)                                                               | humidité (%)                                                   |
+| `%` dont le nom contient « boden » ou « soil »                                                                                | humidité du sol (%)                                            |
+| `mb`                                                                                                                          | pression (mbar), de 300 à 1200                                 |
+| `lux`                                                                                                                         | luminosité (lux)                                               |
+| `grad`                                                                                                                        | angle (°), de -90 à 360 (direction du vent, hauteur du soleil) |
+| `km/h`, `m/s`                                                                                                                 | vitesse                                                        |
+| `mm/h`                                                                                                                        | précipitations (mm/h)                                          |
+| `mm` dont un mot du nom est « heute », « tag », « today », « day », « 24 », « 24h » ou « h24 »                                | précipitations du jour (mm/jour)                               |
+| `mm` dont un mot du nom est « stunde », « hour », « 1h » ou « h »                                                             | précipitations de l’heure (mm/h)                               |
+| `ppm` dont le nom contient « co2 », « kohlendioxid » ou « carbon_dioxide » (ou « carbondioxide »)                             | CO2 (ppm), de 0 à 10 000                                       |
+| `ppm` dont un mot du nom est « co », ou dont le nom contient « kohlenmonoxid » ou « carbon_monoxide » (ou « carbonmonoxide ») | CO (ppm), de 0 à 1000                                          |
+| `ppb` dont le nom contient « voc »                                                                                            | COV (ppb), de 0 à 100 000                                      |
+| booléen dont le nom contient « regen » ou dont un mot commence par « rain »                                                   | capteur de pluie                                               |
+| booléen dont le nom contient « beweg » ou « motion », ou dont un mot est « pir »                                              | détecteur de mouvement                                         |
+| texte (direction du vent en lettres…)                                                                                         | texte                                                          |
+
+Un « mot du nom » est une partie entre deux `_`, sans distinction de majuscules
+(`regen_tag` : « regen » et « tag ») ; « contient » vaut n’importe où dans le nom
+(`w_luftfeuchte` contient « feucht »). Ainsi `stage` ou `montag_regen` ne disent pas
+le jour, `cooling` ou `a_coil` ne sont pas du CO, `w_drain` n’est pas la pluie et
+`w_expired` pas un mouvement. Une exclusion (« abs », la veille) vaut n’importe où
+dans le nom.
+
+Les règles sur les noms (pluie du jour ou de l’heure, gaz) sont une supposition : les
+noms des variables de chaque modèle n’ont pas été lus dans la documentation du
+fabricant. Un nom ambigu (jour et heure à la fois ; `co_2`, CO2 ou deuxième sonde de
+CO) et un autre gaz en `ppm` (formaldéhyde…) ne sont pas publiés, seulement listés. À
+confirmer avec de vrais appareils : vos retours sont bienvenus.
+
+Rien n’est inventé :
+
+- une valeur vide, `nan`, un texte, un nombre à virgule (« 1,5 ») ou hors de la plage
+  de sa nature n’est **pas** publiée (jamais 0 à la place) ;
+- une autre unité (`g/m3`…), un `mm` dont le nom ne dit ni le jour ni l’heure (ou
+  dit la veille : « gestern », « vortag », « yesterday ») ou un autre booléen n’est
+  pas publié : l’état liste ces variables (les 20 premières), pour qu’on puisse les
+  ajouter. Le `W/m2` (rayonnement) n’a pas de catégorie dans Gladys : jamais publié ;
+- un Wiffi n’est gardé (et proposé dans la Découverte) qu’une fois qu’il a envoyé au
+  moins une valeur publiable ;
+- les détails réseau du Wiffi (adresse IP, SSID, signal Wi-Fi) ne sont pas publiés ;
+- si l’unité d’une variable change, la fonction existante n’est plus alimentée et
+  l’état le signale.
+
+Une valeur reçue il y a plus d’une minute (par exemple gardée par le récepteur
+pendant un redémarrage de l’intégration) est publiée avec sa date ; au-delà de 2 h,
+elle n’est plus publiée. Un télégramme plus ancien que le dernier appliqué est ignoré.
+
+## Limites du récepteur
+
+Pour qu’un appareil défaillant ou malveillant du réseau ne puisse pas saturer
+Gladys : une adresse non autorisée est coupée avant toute lecture ; un télégramme
+est coupé au-delà de 64 Ko ; 16 connexions au plus (4 par adresse, la plus ancienne
+de l’adresse cède la place) ; une connexion est fermée après 5 s sans octet et 15 s
+au total, après 4 télégrammes (un vide compte) et au-delà de 129 Ko ; 60 télégrammes
+par minute et par adresse (240 en tout, les vides comptent), le reste est ignoré.
+Chaque refus est compté dans l’état pendant une heure. Le nombre de connexions par
+seconde d’une même adresse n’est pas plafonné : chacune reste bornée comme ci-dessus.
+Quand Docker montre tous les
+Wiffis sous une seule adresse (sa passerelle), ils se partagent les 60 par minute de
+cette adresse : assez pour des Wiffis qui envoient toutes les quelques secondes, pas
+pour des dizaines.
+
+L’adresse MAC d’un télégramme ne prouve pas qui l’envoie : toute machine autorisée à
+envoyer peut en annoncer une. Listez vos Wiffis dans « Expéditeurs autorisés ». La
+table garde 32 Wiffis : pleine, le Wiffi non créé dans Gladys entendu il y a le plus
+longtemps cède sa place (un Wiffi créé dans Gladys jamais), et un Wiffi jamais créé
+ni entendu depuis un jour est oublié.
+
+## Sécurité
+
+Les télégrammes circulent en clair : n’exposez
+jamais ce port sur Internet. L’intégration n’envoie rien aux Wiffis et ne les commande pas.
+
+## Données conservées
+
+`/data/wiffi.json` garde la liste des Wiffis, leurs fonctions et l’heure de leur
+dernier télégramme (32 Wiffis et 150 fonctions par Wiffi au plus), jamais de valeur.
+S’il est illisible, il n’est jamais réécrit et il est relu toutes les 10 s.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Wiffi (stall.biz) dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Vos Wiffis, sur votre réseau local | `section` | Non | Capteurs de météo, de pluie, d’air et de température des Wiffis de stall.biz (weatherman, rainyman, airsniffer, wiffi-wz…), sans cloud et en lecture seule. Chaque Wiffi envoie lui-même ses valeurs à Gladys, en télégrammes JSON (un petit récepteur lancé par Gladys à côté de cette intégration). Un Wiffi apparaît dans l’onglet Découverte après son premier télégramme. Jamais testé avec un vrai appareil. Intégration non officielle, sans lien avec stall.biz. |
+| Réglez chaque Wiffi | `section` | Non | Dans la page web du Wiffi : mettez l’adresse de la CCU (« CCU-IP ») à l’adresse IP de la machine Gladys sur votre réseau (\{\{gladys_host\}\} est l’adresse par laquelle votre navigateur joint Gladys, elle peut différer), le port des télégrammes JSON (paramètre « send_json ») à \{\{port:wiffi_json\}\} (choisi par Gladys), et l’envoi JSON sans en-tête. Le port apparaît une fois cette configuration enregistrée une fois : enregistrez, puis rechargez cet écran. Autorisez ce port dans le pare-feu de la machine Gladys s’il y en a un. |
+| Expéditeurs autorisés | `string` | Non | Les adresses IP de vos Wiffis (ou un réseau comme 192.168.1.0/24), séparées par des virgules. Vide : toute adresse de votre réseau local (adresses privées) peut envoyer des télégrammes. Donnez à vos Wiffis une adresse IP fixe dans votre box et listez-les ici. |
+| Muet après (minutes) | `number` | Non | Un Wiffi qui n’envoie rien pendant cette durée est affiché injoignable et nommé dans l’état ; un capteur sans valeur valable pendant cette durée est nommé aussi. De 2 à 60 minutes. |
+
+## Comment installer Wiffi (stall.biz) dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Wiffi (stall.biz) apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-wiffi:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-wiffi](https://github.com/LM1LC3N7/gladys-wiffi).
+
+Wiffi (stall.biz) nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Wiffi (stall.biz) est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-wiffi) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-wiffi/blob/HEAD/docs/fr.md)

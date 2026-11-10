@@ -70,28 +70,4 @@ function TestimonialSection({ lang, testimonials }) {
   );
 }
 
-function TestimonialHomeSection({ lang, testimonials }) {
-  const localeTestimonials = testimonials[lang] || testimonials.en;
-  const testimonialsColumn = [[], [], []];
-  localeTestimonials.forEach((testimonial, i) =>
-    testimonialsColumn[i % 3].push(testimonial)
-  );
-
-  if (localeTestimonials.length === 0) {
-    return null;
-  }
-
-  return (
-    <div className={cx("row", styles.testimonialsSection)}>
-      {testimonialsColumn.map((testimonialsItem, i) => (
-        <div className="col col--4" key={i}>
-          {testimonialsItem.map((testimonial) => (
-            <Testimonial {...testimonial} key={testimonial.url} lang={lang} />
-          ))}
-        </div>
-      ))}
-    </div>
-  );
-}
-
-export { Testimonial, TestimonialSection, TestimonialHomeSection };
+export { Testimonial, TestimonialSection };

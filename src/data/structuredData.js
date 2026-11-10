@@ -17,12 +17,12 @@ const homepageFaqEn = [
   {
     question: "Is Gladys really free?",
     answer:
-      "Yes, 100% free and open-source. Gladys Assistant can be installed with a single Docker command. No subscription, limitations, or credit card required. It runs on any Linux machine with Docker: mini-PC, NAS, Raspberry Pi, or server.",
+      "Yes, 100% free and open-source. Gladys Assistant installs on a mini-PC from a USB drive with Gladys Assistant OS. No subscription, limitations, or credit card required. It also runs with Docker on hardware you already own: NAS, Raspberry Pi, or server.",
   },
   {
     question: "Is it hard to install?",
     answer:
-      "It takes some technical steps, but documentation guides you through each one with screenshots and videos. You need a Linux machine and Docker.",
+      "It's guided step by step. On a mini-PC, Gladys Assistant OS, our official installer, does everything for you: write it to a USB drive, start the mini-PC from it, answer a few questions, and Gladys installs itself, automatic updates included. No command line needed. Already have a server or a NAS? Gladys also installs there with Docker.",
   },
   {
     question: "Is my data really private?",
@@ -32,7 +32,7 @@ const homepageFaqEn = [
   {
     question: "Does Gladys work with my devices?",
     answer:
-      "Very likely. Gladys supports thousands of devices through Zigbee (Zigbee2MQTT), Z-Wave, Matter, MQTT, and integrations for popular brands: Philips Hue, SmartThings, TP-Link Kasa and Tapo, Shelly, Sonos, Reolink cameras, LG ThinQ and many more. Anything else is covered by external integrations, community-built integrations installable in one click, and anyone can create one.",
+      "Very likely. Gladys has more than 1,000 integrations, each installed in one click: popular brands like Philips Hue, SmartThings, TP-Link Kasa and Tapo, Shelly, Sonos, Reolink cameras and LG ThinQ, and open protocols like Zigbee (Zigbee2MQTT), Z-Wave, Matter and MQTT that cover thousands of devices from any brand. Most of them are built by the community, the list grows every week, and anyone can create one.",
   },
   {
     question: "How much does Gladys Plus cost?",
@@ -50,12 +50,12 @@ const homepageFaqFr = [
   {
     question: "Gladys est-elle vraiment gratuite ?",
     answer:
-      "Oui, 100 % gratuite et open-source. Gladys Assistant s'installe en une seule commande Docker, sans abonnement ni carte bancaire. Elle tourne sur toute machine Linux avec Docker : mini-PC, NAS, Raspberry Pi ou serveur.",
+      "Oui, 100 % gratuite et open-source. Gladys Assistant s'installe sur un mini-PC depuis une clé USB avec Gladys Assistant OS, sans abonnement, sans limitation ni carte bancaire. Elle tourne aussi avec Docker sur le matériel que vous avez déjà : NAS, Raspberry Pi ou serveur.",
   },
   {
     question: "Est-ce compliqué à installer ?",
     answer:
-      "Cela demande un peu de technique, mais la documentation vous guide pas à pas avec captures d'écran et vidéos. Il faut une machine Linux et Docker. Un kit de démarrage français est aussi disponible avec Gladys pré-installée.",
+      "C'est guidé pas à pas. Sur un mini-PC, Gladys Assistant OS, notre installeur officiel, s'occupe de tout : vous l'écrivez sur une clé USB, vous démarrez le mini-PC dessus, vous répondez à quelques questions, et Gladys s'installe toute seule, mises à jour automatiques comprises. Aucune ligne de commande. Pour aller plus vite, le kit de démarrage arrive avec Gladys déjà installée.",
   },
   {
     question: "Mes données sont-elles vraiment privées ?",
@@ -65,7 +65,7 @@ const homepageFaqFr = [
   {
     question: "Gladys fonctionne-t-elle avec mes appareils ?",
     answer:
-      "Très probablement. Gladys supporte des milliers d'appareils via Zigbee (Zigbee2MQTT), Matter, MQTT et des intégrations natives (Sonos, caméras RTSP). Tout le reste est couvert par les intégrations externes, des intégrations communautaires installables en un clic, et n'importe qui peut en créer une.",
+      "Très probablement. Gladys compte plus de 1 000 intégrations, installables en un clic : les grandes marques comme Philips Hue, SmartThings, Tapo, Shelly, Sonos, Netatmo ou les caméras Reolink, et les protocoles ouverts Zigbee (Zigbee2MQTT), Z-Wave, Matter et MQTT, qui couvrent des milliers d'appareils de toutes marques. La plupart sont créées par la communauté, la liste s'agrandit chaque semaine, et n'importe qui peut en créer une.",
   },
   {
     question: "Puis-je accéder à Gladys depuis l'extérieur ?",
@@ -78,12 +78,12 @@ const homepageFaqDe = [
   {
     question: "Ist Gladys wirklich kostenlos?",
     answer:
-      "Ja, 100 % kostenlos und Open Source. Gladys Assistant lässt sich mit einem einzigen Docker-Befehl installieren. Kein Abo, keine Einschränkungen, keine Kreditkarte nötig. Gladys läuft auf jedem Linux-Rechner mit Docker: Mini-PC, NAS, Raspberry Pi oder Server.",
+      "Ja, 100 % kostenlos und Open Source. Gladys Assistant installierst du mit Gladys Assistant OS von einem USB-Stick auf einem Mini-PC. Kein Abo, keine Einschränkungen, keine Kreditkarte nötig. Gladys läuft auch mit Docker auf Hardware, die du schon hast: NAS, Raspberry Pi oder Server.",
   },
   {
     question: "Ist die Installation kompliziert?",
     answer:
-      "Ein paar technische Schritte sind nötig, aber die Dokumentation führt dich mit Screenshots und Videos durch jeden einzelnen. Du brauchst einen Linux-Rechner und Docker.",
+      "Wir führen dich Schritt für Schritt. Auf einem Mini-PC erledigt Gladys Assistant OS, unser offizielles Installationsprogramm, alles für dich: Du schreibst es auf einen USB-Stick, startest den Mini-PC davon, beantwortest ein paar Fragen, und Gladys installiert sich von selbst, inklusive automatischer Updates. Keine Kommandozeile nötig. Du hast schon einen Server oder ein NAS? Dann installierst du Gladys dort mit Docker.",
   },
   {
     question: "Bleiben meine Daten wirklich privat?",
@@ -93,7 +93,7 @@ const homepageFaqDe = [
   {
     question: "Funktioniert Gladys mit meinen Geräten?",
     answer:
-      "Sehr wahrscheinlich. Gladys unterstützt tausende Geräte über Zigbee (Zigbee2MQTT), Z-Wave, Matter, MQTT sowie Integrationen für beliebte Marken: Philips Hue, SmartThings, TP-Link Kasa und Tapo, Shelly, Sonos, Reolink-Kameras, LG ThinQ und viele mehr. Alles andere wird von externen Integrationen abgedeckt: von der Community entwickelte Integrationen, die sich mit einem Klick installieren lassen, und jeder kann selbst eine erstellen.",
+      "Sehr wahrscheinlich. Gladys bietet über 1.000 Integrationen, jede mit einem Klick installiert: beliebte Marken wie Philips Hue, SmartThings, TP-Link Kasa und Tapo, Shelly, Sonos, Reolink-Kameras und LG ThinQ, und offene Protokolle wie Zigbee (Zigbee2MQTT), Z-Wave, Matter und MQTT, die tausende Geräte jeder Marke abdecken. Die meisten werden von der Community entwickelt, die Liste wächst jede Woche, und jeder kann selbst eine erstellen.",
   },
   {
     question: "Was kostet Gladys Plus?",
@@ -111,12 +111,12 @@ const homepageFaqEs = [
   {
     question: "¿Gladys es realmente gratis?",
     answer:
-      "Sí, 100 % gratis y de código abierto. Gladys Assistant se instala con un solo comando Docker. Sin suscripción, sin limitaciones y sin tarjeta de crédito. Funciona en cualquier máquina Linux con Docker: mini-PC, NAS, Raspberry Pi o servidor.",
+      "Sí, 100 % gratis y de código abierto. Gladys Assistant se instala en un mini-PC desde una memoria USB con Gladys Assistant OS. Sin suscripción, sin limitaciones y sin tarjeta de crédito. También funciona con Docker en el equipo que ya tienes: NAS, Raspberry Pi o servidor.",
   },
   {
     question: "¿Es difícil de instalar?",
     answer:
-      "Requiere algunos pasos técnicos, pero la documentación te guía en cada uno con capturas de pantalla y vídeos. Necesitas una máquina Linux y Docker.",
+      "Te guiamos paso a paso. En un mini-PC, Gladys Assistant OS, nuestro instalador oficial, se encarga de todo: lo grabas en una memoria USB, arrancas el mini-PC desde ella, respondes a unas pocas preguntas y Gladys se instala sola, con actualizaciones automáticas. Sin línea de comandos. ¿Ya tienes un servidor o un NAS? Gladys también se instala ahí con Docker.",
   },
   {
     question: "¿Mis datos son realmente privados?",
@@ -126,7 +126,7 @@ const homepageFaqEs = [
   {
     question: "¿Gladys funciona con mis dispositivos?",
     answer:
-      "Muy probablemente. Gladys es compatible con miles de dispositivos a través de Zigbee (Zigbee2MQTT), Z-Wave, Matter, MQTT e integraciones con marcas populares: Philips Hue, SmartThings, TP-Link Kasa y Tapo, Shelly, Sonos, cámaras Reolink, LG ThinQ y muchas más. Todo lo demás lo cubren las integraciones externas, integraciones creadas por la comunidad que se instalan con un clic, y cualquiera puede crear la suya.",
+      "Muy probablemente. Gladys tiene más de 1.000 integraciones, que se instalan con un clic: marcas populares como Philips Hue, SmartThings, TP-Link Kasa y Tapo, Shelly, Sonos, cámaras Reolink y LG ThinQ, y protocolos abiertos como Zigbee (Zigbee2MQTT), Z-Wave, Matter y MQTT, que cubren miles de dispositivos de cualquier marca. La mayoría las crea la comunidad, la lista crece cada semana, y cualquiera puede crear la suya.",
   },
   {
     question: "¿Cuánto cuesta Gladys Plus?",

@@ -6,8 +6,12 @@ import Translate, { translate } from "@docusaurus/Translate";
 
 import styles from "./horizon/styles.module.css";
 import YoutubeEmbedVideo from "./YoutubeEmbedVideo";
-import { TestimonialHomeSection } from "./Testimonial";
 import SubcribeNewsletter from "./home/SubcribeNewsletter";
+import {
+  IntegrationsMarquee,
+  IntegrationsSection,
+  useIntegrationsSummary,
+} from "./home/Integrations";
 
 import testimonialFr from "./testimonials/testimonial.fr.json";
 import testimonialEn from "./testimonials/testimonial.en.json";
@@ -17,17 +21,6 @@ import testimonialEs from "./testimonials/testimonial.es.json";
 import { BLACK_FRIDAY_CONFIG } from "../config/blackFriday";
 
 const DEMO_URL = "https://demo.gladysassistant.com/dashboard";
-
-const COMPATIBILITIES = [
-  { title: "Zigbee", imgSrc: "zigbee2mqtt.jpg", docKey: "zigbee2mqtt" },
-  { title: "Matter", imgSrc: "matter.jpg", docKey: "matter" },
-  { title: "MQTT", imgSrc: "mqtt.jpg", docKey: "mqtt" },
-  { title: "Tuya", imgSrc: "tuya.jpg", docKey: "external/tuya/" },
-  { title: "Netatmo", imgSrc: "netatmo.jpg", docKey: "external/netatmo/" },
-  { title: "Sonos", imgSrc: "sonos.jpg", docKey: "sonos" },
-  { title: "Zendure", imgSrc: "zendure.jpg", docKey: "external/zendure/" },
-  { title: "Camera", imgSrc: "rtsp-camera.jpg", docKey: "camera" },
-];
 
 const testimonials = {
   fr: testimonialFr,
@@ -171,6 +164,61 @@ const FeatureRow = ({ reversed, eyebrow, title, text, shot }) => (
   </div>
 );
 
+/**
+ * One testimonial. On phones the text is cut after a few lines, with a
+ * button to read the rest: the testimonials then sit side by side in a
+ * swipeable row instead of a 3,000px column (see `.rail`).
+ */
+const Quote = ({ asset, username, content }) => {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <figure className={styles.quoteCard}>
+      <figcaption className={styles.quoteAuthor}>
+        <img
+          src={asset(`img/testimonials/${username}.png`)}
+          alt=""
+          width="44"
+          height="44"
+          loading="lazy"
+        />
+        <span>
+          <strong>{username}</strong>
+          <span>@{username}</span>
+        </span>
+      </figcaption>
+      <blockquote
+        className={classnames(styles.quoteText, {
+          [styles.quoteTextClamped]: !expanded,
+        })}
+      >
+        {content}
+      </blockquote>
+      <button
+        type="button"
+        className={styles.quoteMore}
+        aria-expanded={expanded}
+        onClick={() => setExpanded(!expanded)}
+      >
+        {expanded ? (
+          <Translate
+            id="home.horizon.testimonialLess"
+            description="Button that collapses a long testimonial, on phones"
+          >
+            Show less
+          </Translate>
+        ) : (
+          <Translate
+            id="home.horizon.testimonialMore"
+            description="Button that expands a long testimonial, on phones"
+          >
+            Read more
+          </Translate>
+        )}
+      </button>
+    </figure>
+  );
+};
+
 const GlassCard = ({ icon, title, text }) => (
   <div className={styles.glassCard}>
     <span className={styles.glassCardIcon}>{ICONS[icon]}</span>
@@ -186,17 +234,17 @@ const FAQQuestions = {
       response: (
         <>
           <b>Oui, 100% gratuite et open-source !</b> Gladys Assistant est un
-          logiciel libre que vous pouvez installer{" "}
-          <Link href="/fr/docs/installation/docker/#lancer-un-container-gladys-assistant">
-            en une seule commande Docker
-          </Link>
+          logiciel libre que vous installez sur un mini-PC depuis une clé USB
+          avec{" "}
+          <Link href="/fr/docs/installation/mini-pc/">Gladys Assistant OS</Link>
           . Aucun abonnement requis pour utiliser Gladys, aucune limitation,
           aucune carte bancaire demandée.
           <br />
           <br />
-          Vous pouvez l'installer sur n'importe quelle machine Linux : mini-PC,
-          NAS Synology, Raspberry Pi, serveur, ou même un vieux PC. Si Docker
-          tourne dessus, Gladys tourne dessus ! 🚀
+          Gladys tourne aussi avec{" "}
+          <Link href="/fr/docs/installation/docker/">Docker</Link> sur le
+          matériel que vous avez déjà : NAS Synology, Raspberry Pi, serveur, ou
+          même un vieux PC. Si Docker tourne dessus, Gladys tourne dessus ! 🚀
         </>
       ),
     },
@@ -204,10 +252,12 @@ const FAQQuestions = {
       title: <>Est-ce compliqué à installer ?</>,
       response: (
         <>
-          <b>Cela demande un peu de technique, mais c'est guidé.</b> Il faut
-          d'abord préparer une machine Linux (Ubuntu Server, par exemple), puis
-          lancer Gladys via Docker. Notre documentation vous accompagne pas à
-          pas, avec des captures d'écran et des vidéos.
+          <b>C'est guidé pas à pas.</b> Sur un mini-PC,{" "}
+          <Link href="/fr/docs/installation/mini-pc/">Gladys Assistant OS</Link>
+          , notre installeur officiel, s'occupe de tout : vous l'écrivez sur une
+          clé USB, vous démarrez le mini-PC dessus, vous répondez à quelques
+          questions, et Gladys s'installe toute seule, mises à jour automatiques
+          comprises. Aucune ligne de commande.
           <br />
           <br />
           <b>Pour aller plus vite :</b> le{" "}
@@ -237,18 +287,16 @@ const FAQQuestions = {
       title: <>Gladys fonctionne-t-elle avec mes appareils ?</>,
       response: (
         <>
-          <b>Très probablement !</b> Gladys supporte{" "}
-          <Link href="/fr/docs/integrations/">des milliers d'appareils</Link> via
-          les protocoles ouverts Zigbee, Matter et MQTT, ainsi que des
-          intégrations natives (Sonos, caméras RTSP, et bien d'autres).
+          <b>Très probablement !</b> Gladys compte{" "}
+          <Link href="/fr/docs/integrations/">plus de 1 000 intégrations</Link>,
+          installables en un clic : les grandes marques comme Philips Hue,
+          SmartThings, Tapo, Shelly, Sonos, Netatmo ou les caméras Reolink, et
+          les protocoles ouverts Zigbee, Z-Wave, Matter et MQTT, qui couvrent
+          des milliers d'appareils de toutes marques.
           <br />
           <br />
-          Votre appareil n'est pas encore listé ? Découvrez les{" "}
-          <Link href="/fr/docs/integrations/?origin=community">
-            intégrations externes
-          </Link>{" "}
-          : des intégrations créées par la communauté, installables en un clic,
-          dont la liste s'agrandit en continu. Et si la vôtre manque,{" "}
+          La plupart sont créées par la communauté, et la liste s'agrandit
+          chaque semaine. Si la vôtre manque encore,{" "}
           <Link href="/fr/docs/dev/external-integrations/">
             créez-la vous-même
           </Link>{" "}
@@ -286,17 +334,16 @@ const FAQQuestions = {
       response: (
         <>
           <b>Yes, 100% free and open-source!</b> Gladys Assistant is free
-          software you can install with{" "}
-          <Link href="/docs/installation/docker/#start-gladys">
-            a single Docker command
-          </Link>
-          . No subscription is required to use Gladys, no limitations, no credit
+          software you install on a mini-PC from a USB drive with{" "}
+          <Link href="/docs/installation/mini-pc/">Gladys Assistant OS</Link>.
+          No subscription is required to use Gladys, no limitations, no credit
           card needed.
           <br />
           <br />
-          You can install it on any Linux machine: mini-PC, Synology NAS,
-          Raspberry Pi, server, or even an old computer. If Docker runs on it,
-          Gladys runs on it! 🚀
+          Gladys also runs with{" "}
+          <Link href="/docs/installation/docker/">Docker</Link> on hardware you
+          already own: Synology NAS, Raspberry Pi, server, or even an old
+          computer. If Docker runs on it, Gladys runs on it! 🚀
         </>
       ),
     },
@@ -304,10 +351,15 @@ const FAQQuestions = {
       title: <>Is it hard to install?</>,
       response: (
         <>
-          <b>It takes some technical steps, but we guide you through them.</b>{" "}
-          You first need a Linux machine (Ubuntu Server, for example), then you
-          run Gladys via Docker. Our documentation walks you through each step
-          with screenshots and videos.
+          <b>It's guided step by step.</b> On a mini-PC,{" "}
+          <Link href="/docs/installation/mini-pc/">Gladys Assistant OS</Link>,
+          our official installer, does everything for you: write it to a USB
+          drive, start the mini-PC from it, answer a few questions, and Gladys
+          installs itself, automatic updates included. No command line needed.
+          <br />
+          <br />
+          Already have a server or a NAS? Gladys also installs there with{" "}
+          <Link href="/docs/installation/docker/">Docker</Link>.
         </>
       ),
     },
@@ -330,18 +382,16 @@ const FAQQuestions = {
       title: <>Does Gladys work with my devices?</>,
       response: (
         <>
-          <b>Very likely!</b> Gladys supports{" "}
-          <Link href="/docs/integrations/">thousands of devices</Link> through
-          open protocols like Zigbee, Z-Wave, Matter, and MQTT, plus
-          integrations for popular brands: Philips Hue, SmartThings, TP-Link
-          Kasa and Tapo, Shelly, Sonos, Reolink cameras, LG ThinQ, and many
-          more.
+          <b>Very likely!</b> Gladys has{" "}
+          <Link href="/docs/integrations/">more than 1,000 integrations</Link>,
+          each installed in one click: popular brands like Philips Hue,
+          SmartThings, TP-Link Kasa and Tapo, Shelly, Sonos, Reolink cameras and
+          LG ThinQ, and open protocols like Zigbee, Z-Wave, Matter and MQTT
+          that cover thousands of devices from any brand.
           <br />
           <br />
-          Device not listed yet? Have a look at{" "}
-          <Link href="/docs/integrations/?origin=community">external integrations</Link>{" "}
-          : community-built integrations you can install in one click, and the
-          list keeps growing. If yours is missing,{" "}
+          Most of them are built by the community, and the list grows every
+          week. If yours is still missing,{" "}
           <Link href="/docs/dev/external-integrations/">build it yourself</Link>{" "}
           in the language of your choice, or{" "}
           <a href="https://community.gladysassistant.com/">ask on the forum</a>.
@@ -386,16 +436,16 @@ const FAQQuestions = {
         <>
           <b>Ja, 100 % kostenlos und Open Source!</b> Gladys Assistant ist freie
           Software, die du mit{" "}
-          <Link href="/de/docs/installation/docker/#start-gladys">
-            einem einzigen Docker-Befehl
-          </Link>{" "}
-          installieren kannst. Für Gladys brauchst du kein Abo, es gibt keine
-          Einschränkungen und du musst keine Kreditkarte angeben.
+          <Link href="/de/docs/installation/mini-pc/">Gladys Assistant OS</Link>{" "}
+          von einem USB-Stick auf einem Mini-PC installierst. Für Gladys
+          brauchst du kein Abo, es gibt keine Einschränkungen und du musst keine
+          Kreditkarte angeben.
           <br />
           <br />
-          Du kannst Gladys auf jedem Linux-Rechner installieren: Mini-PC,
-          Synology-NAS, Raspberry Pi, Server oder sogar ein alter Computer. Wenn
-          Docker darauf läuft, läuft auch Gladys darauf! 🚀
+          Gladys läuft auch mit{" "}
+          <Link href="/de/docs/installation/docker/">Docker</Link> auf Hardware,
+          die du schon hast: Synology-NAS, Raspberry Pi, Server oder sogar ein
+          alter Computer. Wenn Docker darauf läuft, läuft auch Gladys darauf! 🚀
         </>
       ),
     },
@@ -403,13 +453,17 @@ const FAQQuestions = {
       title: <>Ist die Installation kompliziert?</>,
       response: (
         <>
-          <b>
-            Ein paar technische Schritte sind nötig, aber wir begleiten dich
-            dabei.
-          </b>{" "}
-          Zuerst brauchst du einen Linux-Rechner (zum Beispiel Ubuntu Server),
-          dann startest du Gladys über Docker. Unsere Dokumentation führt dich
-          Schritt für Schritt durch alles, mit Screenshots und Videos.
+          <b>Wir führen dich Schritt für Schritt.</b> Auf einem Mini-PC
+          erledigt{" "}
+          <Link href="/de/docs/installation/mini-pc/">Gladys Assistant OS</Link>
+          , unser offizielles Installationsprogramm, alles für dich: Du
+          schreibst es auf einen USB-Stick, startest den Mini-PC davon,
+          beantwortest ein paar Fragen, und Gladys installiert sich von selbst,
+          inklusive automatischer Updates. Keine Kommandozeile nötig.
+          <br />
+          <br />
+          Du hast schon einen Server oder ein NAS? Dann installierst du Gladys
+          dort mit <Link href="/de/docs/installation/docker/">Docker</Link>.
         </>
       ),
     },
@@ -432,20 +486,16 @@ const FAQQuestions = {
       title: <>Funktioniert Gladys mit meinen Geräten?</>,
       response: (
         <>
-          <b>Sehr wahrscheinlich!</b> Gladys unterstützt{" "}
-          <Link href="/de/docs/integrations/">tausende Geräte</Link> über offene
-          Protokolle wie Zigbee, Z-Wave, Matter und MQTT sowie Integrationen für
-          beliebte Marken: Philips Hue, SmartThings, TP-Link Kasa und Tapo,
-          Shelly, Sonos, Reolink-Kameras, LG ThinQ und viele mehr.
+          <b>Sehr wahrscheinlich!</b> Gladys bietet{" "}
+          <Link href="/de/docs/integrations/">über 1.000 Integrationen</Link>,
+          jede mit einem Klick installiert: beliebte Marken wie Philips Hue,
+          SmartThings, TP-Link Kasa und Tapo, Shelly, Sonos, Reolink-Kameras und
+          LG ThinQ, und offene Protokolle wie Zigbee, Z-Wave, Matter und MQTT,
+          die tausende Geräte jeder Marke abdecken.
           <br />
           <br />
-          Dein Gerät ist noch nicht dabei? Schau dir die{" "}
-          <Link href="/de/docs/integrations/?origin=community">
-            externen Integrationen
-          </Link>{" "}
-          an: Von der Community entwickelte Integrationen, die du mit einem
-          Klick installieren kannst, und die Liste wächst ständig. Fehlt deine
-          trotzdem,{" "}
+          Die meisten werden von der Community entwickelt, und die Liste wächst
+          jede Woche. Fehlt deine trotzdem,{" "}
           <Link href="/de/docs/dev/external-integrations/">
             entwickle sie einfach selbst
           </Link>{" "}
@@ -496,17 +546,16 @@ const FAQQuestions = {
       response: (
         <>
           <b>¡Sí, 100 % gratis y de código abierto!</b> Gladys Assistant es
-          software libre que puedes instalar con{" "}
-          <Link href="/es/docs/installation/docker/#start-gladys">
-            un solo comando Docker
-          </Link>
+          software libre que instalas en un mini-PC desde una memoria USB con{" "}
+          <Link href="/es/docs/installation/mini-pc/">Gladys Assistant OS</Link>
           . No necesitas ninguna suscripción para usar Gladys, no hay
           limitaciones y no te pedimos tarjeta de crédito.
           <br />
           <br />
-          Puedes instalarla en cualquier máquina Linux: mini-PC, NAS Synology,
-          Raspberry Pi, servidor o incluso un ordenador antiguo. Si Docker
-          funciona en ella, ¡Gladys también! 🚀
+          Gladys también funciona con{" "}
+          <Link href="/es/docs/installation/docker/">Docker</Link> en el equipo
+          que ya tienes: NAS Synology, Raspberry Pi, servidor o incluso un
+          ordenador antiguo. Si Docker funciona en él, ¡Gladys también! 🚀
         </>
       ),
     },
@@ -514,10 +563,16 @@ const FAQQuestions = {
       title: <>¿Es difícil de instalar?</>,
       response: (
         <>
-          <b>Requiere algunos pasos técnicos, pero te guiamos en cada uno.</b>{" "}
-          Primero necesitas una máquina Linux (Ubuntu Server, por ejemplo) y
-          después ejecutas Gladys con Docker. Nuestra documentación te acompaña
-          paso a paso, con capturas de pantalla y vídeos.
+          <b>Te guiamos paso a paso.</b> En un mini-PC,{" "}
+          <Link href="/es/docs/installation/mini-pc/">Gladys Assistant OS</Link>
+          , nuestro instalador oficial, se encarga de todo: lo grabas en una
+          memoria USB, arrancas el mini-PC desde ella, respondes a unas pocas
+          preguntas y Gladys se instala sola, con actualizaciones automáticas.
+          Sin línea de comandos.
+          <br />
+          <br />
+          ¿Ya tienes un servidor o un NAS? Gladys también se instala ahí con{" "}
+          <Link href="/es/docs/installation/docker/">Docker</Link>.
         </>
       ),
     },
@@ -540,20 +595,16 @@ const FAQQuestions = {
       title: <>¿Gladys funciona con mis dispositivos?</>,
       response: (
         <>
-          <b>¡Muy probablemente!</b> Gladys es compatible con{" "}
-          <Link href="/es/docs/integrations/">miles de dispositivos</Link> a
-          través de protocolos abiertos como Zigbee, Z-Wave, Matter y MQTT,
-          además de integraciones con marcas populares: Philips Hue,
-          SmartThings, TP-Link Kasa y Tapo, Shelly, Sonos, cámaras Reolink, LG
-          ThinQ y muchas más.
+          <b>¡Muy probablemente!</b> Gladys tiene{" "}
+          <Link href="/es/docs/integrations/">más de 1.000 integraciones</Link>,
+          que se instalan con un clic: marcas populares como Philips Hue,
+          SmartThings, TP-Link Kasa y Tapo, Shelly, Sonos, cámaras Reolink y LG
+          ThinQ, y protocolos abiertos como Zigbee, Z-Wave, Matter y MQTT, que
+          cubren miles de dispositivos de cualquier marca.
           <br />
           <br />
-          ¿Tu dispositivo aún no aparece? Echa un vistazo a las{" "}
-          <Link href="/es/docs/integrations/?origin=community">
-            integraciones externas
-          </Link>
-          : integraciones creadas por la comunidad que puedes instalar con un
-          clic, y la lista no para de crecer. Si aun así falta la tuya,{" "}
+          La mayoría las crea la comunidad, y la lista crece cada semana. Si aun
+          así falta la tuya,{" "}
           <Link href="/es/docs/dev/external-integrations/">
             desarróllala tú mismo
           </Link>{" "}
@@ -664,8 +715,7 @@ function Home({ lang }) {
   const asset = (path) => `${siteConfig.baseUrl}${path.replace(/^\//, "")}`;
 
   const docsUrl = lang === "en" ? "/docs" : `/${lang}/docs`;
-  const integrationsUrl =
-    lang === "en" ? "/docs/integrations" : `/${lang}/docs/integrations`;
+  const integrations = useIntegrationsSummary(lang);
 
   // The starter kit is a French-market offer: keep it out of the English page.
   const shouldDisplayStarterKitLink = lang === "fr";
@@ -775,10 +825,11 @@ function Home({ lang }) {
         <span className={styles.badge}>
           <span className={styles.badgeDot}>{ICONS.sparkle}</span>
           <Translate
-            id="home.horizon.badge"
-            description="Small badge above the homepage title"
+            id="home.horizon.badgeIntegrations"
+            description="Small badge above the homepage title. {count} is the number of integrations rounded down to the hundred (e.g. 1,000)."
+            values={{ count: integrations.rounded }}
           >
-            Gladys Assistant 5 · New design
+            {"Gladys Assistant 5 · {count}+ integrations"}
           </Translate>
         </span>
 
@@ -799,11 +850,25 @@ function Home({ lang }) {
 
         <p className={styles.heroSubtitle}>
           <Translate
-            id="home.description"
-            description="The home page description"
+            id="home.horizon.heroSubtitle"
+            description="The homepage subtitle, under the title. {integrations} is the number of integrations, in bold (home.horizon.heroSubtitleCount)."
+            values={{
+              integrations: (
+                <b>
+                  <Translate
+                    id="home.horizon.heroSubtitleCount"
+                    description="The bold part of the homepage subtitle. {count} is the number of integrations rounded down to the hundred (e.g. 1,000)."
+                    values={{ count: integrations.rounded }}
+                  >
+                    {"{count}+ integrations"}
+                  </Translate>
+                </b>
+              ),
+            }}
           >
-            Open-source, local smart home. Integrations install in one click,
-            and anyone can create one.
+            {
+              "The open-source, local smart home that works with what you already own: {integrations}, each installed in one click."
+            }
           </Translate>
         </p>
 
@@ -834,13 +899,15 @@ function Home({ lang }) {
           <span>
             <i className={styles.heroTrustDot} />
             <Translate
-              id="home.horizon.trustDocker"
-              description="Homepage hero reassurance: one Docker command"
+              id="home.horizon.trustUsbInstall"
+              description="Homepage hero reassurance: installs from a USB drive with Gladys Assistant OS"
             >
-              One Docker command
+              Installs from a USB drive
             </Translate>
           </span>
         </div>
+
+        <IntegrationsMarquee lang={lang} />
 
         <div className={styles.heroShot}>
           <Shot
@@ -860,6 +927,8 @@ function Home({ lang }) {
       </header>
 
       <main>
+        <IntegrationsSection lang={lang} />
+
         <section className={styles.section}>
           <div className={styles.sectionHeader}>
             <span className={styles.eyebrow}>
@@ -1145,69 +1214,6 @@ function Home({ lang }) {
           <div className={styles.sectionHeader}>
             <span className={styles.eyebrow}>
               <Translate
-                id="home.horizon.compatibilitiesEyebrow"
-                description="Eyebrow above the compatibilities section"
-              >
-                Compatibility
-              </Translate>
-            </span>
-            <h2 className={styles.sectionTitle}>
-              <Translate
-                id="home.compatibilities.title"
-                description="Cool features chat title on the homepage"
-              >
-                Works With Everything You Own
-              </Translate>
-            </h2>
-            <p className={styles.sectionLead}>
-              <Translate
-                id="home.integrations.description"
-                description="Integrations description of the homepage"
-              >
-                Open protocols, native integrations, and community external
-                integrations for everything else.
-              </Translate>
-            </p>
-          </div>
-
-          <div className={styles.compatGrid}>
-            {COMPATIBILITIES.map((item) => (
-              <a
-                key={item.title}
-                className={styles.compatTile}
-                href={asset(`docs/integrations/${item.docKey}`)}
-              >
-                <img
-                  src={asset(`img/home/compatibilities/${item.imgSrc}`)}
-                  width="254"
-                  height="169"
-                  loading="lazy"
-                  alt={item.title}
-                />
-                <span className={styles.compatTileLabel}>{item.title}</span>
-              </a>
-            ))}
-          </div>
-
-          <div style={{ textAlign: "center", marginTop: "2.5rem" }}>
-            <Link
-              className={classnames(styles.btn, styles.btnQuiet)}
-              href={integrationsUrl}
-            >
-              <Translate
-                id="home.ctaAfterIntegrations"
-                description="CTA after integrations section"
-              >
-                Browse All Integrations →
-              </Translate>
-            </Link>
-          </div>
-        </section>
-
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <span className={styles.eyebrow}>
-              <Translate
                 id="home.horizon.principlesEyebrow"
                 description="Eyebrow above the principles section"
               >
@@ -1261,7 +1267,7 @@ function Home({ lang }) {
                   description="Characteristics ease of use title on the homepage"
                 >
                   No terminal for day-to-day use: a clear interface to control
-                  your home. Installation is guided via Docker.
+                  your home. Installation is guided from a USB drive.
                 </Translate>
               }
             />
@@ -1366,8 +1372,15 @@ function Home({ lang }) {
               </Translate>
             </h2>
           </div>
-          <div className={styles.testimonials}>
-            <TestimonialHomeSection lang={lang} testimonials={testimonials} />
+          <div className={classnames(styles.quoteGrid, styles.rail)}>
+            {(testimonials[lang] || testimonials.en).map((testimonial) => (
+              <Quote
+                key={testimonial.username}
+                asset={asset}
+                username={testimonial.username}
+                content={testimonial.content}
+              />
+            ))}
           </div>
         </section>
 
@@ -1381,7 +1394,7 @@ function Home({ lang }) {
                 Assistant. Découvre leurs avis.
               </p>
             </div>
-            <div className={styles.pressGrid}>
+            <div className={classnames(styles.pressGrid, styles.rail)}>
               {PRESS.map((item) => (
                 <a
                   key={item.url}
@@ -1442,7 +1455,7 @@ function Home({ lang }) {
                 </Translate>
               </p>
             </div>
-            <div className={styles.videoGrid}>
+            <div className={classnames(styles.videoGrid, styles.rail)}>
               {YOUTUBE_VIDEOS.map((video) => (
                 <div key={video.id}>
                   <div className={styles.videoFrame}>
@@ -1469,10 +1482,12 @@ function Home({ lang }) {
           </div>
           <div className={styles.faqGrid}>
             {(FAQQuestions[lang] || FAQQuestions.en).map((oneElement, index) => (
-              <div className={styles.faqItem} key={index}>
-                <h3 className={styles.faqQuestion}>{oneElement.title}</h3>
+              <details className={styles.faqItem} key={index}>
+                <summary className={styles.faqSummary}>
+                  <h3 className={styles.faqQuestion}>{oneElement.title}</h3>
+                </summary>
                 <p className={styles.faqAnswer}>{oneElement.response}</p>
-              </div>
+              </details>
             ))}
           </div>
         </section>

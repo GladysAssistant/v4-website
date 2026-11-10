@@ -1,13 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import HorizonPage from "../components/horizon/HorizonPage";
+import Turnstile from "../components/Turnstile";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import styles from "./styles.module.css";
 import Translate from "@docusaurus/Translate";
 import { translate } from "@docusaurus/Translate";
 
 const CONTACT_API = "https://contact-page.gladysassistant.workers.dev";
-const TURNSTILE_SCRIPT =
-  "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
 
 const STATUS = {
   INITIAL: "INITIAL",
@@ -24,58 +23,6 @@ function validateEmail(email) {
   const re =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(String(email).toLowerCase());
-}
-
-function loadTurnstileScript() {
-  if (typeof window === "undefined") {
-    return Promise.reject(new Error("no window"));
-  }
-  if (window.turnstile) {
-    return Promise.resolve(window.turnstile);
-  }
-  return new Promise((resolve, reject) => {
-    const existing = document.querySelector(`script[src="${TURNSTILE_SCRIPT}"]`);
-    const script = existing || document.createElement("script");
-    script.addEventListener("load", () => resolve(window.turnstile));
-    script.addEventListener("error", reject);
-    if (!existing) {
-      script.src = TURNSTILE_SCRIPT;
-      script.async = true;
-      document.head.appendChild(script);
-    }
-  });
-}
-
-/** Renders the Turnstile widget and reports the token to the parent. */
-function Turnstile({ siteKey, language, onToken }) {
-  const container = useRef(null);
-  const widgetId = useRef(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    loadTurnstileScript()
-      .then((turnstile) => {
-        if (cancelled || !container.current) {
-          return;
-        }
-        widgetId.current = turnstile.render(container.current, {
-          sitekey: siteKey,
-          language,
-          callback: (token) => onToken(token),
-          "expired-callback": () => onToken(""),
-          "error-callback": () => onToken(""),
-        });
-      })
-      .catch((e) => console.error("Turnstile failed to load", e));
-    return () => {
-      cancelled = true;
-      if (widgetId.current && window.turnstile) {
-        window.turnstile.remove(widgetId.current);
-      }
-    };
-  }, [siteKey, language]);
-
-  return <div ref={container} className="margin-top--sm" />;
 }
 
 function Home() {

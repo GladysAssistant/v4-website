@@ -19,7 +19,7 @@ https://github.com/prohand/gladys-veolia instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Veolia","description":"Votre consommation d'eau depuis votre espace client Veolia (eau.veolia.fr).","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-veolia","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-veolia.png","type":"device","version":"1.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-23T17:29:39Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Veolia","description":"Votre consommation d'eau depuis votre espace client Veolia (eau.veolia.fr).","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-veolia","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-veolia.png","type":"device","version":"1.4.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-07T03:43:01Z"}} />
 
 Cette intégration lit votre consommation d'eau dans votre **espace client
 Veolia** (eau.veolia.fr) et l'affiche dans Gladys : un appareil « compteur
@@ -28,10 +28,11 @@ d'eau », un widget de tableau de bord, et des cartes pour vos scènes.
 ## Ce qu'il vous faut
 
 - Un compteur d'eau **télérelevé** : c'est lui qui envoie chaque jour votre
-  consommation à Veolia. Sans télérelève, Veolia n'a qu'un relevé par an.
+  consommation à Veolia. Sans télérelève, Veolia n'a que vos factures :
+  l'intégration affiche alors les volumes facturés (voir plus bas).
 - Un **espace client Veolia** avec e-mail et mot de passe. Vérifiez que vous
   voyez bien votre consommation par jour sur le site Veolia.
-- Gladys **5.1 ou plus récent**.
+- Gladys **5.3 ou plus récent**.
 
 Votre commune est-elle servie par Veolia ? Dans l'écran de configuration,
 utilisez le bouton **Vérifier ma commune** avec votre code postal. Par
@@ -42,7 +43,8 @@ exemple, Metz (57000) répond « Compatible, portail eau.veolia.fr ».
 1. Ouvrez l'onglet **Configuration** de l'intégration.
 2. Saisissez l'**e-mail** et le **mot de passe** de votre espace client.
 3. **Espace client** : gardez `eau.veolia.fr`, sauf si le bouton _Vérifier ma
-   commune_ vous indique un autre portail (Eau de Toulouse Métropole).
+   commune_ vous indique un autre portail (Eau de Toulouse Métropole, Vendée
+   Eau, C Mon O, Nantes Métropole…).
 4. Réglages facultatifs :
    - **Intervalle de rafraîchissement** (6 h par défaut) : Veolia ne publie
      qu'un relevé par jour, inutile de descendre très bas ;
@@ -73,6 +75,24 @@ durée d'au moins 2 ans pour les garder.
 | Consommation journalière | L     | Litres consommés chaque jour, rangés à la date du relevé |
 | Consommation du mois     | m³    | Total du mois en cours                                   |
 | Consommation de l'année  | m³    | Total de l'année civile en cours                         |
+
+### Compteur non télérelevé
+
+Si Veolia ne relève pas votre compteur à distance (type de relève
+`RADIORELEVE`, `MANUAL` ou non indiqué, comme sur C Mon O), il n'y a pas de
+relevé par jour. Le site Veolia n'affiche alors que la liste de vos factures,
+et l'intégration fait pareil :
+
+- l'appareil a une valeur de plus, **Consommation facturée** (m³) : le volume
+  de chaque facture, rangé à la date de la facture ;
+- l'**Index** prend l'index de chaque facture, à sa date ;
+- les consommations du jour, du mois et de l'année restent vides ;
+- le widget montre la dernière facture, l'index et un graphique des
+  dernières factures.
+
+Ces valeurs ne changent que quelques fois par an. Si l'appareil était déjà
+ajouté, ouvrez **Découverte** et cliquez sur **Mettre à jour** pour ajouter la
+nouvelle valeur.
 
 La carte de l'appareil porte le badge **Cloud** quand le portail
 Veolia répond, **Injoignable** quand il ne répond pas, avec un point orange
@@ -130,8 +150,14 @@ et m'envoyer : _Le mois dernier : \{\{…cubic_meters\}\} m³_ ».
 - **« WAF block »** dans le statut : Veolia (via AWS) bloque certaines
   adresses de serveurs (hébergeurs, VPN). Depuis une box internet classique,
   cela ne devrait pas arriver.
-- **Pas de consommation journalière** : votre compteur n'est sans doute pas
-  télérelevé. Vérifiez sur le site Veolia.
+- **Pas de consommation journalière, valeurs vides** : votre compteur n'est
+  sans doute pas télérelevé. **Tester la connexion** affiche le type de relève
+  donné par Veolia (`RADIORELEVE`, `MANUAL`…), les logs aussi à chaque
+  rafraîchissement. Sur le site Veolia : « Type de relève » de votre abonnement.
+  Seuls les compteurs télérelevés ont des relevés journaliers : les autres
+  affichent leurs factures (voir _Compteur non télérelevé_). Si le compteur
+  est télérelevé ou si le type est « non indiqué », le message donne aussi le
+  nombre de relevés envoyés par Veolia : copiez-le dans une demande GitHub.
 - **Commune « pas encore prise en charge »** : votre commune a son propre
   portail Veolia. Ouvrez une demande sur le dépôt GitHub en donnant l'adresse
   du portail.
@@ -164,11 +190,11 @@ Voici les paramètres demandés par Veolia dans son écran de configuration dans
 ## Comment installer Veolia dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Veolia apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-veolia:1.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-veolia:1.4.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/prohand/gladys-veolia](https://github.com/prohand/gladys-veolia).
 
-Veolia nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+Veolia nécessite Gladys `>=5.3.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
 
 Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
 

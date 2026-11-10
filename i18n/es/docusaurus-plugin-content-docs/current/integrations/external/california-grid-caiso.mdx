@@ -1,0 +1,250 @@
+---
+title: "Integración domótica California grid (CAISO), gratuita y de código abierto"
+sidebar_label: "California grid (CAISO)"
+description: "Unofficial. California grid (CAISO): wholesale prices, demand, renewables, CO2, Flex Alert. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-caiso.png"
+keywords:
+  - "california grid (caiso)"
+  - "domótica california grid (caiso)"
+  - "gladys california grid (caiso)"
+  - "california grid (caiso) gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-caiso instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"California grid (CAISO)","description":"Unofficial. California grid (CAISO): wholesale prices, demand, renewables, CO2, Flex Alert.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-caiso","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-caiso.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-05T00:45:14Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+Unofficial integration. It reads the public files of the California
+Independent System Operator (CAISO), the operator of most of the California
+grid, without account nor key, and publishes in Gladys:
+
+- **the grid**: demand and net demand (MW), renewables share (%), carbon
+  intensity (g/kWh), CO2 emissions (t/h), the grid conditions published by
+  the ISO (Normal, Flex Alert, EEA...) and an alert level from 0 to 6;
+- **the real-time wholesale prices** of the three trading hubs NP15 (Northern
+  California), SP15 (Southern California) and ZP26 (Central California), in
+  $/MWh, 5-minute intervals.
+
+**Wholesale prices are not your retail rate.** They are the prices of the
+market where the ISO balances the grid (locational marginal price, LMP). Your
+utility bills you a retail rate (PG&E, SCE, SDG&E...) that does not follow
+them minute by minute. Use them as a signal (cheap, often negative, when solar
+floods the grid), not as a bill.
+
+Tried against the real CAISO files (Today's Outlook and OASIS) on 2026-10-30,
+and in the Gladys sandbox; never tested with a real Gladys at home, and never
+seen during a real Flex Alert or EEA (see "Grid conditions").
+
+## Setup
+
+1. Install the integration from the store, open its page.
+2. Pick the language of the texts, the read interval (5 to 60 minutes, 5 by
+   default: the ISO updates both sources every 5 minutes) and, if you want the
+   scene trigger, the low price threshold.
+3. In the **Discovery** tab, create the devices you want: the grid, and one or
+   more hubs. **A source is only read while a device needs it**: the grid
+   needs Today's Outlook, a hub needs OASIS. Nothing is read before.
+
+## Devices
+
+### California grid (CAISO)
+
+| Feature                        | Unit          | From                                         |
+| ------------------------------ | ------------- | -------------------------------------------- |
+| Demand                         | MW (in name)  | `CurrentSystemDemand`, with its own time     |
+| Net demand (minus wind, solar) | MW (in name)  | `CurrentNetDemand`, with its own time        |
+| Renewables share               | %             | `renewablesPercent` (above 100 %: 100)       |
+| Carbon intensity               | g/kWh         | `currentCo2intensity` (t/MWh × 1000, exact)  |
+| CO2 emissions                  | t/h (in name) | `currentCo2`                                 |
+| Alert level                    | 0 to 6        | the grid conditions, see below               |
+| Grid conditions                | text          | the words of the ISO, as published           |
+| Data status                    | text          | time of the reading, or why nothing is shown |
+
+The renewables share is the one the ISO publishes: renewables (solar, wind,
+geothermal, biomass, biogas, small hydro; large hydro excluded, as in
+California's rules) over the demand. When renewables exceed the demand (the
+rest exported or stored), all the electricity consumed is renewable: 100.
+The carbon intensity and the emissions are the ISO's CO2 figures (imports
+included), not CO2-equivalent.
+
+The demand values are not `energy` sensors: a whole grid is not a home meter,
+and they never enter the energy dashboards of Gladys.
+
+### CAISO wholesale price NP15 / SP15 / ZP26
+
+| Feature                   | Unit  | From                                       |
+| ------------------------- | ----- | ------------------------------------------ |
+| Real-time wholesale price | $/MWh | OASIS `PRC_INTVL_LMP`, market RTM, hub LMP |
+| Data status               | text  | the 5-minute interval shown, or why not    |
+
+One OASIS query reads the three hubs at once (the ISO allows one request
+every 5 seconds; the integration never sends two less than the interval
+apart). The answer always holds the interval running, and at times the next
+one when the ISO has already settled it: such a next interval is published at
+its start, without a request. A price is shown for 10 minutes after its
+interval ends: **with a read interval of 30 to 60 minutes, the price is
+"stale" most of the time; keep 5 minutes (the default) for the prices.**
+
+## Freshness: nothing old shown as new, never 0 for an unknown
+
+- A value is published **once per reading of the source**, only while it is
+  fresh: a reading of Today's Outlook at most **20 minutes** old (its own
+  time, turned into UTC with the Last-Modified of the file), a price whose
+  interval ended at most **10 minutes** ago (OASIS times are UTC). The age is
+  counted from the server time plus the `Age` a cache (CloudFront) adds: a
+  copy kept for hours by a cache is stale, never fresh.
+- A missing, unreadable, out of range or stale value is **never published**,
+  and never as 0: the "Data status" text and the integration status say so
+  ("Stale, nothing published: last reading of 10/29 22:55 PDT",
+  "not published: demand"). The texts are updated when a reading turns stale
+  even without a new read.
+- After a restart, nothing is published before a new reading (a reading
+  already published before the restart is never sent again).
+- Times are Pacific times (the ISO's), turned into UTC exactly across the
+  changes of time, shown with PDT or PST (the hour repeated in November reads
+  twice, told apart); in that hour, a time without the Last-Modified of its
+  file is unreadable (never a guess).
+
+## Grid conditions and alert level
+
+The grid conditions are the `gridstatus` list of `stats.txt`. **The ISO's
+Today's Outlook page no longer shows this field** (since November 2023 it
+shows the notices of another service, not documented as an open feed): it is
+still in the file, but it **may lag behind a notice, or miss it**. The
+reference for the emergency notices is the ISO's page
+[https://www.caiso.com/emergency-notifications](https://www.caiso.com/emergency-notifications). The status says it.
+
+Each entry is matched whole (case and spaces ignored, "EEA 1" or "EEA1"; a
+comment after a dash, as in "EEA 3 - Load shed", is ignored, unless it starts
+with a word saying the notice ended: "- cancelled", "- expired"...) against the
+seven notices of the ISO and "Normal":
+
+| Level | Conditions                                                  |
+| ----- | ----------------------------------------------------------- |
+| 0     | Normal                                                      |
+| 1     | Restricted Maintenance Operations (RMO)                     |
+| 2     | Flex Alert                                                  |
+| 3     | EEA Watch (Energy Emergency Alert Watch)                    |
+| 4-6   | EEA 1, EEA 2, EEA 3 (Energy Emergency Alert 1, 2, 3; EEA1…) |
+| none  | Transmission Emergency (alone in the list: 0)               |
+
+The level is the **highest entry recognized**: on 6 September 2022 the list
+"EEA 3, EEA 2, EEA 1, EEA Watch, Flex Alert, Restricted Maintenance
+Operations, Transmission Emergency" gives 6. "Transmission Emergency" is a
+regional notice: it is shown in "Grid conditions" and never raises the level;
+alone in the list (nothing but Transmission Emergency), the level is 0, so
+that the level does not stay at an old EEA. An entry not recognized (a new
+wording, or one saying the notice ended, as "EEA 3 cancelled") is left out of
+the level and named in the status: **the level published is then a minimum,
+and may be below the real one** (an unrecognized entry could be a higher
+notice). Level 0 needs every entry recognized: "Transmission Emergency" or
+"Normal" next to an entry not recognized ("EEA-3, EEA-2, Transmission
+Emergency") gives an unknown level, never 0: an entry not recognized never
+brings the level back to normal, nor fires "back to normal". When the level is
+unknown (no entry carrying a level, or 0 next to an entry not recognized), it
+is not published and "Grid conditions changed" does not fire: Gladys keeps
+showing the last level published, the "Grid conditions" text and the status
+say what the ISO wrote, and the status names the entries not recognized.
+
+## Scene triggers
+
+- **Low wholesale price (CAISO)**: a hub price went below the "Low price
+  threshold" of the configuration (`phase` = `started`), or came back at or
+  above it (`ended`). Filters: the hub, the phase. Variables: hub, phase,
+  price, threshold. Only for a hub whose device is created.
+- **Grid conditions changed (CAISO)**: the alert level changed (`level`,
+  `previous_level`, `conditions` = the words of the ISO). Filter: the new
+  level. Only while the grid device is created.
+
+Each fires once per change, on a fresh reading only. The first value seen
+after the installation (or after a new threshold) is a reference, never an
+event; the last state is kept in /data, so a restart never fires a trigger
+again. An unknown level, or a stale reading, is never a change. An event that
+Gladys does not accept is sent again with the next reading if the change still
+holds.
+
+For a condition on the value itself ("price below X while..."), the price
+feature works with the usual device triggers of Gladys.
+
+## Pace, errors and status
+
+- Each source at its own pace: never two requests less than the interval
+  apart (kept across restarts), one request at a time, an honest User-Agent,
+  the ETag and Last-Modified of Today's Outlook sent back (a 304 keeps the
+  reading and its age). The Discovery tab, a device updated, a reconnection to
+  Gladys send no request; saving the form sends one only if a shorter interval
+  makes a source due; a device created sends one only when its source was not
+  asked within the interval.
+- HTTP 429 or 5xx: the source pauses 5 minutes, doubled at each new refusal,
+  from 60 seconds to 6 hours, `Retry-After` honoured; kept across restarts; the
+  other source goes on. It is read again right when the pause ends.
+- The status is "connected" only when a source answered and holds fresh data
+  (right after a restart, before the first read is due: when a source read
+  fine within the interval before the restart).
+  It lists, in English and French: the source unreachable, paused (also right
+  after a restart, with its cause), refused, stale, values not published,
+  conditions not recognized (quoted), OASIS "no data" or an OASIS error code,
+  /data not readable, not writable or not answering, where the alert level
+  comes from, and "prices are wholesale market prices, not your retail rate".
+- `getConfig` failing at a connection to Gladys: tried again after 5 s, doubled
+  up to 5 minutes, without end; the status says so.
+- /data (the pace, the pauses, what was published, the trigger states): each
+  wait is bounded (5 s), one save at a time (a save that hangs is said, and
+  the next ones fold into one instead of piling up); a file that cannot be
+  read is set aside, never overwritten, and said (and if it cannot even be set
+  aside, nothing is written to /data). **While /data cannot be written** (said in the
+  status), all of this lives in memory only: a restart then reads at once,
+  may publish the last reading again and may fire a trigger again; the
+  promises about restarts above hold only while /data can be written.
+
+## Sources and limits
+
+- Today's Outlook: `https://www.caiso.com/outlook/current/stats.txt`.
+- OASIS: `https://oasis.caiso.com/oasisapi/SingleZip` (public interface,
+  documented by the ISO, no key).
+- Data © California ISO. This integration is not affiliated with nor endorsed
+  by the California ISO.
+- Read-only: the integration only sends GET requests.
+
+## Parámetros de configuración
+
+Estos son los parámetros que California grid (CAISO) te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| California grid (CAISO) | `section` | No | Reads the public files of the California ISO, without account nor key: Today's Outlook (demand, renewables share, CO2, grid conditions such as Flex Alert) and OASIS (real-time wholesale prices of the NP15, SP15 and ZP26 hubs). Create the devices you want from the Discovery tab: a source is only read while a device needs it. Wholesale prices are not your retail electricity rate. |
+| Language of the device texts | `select` | No | Language of the device names and status texts. |
+| Read interval (minutes) | `number` | No | Time between two reads of each source, 5 to 60 minutes. The ISO updates both every 5 minutes. |
+| Low price threshold ($/MWh) | `number` | No | The "Low wholesale price" scene trigger fires when a hub price goes below this value, and again when it comes back at or above it. 0 = negative prices. |
+
+## Cómo instalar California grid (CAISO) en Gladys
+
+1. En Gladys, abre **Integraciones**: California grid (CAISO) aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-caiso:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-caiso](https://github.com/LM1LC3N7/gladys-caiso).
+
+California grid (CAISO) requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+California grid (CAISO) es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-caiso) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-caiso/blob/HEAD/docs/en.md)

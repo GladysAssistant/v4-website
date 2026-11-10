@@ -1,0 +1,166 @@
+---
+title: "Integración domótica Akuvox, gratuita y de código abierto"
+sidebar_label: "Akuvox"
+description: "Akuvox door phones and access controls, locally: relays, door and call events. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-akuvox.png"
+keywords:
+  - "akuvox"
+  - "domótica akuvox"
+  - "gladys akuvox"
+  - "akuvox gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-akuvox instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Akuvox","description":"Akuvox door phones and access controls, locally: relays, door and call events.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-akuvox","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-akuvox.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-06T05:42:10Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+**Unofficial integration, not affiliated with Akuvox**, for the Akuvox door phones and access controllers
+(E, R, X and A series: E12, E18, R20, R29, X915, X916, A05…) on your local network, through their **HTTP
+API**, without the Akuvox cloud. **Never tested with a real device**: built from the pylocal-akuvox 1.7.0
+library and the "Local Akuvox" Home Assistant integration 1.0.5. Your feedback is welcome.
+
+## What it does
+
+- **State of the door relays** (relays A to D): "locked" at rest, "unlocked" while the relay is
+  released. Read only.
+- **An "Open relay" button** per relay, **off by default**: check "Allow opening the doors from Gladys".
+  It is a push button, never a switch: a "turn everything off" or "lock everything" never opens a door.
+- **Scene triggers**:
+  - "Akuvox door opened": a granted access in the door log (code, card, face, app…), with the relay, the
+    method and the user name;
+  - "Akuvox access denied": a refused access (wrong code, unknown card…);
+  - "Akuvox call": a new call in the call log (dialed, received, missed), with the name of the other
+    party. A visitor ringing makes a **dialed** call on a door phone.
+
+The PIN or card number of the log is never read nor published.
+
+## Prepare the device
+
+In the web page of each device (its IP address in a browser):
+
+1. **Settings → HTTP API**: enable the API, choose **Digest** (recommended) or Basic authentication, and
+   create a user and a password. "None" or an allowlist of addresses works too: then add the address of
+   Gladys to the list.
+2. Give the device a **fixed IP address** in your router.
+3. The relays must be in **automatic** mode (close after a delay), the default. A relay in manual
+   (bistable) mode, or whose mode cannot be read, is never opened by the integration.
+
+## Configuration
+
+- **Addresses of the devices**: separated by commas, 8 at most, with `:port` if the web page is not on
+  port 80. The same user and password serve for all.
+- **Authentication**: as on the devices. With **Digest**, the password never travels on the network; with
+  **Basic**, it travels in clear on your local network at every request. If a device asks for Basic while
+  Digest is chosen, nothing is sent and the status says so.
+- **Reading interval**: 5 to 300 s (10 s by default). The devices push nothing: an opening or a call shows
+  within this time.
+- **Opening duration**: 1 to 30 s (5 s by default). The relay closes by itself after it, whatever happens
+  to Gladys: the device closes it.
+
+The **Test the connection** button reads the identity of each device (at most once every 5 s per device).
+
+## Safety of the opening
+
+- Off by default; the option is read again right before sending: unchecked while an opening waits for the
+  device, nothing leaves.
+- Right before each opening, the integration reads the identity of the device again (its MAC address): if
+  another device answers at this address, nothing is sent. It also reads the relay configuration again:
+  only a relay in automatic mode, of a known type, is opened.
+- An opening is **never sent again** by the integration, never retried, never replayed after a restart.
+- An opening goes before the readings: a slow reading is dropped, never waited for.
+- The result is in the status: "opened, confirmed" only when the relay, at rest before, is read released
+  after it; otherwise "accepted by the device, not read back yet", "sent, no answer (maybe opened)",
+  "refused by the device" or "nothing sent" with the reason.
+- There is no closing command: the relay closes by itself (automatic mode of the API).
+
+Refusals of an opening before anything is sent: option unchecked, credentials refused, device unknown or
+not read yet, another device at the address, identity unreadable, access refused by the device (403),
+Basic asked while Digest is chosen, device unreachable, relay configuration unreadable or not allowed,
+relay mode unreadable, relay in manual mode, relay not on the device, too many commands waiting (4 per device), the
+3.3 s deadline passed before sending, integration stopped or reconfigured.
+
+## Refused credentials
+
+A device that refuses the user or the password is not asked again (some lock their API after a few
+failures): the status says so, and it holds across a restart. The integration tries again as soon as you
+change the credentials, save the configuration or click "Test the connection" (one try each time). A 403
+(address not allowed) is not a credentials refusal: it is tried again after 1 minute, then 2, 4… up to one
+hour. A 401 or 403 on a log or on the configuration only does not count either: that reading is set aside
+(same spacing), the status says so, and the relays are still read.
+
+## Events: what to know
+
+- A log entry becomes an event only if it appears **between two close readings**: at start, after an
+  outage of the device longer than 2 minutes (or 3 intervals), or when the log was cleared, the entries
+  already there are not published. The time of the log is the device's own, which the integration cannot
+  compare with its clock: it publishes nothing stale.
+- The entry an opening from Gladys leaves in the log is not a "door opened" event (a scene opening the
+  door on that event would loop), whatever the interval: the mark lives until two readings of the log after
+  the opening (30 minutes at most). An entry with a code, a card, a face… is never taken for it: someone at
+  the door is always published.
+- At most 5 new entries per log and per reading (the newest), 200 events per minute.
+- The log read is the first page the device returns: if your model returns the oldest first, say so in the
+  forum topic.
+
+## Known limits
+
+- A device without the configuration API (`/api/config/get`), or whose API user cannot read it, never
+  opens: the mode of its relays cannot be checked. The status and the answer to the command say so. The
+  same goes if the device takes more than 1.5 s to send it.
+- Not supported yet: HTTPS, indoor monitors (IT83, opening through `/fcgi/do`), relays in manual mode,
+  events pushed by the device (Action URL).
+- Personal data: the user name of an access goes to your Gladys scenes, nowhere else, never into the
+  integration logs.
+
+## Help
+
+Gladys forum (topic of the integration) or the GitHub issues of `LM1LC3N7/gladys-akuvox`.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Akuvox te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Your Akuvox devices | `section` | No | For Akuvox door phones and access controllers (E, R, X and A series) on your network, through their local HTTP API, without the Akuvox cloud: the state of the door relays, an opening button per relay (off by default), and scene triggers for the door log (opened, access denied) and the call log. Enable the HTTP API in the web page of each device first (see the guide). Never tested with a real device. Unofficial, not affiliated with Akuvox. |
+| Addresses of the devices | `string` | Sí | The IP address of each device, separated by commas (8 at most), with ":port" if its web page is not on port 80. Give each device a fixed address in your router. |
+| Authentication of the HTTP API | `select` | No | As set in the HTTP API page of the devices. Digest never sends the password over the network; Basic sends it in clear on your local network at every request; None (or an allowlist of addresses on the device) sends nothing. |
+| User of the HTTP API | `string` | No | The same on every device listed above. |
+| Password of the HTTP API | `secret` | No | Kept by Gladys in its database, never shown again, sent only to the devices listed above (with Digest, only a proof of it travels). A device that refuses it is not asked again until you change it or click "Test the connection". |
+| Reading interval (seconds) | `number` | No | How often the relays and the logs are read (5 to 300). The devices push nothing: a door opened or a call shows within this time. |
+| Opening the doors | `section` | No | Anyone who can control the devices in Gladys (dashboard, scenes, the Gladys app) can open the doors once this is allowed: allow it only if your Gladys is well protected. An opening is a push button, never a switch: a "turn everything off" never opens a door. It is never sent again by the integration, nor after a restart. Every opening is written in the integration logs; the password never is. |
+| Allow opening the doors from Gladys | `boolean` | No | Once checked, every Gladys user, every scene and the Gladys mobile app can release the door relays. |
+| Opening duration (seconds) | `number` | No | The relay closes by itself after this time (1 to 30), whatever happens to Gladys. |
+| Language of the names | `select` | No | Used for the names of the devices and features added from now on. |
+
+## Cómo instalar Akuvox en Gladys
+
+1. En Gladys, abre **Integraciones**: Akuvox aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-akuvox:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-akuvox](https://github.com/LM1LC3N7/gladys-akuvox).
+
+Akuvox requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Akuvox es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-akuvox) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-akuvox/blob/HEAD/docs/en.md)

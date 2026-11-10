@@ -57,20 +57,22 @@ Si Zigbee2Mqtt ne démarre pas chez vous, je vous recommande de lire la FAQ sur 
 
 Connectez votre dongle USB Zigbee à votre machine faisant tourner Gladys (Raspberry Pi, NAS).
 
-Dans Gladys, Rendez-vous dans `Intégrations / Zigbee2Mqtt`.
+Dans Gladys, rendez-vous dans `Intégrations / Zigbee2Mqtt`, puis cliquez dans le menu sur `Configuration`.
 
-En cliquant dans le menu sur `Paramètres`, Gladys va automatiquement scanner les différents ports USB pour vous proposer une liste déroulante. Indiquez dans le paramètrage le port USB à utiliser pour permettre à Gladys de communqiuer en Zigbee.
+Gladys liste les ports USB de la machine, avec le nom de l'appareil branché sur chacun, par exemple `ITead Sonoff Zigbee 3.0 USB Dongle Plus (/dev/ttyUSB0)`. Les autres ports série, ceux de la machine elle-même et des cartes HAT/GPIO (comme la RaspBee), sont masqués : cliquez sur **Afficher les autres ports série (carte HAT/GPIO, ports de la machine)** pour les voir.
 
 ![Paramètrage dongle USB](../../../../../static/img/docs/fr/configuration/zigbee2mqtt/z2m_parametrage_dongle_usb_fr.png)
 
-**13 Mai 2023:** Il est maintenant possible de sélectionner directement dans Gladys le modèle de dongle Zigbee que vous utilisez :
+Gladys reconnaît les dongles les plus courants (SONOFF ZBDongle-P et ZBDongle-E, Home Assistant Connect ZBT-1 et ZBT-2, ConBee II et III, SMLIGHT SLZB-06M et SLZB-07…). Si votre dongle est reconnu, son port et son modèle sont déjà sélectionnés : vous n'avez rien à choisir.
+
+Sinon, sélectionnez le port, puis le modèle de votre dongle dans la liste :
 
 ![Modèle Zigbee](../../../../../static/img/docs/fr/configuration/zigbee2mqtt/zigbee-model.jpg)
 
-Cela permet de charger directement la configuration Zigbee2mqtt correspondante.
+Le modèle est obligatoire : il permet de charger la configuration Zigbee2mqtt correspondante.
 
 :::warning
-Si vous avez un dongle basé sur [EmberZNet](https://www.zigbee2mqtt.io/guide/adapters/emberznet.html) (comme par exemple le Sonoff Zigbee 3.0 ZBDongle-E), il est recommandé de [mettre à jour](https://www.zigbee2mqtt.io/guide/adapters/emberznet.html#firmware-flashing) le firmware de votre dongle. Dans le cas contraire, vous devez choisir l'option `(legacy ezsp)` dans la liste.
+Si vous avez un dongle basé sur [EmberZNet](https://www.zigbee2mqtt.io/guide/adapters/emberznet.html) (comme par exemple le Sonoff Zigbee 3.0 ZBDongle-E), il est recommandé de [mettre à jour](https://www.zigbee2mqtt.io/guide/adapters/emberznet.html#firmware-flashing) le firmware de votre dongle. Dans le cas contraire, vous devez choisir l'option `(legacy ezsp)` dans la liste, même si Gladys a sélectionné le modèle de votre dongle pour vous.
 :::
 
 ## Utiliser un coordinateur réseau
@@ -92,6 +94,14 @@ Une fois votre dongle configuré, Gladys a besoin d'installer deux containers (M
 Rendez-vous dans la partie `Configuration` et cliquez sur le bouton **Activer Zigbee2mqtt**. Après quelques instants (le temps dépend de votre modèle de Raspberry Pi et de votre bande passante), vous devriez visualiser tous les éléments démarrés et les liens entre chacun au vert.
 
 ![Etat des services Zigbee2Mqtt](../../../../../static/img/docs/fr/configuration/zigbee2mqtt/z2m_etat_services_fr.png)
+
+Gladys n'affiche Zigbee2MQTT au vert qu'une fois qu'il a réellement démarré et répondu à Gladys. En attendant, un message sous le schéma vous dit où il en est :
+
+- **Zigbee2MQTT démarre** : il est affiché « Redémarrage ». Patientez, il passera au vert dès qu'il répondra à Gladys.
+- **Zigbee2MQTT n'arrive pas à démarrer** : Gladys affiche l'erreur rencontrée au-dessus du schéma. Reportez-vous à [Résoudre les erreurs Zigbee2MQTT les plus fréquentes](#résoudre-les-erreurs-zigbee2mqtt-les-plus-fréquentes).
+- **Zigbee2MQTT ne répond pas** : Gladys n'obtient pas de réponse ; il est peut-être arrêté, ou plante au démarrage. Reportez-vous à la même section.
+
+Tant que Zigbee2MQTT ne répond pas, les pages `Découverte Zigbee` et `Appareils` affichent le bandeau « Zigbee2mqtt ne répond pas » et l'association d'appareils est désactivée. Le bandeau disparaît de lui-même dès que Zigbee2MQTT est prêt.
 
 ## Autorisez l'association d'appareils
 
@@ -131,7 +141,7 @@ La grande majorité des problèmes Zigbee2MQTT vient de trois causes : le mauvai
 
 Zigbee2MQTT n'a pas réussi à dialoguer avec votre clé. Vérifiez, dans cet ordre :
 
-1. Le **port USB** sélectionné dans `Intégrations / Zigbee2Mqtt / Paramètres` est bien celui de votre clé. Si vous avez changé la clé de port, ou redémarré avec un disque branché, le nom du port a pu changer.
+1. Le **port USB** sélectionné dans `Intégrations / Zigbee2Mqtt / Configuration` est bien celui de votre clé. Si vous avez changé la clé de port, ou redémarré avec un disque branché, le nom du port a pu changer.
 2. Le **modèle de clé** sélectionné dans les paramètres correspond bien à votre matériel. Une clé Silicon Labs configurée comme une Texas Instruments (ou l'inverse) échoue ici.
 3. Rien d'autre n'utilise la clé : une seule instance de Zigbee2MQTT peut prendre la main sur le coordinateur.
 4. La clé est suffisamment alimentée. Débranchez-la, rebranchez-la via un **hub USB alimenté** ou une courte rallonge USB, et redémarrez l'intégration.
