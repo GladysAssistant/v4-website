@@ -5,6 +5,10 @@ description: "Set up a Gladys Assistant development environment on Windows with 
 sidebar_label: Windows
 ---
 
+:::info[Looking to run Gladys at home?]
+This guide is for contributing to the code of Gladys. To run Gladys for your smart home, we do not recommend Windows: see [Gladys Assistant on Windows](/docs/installation/windows).
+:::
+
 You'll find below the instructions on how to setup a development environment for Gladys 4.
 
 ## System prerequisites

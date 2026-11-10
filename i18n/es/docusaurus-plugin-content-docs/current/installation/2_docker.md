@@ -145,7 +145,7 @@ El comando anterior usa `TZ=Europe/Paris`. Sustitúyelo por tu propio valor (por
 
 ### ¿En qué sistemas puedo ejecutar Gladys con Docker?
 
-La instalación con Docker funciona en cualquier sistema que ejecute Docker: un mini-PC, un NAS (Synology, Unraid), un servidor Linux, una Raspberry Pi o una máquina virtual. El mismo comando único inicia Gladys en todos ellos. En un servidor Proxmox, sigue la [guía de Proxmox](/es/docs/installation/proxmox).
+La instalación con Docker funciona en cualquier sistema Linux que ejecute Docker: un mini-PC, un NAS (Synology, Unraid), un servidor Linux, una Raspberry Pi o una máquina virtual. El mismo comando único inicia Gladys en todos ellos. En un servidor Proxmox, sigue la [guía de Proxmox](/es/docs/installation/proxmox). Docker Desktop en Windows o macOS no está soportado: Gladys se ejecuta allí en una máquina virtual oculta, sin acceso a tus dongles USB ni a tu red local (consulta [Gladys Assistant en Windows](/es/docs/installation/windows)).
 
 ### ¿Cómo actualizo Gladys cuando se ejecuta en Docker?
 
@@ -176,7 +176,7 @@ Sí, y los pasos son los mismos en ambos: instala Docker con el script oficial y
         name: "¿En qué sistemas puedo ejecutar Gladys con Docker?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "La instalación con Docker funciona en cualquier sistema que ejecute Docker: un mini-PC, un NAS como Synology o Unraid, un servidor Linux, una Raspberry Pi o una máquina virtual. El mismo comando único inicia Gladys en todos ellos. En un servidor Proxmox, sigue la guía de Proxmox.",
+          text: "La instalación con Docker funciona en cualquier sistema Linux que ejecute Docker: un mini-PC, un NAS como Synology o Unraid, un servidor Linux, una Raspberry Pi o una máquina virtual. El mismo comando único inicia Gladys en todos ellos. En un servidor Proxmox, sigue la guía de Proxmox. Docker Desktop en Windows o macOS no está soportado: Gladys se ejecuta allí en una máquina virtual oculta, sin acceso a tus dongles USB ni a tu red local.",
         },
       },
       {

@@ -145,7 +145,7 @@ Dans ce cas, saisissez plutôt l'IP de votre machine dans votre navigateur. Pour
 
 ### Sur quels systèmes puis-je faire tourner Gladys avec Docker ?
 
-L'installation avec Docker fonctionne sur tout système qui fait tourner Docker : un mini-PC, un NAS (Synology, Unraid), un serveur Linux, un Raspberry Pi ou une machine virtuelle. La même commande lance Gladys sur tous ces systèmes. Sur un serveur Proxmox, suivez le [guide Proxmox](/fr/docs/installation/proxmox).
+L'installation avec Docker fonctionne sur tout système Linux qui fait tourner Docker : un mini-PC, un NAS (Synology, Unraid), un serveur Linux, un Raspberry Pi ou une machine virtuelle. La même commande lance Gladys sur tous ces systèmes. Sur un serveur Proxmox, suivez le [guide Proxmox](/fr/docs/installation/proxmox). Docker Desktop sur Windows ou macOS n'est pas pris en charge : Gladys y tourne dans une machine virtuelle cachée, sans accès à vos dongles USB ni à votre réseau local (voir [Gladys Assistant sur Windows](/fr/docs/installation/windows)).
 
 ### Puis-je installer Gladys sur Debian ou Ubuntu ?
 
@@ -176,7 +176,7 @@ Oui. Tant que votre NAS peut faire tourner des conteneurs Docker, vous pouvez y 
         name: "Sur quels systèmes puis-je faire tourner Gladys avec Docker ?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "L'installation avec Docker fonctionne sur tout système qui fait tourner Docker : un mini-PC, un NAS (Synology, Unraid), un serveur Linux, un Raspberry Pi ou une machine virtuelle. La même commande lance Gladys sur tous ces systèmes. Sur un serveur Proxmox, suivez le guide Proxmox.",
+          text: "L'installation avec Docker fonctionne sur tout système Linux qui fait tourner Docker : un mini-PC, un NAS (Synology, Unraid), un serveur Linux, un Raspberry Pi ou une machine virtuelle. La même commande lance Gladys sur tous ces systèmes. Sur un serveur Proxmox, suivez le guide Proxmox. Docker Desktop sur Windows ou macOS n'est pas pris en charge : Gladys y tourne dans une machine virtuelle cachée, sans accès à vos dongles USB ni à votre réseau local.",
         },
       },
       {

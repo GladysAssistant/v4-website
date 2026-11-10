@@ -5,6 +5,10 @@ description: "Installez un environnement de développement Gladys Assistant sur 
 sidebar_label: Windows
 ---
 
+:::info[Vous voulez faire tourner Gladys chez vous ?]
+Ce guide sert à contribuer au code de Gladys. Pour faire tourner Gladys pour votre maison connectée, nous déconseillons Windows : voir [Gladys Assistant sur Windows](/fr/docs/installation/windows).
+:::
+
 Vous trouverez ici les instructions pour mettre en place un environnement de développemment Gladys 4 sur Windows.
 
 ## Pré-requis systèmes

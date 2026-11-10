@@ -5,6 +5,10 @@ description: "Richte eine Entwicklungsumgebung für Gladys Assistant unter Windo
 sidebar_label: Windows
 ---
 
+:::info[Du willst Gladys zu Hause betreiben?]
+Diese Anleitung ist dafür gedacht, am Code von Gladys mitzuarbeiten. Um Gladys für dein Smart Home zu betreiben, raten wir von Windows ab: Siehe [Gladys Assistant unter Windows](/de/docs/installation/windows).
+:::
+
 Hier findest du die Anleitung, wie du eine Entwicklungsumgebung für Gladys 4 einrichtest.
 
 ## Systemvoraussetzungen
