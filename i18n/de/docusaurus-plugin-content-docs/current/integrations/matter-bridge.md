@@ -5,10 +5,11 @@ description: "Mach Gladys Assistant zur Matter-Bridge: Kopple sie mit Apple Home
 sidebar_label: Matter-Bridge
 ---
 
-Die Integration **Matter-Bridge** macht Gladys zu einer Matter-Bridge. Nach dem Koppeln erscheinen deine Gladys-Geräte in der Matter-App deiner Wahl (Apple Home, Google Home, Amazon Alexa, SmartThings, Home Assistant...), **unabhängig von ihrem Protokoll**: Zigbee, Z-Wave, WLAN, MQTT... Die Matter-Verbindung zwischen Gladys und deinen Apps bleibt in deinem lokalen Netzwerk, und die Bridge braucht kein Gladys-Plus-Abo.
+Die Integration **Matter-Bridge** macht Gladys zu einer Matter-Bridge. Nach dem Koppeln erscheinen deine Gladys-Geräte in der Matter-App deiner Wahl (Apple Home, Google Home, Amazon Alexa, SmartThings, Home Assistant...), **unabhängig von ihrem Protokoll**: Zigbee, Z-Wave, WLAN, MQTT... Die Matter-Verbindung zwischen Gladys und deinem **Matter-Controller** (Steuerzentrale, Nest, Echo...) bleibt in deinem lokalen Netzwerk, und die Bridge braucht kein Gladys-Plus-Abo.
 
-Zwei Dinge solltest du trotzdem wissen:
+Drei Dinge solltest du trotzdem wissen:
 
+- Die Steuerung über die App ist nicht immer lokal: Unterwegs, und bei manchen Ökosystemen (zum Beispiel Google Home) sogar zu Hause, läuft dein Befehl über die Cloud des App-Anbieters, bevor er deinen Controller erreicht, der dann lokal mit Gladys spricht.
 - Deine Matter-App braucht eventuell ein eigenes Konto: eine Apple-ID für Apple Home, ein Google-Konto für Google Home, ein Amazon-Konto für Alexa, ein Samsung-Konto für SmartThings.
 - Die Bridge macht ein Gerät nicht lokal: Steuert Gladys ein Gerät über einen Cloud-Dienst (zum Beispiel über eine Cloud-Integration), hängt dieses Gerät weiterhin von dieser Cloud ab, wenn du es über eine Matter-App steuerst.
 
@@ -26,8 +27,8 @@ Drei Integrationen haben ähnliche Namen, arbeiten aber in unterschiedliche Rich
 - **IPv6 in deinem lokalen Netzwerk.** Matter basiert auf IPv6. Die Seite der Integration zeigt dir, ob auf dem Rechner, auf dem Gladys läuft, eine IPv6-Schnittstelle gefunden wurde.
 - **Gladys muss das Host-Netzwerk nutzen.** Die Standardinstallation von Gladys (`network_mode: host` in Docker) tut das bereits. Die Bridge lauscht auf dem UDP-Port **5541**, getrennt vom Port 5540 der Integration [Matter](/de/docs/integrations/matter/): Beide können gleichzeitig laufen.
 - **Ein Administratorkonto.** Die Integration ist nur für Gladys-Administratoren sichtbar.
-- **Ein Matter-Controller im selben Netzwerk.** Die App allein reicht nicht immer: Jedes Ökosystem braucht ein Gerät, das als Matter-Controller dient.
-  - Apple Home: eine Steuerzentrale (Apple TV oder HomePod).
+- **Ein Matter-Controller im selben Netzwerk.** Die App allein reicht nicht immer: Die meisten Ökosysteme brauchen ein Gerät, das als Matter-Controller dient.
+  - Apple Home: Ein iPhone oder iPad (iOS 18 oder neuer) kann die Bridge zu Hause ohne Steuerzentrale hinzufügen und steuern. Eine Steuerzentrale (Apple TV oder HomePod) wird empfohlen: Sie ist nötig, um deine Geräte von unterwegs zu steuern und Automationen auszuführen.
   - Google Home: ein Matter-fähiges Google-Gerät (Nest Hub, Nest-Lautsprecher, Google TV Streamer...).
   - Amazon Alexa: ein Matter-fähiger Echo.
   - SmartThings: ein SmartThings-Hub oder ein Samsung-Gerät, das als Hub dient.
