@@ -17,7 +17,7 @@ Du kannst sie mit einem Klick unter **Einstellungen > System > Logs herunterlade
 
 ### Etwas funktioniert nicht, wo fange ich an?
 
-Siehe die [Seite zur Fehlerbehebung](/de/docs/installation/troubleshooting): Sie behandelt die häufigsten Probleme, vom vergessenen Passwort über ein fehlgeschlagenes Update bis zum nicht erkannten Zigbee-Dongle.
+Siehe die [Seite zur Fehlerbehebung](/de/docs/installation/troubleshooting): Sie behandelt die häufigsten Probleme, vom Mini-PC, der nicht vom USB-Stick startet, über ein vergessenes Passwort oder ein fehlgeschlagenes Update bis zum nicht erkannten Zigbee-Dongle.
 
 ### Wer nutzt Gladys Assistant 4?
 

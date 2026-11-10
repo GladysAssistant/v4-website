@@ -17,7 +17,7 @@ Puedes descargarlos con un clic desde **Configuración > Sistema > Descargar reg
 
 ### Algo no funciona, ¿por dónde empiezo?
 
-Consulta la [página de solución de problemas](/es/docs/installation/troubleshooting): cubre los problemas más frecuentes, desde una contraseña olvidada hasta una actualización que falla o un dongle Zigbee que no se detecta.
+Consulta la [página de solución de problemas](/es/docs/installation/troubleshooting): cubre los problemas más frecuentes, desde un mini-PC que no arranca desde la memoria USB hasta una contraseña olvidada, una actualización que falla o un dongle Zigbee que no se detecta.
 
 ### ¿Quién usa Gladys Assistant 4?
 

@@ -17,7 +17,7 @@ Vous pouvez les télécharger en un clic depuis **Paramètres > Système > Tél�
 
 ## Quelque chose ne fonctionne pas, par où commencer ?
 
-Consultez la [page de dépannage](/fr/docs/installation/troubleshooting) : elle couvre les problèmes les plus fréquents, du mot de passe oublié à la mise à jour qui échoue en passant par le dongle Zigbee non détecté.
+Consultez la [page de dépannage](/fr/docs/installation/troubleshooting) : elle couvre les problèmes les plus fréquents, du mini-PC qui ne démarre pas sur la clé USB au mot de passe oublié, en passant par la mise à jour qui échoue ou le dongle Zigbee non détecté.
 
 ## Qui utilise Gladys Assistant 4 ?
 

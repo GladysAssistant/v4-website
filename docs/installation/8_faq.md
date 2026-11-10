@@ -17,7 +17,7 @@ You can download them in one click from **Settings > System > Download logs**, w
 
 ### Something does not work, where do I start?
 
-See the [troubleshooting page](/docs/installation/troubleshooting): it covers the most common problems, from a forgotten password to a failed update or a Zigbee dongle that is not detected.
+See the [troubleshooting page](/docs/installation/troubleshooting): it covers the most common problems, from a mini-PC that does not start from the USB drive to a forgotten password, a failed update or a Zigbee dongle that is not detected.
 
 ### Who uses Gladys Assistant 4?
 
