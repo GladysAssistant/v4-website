@@ -5,7 +5,12 @@ description: "Mach Gladys Assistant zur Matter-Bridge: Kopple sie mit Apple Home
 sidebar_label: Matter-Bridge
 ---
 
-Die Integration **Matter-Bridge** macht Gladys zu einer Matter-Bridge. Nach dem Koppeln erscheinen deine Gladys-Geräte in der Matter-App deiner Wahl (Apple Home, Google Home, Amazon Alexa, SmartThings, Home Assistant...), **unabhängig von ihrem Protokoll**: Zigbee, Z-Wave, WLAN, MQTT... Alles bleibt in deinem lokalen Netzwerk, ein Cloud-Konto ist nicht nötig.
+Die Integration **Matter-Bridge** macht Gladys zu einer Matter-Bridge. Nach dem Koppeln erscheinen deine Gladys-Geräte in der Matter-App deiner Wahl (Apple Home, Google Home, Amazon Alexa, SmartThings, Home Assistant...), **unabhängig von ihrem Protokoll**: Zigbee, Z-Wave, WLAN, MQTT... Die Matter-Verbindung zwischen Gladys und deinen Apps bleibt in deinem lokalen Netzwerk, und die Bridge braucht kein Gladys-Plus-Abo.
+
+Zwei Dinge solltest du trotzdem wissen:
+
+- Deine Matter-App braucht eventuell ein eigenes Konto: eine Apple-ID für Apple Home, ein Google-Konto für Google Home, ein Amazon-Konto für Alexa, ein Samsung-Konto für SmartThings.
+- Die Bridge macht ein Gerät nicht lokal: Steuert Gladys ein Gerät über einen Cloud-Dienst (zum Beispiel über eine Cloud-Integration), hängt dieses Gerät weiterhin von dieser Cloud ab, wenn du es über eine Matter-App steuerst.
 
 :::tip[Matter, Matterbridge oder Matter-Bridge?]
 Drei Integrationen haben ähnliche Namen, arbeiten aber in unterschiedliche Richtungen:
@@ -21,7 +26,12 @@ Drei Integrationen haben ähnliche Namen, arbeiten aber in unterschiedliche Rich
 - **IPv6 in deinem lokalen Netzwerk.** Matter basiert auf IPv6. Die Seite der Integration zeigt dir, ob auf dem Rechner, auf dem Gladys läuft, eine IPv6-Schnittstelle gefunden wurde.
 - **Gladys muss das Host-Netzwerk nutzen.** Die Standardinstallation von Gladys (`network_mode: host` in Docker) tut das bereits. Die Bridge lauscht auf dem UDP-Port **5541**, getrennt vom Port 5540 der Integration [Matter](/de/docs/integrations/matter/): Beide können gleichzeitig laufen.
 - **Ein Administratorkonto.** Die Integration ist nur für Gladys-Administratoren sichtbar.
-- **Eine Matter-App im selben Netzwerk**: Apple Home (mit einer Steuerzentrale wie einem Apple TV oder einem HomePod), Google Home, Amazon Alexa, SmartThings, Home Assistant...
+- **Ein Matter-Controller im selben Netzwerk.** Die App allein reicht nicht immer: Jedes Ökosystem braucht ein Gerät, das als Matter-Controller dient.
+  - Apple Home: eine Steuerzentrale (Apple TV oder HomePod).
+  - Google Home: ein Matter-fähiges Google-Gerät (Nest Hub, Nest-Lautsprecher, Google TV Streamer...).
+  - Amazon Alexa: ein Matter-fähiger Echo.
+  - SmartThings: ein SmartThings-Hub oder ein Samsung-Gerät, das als Hub dient.
+  - Home Assistant: sein Matter-Server.
 
 Die Kopplung läuft über dein Netzwerk: Anders als manche Matter-Geräte braucht die Bridge kein Bluetooth.
 
@@ -105,7 +115,7 @@ Mit Matter kannst du dieselbe Bridge mit mehreren Apps koppeln (Multi-Admin). So
 | 🌫️ CO2-, PM2.5- und PM10-Sensoren | Luftqualitätssensor, mit einer Gesamtluftqualität aus PM2.5 (oder CO2, wenn kein PM2.5 vorhanden ist) |
 | 🔋 Batterie | Batteriestand des Geräts, mit einer Warnung bei schwacher Batterie unter 20 % |
 
-Ein Gerät mit mehreren Funktionen (zum Beispiel ein Temperatur-, Luftfeuchtigkeits- und Batteriesensor) erscheint in deinen Matter-Apps als ein einziges Zubehör.
+Ein Gerät mit mehreren Funktionen (zum Beispiel ein Temperatur-, Luftfeuchtigkeits- und Batteriesensor) wird als ein einziges Gerät der Bridge bereitgestellt. Die meisten Apps zeigen es als ein Zubehör an, manche zeigen eine Kachel pro Funktion (Temperatur, Luftfeuchtigkeit, Batterie...).
 
 Ein paar Einschränkungen:
 
@@ -119,7 +129,7 @@ Wir fügen regelmäßig neue Gerätetypen hinzu, basierend auf dem Feedback der 
 ## Bridge deaktivieren oder zurücksetzen
 
 - `Matter-Bridge deaktivieren` nimmt die Bridge offline, **behält aber ihre Kopplungen**: Wenn du sie wieder aktivierst, finden deine Matter-Apps dieselbe Bridge und dieselben Geräte.
-- `Bridge zurücksetzen` ist für den Fall gedacht, dass sich die Bridge nicht mehr koppeln lässt. **Alle Ökosysteme vergessen Gladys**, und du musst die Bridge mit ihrem **neuen Kopplungscode** erneut hinzufügen. Deine Auswahl der bereitgestellten Geräte bleibt erhalten.
+- `Bridge zurücksetzen` ist für den Fall gedacht, dass sich die Bridge nicht mehr koppeln lässt. Alle Kopplungen von Gladys werden gelöscht: Die Bridge antwortet den Ökosystemen, mit denen sie gekoppelt war, nicht mehr. Ein alter Eintrag „Gladys Bridge“ kann in deinen Matter-Apps bleiben: **Entferne ihn dort** und füge die Bridge dann mit ihrem **neuen Kopplungscode** erneut hinzu. Deine Auswahl der bereitgestellten Geräte bleibt erhalten.
 
 ## Fehlerbehebung
 

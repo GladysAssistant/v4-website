@@ -5,7 +5,12 @@ description: "Turn Gladys Assistant into a Matter bridge: pair it with Apple Hom
 sidebar_label: Matter Bridge
 ---
 
-The **Matter Bridge** integration turns Gladys into a Matter bridge. Once paired, your Gladys devices appear in the Matter app of your choice (Apple Home, Google Home, Amazon Alexa, SmartThings, Home Assistant...), **whatever protocol they use**: Zigbee, Z-Wave, Wi-Fi, MQTT... Everything stays on your local network, no cloud account is needed.
+The **Matter Bridge** integration turns Gladys into a Matter bridge. Once paired, your Gladys devices appear in the Matter app of your choice (Apple Home, Google Home, Amazon Alexa, SmartThings, Home Assistant...), **whatever protocol they use**: Zigbee, Z-Wave, Wi-Fi, MQTT... The Matter link between Gladys and your apps stays on your local network, and the bridge doesn't need a Gladys Plus subscription.
+
+Two things to know, though:
+
+- Your Matter app may need its own account: an Apple ID for Apple Home, a Google account for Google Home, an Amazon account for Alexa, a Samsung account for SmartThings.
+- The bridge doesn't make a device local: if Gladys controls a device through a cloud service (a cloud-based integration, for example), that device still depends on this cloud when you control it from a Matter app.
 
 :::tip[Matter, Matterbridge or Matter Bridge?]
 Three integrations have similar names, but they don't go in the same direction:
@@ -21,7 +26,12 @@ Three integrations have similar names, but they don't go in the same direction:
 - **IPv6 on your local network.** Matter relies on IPv6. The integration page tells you whether an IPv6 interface was detected on the machine running Gladys.
 - **Gladys must use the host network.** The standard Gladys installation (`network_mode: host` in Docker) already does. The bridge listens on UDP port **5541**, separate from port 5540 used by the [Matter](/docs/integrations/matter/) integration, so both can run at the same time.
 - **An administrator account.** The integration is only visible to Gladys administrators.
-- **A Matter app on the same network**: Apple Home (with a home hub such as an Apple TV or a HomePod), Google Home, Amazon Alexa, SmartThings, Home Assistant...
+- **A Matter controller on the same network.** The app alone isn't always enough: each ecosystem needs a device that acts as its Matter controller.
+  - Apple Home: a home hub (Apple TV or HomePod).
+  - Google Home: a Google device that supports Matter (Nest Hub, Nest speaker, Google TV Streamer...).
+  - Amazon Alexa: an Echo that supports Matter.
+  - SmartThings: a SmartThings hub, or a Samsung device that acts as one.
+  - Home Assistant: its Matter server.
 
 Pairing happens over your network: unlike some Matter devices, the bridge doesn't need Bluetooth.
 
@@ -105,7 +115,7 @@ Matter lets you pair the same bridge with several apps (multi-admin). To add Gla
 | 🌫️ CO2, PM2.5 and PM10 sensors | Air quality sensor, with an overall air quality computed from PM2.5 (or CO2 when there is no PM2.5) |
 | 🔋 Battery | Battery level of the device, with a low battery warning below 20% |
 
-A device with several features (for example a temperature, humidity and battery sensor) appears as a single accessory in your Matter apps.
+A device with several features (for example a temperature, humidity and battery sensor) is exposed as a single bridged device. Most apps show it as one accessory, some show one tile per function (temperature, humidity, battery...).
 
 Some limits to know:
 
@@ -119,7 +129,7 @@ We regularly add support for new device types based on community feedback. Feel 
 ## Disable or reset the bridge
 
 - `Disable the Matter bridge` takes the bridge offline but **keeps its pairings**: when you enable it again, your Matter apps find the same bridge and the same devices.
-- `Reset the bridge` is for when you can't pair the bridge anymore. **Every ecosystem forgets Gladys**, and you will have to add the bridge again with its **new pairing code**. Your selection of exposed devices is kept.
+- `Reset the bridge` is for when you can't pair the bridge anymore. All the pairings of Gladys are deleted: the bridge no longer answers the ecosystems it was paired with. An old "Gladys Bridge" entry may remain in your Matter apps: **remove it there**, then add the bridge again with its **new pairing code**. Your selection of exposed devices is kept.
 
 ## Troubleshooting
 

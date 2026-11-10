@@ -5,7 +5,12 @@ description: "Convierte Gladys Assistant en un puente Matter: emparéjalo con Ap
 sidebar_label: Puente Matter
 ---
 
-La integración **Puente Matter** convierte Gladys en un puente Matter. Una vez emparejado, tus dispositivos de Gladys aparecen en la aplicación Matter que elijas (Apple Home, Google Home, Amazon Alexa, SmartThings, Home Assistant...), **sea cual sea su protocolo**: Zigbee, Z-Wave, Wi-Fi, MQTT... Todo se queda en tu red local, no hace falta ninguna cuenta en la nube.
+La integración **Puente Matter** convierte Gladys en un puente Matter. Una vez emparejado, tus dispositivos de Gladys aparecen en la aplicación Matter que elijas (Apple Home, Google Home, Amazon Alexa, SmartThings, Home Assistant...), **sea cual sea su protocolo**: Zigbee, Z-Wave, Wi-Fi, MQTT... La conexión Matter entre Gladys y tus aplicaciones se queda en tu red local, y el puente no necesita una suscripción a Gladys Plus.
+
+Aun así, conviene saber dos cosas:
+
+- Tu aplicación Matter puede necesitar su propia cuenta: un ID de Apple para Apple Home, una cuenta de Google para Google Home, una cuenta de Amazon para Alexa, una cuenta de Samsung para SmartThings.
+- El puente no hace local un dispositivo: si Gladys controla un dispositivo a través de un servicio en la nube (una integración en la nube, por ejemplo), ese dispositivo sigue dependiendo de esa nube cuando lo controlas desde una aplicación Matter.
 
 :::tip[¿Matter, Matterbridge o Puente Matter?]
 Tres integraciones tienen nombres parecidos, pero no van en la misma dirección:
@@ -21,7 +26,12 @@ Tres integraciones tienen nombres parecidos, pero no van en la misma dirección:
 - **IPv6 en tu red local.** Matter se basa en IPv6. La página de la integración te indica si se ha detectado una interfaz IPv6 en la máquina donde se ejecuta Gladys.
 - **Gladys debe usar la red del host.** La instalación estándar de Gladys (`network_mode: host` en Docker) ya lo hace. El puente escucha en el puerto UDP **5541**, distinto del puerto 5540 que usa la integración [Matter](/es/docs/integrations/matter/), así que ambas pueden funcionar a la vez.
 - **Una cuenta de administrador.** La integración solo es visible para los administradores de Gladys.
-- **Una aplicación Matter en la misma red**: Apple Home (con un concentrador doméstico como un Apple TV o un HomePod), Google Home, Amazon Alexa, SmartThings, Home Assistant...
+- **Un controlador Matter en la misma red.** La aplicación sola no siempre basta: cada ecosistema necesita un dispositivo que haga de controlador Matter.
+  - Apple Home: un concentrador doméstico (Apple TV o HomePod).
+  - Google Home: un dispositivo de Google compatible con Matter (Nest Hub, altavoz Nest, Google TV Streamer...).
+  - Amazon Alexa: un Echo compatible con Matter.
+  - SmartThings: un hub SmartThings, o un dispositivo Samsung que haga de hub.
+  - Home Assistant: su servidor Matter.
 
 El emparejamiento se hace por la red: a diferencia de algunos dispositivos Matter, el puente no necesita Bluetooth.
 
@@ -105,7 +115,7 @@ Matter permite emparejar un mismo puente con varias aplicaciones (multi-admin). 
 | 🌫️ Sensores de CO2, PM2.5 y PM10 | Sensor de calidad del aire, con una calidad global calculada a partir de las PM2.5 (o del CO2 si no hay PM2.5) |
 | 🔋 Batería | Nivel de batería del dispositivo, con un aviso de batería baja por debajo del 20 % |
 
-Un dispositivo con varias funciones (por ejemplo un sensor de temperatura, humedad y batería) aparece como un único accesorio en tus aplicaciones Matter.
+Un dispositivo con varias funciones (por ejemplo un sensor de temperatura, humedad y batería) se expone como un único dispositivo del puente. La mayoría de las aplicaciones lo muestran como un solo accesorio, algunas muestran un recuadro por función (temperatura, humedad, batería...).
 
 Algunos límites que conviene conocer:
 
@@ -119,7 +129,7 @@ Añadimos regularmente nuevos tipos de dispositivos según los comentarios de la
 ## Desactivar o restablecer el puente
 
 - `Desactivar el puente Matter` desconecta el puente pero **conserva sus emparejamientos**: cuando lo vuelves a activar, tus aplicaciones Matter encuentran el mismo puente y los mismos dispositivos.
-- `Restablecer el puente` sirve cuando ya no puedes emparejar el puente. **Todos los ecosistemas olvidan Gladys**, y tendrás que volver a añadir el puente con su **nuevo código de emparejamiento**. Tu selección de dispositivos expuestos se conserva.
+- `Restablecer el puente` sirve cuando ya no puedes emparejar el puente. Se borran todos los emparejamientos de Gladys: el puente deja de responder a los ecosistemas con los que estaba emparejado. Puede que quede una antigua entrada «Gladys Bridge» en tus aplicaciones Matter: **elimínala allí** y luego vuelve a añadir el puente con su **nuevo código de emparejamiento**. Tu selección de dispositivos expuestos se conserva.
 
 ## Solución de problemas
 

@@ -5,7 +5,12 @@ description: "Transformez Gladys Assistant en bridge Matter : appairez-le avec A
 sidebar_label: Bridge Matter
 ---
 
-L'intégration **Bridge Matter** transforme Gladys en bridge Matter. Une fois appairé, vos appareils Gladys apparaissent dans l'application Matter de votre choix (Apple Maison, Google Home, Amazon Alexa, SmartThings, Home Assistant...), **quel que soit leur protocole** : Zigbee, Z-Wave, Wi-Fi, MQTT... Tout reste sur votre réseau local, aucun compte cloud n'est nécessaire.
+L'intégration **Bridge Matter** transforme Gladys en bridge Matter. Une fois appairé, vos appareils Gladys apparaissent dans l'application Matter de votre choix (Apple Maison, Google Home, Amazon Alexa, SmartThings, Home Assistant...), **quel que soit leur protocole** : Zigbee, Z-Wave, Wi-Fi, MQTT... La liaison Matter entre Gladys et vos applications reste sur votre réseau local, et le bridge ne nécessite pas d'abonnement Gladys Plus.
+
+Deux points à connaître toutefois :
+
+- Votre application Matter peut demander son propre compte : un identifiant Apple pour Apple Maison, un compte Google pour Google Home, un compte Amazon pour Alexa, un compte Samsung pour SmartThings.
+- Le bridge ne rend pas un appareil local : si Gladys pilote un appareil via un service cloud (une intégration cloud, par exemple), cet appareil dépend toujours de ce cloud quand vous le pilotez depuis une application Matter.
 
 :::tip[Matter, Matterbridge ou Bridge Matter ?]
 Trois intégrations ont des noms proches, mais elles ne vont pas dans le même sens :
@@ -21,7 +26,12 @@ Trois intégrations ont des noms proches, mais elles ne vont pas dans le même s
 - **L'IPv6 sur votre réseau local.** Matter repose sur l'IPv6. La page de l'intégration vous indique si une interface IPv6 a été détectée sur la machine qui fait tourner Gladys.
 - **Gladys doit utiliser le réseau de l'hôte.** C'est déjà le cas avec l'installation standard de Gladys (`network_mode: host` dans Docker). Le bridge écoute sur le port UDP **5541**, distinct du port 5540 utilisé par l'intégration [Matter](/fr/docs/integrations/matter/) : les deux peuvent fonctionner en même temps.
 - **Un compte administrateur.** L'intégration n'est visible que par les administrateurs de Gladys.
-- **Une application Matter sur le même réseau** : Apple Maison (avec un concentrateur domestique comme une Apple TV ou un HomePod), Google Home, Amazon Alexa, SmartThings, Home Assistant...
+- **Un contrôleur Matter sur le même réseau.** L'application seule ne suffit pas toujours : chaque écosystème a besoin d'un appareil qui joue le rôle de contrôleur Matter.
+  - Apple Maison : un concentrateur domestique (Apple TV ou HomePod).
+  - Google Home : un appareil Google compatible Matter (Nest Hub, enceinte Nest, Google TV Streamer...).
+  - Amazon Alexa : un Echo compatible Matter.
+  - SmartThings : un hub SmartThings, ou un appareil Samsung qui en fait office.
+  - Home Assistant : son serveur Matter.
 
 L'appairage se fait par le réseau : contrairement à certains appareils Matter, le bridge n'a pas besoin du Bluetooth.
 
@@ -105,7 +115,7 @@ Matter permet d'appairer un même bridge avec plusieurs applications (multi-admi
 | 🌫️ Capteurs de CO2, PM2.5 et PM10 | Capteur de qualité de l'air, avec une qualité globale calculée à partir des PM2.5 (ou du CO2 en l'absence de PM2.5) |
 | 🔋 Batterie | Niveau de batterie de l'appareil, avec une alerte de batterie faible sous 20 % |
 
-Un appareil avec plusieurs fonctionnalités (par exemple un capteur de température, d'humidité et de batterie) apparaît comme un seul accessoire dans vos applications Matter.
+Un appareil avec plusieurs fonctionnalités (par exemple un capteur de température, d'humidité et de batterie) est exposé comme un seul appareil du bridge. La plupart des applications l'affichent comme un seul accessoire, certaines affichent une tuile par fonction (température, humidité, batterie...).
 
 Quelques limites à connaître :
 
@@ -119,7 +129,7 @@ Nous ajoutons régulièrement de nouveaux types d'appareils selon les retours de
 ## Désactiver ou réinitialiser le bridge
 
 - `Désactiver le bridge Matter` met le bridge hors ligne mais **conserve ses appairages** : quand vous le réactivez, vos applications Matter retrouvent le même bridge et les mêmes appareils.
-- `Réinitialiser le bridge` sert quand vous n'arrivez plus à appairer le bridge. **Tous les écosystèmes oublient Gladys**, et vous devrez ajouter à nouveau le bridge avec son **nouveau code d'appairage**. Votre sélection d'appareils exposés est conservée.
+- `Réinitialiser le bridge` sert quand vous n'arrivez plus à appairer le bridge. Tous les appairages de Gladys sont supprimés : le bridge ne répond plus aux écosystèmes avec lesquels il était appairé. Une ancienne entrée « Gladys Bridge » peut rester dans vos applications Matter : **supprimez-la**, puis ajoutez à nouveau le bridge avec son **nouveau code d'appairage**. Votre sélection d'appareils exposés est conservée.
 
 ## Dépannage
 
