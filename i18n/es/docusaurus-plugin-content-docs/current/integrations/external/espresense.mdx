@@ -1,0 +1,209 @@
+---
+title: "Integración domótica ESPresense, gratuita y de código abierto"
+sidebar_label: "ESPresense"
+description: "Presencia habitación por habitación con ESPresense: quién está dónde, habitaciones ocupadas. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-espresense.png"
+keywords:
+  - "espresense"
+  - "domótica espresense"
+  - "gladys espresense"
+  - "espresense gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-espresense instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"ESPresense","description":"Presencia habitación por habitación con ESPresense: quién está dónde, habitaciones ocupadas.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-espresense","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-espresense.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-09T11:57:38Z"}} />
+
+La presencia habitación por habitación en Gladys con
+[ESPresense](https://espresense.com/): un ESP32 en cada habitación mide la
+distancia Bluetooth de sus teléfonos, relojes y balizas y la publica en un
+broker MQTT. La integración lee ese broker e indica a Gladys quién está en
+qué habitación.
+
+> Desarrollada sin el hardware, con mensajes en el formato exacto del
+> firmware y de ESPresense-companion: sus comentarios son bienvenidos.
+
+## Lo que obtiene
+
+- **Un dispositivo por teléfono, reloj o baliza seguido**, con su
+  **Habitación** (el nombre de la habitación, o «Ausente»), **En una
+  habitación** (sí/no), **Presencia** (para la acción de escena «Comprobar
+  la presencia de un usuario» de Gladys) y la **Distancia al nodo más
+  cercano** en metros.
+- **Un dispositivo por habitación**: **Ocupada** (sí/no), **Dispositivos en
+  la habitación** (un número) y **Nodo en línea** (el ESP32 de la habitación
+  responde).
+- Un disparador de escena, una acción de escena y un widget (más abajo).
+
+Solo los dispositivos añadidos en Gladys cuentan en las habitaciones.
+
+## Antes de empezar
+
+1. Instale ESPresense en un ESP32 por habitación (desde
+   [espresense.com/firmware](https://espresense.com/firmware), en el
+   navegador), conéctelo a su Wi-Fi y dele su **nombre de habitación** y el
+   **broker MQTT**. El broker instalado por Gladys sirve: sus credenciales
+   están en la página MQTT de Gladys.
+2. Haga reconocibles sus teléfonos. Un teléfono cambia su dirección
+   Bluetooth cada pocos minutos: active un emisor Bluetooth (el «BLE
+   transmitter» o el iBeacon de la aplicación Home Assistant, por ejemplo) o
+   dé a ESPresense el IRK de un iPhone, y luego dé al dispositivo un
+   **alias** como `phone:alice` (vea
+   [la documentación de ESPresense](https://espresense.com/), o la página del
+   dispositivo en ESPresense-companion). Las balizas (`iBeacon:…`, `tile:…`)
+   ya tienen un identificador estable.
+3. Compruebe en la página web ESPresense de un nodo (su dirección IP) que ve
+   sus dispositivos.
+
+## ESPresense-companion
+
+[ESPresense-companion](https://github.com/ESPresense/ESPresense-companion)
+es un servicio opcional que sitúa cada dispositivo en un plano por
+trilateración entre todos los nodos. Cuando funciona en el mismo broker, la
+habitación que calcula prevalece sobre el nodo más cercano (opción **Usar
+ESPresense-companion**, marcada por defecto). Si se detiene (su mensaje de
+última voluntad), la integración vuelve por sí sola al nodo más cercano.
+
+Nombre sus habitaciones como sus nodos (`Living Room` y el nodo
+`living_room`): la integración reúne ambos en la misma habitación. Una
+habitación que solo conoce el companion no tiene **Nodo en línea**.
+
+## Configuración
+
+1. **Dirección del broker**: `mqtt://` (puerto 1883) o `mqtts://` (puerto
+   8883), con el nombre de usuario y la contraseña si el broker los pide. La
+   integración solo se suscribe, nunca publica.
+2. **Prefijo de los temas**: `espresense`, salvo si sus nodos publican en
+   otro lugar.
+3. **Distancia máxima**: más lejos de todos los nodos, un dispositivo no está
+   en ninguna habitación.
+4. **Margen antes de cambiar de habitación**: un dispositivo solo deja su
+   habitación por un nodo más cercano en más de este margen, para no saltar
+   entre dos habitaciones cuando está entre ambas.
+5. **Ausente tras**: tiempo sin que ningún nodo oiga un dispositivo bajo la
+   distancia máxima antes de que quede ausente.
+6. **Mostrar dispositivos anónimos**: las direcciones MAC solas
+   (`0a1b2c3d4e5f`) y las huellas de anuncios (`md:…`, `ad:…`, `sd:…`)
+   cambian o las comparten muchos dispositivos: están ocultas en la pestaña
+   Descubrimiento salvo si marca la opción.
+7. **Idioma de los textos**: nombres de las funciones al añadir un
+   dispositivo, texto «Ausente», frases de escenas y mensajes de las
+   acciones.
+
+**Comprobar la conexión** indica si el broker responde, cuántos nodos están
+en línea y cuántos dispositivos oyen.
+
+## Dispositivos y habitaciones
+
+Abra la pestaña **Descubrimiento** de la integración: las habitaciones
+aparecen en cuanto su nodo está en línea, los dispositivos en cuanto un nodo
+los oye (los oídos en los últimos 15 minutos, 100 como máximo). Añada las
+habitaciones y los dispositivos que quiera seguir. El nombre de un
+dispositivo viene de su alias (`phone:alice` muestra el nombre dado en
+ESPresense); cámbielo en Gladys a su gusto.
+
+La habitación de un dispositivo sigue el nodo más cercano que lo oye bajo la
+distancia máxima, con el margen anterior, o la habitación de
+ESPresense-companion. Los cambios llegan a Gladys en dos segundos.
+
+## Presencia de un usuario de Gladys
+
+Cada dispositivo seguido tiene una función **Presencia**, la que usa la
+presencia Bluetooth de Gladys: se marca «visto» cuando el dispositivo entra
+en una habitación, y luego cada 5 minutos mientras sigue en una. En una
+escena, la acción **Comprobar la presencia de un usuario** de Gladys la
+vincula a un usuario: elija el usuario y esta función, y un plazo de más de
+5 minutos (10 minutos para empezar). El usuario queda entonces en casa o
+ausente como con las demás fuentes de presencia.
+
+## Escenas
+
+- **Dispositivo entra en una habitación** (disparador): un dispositivo
+  seguido entró en una habitación, desde otra o al volver. Elija el
+  dispositivo y la habitación, o deje uno vacío para todos. Las acciones
+  siguientes leen `{{triggerEvent.data.device_name}}` y
+  `{{triggerEvent.data.room_name}}`.
+- **Dónde está un dispositivo** (acción): la habitación de un dispositivo
+  seguido, en una frase lista para un mensaje («Teléfono de Alice está en
+  Cocina (1,2 m).») y en valores (`present`, `room`, `distance`).
+- «Habitación vacía», «nadie en casa» o «nodo fuera de línea»: use las
+  funciones **Ocupada**, **En una habitación** o **Nodo en línea** de los
+  dispositivos en un disparador «estado de un dispositivo» de Gladys.
+
+## Panel
+
+El widget **Habitaciones ESPresense** lista las habitaciones añadidas a
+Gladys, ocupadas primero, con los nombres de los dispositivos en cada una
+(10 habitaciones como máximo). El ajuste **Ocultar habitaciones vacías**
+solo deja las ocupadas.
+
+## Límites
+
+- La integración no usa Bluetooth por sí misma: lo hacen los nodos.
+- La distancia es una estimación a partir de la señal Bluetooth: paredes,
+  cuerpos y bolsillos la cambian. Calibre los nodos en ESPresense
+  (`rx_adj_rssi`, la referencia a 1 m de cada dispositivo) antes de ajustar
+  aquí los umbrales.
+- Un teléfono sin alias, sin iBeacon ni aplicación emisora cambia de
+  dirección: no se puede seguir.
+- No se usó ningún ESP32 para el desarrollo; la integración se probó contra
+  un broker MQTT con los mensajes del firmware y del companion.
+
+## Solución de problemas
+
+- **Ninguna habitación en Descubrimiento**: compruebe el prefijo de los temas
+  y que los nodos usen el mismo broker («Comprobar la conexión» los cuenta).
+- **Falta un dispositivo**: quizá es anónimo (vea la opción), o no se oyó en
+  los últimos 15 minutos.
+- **Un dispositivo cambia demasiado de habitación**: aumente el margen, o
+  baje la distancia máxima.
+- **Ausente demasiado pronto**: aumente **Ausente tras**; un teléfono en
+  reposo emite con menos frecuencia.
+- Registros detallados: ajuste `LOG_LEVEL=debug` en el contenedor de la
+  integración.
+
+## Parámetros de configuración
+
+Estos son los parámetros que ESPresense te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Conectar ESPresense | `section` | No | Los nodos ESPresense (un ESP32 por habitación) miden la distancia Bluetooth de teléfonos, relojes y balizas y la publican en un broker MQTT. La integración lee ese broker: solo se suscribe, nunca publica. |
+| Dirección del broker | `string` | Sí | El broker donde publican los nodos: mqtt:\/\/ (puerto 1883) o mqtts:\/\/ para TLS (puerto 8883). El broker instalado por Gladys también sirve: sus credenciales están en la página MQTT de Gladys. |
+| Nombre de usuario | `string` | No | Déjelo vacío si el broker acepta clientes anónimos. |
+| Contraseña | `secret` | No |  |
+| Aceptar un certificado autofirmado | `boolean` | No | Solo mqtts:\/\/: el certificado del broker no se comprueba. |
+| Prefijo de los temas | `string` | No | espresense, salvo si sus nodos publican en otro lugar (puente, firmware propio). |
+| Habitaciones | `section` | No | Sin ESPresense-companion, un dispositivo está en la habitación del nodo más cercano que lo oye bajo la distancia máxima. Solo cambia por un nodo más cercano en más del margen, y queda ausente cuando ningún nodo lo oye durante el tiempo elegido. |
+| Distancia máxima | `select` | No | Más lejos de todos los nodos, un dispositivo no está en ninguna habitación. |
+| Margen antes de cambiar de habitación | `select` | No | Evita que un dispositivo salte entre dos habitaciones cuando está entre ambas. |
+| Ausente tras | `select` | No | Tiempo sin que ningún nodo oiga un dispositivo antes de que quede ausente. |
+| Usar ESPresense-companion | `boolean` | No | Cuando el companion funciona, su habitación (trilateración en el plano) prevalece sobre el nodo más cercano. |
+| Mostrar dispositivos anónimos | `boolean` | No | Las direcciones MAC solas y las huellas de anuncios cambian o se comparten: ocultas en Descubrimiento salvo si se marca. |
+| Idioma de los textos | `select` | No | Nombres de las funciones al añadir un dispositivo, texto «Ausente», frases de escenas y mensajes de las acciones. |
+
+## Cómo instalar ESPresense en Gladys
+
+1. En Gladys, abre **Integraciones**: ESPresense aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-espresense:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-espresense](https://github.com/guim31/gladys-espresense).
+
+ESPresense requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+ESPresense es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-espresense) — [fuente de esta documentación](https://github.com/guim31/gladys-espresense/blob/HEAD/docs/es.md)
