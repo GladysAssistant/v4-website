@@ -9,7 +9,7 @@ Die Integration **Matter-Bridge** macht Gladys zu einer Matter-Bridge. Nach dem 
 
 Drei Dinge solltest du trotzdem wissen:
 
-- Die Steuerung über die App ist nicht immer lokal: Unterwegs, und bei manchen Ökosystemen (zum Beispiel Google Home) sogar zu Hause, läuft dein Befehl über die Cloud des App-Anbieters, bevor er deinen Controller erreicht, der dann lokal mit Gladys spricht.
+- Die Steuerung über die App ist nicht immer lokal: Unterwegs, und bei manchen Ökosystemen (zum Beispiel Google Home oder Alexa) kann dein Befehl über die Cloud des App-Anbieters laufen, bevor er deinen Controller erreicht, der dann lokal mit Gladys spricht.
 - Deine Matter-App braucht eventuell ein eigenes Konto: eine Apple-ID für Apple Home, ein Google-Konto für Google Home, ein Amazon-Konto für Alexa, ein Samsung-Konto für SmartThings.
 - Die Bridge macht ein Gerät nicht lokal: Steuert Gladys ein Gerät über einen Cloud-Dienst (zum Beispiel über eine Cloud-Integration), hängt dieses Gerät weiterhin von dieser Cloud ab, wenn du es über eine Matter-App steuerst.
 

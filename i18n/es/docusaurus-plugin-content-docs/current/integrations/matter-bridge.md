@@ -9,7 +9,7 @@ La integración **Puente Matter** convierte Gladys en un puente Matter. Una vez 
 
 Aun así, conviene saber tres cosas:
 
-- El control desde la aplicación no siempre es local: fuera de casa, y con algunos ecosistemas (Google Home, por ejemplo) incluso en casa, tu orden pasa por la nube del proveedor de la aplicación antes de llegar a tu controlador, que luego habla con Gladys en local.
+- El control desde la aplicación no siempre es local: fuera de casa, y con algunos ecosistemas (Google Home o Alexa, por ejemplo), tu orden puede pasar por la nube del proveedor de la aplicación antes de llegar a tu controlador, que luego habla con Gladys en local.
 - Tu aplicación Matter puede necesitar su propia cuenta: un ID de Apple para Apple Home, una cuenta de Google para Google Home, una cuenta de Amazon para Alexa, una cuenta de Samsung para SmartThings.
 - El puente no hace local un dispositivo: si Gladys controla un dispositivo a través de un servicio en la nube (una integración en la nube, por ejemplo), ese dispositivo sigue dependiendo de esa nube cuando lo controlas desde una aplicación Matter.
 
