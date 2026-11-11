@@ -20,12 +20,14 @@ Three integrations have similar names, but they don't go in the same direction:
 - [Matter](/docs/integrations/matter/): Matter devices → Gladys. Gladys is the Matter controller.
 - [Matterbridge](/docs/integrations/matterbridge/): devices exposed by the open-source Matterbridge project and its plugins → Gladys.
 
+Matter Bridge and Matterbridge can't be enabled at the same time: both need port 5540.
+
 :::
 
 ## Prerequisites
 
 - **IPv6 on your local network.** Matter relies on IPv6. The integration page tells you whether an IPv6 interface was detected on the machine running Gladys.
-- **Gladys must use the host network.** The standard Gladys installation (`network_mode: host` in Docker) already does. The bridge listens on UDP port **5541**, separate from port 5540 used by the [Matter](/docs/integrations/matter/) integration, so both can run at the same time.
+- **Gladys must use the host network.** The standard Gladys installation (`network_mode: host` in Docker) already does. The bridge listens on UDP port **5540**, the standard Matter port and the only one Amazon Alexa discovers. It runs alongside the [Matter](/docs/integrations/matter/) integration, which uses another port, but **not alongside the [Matterbridge](/docs/integrations/matterbridge/) integration**, which needs port 5540 too.
 - **An administrator account.** The integration is only visible to Gladys administrators.
 - **A Matter controller on the same network.** The app alone isn't always enough: most ecosystems need a device that acts as their Matter controller.
   - Apple Home: an iPhone or iPad (iOS 18 or later) can add and control the bridge at home without a hub. A home hub (Apple TV or HomePod) is recommended: it is needed to control your devices away from home and to run automations.
@@ -41,6 +43,8 @@ Pairing happens over your network: unlike some Matter devices, the bridge doesn'
 In Gladys, go to `Integrations` and click on `Matter Bridge` (in the "Voice assistants & AI" category).
 
 Check that the page shows `An IPv6 interface is available on this machine ✅`, then click on `Enable the Matter bridge`.
+
+If the [Matterbridge](/docs/integrations/matterbridge/) integration is enabled, this button is disabled and the page explains why: disable the Matterbridge integration first.
 
 The bridge starts after a few seconds. If it can't start, the error is shown on the page under `The Matter bridge could not start:`.
 
@@ -136,6 +140,8 @@ We regularly add support for new device types based on community feedback. Feel 
 
 - **No IPv6 interface detected**: enable IPv6 on your router and on the machine running Gladys, then restart Gladys.
 - **The app can't find the bridge**: check that your phone and Gladys are on the same network (not a guest Wi-Fi), and that Gladys uses the host network.
+- **`The Matter bridge was not started: port 5540, the standard Matter port, is already used by another program`**: another Matter bridge runs on the machine (a Matterbridge installed outside Gladys, another Matter server...). Stop it or move it to another port, then disable and enable the Matter bridge again.
+- **`The Matter bridge was not started: the Matterbridge integration is enabled`**: disable the [Matterbridge](/docs/integrations/matterbridge/) integration, then disable and enable the Matter bridge again.
 - **A device is missing**: check that it is part of the supported devices above and, in "selection" mode, that it is selected, then click on `Save`.
 
 🛠️ Need help? Join us on the [Gladys community forum](https://community.gladysassistant.com/), we're here to support you!

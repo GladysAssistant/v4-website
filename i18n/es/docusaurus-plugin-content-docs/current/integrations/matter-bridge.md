@@ -20,12 +20,14 @@ Tres integraciones tienen nombres parecidos, pero no van en la misma dirección:
 - [Matter](/es/docs/integrations/matter/): dispositivos Matter → Gladys. Gladys es el controlador Matter.
 - [Matterbridge](/es/docs/integrations/matterbridge/): dispositivos expuestos por el proyecto open source Matterbridge y sus plugins → Gladys.
 
+El Puente Matter y Matterbridge no pueden estar activados a la vez: ambos necesitan el puerto 5540.
+
 :::
 
 ## Requisitos
 
 - **IPv6 en tu red local.** Matter se basa en IPv6. La página de la integración te indica si se ha detectado una interfaz IPv6 en la máquina donde se ejecuta Gladys.
-- **Gladys debe usar la red del host.** La instalación estándar de Gladys (`network_mode: host` en Docker) ya lo hace. El puente escucha en el puerto UDP **5541**, distinto del puerto 5540 que usa la integración [Matter](/es/docs/integrations/matter/), así que ambas pueden funcionar a la vez.
+- **Gladys debe usar la red del host.** La instalación estándar de Gladys (`network_mode: host` en Docker) ya lo hace. El puente escucha en el puerto UDP **5540**, el puerto Matter estándar y el único que Amazon Alexa sabe descubrir. Funciona a la vez que la integración [Matter](/es/docs/integrations/matter/), que usa otro puerto, pero **no a la vez que la integración [Matterbridge](/es/docs/integrations/matterbridge/)**, que también necesita el puerto 5540.
 - **Una cuenta de administrador.** La integración solo es visible para los administradores de Gladys.
 - **Un controlador Matter en la misma red.** La aplicación sola no siempre basta: la mayoría de los ecosistemas necesitan un dispositivo que haga de controlador Matter.
   - Apple Home: un iPhone o iPad (iOS 18 o posterior) puede añadir y controlar el puente en casa sin concentrador. Se recomienda un concentrador doméstico (Apple TV o HomePod): es necesario para controlar tus dispositivos fuera de casa y para ejecutar automatizaciones.
@@ -41,6 +43,8 @@ El emparejamiento se hace por la red: a diferencia de algunos dispositivos Matte
 En Gladys, ve a `Integraciones` y haz clic en `Puente Matter` (categoría «Asistentes de voz e IA»).
 
 Comprueba que la página muestra `Hay una interfaz IPv6 disponible en esta máquina ✅` y haz clic en `Activar el puente Matter`.
+
+Si la integración [Matterbridge](/es/docs/integrations/matterbridge/) está activada, este botón está desactivado y la página explica por qué: desactiva primero la integración Matterbridge.
 
 El puente se inicia en unos segundos. Si no puede iniciarse, el error se muestra en la página bajo `El puente Matter no ha podido iniciarse:`.
 
@@ -136,6 +140,8 @@ Añadimos regularmente nuevos tipos de dispositivos según los comentarios de la
 
 - **No se detecta ninguna interfaz IPv6**: activa IPv6 en tu router y en la máquina donde se ejecuta Gladys, y luego reinicia Gladys.
 - **La aplicación no encuentra el puente**: comprueba que tu teléfono y Gladys están en la misma red (no en una Wi-Fi de invitados) y que Gladys usa la red del host.
+- **`El puente Matter no se ha iniciado: el puerto 5540, el puerto Matter estándar, ya está siendo utilizado por otro programa`**: otro puente Matter funciona en la máquina (un Matterbridge instalado fuera de Gladys, otro servidor Matter...). Detenlo o cámbiale el puerto y, a continuación, desactiva y vuelve a activar el puente Matter.
+- **`El puente Matter no se ha iniciado: la integración Matterbridge está activada`**: desactiva la integración [Matterbridge](/es/docs/integrations/matterbridge/) y, a continuación, desactiva y vuelve a activar el puente Matter.
 - **Falta un dispositivo**: comprueba que forma parte de los dispositivos compatibles de arriba y, en modo selección, que está seleccionado, y luego haz clic en `Guardar`.
 
 🛠️ ¿Necesitas ayuda? Únete al [foro de la comunidad de Gladys](https://community.gladysassistant.com/), ¡estamos aquí para ayudarte!

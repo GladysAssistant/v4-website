@@ -23,6 +23,10 @@ En Gladys, ve a `Integraciones / Matterbridge`.
 
 Gladys necesita instalar un contenedor Docker para ejecutar Matterbridge. No te preocupes, todo está automatizado.
 
+:::note
+Matterbridge y el [Puente Matter](/es/docs/integrations/matter-bridge/) de Gladys necesitan ambos el puerto 5540, el puerto Matter estándar: no pueden funcionar a la vez. Mientras el Puente Matter esté activado, el botón Activar de Matterbridge está desactivado: desactiva primero el Puente Matter.
+:::
+
 Haz clic en el botón **Activar** para iniciar el contenedor de Matterbridge.
 
 ![Activar Matterbridge](../../../../../static/img/docs/en/configuration/matterbridge/mattebridge-activate-integration.png)

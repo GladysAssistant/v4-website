@@ -23,6 +23,10 @@ In Gladys, go to `Integrations / Matterbridge`.
 
 Gladys needs to install a Docker container to run Matterbridge. Don't worry, everything has been automated.
 
+:::note
+Matterbridge and the [Matter Bridge](/docs/integrations/matter-bridge/) of Gladys both need port 5540, the standard Matter port: they can't run at the same time. While the Matter Bridge is enabled, the Enable button of Matterbridge is disabled: disable the Matter Bridge first.
+:::
+
 Click the **Enable** button to start the Matterbridge container.
 
 ![Enable Matterbridge](../../static/img/docs/en/configuration/matterbridge/mattebridge-activate-integration.png)
