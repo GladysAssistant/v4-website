@@ -1,0 +1,199 @@
+---
+title: "ChirpStack smart home integration, free and open source"
+sidebar_label: "ChirpStack"
+description: "LoRaWAN sensors of a ChirpStack v4 server in Gladys: measures, signal, silent devices, downlinks. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-chirpstack.png"
+keywords:
+  - "chirpstack"
+  - "chirpstack smart home"
+  - "gladys chirpstack"
+  - "chirpstack gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-chirpstack instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"ChirpStack","description":"LoRaWAN sensors of a ChirpStack v4 server in Gladys: measures, signal, silent devices, downlinks.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-chirpstack","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-chirpstack.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-12T07:58:34Z"}} />
+
+The LoRaWAN sensors of your [ChirpStack](https://www.chirpstack.io) v4 server
+in Gladys: temperature, humidity, doors, leaks, CO2, batteries… ChirpStack
+publishes each uplink of your sensors on its MQTT broker, decoded by the codec
+of the device profile. The integration reads that broker and turns each
+decoded value into a Gladys feature.
+
+> Tested against a real ChirpStack v4 (the official chirpstack-docker stack, a
+> simulated gateway and simulated sensors), not against real LoRa radios:
+> feedback welcome.
+
+## What you get
+
+- **One device per LoRaWAN device** that ChirpStack hears, named as in
+  ChirpStack, in the Discovery tab of the integration.
+- **One feature per value decoded by the codec**: its kind is guessed from its
+  name (`temperature`, `TempC_SHT`, `humidity`, `BatV`, `DOOR_OPEN_STATUS`,
+  `water_leak`, `co2`…). A value whose name says nothing becomes a plain value.
+- The **RSSI** and **SNR** of the best gateway, and the **battery level** of
+  the LoRaWAN status when the device reports it.
+- Scene triggers, a scene action to send a downlink and a dashboard widget
+  (below).
+
+## Before you start
+
+1. A running ChirpStack **v4** with its MQTT integration (enabled by default,
+   and the case of the chirpstack-docker stack). The events must be **JSON**:
+   `json=true` in `[integration.mqtt]` of `chirpstack.toml` (the default).
+2. A **codec** on the device profile of each sensor (Device profiles → Codec):
+   often the one of the
+   [TTN device repository](https://github.com/TheThingsNetwork/lorawan-devices),
+   that ChirpStack can import. Without a codec, the device only shows its
+   signal, and the `uplink_received` trigger gives the raw payload.
+3. The address of the MQTT broker ChirpStack publishes to, and its credentials
+   if it has any.
+
+## Configuration
+
+- **Broker address**: `mqtt://` (port 1883) or `mqtts://` for TLS (port 8883).
+  The integration only needs to read `application/#`, and to write
+  `application/+/device/+/command/down` for the downlinks.
+- **User name** and **password**: leave them empty for an anonymous broker.
+- **Accept a self-signed certificate**: `mqtts://` only.
+- **Topic prefix**: `application`, unless `event_topic` was changed in
+  `chirpstack.toml`.
+- **Corrected keys**: see the next section.
+- **Silent after**: a sensor added to Gladys that sends nothing for that long
+  is "silent" (trigger, widget). Choose it longer than the reporting interval
+  of your slowest sensor: some door sensors only report every few hours.
+- **Language of the texts**: the feature names (frozen when the device is
+  added) and the messages of the actions and scenes.
+
+Then use **Check the connection**.
+
+## Keys and kinds
+
+Each numeric or boolean value of the decoded object becomes a feature (up to
+50 per device; nested objects up to three levels, as `sensor.co2`; lists and
+texts are skipped). A value that is a word becomes a feature only for a
+detector (`"open"`, `"closed"`, `"leak"`, `"normal"`…). The kind guessed the
+first time a key is seen is kept: a later version never changes it.
+
+When a guess is wrong, or for a value to hide, write `key=kind` pairs in
+**Corrected keys**, separated by commas: `TempC_DS=temperature,
+Work_mode=ignore`. The key is compared without case nor separators. Kinds:
+
+- measures: `temperature` (°C), `temperature_f` (°F), `humidity` (%),
+  `soil_moisture` (%), `co2` (ppm), `pressure` (hPa), `illuminance` (lux),
+  `battery` (%), `voltage` (V), `voltage_mv` (mV), `current` (A), `power` (W),
+  `distance_mm`, `distance_cm`, `distance_m`, `pm25`, `pm10` (µg/m³), `noise`
+  (dB), `counter`, `number` (no unit);
+- detectors: `motion`, `opening` (true = open), `contact` (true = closed),
+  `leak`, `smoke`, `vibration`, `tamper`, `binary` (any yes/no);
+- `ignore`: no feature.
+
+A corrected key changes the device: use **Update** in the Discovery tab.
+
+## Devices
+
+Open the **Discovery** tab of the integration: every device heard since the
+integration started (and kept in its data volume across restarts) is there,
+with its features. Add the ones you want. A new key sent later by a device
+(another frame type) appears there too, and **Update** adds it.
+
+The states are sent on each uplink, only when they changed (and every 12 hours
+for a steady value). The door sensors follow the Gladys convention: open or
+closed, as shown.
+
+## Scenes
+
+Triggers, for the devices added to Gladys (leave the device empty for any):
+
+- **Uplink received**: every uplink, even with the same values as before (a
+  LoRaWAN button, an event counter). Filter on the fPort; the scene reads the
+  fPort, the frame counter, the raw payload in hexadecimal and the RSSI.
+- **Sensor silent**: nothing received for the configured delay (battery, range,
+  failure). Once per silence; the delay restarts when the MQTT broker comes
+  back, so an outage does not make every sensor silent.
+- **Sensor back**: a silent sensor sends again.
+- **Sensor joined**: an OTAA join (restart, new battery).
+
+Action **Send a downlink**: queues bytes for a device in ChirpStack (the
+`command/down` topic). Give the fPort (1 to 223) and the payload in
+hexadecimal, as written in the manual of the device (for example `0100FF`);
+"Confirmed downlink" asks the device for an acknowledgement. A class A device
+receives it after its next uplink. The integration needs to have heard the
+device once (to know its application). Nothing is guessed: what you type is
+sent.
+
+## Dashboard
+
+The **LoRaWAN sensors** widget lists the sensors added to Gladys, silent ones
+first, with their last message and their signal ("12 min ago · -97 dBm").
+Settings: hide the signal, show only the silent sensors.
+
+## Limits
+
+- ChirpStack **v4** (the v3 Application Server format is read too, untested).
+  JSON events only, not protobuf.
+- No list of the ChirpStack devices through its API: a device appears once it
+  has sent something.
+- Read-only devices: a command goes through the downlink scene action, with a
+  payload you write yourself.
+- Each uplink sends a few states: the core accepts 300 per minute, enough for
+  dozens of sensors at the usual intervals.
+- Developed without LoRa radio hardware.
+
+## Troubleshooting
+
+- **No device in Discovery**: use **Check the connection**. Check the topic
+  prefix, that the sensor sends (Devices → Events in ChirpStack) and that the
+  user of the broker may read `application/#`.
+- **"Not in JSON"**: set `json=true` in `[integration.mqtt]` of
+  `chirpstack.toml` and restart ChirpStack.
+- **Only RSSI and SNR**: the device profile has no codec, or the codec fails
+  (Devices → Events → log in ChirpStack).
+- **A wrong kind**: correct it in **Corrected keys**, then **Update** the
+  device.
+- **Downlink not received**: check the Queue tab of the device in ChirpStack,
+  and that the broker user may write `command/down`.
+- Logs: `LOG_LEVEL=debug` shows each uplink.
+
+## Configuration settings
+
+These are the settings ChirpStack asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Connect ChirpStack | `section` | No | ChirpStack publishes every uplink of your LoRaWAN sensors on its MQTT broker, decoded by the codec of the device profile. The integration reads that broker; it publishes only the downlinks your scenes send. |
+| Broker address | `string` | Yes | The broker ChirpStack publishes to: mqtt:\/\/ (port 1883) or mqtts:\/\/ for TLS (port 8883). With chirpstack-docker, it is the mosquitto service. |
+| User name | `string` | No | Leave empty if the broker accepts anonymous clients. |
+| Password | `secret` | No |  |
+| Accept a self-signed certificate | `boolean` | No | mqtts:\/\/ only: the certificate of the broker is then not checked. |
+| Topic prefix | `string` | No | application, unless event_topic was changed in chirpstack.toml. |
+| Sensors | `section` | No | Each value decoded by the codec becomes a feature, its kind guessed from its name (temperature, humidity, battery, door…). Unknown names become plain values. |
+| Corrected keys | `string` | No | key=kind pairs, separated by commas, for a wrong guess or a value to ignore. Kinds: see the documentation. |
+| Silent after | `select` | No | A sensor added to Gladys that sends nothing for that long is silent: scene trigger, widget. |
+| Language of the texts | `select` | No | Feature names when a device is added, and the messages of the actions and scenes. |
+
+## How to install ChirpStack in Gladys
+
+1. In Gladys, open **Integrations**: ChirpStack appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-chirpstack:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-chirpstack](https://github.com/guim31/gladys-chirpstack).
+
+ChirpStack requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+ChirpStack is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-chirpstack) — [source of this documentation](https://github.com/guim31/gladys-chirpstack/blob/HEAD/docs/en.md)

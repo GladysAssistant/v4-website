@@ -1,0 +1,207 @@
+---
+title: "Integración domótica Hydro-Québec Peaks, gratuita y de código abierto"
+sidebar_label: "Hydro-Québec Peaks"
+description: "Puntas de invierno de Hydro-Québec: precalentamiento, inicio y fin de cada punta en sus escenas. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-hydroquebec-peak.png"
+keywords:
+  - "hydro-québec peaks"
+  - "domótica hydro-québec peaks"
+  - "gladys hydro-québec peaks"
+  - "hydro-québec peaks gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/prohand/gladys-hydroquebec-peak instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Hydro-Québec Peaks","description":"Puntas de invierno de Hydro-Québec: precalentamiento, inicio y fin de cada punta en sus escenas.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-hydroquebec-peak","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-hydroquebec-peak.png","type":"device","version":"1.0.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-10T10:09:34Z"}} />
+
+Esta integración lleva a Gladys los **eventos de punta de invierno** de
+Hydro-Québec: las horas, anunciadas unas horas o un día antes, en las que se
+pide a los clientes inscritos en una oferta de punta que consuman menos
+electricidad. Gladys puede entonces precalentar la casa, reducir el consumo
+durante la punta y volver a dejarlo todo como estaba después — por sí sola.
+
+> Integración no oficial, sin relación con Hydro-Québec. Lee los datos
+> públicos que publica Hydro-Québec (datos abiertos, licencia CC BY-NC 4.0).
+
+## Antes de empezar
+
+Se requiere **Gladys 5.3 o posterior**. No hace falta **ninguna cuenta de
+Hydro-Québec**, ni número de cliente ni clave: los eventos de punta son
+públicos.
+
+Solo necesita saber **en qué oferta está inscrito**. Figura en su factura y en
+su Espacio cliente:
+
+| Oferta                                      | Código         | Para        |
+| ------------------------------------------- | -------------- | ----------- |
+| Tarifa D con opción de créditos de invierno | `CPC-D`        | residencial |
+| Tarifa Flex D                               | `TPC-DPC`      | residencial |
+| Opción de créditos de invierno, empresas    | `CPC-G`        | empresas    |
+| Tarifa Flex G, empresas                     | `TPC-GPC`      | empresas    |
+| Gestión de la demanda, empresas             | `GDP-Affaires` | empresas    |
+| OEA, empresas                               | `OEA`          | empresas    |
+
+Hydro-Québec publica puntas **en invierno** (de diciembre a marzo, por regla
+general). Fuera de esa temporada, los dispositivos indican simplemente que no
+hay ninguna punta anunciada.
+
+## Configuración
+
+| Campo                               | Qué poner                                                                                                                              |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| **Ofertas seguidas**                | Marque su oferta. Se crea un dispositivo por oferta marcada.                                                                           |
+| **Otras ofertas**                   | Las ofertas que faltan en la lista, por su código, separadas por comas (p. ej. `ENG_100H_2F_7J`).                                      |
+| **Antelación del precalentamiento** | Cuántos minutos antes de una punta se abre la ventana de precalentamiento. Hydro-Québec aconseja unas dos horas (120). 0 la desactiva. |
+| **Intervalo de actualización**      | Cada cuánto se vuelven a leer los datos de Hydro-Québec, en segundos (900 = 15 minutos, mínimo 300).                                   |
+
+Abra después **Descubrir** en la integración y cree el dispositivo de su
+oferta.
+
+El botón **Listar las ofertas** da todos los códigos de oferta que Hydro-Québec
+publica esta temporada, listos para copiar en _Otras ofertas_. **Probar la
+conexión** lee los datos al momento e indica, para cada oferta seguida,
+cuántas puntas hay anunciadas y cuál viene después.
+
+## El dispositivo de una oferta
+
+Cada oferta se convierte en un dispositivo llamado `Hydro-Québec <código>`,
+con estas funciones de solo lectura:
+
+| Función                        | Valores                                                                                                       |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| Punta en curso                 | 1 durante una punta, 0 en caso contrario                                                                      |
+| Ventana de precalentamiento    | 1 durante la antelación previa a una punta, 0 en caso contrario                                               |
+| Punta esta mañana              | 1 cuando hay una punta de mañana (AM) anunciada hoy                                                           |
+| Punta esta tarde               | 1 cuando hay una punta de tarde (PM) anunciada hoy                                                            |
+| Punta mañana por la mañana     | lo mismo, mañana                                                                                              |
+| Punta mañana por la tarde      | lo mismo, mañana                                                                                              |
+| Minutos hasta la próxima punta | minutos antes del inicio de la próxima punta; **0** durante una punta, **-1** cuando no hay ninguna anunciada |
+| Próxima punta                  | la punta en curso o la siguiente, p. ej. `2026-12-15 06:00–09:00`, `—` si no hay ninguna                      |
+
+Todas las horas son **hora de Quebec**, sea cual sea la zona horaria de su
+servidor Gladys. Una punta va de su inicio a su fin: a las 9:00, la punta de
+6:00 a 9:00 ha terminado.
+
+Los indicadores cambian **al minuto**: la integración los vuelve a evaluar
+cada minuto a partir de los datos que ya tiene, y vuelve a leer los datos de
+Hydro-Québec en cada intervalo de actualización.
+
+## Escenas y panel (Gladys 5.1+)
+
+### Disparadores de escena
+
+| Disparador                                 | Cuándo                                                   |
+| ------------------------------------------ | -------------------------------------------------------- |
+| **Se anuncia una punta**                   | Hydro-Québec ha publicado una nueva punta para la oferta |
+| **Se abre la ventana de precalentamiento** | empieza la antelación previa a una punta                 |
+| **Empieza una punta**                      | al inicio de la punta                                    |
+| **Termina una punta**                      | al final de la punta                                     |
+
+Cada disparador puede limitarse a **una oferta** (su dispositivo) y a las
+puntas de **mañana (AM)** o de **tarde (PM)**. En las acciones siguientes, el
+evento da: `offer` (el código), `start` y `end` (hora de Quebec,
+`AAAA-MM-DD HH:MM`), `duration_minutes` — y para el precalentamiento,
+`lead_minutes`. Por ejemplo, una notificación:
+`Punta de {{triggerEvent.data.start}} a {{triggerEvent.data.end}}`.
+
+Cada disparador se activa **una sola vez por punta**, incluso tras un
+reinicio de la integración. Dos reglas que conviene conocer:
+
+- las puntas ya publicadas cuando instala la integración (o marca una nueva
+  oferta) no se «anuncian» — solo las publicadas después;
+- si la integración estaba detenida al empezar una punta, no finge que la
+  punta «acaba de empezar» con más de 10 minutos de retraso. El fin de una
+  punta cuyo inicio se señaló se señala siempre, aunque sea tarde: la escena
+  que vuelve a poner la calefacción siempre se ejecuta.
+
+### Acción de escena
+
+**Leer ahora las puntas de Hydro-Québec** lee los datos al momento y da a las
+acciones siguientes: `peak_in_progress`, `preheat_in_progress`,
+`next_peak_start` y `minutes_until_next_peak` (para la oferta elegida, o la
+primera seguida). Útil en una escena iniciada por otra cosa — «cuando vuelvo a
+casa, si no hay punta en curso, sube la calefacción».
+
+### Ejemplos de escenas
+
+- **Precalentamiento**: disparador _Se abre la ventana de precalentamiento_ →
+  subir los termostatos 1 o 2 °C, calentar el termo.
+- **Durante la punta**: disparador _Empieza una punta_ → bajar los
+  termostatos, apagar el termo, pausar el cargador del coche.
+- **Después de la punta**: disparador _Termina una punta_ → volver a las
+  consignas, encender de nuevo el termo y el cargador.
+- **Avisar en casa**: disparador _Se anuncia una punta_ → enviar un mensaje
+  «Punta mañana \{\{triggerEvent.data.start\}\}: evite la secadora».
+
+### El widget «Puntas de Hydro-Québec»
+
+Añádalo a un panel: una cuenta atrás hasta la próxima punta (o hasta el fin de
+la que está en curso), las próximas puntas anunciadas — cuántas es un ajuste
+del widget —, el estado de cada oferta seguida, un botón **Actualizar** y un
+enlace a los datos abiertos.
+
+## Conviene saber
+
+- Los datos vienen de los datos abiertos de Hydro-Québec, leídos unos cada 15
+  minutos con una petición condicional: cuando nada ha cambiado, no se
+  descarga nada.
+- A veces Hydro-Québec publica una punta solo unas horas antes. Cuando una
+  punta se publica dentro de su ventana de precalentamiento, el disparador de
+  precalentamiento se activa enseguida.
+- La integración guarda una pequeña memoria en su volumen `/data` (las puntas
+  ya anunciadas). Borrarla solo significa que el próximo arranque no anuncia
+  las puntas ya publicadas.
+- No conoce ni su consumo ni sus créditos: siguen en su Espacio cliente de
+  Hydro-Québec.
+
+## Solución de problemas
+
+- **La pantalla de configuración pide elegir una oferta**: marque al menos
+  una oferta, o escriba una en _Otras ofertas_.
+- **«Desconocida para Hydro-Québec esta temporada»** bajo _Probar la
+  conexión_: el código escrito no está en el flujo — compruébelo con _Listar
+  las ofertas_.
+- **Ninguna punta en todo el invierno**: compruebe la oferta; fuera del
+  invierno, que no haya puntas es normal.
+- **«Datos abiertos de Hydro-Québec inaccesibles»**: su Gladys no consigue
+  conectar con `donnees.solutions.hydroquebec.com` (DNS, cortafuegos). La
+  integración conserva los últimos datos leídos y vuelve a intentarlo en cada
+  intervalo.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Hydro-Québec Peaks te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Primeros pasos | `section` | No | Esta integración lee los eventos de punta de invierno que Hydro-Québec publica como datos abiertos: sin cuenta ni clave. Marque la oferta en la que está inscrito (figura en su factura y en su Espacio cliente): cada oferta se convierte en un dispositivo con sus indicadores de punta, más disparadores de escena para el anuncio, la ventana de precalentamiento, el inicio y el fin de cada punta. Integración no oficial, sin relación con Hydro-Québec. |
+| Ofertas seguidas | `multi_select` | No | Las ofertas de punta en las que está inscrito. Un dispositivo por oferta. |
+| Otras ofertas | `string` | No | Las ofertas que faltan en la lista de arriba, por su código, separadas por comas (el botón «Listar las ofertas» las da todas). |
+| Antelación del precalentamiento (minutos) | `number` | No | Cuánto tiempo antes de una punta se abre la ventana de precalentamiento. Hydro-Québec aconseja unas dos horas. 0 la desactiva. |
+| Intervalo de actualización (s) | `number` | No | Cada cuánto se vuelven a leer los datos de Hydro-Québec, en segundos. Las puntas se publican con horas de antelación: 15 minutos bastan. Los indicadores cambian al minuto. |
+
+## Cómo instalar Hydro-Québec Peaks en Gladys
+
+1. En Gladys, abre **Integraciones**: Hydro-Québec Peaks aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/prohand/gladys-hydroquebec-peak:1.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/prohand/gladys-hydroquebec-peak](https://github.com/prohand/gladys-hydroquebec-peak).
+
+Hydro-Québec Peaks requiere Gladys `>=5.3.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Hydro-Québec Peaks es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [prohand](https://github.com/prohand), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/prohand/gladys-hydroquebec-peak) — [fuente de esta documentación](https://github.com/prohand/gladys-hydroquebec-peak/blob/HEAD/docs/es.md)

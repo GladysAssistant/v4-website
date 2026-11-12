@@ -1,0 +1,230 @@
+---
+title: "Octopus Energy Germany Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Octopus Energy Germany"
+description: "Unofficial: Octopus Energy Germany tariffs, dynamic prices, smart-meter use, Intelligent Go. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-octopus-germany.png"
+keywords:
+  - "octopus energy germany"
+  - "octopus energy germany smart home"
+  - "gladys octopus energy germany"
+  - "octopus energy germany gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-octopus-germany instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Octopus Energy Germany","description":"Unofficial: Octopus Energy Germany tariffs, dynamic prices, smart-meter use, Intelligent Go.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-octopus-germany","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-octopus-germany.png","type":"device","version":"0.1.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-12T01:49:39Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+Unofficial integration, not affiliated with Octopus Energy. It reads your
+**Octopus Energy Germany** customer account through the official Kraken API
+of Octopus Germany (`api.oeg-kraken.energy`, documented on
+developer.oeg-kraken.energy) and gives Gladys:
+
+- one device per **electricity market location (MaLo)** of the account, with
+  the price per kWh now, the next price, the monthly standing charge and, for
+  a smart meter (iMSys), the consumption by half hour for the energy
+  monitoring;
+- one device per **Intelligent Octopus device** (car, charge point) with
+  "Smart charge planned now";
+- an energy contract template, **Octopus Energy Germany electricity**, priced
+  from the tariff of your account: fixed, time-of-use (Intelligent Octopus
+  Go, Heat…) or dynamic.
+
+**Read-only.** The only request that is not a read is the login. Nothing is
+ever changed on your account, your meters or your devices (no smart charge,
+no boost, no meter reading sent).
+
+> This integration has never been tested with a real Octopus Germany account:
+> it was written from the published API schema and from the queries of
+> octopus_germany (Home Assistant, MIT). Please report what you see.
+
+## Setup
+
+1. **Recommended: an API key** of your Octopus account (`sk_live_…`). It is
+   the durable way to log in; if you have none, ask Octopus customer service.
+   It is used alone when given.
+2. **Fallback: the e-mail address and the password** of the Octopus website
+   and app. Kraken marked this login deprecated in 2026 (removal announced
+   "on or after 2026-09-21"); it still worked in October 2026. When Octopus
+   stops accepting it, the status says so and asks for an API key.
+   Whatever you enter is kept by Gladys in its database, the secrets never
+   shown again, and sent only to Octopus Germany to log in. The integration
+   keeps the Kraken token in memory only.
+3. With several accounts on one login, enter the **account number** to read
+   (empty: the first one; the status says so).
+4. Press **Test the connection** (at most once a minute): it logs in and
+   counts your accounts.
+5. In **Discovery**, add the devices you want. Nothing is asked of Octopus
+   for a device nobody added (consumption, planned charges).
+6. In the energy settings of Gladys, create a contract from the template
+   **Octopus Energy Germany electricity** on your meter: enter the last 4
+   digits of the MaLo (shown in the device name; may be left empty only with
+   a single MaLo: with several, an empty or ambiguous value is refused) and
+   your monthly standing charge (shown by the "Standing charge per month"
+   feature, VAT included).
+
+## Devices
+
+| Device                           | Feature                   | Meaning                                         |
+| -------------------------------- | ------------------------- | ----------------------------------------------- |
+| Octopus electricity (MaLo …1234) | Price per kWh now         | gross price (VAT included), EUR/kWh             |
+|                                  | Next price per kWh        | the next different price within 2 days          |
+|                                  | Standing charge per month | gross, EUR, from your agreement                 |
+|                                  | Consumption (30 min)      | smart meter (iMSys) only, kWh, dated by Octopus |
+| Octopus Intelligent …            | Smart charge planned now  | 1 inside a planned charge, 0 outside            |
+
+The **device id** is a keyed hash of the MaLo number (HMAC-SHA-256, 16 hex
+digits) under a random key made at the first start and kept by Gladys in the
+integration config, outside the form (never in `/data`): without that key,
+neither the id nor `/data` gives the MaLo back, even with its last 4 digits,
+which the device name shows. Until Gladys has stored that key, nothing is
+read nor published (status "Gladys could not store the key…", tried again
+with the next read of the account: after 5, 10, 20, 40 then every 60
+minutes; saving the form tries again too, at most once in 5 s, doubled up
+to 5 minutes). The MaLo number itself never appears in an id,
+a log, the status or `/data`. The MaLo, not the meter, is the identity: a
+replaced meter keeps its Gladys device and its history.
+
+A value Octopus does not give stays unknown: nothing is ever published as 0
+in its place. The prices are published again at every quarter of an hour
+from what was read; a tariff read more than 6 hours ago is not published as
+current any more.
+
+## Pace
+
+- the account (tariffs, dynamic prices ahead, devices): every hour;
+- the consumption of the added meters: every 3 hours, the last 3 days; 7
+  days for a new device and once a day after 06:00 (German time);
+- the planned charges of the added Intelligent devices: every 15 minutes.
+
+Each time is kept in `/data` before the request: a restart, a reconnection or
+Discovery never bring a read forward, and the test button only logs in and
+lists the accounts (at most once a minute). Two exceptions, a minute after
+the previous read at the earliest: another login or account number saved in
+the form (the account), a meter device just added (its consumption). The
+requests go one at a time, 2 seconds apart.
+
+## The energy contract
+
+The template is **priced by the integration** (delegated): Gladys sends the
+consumption by half hour, the integration answers its cost:
+
+- the price of a half hour is the mean of its two quarters of an hour, VAT
+  included, from the agreement in force then (a change of tariff mid-month is
+  priced right);
+- **dynamic tariff**: the price of the Octopus forecast for that quarter,
+  nothing else; **time-of-use** (Intelligent Octopus Go: 00:00 to 05:00 German
+  time): the rate of the time slot, the changes of time included;
+  **fixed**: the rate, within the dates Octopus gives it;
+- a negative price costs 0 (Gladys does not take credits);
+- an unknown price is never a 0: the whole request of Gladys fails (up to a
+  month of half hours), and Gladys asks again later. Its catch-up starts from
+  the oldest half hour without a cost and covers 31 days: one quarter of an
+  hour without a known price keeps the rest of that billing period without a
+  cost until the quarter leaves this window.
+
+A dynamic tariff is priced from its forecast only, never from the fixed rate
+of the product: an agreement seen dynamic once stays so (kept in `/data`),
+and an answer of Octopus carrying an error (for example KT-CT-3956 on the
+forecast) only spoils the part it points at (that agreement has no price, that
+MaLo keeps what was read before); an error pointing nowhere spoils the whole
+answer, a passing error: nothing is taken from it, the prices read
+before are kept. The dynamic prices are only known ahead of time (today and
+tomorrow): the integration keeps every price it has seen in `/data` for 40
+days, so that it can price the past, and a price kept for a quarter already
+started is never rewritten. **Start the contract on the day the integration
+was installed** (or later), and keep Gladys running: a quarter of an hour it
+never saw ahead has no known dynamic price (see above).
+
+Not included: a variable §14a grid fee (module 3), which Octopus bills on top
+for the customers who chose it. The standing charge is the amount you enter
+in the contract (Gladys computes it, not the integration).
+
+## Status and errors
+
+| Status                                                     | Meaning                                                                                                                                                     | What happens                                                                                                 |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Octopus refused the login (KT-CT-1138, 1134 or 1135)       | the login refused: wrong e-mail, password or API key (1134 and 1135 are documented for refresh tokens; answered to this login, they are taken as a refusal) | no request until you change the credentials or Test succeeds (another account number alone does not lift it) |
+| API access is not enabled (KT-CT-11334)                    | Octopus disabled API access for this user                                                                                                                   | same                                                                                                         |
+| Octopus no longer accepts the login by e-mail and password | the schema refuses these fields, or KT-CT-1113                                                                                                              | pause of 1 hour, doubled up to 6 hours; lifted by an API key                                                 |
+| Octopus blocks the login for now (KT-CT-1136)              | a temporary block, seen with valid credentials                                                                                                              | pause of 1 hour, doubled up to 6 hours                                                                       |
+| Octopus asked to slow down                                 | HTTP 429 or KT-CT-1199                                                                                                                                      | pause of Retry-After or 15 minutes, doubled up to 6 hours                                                    |
+| Octopus is having trouble                                  | HTTP 5xx or KT-CT-7899                                                                                                                                      | pause of 5 minutes, doubled up to 6 hours                                                                    |
+| Octopus could not be read                                  | network, timeout, unreadable or partial answer, a query refused                                                                                             | tried again after 5, 10, 20, 40 then every 60 minutes                                                        |
+
+A 401 or 403 answered to a query (not to the login) is never taken as a
+refused password: one new login, then a passing error. The pauses and the
+refusal are kept in `/data` (the refusal as 8 bits of a salted hash of the
+credentials, never the credentials).
+
+**Octopus' new sign-in.** If the website accepts your password but the
+integration says it is refused, your account may use the new sign-in: an API
+key of the account still works (ask Octopus for one).
+
+## What `/data` holds
+
+`/data/octopus-germany.json`: the time of the last reads, the pause, the
+refusal (8 bits of a salted hash), the MaLos seen (at most 8: keyed hash,
+last 4 digits, tariff name, smart meter or not, when last seen), the
+agreements seen dynamic (keyed hash) and the prices of the last 40 days.
+Never the e-mail address, the password, a token, the id key, the account
+number nor a whole MaLo number.
+
+## Limits
+
+- Electricity only: gas, feed-in (export) and the balance of the account are
+  not read.
+- The planned charges of Intelligent Octopus do not change the price
+  computed here: the tariff time slots do.
+- Never tested with a real account (see above): the answers are read
+  strictly, and an answer of an unexpected shape is a passing error, never a
+  wrong value.
+
+## Credits
+
+The GraphQL queries are adapted from octopus_germany by thecem (MIT,
+github.com/thecem/octopus_germany), as is the reading of the tariffs and of
+the measurements, rewritten in JavaScript. Notice in `THIRD_PARTY_NOTICES.md`.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Octopus Energy Germany in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Octopus Energy Germany account | `section` | Nein | Unofficial connector, not affiliated with Octopus Energy. For Octopus Energy customers in Germany. Recommended: an API key of your Octopus account (sk_live_…, ask Octopus customer service if you have none). The e-mail address and password of the Octopus website still work as a fallback, but Kraken deprecated that login in 2026 and may remove it. The integration reads your electricity market locations (MaLo), their tariff (fixed, time-of-use such as Intelligent Octopus Go, or dynamic), the smart-meter consumption (iMSys) for the Gladys energy monitoring and the smart charges planned for your Intelligent devices. Read-only: nothing is ever changed on your account. Then create an energy contract from the "Octopus Energy Germany electricity" template. |
+| API key (recommended) | `secret` | Nein | An API key of your Octopus account (sk_live_…): the durable way to log in, used alone when given. Kept by Gladys in its database, never shown again, sent only to Octopus Energy Germany. |
+| E-mail address (fallback) | `string` | Nein | Without an API key: the e-mail address you log in with on the Octopus website (a login Kraken deprecated in 2026). |
+| Password (fallback) | `secret` | Nein | Kept by Gladys in its database, never shown again, sent only to Octopus Energy Germany (api.oeg-kraken.energy) to log in. |
+| Account number (optional) | `string` | Nein | Only needed when your login has several Octopus accounts: empty, the first one is read. |
+
+## So installierst du Octopus Energy Germany in Gladys
+
+1. Öffne in Gladys **Integrationen**: Octopus Energy Germany erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-octopus-germany:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-octopus-germany](https://github.com/LM1LC3N7/gladys-octopus-germany).
+
+Octopus Energy Germany benötigt Gladys `>=5.3.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Octopus Energy Germany ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-octopus-germany) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-octopus-germany/blob/HEAD/docs/en.md)

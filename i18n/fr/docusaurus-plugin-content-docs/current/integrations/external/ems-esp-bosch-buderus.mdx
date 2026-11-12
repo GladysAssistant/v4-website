@@ -1,0 +1,306 @@
+---
+title: "Intégration domotique EMS-ESP (Bosch, Buderus), gratuite et open source"
+sidebar_label: "EMS-ESP (Bosch, Buderus)"
+description: "Chaudières et PAC via une passerelle EMS-ESP en local : chauffage, eau chaude, commandes au choix. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ems-esp.png"
+keywords:
+  - "ems-esp (bosch, buderus)"
+  - "domotique ems-esp (bosch, buderus)"
+  - "gladys ems-esp (bosch, buderus)"
+  - "ems-esp (bosch, buderus) gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-ems-esp instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"EMS-ESP (Bosch, Buderus)","description":"Chaudières et PAC via une passerelle EMS-ESP en local : chauffage, eau chaude, commandes au choix.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-ems-esp","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ems-esp.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-11T12:30:16Z"}} />
+
+Cette intégration affiche dans Gladys une chaudière ou une pompe à chaleur du
+groupe Bosch (**Bosch, Buderus, Junkers, Nefit, Worcester, Sieger**...) lue
+sur son bus EMS par une passerelle **EMS-ESP** : une carte ESP32 (BBQKees ou
+montage maison) avec le micrologiciel libre EMS-ESP, sur votre réseau local,
+sans cloud.
+
+**Jamais testé avec une vraie passerelle** : l'intégration appelle l'API REST
+qu'EMS-ESP documente ([docs.emsesp.org](https://docs.emsesp.org/), page
+« Commands ») et a été vérifiée contre un faux serveur reprenant les formes
+de réponse de la version 3.9. Sans lien avec EMS-ESP, Bosch ni Buderus. Vos
+retours sont les bienvenus.
+
+Vous avez une passerelle réseau Buderus **KM50, KM100 ou KM200** et pas
+d'EMS-ESP ? L'intégration
+[gladys-bosch-thermostat](https://github.com/LM1LC3N7/gladys-bosch-thermostat)
+s'en charge.
+
+## Ce que vous obtenez
+
+Un appareil Gladys par installation, lu toutes les 60 s par défaut :
+
+- températures extérieure et de départ, pression de l'installation (lues sur
+  la chaudière) ;
+- **chauffage de la chaudière, tous les circuits** : marche/arrêt du
+  chauffage de la chaudière (`heatingactivated`, le « mode été » de la
+  chaudière : il coupe le chauffage de **tous** les circuits, voir L'arrêt) ;
+- pour chaque **circuit de chauffage** du thermostat (hc1 à hc4) :
+  température ambiante, consigne ambiante, mode (manuel, automatique, jour,
+  nuit, hors gel... selon le thermostat, avec « Arrêt » quand il en propose
+  un) ;
+- pour chaque **eau chaude** (dhw, dhw2) : température de l'eau, consigne,
+  marche/arrêt (`activated`) ;
+- état de la liaison (« OK », « Passerelle injoignable », un arrêt depuis
+  Gladys en cours...).
+
+Une fonctionnalité apparaît dès qu'EMS-ESP donne sa valeur et ne disparaît
+plus ensuite. Les modes proposés sont ceux que liste le thermostat lors de
+l'ajout de l'appareil, dans la langue réglée dans EMS-ESP (un mode « Arrêt »
+est reconnu dans toutes ses langues).
+
+L'identité de l'appareil est une empreinte du type, du numéro de produit et
+de l'adresse sur le bus de la chaudière (sinon de la pompe à chaleur, sinon du
+thermostat) qu'EMS-ESP liste : son API ne donne ni numéro de série ni adresse
+MAC. Deux passerelles sur le même modèle de chaudière ne se distinguent donc
+pas ; une autre chaudière à l'adresse se voit tout de suite.
+
+## Configuration
+
+1. Trouvez l'adresse d'EMS-ESP sur votre réseau (dans votre box, ou dans
+   EMS-ESP, Réseau), par exemple `192.168.1.50`. Fixez-la (bail DHCP
+   réservé) : un nom en `.local` peut ne pas se résoudre depuis le conteneur.
+2. Dans EMS-ESP, **Paramètres, Sécurité, Clés d'API**, créez une clé :
+   « Lecture et écriture » pour pouvoir commander (arrêts compris),
+   « Lecture » pour lire seulement. Depuis **EMS-ESP 3.10**, toute lecture
+   demande une clé ; avant, la lecture se fait sans clé (une clé reste
+   nécessaire pour les commandes). Sur les versions qui n'ont pas de clés
+   d'API, c'est le jeton d'accès de l'utilisateur admin.
+3. Dans Gladys, ouvrez la configuration de l'intégration, saisissez
+   l'adresse (avec `:port` si ce n'est pas 80) et la clé.
+4. Enregistrez, puis ajoutez l'appareil depuis l'onglet **Découverte**.
+
+La clé est gardée par Gladys dans sa base, jamais réaffichée, envoyée
+seulement à votre passerelle EMS-ESP, dans l'en-tête `Authorization` de
+chaque requête (http simple sur votre réseau local, comme EMS-ESP répond).
+L'intégration se présente avec son propre en-tête
+`User-Agent: gladys-ems-esp/<version>`.
+
+Le bouton **Tester la connexion** lit EMS-ESP une fois, mais jamais plus tôt
+que l'intervalle de rafraîchissement après la lecture précédente.
+
+## Les commandes
+
+Par défaut, Gladys ne fait que lire. L'option **Autoriser la remise en
+marche, les modes et les consignes** (désactivée par défaut) permet au
+tableau de bord, aux scènes et aux assistants vocaux de :
+
+- remettre en **marche** le chauffage de la chaudière ou une eau chaude ;
+- changer le **mode** d'un circuit de chauffage, parmi ceux que liste le
+  thermostat ;
+- changer la **consigne ambiante** d'un circuit de chauffage, par
+  demi-degré, entre 5 et 30 °C et dans les bornes qu'EMS-ESP donne pour
+  elle ;
+- changer la **consigne d'eau chaude**, en degrés entiers, dans les bornes
+  d'EMS-ESP, entre 20 °C et le plafond configuré : **65 °C par défaut, de 40
+  à 65 °C, 65 °C au plus** quoi qu'on saisisse ou qu'EMS-ESP autorise
+  (risque de brûlure).
+
+Ce ne sont ni des interrupteurs ni des binaires : un « tout éteindre » d'une
+scène ou d'un assistant vocal n'atteint pas la chaudière.
+
+Chaque commande relit d'abord EMS-ESP (son identité, puis l'entité qu'elle
+écrit avec ses bornes, ses modes et le droit d'écriture) et décide sur cette
+lecture, jamais sur les valeurs gardées en mémoire ; les commandes arrivées
+ensemble (une scène) partagent cette relecture, partent une à une, puis
+chacune est relue. Une commande part au plus tard 3,5 s après le clic, sinon
+elle est refusée sans rien envoyer. EMS-ESP répond dès que l'écriture est en
+file et ne montre la nouvelle valeur qu'après son passage sur le bus (0,5 à
+2 s) : l'entité est donc relue toutes les 600 ms, et la commande n'est
+annoncée réussie que si une de ces lectures, avant 4,3 s, montre la valeur
+demandée ; sinon Gladys affiche « envoyée et acceptée, pas encore appliquée »
+(ou « envoyée, sans confirmation » si EMS-ESP n'a pas répondu), et les
+lectures de suivi, 5 s et 20 s plus tard, publient la valeur dès qu'elle
+apparaît. Au-delà de 16 commandes en attente, elles sont refusées. EMS-ESP
+servant une requête à la fois, une scène de 5 consignes est réglée et
+confirmée jusqu'à environ 200 ms par requête ; sur une passerelle plus lente
+(500 ms et plus), les dernières sont refusées « rien envoyé » faute de temps. Un refus HTTP 4xx d'une commande
+ne concerne qu'elle : les lectures continuent. Un refus 401/403 veut dire que
+la clé n'a pas le droit d'écrire : l'erreur le dit.
+
+Quand EMS-ESP est réglé en **°F**, les températures sont converties en °C
+pour Gladys et les consignes ne sont pas écrites dans cette version (rien
+n'est envoyé) ; marche, arrêt et modes restent possibles.
+
+Une consigne est refusée tant qu'un arrêt de son circuit envoyé depuis
+Gladys tient (voir ci-dessous) : remettez d'abord le circuit en marche (ou
+choisissez un autre mode). Quand /data ne peut être lu, remise en marche,
+modes et consignes sont refusés (un arrêt gardé y serait inconnu).
+
+## L'arrêt
+
+Choisir **« Arrêt »** pour le chauffage de la chaudière, pour une eau chaude,
+ou pour un circuit de chauffage dont le thermostat propose un mode arrêt
+(RC20, RC30, BC400, CR11, thermostats SRC...) n'a pas besoin de l'option.
+L'intégration écrit `off`, qu'EMS-ESP comprend dans toutes ses langues.
+
+**Un circuit dont le thermostat ne propose pas de mode arrêt** (RC310, RC300,
+RC35... : manuel et automatique, jour et nuit) n'offre pas d'arrêt : son
+sélecteur de mode n'a pas « Arrêt » (l'erreur le rappelle). Pour arrêter le
+chauffage, utilisez « Chauffage de la chaudière, tous les circuits :
+marche/arrêt », choix **« Arrêt du chauffage de la chaudière, tous les
+circuits »**, sans option lui aussi. Attention :
+
+- il coupe le chauffage de **tous** les circuits de la chaudière (le « mode
+  été » de la chaudière), pas d'un seul ;
+- tant qu'il tient, la protection hors gel pilotée par le thermostat peut ne
+  plus chauffer l'installation : ne l'utilisez pas pour une longue absence
+  par grand froid ;
+- il n'a pas été vérifié avec un RC310 maître du bus : si le thermostat
+  remet le chauffage en marche, deux lectures de suite le montrent et la garde
+  de l'arrêt depuis Gladys est levée (l'état « marche » s'affiche).
+
+L'arrêt part sans attendre une lecture, devant toute autre requête : une
+lecture en cours est interrompue, les commandes pas encore envoyées sont
+annulées (rien de ce qui a été demandé avant l'arrêt ne part après lui). Ni
+l'option, ni les bornes, ni une pause demandée par EMS-ESP (HTTP 429/5xx), ni
+une clé refusée auparavant (un essai), ni /data illisible ou bloqué, ni un
+appareil pas encore lu ne le retiennent.
+
+Il est refusé par l'intégration dans ces trois cas seulement :
+
+- la configuration de l'intégration n'est pas valide, ou n'a pas encore pu
+  être lue depuis le démarrage de l'intégration ;
+- le circuit ne propose pas « Arrêt » (ceux du sélecteur créé, ou de la
+  dernière lecture) ;
+- la dernière lecture a montré une **autre** installation à cette adresse.
+
+EMS-ESP lui-même le refuse sans une clé ayant le droit « Lecture et
+écriture » (HTTP 401/403 ; l'erreur le dit). En mode lecture seule, EMS-ESP
+l'accepte (HTTP 200) sans jamais l'appliquer : il reste « pas encore
+appliqué » (l'état de la liaison signale ce mode).
+
+Seule une réponse d'EMS-ESP compte comme un essai. Quand il ne peut pas
+partir (passerelle injoignable, coupure), il est retenté pendant 250 ms,
+puis gardé dans /data et renvoyé en tête de chaque lecture suivante, sans
+limite, jusqu'à ce qu'EMS-ESP y réponde : il part donc à la première lecture
+qui la joint, et dès le redémarrage de l'intégration ou un changement de
+configuration (ou, si /data était lent au démarrage, dès qu'il répond : il
+est relu toutes les 10 s). Parti sans réponse (délai dépassé, coupure) ou
+refusé en HTTP 429/5xx, il est renvoyé de même, sans être compté, au rythme
+des lectures périodiques (leur intervalle, leur repli après des échecs, la
+pause de 1, 2, 5 puis 10 min après des 429/5xx de suite) ; seul le clic
+déclenche une lecture de suivi rapide quand il part sans réponse. Il n'est pas renvoyé à une
+autre installation lue à l'adresse. Quand EMS-ESP le refuse en HTTP 4xx alors
+que les lectures passent, il est renvoyé 2 fois au plus, puis l'état le dit.
+Cliqué alors qu'EMS-ESP refuse les lectures avec la clé, il est envoyé une
+fois : accepté, il compte ; refusé, il est gardé et renvoyé en tête dès
+qu'une autre clé est enregistrée ou que le bouton passe.
+
+Il est annoncé réussi quand une lecture partie après lui montre le circuit à
+l'arrêt. Une fois vu appliqué, plus rien n'est renvoyé. Si une lecture partie
+après lui montre encore un autre état, il est renvoyé, 3 fois au plus (seuls
+les envois qui ont reçu une réponse comptent), puis l'état le dit.
+
+L'arrêt depuis Gladys est gardé dans /data, sans limite de durée. Il est levé
+seulement par une remise en marche ou un autre mode choisi depuis Gladys
+(avec l'option ; la levée est écrite dans /data avant l'envoi), ou quand, une
+fois l'arrêt vu appliqué, un autre état est lu deux fois de suite (changé sur
+le thermostat, la chaudière ou dans EMS-ESP).
+
+## État et erreurs
+
+- **EMS-ESP refuse les lectures avec cette clé** (HTTP 401/403 sur
+  `/api/system`, à partir de 3.10) : les lectures s'arrêtent, sans nouvel
+  essai automatique ; enregistrez une autre clé ou utilisez « Tester la
+  connexion ». Un 401/403 sur une autre adresse de l'API n'est pas un refus
+  de la clé : la valeur est laissée de côté.
+- **EMS-ESP demande de ralentir** (HTTP 429 : une autre requête est en cours,
+  par exemple de Home Assistant ; ou 5xx) : pause de 1 min à 6 h, gardée dans
+  /data, pour tout sauf l'arrêt.
+- **Passerelle injoignable** : nouvel essai après 1, 2, 5 puis 10 min, pas
+  plus tôt que l'intervalle ; l'état de la liaison le dit, et les valeurs de
+  plus de deux intervalles ne sont plus republiées.
+- **Bus EMS non connecté** (EMS-ESP le dit) : aucune valeur n'est publiée,
+  elles pourraient être anciennes.
+- **Valeur absente** (HTTP 404 d'une entité ou d'un appareil qu'EMS-ESP n'a
+  pas, valeur vide ou nulle) : laissée de côté, les autres sont lues ; une
+  valeur inconnue n'est pas publiée comme 0.
+- **Une autre installation répond à l'adresse** : ses valeurs ne vont pas
+  sur l'appareil créé ; elle apparaît comme un nouvel appareil dans
+  Découverte.
+- **EMS-ESP en mode lecture seule** : l'état de la liaison le signale ;
+  EMS-ESP accepte alors toute commande sans l'appliquer, arrêts compris
+  (« pas encore appliquée »).
+
+## Ce qui est gardé dans /data
+
+`ems-esp-state.json` : une pause en cours, un refus de la clé (avec 8 bits
+d'une empreinte salée, de quoi savoir si elle a changé, pas de quoi la
+retrouver), l'heure de la dernière lecture (un redémarrage ne relit pas plus
+tôt que l'intervalle), les arrêts envoyés depuis Gladys. Aucun secret. Une
+lecture ou une écriture de /data n'est pas attendue plus de 1,5 s : un volume
+bloqué compte comme illisible et ne retient pas un arrêt. Illisible, /data est
+relu toutes les 10 s (une lecture à la fois) ; dès qu'il répond, les arrêts
+qu'il garde partent et les commandes sont de nouveau acceptées.
+
+## Limites connues
+
+- API REST seulement (pas de MQTT dans cette version) ; EMS-ESP 3.7 ou plus
+  récent (eau chaude rangée sous `dhw`).
+- Quelques requêtes par lecture (système, chaudière, thermostat, puis le
+  mode de chaque circuit de chauffage). EMS-ESP sert une requête à la fois :
+  une autre application qui l'interroge en même temps peut provoquer un 429
+  et une pause d'une minute.
+- Une scène de plus de quelques consignes sur une passerelle lente (voir Les
+  commandes).
+- « Marche » (ou un autre mode) parti sans réponse remplace l'arrêt depuis
+  Gladys : l'arrêt n'est plus renvoyé ; refusé ou jamais parti, l'arrêt tient
+  et ses renvois continuent.
+- Consignes non écrites quand EMS-ESP est réglé en °F.
+- Programmes horaires, mode de l'eau chaude du thermostat, charge unique,
+  énergie, solaire, mélangeurs, pompe à chaleur en détail, capteurs ajoutés à
+  EMS-ESP : pas dans cette version.
+
+## Crédits
+
+L'intégration appelle l'API d'[EMS-ESP](https://github.com/emsesp/EMS-ESP32)
+(micrologiciel sous licence GPL-3.0) telle que
+[docs.emsesp.org](https://docs.emsesp.org/) la documente ; aucun code
+d'EMS-ESP n'est repris. Voir THIRD_PARTY_NOTICES.md.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par EMS-ESP (Bosch, Buderus) dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre passerelle EMS-ESP | `section` | Non | Affiche dans Gladys une chaudière ou une pompe à chaleur du groupe Bosch (Bosch, Buderus, Junkers, Nefit, Worcester, Sieger...) lue sur son bus EMS par une passerelle EMS-ESP (une carte ESP32 avec le micrologiciel libre EMS-ESP), sur votre réseau local, sans cloud : températures extérieure et de départ, pression, le chauffage de la chaudière, chaque circuit de chauffage du thermostat (température ambiante, consigne, mode) et chaque eau chaude (température, consigne, marche/arrêt), modifiables depuis Gladys en option. Saisissez l’adresse de la passerelle (et une clé d’API d’EMS-ESP : nécessaire depuis la version 3.10, et pour toute commande), enregistrez, puis ajoutez l’appareil depuis l’onglet Découverte. Jamais testé avec une vraie passerelle. Sans lien avec EMS-ESP, Bosch ni Buderus. |
+| Adresse de la passerelle EMS-ESP | `string` | Oui | Son adresse IPv4 ou son nom d’hôte sur votre réseau, avec un port s’il n’est pas 80 (http simple, comme EMS-ESP répond). Donnez-lui une adresse fixe dans votre box (un nom en .local peut ne pas se résoudre depuis le conteneur). |
+| Clé d’API d’EMS-ESP (facultative en lecture avant 3.10) | `secret` | Non | Créée dans EMS-ESP, Paramètres, Sécurité, Clés d’API (« Lecture et écriture » pour les commandes, arrêts compris ; « Lecture » suffit pour lire seulement). Versions anciennes : le jeton d’accès de l’utilisateur admin. Gardée par Gladys dans sa base, jamais réaffichée, envoyée seulement à votre passerelle EMS-ESP (en-tête Authorization). |
+| Commandes | `section` | Non | Par défaut Gladys ne fait que lire. Une fois autorisés, le tableau de bord, les scènes et les assistants vocaux peuvent remettre en marche le chauffage de la chaudière et l’eau chaude, changer le mode de chaque circuit de chauffage et les consignes de pièce et d’eau chaude, toujours dans les bornes que donne EMS-ESP et celles ci-dessous. « Arrêt » (le chauffage de la chaudière, une eau chaude, un circuit de chauffage dont le thermostat propose un mode arrêt) n’a pas besoin d’option : il arrête ce circuit ; le guide liste les cas où il est encore refusé. Il demande une clé avec le droit « Lecture et écriture », comme toute commande. |
+| Autoriser la remise en marche, les modes et les consignes | `boolean` | Non | Désactivé par défaut. Désactivé : toute « Marche », tout mode autre que « Arrêt » et tout changement de consigne sont refusés. « Arrêt » n’est jamais refusé pour cette raison. |
+| Plafond des consignes d'eau chaude (°C) | `number` | Non | Gladys ne règle jamais l’eau chaude au-dessus de cette température (risque de brûlure). 65 °C par défaut, de 40 à 65 °C (jamais plus de 65 °C, quoi qu’on saisisse ; le maximum que donne EMS-ESP s’applique s’il est plus bas). Le plancher est de 20 °C. |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture d’EMS-ESP, en secondes (quelques requêtes : le système, la chaudière, le thermostat et le mode de chaque circuit de chauffage). |
+| Langue des noms des fonctionnalités | `select` | Non | Sert aux noms de l'appareil et des fonctionnalités ajoutés désormais, aux libellés des modes, aux textes d'état et aux erreurs des commandes. |
+
+## Comment installer EMS-ESP (Bosch, Buderus) dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : EMS-ESP (Bosch, Buderus) apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-ems-esp:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-ems-esp](https://github.com/LM1LC3N7/gladys-ems-esp).
+
+EMS-ESP (Bosch, Buderus) nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+EMS-ESP (Bosch, Buderus) est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-ems-esp) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-ems-esp/blob/HEAD/docs/fr.md)

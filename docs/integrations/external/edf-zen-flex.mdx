@@ -1,0 +1,160 @@
+---
+title: "EDF Zen Flex smart home integration, free and open source"
+sidebar_label: "EDF Zen Flex"
+description: "Unofficial: EDF Zen Flex Sobriété and Bonus days, and the contract priced right in Gladys. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-edf-zen-flex.png"
+keywords:
+  - "edf zen flex"
+  - "edf zen flex smart home"
+  - "gladys edf zen flex"
+  - "edf zen flex gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-edf-zen-flex instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"EDF Zen Flex","description":"Unofficial: EDF Zen Flex Sobriété and Bonus days, and the contract priced right in Gladys.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-edf-zen-flex","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-edf-zen-flex.png","type":"provider","version":"0.1.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-11-11T10:03:42Z"}} />
+
+**Unofficial** integration, not affiliated with EDF. It brings the French EDF Zen Flex electricity offer
+(commercial name: "Zen Week-End – Option Flex") to Gladys:
+
+- the **type of each day** (Éco, Sobriété, Bonus), read the day before from the EDF website, in the `zen-flex`
+  tariff calendar of Gladys;
+- an "EDF Zen Flex" **contract template** that Gladys prices itself from that calendar;
+- a **scene trigger** "EDF Zen Flex day announced", to get the home ready the day before a Sobriété day.
+
+Not tested on a real Gladys installation with a meter under a Zen Flex contract: reading the EDF website was
+checked for real on 11 November 2026, the pricing on the tariff engine of Gladys 5.3.
+
+## The source: a public page of the EDF website, undocumented
+
+The integration reads the endpoint that the Zen Flex page of the EDF website uses itself
+(`particulier.edf.fr/services/rest/opm/getOPMStatut`): **no account, no login**, with its own User-Agent
+(`gladys-edf-zen-flex/<version>`), never a browser's nor the EDF app's. It gives the type of today and of
+tomorrow, or "not announced yet".
+
+EDF does not document this endpoint and **may change or close it without notice**. Any answer of an unexpected
+form (an unknown code, a missing key, an HTML page…) is refused as a whole: the status shows "EDF cannot be
+read: answer of an unexpected form", nothing is published, and the days already known stay as they are. **No
+day is ever made up**: a day not announced stays unknown.
+
+EDF sees the IP address of your home and the User-Agent of the module; no other data leaves.
+
+## When the module asks EDF
+
+EDF announces tomorrow by 16:00 at the latest. The module reads at these Paris times, and only when something is
+missing:
+
+| Time                | Read when                                                                                   |
+| ------------------- | ------------------------------------------------------------------------------------------- |
+| 00:15               | the type of today is unknown                                                                |
+| 10:15, 13:15, 16:15 | the type of today or tomorrow is unknown; at 16:15 also when tomorrow was read before 16:00 |
+| 17:15, 19:15, 22:15 | the same (late announcement)                                                                |
+
+(EDF may still change a tomorrow read before 16:00: it is read once more at 16:15.) An ordinary day thus makes
+3 readings (10:15, 13:15, 16:15), then nothing until the next day. At the first start,
+one reading goes at once. Two readings are at least 10 minutes apart, restarts included (the time of the
+attempt is written to `/data` before the request).
+
+On a failure: tried again after 5 (raised to 10), 15, 30 and 60 minutes, then every 2 hours. A 429 answer pauses
+for the time its `Retry-After` asks (between 1 minute and 6 hours, 30 minutes without the header); a 403 answer
+(the website refuses the module) pauses 6 hours. The module does not try to get around a refusal.
+
+## The contract
+
+Open **Integrations → Energy monitoring → Contracts**, create a contract from the **EDF Zen Flex** template and
+check its prices. Gladys computes the cost of your consumption with its own tariff engine; the module only feeds
+the calendar.
+
+Pre-filled prices: EDF "Zen Week-End" grid, Flex option, taxes included, **applicable from 15 September 2026 to
+new contracts** ([PDF](https://particulier.edf.fr/content/dam/2-Actifs/Documents/Offres/grille-prix-zen-week-end.pdf)).
+EDF may revise them twice a year: use those of your bill.
+
+|                         | Off-peak hours | Peak hours     |
+| ----------------------- | -------------- | -------------- |
+| Éco day (and Bonus day) | 0.1595 EUR/kWh | 0.2142 EUR/kWh |
+| Sobriété day            | 0.2142 EUR/kWh | 0.7467 EUR/kWh |
+
+- **Peak hours**: 08:00-13:00 and 18:00-20:00, every day (EDF terms); the rest is off-peak. The "Peak hours"
+  field of the contract follows a change of hours announced by EDF.
+- **Subscription** per month, taxes included, by power: 6 kVA 15.86 · 9 kVA 19.88 · 12 kVA 23.76 · 15 kVA 27.40
+  · 18 kVA 31.14 · 24 kVA 39.14 · 30 kVA 46.47 · 36 kVA 53.88 EUR (6 kVA pre-filled).
+- **Bonus days**: billed as Éco days. The reward EDF pays when you follow its advice is not computed.
+- **A day absent from the calendar** (not announced yet, module stopped): priced as an Éco day, as most days
+  are. A day read later (the day before at 16:00, or on the day) enters the calendar and Gladys recomputes the
+  costs concerned.
+- **A day missed entirely is not caught up**: the module only reads today and tomorrow. If the module or the
+  EDF website is unavailable from 16:00 the day before to the end of the day, that day stays priced as Éco, even
+  if it was a Sobriété day (its peak hours then underpriced by 0.53 EUR/kWh). The status names these days
+  (weekdays of the Sobriété season, public holidays excepted): check them in your EDF customer area.
+- A day runs from midnight to midnight (Paris time). Gladys handles the changes of time.
+
+## Scenes
+
+Trigger **"EDF Zen Flex day announced"**: it fires when the module first reads the type of tomorrow (usually
+around 16:15), with the filter "Type of tomorrow" (Éco, Sobriété, Bonus; empty: any). Variables: `day_type`
+(`eco`, `sobriete` or `bonus`) and `date` (`YYYY-MM-DD`).
+
+- Once per announced day; again if the 16:15 reading finds that type changed (tomorrow read before 16:00).
+- If Gladys does not take the announcement, it is sent again (after 1, 5, 15 minutes, then every 30 minutes)
+  until midnight, then dropped: an announcement is not sent any more once its day has begun.
+- A module started after midnight fires nothing for the current day.
+- The advice of a Bonus day (reduce or shift the consumption) is not given by this endpoint: EDF sends it by
+  e-mail or SMS.
+
+To act during the peak hours of a Sobriété day, a scene may also use the "current price" condition of the
+contract.
+
+## The status
+
+The integration screen shows: the type of today and tomorrow, the number of Sobriété (of 20) and Bonus days
+seen by the module this year, the time of the last reading, and what is wrong (EDF unreadable with the reason
+and the time of the next try, calendar refused, announcement not sent, `/data` not writable), and the days of the
+Sobriété season never read since the installation ("Not read … priced as Éco days", the 5 most recent). The
+counters only see the days read since the installation.
+
+## What `/data` keeps
+
+The days read (400 days at most), those Gladys accepted in its calendar, the last announcement sent, the time of
+the last attempt and of the last successful reading, the pause under way. No personal data, no secret. If
+`/data` cannot be read, the module reads it again every 10 seconds without asking EDF; if it cannot be written,
+the days stay in memory and the first reading waits 10 minutes after the start.
+
+## Calendar already provided
+
+The `zen-flex` key belongs to the first installed integration that declares it. If another integration already
+provides it, Gladys refuses this one (the status says so): the template then reads the values of the other
+integration, and the scene trigger still works.
+
+## Configuration settings
+
+These are the settings EDF Zen Flex asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| How it works | `section` | No | Nothing to set here. Unofficial: this integration reads the type of today and tomorrow (Éco, Sobriété, Bonus) from a public page of the EDF website, without any account, a few times a day; EDF does not document it and may change it, the status then says so and no day is made up. Open Integrations → Energy monitoring → Contracts, create a contract from the EDF Zen Flex template and check its prices. Scenes: the trigger "EDF Zen Flex day announced". |
+
+## How to install EDF Zen Flex in Gladys
+
+1. In Gladys, open **Integrations**: EDF Zen Flex appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-edf-zen-flex:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-edf-zen-flex](https://github.com/LM1LC3N7/gladys-edf-zen-flex).
+
+EDF Zen Flex requires Gladys `>=5.2.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+EDF Zen Flex is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-edf-zen-flex) — [source of this documentation](https://github.com/LM1LC3N7/gladys-edf-zen-flex/blob/HEAD/docs/en.md)

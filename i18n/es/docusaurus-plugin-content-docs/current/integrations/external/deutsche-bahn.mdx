@@ -1,0 +1,208 @@
+---
+title: "Integración domótica Deutsche Bahn, gratuita y de código abierto"
+sidebar_label: "Deutsche Bahn"
+description: "Unofficial: Deutsche Bahn departures, delays and cancellations, official API with your key. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-deutsche-bahn.png"
+keywords:
+  - "deutsche bahn"
+  - "domótica deutsche bahn"
+  - "gladys deutsche bahn"
+  - "deutsche bahn gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-deutsche-bahn instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Deutsche Bahn","description":"Unofficial: Deutsche Bahn departures, delays and cancellations, official API with your key.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-deutsche-bahn","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-deutsche-bahn.png","type":"device","version":"0.1.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-12T01:50:49Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+Unofficial integration, not affiliated with Deutsche Bahn. It follows up to
+three stations of Deutsche Bahn (Germany) and gives, for each one, the next
+departure, its delay and the disrupted departures, plus a departure board
+widget. Read-only: nothing is booked or changed.
+
+The data comes from the official **Timetables** API of the DB API
+Marketplace, with your own free key. The integration never uses the private
+API of the DB Navigator app.
+
+> This integration was built from the API documentation and tested with a fake
+> Gladys and a fake API only: it was never tested with real DB credentials. The
+> first users' feedback is welcome on the forum.
+
+## 1. Get your free key
+
+1. Create an account on the
+   [DB API Marketplace](https://developers.deutschebahn.com/db-api-marketplace/apis/).
+2. Under **Anwendungen** (applications), create an application (a name is
+   enough). Note its **Client ID** and its **Client Secret** (the API key).
+3. In the **Katalog**, open the **Timetables** API, click **Abonnieren**
+   (subscribe), choose the **Free** plan and your application.
+
+## 2. Configure
+
+- **Client ID** and **API key (Client Secret)**: both are needed; with only
+  one of them nothing is sent. Kept by Gladys in its database, never shown
+  again, sent only to the DB API Marketplace (in the `DB-Client-Id` and
+  `DB-Api-Key` headers).
+- **Station 1 to 3**: a name (`Köln Hbf`), an EVA number (`8000207`) or a
+  DS100 code (`KK`). The **Find a station** button lists the stations DB
+  knows for a name, with their EVA number and DS100 code. When a name matches
+  several stations, enter the EVA number.
+- **Lines** (optional): lines or categories separated by commas
+  (`RE 5, S 12, ICE`). **Direction** (optional): part of the name of a station
+  the train goes through or to (`Koblenz`).
+- **Read interval**: 2 minutes by default (1 to 15).
+- **Departures shown**: the next 60 minutes by default (15 to 180).
+- **Disrupted from**: 5 minutes of delay by default.
+- **Language of the values**: English or French.
+
+**Test the credentials** sends one request to DB (at most every 30 seconds)
+and says whether the Client ID and the API key are accepted.
+
+## 3. The devices
+
+Each station appears in the **Discovery** tab once DB has found it (device
+name `DB <station>`, with the filters in brackets). Features, all read-only:
+
+| Feature                     | Value                                                                          |
+| --------------------------- | ------------------------------------------------------------------------------ |
+| Next departure              | text, e.g. `14:05 RE 5 → Koblenz Hbf, pl. 4 instead of 3, +4 min`              |
+| Next departure in           | minutes until the next departure that runs (with its delay)                    |
+| Delay of the next departure | minutes, 0 when on time (live data only)                                       |
+| Disrupted departures        | departures of the window cancelled or late from the threshold (live data only) |
+
+The time shown is the planned time, local time of Germany. A cancelled train
+is not "the next departure": the next one that runs is. A train planned in the
+two hours before and still waiting (late) is shown too; one later than that is
+missed.
+
+A train for which DB reports no change is on time: that is how DB's live data
+works (`/fchg` lists the changes). DB does not guarantee that every tracked
+train is in it, and its data does not tell a train on time from a train it
+does not track: both show "on time".
+
+The values are published again every minute from what was read (no request):
+**Next departure in** counts down between two reads.
+
+What is not known is not published (the last value stays; Gladys has no
+"unknown"):
+
+- no departure in the window: the text says so, **Next departure in** and
+  **Delay** are not updated (never a 0 for "none");
+- live data of DB older than 10 minutes (2.5 intervals when longer): the text
+  ends with "timetable only", delay and disruptions are not updated;
+- no timetable for the current hour nor the next ones (DB answers 404), or a
+  timetable hour missing: nothing is published, the status says so;
+- the hour repeated by the autumn change of time (02:00 to 03:00 winter time):
+  the times are ambiguous, nothing is published until 03:00.
+  In the hour after it, a train of the repeated hour still late is shown
+  with a delay one hour off (one hour a year).
+
+## 4. Dashboard
+
+The **Deutsche Bahn departures** widget shows the next 8 departures of a
+station, with the delay, the platform and the cancellations, the time of the
+live data and the attribution of the data. It uses what the integration
+already read: opening it sends no request to DB.
+
+## 5. How it reads DB, and its limits
+
+- Every interval, for each station: the live changes (`/fchg`), one request;
+  the timetable of each hour of the window (`/plan`) once an hour; the station
+  itself once (kept across restarts). The two hours before are read last,
+  once (a past timetable does not change), and are optional: an error on them
+  (asked again 15 minutes later) never stops the station from being read;
+  only a train still late from then may be missed.
+- At most one request at a time, 1.5 s apart (40 a minute at most, the free
+  plan allows 60). A restart, a reconnection, a save of the form or the test
+  button does not make the reads come sooner than the interval (a changed
+  station waits 30 s after the last read). When /data cannot be read at
+  start, the first read waits a whole interval.
+- **HTTP 429**, a 5xx on the station request, or a 5xx on every station of a
+  round: every request waits (Retry-After when DB gives it, otherwise
+  1 minute doubling up to 6 hours), kept across restarts. A 5xx on the
+  timetable of one station only: that station waits (Retry-After when DB gives
+  it, up to 6 hours; otherwise 1 minute doubling up to 30 minutes), the others
+  are read as usual.
+- **HTTP 401/403 on the station request**: the credentials are refused. The
+  integration stops and does not try them again by itself, even after a
+  restart; enter other credentials or press **Test the credentials** (a
+  success lifts the stop). A 401/403 on a timetable page is checked on the
+  station request first: if the credentials are accepted there, only that
+  station waits (5 minutes, doubling up to 1 hour).
+- No station is started after 90 s in a round; the station left goes first
+  at the next round.
+- DB gives the timetable a limited time ahead only (hours far ahead have no plan yet: asked again 15 minutes later).
+
+## 6. What is kept in /data
+
+`/data/deutsche-bahn.json`: the time of the last round, a pause, a refusal
+(8 bits of a salted hash of the credentials, nothing more) and the stations
+found (name, EVA number, DS100 code). No credential. When the file cannot be
+read, it is not overwritten and is read again every 10 seconds; a file that
+does not parse is moved aside to `deutsche-bahn.json.bad` first.
+
+## Data and license
+
+Timetable data: Deutsche Bahn AG, through the
+[DB API Marketplace](https://developers.deutschebahn.com/db-api-marketplace/apis/product/timetables),
+under the [Creative Commons Attribution 4.0 license (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/).
+The data is modified: the planned timetable and the live changes are merged,
+filtered by line and direction, and summarised (next departure, delay in
+whole minutes, count of disrupted departures). The widget shows the time of
+the live data it displays.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Deutsche Bahn te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| DB API Marketplace application | `section` | No | The departures come from the official Timetables API of Deutsche Bahn. Its free plan needs an account on the DB API Marketplace: create an application, subscribe it to the Timetables API (plan Free), then copy its Client ID and its API key (Client Secret) here. The integration sends at most 40 requests a minute (the plan allows 60). Data: Deutsche Bahn AG, CC BY 4.0. |
+| Client ID | `secret` | No | The Client ID of your DB API Marketplace application. Kept by Gladys in its database, never shown again, sent only to the DB API Marketplace. |
+| API key (Client Secret) | `secret` | No | The API key of the same application. Kept by Gladys in its database, never shown again, sent only to the DB API Marketplace. |
+| Stations | `section` | No | Up to three stations, each a device with its next departure, its delay and the disrupted departures. A station is a name ("Köln Hbf"), an EVA number ("8000207") or a DS100 code ("KK"): the Find a station button gives them. Optional filters: the lines ("RE 5, S 12, ICE") and a station the train goes through or to ("Koblenz"). |
+| Station 1 | `string` | No |  |
+| Lines of station 1 | `string` | No | Optional, separated by commas: a line (RE 5, S 12) or a category (ICE, IC, RE). |
+| Direction of station 1 | `string` | No | Optional: only the trains that go through or to this station (part of its name). |
+| Station 2 | `string` | No |  |
+| Lines of station 2 | `string` | No | Optional, separated by commas: a line (RE 5, S 12) or a category (ICE, IC, RE). |
+| Direction of station 2 | `string` | No | Optional: only the trains that go through or to this station (part of its name). |
+| Station 3 | `string` | No |  |
+| Lines of station 3 | `string` | No | Optional, separated by commas: a line (RE 5, S 12) or a category (ICE, IC, RE). |
+| Direction of station 3 | `string` | No | Optional: only the trains that go through or to this station (part of its name). |
+| Options | `section` | No | The live changes are read every interval (one request per station, the timetable once an hour). Delays and disruptions are published only with live data of the last 10 minutes. |
+| Read interval (minutes) | `number` | No |  |
+| Departures shown (next minutes) | `number` | No |  |
+| Disrupted from (minutes late) | `number` | No |  |
+| Language of the values | `select` | No | Language of the feature names and of the published texts. |
+
+## Cómo instalar Deutsche Bahn en Gladys
+
+1. En Gladys, abre **Integraciones**: Deutsche Bahn aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-deutsche-bahn:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-deutsche-bahn](https://github.com/LM1LC3N7/gladys-deutsche-bahn).
+
+Deutsche Bahn requiere Gladys `>=5.3.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Deutsche Bahn es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-deutsche-bahn) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-deutsche-bahn/blob/HEAD/docs/en.md)

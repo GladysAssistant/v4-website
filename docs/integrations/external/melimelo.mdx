@@ -1,0 +1,172 @@
+---
+title: "Melimelo smart home integration, free and open source"
+sidebar_label: "Melimelo"
+description: "Tasks, shopping list, bin days and birthdays of your Melimelo household in Gladys. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/placeholder.png"
+keywords:
+  - "melimelo"
+  - "melimelo smart home"
+  - "gladys melimelo"
+  - "melimelo gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/prohand/gladys-melimelo instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Melimelo","description":"Tasks, shopping list, bin days and birthdays of your Melimelo household in Gladys.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-melimelo","cover_url":"https://integration-store-storage.gladysassistant.com/covers/placeholder.png","type":"device","version":"1.0.2","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-11T20:16:09Z"}} />
+
+This integration connects your [Melimelo](https://melimelo.co) household — the family
+organizer app — to Gladys Assistant. Gladys sees your tasks, shopping list, bin collection
+days, birthdays and the household calendar, and can use them in scenes and on the dashboard.
+
+It works **through the cloud**: Gladys reads the Melimelo API over the internet. Nothing is
+installed on your network.
+
+It requires **Gladys 5.3.0 or newer**.
+
+## What you need
+
+- **The Melimelo API URL** (an `https://…` address);
+- **A personal access token** of your household.
+
+Both are provided by Melimelo. Today, Melimelo does not publish a public API yet: until it
+does, the integration cannot connect. It is ready to work as soon as Melimelo opens that
+access.
+
+## Setup
+
+1. In Gladys, open **Integrations**, search for **Melimelo** and install it.
+2. In the **Configuration** screen of the integration:
+   - paste the **Melimelo API URL**;
+   - paste the **access token** (it is stored as a secret);
+   - adjust the settings below if needed.
+3. Click **Test the connection**: the message names the household found and counts its
+   tasks and items.
+4. Open **Discovery**: the device **Melimelo – \<household name>** shows up. Add it to follow
+   its values in Gladys.
+
+## Settings
+
+| Setting                  | Default        | What it does                                             |
+| ------------------------ | -------------- | -------------------------------------------------------- |
+| Melimelo API URL         | —              | Address of the API. Only `https` is accepted.            |
+| Access token             | —              | Personal token of the household. Never shown nor logged. |
+| Synchronization interval | 300 s          | How often Melimelo is read (60 to 3600 s).               |
+| Bin reminder hour        | 19             | Hour (0-23) from which "bins go out tomorrow" fires.     |
+| Event notice             | 15 min         | Lead time of "event about to start" (5 to 240 min).      |
+| Time zone                | `Europe/Paris` | Tells what "today" and "tomorrow" are.                   |
+
+## The "Household" device
+
+One read-only device per household:
+
+| Value                          | Example     |
+| ------------------------------ | ----------- |
+| Open tasks                     | 4           |
+| Overdue tasks                  | 1           |
+| Shopping list items            | 7           |
+| Today's events                 | 2           |
+| Days until the next collection | 1           |
+| Next bin collection            | Yellow bin  |
+| Days until the next birthday   | 9           |
+| Next birthday                  | Granny (80) |
+
+Use them in scene conditions, e.g. "if there are overdue tasks, send a message".
+
+## Scenes
+
+### Triggers
+
+| Key                           | When                                                              | Variables                                    |
+| ----------------------------- | ----------------------------------------------------------------- | -------------------------------------------- |
+| `task_due`                    | An open task is due today                                         | `title`, `assignee`, `due_date`              |
+| `garbage_collection_tomorrow` | The day before a collection, from the reminder hour (type filter) | `type`, `label`, `date`                      |
+| `birthday_today`              | On the day of a birthday                                          | `name`, `age`                                |
+| `shopping_item_added`         | A household member adds an item (never Gladys)                    | `item`, `quantity`, `added_by`               |
+| `event_starting_soon`         | A calendar event starts soon (all-day events excluded)            | `title`, `start_time`, `location`, `minutes` |
+
+Each trigger fires **only once** per task, collection, birthday or event, even if the
+integration restarts. Use the variables in the following actions, e.g.
+`{{triggerEvent.data.title}}`.
+
+Triggers are checked at every synchronization: with a 300 s interval, an event may be
+announced up to 5 minutes later than the chosen notice.
+
+### Actions
+
+| Key                 | What it does                                    | Output                           |
+| ------------------- | ----------------------------------------------- | -------------------------------- |
+| `add_shopping_item` | Adds an item to the shopping list               | `added`                          |
+| `create_task`       | Creates a task (optional `YYYY-MM-DD` due date) | `task_id`                        |
+| `complete_task`     | Completes the open task with this title         | `completed` (`false` if missing) |
+| `sync_now`          | Reads Melimelo right away                       | `tasks_open`, `shopping_items`   |
+
+Example: "When the fridge sensor sees the door open for more than 2 minutes, add 'Check the
+fridge' to the tasks."
+
+## Dashboard
+
+The **Melimelo household** widget shows:
+
+- the number of tasks, items to buy and today's events;
+- one list of your choice (widget setting): tasks, shopping, agenda or bin days;
+- the connection, the time of the last sync, the next collection and the next birthday;
+- the buttons **Add to shopping** (a small form), **Synchronize** and **Open Melimelo**.
+
+## Troubleshooting
+
+| Message                             | What to do                                           |
+| ----------------------------------- | ---------------------------------------------------- |
+| "Fill in the Melimelo API URL…"     | Fill in the URL and the token in the configuration.  |
+| "Melimelo refused the access token" | Create a new token and paste it.                     |
+| "The Melimelo API does not know…"   | Check the API URL.                                   |
+| "Melimelo cannot be reached"        | Check the URL and the internet connection of Gladys. |
+| "Melimelo asks to slow down"        | Raise the synchronization interval.                  |
+
+The integration logs are in Gladys **Settings → System** (container logs). The token never
+appears there.
+
+## Privacy
+
+The integration only talks to the Melimelo API you configured. The household data stays in
+Gladys. Only a short list of the triggers already sent is kept on disk (`/data`), 45 days at
+most.
+
+## Configuration settings
+
+These are the settings Melimelo asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Getting started | `section` | No | This integration reads your Melimelo household from the Melimelo cloud: open tasks, shopping list, bin collection days, birthdays and the calendar. It needs the address of the Melimelo API and a personal access token of your household, both provided by Melimelo. Nothing is installed on your network. |
+| Melimelo API URL | `string` | Yes | The address of the Melimelo API, given by Melimelo. Only https addresses are accepted. |
+| Access token | `secret` | Yes | The personal access token of your household. It is stored as a secret and only sent to the Melimelo API. |
+| Synchronization interval (s) | `number` | No | How often Melimelo is read, in seconds (60 to 3600). The scene triggers are checked at the same pace. |
+| Bin reminder hour | `number` | No | From this hour (0 to 23), the day before a collection, the "bins go out tomorrow" trigger fires. |
+| Event notice (min) | `number` | No | How many minutes before a calendar event the "event about to start" trigger fires (5 to 240). |
+| Time zone | `string` | No | The time zone of the household, used to know what "today" and "tomorrow" are (IANA name, e.g. Europe/Paris). |
+
+## How to install Melimelo in Gladys
+
+1. In Gladys, open **Integrations**: Melimelo appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-melimelo:1.0.2`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-melimelo](https://github.com/prohand/gladys-melimelo).
+
+Melimelo requires Gladys `>=5.3.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Melimelo is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [prohand](https://github.com/prohand), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/prohand/gladys-melimelo) — [source of this documentation](https://github.com/prohand/gladys-melimelo/blob/HEAD/docs/en.md)

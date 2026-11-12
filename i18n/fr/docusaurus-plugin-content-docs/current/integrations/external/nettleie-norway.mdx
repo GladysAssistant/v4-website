@@ -1,0 +1,286 @@
+---
+title: "Intégration domotique Nettleie (Norway), gratuite et open source"
+sidebar_label: "Nettleie (Norway)"
+description: "Tarifs réseau norvégiens (nettleie) : gestionnaires, paliers de puissance, strømstøtte, Norgespris. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-nettleie.png"
+keywords:
+  - "nettleie (norway)"
+  - "domotique nettleie (norway)"
+  - "gladys nettleie (norway)"
+  - "nettleie (norway) gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-nettleie instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Nettleie (Norway)","description":"Tarifs réseau norvégiens (nettleie) : gestionnaires, paliers de puissance, strømstøtte, Norgespris.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-nettleie","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-nettleie.png","type":"device","version":"0.1.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-12T01:49:50Z"}} />
+
+Intégration non officielle : elle tarife votre électricité dans Gladys avec le
+**tarif réseau de votre gestionnaire norvégien** (nettleie), les taxes
+publiques et, si vous le voulez, le prix spot avec la **strømstøtte** ou
+**Norgespris**. Elle n’est liée à aucun gestionnaire de réseau, ni à NVE, ni à
+Hva koster strømmen.no, ni au projet fri-nettleie.
+
+> Cette intégration n’a jamais été testée avec un vrai contrat Gladys et un
+> vrai compteur en Norvège : ses tests vérifient les prix contre les tarifs
+> publiés, pas contre une vraie facture. Dites-nous ce que vous voyez.
+
+## Ce qu’elle fait
+
+- Un modèle de contrat **« Nettleie (Norvège) »** (tarification déléguée,
+  Gladys 5.3 ou plus récent) : Gladys envoie la consommation de chaque
+  demi-heure, l’intégration répond son coût en NOK, TVA comprise :
+  - la **part énergie** (energiledd) du tarif de votre gestionnaire pour
+    l’heure locale, le type de jour (jour ouvré, week-end, jour férié) et le
+    mois ;
+  - la **taxe de consommation** (forbruksavgift) et la **taxe Enova**
+    (1 øre/kWh), et **25 % de TVA** dans la zone sud ;
+  - avec la fourniture **spot** : le prix day-ahead horaire de votre zone plus la
+    marge de votre fournisseur, moins la **strømstøtte** (90 % du prix spot
+    horaire au-delà de 77 øre/kWh hors TVA en 2026, 75 øre en 2025, au plus
+    5 000 kWh par mois, logements seulement) ;
+  - avec la fourniture **Norgespris** : 40 øre/kWh hors TVA plus votre marge,
+    dans la limite de 5 000 kWh par mois (1 000 pour une résidence
+    secondaire), le prix spot au-delà. Le dispositif court du 1er octobre 2025
+    au 31 décembre 2029, mais son prix n’est fixé que pour 2025 et 2026
+    (40 øre) : à partir du 1er janvier 2027, les demi-heures restent sans coût
+    jusqu’à une mise à jour de l’intégration qui porte le nouveau prix.
+- Un appareil par contrat (dans **Découverte** une fois le contrat créé) : le
+  **prix actuel** (NOK/kWh), la **pointe de puissance du mois** (kW), le
+  **palier de puissance** atteint (NOK/mois, TVA comprise) et le seuil du
+  **palier suivant** (kW) : de quoi écrire une scène qui prévient avant un
+  nouveau palier.
+- Un bouton **Tester** : le gestionnaire trouvé, la date de ses données, le
+  prix actuel, la puissance du mois et une comparaison du tarif du jour avec
+  celui que détient NVE.
+
+## Le palier de puissance (kapasitetsledd)
+
+Chaque gestionnaire norvégien facture une part fixe mensuelle **par paliers
+de puissance**, le plus souvent d’après la moyenne des trois heures les plus
+chargées du mois, sur trois jours différents. Le moteur de tarification de
+Gladys **ne sait pas facturer un palier** : sa composante « demand » est un
+prix par kW (une droite, pas des marches), et un coût délégué est l’énergie
+seule. L’intégration ne le cache donc pas dans le prix du kWh ; à la place :
+
+- l’appareil du contrat **affiche** la pointe du mois (calculée sur la
+  consommation par demi-heure que Gladys envoie pour la tarification : kWh de
+  chaque heure d’horloge, moyenne des trois jours les plus hauts) et le
+  palier atteint ;
+- le modèle a une entrée facultative **« Palier de puissance par mois »**,
+  comptée par Gladys comme un montant fixe mensuel : saisissez le palier que
+  vous prévoyez pour l’avoir dans les totaux.
+
+Paliers calculés : la règle courante (TRE_DØGNMAX_MND) et l’heure la plus
+haute du mois (MND_MAX). Les gestionnaires qui facturent sur les cinq
+semaines les plus hautes de l’année ou sur le calibre du fusible
+(FEM_VEKTET_ÅR, OV_TREFASE) n’ont pas de palier calculé : le bouton Tester
+le dit. La pointe ne compte que les demi-heures que Gladys a tarifées : un
+trou dans les données du compteur la fait baisser.
+
+## Mise en route
+
+1. Installez l’intégration. Rien à remplir dans sa configuration.
+2. Dans **Énergie > Contrats**, créez un contrat sur votre compteur principal
+   avec le modèle **« Nettleie (Norvège) »** et remplissez ses entrées :
+   - **Gestionnaire de réseau** : son nom (« Elvia »), son nom de fichier
+     fri-nettleie (liste ci-dessous), son GLN ou son numéro d’organisation ;
+   - **Groupe de clients** : household (logement) ou holiday_home
+     (résidence secondaire, fritidsbolig) ;
+   - **Zone fiscale** : south, north (Nordland, Troms : sans TVA) ou
+     tiltakssone (Finnmark et communes du Nord-Troms : sans TVA ni taxe de
+     consommation) ;
+   - **Fourniture** : grid_only, spot ou norgespris, et la **zone de prix**
+     (NO1 à NO5) pour les deux dernières (obligatoire : pas de valeur par
+     défaut) ;
+   - **Marge du fournisseur** (påslag, NOK/kWh hors TVA), **palier de
+     puissance** et **autres frais mensuels** (NOK/mois TVA comprise), tous
+     facultatifs.
+3. Dans **Découverte**, ajoutez l’appareil du contrat si vous voulez ses
+   capteurs.
+4. Appuyez sur **Tester** dans l’écran de configuration.
+
+Une entrée fausse ne devient jamais une valeur par défaut : les demi-heures
+restent sans coût, le statut nomme l’entrée, et Gladys redemande à son
+passage suivant une fois corrigée. Le statut prévient aussi quand la zone
+fiscale ne correspond pas au comté du gestionnaire, et quand le tarif en
+vigueur date d’une année antérieure sans que le fichier du gestionnaire ait
+été vérifié cette année (ses prix restent utilisés, non vérifiés cette année). Les limites mensuelles de la
+strømstøtte et de Norgespris comptent les kWh que Gladys envoie depuis le
+début du mois, ou depuis le début du contrat s’il est plus tard : faites
+commencer le contrat le 1er d’un mois. Un gestionnaire qui a plusieurs tarifs à la
+fois (un fichier en a dans son historique) demande le **Nom du tarif** : le
+statut donne les choix.
+
+## D’où viennent les données, et leur fraîcheur
+
+- **Tarifs réseau et taux de taxes : fri-nettleie**
+  ([https://github.com/kraftsystemet/fri-nettleie](https://github.com/kraftsystemet/fri-nettleie)), un recueil
+  communautaire des tarifs de tous les gestionnaires norvégiens, par **Fri
+  nettleie / kraftsystemet**, données sous **CC BY 4.0**
+  ([https://creativecommons.org/licenses/by/4.0/deed.fr](https://creativecommons.org/licenses/by/4.0/deed.fr)). L’intégration en
+  livre une copie (commit 58a0d20, 10 novembre 2026) et relit une fois par
+  jour les fichiers des gestionnaires utilisés par vos contrats (requête
+  conditionnelle, rien d’envoyé que le nom du fichier ; désactivable dans la
+  configuration). Le statut et le bouton Tester affichent la **date de la
+  donnée** (le « sist_oppdatert » du fichier du gestionnaire). Modifications :
+  les tarifs sont vérifiés champ par champ, les prix annuels des paliers sont
+  affichés par mois, taxes et TVA sont ajoutées.
+- **Comparaison : NVE**, les tarifs que les gestionnaires déclarent au
+  régulateur ([https://nettleietariffer.dataplattform.nve.no](https://nettleietariffer.dataplattform.nve.no)), seulement par
+  le bouton Tester, au plus une fois par gestionnaire et par heure. Contient
+  des données sous la licence norvégienne des données publiques (NLOD) mises à
+  disposition par NVE ([https://data.norge.no/nlod/](https://data.norge.no/nlod/)). NVE a parfois des mois
+  de retard : les prix suivent toujours fri-nettleie.
+- **Prix spot : Strømpriser levert av Hva koster strømmen.no**
+  ([https://www.hvakosterstrommen.no](https://www.hvakosterstrommen.no), API ouverte, libre pour tout usage ;
+  fournitures spot et Norgespris seulement). Prix day-ahead horaires
+  d’ENTSO-E convertis en NOK par le site avec le taux Norges Bank du jour : ils
+  peuvent différer un peu des prix en NOK de Nord Pool et de votre facture.
+  Historique depuis le 1er décembre 2021 ; un jour n’est gardé qu’entier (23,
+  24 ou 25 heures), 62 jours. La tarification ne les attend jamais : une
+  demi-heure dont le prix spot n’est pas encore là reste sans coût tout de
+  suite, le jour est lu en arrière-plan et Gladys la tarife à son passage
+  suivant. Gladys exige un coût pour chaque demi-heure d’une requête : un jour
+  que la source n’a pas laisse sans coût les demi-heures pas encore tarifées
+  de la même période de facturation (Gladys rattrape 31 jours au plus), et le
+  statut nomme le jour. Un tel jour est redemandé toutes les 6 heures.
+- **Règles de la strømstøtte et de Norgespris** : d’après le règlement
+  (FOR-2025-09-08-1791) et les pages du gouvernement, vérifiées contre le
+  projet Strømkalkulator (MIT). Elles sont écrites dans l’intégration avec
+  leurs dates : après 2026, ou pour une année dont fri-nettleie n’a pas encore
+  publié les taux de taxes, les demi-heures restent **sans coût** (jamais un
+  coût deviné) jusqu’à l’arrivée des données. Les taux de taxes viennent d’un
+  fichier du guide de collecte de fri-nettleie (`satser.yml`) : si le projet le
+  déplace, les taux livrés restent et l’année suivante reste sans coût jusqu’à
+  une mise à jour.
+
+## Bon à savoir
+
+- Toutes les heures sont l’heure locale de la Norvège (Europe/Oslo). La nuit
+  du passage à l’heure d’hiver, les deux heures de 02:00 sont « l’heure 2 »,
+  comme les gestionnaires comptent.
+- La strømstøtte est calculée heure par heure sur le prix spot horaire ; une
+  demi-heure prend le prix de son heure (Gladys envoie des demi-heures).
+- Un total négatif (prix spot négatif) compte pour zéro : Gladys ne prend pas
+  de crédit.
+- L’intégration n’envoie rien sur vous : elle lit des fichiers publics.
+
+## Gestionnaires
+
+L’entrée accepte le nom de fichier (première colonne), le nom, le GLN ou le
+numéro d’organisation. Date des données de la copie livrée avec cette version.
+
+| Nom de fichier            | Gestionnaire                          | Numéro d’organisation (NVE) | Données du |
+| ------------------------- | ------------------------------------- | --------------------------- | ---------- |
+| `alut`                    | Alut AS                               | 925336637                   | 2026-03-07 |
+| `area-alle`               | Area Nett AS - Alle områder           | 923993355                   | 2025-12-20 |
+| `area-lega`               | Area Nett AS - Område 3 - Lega        | 923993355                   | 2025-12-20 |
+| `area-luostejok`          | Area Nett AS - Område 2 - Luostejok   | 923993355                   | 2025-12-20 |
+| `area-nettinord`          | Area Nett AS - Område 1- NettiNord    | 923993355                   | 2025-12-20 |
+| `arva`                    | Arva AS                               | 979151950                   | 2024-10-22 |
+| `asker`                   | Asker Nett                            | 917743193                   | 2026-09-30 |
+| `barentsnett`             | Barents Nett AS                       | 971058854                   | 2026-10-08 |
+| `bindalkraftlag`          | Bindal Kraftlag Nett                  | 953181606                   | 2025-10-22 |
+| `bkk`                     | BKK AS                                | 976944801                   | 2025-12-12 |
+| `bomlokraftnett`          | Bømlo Kraftnett AS                    | 923934138                   | 2025-12-20 |
+| `breheim`                 | Breheim Nett                          | 924527994                   | 2025-12-20 |
+| `denett`                  | DE Nett AS                            | 924862602                   | 2025-12-25 |
+| `elinett`                 | Elinett AS                            | 979379455                   | 2026-08-18 |
+| `elmea`                   | Elmea AS Nett                         | 986347801                   | 2025-10-22 |
+| `elvenett`                | Elvenett AS                           | 979497482                   | 2026-08-23 |
+| `elvia`                   | Elvia AS                              | 980489698                   | 2026-06-05 |
+| `enida`                   | Enida AS                              | 918312730                   | 2025-10-22 |
+| `etna`                    | Etna Nett AS                          | 882783022                   | 2026-10-09 |
+| `everket`                 | Everket AS                            | 966731508                   | 2025-09-21 |
+| `fagne`                   | Fagne AS                              | 915635857                   | 2025-10-22 |
+| `fjellnett`               | Fjellnett AS                          | 923354204                   | 2026-08-18 |
+| `foere`                   | Føre AS                               | 925549738                   | 2025-10-22 |
+| `foie`                    | Føie AS                               | 971589752                   | 2026-10-08 |
+| `glitre`                  | Glitre Nett AS                        | 982974011                   | 2026-09-17 |
+| `griug`                   | Griug AS                              | 953681781                   | 2025-12-25 |
+| `haringnett`              | Haringnett AS                         | 923789324                   | 2026-03-07 |
+| `havnett`                 | Havnett AS                            | 924004150                   | 2025-02-24 |
+| `holandogsetskogelverk`   | Høland og Setskog Elverk AS           | 923488960                   | 2026-08-18 |
+| `indrehordalandkraftnett` | Indre Hordaland Kraftnett AS          | 919415096                   | 2026-05-16 |
+| `jaereneverk`             | Jæren Everk AS                        | 824914982                   | 2025-09-01 |
+| `kenett`                  | KE Nett AS                            | 977285712                   | 2025-12-20 |
+| `klive`                   | Klive AS                              | 923436596                   | 2025-10-23 |
+| `kystnett`                | Kystnett AS                           | 923152601                   | 2026-09-21 |
+| `lede`                    | Lede AS                               | 979422679                   | 2026-04-15 |
+| `linea`                   | Linea AS                              | 917424799                   | 2025-11-12 |
+| `linja`                   | Linja AS                              | 912631532                   | 2026-06-19 |
+| `linja-nord`              | Linja AS - Nord (Mørenett) (old file) | -                           | 2025-11-22 |
+| `linja-sor`               | Linja AS - Sør (old file)             | -                           | 2025-11-22 |
+| `lnett`                   | Lnett AS                              | 980038408                   | 2025-12-08 |
+| `lucerna`                 | Lucerna AS                            | 982897327                   | 2026-10-09 |
+| `lysna`                   | Lysna AS                              | 923833706                   | 2026-08-18 |
+| `mellom`                  | Mellom AS                             | 925668389                   | 2026-08-29 |
+| `meloy`                   | Meløy Nett AS                         | 919173122                   | 2025-12-20 |
+| `midtnett`                | Midtnett AS                           | 917856222                   | 2026-09-21 |
+| `mostraum`                | Mostraum Nett AS                      | 933584801                   | 2026-11-09 |
+| `netera`                  | Netera AS                             | 924330678                   | 2026-03-07 |
+| `nettselskapet`           | Nettselskapet AS                      | 921688679                   | 2026-05-25 |
+| `noranett`                | Noranett AS                           | 985411131                   | 2025-11-22 |
+| `noranett-andoy`          | Noranett Andøy AS                     | 921680554                   | 2025-12-20 |
+| `noranett-hadsel`         | Noranett Hadsel AS                    | 917983550                   | 2025-12-20 |
+| `nordvest`                | Nordvest Nett AS                      | 980824586                   | 2026-06-20 |
+| `norefjell`               | Norefjell Nett AS                     | 824701482                   | 2026-08-18 |
+| `norgesnett`              | Norgesnett AS (old file)              | -                           | 2026-10-09 |
+| `rakkestadenergi`         | Rakkestad Energi AS Nett (old file)   | -                           | 2025-07-04 |
+| `rknett`                  | RK Nett AS                            | 925017809                   | 2026-09-13 |
+| `rnett`                   | R-Nett AS                             | 925067911                   | 2026-05-30 |
+| `romsdalsnett`            | Romsdalsnett AS                       | 926377841                   | 2026-10-08 |
+| `snett`                   | S-NETT AS                             | 923819177                   | 2025-09-19 |
+| `soraurdalenergi`         | Sør Aurdal Energi AS Nett             | 997712099                   | 2026-08-23 |
+| `stannum`                 | Stannum AS                            | 924940379                   | 2025-10-22 |
+| `stram`                   | Stram AS                              | 914385261                   | 2024-12-10 |
+| `straumen`                | Straumen Nett AS                      | 925354813                   | 2024-12-28 |
+| `straumnett`              | Straumnett AS                         | 922694435                   | 2026-04-15 |
+| `sygnir`                  | Sygnir AS                             | 924619260                   | 2026-10-08 |
+| `tendranett`              | Tendranett AS                         | 918999361                   | 2025-12-20 |
+| `tensio-tn`               | Tensio TN AS                          | 988807648                   | 2026-06-19 |
+| `tensio-ts`               | Tensio TS AS                          | 978631029                   | 2026-06-19 |
+| `tinfos`                  | Tinfos AS Nett                        | 916763476                   | 2024-11-24 |
+| `tnett`                   | Tnett AS                              | 925803375                   | 2026-08-23 |
+| `uvdal`                   | Uvdal Kraftforsyning                  | 967670170                   | 2025-12-20 |
+| `vang`                    | Vang Energiverk AS                    | 824368082                   | 2024-11-09 |
+| `vestall`                 | Vestall AS                            | 968168134                   | 2025-12-20 |
+| `vestmar`                 | Vestmar Nett AS                       | 979399901                   | 2025-12-20 |
+| `vevig`                   | Vevig AS                              | 916319908                   | 2025-11-12 |
+| `viermie`                 | Viermie AS                            | 919884452                   | 2025-12-30 |
+| `vissi`                   | Vissi AS                              | 921683057                   | 2024-11-06 |
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Nettleie (Norway) dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Tarifs réseau norvégiens | `section` | Non | Cette intégration tarifie votre électricité avec le tarif réseau de votre gestionnaire : créez un contrat avec le modèle « Nettleie (Norvège) » dans Énergie > Contrats et indiquez-y votre gestionnaire. Tarifs : fri-nettleie (kraftsystemet, CC BY 4.0), livrés avec l’intégration et relus une fois par jour sur GitHub. Prix spot (seulement pour les fournitures « spot » et « Norgespris ») : Strømpriser levert av Hva koster strømmen.no (day-ahead ENTSO-E, en NOK). Le palier de puissance (kapasitetsledd) est affiché par l’appareil du contrat, pas ajouté aux coûts : voir la documentation. |
+| Relire les tarifs chaque jour | `boolean` | Non | Une fois par jour, les fichiers des gestionnaires utilisés par vos contrats (et les taux de taxes) sont relus depuis le dépôt fri-nettleie sur GitHub. Désactivé : seulement les données livrées avec cette version. |
+
+## Comment installer Nettleie (Norway) dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Nettleie (Norway) apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-nettleie:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-nettleie](https://github.com/LM1LC3N7/gladys-nettleie).
+
+Nettleie (Norway) nécessite Gladys `>=5.3.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Nettleie (Norway) est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-nettleie) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-nettleie/blob/HEAD/docs/fr.md)

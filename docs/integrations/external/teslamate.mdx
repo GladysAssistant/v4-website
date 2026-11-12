@@ -1,0 +1,226 @@
+---
+title: "TeslaMate smart home integration, free and open source"
+sidebar_label: "TeslaMate"
+description: "Your Teslas through TeslaMate: battery, range, charge, doors and tyres, read on local MQTT. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-teslamate.png"
+keywords:
+  - "teslamate"
+  - "teslamate smart home"
+  - "gladys teslamate"
+  - "teslamate gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-teslamate instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"TeslaMate","description":"Your Teslas through TeslaMate: battery, range, charge, doors and tyres, read on local MQTT.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-teslamate","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-teslamate.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-10T23:01:09Z"}} />
+
+This integration shows your Teslas in Gladys as
+[TeslaMate](https://docs.teslamate.org), the self-hosted Tesla data logger,
+sees them: battery, range, charge, doors, trunks, windows, locks, Sentry
+mode, temperatures, tyre pressures, odometer and state of each car. It reads
+the messages TeslaMate publishes on **your** MQTT broker, on your local
+network: nothing goes through the Internet, Gladys never asks for a Tesla
+account.
+
+**Read only**: Gladys never sends anything to a car and never publishes
+anything on the broker (it connects and subscribes to the TeslaMate topics,
+that is all: no charging, climate or lock command). To control the car, see the Tesla
+(Teslemetry) integration.
+
+Never tested with a real car nor a real TeslaMate: only with a fake broker
+and a fake Gladys, from the MQTT documentation of TeslaMate. Unofficial, not
+affiliated with Tesla nor with TeslaMate.
+
+## Before you start
+
+1. TeslaMate runs and publishes to an MQTT broker (Mosquitto for example):
+   the `MQTT_HOST` variable of TeslaMate (and `MQTT_USERNAME`,
+   `MQTT_PASSWORD`, `MQTT_TLS` when needed). `DISABLE_MQTT` must not be
+   `true`.
+2. The broker can be reached from the Gladys machine (port 1883, or 8883 in
+   TLS).
+3. If TeslaMate has an `MQTT_NAMESPACE`, note it: its topics are then
+   `teslamate/<namespace>/cars/...` instead of `teslamate/cars/...`.
+
+Quick check from a machine of the network:
+`mosquitto_sub -h <broker> -t 'teslamate/cars/+/state' -v` must print the
+state of each car.
+
+## Settings
+
+| Setting                       | Role                                                                                                                                                                              |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| MQTT broker address           | The IP address or name of the broker (port 1883), or `mqtts://address:8883` in TLS.                                                                                               |
+| User name, Password           | Those of the broker, if it asks for them. The password is kept by Gladys in its database, never shown again, sent only to your broker. A password without a user name is refused. |
+| Verify the TLS certificate    | On by default; turn off only for a broker with a self-signed certificate on your local network.                                                                                   |
+| TeslaMate namespace           | The `MQTT_NAMESPACE` of TeslaMate, empty when there is none (letters, digits, `_` and `-`).                                                                                       |
+| Show the geofence             | On by default: the name of the TeslaMate geofence the car is in (Home, Work...), empty outside of them.                                                                           |
+| Show the position, rounded    | Off by default. On: latitude and longitude rounded to 3 decimals (about 110 m north-south, less east-west), as a text, for example `48.858, 2.294`.                               |
+| Language of the feature names | French or English.                                                                                                                                                                |
+
+The **Test the connection** button connects to the broker with the saved
+settings, listens for 10 s and names the cars TeslaMate publishes. Two tests
+are at least 10 s apart.
+
+## Adding a car
+
+The cars appear in the Discovery tab as soon as the broker sends their topics
+(within seconds: the broker keeps the last value of every topic). Click "Add
+to Gladys". A car only has the features TeslaMate published a value for (a
+car without tyre pressure sensors has none).
+
+The id of a car is its number in TeslaMate (`car_id`) and the namespace:
+`car:default-1` without namespace, `car:<namespace>-1` with one. Changing the
+namespace therefore makes new devices. If the same car shows under two
+numbers (a car removed then added again in TeslaMate, the old one kept by
+the broker), the `TESLAMATE_SAME_CAR_AS` parameter of each gives the number
+of the other: add the one whose values move. The VIN is never shown nor
+kept: only a salted fingerprint, in memory, is used for this comparison.
+
+## Features
+
+| Feature                             | TeslaMate topic                                              | Unit                                                                                  |
+| ----------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------- |
+| Battery level, usable battery level | `battery_level`, `usable_battery_level`                      | %                                                                                     |
+| Rated range, estimated range        | `rated_battery_range_km`, `est_battery_range_km`             | km                                                                                    |
+| Charging state                      | `charging_state`                                             | Charging, Starting, Stopped, No power, Complete / Disconnected                        |
+| Plugged in                          | `plugged_in`                                                 | yes / no                                                                              |
+| Charging power, current, voltage    | `charger_power`, `charger_actual_current`, `charger_voltage` | kW, A, V                                                                              |
+| Energy added (last charge)          | `charge_energy_added`                                        | kWh                                                                                   |
+| Charge limit                        | `charge_limit_soc`                                           | %                                                                                     |
+| Inside, outside temperature         | `inside_temp`, `outside_temp`                                | °C                                                                                    |
+| Climate on                          | `is_climate_on`                                              | yes / no                                                                              |
+| Odometer                            | `odometer`                                                   | km                                                                                    |
+| Locked, Sentry mode                 | `locked`, `sentry_mode`                                      | yes / no                                                                              |
+| Doors, trunk, frunk, windows open   | `doors_open`, `trunk_open`, `frunk_open`, `windows_open`     | yes / no                                                                              |
+| Pressure of the four tyres          | `tpms_pressure_fl`, `_fr`, `_rl`, `_rr`                      | bar                                                                                   |
+| State (TeslaMate)                   | `state`                                                      | TeslaMate's word: `online`, `asleep`, `offline`, `charging`, `driving`, `updating`... |
+| Geofence                            | `geofence`                                                   | text, when the option is on                                                           |
+| Position (rounded)                  | `location`                                                   | text, when the option is on                                                           |
+
+All are read only. The state words stay TeslaMate's (in English) so that your
+scenes do not depend on the language.
+
+Never read: the VIN (but for the in-memory fingerprint above), the
+navigation (`active_route`: destination and its position), speed, heading,
+elevation, shift state, the old `latitude` / `longitude` topics, the battery
+power (`power`, whose unit is not certain).
+
+## Values: when and how they arrive
+
+- A value TeslaMate publishes while Gladys listens is sent at once. The
+  measurements (battery, power, temperatures, tyres...) of one feature are
+  sent at most every 10 s, the last one kept; doors, locks and states are
+  not spaced (sent within the next second). Gladys receives at most 250 values per minute from this
+  integration.
+- A value kept by the broker (at start, after a cut) is never presented as
+  new: equal to what Gladys shows, nothing is sent; different, it is sent
+  **dated** (which starts no scene) just after the last change Gladys knows
+  of, or, for a feature still empty, at the date of the last state change of
+  the car (`since`). Without that date, nothing is sent before a live value.
+- An empty value ("the car reports no value", for example when it is
+  switched off), an unreadable one or one out of bounds is not a
+  measurement: nothing is sent, the last value stays. A text is never sent as 0.
+- The odometer never goes down: a lower value is ignored.
+- When you add a car, the values already read are sent dated.
+
+## Where the car is
+
+The geofence is the name of a zone you drew in TeslaMate. **It is on by
+default**: Gladys then shows whether the car is at home (and so, often,
+whether you are). Turn "Show the geofence" off if you do not want it. The position is off by default; when on, it is rounded to about
+100 m before being kept in memory or sent, and is never written to the logs.
+Turning either off erases the value Gladys shows (empty text) and stops
+reading the topic, also when the option was turned off while the integration
+was not running (the value is erased at the next start). Turning an option
+on again reads the last values kept by the broker (sent dated). Gladys keeps
+no history of texts.
+
+## Status and badge
+
+- "Connected: N car(s) seen in TeslaMate.": all is well. If TeslaMate reports
+  a problem for a car (`healthy` is `false`), the status says so and the
+  badge of the car turns orange.
+- "waiting for TeslaMate", then after 30 s "nothing from TeslaMate": check
+  `MQTT_HOST` and `MQTT_NAMESPACE` of TeslaMate and the "namespace" setting.
+- "MQTT broker unreachable": next try every 10 s, then every minute after
+  three failures in a row.
+- "The state of the integration in /data could not be read": /data is slow
+  or unreadable; it is read again every 10 s, without connecting meanwhile (a
+  stop after a refusal it holds must be kept). After six tries, the
+  integration connects anyway, never writing over /data.
+- Gladys does not answer: the values wait, next try after 5 s, 10 s, 20 s,
+  then every 30 s; one warning a minute at most in the log.
+- "The MQTT broker refused the connection": no new try before 15 min, then
+  1 h, 6 h, and every 24 h afterwards, even after a restart. Saving other
+  credentials or pressing "Test the connection" (when it succeeds) tries
+  again at once. A connection with a password closed twice in a row without
+  an answer of the broker counts as a refusal.
+- A broker without MQTT 5 is used in MQTT 3.1.1 (said in the status).
+- A message over 64 KB cuts the connection before it is read (in MQTT 5, the
+  broker does not even send it); a value over 4 KB is ignored.
+- Badge: "local" while the broker is connected, "unreachable" otherwise.
+- "Connected" only says the broker answers and TeslaMate published on it: a
+  stopped TeslaMate looks like a sleeping car (the broker keeps the last
+  values, `healthy` included).
+
+At most 20 cars are followed; the other numbers are ignored and counted in
+the status.
+
+## Known limits
+
+- Distances in km and temperatures in °C only (what TeslaMate publishes).
+- No command: read only in v1.
+- Charging power, current and voltage: when the car stops reporting them
+  (charge over, empty value), the last value stays shown; its date in Gladys
+  tells its age. To check with a real TeslaMate.
+- A value kept by the broker, sent dated at the `since` of the car (its last
+  state change), may be older than that date: the date is approximate, never
+  the present moment.
+- Odometer: an absurd value accepted (up to 5,000,000 km) blocks the lower
+  ones after it; delete and create the feature (or the device) again to start
+  over, without a restart.
+- Never tested with a real car.
+
+## Configuration settings
+
+These are the settings TeslaMate asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Teslas in Gladys, through TeslaMate | `section` | No | Reads what TeslaMate, the self-hosted Tesla data logger, publishes on YOUR MQTT broker: battery level, range, charging state and power, doors, trunks, windows, locks, Sentry mode, temperatures, tyre pressures, odometer and state of each car. Read only: Gladys never sends anything to a car. Set up TeslaMate with your broker first (MQTT_HOST), then type the address of the broker below. Nothing goes through the Internet. Never tested with a real car. Unofficial, not affiliated with Tesla nor with TeslaMate. |
+| MQTT broker address | `string` | Yes | The broker TeslaMate publishes to (its MQTT_HOST): its IP address (port 1883), or mqtts:\/\/address:8883 in TLS. |
+| User name | `string` | No | The user of the broker, if it asks for one. |
+| Password | `secret` | No | The password of the broker: kept by Gladys in its database, never shown again, sent only to your broker. |
+| Verify the TLS certificate of the broker (mqtts) | `boolean` | No | Turn off only for a broker with a self-signed certificate on your local network. |
+| TeslaMate namespace (optional) | `string` | No | Only if TeslaMate has an MQTT_NAMESPACE: the same value (its topics are then teslamate/\<namespace>/cars/...). Empty otherwise. |
+| Where the car is | `section` | No | TeslaMate also publishes where each car is. Gladys may show the name of the TeslaMate geofence the car is in (Home, Work... the zones you drew in TeslaMate), and, if you allow it, its position rounded to about 100 m. Turning an option off erases the value Gladys shows. The navigation (destination) is never read. |
+| Show the geofence of the car | `boolean` | No | On by default: the name of the TeslaMate geofence, empty outside of them. It shows whether the car is at home: turn off if you do not want that. |
+| Show the position of the car, rounded | `boolean` | No | Off by default. On: latitude and longitude rounded to 3 decimals (about 100 m), as a text. |
+| Language of the feature names | `select` | No |  |
+
+## How to install TeslaMate in Gladys
+
+1. In Gladys, open **Integrations**: TeslaMate appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-teslamate:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-teslamate](https://github.com/LM1LC3N7/gladys-teslamate).
+
+TeslaMate requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+TeslaMate is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-teslamate) — [source of this documentation](https://github.com/LM1LC3N7/gladys-teslamate/blob/HEAD/docs/en.md)

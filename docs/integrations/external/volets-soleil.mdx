@@ -1,0 +1,174 @@
+---
+title: "Volets & Soleil smart home integration, free and open source"
+sidebar_label: "Volets & Soleil"
+description: "Advised shutter closure per facade, from the sun position. Local, no account. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-volets-soleil.png"
+keywords:
+  - "volets & soleil"
+  - "volets & soleil smart home"
+  - "gladys volets & soleil"
+  - "volets & soleil gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-volets-soleil instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Volets & Soleil","description":"Advised shutter closure per facade, from the sun position. Local, no account.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-volets-soleil","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-volets-soleil.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-10T13:07:31Z"}} />
+
+For each facade of your house, this integration tells whether the sun shines on it and **how much to close
+the shutters** to keep the house cool in summer, or to let the sun in during winter. Everything is computed
+locally from the position of the sun: no account, no internet access, no API.
+
+The integration never moves a shutter itself: your scenes do, with the values it publishes.
+
+_Developed without shutters connected to a test Gladys: feedback welcome on the forum._
+
+## What you get
+
+One device per facade, with:
+
+- **Sun on the facade** (yes / no): the sun is above the threshold and in front of the wall;
+- **Advised closure** (0-100 %), detailed below;
+- **Direct sunlight** (0-100 %): the share of the sun's strength hitting the wall, `100 × cos θ`, whatever the
+  season;
+- **Sun incidence angle** (°): 0° when the sun faces the wall, 90° for grazing light, or when the sun is not on
+  the facade;
+- **Next sun arrival** and **Next sun departure**, in local time (`14:32`, `tomorrow 07:12`), over the next 48
+  hours.
+
+Everything is recomputed every minute; only the values that change are sent to Gladys.
+
+**The advised closure.** With θ the angle between the sun's rays and the facade, and `h` the sun elevation:
+
+`closure = 100 × cos θ × min(1, h / 15°)`, rounded to the nearest 10 %.
+
+A west facade at 7 pm in July (sun low and in front) gets 90 %; a south facade at noon (sun high, rays
+nearly parallel to the wall) gets 40 %; the second factor softens the first minutes of a low, still weak sun.
+**In winter, the advice is always 0 %**: open, to let the sun warm the house. Steps of 10 % avoid moving the
+shutters every minute.
+
+## Configuration
+
+- **Location**: the coordinates of your house in Gladys (**Settings → Houses**). The integration asks for the
+  permission to read them when installed. Without them, it shows an error and checks again every 10 minutes.
+- **Language of names and texts**: the language of the device names and of the texts sent to Gladys.
+- **Season**: _Automatic (months)_ uses the summer months below (a range that crosses the new year works, for
+  the southern hemisphere); _Always summer_ or _Always winter_. The integration cannot read your thermometer
+  itself: to follow the outdoor temperature, use the **Force the season** scene action (see below).
+- **Minimum sun elevation**: below this height above the horizon, the sun is ignored (5° by default).
+- **Facades 1 to 6**: fill in the **orientation** of each facade, the direction its windows look at: degrees
+  from the north, clockwise (90 = east, 180 = south, 270 = west), or a compass point in English letters (N, NE,
+  E, SE, S, SW, W, NW, and NNE, ENE…). `O` is read as west (French and Spanish). An empty orientation ignores
+  the slot. Optional:
+  - **Name**: the device name (otherwise "Facade S");
+  - **Field of view**: 180° for a flat wall, less when deep window recesses or side walls hide the sun earlier;
+  - **Horizon mask**: the elevation hidden by a hill, a building or a balcony in front of the facade.
+
+Tip: a map application gives the orientation of your walls; a facade facing south-south-west is about 200°.
+
+## Actions
+
+- **Show the advice now**: the season in force and the advice of every facade, to check the orientations.
+
+## Scenes
+
+**Trigger "Sun reaches a facade"**: choose the facade and when: on arrival, 15 min, 30 min or 1 hour before.
+Variables: the facade, the arrival time, the minutes before arrival, the **highest advised closure** of the
+coming sunny period, and the season (`summer` or `winter`).
+
+Examples:
+
+- _Lower the living room shutters before the sun_: trigger "Sun reaches a facade", Living room, 30 min before →
+  condition: the season variable is `summer` → set the shutter position.
+- _Close more when it gets strong_: trigger on the **Advised closure** of the facade device above 70 % → set
+  the shutter position to 30 % (in Gladys, a shutter position counts the opening).
+- _Reopen when the sun leaves_: trigger on **Sun on the facade** going to "no" → open the shutters.
+
+**Action "Force the season"**: summer, winter, or back to the configuration. For example a scene "every day at 10
+am, if the outdoor temperature is above 25 °C → Force the season: summer". The choice is kept across restarts.
+Output: the season in force.
+
+## Dashboard
+
+The **Sun on the facades** widget lists every facade with its advised closure and the next sun time, the season
+in force, and three buttons to force the season (the active one shows a check mark). Its settings hide the season
+line or the buttons.
+
+## Limits and troubleshooting
+
+- "No house location": set the coordinates of the house in **Settings → Houses**; the first house with
+  coordinates is used.
+- "Unreadable facade orientation": fix the orientation of the slots named in the message (degrees or compass
+  points).
+- The model is geometric: no clouds, no weather. Trees and neighbours are approximated by the minimum
+  elevation and the horizon mask.
+- Times are shown in the time zone of Gladys. A sunny period shorter than 5 minutes may be missed.
+- Logs: the container logs only the lifecycle; set `LOG_LEVEL=debug` for every computation.
+
+## Configuration settings
+
+These are the settings Volets & Soleil asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| How it works | `section` | No | The sun position is computed locally from the location of your house in Gladys. Describe each facade below: one device per facade, with the advised shutter closure. |
+| Language of names and texts | `select` | No |  |
+| Season | `select` | No | Summer: close to keep the house cool. Winter: always 0 % to let the sun in. Automatic: summer during the months below. A scene or the widget can force the season. |
+| Summer starts in | `select` | No |  |
+| Summer ends after | `select` | No |  |
+| Minimum sun elevation (°) | `number` | No | Below this height above the horizon, the sun is ignored (trees, neighbours). |
+| Facade 1 | `section` | No | Leave the orientation empty to ignore a facade. Orientation: degrees from the north, clockwise (90 = east, 180 = south, 270 = west), or N, NE, E, SE, S, SW, W, NW. |
+| Orientation | `string` | No |  |
+| Name (optional) | `string` | No |  |
+| Field of view (°) | `number` | No | Width of sky seen by the windows: 180 for a flat wall, less for deep window recesses or side walls. |
+| Horizon mask (°) | `number` | No | Sun elevation hidden by a hill, a building or a balcony in front of this facade, 0 if clear. |
+| Facade 2 | `section` | No |  |
+| Orientation | `string` | No |  |
+| Name (optional) | `string` | No |  |
+| Field of view (°) | `number` | No |  |
+| Horizon mask (°) | `number` | No |  |
+| Facade 3 | `section` | No |  |
+| Orientation | `string` | No |  |
+| Name (optional) | `string` | No |  |
+| Field of view (°) | `number` | No |  |
+| Horizon mask (°) | `number` | No |  |
+| Facade 4 | `section` | No |  |
+| Orientation | `string` | No |  |
+| Name (optional) | `string` | No |  |
+| Field of view (°) | `number` | No |  |
+| Horizon mask (°) | `number` | No |  |
+| Facade 5 | `section` | No |  |
+| Orientation | `string` | No |  |
+| Name (optional) | `string` | No |  |
+| Field of view (°) | `number` | No |  |
+| Horizon mask (°) | `number` | No |  |
+| Facade 6 | `section` | No |  |
+| Orientation | `string` | No |  |
+| Name (optional) | `string` | No |  |
+| Field of view (°) | `number` | No |  |
+| Horizon mask (°) | `number` | No |  |
+
+## How to install Volets & Soleil in Gladys
+
+1. In Gladys, open **Integrations**: Volets & Soleil appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-volets-soleil:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-volets-soleil](https://github.com/guim31/gladys-volets-soleil).
+
+Volets & Soleil requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Volets & Soleil is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-volets-soleil) — [source of this documentation](https://github.com/guim31/gladys-volets-soleil/blob/HEAD/docs/en.md)

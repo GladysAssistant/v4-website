@@ -1,0 +1,159 @@
+---
+title: "Intégration domotique Amazon Polly, gratuite et open source"
+sidebar_label: "Amazon Polly"
+description: "Voix Amazon Polly pour les annonces de Gladys, avec votre propre compte AWS. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-amazon-polly.png"
+keywords:
+  - "amazon polly"
+  - "domotique amazon polly"
+  - "gladys amazon polly"
+  - "amazon polly gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-amazon-polly instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Amazon Polly","description":"Voix Amazon Polly pour les annonces de Gladys, avec votre propre compte AWS.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-amazon-polly","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-amazon-polly.png","type":"tts","version":"0.1.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-11T21:44:46Z"}} />
+
+Donne à Gladys les voix d’**Amazon Polly** pour ses annonces (l’action de scène « Jouer une notification ») et la
+réponse de l’assistant vocal, avec **votre propre compte AWS**. Non officielle : sans lien avec Amazon.
+
+Cette intégration n’a encore jamais été testée avec un vrai compte AWS : elle a été écrite d’après la
+documentation d’Amazon Polly et testée contre une imitation locale de l’API Polly.
+
+## Ce qu’elle fait
+
+Gladys envoie un texte (2 000 caractères au plus) et la langue de l’utilisateur. L’intégration prend la voix
+choisie pour cette langue (français, anglais ou allemand ; sinon celle de « Langue si inconnue »), demande un
+clip MP3 à Amazon Polly et le remet à Gladys, qui le joue sur vos enceintes.
+
+Ensuite, dans Gladys, ouvrez **Intégrations → Intelligence artificielle**, carte **Voix**, et choisissez
+**Amazon Polly**.
+
+Limites de Gladys elle-même (pas de l’intégration) : le clip est servi aux enceintes sur votre réseau local, et
+la réponse de l’assistant vocal reste en texte dans une page HTTPS (voir la documentation de Gladys).
+
+## Ce que cela coûte
+
+Amazon Polly est facturé au caractère envoyé, sur votre compte AWS (tarifs sur
+[aws.amazon.com/polly/pricing](https://aws.amazon.com/polly/pricing/), novembre 2026 : environ 4 USD le million de
+caractères avec le moteur **standard**, environ 16 USD en **neuronal**, plus en génératif et long format ; les
+nouveaux comptes ont un quota gratuit la première année). Le moteur standard est celui par défaut.
+
+Pour garder la facture en main :
+
+- **Limite mensuelle** (1 000 000 de caractères par défaut) : comptée en mémoire avant le départ de chaque
+  requête, et écrite dans `/data` (l’écriture attendue 1 s au plus) ; atteinte, plus rien n’est envoyé avant le mois civil suivant (UTC) ou une limite plus
+  haute. Une requête peut-être facturée (pas de réponse, connexion coupée) reste comptée ; une requête à
+  laquelle AWS a répondu par une erreur ne l’est pas. Une annonce n’est jamais bloquée par `/data` (retardée de 3 s au plus) : s’il n’est
+  pas encore lu (2 s au plus), en lecture seule ou lent, la requête part quand même et le statut dit « le compteur
+  mensuel n’est pas enregistré : le plafond n’est garanti que jusqu’au prochain redémarrage » (la pause et un refus
+  gardés dans `/data` peuvent aussi être inconnus). Une coupure de courant ou un plantage au mauvais moment peut
+  faire perdre le décompte d’une requête.
+- Le même texte dans la même voix est rejoué depuis la mémoire (24 heures, 20 clips), pas facturé deux fois ;
+  demandé plusieurs fois à la fois (une scène qui annonce sur plusieurs enceintes), il ne fait qu’une requête
+  dont tous partagent la réponse.
+- 2 requêtes à la fois au plus et 8 en attente ; au-delà, au même moment, refus (« Trop d’annonces à la fois »).
+- Pas de nouvel essai : une requête en échec n’est pas renvoyée par l’intégration (un nouvel essai pourrait
+  être facturé deux fois).
+
+## Créer la clé AWS (droits minimaux)
+
+1. Dans la console AWS, **IAM → Utilisateurs → Créer un utilisateur** (sans accès à la console).
+2. Attachez seulement cette stratégie (elle permet la synthèse, rien d’autre) :
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [{ "Effect": "Allow", "Action": "polly:SynthesizeSpeech", "Resource": "*" }]
+}
+```
+
+3. **Informations d’identification de sécurité → Créer une clé d’accès** (« Application exécutée en dehors
+   d’AWS »). Copiez l’identifiant de clé d’accès (`AKIA…`) et la clé d’accès secrète (affichée une seule fois).
+4. Si vous le souhaitez, posez une alerte **AWS Budgets** sur votre compte : c’est la seule limite qu’AWS
+   applique de son côté.
+
+## Configuration
+
+| Champ                                 | Rôle                                                                                                                                                                      |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Identifiant de clé d’accès            | L’identifiant `AKIA…` de l’utilisateur IAM.                                                                                                                               |
+| Clé d’accès secrète                   | Gardée par Gladys dans sa base, jamais réaffichée, envoyée seulement à Amazon Web Services : elle signe chaque requête, seule la signature circule, pas la clé elle-même. |
+| Région AWS                            | Où Polly tourne (`eu-west-1`, Irlande, par défaut). Tous les moteurs n’existent pas dans toutes les régions.                                                              |
+| Moteur de voix                        | `standard` (par défaut, le moins cher), neuronal, génératif, long format.                                                                                                 |
+| Voix française / anglaise / allemande | La voix de chaque langue. Les voix marquées « pas standard » exigent le moteur neuronal ou plus récent : Polly les refuse avec le moteur standard, et l’erreur le dit.    |
+| Langue si inconnue                    | La voix utilisée quand Gladys n’envoie pas de langue, ou une autre.                                                                                                       |
+| Débit de parole                       | De très lent à très rapide (SSML `prosody` ; les balises ne sont pas facturées).                                                                                          |
+| Limite mensuelle (caractères)         | De 1 000 à 100 000 000 ; 1 000 000 par défaut.                                                                                                                            |
+
+Le bouton **Tester la voix** demande à Polly une courte phrase (environ 50 caractères facturés) avec les réglages
+enregistrés et dit combien de temps cela a pris. Rien n’est joué.
+
+## Quand quelque chose ne va pas
+
+Le statut de l’écran Configuration dit pourquoi :
+
+- **AWS a refusé ces clés** (clé inconnue, supprimée ou désactivée, secret erroné, ou région non activée sur le
+  compte, comme eu-south-2 ou af-south-1) : plus rien n’est envoyé avec elles dans cette région, même après un redémarrage (dès que `/data` est lu), tant que vous ne saisissez pas d’autres clés, ne choisissez pas une autre région, ou que le bouton
+  **Tester** ne réussit pas (il envoie quand même). `/data` ne garde que 8 bits d’une empreinte salée des clés
+  refusées, jamais les clés : après un redémarrage, d’autres clés ont 1 chance sur 256 de paraître refusées ; le
+  bouton Tester lève alors le refus.
+- **Refusé** (`AccessDeniedException`) : les clés sont valides mais l’utilisateur IAM n’a pas
+  `polly:SynthesizeSpeech`. Ce n’est pas un refus des clés : l’annonce suivante réessaie.
+- **Horloge** : AWS a rejeté l’heure de la requête ; vérifiez l’horloge de la machine Gladys.
+- **Ralentir / échec de Polly** (limitation, HTTP 429 ou 5xx) : aucune requête pendant 60 s, puis 2, 4… minutes
+  jusqu’à 1 heure si cela continue (plus quand AWS le demande par `Retry-After`, 6 heures au plus) ; le bouton
+  Tester attend aussi. La pause est gardée dans `/data` au redémarrage ; un succès y met fin.
+- **Polly a refusé la requête** : sa raison est affichée (par exemple « This voice does not support the selected
+  engine »), coupée avant la première valeur qu’elle cite (votre texte pourrait en être une, même en partie) ; rien n’est facturé.
+- **Injoignable, ou connexion coupée** : une coupure après le départ de la requête reste comptée.
+- **Pas de réponse à temps** : Gladys attend 30 s ; l’intégration abandonne à 25 s.
+
+## Vie privée
+
+Le texte à dire est envoyé à Amazon Web Services, dans la région choisie. L’intégration ne l’écrit jamais dans
+les journaux ni dans `/data` (seulement sa longueur) ; les clips restent en mémoire seulement.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Amazon Polly dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Vos clés AWS | `section` | Non | Amazon Polly est facturé sur votre propre compte AWS, au caractère prononcé. Créez un utilisateur IAM autorisé seulement à polly:SynthesizeSpeech (la documentation donne la stratégie) et saisissez sa clé d’accès ici. Le moteur standard est celui par défaut : le moins cher. |
+| Identifiant de clé d’accès | `string` | Oui | L’identifiant de clé d’accès de l’utilisateur IAM (AKIA… ). |
+| Clé d’accès secrète | `secret` | Oui | La clé d’accès secrète affichée une seule fois par AWS à la création de la clé. Gardée par Gladys dans sa base, jamais réaffichée, envoyée seulement à Amazon Web Services (elle signe les requêtes : seule la signature circule, pas la clé elle-même). |
+| Région AWS | `select` | Non | Où Polly tourne. Tous les moteurs n’existent pas dans toutes les régions : eu-west-1 (Irlande) a les voix standard et neuronales. |
+| Moteur de voix | `select` | Non | Standard est le moins cher ; neuronal, génératif et long format sonnent plus naturel et coûtent plus cher au caractère (voir les tarifs). Toutes les voix n’ont pas tous les moteurs : Polly le dit alors. |
+| Voix française | `select` | Non | Utilisée quand la demande est dans cette langue. « pas standard » : cette voix exige le moteur neuronal ou plus récent. |
+| Voix anglaise | `select` | Non | Utilisée quand la demande est dans cette langue. « pas standard » : cette voix exige le moteur neuronal ou plus récent. |
+| Voix allemande | `select` | Non | Utilisée quand la demande est dans cette langue. « pas standard » : cette voix exige le moteur neuronal ou plus récent. |
+| Langue si inconnue | `select` | Non | La voix utilisée quand Gladys n’envoie pas de langue, ou une autre. |
+| Débit de parole | `select` | Non |  |
+| Limite mensuelle (caractères) | `number` | Non | Plus rien n’est envoyé à Polly une fois ce nombre de caractères envoyé dans le mois civil (UTC). 1 000 000 de caractères coûtent environ 4 USD avec le moteur standard. |
+
+## Comment installer Amazon Polly dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Amazon Polly apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-amazon-polly:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-amazon-polly](https://github.com/LM1LC3N7/gladys-amazon-polly).
+
+Amazon Polly nécessite Gladys `>=5.3.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Amazon Polly est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-amazon-polly) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-amazon-polly/blob/HEAD/docs/fr.md)

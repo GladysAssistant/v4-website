@@ -19,7 +19,7 @@ https://github.com/LM1LC3N7/gladys-ipx800-v3 instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"IPX800 V3","description":"GCE IPX800 V3 on your network: relays, digital inputs, analog temperature and humidity sensors.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-ipx800-v3","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ipx800-v3.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-06T03:07:51Z"}} />
+<ExternalIntegrationHeader integration={{"name":"IPX800 V3","description":"GCE IPX800 V3 on your network: relays, digital inputs, analog temperature and humidity sensors.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-ipx800-v3","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ipx800-v3.png","type":"device","version":"0.2.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-10T15:28:38Z"}} />
 
 :::info
 
@@ -46,7 +46,7 @@ For an IPX800 V4 or V5, use the **IPX800** integration (another API).
 2. If the IPX800 protects its pages with a user and a password (Network >
    Security), enter both; leave them empty otherwise.
 3. On the same page, list in "Relays Gladys may drive" the relays Gladys
-   must drive, and those only (e.g. `R1, R2`; see "Relays" below: never a
+   must drive, and those only (e.g. `R1, R2`, or a range `R1-R8`; see "Relays" below: never a
    pump, a ventilation, a door strike…). If the IPX800 has extensions (X-880,
    X-24D), list them in "Extensions", e.g. `R9-R16, D9-D24`. Then save.
 4. "Test the connection" reads the IPX800 at once (once an interval has
@@ -68,16 +68,23 @@ never written in the logs nor in the files of the integration.
 
 ## What you get
 
-| On the IPX800                                               | In Gladys                                     | Code (in the name) |
-| ----------------------------------------------------------- | --------------------------------------------- | ------------------ |
-| Relay 1 to 8 (up to 32)                                     | read only, or a switch / light if you list it | `R3`               |
-| Input 1 to 8 (up to 32)                                     | a binary input (read only)                    | `D3`               |
-| Analog input 1 to 4, TC4012, TC100 or SHT temperature probe | temperature (°C)                              | `A1`               |
-| Analog input 1 to 4, SHT humidity probe                     | humidity (%)                                  | `A2`               |
+| On the IPX800                                                | In Gladys                                     | Code (in the name) |
+| ------------------------------------------------------------ | --------------------------------------------- | ------------------ |
+| Relay 1 to 8 (up to 32)                                      | read only, or a switch / light if you list it | `R3`               |
+| Input 1 to 8 (up to 32)                                      | a binary input (read only)                    | `D3`               |
+| Analog input 1 to 16, TC4012, TC100 or SHT temperature probe | temperature (°C)                              | `A1`               |
+| Analog input 1 to 16, SHT humidity probe                     | humidity (%)                                  | `A2`               |
+
+A new device is named after its code: `IPX800V3-R1`, `IPX800V3-D1`,
+`IPX800V3-A1` (`IPX800V3-2-R1` for the IPX800 #2), the same in both
+languages; rename it as you like, the name you give is kept.
 
 The IPX800 V3 answers 32 relays and 32 inputs, wired or not: the
 integration shows its 8 relays and 8 inputs, and what you list in
-"Extensions". An input is "on" when the IPX800 reads it closed (`dn`).
+"Extensions". An input is "on" (1) when the IPX800 reads it connected
+(`dn` in `status.xml`), "off" (0) when not (`up`). Its 16 analog inputs are
+all read; one becomes a device only with a probe type of the table. The
+date and time of the IPX800 (`day`, `time0`) are not read.
 
 An analog input is published only when the probe type chosen on the IPX800
 is one of those in the table; its value is computed with the GCE formulas
@@ -89,7 +96,19 @@ the inputs concerned. A raw value of 0 (nothing wired) or 1023 (open input)
 is no measurement.
 
 The IPX800 is read every 10 seconds by default (5 s at least), through its
-page `globalstatus.xml`, or `status.xml` when that one is missing. A value
+page `globalstatus.xml`, or `status.xml` when that one is missing. To see an
+input change sooner, "Read the inputs every (milliseconds)" reads it faster:
+1000 ms (1 s) at least (less is read as 1000), as its small web server
+answers one request at a time. To go back to the interval above, type `0`
+(Gladys keeps the last value of a number field you empty). Each read is one
+request for the whole page (relays and analog inputs too), the next one only
+once the previous one is answered and after a rest at least as long as that
+answer took (250 ms at least): a slow IPX800 is read more slowly, the periodic
+reads never take more than half of the time (the read backs of commands come
+on top), and its reads never stack up. At that pace the integration
+writes its state file in `/data` only when something changed (and the time
+of the last read every 5 s at most), so that the disk of Gladys is not
+written every second. A value
 the IPX800 does not give (missing, a text, out of range) is not published:
 never as 0.
 
@@ -98,8 +117,8 @@ never as 0.
 Keep the first one in the fields at the top, and put the other one in
 **"IPX800 #2"** (address with `:port` if needed, user and password, its
 relays Gladys may drive, its extensions), a third one in "IPX800 #3". Each
-has its own devices in Discover ("IPX800 #2 · Relay 1 (R1)"), its own list
-of relays and its own line in the status. The poll interval and the
+has its own devices in Discover (`IPX800V3-2-R1`), its own list
+of relays and its own line in the status. The read intervals and the
 language are shared.
 
 **Do not change the address of a slot to try another IPX800**: the devices
@@ -146,7 +165,10 @@ apart from the first one.
 
 A relay you do not list is **read only**. To drive one from Gladys, list it
 in "Relays Gladys may drive", e.g. `R1, R3:light` (`:light` makes it a
-light, a switch otherwise), preferably before creating it in Discover;
+light, a switch otherwise), or a range, `R1-R8` (`R1-R8:light`: all lights;
+a range backwards or past R32 lists none of it; a relay listed twice with
+another kind keeps its first one, which the status says ("listed twice");
+the rest of the entry applies), preferably before creating it in Discover;
 already created, click "Update" on it in Discover. A switch or a light obeys
 every "turn everything off" of Google, Alexa, the MCP and the scenes: never
 list a pump, a freezer, a ventilation, a heating, a door strike nor a valve.
@@ -201,7 +223,8 @@ answer (a frozen disk) is waited for 1.5 s at most: neither the switch-off
 nor the reads wait for it longer, and the status says so.
 
 A switch-off the reads do not show is sent again, 3 times at most (three
-sends that left); then the status says so (check on site). It stays held
+sends that left), one a read, 5 s apart at least when the inputs are read faster than every
+5 s; then the status says so (check on site). It stays held
 until a newer command on that relay leaves (your click), another
 switch-off, the relay leaving the list, or, once applied, the relay read on
 twice in a row (changed on the IPX800 itself, by its scenarios or its page):
@@ -253,32 +276,33 @@ Diese Einstellungen fragt IPX800 V3 in seinem Konfigurationsbildschirm in Gladys
 
 | Einstellung | Typ | Pflichtfeld | Beschreibung |
 | --- | --- | --- | --- |
-| Your IPX800 V3 | `section` | Nein | Brings up to three GCE Electronics IPX800 V3 into Gladys through their local HTTP interface: relays (read only unless you list them below), digital inputs, analog temperature and humidity sensors. A relay listed is switched off first, whatever else is going on (see the guide for the limits). Each IPX800 keeps its own devices: another address never gets their commands. Never tested with a real device. Not affiliated with GCE Electronics. |
+| Your IPX800 V3 | `section` | Nein | Brings up to three GCE Electronics IPX800 V3 into Gladys through their local HTTP interface: relays (read only unless you list them below), digital inputs, analog temperature and humidity sensors (up to 16). A relay listed is switched off first, whatever else is going on (see the guide for the limits). Each IPX800 keeps its own devices: another address never gets their commands. Never tested with a real device. Not affiliated with GCE Electronics. |
 | Address of the IPX800 V3 | `string` | Ja | Its IP address (or name) on your network, with :port only if its web server is not on 80, without path; give it a fixed address in your router. |
 | User | `string` | Nein | Only if the IPX800 V3 protects its pages with a user and a password (Network > Security); leave empty otherwise. |
 | Password | `secret` | Nein | With the user above. Sent to the IPX800 V3 in every request, over plain http (as its own pages do): anyone who can watch your network can read it. Kept by Gladys in its database, never shown again, sent only to the IPX800 V3, never written in the logs. |
-| Relays Gladys may drive | `string` | Nein | The other relays are read only. R1 to R8, up to R32 with extensions (codes as in the device names); add :light for a light, e.g. "R1, R3:light". A relay listed here obeys every "turn everything off" of Google, Alexa, the MCP and the scenes: never list a pump, a freezer, a ventilation, a heating, a door strike nor a valve, nor a relay set to pulse mode on the IPX800 (Ta / Tb: a gate), which would likely stay on. List them before creating them in Discover; a relay already created stays read only until you click "Update" on it in Discover. |
+| Relays Gladys may drive | `string` | Nein | The other relays are read only. R1 to R8, up to R32 with extensions (codes as in the device names); one relay or a range, add :light for a light, e.g. "R1-R8" or "R1, R3:light". A relay listed here obeys every "turn everything off" of Google, Alexa, the MCP and the scenes: never list a pump, a freezer, a ventilation, a heating, a door strike nor a valve, nor a relay set to pulse mode on the IPX800 (Ta / Tb: a gate), which would likely stay on. List them before creating them in Discover; a relay already created stays read only until you click "Update" on it in Discover. |
 | Extensions | `string` | Nein | What your IPX800 V3 has beyond its 8 relays and 8 inputs (X-880, X-24D…), e.g. "R9-R16, D9-D24"; up to R32 and D32. |
 | Options | `section` | Nein |  |
 | Read every (seconds) | `number` | Nein | How often the IPX800 V3 is read: 10 s by default, 5 s at least. |
+| Read the inputs every (milliseconds) | `number` | Nein | Optional, to see an input change sooner: 1000 ms (1 s) at least (less is read as 1000). 0: the interval above (Gladys keeps a number field you empty: type 0 to go back). The whole status page of the IPX800 V3 (relays and analog inputs too) is read in one request at this pace, one request at a time, with a rest after each answer, so that its small web server keeps up. |
 | Language of the names | `select` | Nein | Used for the names of the devices and features added from now on. |
 | IPX800 #2 (optional) | `section` | Nein | Another IPX800 V3: fill in its address to bring it in, leave empty otherwise. |
 | Address of IPX800 #2 | `string` | Nein | Its IP address (or name) on your network, with :port only if its web server is not on 80, without path; give it a fixed address in your router. |
 | User of IPX800 #2 | `string` | Nein | Only if the IPX800 V3 protects its pages with a user and a password (Network > Security); leave empty otherwise. |
 | Password of IPX800 #2 | `secret` | Nein | With the user above. Sent to the IPX800 V3 in every request, over plain http (as its own pages do): anyone who can watch your network can read it. Kept by Gladys in its database, never shown again, sent only to the IPX800 V3, never written in the logs. |
-| Relays Gladys may drive of IPX800 #2 | `string` | Nein | The other relays are read only. R1 to R8, up to R32 with extensions (codes as in the device names); add :light for a light, e.g. "R1, R3:light". A relay listed here obeys every "turn everything off" of Google, Alexa, the MCP and the scenes: never list a pump, a freezer, a ventilation, a heating, a door strike nor a valve, nor a relay set to pulse mode on the IPX800 (Ta / Tb: a gate), which would likely stay on. List them before creating them in Discover; a relay already created stays read only until you click "Update" on it in Discover. |
+| Relays Gladys may drive of IPX800 #2 | `string` | Nein | The other relays are read only. R1 to R8, up to R32 with extensions (codes as in the device names); one relay or a range, add :light for a light, e.g. "R1-R8" or "R1, R3:light". A relay listed here obeys every "turn everything off" of Google, Alexa, the MCP and the scenes: never list a pump, a freezer, a ventilation, a heating, a door strike nor a valve, nor a relay set to pulse mode on the IPX800 (Ta / Tb: a gate), which would likely stay on. List them before creating them in Discover; a relay already created stays read only until you click "Update" on it in Discover. |
 | Extensions of IPX800 #2 | `string` | Nein | What your IPX800 V3 has beyond its 8 relays and 8 inputs (X-880, X-24D…), e.g. "R9-R16, D9-D24"; up to R32 and D32. |
 | IPX800 #3 (optional) | `section` | Nein | Another IPX800 V3: fill in its address to bring it in, leave empty otherwise. |
 | Address of IPX800 #3 | `string` | Nein | Its IP address (or name) on your network, with :port only if its web server is not on 80, without path; give it a fixed address in your router. |
 | User of IPX800 #3 | `string` | Nein | Only if the IPX800 V3 protects its pages with a user and a password (Network > Security); leave empty otherwise. |
 | Password of IPX800 #3 | `secret` | Nein | With the user above. Sent to the IPX800 V3 in every request, over plain http (as its own pages do): anyone who can watch your network can read it. Kept by Gladys in its database, never shown again, sent only to the IPX800 V3, never written in the logs. |
-| Relays Gladys may drive of IPX800 #3 | `string` | Nein | The other relays are read only. R1 to R8, up to R32 with extensions (codes as in the device names); add :light for a light, e.g. "R1, R3:light". A relay listed here obeys every "turn everything off" of Google, Alexa, the MCP and the scenes: never list a pump, a freezer, a ventilation, a heating, a door strike nor a valve, nor a relay set to pulse mode on the IPX800 (Ta / Tb: a gate), which would likely stay on. List them before creating them in Discover; a relay already created stays read only until you click "Update" on it in Discover. |
+| Relays Gladys may drive of IPX800 #3 | `string` | Nein | The other relays are read only. R1 to R8, up to R32 with extensions (codes as in the device names); one relay or a range, add :light for a light, e.g. "R1-R8" or "R1, R3:light". A relay listed here obeys every "turn everything off" of Google, Alexa, the MCP and the scenes: never list a pump, a freezer, a ventilation, a heating, a door strike nor a valve, nor a relay set to pulse mode on the IPX800 (Ta / Tb: a gate), which would likely stay on. List them before creating them in Discover; a relay already created stays read only until you click "Update" on it in Discover. |
 | Extensions of IPX800 #3 | `string` | Nein | What your IPX800 V3 has beyond its 8 relays and 8 inputs (X-880, X-24D…), e.g. "R9-R16, D9-D24"; up to R32 and D32. |
 
 ## So installierst du IPX800 V3 in Gladys
 
 1. Öffne in Gladys **Integrationen**: IPX800 V3 erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
-2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-ipx800-v3:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-ipx800-v3:0.2.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
 3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
 4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-ipx800-v3](https://github.com/LM1LC3N7/gladys-ipx800-v3).
 

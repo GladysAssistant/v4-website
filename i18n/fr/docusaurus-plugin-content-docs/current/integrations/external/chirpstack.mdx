@@ -1,0 +1,207 @@
+---
+title: "Intégration domotique ChirpStack, gratuite et open source"
+sidebar_label: "ChirpStack"
+description: "Les capteurs LoRaWAN d'un serveur ChirpStack v4 dans Gladys : mesures, signal, capteurs muets. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-chirpstack.png"
+keywords:
+  - "chirpstack"
+  - "domotique chirpstack"
+  - "gladys chirpstack"
+  - "chirpstack gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/guim31/gladys-chirpstack instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"ChirpStack","description":"Les capteurs LoRaWAN d'un serveur ChirpStack v4 dans Gladys : mesures, signal, capteurs muets.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-chirpstack","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-chirpstack.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-12T07:58:34Z"}} />
+
+Les capteurs LoRaWAN de votre serveur [ChirpStack](https://www.chirpstack.io)
+v4 dans Gladys : température, humidité, portes, fuites, CO2, piles… ChirpStack
+publie chaque message de vos capteurs sur son broker MQTT, décodé par le codec
+du profil d'appareil. L'intégration lit ce broker et fait de chaque valeur
+décodée une fonctionnalité Gladys.
+
+> Testée contre un vrai ChirpStack v4 (la pile officielle chirpstack-docker,
+> une passerelle et des capteurs simulés), pas avec de vraies radios LoRa :
+> vos retours sont les bienvenus.
+
+## Ce que vous obtenez
+
+- **Un appareil par appareil LoRaWAN** entendu par ChirpStack, nommé comme
+  dans ChirpStack, dans l'onglet Découverte de l'intégration.
+- **Une fonctionnalité par valeur décodée par le codec** : son type est deviné
+  d'après son nom (`temperature`, `TempC_SHT`, `humidity`, `BatV`,
+  `DOOR_OPEN_STATUS`, `water_leak`, `co2`…). Une valeur dont le nom ne dit rien
+  devient une valeur simple.
+- Le **RSSI** et le **SNR** de la meilleure passerelle, et le **niveau de
+  batterie** du statut LoRaWAN quand l'appareil le donne.
+- Des déclencheurs de scène, une action de scène pour envoyer un message
+  descendant et un widget de tableau de bord (plus bas).
+
+## Avant de commencer
+
+1. Un ChirpStack **v4** en service avec son intégration MQTT (activée par
+   défaut, c'est le cas de la pile chirpstack-docker). Les événements doivent
+   être en **JSON** : `json=true` dans `[integration.mqtt]` de
+   `chirpstack.toml` (valeur par défaut).
+2. Un **codec** sur le profil de chaque capteur (Device profiles → Codec) :
+   souvent celui du
+   [dépôt d'appareils de TTN](https://github.com/TheThingsNetwork/lorawan-devices),
+   que ChirpStack sait importer. Sans codec, l'appareil ne montre que son
+   signal, et le déclencheur « message reçu » donne le contenu brut.
+3. L'adresse du broker MQTT où publie ChirpStack, et ses identifiants s'il en
+   a.
+
+## Configuration
+
+- **Adresse du broker** : `mqtt://` (port 1883) ou `mqtts://` pour TLS (port
+  8883). L'intégration n'a besoin que de lire `application/#`, et d'écrire
+  `application/+/device/+/command/down` pour les messages descendants.
+- **Nom d'utilisateur** et **mot de passe** : vides pour un broker anonyme.
+- **Accepter un certificat auto-signé** : `mqtts://` seulement.
+- **Préfixe des sujets** : `application`, sauf si `event_topic` a été modifié
+  dans `chirpstack.toml`.
+- **Clés corrigées** : voir la section suivante.
+- **Muet après** : un capteur ajouté à Gladys qui n'envoie rien pendant ce
+  délai est « muet » (déclencheur, widget). Choisissez-le plus long que
+  l'intervalle de votre capteur le plus lent : certains détecteurs de porte
+  n'émettent que toutes les quelques heures.
+- **Langue des textes** : noms des fonctionnalités (figés à l'ajout de
+  l'appareil) et messages des actions et des scènes.
+
+Puis utilisez **Vérifier la connexion**.
+
+## Clés et types
+
+Chaque valeur numérique ou booléenne de l'objet décodé devient une
+fonctionnalité (50 au plus par appareil ; objets imbriqués jusqu'à trois
+niveaux, comme `sensor.co2` ; listes et textes ignorés). Une valeur en toutes
+lettres ne devient une fonctionnalité que pour un détecteur (`"open"`,
+`"closed"`, `"leak"`, `"normal"`…). Le type deviné la première fois qu'une clé
+est vue est conservé : une version ultérieure ne le change jamais.
+
+Quand le type est mal deviné, ou pour masquer une valeur, écrivez des paires
+`clé=type` dans **Clés corrigées**, séparées par des virgules :
+`TempC_DS=temperature, Work_mode=ignore`. La clé est comparée sans tenir compte
+de la casse ni des séparateurs. Types :
+
+- mesures : `temperature` (°C), `temperature_f` (°F), `humidity` (%),
+  `soil_moisture` (%), `co2` (ppm), `pressure` (hPa), `illuminance` (lux),
+  `battery` (%), `voltage` (V), `voltage_mv` (mV), `current` (A), `power` (W),
+  `distance_mm`, `distance_cm`, `distance_m`, `pm25`, `pm10` (µg/m³), `noise`
+  (dB), `counter`, `number` (sans unité) ;
+- détecteurs : `motion`, `opening` (vrai = ouvert), `contact` (vrai = fermé),
+  `leak`, `smoke`, `vibration`, `tamper`, `binary` (tout oui/non) ;
+- `ignore` : pas de fonctionnalité.
+
+Une clé corrigée modifie l'appareil : utilisez **Mettre à jour** dans l'onglet
+Découverte.
+
+## Appareils
+
+Ouvrez l'onglet **Découverte** de l'intégration : chaque appareil entendu depuis
+le démarrage de l'intégration (et gardé dans son volume de données d'un
+redémarrage à l'autre) s'y trouve, avec ses fonctionnalités. Ajoutez ceux que
+vous voulez. Une nouvelle clé envoyée plus tard par un appareil (autre type de
+trame) y apparaît aussi, et **Mettre à jour** l'ajoute.
+
+Les états sont envoyés à chaque message, seulement s'ils ont changé (et toutes
+les 12 heures pour une valeur stable). Les détecteurs de porte suivent la
+convention de Gladys : ouvert ou fermé, tel qu'affiché.
+
+## Scènes
+
+Déclencheurs, pour les appareils ajoutés à Gladys (laissez l'appareil vide pour
+tous) :
+
+- **Message reçu** : chaque message, même avec les mêmes valeurs qu'avant (un
+  bouton LoRaWAN, un compteur d'événements). Filtre sur le fPort ; la scène lit
+  le fPort, le compteur de trames, le contenu brut en hexadécimal et le RSSI.
+- **Capteur muet** : rien reçu pendant le délai configuré (pile, portée,
+  panne). Une fois par silence ; le délai repart au retour du broker MQTT, pour
+  qu'une coupure ne rende pas tous les capteurs muets.
+- **Capteur de retour** : un capteur muet émet de nouveau.
+- **Capteur reconnecté** : un join OTAA (redémarrage, pile changée).
+
+Action **Envoyer un message descendant** : met des octets en file pour un
+appareil dans ChirpStack (sujet `command/down`). Indiquez le fPort (1 à 223) et
+le contenu en hexadécimal, tel que l'écrit la notice de l'appareil (par exemple
+`0100FF`) ; « Message confirmé » demande un accusé de réception à l'appareil.
+Un appareil de classe A le reçoit après son prochain message. L'intégration
+doit avoir entendu l'appareil une fois (pour connaître son application). Rien
+n'est deviné : ce que vous tapez est envoyé.
+
+## Tableau de bord
+
+Le widget **Capteurs LoRaWAN** liste les capteurs ajoutés à Gladys, les muets
+en tête, avec leur dernier message et leur signal (« il y a 12 min · -97 dBm »).
+Réglages : masquer le signal, n'afficher que les capteurs muets.
+
+## Limites
+
+- ChirpStack **v4** (le format de l'Application Server v3 est lu aussi, sans
+  test). Événements JSON seulement, pas protobuf.
+- Pas de liste des appareils ChirpStack par son API : un appareil apparaît dès
+  qu'il a envoyé quelque chose.
+- Appareils en lecture seule : une commande passe par l'action de scène de
+  message descendant, avec un contenu que vous écrivez vous-même.
+- Chaque message envoie quelques états : le cœur en accepte 300 par minute,
+  assez pour des dizaines de capteurs aux intervalles habituels.
+- Développée sans matériel radio LoRa.
+
+## Dépannage
+
+- **Aucun appareil dans la Découverte** : utilisez **Vérifier la connexion**.
+  Vérifiez le préfixe des sujets, que le capteur émet (Devices → Events dans
+  ChirpStack) et que l'utilisateur du broker peut lire `application/#`.
+- **« Pas en JSON »** : mettez `json=true` dans `[integration.mqtt]` de
+  `chirpstack.toml` et redémarrez ChirpStack.
+- **Seulement RSSI et SNR** : le profil d'appareil n'a pas de codec, ou le codec
+  échoue (Devices → Events → log dans ChirpStack).
+- **Un type erroné** : corrigez-le dans **Clés corrigées**, puis **Mettre à
+  jour** l'appareil.
+- **Message descendant non reçu** : regardez l'onglet Queue de l'appareil dans
+  ChirpStack, et que l'utilisateur du broker peut écrire `command/down`.
+- Journaux : `LOG_LEVEL=debug` montre chaque message.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par ChirpStack dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Connecter ChirpStack | `section` | Non | ChirpStack publie chaque message de vos capteurs LoRaWAN sur son broker MQTT, décodé par le codec du profil d'appareil. L'intégration lit ce broker ; elle n'y publie que les messages descendants de vos scènes. |
+| Adresse du broker | `string` | Oui | Le broker où publie ChirpStack : mqtt:\/\/ (port 1883) ou mqtts:\/\/ pour TLS (port 8883). Avec chirpstack-docker, c'est le service mosquitto. |
+| Nom d'utilisateur | `string` | Non | Laissez vide si le broker accepte les clients anonymes. |
+| Mot de passe | `secret` | Non |  |
+| Accepter un certificat auto-signé | `boolean` | Non | mqtts:\/\/ seulement : le certificat du broker n'est alors pas vérifié. |
+| Préfixe des sujets | `string` | Non | application, sauf si event_topic a été modifié dans chirpstack.toml. |
+| Capteurs | `section` | Non | Chaque valeur décodée par le codec devient une fonctionnalité, dont le type est deviné d'après son nom (température, humidité, batterie, porte…). Les noms inconnus deviennent des valeurs simples. |
+| Clés corrigées | `string` | Non | Paires clé=type, séparées par des virgules, pour un type mal deviné ou une valeur à ignorer. Types : voir la documentation. |
+| Muet après | `select` | Non | Un capteur ajouté à Gladys qui n'émet rien pendant ce délai est muet : déclencheur de scène, widget. |
+| Langue des textes | `select` | Non | Noms des fonctionnalités à l'ajout d'un appareil, messages des actions et des scènes. |
+
+## Comment installer ChirpStack dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : ChirpStack apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/guim31/gladys-chirpstack:1.0.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/guim31/gladys-chirpstack](https://github.com/guim31/gladys-chirpstack).
+
+ChirpStack nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+ChirpStack est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [guim31](https://github.com/guim31), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/guim31/gladys-chirpstack) — [source de cette documentation](https://github.com/guim31/gladys-chirpstack/blob/HEAD/docs/fr.md)
