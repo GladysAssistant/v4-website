@@ -1,0 +1,180 @@
+---
+title: "Apple WeatherKit smart home integration, free and open source"
+sidebar_label: "Apple WeatherKit"
+description: "Unofficial connector: Apple WeatherKit weather, forecasts and alerts, with your Apple key. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-apple-weatherkit.png"
+keywords:
+  - "apple weatherkit"
+  - "apple weatherkit smart home"
+  - "gladys apple weatherkit"
+  - "apple weatherkit gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-apple-weatherkit instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Apple WeatherKit","description":"Unofficial connector: Apple WeatherKit weather, forecasts and alerts, with your Apple key.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-apple-weatherkit","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-apple-weatherkit.png","type":"weather","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-11T20:11:56Z"}} />
+
+**Unofficial** connector, not affiliated with Apple. It makes **Apple WeatherKit** the weather provider of Gladys:
+current conditions, 24-hour and 8-day forecasts, and the official alerts of the country you set. The weather
+widget, the assistant and the weather-alert scene triggers of Gladys use it directly.
+
+> This integration was **never tested with a real Apple Developer account**: it is written from the
+> documentation of the WeatherKit REST API. Feedback is welcome.
+
+## What you need
+
+- An **Apple Developer Program** membership of your own (paid: 99 USD a year). It includes **500,000 WeatherKit
+  calls a month** for the whole team; above that, Apple sells paid tiers in your developer account.
+- Gladys 5.1 or later, and at least one located house (Settings → Houses) for the test button.
+
+## Getting the credentials
+
+On [developer.apple.com/account](https://developer.apple.com/account):
+
+1. **Team ID**: _Membership details_, 10 characters.
+2. **Service ID**: _Certificates, Identifiers & Profiles_ → _Identifiers_ → **+** → _Services IDs_, for example
+   `com.example.weather`.
+3. **Key**: _Keys_ → **+** → tick **WeatherKit** → register, then download `AuthKey_XXXXXXXXXX.p8` (Apple gives it
+   once). The 10 characters after `AuthKey_` are the **Key ID**.
+
+See also [WeatherKit: get started](https://developer.apple.com/weatherkit/get-started/).
+
+## Configuration
+
+| Field                       | Purpose                                                                                                                                                                                                                                                                 |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Team ID, Key ID, Service ID | The identifiers above.                                                                                                                                                                                                                                                  |
+| Private key (.p8)           | The whole `.p8` file, `-----BEGIN/END PRIVATE KEY-----` lines included (pasted on one line works too). Kept by Gladys in its database, never shown again, used only to sign the requests sent to Apple WeatherKit. It never appears in the logs, the status or `/data`. |
+| Country for the alerts      | Two-letter code (FR, BE, US...). WeatherKit gives alerts only with it. Empty: no alerts.                                                                                                                                                                                |
+| Weather alerts              | On by default (when a country is set).                                                                                                                                                                                                                                  |
+| Refresh interval            | 15 minutes by default (10 to 120). A location is read from Apple at most once per interval.                                                                                                                                                                             |
+| Monthly budget              | 50,000 calls by default (1,000 to 500,000), per calendar month in UTC.                                                                                                                                                                                                  |
+
+**Test WeatherKit** makes one call (the data sets at your first located house, or at Cupertino when no house
+has a location): it says whether Apple accepts the credentials, whether alerts exist for your country, and the
+calls of the month. It runs at most once every 30 seconds, and not during a pause asked by Apple nor once the
+budget is reached.
+
+## Costs, quotas and pacing
+
+- Gladys asks for the weather when a dashboard shows it, when the assistant answers, and every 30 minutes for
+  the alerts. The integration answers from its kept copy while it is younger than the interval: with 15 minutes,
+  count **about 3,000 calls a month per location**.
+- Each call is counted in `/data` before it leaves. Once the budget is reached, nothing is sent until the 1st of
+  the next month (UTC). Apple counts the calls of your other apps in the same quota.
+- **HTTP 429**: paused as long as `Retry-After` says (compared with Apple's `Date` header), between 60 s and
+  6 hours; without the header, 60 s then doubled.
+- **Server error, unreadable, oversized (over 1 MB) or missing answer**: 60 s pause, doubled at each failure up
+  to 1 hour.
+- **Other 4xx (400, 404...)**: the location or the country is not served; only that location is held back for one
+  refresh interval, the others go on.
+- Gladys waits 15 s for an answer: a call (or its retry after a 401) that cannot end in time does not leave.
+- During a pause or an outage, Gladys gets the last copy if it is under one hour old, with its own date (never
+  presented as new); otherwise an error, and Gladys moves on to its next provider.
+- Pauses, the counter and the copies are kept in `/data`: a restart does not trigger a call.
+
+## Refused credentials
+
+A single 401 or 403 stops nothing: the request is made once more with a new token. Refused **twice in a row**,
+the credentials are recorded as refused and no request leaves with them any more. `/data` keeps only **one
+byte** of a salted hash of the identifiers and of the **public** key: nothing secret, and nothing a reader could
+check a guess against (one guess in 256 matches). Saving different credentials while the integration runs lifts
+the refusal at once. After a restart only that byte is known: new credentials whose byte happens to be the same
+(1 chance in 256) stay held back until a success of **Test WeatherKit**, which always makes its call.
+
+## What is sent to Apple
+
+The coordinates of the house rounded to 3 decimals (about 100 m), the user's language (its base: `pt-BR` → `pt`),
+the alert country, and a token signed for one hour. `/data/state.json` holds the month counter, the pause, one
+byte marking refused credentials, and the last answers. The answers carry no coordinates, but each is filed under
+a salted hash of the rounded location: with the salt beside it, the location can be found back by brute force,
+and the alerts name their area. `/data` stays on your Gladys.
+
+## Mappings
+
+| WeatherKit                             | Gladys                   |
+| -------------------------------------- | ------------------------ |
+| Clear, MostlyClear, Hot, Frigid        | clear                    |
+| PartlyCloudy / MostlyCloudy, Cloudy    | partly-cloudy / cloud    |
+| Fog, Haze, Smoke                       | fog                      |
+| Drizzle / Rain, Showers... / HeavyRain | drizzle / rain / pouring |
+| FreezingDrizzle, FreezingRain          | freezing-rain            |
+| Sleet, WintryMix, MixedRainAndSnow...  | sleet                    |
+| Snow, Flurries, Blizzard...            | snow                     |
+| Hail                                   | hail                     |
+| Thunderstorms, StrongStorms...         | thunderstorm             |
+| Breezy, Windy / Dust, BlowingDust      | wind / sandstorm         |
+| TropicalStorm, Hurricane / Tornado     | hurricane / tornado      |
+| any other code                         | unknown                  |
+
+Units: WeatherKit answers in metric; the integration converts to m/s and km (metric) or °F, mph, inches and miles
+(US); pressure stays in hPa; humidity, cloud cover and precipitation chance in percent. A missing value stays
+missing, never 0.
+
+Alerts: Apple's CAP severity is kept; "unknown" becomes "minor" (the alert is kept). The phenomenon (storm, wind,
+snow...) is read from the title in English, French, German or Spanish; without a match the alert is shown with
+its title alone. The description gives the area and the source; the long text is not fetched (one more call per
+alert). Alerts expired by Apple's clock are removed.
+
+## Attribution
+
+Apple asks to show the Apple Weather mark and a link to its data sources:
+[https://weatherkit.apple.com/legal-attribution.html](https://weatherkit.apple.com/legal-attribution.html). The Gladys weather widget cannot show it yet: the link is
+on the configuration screen and here.
+
+## Statuses
+
+- "Enter the Team ID...": nothing configured.
+- "Invalid configuration: ...": names the wrong fields (never their value); nothing is sent.
+- "Ready", then "WeatherKit answers".
+- "Apple refused these credentials...", "WeatherKit asked to slow down...", "did not answer properly...",
+  "Monthly budget reached...".
+- "/data/state.json is unreadable": read again every 10 s, nothing is sent meanwhile (an unreadable file is not
+  taken as empty).
+- "The configuration could not be read": new try after 5 s, then doubled up to 5 minutes.
+
+## Limits
+
+No minute-by-minute forecast, no radar image, no air quality. Apache-2.0 license.
+
+## Configuration settings
+
+These are the settings Apple WeatherKit asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Apple WeatherKit in Gladys | `section` | No | Unofficial connector, not affiliated with Apple. It makes Apple WeatherKit the weather provider of Gladys: current conditions, 24 hours, 8 days, and the official alerts of the country you set. It needs your own Apple Developer Program membership (paid, 99 USD a year, which includes 500,000 WeatherKit calls a month for the whole team): a WeatherKit key (.p8), its Key ID, your Team ID and a Service ID. Each location is read at most once per refresh interval, and a monthly budget stops the calls before your quota. Data: Apple Weather (see the attribution link). |
+| Team ID | `string` | Yes | The 10 characters of your Apple Developer team (Membership details). |
+| Key ID | `string` | Yes | The 10 characters of the WeatherKit key (Certificates, Identifiers & Profiles → Keys). |
+| Service ID | `string` | Yes | The identifier of a Services ID registered with WeatherKit, in reverse-domain form. |
+| Private key (.p8) | `secret` | Yes | The whole content of the AuthKey_XXXXXXXXXX.p8 file, header lines included. Kept by Gladys in its database, never shown again, used only to sign the requests sent to Apple WeatherKit. |
+| Country for the alerts | `string` | No | Two-letter country code of your houses (FR, BE, US...). WeatherKit gives alerts only with it. Empty: no alerts. |
+| Weather alerts | `boolean` | No | Asks WeatherKit for the official alerts of the country set above, shown by the weather widget and used by the weather-alert scene triggers of Gladys. |
+| Refresh interval (minutes) | `number` | No | A location is read from Apple at most once per interval; Gladys gets the kept copy in between. 15 minutes is about 3,000 calls a month per location. |
+| Monthly budget (calls) | `number` | No | Calls allowed per calendar month (UTC), counted by this integration only. Reached: no call until the next month. Apple counts the calls of all your apps in the same quota. |
+
+## How to install Apple WeatherKit in Gladys
+
+1. In Gladys, open **Integrations**: Apple WeatherKit appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-apple-weatherkit:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-apple-weatherkit](https://github.com/LM1LC3N7/gladys-apple-weatherkit).
+
+Apple WeatherKit requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Apple WeatherKit is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-apple-weatherkit) — [source of this documentation](https://github.com/LM1LC3N7/gladys-apple-weatherkit/blob/HEAD/docs/en.md)

@@ -1,0 +1,169 @@
+---
+title: "Intégration domotique Tessie, gratuite et open source"
+sidebar_label: "Tessie"
+description: "Vos Tesla via Tessie : batterie, autonomie, charge, clim, portes, pneus, et verrouillage. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-tessie.png"
+keywords:
+  - "tessie"
+  - "domotique tessie"
+  - "gladys tessie"
+  - "tessie gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-tessie instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Tessie","description":"Vos Tesla via Tessie : batterie, autonomie, charge, clim, portes, pneus, et verrouillage.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-tessie","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-tessie.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-11T21:35:30Z"}} />
+
+Affiche dans Gladys les Tesla de votre compte **Tessie** : niveau de batterie,
+autonomie, état et puissance de charge, climatisation, températures intérieure
+et extérieure, portes, coffres, fenêtres, verrouillage, mode Sentinelle,
+pression des pneus, compteur et état. Une commande : **Verrouiller**.
+
+Jamais testé avec une vraie voiture. Non officiel, sans lien avec Tesla ni avec
+Tessie.
+
+## Ce qu'il faut
+
+- Un compte Tessie (service payant, [tessie.com](https://tessie.com)) où se
+  trouvent vos voitures.
+- Un jeton d'accès : sur [dash.tessie.com](https://dash.tessie.com/settings/api),
+  Settings, API, **Generate Access Token**.
+
+## Mise en place
+
+1. Installez l'intégration depuis le store Gladys.
+2. Dans sa configuration, collez le jeton dans **Jeton d'accès Tessie**. Il
+   est gardé par Gladys dans sa base, jamais réaffiché, et envoyé seulement à
+   Tessie (`api.tessie.com`), dans un en-tête.
+3. Enregistrez, puis **Tester la connexion** : la réponse donne le nombre de
+   voitures renvoyées par Tessie.
+4. Dans **Découverte**, créez chaque voiture.
+
+## Ce qui est lu, et à quel rythme
+
+À chaque **intervalle de lecture** (5 minutes par défaut, de 60 s à 1 heure),
+Gladys lit le dernier état connu de Tessie pour chaque voiture. Gladys **ne
+demande jamais à Tessie de réveiller une voiture** pour la lire : une voiture
+endormie garde les valeurs de son dernier réveil.
+
+Chaque groupe de valeurs (charge, climatisation, véhicule, position) porte
+l'heure à laquelle Tessie l'a reçu de la voiture :
+
+- moins de 10 minutes : affiché comme une nouvelle valeur (les scènes peuvent
+  réagir) ;
+- plus ancien : affiché avec sa propre date (les scènes ne réagissent pas) ;
+- plus de 2 heures : pas affiché ;
+- une valeur déjà affichée n'est pas renvoyée.
+
+Les distances sont en km (Tesla donne des miles : convertis), les températures
+en °C, la pression des pneus en bar. Une valeur que la voiture ne donne pas
+reste inconnue, jamais 0. Le compteur ne recule jamais.
+
+10 voitures au plus sont suivies (le statut dit combien sont laissées de côté).
+
+## Verrouiller
+
+La fonctionnalité **Verrouillage** d'une voiture est la seule commande. La
+passer à verrouillé envoie la commande de verrouillage de Tessie (Tessie
+réveille la voiture si besoin). Elle part même quand Tessie a demandé
+d'attendre, quand Tessie a refusé le jeton pour les lectures, ou pendant une
+lecture. Elle est essayée 3 fois au plus en 3 minutes, et renvoyée après un
+redémarrage de l'intégration dans ce délai. Elle se termine quand la voiture
+confirme, ou quand une lecture datée d'après la commande montre la voiture
+verrouillée alors qu'elle était connue déverrouillée avant (une lecture plus
+ancienne ne compte jamais). Gladys relit la voiture 5 s et 20 s après. Quand
+la voiture n'a pas confirmé en 3 secondes environ, Gladys affiche une erreur
+qui dit ce qui est parti et ce qui suit.
+
+Elle ne part pas quand :
+
+- aucun jeton valide n'est encore configuré (elle en attend un 3 minutes au
+  plus) ;
+- la voiture n'est plus dans le compte Tessie (si la clé des identifiants est
+  perdue, la seule voiture du compte est verrouillée quand Gladys n'a qu'une
+  voiture Tessie) ;
+- Tessie refuse la commande (401, 403 ou autre 4xx que 429) : elle n'est pas
+  réessayée ;
+- les 3 essais sont épuisés, ou les 3 minutes passées.
+
+**Déverrouiller n'est pas disponible** (ni coffres, trappe de charge,
+climatisation) : passer la fonctionnalité à déverrouillé est refusé et rien
+n'est envoyé.
+
+## La position (désactivée par défaut)
+
+Activez **Afficher la position de la voiture, arrondie** pour obtenir une
+fonctionnalité texte avec la latitude et la longitude arrondies à 3 décimales
+(environ 100 m), affichée seulement quand la valeur de Tessie a moins de
+10 minutes. Désactiver l'option efface la valeur affichée. La navigation
+(destination), la vitesse et le cap ne sont jamais lus.
+
+## Le statut
+
+- **Connecté à Tessie : N véhicule(s)** : tout va bien.
+- **Tessie a refusé le jeton (401/403)** : les lectures s'arrêtent jusqu'à
+  l'enregistrement d'un nouveau jeton ou un test réussi.
+- **Tessie a demandé d'attendre (429 ou 5xx)** : les lectures attendent le
+  temps indiqué par Tessie (1 minute à 6 heures, gardé après un redémarrage).
+- **Tessie n'a pas pu être lu** : réseau ou délai dépassé ; nouvel essai plus
+  tard, l'attente doublant jusqu'à 1 heure.
+- **La configuration n'a pas pu être lue depuis Gladys** : nouvel essai,
+  espacé, sans fin.
+- **Le dossier /data est illisible** : les lectures attendent (un arrêt peut y
+  être enregistré), nouvel essai toutes les 10 s, sans fin. Le verrouillage
+  part quand même.
+- **Le dossier /data n'est pas inscriptible** (à la fin de « Connecté ») : les
+  lectures continuent ; pauses et verrouillages en attente ne sont pas gardés
+  après un redémarrage.
+
+## Vie privée
+
+Le jeton et le VIN ne sont jamais écrits dans les journaux, le statut, ni le
+dossier `/data` de l'intégration ; les journaux nomment une voiture par son
+rang (#1, #2...). Gladys connaît une voiture par un code tiré de son VIN avec
+une clé aléatoire : sans cette clé, le VIN ne se retrouve pas depuis le code.
+La clé est gardée deux fois, dans les réglages de l'intégration dans Gladys
+(jamais affichée dans le formulaire) et dans `/data` : en perdre une ne change
+rien. Si les deux sont perdues (base Gladys restaurée sans elle et intégration
+réinstallée), les voitures reviennent dans Découverte comme de nouveaux
+appareils : les anciens, leur historique et les scènes qui les utilisent sont
+à reporter sur les nouveaux.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Tessie dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Vos Tesla dans Gladys, via Tessie | `section` | Non | Lit les voitures de votre compte Tessie (service Tesla payant) par l'API officielle de Tessie : niveau de batterie, autonomie, état et puissance de charge, climatisation, températures, portes, coffres, fenêtres, verrouillage, mode Sentinelle, pression des pneus, compteur et état. Gladys affiche le dernier état connu de Tessie et ne lui demande jamais de réveiller une voiture pour la lire. La seule commande est Verrouiller (déverrouiller, coffres et trappe de charge ne sont pas disponibles). Créez un jeton d'accès sur dash.tessie.com (Settings, API) et collez-le ci-dessous. Jamais testé avec une vraie voiture. Non officiel, sans lien avec Tesla ni avec Tessie. |
+| Jeton d'accès Tessie | `secret` | Oui | Le jeton de dash.tessie.com (Settings, API, Generate Access Token) : gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement à Tessie (api.tessie.com). |
+| Intervalle de lecture (s) | `number` | Non | Fréquence de lecture de Tessie, en secondes : de 60 à 3600. Une lecture ne demande jamais de réveiller la voiture. |
+| Où est la voiture | `section` | Non | Tessie sait aussi où est chaque voiture. Si vous l'autorisez, Gladys affiche sa position arrondie à environ 100 m (3 décimales), seulement quand la valeur de Tessie a moins de 10 minutes. Désactiver l'option efface la valeur affichée par Gladys. La navigation (destination) n'est jamais lue. |
+| Afficher la position de la voiture, arrondie | `boolean` | Non | Désactivé par défaut. Activé : latitude et longitude arrondies à 3 décimales (environ 100 m), en texte. |
+| Langue des noms des fonctionnalités | `select` | Non |  |
+
+## Comment installer Tessie dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Tessie apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-tessie:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-tessie](https://github.com/LM1LC3N7/gladys-tessie).
+
+Tessie nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Tessie est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-tessie) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-tessie/blob/HEAD/docs/fr.md)

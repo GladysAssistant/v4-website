@@ -1,0 +1,154 @@
+---
+title: "ElCom electricity tariffs Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "ElCom electricity tariffs"
+description: "Electricity tariff of every Swiss municipality (ElCom open data) for your energy contract. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-elcom.png"
+keywords:
+  - "elcom electricity tariffs"
+  - "elcom electricity tariffs smart home"
+  - "gladys elcom electricity tariffs"
+  - "elcom electricity tariffs gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-elcom instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"ElCom electricity tariffs","description":"Electricity tariff of every Swiss municipality (ElCom open data) for your energy contract.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-elcom","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-elcom.png","type":"provider","version":"0.1.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-11-11T02:05:14Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+Prices your electricity consumption in Gladys at the tariff the Federal Electricity Commission (ElCom) publishes
+for your Swiss municipality: energy, grid usage, municipal charges, the federal grid surcharge and metering, in
+CHF, with or without VAT. The data is the ElCom open data served by LINDAS, the linked data service of the Swiss
+federal administration: no account, no key.
+
+Unofficial integration, not affiliated with ElCom nor with the Swiss federal administration. Checked against the
+live ElCom data (Bern, Lausanne, a municipality with five grid operators), never tested inside a real Gladys
+energy contract.
+
+## What ElCom publishes, and what it does not
+
+For each municipality, grid operator, year and consumption profile, ElCom publishes the **yearly average price of
+a kWh** (Rp./kWh, without VAT) for a standard product and for the cheapest product of the operator. It publishes
+**no peak / off-peak (HT/NT) split and no time windows**: a double tariff shows only as its average over the
+profile. The integration therefore prices every kWh of a calendar year (Europe/Zurich time) at that average. The
+yearly fees (metering, basic fees) are already spread by ElCom on the yearly volume of the profile (Bern, H4 2026:
+metering 93.60 CHF / 4,500 kWh = 2.08 Rp./kWh); nothing is added on top. A home far from the volume of its profile
+is therefore priced less accurately: choose the profile closest to your yearly consumption.
+
+The `cheapest` product is published since 2018 only, and by a part of the operators (about a third of the rows in
+2026; none in Lausanne): when it is missing, the contract says so and asks for `standard`. ElCom writes a price of
+0 ("Aucun", "kein Tarif vorhanden") when an operator has no tariff for a profile: the integration takes it as "no
+tariff" and says so, never as a price of 0.
+
+The consumption profiles (ElCom categories):
+
+| Profile | Typical consumer                                      |
+| ------- | ----------------------------------------------------- |
+| H1      | 2-room flat, 1,600 kWh/year                           |
+| H2      | 4-room flat, 2,500 kWh/year                           |
+| H3      | 4-room flat with electric boiler, 4,500 kWh/year      |
+| H4      | 5-room flat, 4,500 kWh/year (default)                 |
+| H5      | 5-room house, 7,500 kWh/year                          |
+| H6      | 5-room house with electric heating, 25,000 kWh/year   |
+| H7      | 5-room house with heat pump, 13,000 kWh/year          |
+| H8      | Large, highly electrified condominium, 7,500 kWh/year |
+| C1-C7   | Businesses, from under 8 kW to 1,630 kW               |
+
+## Setting up
+
+1. Install the integration: nothing to configure.
+2. In the integration page, click **Find my municipality**, type its name (or a 4-digit postal code): the button
+   gives its municipality number (BFS) and the grid operators that serve it this year.
+3. In the energy settings of Gladys, create a contract on your electricity meter with the template **Swiss
+   municipality tariff (ElCom)** and fill in:
+   - **Municipality number (BFS)**, e.g. 351 for Bern;
+   - **Grid operator number**, only when several operators serve the municipality (empty otherwise);
+   - **Consumption profile** (H4 by default), **Product** (`standard` or `cheapest`) and **VAT** (`included`
+     adds the Swiss standard rate of the year: 8.1 % since 2024, 7.7 % from 2018 to 2023, 8.0 % before).
+4. Click **Check my contracts**: it shows the price of the year of each contract, or what is missing.
+
+The connection status of the integration sums up the contracts (price of the year, date of the ElCom data) or the
+problem to fix (several operators and none chosen, an operator that does not serve the municipality, a profile or
+a product the operator does not have, a municipality ElCom has no tariff for).
+
+## How often the data is read
+
+ElCom publishes the tariffs once a year (the next year in early September) and corrects them now and then. The
+integration keeps what it read in its `/data` volume and:
+
+- reads the tariffs of a municipality for a year once and keeps them (40 municipality-years at most, the least
+  recently used dropped first);
+- asks for the next year from 1 September only;
+- asks once a day the date ElCom last changed its data: when it is newer than a tariff of this year or the next in
+  use, that tariff is read again (once per change);
+- reads again, once a week at most, a tariff of this year or the next in which a contract finds nothing (an
+  operator, a profile or a product not published yet);
+- when ElCom has no tariff for a municipality and a year, or its answer cannot be read, asks again a week later at
+  the soonest;
+- the **Check my contracts** button reads again the tariffs of the contracts (this year, and the next from
+  September) read more than an hour ago, a missing one included;
+- sends one request at a time, two seconds apart at least, with its own User-Agent;
+- after a failure (no answer, timeout, rate limit, server error), pauses every request for 1 minute, doubled at
+  each new failure up to 6 hours (a `Retry-After` from the server is honoured, within 6 hours);
+- keeps these dates across a restart; while `/data` cannot be read, it only asks for the prices Gladys needs.
+
+Half hours Gladys already priced are not priced again after a correction: only the next ones use it.
+
+## Pricing and Gladys
+
+The template is "delegated": Gladys sends the half hours of a billing period, the integration answers one cost per
+half hour (with its components). When the tariff of a year is not available (not published yet, municipality
+unknown, LINDAS paused), the integration answers an error: Gladys stores no cost for these half hours (never a
+zero) and asks again at its next run. The current price shown on the dashboard is the price of this year; from
+September, the price from 1 January is shown too once read.
+
+## Limits
+
+- No peak / off-peak split (see above); a dynamic tariff is priced at its published average.
+- Municipality numbers change when municipalities merge: a year before the merger has its tariffs under the old
+  number. A contract spanning the change gets an error for the years the number does not exist.
+- A price above 10 CHF/kWh in the data is ignored (the bound of Gladys).
+
+## Data and credits
+
+Source: Federal Electricity Commission ElCom, electricity tariffs per grid operator and municipality, served by
+LINDAS (`lindas.admin.ch`), terms of use "Open use". See also the official site
+[strompreis.elcom.admin.ch](https://www.strompreis.elcom.admin.ch/).
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt ElCom electricity tariffs in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Getting started | `section` | Nein | Nothing to set here. Create an energy contract in Gladys with the "Swiss municipality tariff (ElCom)" template and type your municipality number (BFS); the "Find my municipality" button below gives it, with the grid operators. The integration prices every kWh at the yearly average tariff ElCom publishes for your municipality and consumption profile (no peak / off-peak split: ElCom publishes none). Open data, no account, no key. Unofficial, not affiliated with ElCom. Checked against the live ElCom data, never tested inside a real Gladys energy contract. |
+
+## So installierst du ElCom electricity tariffs in Gladys
+
+1. Öffne in Gladys **Integrationen**: ElCom electricity tariffs erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-elcom:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-elcom](https://github.com/LM1LC3N7/gladys-elcom).
+
+ElCom electricity tariffs benötigt Gladys `>=5.2.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+ElCom electricity tariffs ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-elcom) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-elcom/blob/HEAD/docs/en.md)

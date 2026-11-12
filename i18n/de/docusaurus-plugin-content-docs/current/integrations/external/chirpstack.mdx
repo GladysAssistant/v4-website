@@ -1,0 +1,205 @@
+---
+title: "ChirpStack Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "ChirpStack"
+description: "LoRaWAN-Sensoren eines ChirpStack-v4-Servers in Gladys: Messwerte, Signal, stumme Sensoren. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-chirpstack.png"
+keywords:
+  - "chirpstack"
+  - "chirpstack smart home"
+  - "gladys chirpstack"
+  - "chirpstack gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-chirpstack instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"ChirpStack","description":"LoRaWAN-Sensoren eines ChirpStack-v4-Servers in Gladys: Messwerte, Signal, stumme Sensoren.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-chirpstack","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-chirpstack.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-12T07:58:34Z"}} />
+
+Die LoRaWAN-Sensoren deines [ChirpStack](https://www.chirpstack.io)-v4-Servers
+in Gladys: Temperatur, Feuchtigkeit, Türen, Lecks, CO2, Batterien… ChirpStack
+veröffentlicht jede Nachricht deiner Sensoren auf seinem MQTT-Broker, dekodiert
+vom Codec des Geräteprofils. Die Integration liest diesen Broker und macht aus
+jedem dekodierten Wert eine Gladys-Funktion.
+
+> Getestet mit einem echten ChirpStack v4 (der offizielle chirpstack-docker-Stack,
+> ein simuliertes Gateway und simulierte Sensoren), nicht mit echten LoRa-Funkgeräten:
+> Rückmeldungen sind willkommen.
+
+## Was du bekommst
+
+- **Ein Gerät pro LoRaWAN-Gerät**, das ChirpStack hört, benannt wie in
+  ChirpStack, im Tab „Erkennung“ der Integration.
+- **Eine Funktion pro vom Codec dekodiertem Wert**: Der Typ wird aus dem Namen
+  erraten (`temperature`, `TempC_SHT`, `humidity`, `BatV`, `DOOR_OPEN_STATUS`,
+  `water_leak`, `co2`…). Ein Wert mit nichtssagendem Namen wird ein einfacher
+  Wert.
+- **RSSI** und **SNR** des besten Gateways und der **Batteriestand** des
+  LoRaWAN-Status, wenn das Gerät ihn meldet.
+- Szenen-Auslöser, eine Szenen-Aktion zum Senden eines Downlinks und ein
+  Dashboard-Widget (unten).
+
+## Bevor du anfängst
+
+1. Ein laufendes ChirpStack **v4** mit seiner MQTT-Integration (standardmäßig
+   aktiv, so auch im chirpstack-docker-Stack). Die Ereignisse müssen **JSON**
+   sein: `json=true` in `[integration.mqtt]` von `chirpstack.toml` (Standard).
+2. Ein **Codec** im Geräteprofil jedes Sensors (Device profiles → Codec): oft
+   der aus dem
+   [TTN-Geräte-Repository](https://github.com/TheThingsNetwork/lorawan-devices),
+   den ChirpStack importieren kann. Ohne Codec zeigt das Gerät nur sein Signal,
+   und der Auslöser „Nachricht empfangen“ liefert die Rohdaten.
+3. Die Adresse des MQTT-Brokers, an den ChirpStack sendet, und seine
+   Zugangsdaten, falls vorhanden.
+
+## Konfiguration
+
+- **Adresse des Brokers**: `mqtt://` (Port 1883) oder `mqtts://` für TLS (Port
+  8883). Die Integration muss nur `application/#` lesen und
+  `application/+/device/+/command/down` für die Downlinks schreiben.
+- **Benutzername** und **Passwort**: leer lassen bei einem anonymen Broker.
+- **Selbstsigniertes Zertifikat akzeptieren**: nur `mqtts://`.
+- **Topic-Präfix**: `application`, außer `event_topic` wurde in
+  `chirpstack.toml` geändert.
+- **Korrigierte Schlüssel**: siehe nächster Abschnitt.
+- **Stumm nach**: Ein zu Gladys hinzugefügter Sensor, der so lange nichts
+  sendet, ist „stumm“ (Auslöser, Widget). Wähle die Zeit länger als das
+  Intervall deines langsamsten Sensors: Manche Türsensoren melden sich nur alle
+  paar Stunden.
+- **Sprache der Texte**: die Namen der Funktionen (beim Hinzufügen des Geräts
+  festgelegt) und die Meldungen der Aktionen und Szenen.
+
+Nutze dann **Verbindung prüfen**.
+
+## Schlüssel und Typen
+
+Jeder numerische oder boolesche Wert des dekodierten Objekts wird eine Funktion
+(höchstens 50 pro Gerät; verschachtelte Objekte bis drei Ebenen, wie
+`sensor.co2`; Listen und Texte werden übersprungen). Ein Wert in Worten wird nur
+bei einem Melder eine Funktion (`"open"`, `"closed"`, `"leak"`, `"normal"`…).
+Der beim ersten Auftreten eines Schlüssels erratene Typ bleibt: Eine spätere
+Version ändert ihn nie.
+
+Wenn ein Typ falsch erraten ist oder ein Wert verborgen werden soll, schreib
+Paare `Schlüssel=Typ` in **Korrigierte Schlüssel**, durch Kommas getrennt:
+`TempC_DS=temperature, Work_mode=ignore`. Der Schlüssel wird ohne Groß- und
+Kleinschreibung und ohne Trennzeichen verglichen. Typen:
+
+- Messwerte: `temperature` (°C), `temperature_f` (°F), `humidity` (%),
+  `soil_moisture` (%), `co2` (ppm), `pressure` (hPa), `illuminance` (lux),
+  `battery` (%), `voltage` (V), `voltage_mv` (mV), `current` (A), `power` (W),
+  `distance_mm`, `distance_cm`, `distance_m`, `pm25`, `pm10` (µg/m³), `noise`
+  (dB), `counter`, `number` (ohne Einheit);
+- Melder: `motion`, `opening` (wahr = offen), `contact` (wahr = geschlossen),
+  `leak`, `smoke`, `vibration`, `tamper`, `binary` (jedes Ja/Nein);
+- `ignore`: keine Funktion.
+
+Ein korrigierter Schlüssel ändert das Gerät: Nutze **Aktualisieren** im Tab
+„Erkennung“.
+
+## Geräte
+
+Öffne den Tab **Erkennung** der Integration: Jedes seit dem Start der
+Integration gehörte Gerät (und über Neustarts hinweg in ihrem Datenvolume
+gespeichert) steht dort mit seinen Funktionen. Füge die gewünschten hinzu. Ein
+neuer Schlüssel, den ein Gerät später sendet (anderer Frame-Typ), erscheint dort
+auch, und **Aktualisieren** fügt ihn hinzu.
+
+Die Zustände werden bei jeder Nachricht gesendet, nur wenn sie sich geändert
+haben (und alle 12 Stunden für einen gleichbleibenden Wert). Die Türsensoren
+folgen der Konvention von Gladys: offen oder geschlossen, wie angezeigt.
+
+## Szenen
+
+Auslöser, für die zu Gladys hinzugefügten Geräte (lass das Gerät leer für
+alle):
+
+- **Nachricht empfangen**: jede Nachricht, auch mit denselben Werten wie zuvor
+  (eine LoRaWAN-Taste, ein Ereigniszähler). Filter auf den fPort; die Szene
+  liest den fPort, den Frame-Zähler, die Rohdaten in Hexadezimal und den RSSI.
+- **Sensor stumm**: nichts empfangen während der eingestellten Zeit (Batterie,
+  Reichweite, Defekt). Einmal pro Stille; die Zeit beginnt neu, wenn der
+  MQTT-Broker zurück ist, damit ein Ausfall nicht alle Sensoren stumm macht.
+- **Sensor wieder da**: Ein stummer Sensor sendet wieder.
+- **Sensor neu verbunden**: ein OTAA-Join (Neustart, neue Batterie).
+
+Aktion **Downlink senden**: reiht Bytes für ein Gerät in ChirpStack ein (Topic
+`command/down`). Gib den fPort (1 bis 223) und den Inhalt in Hexadezimal an, wie
+im Handbuch des Geräts (zum Beispiel `0100FF`); „Bestätigter Downlink“ verlangt
+eine Bestätigung vom Gerät. Ein Gerät der Klasse A erhält ihn nach seiner
+nächsten Nachricht. Die Integration muss das Gerät einmal gehört haben (um seine
+Anwendung zu kennen). Nichts wird erraten: Was du eingibst, wird gesendet.
+
+## Dashboard
+
+Das Widget **LoRaWAN-Sensoren** listet die zu Gladys hinzugefügten Sensoren,
+stumme zuerst, mit ihrer letzten Nachricht und ihrem Signal („vor 12 Min. ·
+-97 dBm“). Einstellungen: Signal ausblenden, nur stumme Sensoren zeigen.
+
+## Grenzen
+
+- ChirpStack **v4** (das Format des Application Servers v3 wird auch gelesen,
+  ungetestet). Nur JSON-Ereignisse, kein Protobuf.
+- Keine Liste der ChirpStack-Geräte über seine API: Ein Gerät erscheint, sobald
+  es etwas gesendet hat.
+- Nur lesbare Geräte: Ein Befehl geht über die Szenen-Aktion für Downlinks, mit
+  einem Inhalt, den du selbst schreibst.
+- Jede Nachricht sendet einige Zustände: Der Kern akzeptiert 300 pro Minute,
+  genug für Dutzende Sensoren mit üblichen Intervallen.
+- Ohne LoRa-Funkhardware entwickelt.
+
+## Fehlerbehebung
+
+- **Kein Gerät in der Erkennung**: Nutze **Verbindung prüfen**. Prüfe das
+  Topic-Präfix, ob der Sensor sendet (Devices → Events in ChirpStack) und ob der
+  Benutzer des Brokers `application/#` lesen darf.
+- **„Nicht in JSON“**: Setze `json=true` in `[integration.mqtt]` von
+  `chirpstack.toml` und starte ChirpStack neu.
+- **Nur RSSI und SNR**: Das Geräteprofil hat keinen Codec, oder der Codec
+  schlägt fehl (Devices → Events → log in ChirpStack).
+- **Ein falscher Typ**: Korrigiere ihn in **Korrigierte Schlüssel** und
+  **aktualisiere** dann das Gerät.
+- **Downlink nicht empfangen**: Prüfe den Tab Queue des Geräts in ChirpStack und
+  ob der Benutzer des Brokers `command/down` schreiben darf.
+- Protokolle: `LOG_LEVEL=debug` zeigt jede Nachricht.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt ChirpStack in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| ChirpStack verbinden | `section` | Nein | ChirpStack veröffentlicht jede Nachricht deiner LoRaWAN-Sensoren auf seinem MQTT-Broker, dekodiert vom Codec des Geräteprofils. Die Integration liest diesen Broker und sendet nur die Downlinks deiner Szenen. |
+| Adresse des Brokers | `string` | Ja | Der Broker, an den ChirpStack sendet: mqtt:\/\/ (Port 1883) oder mqtts:\/\/ für TLS (Port 8883). Mit chirpstack-docker ist es der Dienst mosquitto. |
+| Benutzername | `string` | Nein | Leer lassen, wenn der Broker anonyme Clients zulässt. |
+| Passwort | `secret` | Nein |  |
+| Selbstsigniertes Zertifikat akzeptieren | `boolean` | Nein | Nur mqtts:\/\/: Das Zertifikat des Brokers wird dann nicht geprüft. |
+| Topic-Präfix | `string` | Nein | application, außer event_topic wurde in chirpstack.toml geändert. |
+| Sensoren | `section` | Nein | Jeder vom Codec dekodierte Wert wird eine Funktion, ihr Typ wird aus dem Namen erraten (Temperatur, Feuchtigkeit, Batterie, Tür…). Unbekannte Namen werden einfache Werte. |
+| Korrigierte Schlüssel | `string` | Nein | Paare Schlüssel=Typ, durch Kommas getrennt, für einen falsch erratenen Typ oder einen zu ignorierenden Wert. Typen: siehe Dokumentation. |
+| Stumm nach | `select` | Nein | Ein zu Gladys hinzugefügter Sensor, der so lange nichts sendet, ist stumm: Szenen-Auslöser, Widget. |
+| Sprache der Texte | `select` | Nein | Namen der Funktionen beim Hinzufügen eines Geräts, Meldungen der Aktionen und Szenen. |
+
+## So installierst du ChirpStack in Gladys
+
+1. Öffne in Gladys **Integrationen**: ChirpStack erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-chirpstack:1.0.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-chirpstack](https://github.com/guim31/gladys-chirpstack).
+
+ChirpStack benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+ChirpStack ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-chirpstack) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-chirpstack/blob/HEAD/docs/de.md)

@@ -1,0 +1,177 @@
+---
+title: "Intégration domotique OpenRGB, gratuite et open source"
+sidebar_label: "OpenRGB"
+description: "L’éclairage RGB de votre ordinateur par OpenRGB : allumer, éteindre, couleur, effets, profils. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-openrgb.png"
+keywords:
+  - "openrgb"
+  - "domotique openrgb"
+  - "gladys openrgb"
+  - "openrgb gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-openrgb instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"OpenRGB","description":"L’éclairage RGB de votre ordinateur par OpenRGB : allumer, éteindre, couleur, effets, profils.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-openrgb","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-openrgb.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-11T16:39:11Z"}} />
+
+Intègre à Gladys l’éclairage RGB d’un ordinateur piloté par
+[OpenRGB](https://openrgb.org) (carte mère, RAM, carte graphique,
+ventilateurs, rubans LED, clavier, souris…), par le **serveur SDK** d’OpenRGB
+sur votre réseau local : sans compte, sans cloud.
+
+> Jamais testé avec un vrai appareil : construit d’après le protocole du
+> serveur SDK d’OpenRGB (tel que le lit la bibliothèque openrgb-sdk). Dites-nous
+> sur le forum comment ça se passe. Sans lien avec OpenRGB.
+
+## Ce que vous obtenez
+
+Un appareil par contrôleur qu’OpenRGB voit, avec :
+
+- **Lumière** : allumer / éteindre. Éteindre met toutes les LED en noir dans
+  le mode direct ; allumer remet la dernière couleur vue allumée (blanc si
+  aucune) ;
+- **Couleur** : toutes les LED du contrôleur à cette couleur, dans le mode
+  direct ;
+- **Mode d’effet** : le mode actif (Direct, Static, Rainbow…), affiché ; le
+  changer demande l’option **Autoriser les modes d’effet**.
+
+Et, si OpenRGB a des profils enregistrés, un appareil **Profils OpenRGB** :
+choisir un profil le charge (tous les appareils d’un coup), seulement avec
+l’option **Autoriser le chargement des profils**. OpenRGB ne dit pas quel
+profil est actif : la liste ne montre pas de valeur lue.
+
+Aucune fonctionnalité n’est un interrupteur. Les lumières suivent « éteindre
+les lumières » comme les autres.
+
+Non gérés : la luminosité, les couleurs LED par LED ou par zone, la vitesse et
+le sens des effets, le redimensionnement des zones. L’intégration n’envoie
+jamais de demande d’enregistrement (ni mode enregistré dans l’appareil, ni
+profil créé ou supprimé) ; certains appareils gardent seuls leur dernier mode.
+
+Laissés de côté (l’état le dit) : un contrôleur sans mode « couleur par LED »
+(il ne peut être ni coloré ni éteint ainsi), et deux contrôleurs identiques
+sans numéro de série au même emplacement (jamais d’écriture sur le mauvais).
+
+## Configuration
+
+1. Dans OpenRGB, onglet **SDK Server**, cliquez sur **Start Server** (ou lancez
+   `openrgb --server`, au besoin avec `--server-port`). Cochez le démarrage
+   automatique si OpenRGB démarre avec l’ordinateur.
+2. Donnez à cet ordinateur une adresse fixe dans votre box.
+3. Dans **Adresse de l’ordinateur OpenRGB**, saisissez son adresse IP (ou son
+   nom), avec `:port` seulement si ce n’est pas le 6742.
+4. Enregistrez, puis ajoutez les appareils depuis l’onglet **Découverte**.
+
+Le serveur SDK n’a pas de mot de passe : tout appareil de votre réseau peut le
+piloter. Gardez-le sur un réseau de confiance, ne l’ouvrez pas sur Internet.
+
+L’état dit combien de contrôleurs ont été lus, ceux laissés de côté, un
+serveur qui ne répond pas (et quand il est réessayé), un service qui répond
+mais pas comme OpenRGB.
+
+**Tester la connexion** lit le serveur, ou montre la dernière lecture si elle
+date de moins d’un intervalle (jamais plus vite que l’intervalle).
+
+## Quel contrôleur un appareil pilote
+
+OpenRGB numérote ses contrôleurs, mais ce numéro change quand il refait sa
+détection. Un appareil est donc lié à son contrôleur par une empreinte du
+fabricant, du nom et du numéro de série (ou, sans numéro de série, de
+l’emplacement qu’OpenRGB affiche : bus et adresse). Avant chaque écriture, le
+contrôleur est relu à son numéro ; si ce n’est plus lui, toute la liste est
+relue pour le retrouver ; s’il n’y est plus : « rien envoyé ». Une lecture sert
+aux écritures qui suivent sur la même connexion jusqu’à la lecture périodique
+suivante (plus 5 s), tant qu’OpenRGB ne signale pas que sa liste a changé : une
+scène sur plusieurs contrôleurs part sans une lecture par contrôleur. Les
+commandes passent l’une après l’autre (jamais entremêlées) ; juste après un
+changement de liste, sur un serveur lent, les dernières d’une scène peuvent
+répondre « rien envoyé » (les extinctions, elles, partent l’une après l’autre
+et sont gardées). « Allumer » relit toujours l’état avant de décider : une
+scène qui allume plusieurs contrôleurs sur un serveur lent peut n’en régler que
+certains, même sans changement de liste (mesuré : 3, 2 ou 1 sur 5 avec des
+réponses en 300, 500 ou 900 ms ; les autres répondent « rien envoyé »).
+Espacez ces actions dans la scène (une attente d’une à deux secondes entre
+deux allumages).
+
+Si OpenRGB change l’ordre de ses contrôleurs sans le signaler, une commande
+peut toucher, jusqu’à la lecture suivante, le contrôleur qui a pris la place :
+une extinction peut ainsi éteindre un voisin. Elle n’est alors pas annoncée
+faite : elle est gardée, et la lecture suivante (ou un nouveau clic) éteint le
+bon contrôleur ; le voisin reste éteint jusqu’à ce que vous le rallumiez.
+
+Un appareil USB rebranché sur un autre port, sans numéro de série, peut donc
+apparaître comme un nouvel appareil dans la Découverte.
+
+## Éteindre
+
+Éteindre ne demande aucune option. Il passe avant les autres commandes et
+avant les lectures (une lecture bloquée depuis 1 s est coupée), et annule les
+commandes de ce contrôleur encore en attente : rien de demandé avant
+l’extinction ne part après elle. Il fonctionne aussi avant que la
+configuration soit lue (l’adresse gardée dans `/data` sert).
+
+Si la lecture qui suit ne montre pas le contrôleur éteint, l’extinction est
+gardée (dans `/data`) et renvoyée par les lectures suivantes, 3 fois au plus.
+Une commande plus récente partie vers ce contrôleur (allumer, couleur, mode)
+ou un profil demandé après l’extinction et chargé arrêtent ces renvois. Un
+profil demandé avant une extinction ne part plus après elle. Au démarrage, une
+extinction gardée n’est renvoyée que si elle date de moins de 10 minutes.
+
+Une extinction est refusée seulement quand le contrôleur n’est plus sur le
+serveur (ou y est en double, sans numéro de série). Si le serveur ne répond pas, elle est gardée et envoyée aux lectures
+suivantes (3 fois au plus).
+
+## Réponses à une commande
+
+- « Fait » : la lecture qui suit montre la valeur demandée ;
+- « Envoyé, sans confirmation » : parti, mais la lecture ne le montre pas
+  (encore) ;
+- « Rien envoyé » : refusé avant tout envoi (option désactivée, contrôleur
+  introuvable, valeur non valide, extinction arrivée après, serveur
+  injoignable).
+
+## Données gardées
+
+Dans `/data` : l’adresse du serveur, l’heure de la dernière lecture (un
+redémarrage ne relit pas plus tôt que l’intervalle), pour chaque contrôleur
+son numéro dans OpenRGB et sa dernière couleur allumée, les extinctions à
+renvoyer. Ni nom, ni numéro de série.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par OpenRGB dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre serveur OpenRGB | `section` | Non | Intègre à Gladys les appareils RGB qu’OpenRGB pilote sur un ordinateur (carte mère, RAM, carte graphique, ventilateurs, rubans LED, clavier, souris…), par le serveur SDK d’OpenRGB sur votre réseau : chacun devient une lumière (allumer / éteindre, couleur) avec son mode d’effet. Démarrez le serveur SDK dans OpenRGB (onglet SDK Server, ou openrgb --server). Il n’a pas de mot de passe : tout appareil de votre réseau peut le piloter, gardez-le sur un réseau de confiance. Éteindre ne demande aucune option et passe en premier. Modes d’effet et profils ne changent que si vous les autorisez ci-dessous. L’intégration ne demande jamais à un appareil d’enregistrer ses réglages (certains gardent seuls leur dernier mode). Jamais testé avec un vrai appareil : dites-nous sur le forum comment ça se passe. Sans lien avec OpenRGB. |
+| Adresse de l’ordinateur OpenRGB | `string` | Oui | L’adresse IP (ou le nom) de l’ordinateur où tourne OpenRGB, avec :port seulement si le serveur SDK n’écoute pas sur le 6742. Donnez à cet ordinateur une adresse fixe dans votre box. |
+| Lecture toutes les (secondes) | `number` | Non | Fréquence de lecture des appareils : 10 s par défaut, 5 s au moins. |
+| Autoriser les modes d’effet | `boolean` | Non | Permet à Gladys de passer un appareil sur un autre de ses modes d’effet (arc-en-ciel, respiration…). Désactivé par défaut : le mode est affiché, pas changé. |
+| Autoriser le chargement des profils | `boolean` | Non | Permet à Gladys de charger un profil enregistré dans OpenRGB (il règle tous les appareils d’un coup). Désactivé par défaut. Les profils ne sont jamais enregistrés ni supprimés. |
+| Langue des noms | `select` | Non | Sert aux noms des fonctionnalités ajoutées désormais. |
+
+## Comment installer OpenRGB dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : OpenRGB apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-openrgb:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-openrgb](https://github.com/LM1LC3N7/gladys-openrgb).
+
+OpenRGB nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+OpenRGB est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-openrgb) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-openrgb/blob/HEAD/docs/fr.md)

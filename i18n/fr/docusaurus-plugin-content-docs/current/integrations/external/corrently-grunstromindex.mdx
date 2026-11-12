@@ -1,0 +1,116 @@
+---
+title: "Intégration domotique Corrently GrünstromIndex, gratuite et open source"
+sidebar_label: "Corrently GrünstromIndex"
+description: "Connecteur non officiel : GrünstromIndex Corrently, part de courant vert par code postal allemand. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-corrently.png"
+keywords:
+  - "corrently grünstromindex"
+  - "domotique corrently grünstromindex"
+  - "gladys corrently grünstromindex"
+  - "corrently grünstromindex gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-corrently instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Corrently GrünstromIndex","description":"Connecteur non officiel : GrünstromIndex Corrently, part de courant vert par code postal allemand.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-corrently","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-corrently.png","type":"device","version":"0.1.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-12T02:11:38Z"}} />
+
+Connecteur non officiel, sans lien avec Corrently ni STROMDAO. **Jamais testé avec une vraie
+installation Gladys** : testé contre l'API Corrently réelle et un Gladys simulé.
+
+Le GrünstromIndex (indice de courant vert) indique, de 0 à 100, la part d'électricité renouvelable
+autour d'un code postal allemand, heure par heure, environ cinq jours à l'avance. Il sert à lancer
+le lave-linge, la pompe à chaleur ou la charge de la voiture aux heures les plus vertes.
+
+## Configuration
+
+1. Saisissez votre **code postal allemand** (cinq chiffres, zéro initial compris, ex. `01067`).
+2. Enregistrez, puis ouvrez l'appareil `GrünstromIndex <code postal>` dans la page des appareils de
+   l'intégration.
+
+## Ce que vous obtenez
+
+| Fonction                      | Signification                                                                          |
+| ----------------------------- | -------------------------------------------------------------------------------------- |
+| GrünstromIndex                | L'indice de l'heure en cours (0-100)                                                   |
+| GrünstromIndex next hour      | L'indice de l'heure suivante                                                           |
+| GrünstromIndex best of 24 h   | Le plus haut indice des 24 heures à partir de l'heure en cours                         |
+| Hours until the greenest hour | Heures d'ici cette heure la plus verte (0 : maintenant ; la première en cas d'égalité) |
+
+Une heure que la prévision ne couvre pas reste inconnue (aucune valeur publiée) ; le meilleur des
+24 heures reste inconnu tant que les 24 heures ne sont pas toutes connues. Une prévision calculée il y a
+plus de 72 heures n'est plus utilisée (sa date est l'heure de calcul de Corrently, qu'une copie en cache
+peut reculer de quelques heures).
+
+**Calendrier d'énergie** `green-power-index-de` : chaque demi-heure reçoit un niveau, `low` (indice
+0-33), `medium` (34-66) ou `high` (67-100), jusqu'à sept jours à l'avance. Un modèle de tarif des
+contrats d'énergie de Gladys (catalogue communautaire ou autre intégration) peut le lire. Ces bornes ne
+changent jamais.
+
+## Lectures et usage raisonnable
+
+- Une lecture par heure au plus, comme le demande la règle d'usage raisonnable de Corrently. L'heure de
+  chaque tentative est enregistrée dans `/data` avant la requête : un redémarrage, un enregistrement
+  de la configuration ou un nouveau code postal ne lit pas plus tôt. Une configuration enregistrée
+  pendant une lecture garde sa réponse.
+- Le bouton **Lire la prévision** ne lit que si la dernière lecture date d'une heure ; sinon il affiche
+  la prévision en mémoire et l'heure de la prochaine lecture.
+- Après un échec, l'attente double : 1 h, 2 h, 4 h, puis 6 h. Une réponse `429` avec un `Retry-After`
+  plus long est respectée (24 h au plus).
+- Si `/data` ne peut être lu ou écrit, le module ne lit pas Corrently (il ne pourrait pas tenir
+  l'espacement d'une heure) et réessaie `/data` toutes les 10 secondes.
+
+## Hors périmètre
+
+- **Tarif Corrently.** La réponse contient un champ `energyprice`, mais c'est une valeur signée de
+  quelques centimes (souvent négative) qui n'est pas documentée comme un tarif de fourniture : elle n'est
+  jamais publiée comme un prix, et le module ne propose aucun modèle de contrat d'énergie.
+- Un jeton Corrently. Le module lit sans jeton, comme Corrently le permet à une lecture par heure.
+  Corrently annonce la fin de l'accès sans jeton ; le jeton reviendra quand Corrently documentera comment
+  l'envoyer hors de l'adresse.
+- Les champs CO2 de la réponse (souvent vides) et la prévision solaire.
+
+## Données et licence
+
+Données : Corrently / STROMDAO GmbH, licence
+[**CC BY-NC-SA 4.0**](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.fr). Les données sont
+**adaptées** par ce module (indice arrondi à l'entier, niveaux `low` / `medium` / `high` calculés à partir
+de lui) ; les niveaux du calendrier sont partagés sous la même licence. Usage non commercial seulement :
+un usage commercial exige une licence de Corrently
+([corrently.energy](https://corrently.energy/products/corrently-apis-rate-limit-erhohung)).
+Documentation : [corrently.io/books/grunstromindex](https://corrently.io/books/grunstromindex). Le
+module lui-même est sous Apache-2.0.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Corrently GrünstromIndex dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| GrünstromIndex Corrently | `section` | Non | Connecteur non officiel, sans lien avec Corrently ni STROMDAO. Il lit la prévision officielle du GrünstromIndex (0 à 100 : part d'électricité renouvelable autour d'un code postal allemand, heure par heure, environ cinq jours à l'avance) une fois par heure au plus, comme le demande la règle d'usage raisonnable de Corrently. Un appareil avec l'indice actuel, celui de l'heure suivante, le meilleur des 24 prochaines heures et le nombre d'heures avant lui, plus le calendrier d'énergie Gladys green-power-index-de (low, medium, high par demi-heure). Données : Corrently (STROMDAO GmbH), CC BY-NC-SA 4.0, adaptées (indice arrondi, niveaux calculés par ce module) ; un usage commercial exige une licence de Corrently. |
+| Code postal allemand | `string` | Oui | Cinq chiffres, zéro initial compris. Le changer crée un nouvel appareil. |
+
+## Comment installer Corrently GrünstromIndex dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Corrently GrünstromIndex apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-corrently:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-corrently](https://github.com/LM1LC3N7/gladys-corrently).
+
+Corrently GrünstromIndex nécessite Gladys `>=5.3.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Corrently GrünstromIndex est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-corrently) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-corrently/blob/HEAD/docs/fr.md)

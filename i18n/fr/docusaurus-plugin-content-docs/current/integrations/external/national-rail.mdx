@@ -1,0 +1,166 @@
+---
+title: "Intégration domotique National Rail, gratuite et open source"
+sidebar_label: "National Rail"
+description: "Départs, retards et suppressions des trains britanniques en direct (National Rail Darwin). Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-national-rail.png"
+keywords:
+  - "national rail"
+  - "domotique national rail"
+  - "gladys national rail"
+  - "national rail gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-national-rail instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"National Rail","description":"Départs, retards et suppressions des trains britanniques en direct (National Rail Darwin).","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-national-rail","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-national-rail.png","type":"device","version":"0.1.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-12T01:49:54Z"}} />
+
+Les départs des trains britanniques en direct dans Gladys : les prochains trains de vos gares, leur voie, leur
+retard, les suppressions et les messages de perturbation de National Rail, depuis Darwin, le moteur officiel
+d’information en temps réel des trains de Grande-Bretagne.
+
+Intégration non officielle, sans lien avec National Rail, National Rail Enquiries ni le Rail Delivery Group.
+Powered by National Rail Enquiries. **Jamais testé avec une vraie clé** : écrit d’après la documentation
+officielle du service Live Departure Board (LDBWS) et de son schéma, et testé contre un service simulé.
+
+## Ce qu’il faut
+
+Une clé gratuite du **Rail Data Marketplace** (RDM), la plateforme où National Rail publie désormais Darwin
+pour les développeurs :
+
+1. Créez un compte sur [raildata.org.uk](https://raildata.org.uk/).
+2. Trouvez le produit **Live Departure Board** (Darwin, gratuit) et abonnez-vous.
+3. Ouvrez votre abonnement et copiez sa **consumer key**.
+
+L’ancienne page d’inscription d’OpenLDBWS ne répond plus (vérifié le 10 novembre 2026) : ses jetons ne sont
+pas utilisés par cette intégration.
+
+## Configuration
+
+| Champ              | Quoi taper                                                                                                                                                                                                                                                                                                         |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Clé (consumer key) | La consumer key de l’abonnement. Gardée par Gladys dans sa base, jamais réaffichée, envoyée seulement au Rail Data Marketplace.                                                                                                                                                                                    |
+| Tableaux           | Codes de gare (trois lettres : PAD pour London Paddington, RDG pour Reading…, indiqués sur chaque page de gare de nationalrail.co.uk), séparés par des virgules. `RDG>PAD` : seulement les trains au départ de Reading qui desservent London Paddington. `:Mon nom` à la fin nomme l’appareil. 6 tableaux au plus. |
+| Rafraîchissement   | Fréquence de lecture de chaque tableau, 120 s par défaut (60 à 3600).                                                                                                                                                                                                                                              |
+| Trains par tableau | Nombre de prochains trains exposés en fonctionnalités (3 par défaut, 1 à 5).                                                                                                                                                                                                                                       |
+| Langue des valeurs | Anglais ou français, pour les noms des fonctionnalités et les textes.                                                                                                                                                                                                                                              |
+| Adresse de l’API   | À laisser telle quelle, sauf si le Rail Data Marketplace déplace le produit. Seule une adresse `https://…raildata.org.uk` est acceptée : la clé n’est envoyée nulle part ailleurs.                                                                                                                                 |
+
+Exemple : `PAD, RDG>PAD:Train du travail`.
+
+Enregistrez, puis ouvrez l’onglet **Découverte** et ajoutez les tableaux. Seuls les tableaux ajoutés comme
+appareils sont lus d’eux-mêmes. Le bouton **Tester la connexion** lit le premier tableau (au plus une fois toutes les
+30 s ; un tableau lu depuis moins d’un intervalle répond d’après cette lecture, même en échec ; un clic pendant une lecture l’attend ; une nouvelle clé est
+lue aussitôt, hors pause 429).
+
+## Appareils
+
+Un appareil par tableau, en lecture seule. Pour chacun des prochains trains qui circuleront, avec une heure
+connue :
+
+- **Prochain train**, **Train 2**… : minutes avant son départ (d’après son heure estimée). `999` veut dire
+  aucun train dans les deux prochaines heures.
+- **Détails du prochain train**… : `18:15 Reading · voie 4 · retard 5 min (prévu 18:20)`.
+
+Et pour tout le tableau :
+
+- **Tableau des départs** : tous les trains, supprimés et retardés compris :
+  `18:15 Reading (+5) · 18:22 Oxford (à l’heure) · 18:30 Didcot (supprimé)`.
+- **Messages de perturbation** : les messages National Rail de la gare, sans leur HTML.
+
+Un train supprimé, ou un train que Darwin dit seulement « Delayed » sans heure, n’a pas de compte à rebours :
+il est indiqué dans le texte du tableau, sans heure inventée. Les bus de remplacement ne sont pas affichés :
+Darwin les liste à part, et cette version ne lit que les trains. Les heures sont celles du Royaume-Uni (GMT en
+hiver, BST en été), changements d’heure et minuit compris (dans l’heure répétée d’octobre, la lecture la plus proche du
+tableau est retenue). Les comptes à rebours partent de l’heure où le tableau a été servi (le `Date` de la
+réponse). Aucune fonctionnalité ne garde d’historique.
+
+## Scènes
+
+- **Train en retard** (déclencheur) : un train d’un tableau suivi a désormais au moins 5, 10, 15 ou
+  30 minutes de retard. Une fois par train et par seuil (un train en retard de 12 min déclenche les seuils 5
+  et 10 min, puis 15 s’il prend plus de retard). Variables : gare, destination, heure prévue et estimée,
+  retard, voie, exploitant, motif.
+- **Train supprimé** (déclencheur) : une fois par train, avec le motif quand Darwin le donne.
+- **Lire les prochains trains** (action) : les prochains trains d’un tableau, relus si la dernière lecture date
+  de plus d’un intervalle. Sorties : minutes avant le prochain et le suivant, destination, heures, retard,
+  voie, détails, tableau des départs, nombre de trains. Sans train, les sorties d’un train sont vides.
+
+Les événements déjà envoyés sont gardés dans `/data` : un redémarrage ne les renvoie pas. 60 événements par
+minute au plus sont envoyés, les autres aux lectures suivantes.
+
+## Lectures, pauses et erreurs
+
+- Chaque tableau est lu une fois par intervalle, une requête à la fois. L’heure de chaque tentative est écrite
+  dans `/data` avant la requête (quand `/data` est inscriptible) : un redémarrage, une reconnexion, un formulaire enregistré ou l’onglet
+  Découverte ne lisent jamais plus tôt.
+- **Clé refusée** (401 ou 403 avec l’erreur de la passerelle du Rail Data Marketplace) : aucun nouvel essai
+  automatique. Le statut le dit ; enregistrer une autre clé, ou un appui réussi sur **Tester la connexion**,
+  lève le refus (une clé changée pendant que l’intégration était arrêtée partage l’étiquette de la clé
+  refusée une fois sur 256 : le bouton lève alors le refus). Seule une étiquette de 8 bits d’une empreinte salée est gardée dans `/data`, jamais la clé.
+  Un 401/403 illisible n’est pas pris pour un refus.
+- **429 (trop de requêtes)** : tous les tableaux attendent, `Retry-After` s’il est donné, sinon 1 min
+  doublée à chaque fois, entre 1 min et 6 h ; la pause est gardée dans `/data`.
+- **Un tableau en échec** (erreur du serveur, pas de réponse en 10 s, code de gare inconnu) : il est relu de
+  plus en plus tard (l’intervalle doublé, jusqu’à 1 h) ; les autres tableaux continuent.
+- Les réponses de plus de 1 Mo sont coupées avant d’être lues, et un tableau produit plus de 5 min avant
+  d’être servi n’est pas utilisé.
+- Darwin sans information sur les trains de la gare (`areServicesAvailable: false`) : rien n’est publié, le
+  statut le dit avec le message National Rail ; jamais « aucun train ».
+- Après 15 min sans bonne lecture d’un tableau, ses textes disent « Pas de données récentes » (Gladys ne sait
+  pas retirer un compte à rebours : sa date dans Gladys dit son âge).
+- Un 404 de la passerelle elle-même (pas d’une gare) indique que l’adresse de l’API est peut-être périmée.
+- Enregistrer une nouvelle clé relit aussitôt les tableaux en échec avec l’ancienne.
+- `/data` illisible : jamais écrasé ; l’intégration le relit toutes les 10 s et, en 30 s au plus, continue
+  avec les pauses et le refus en mémoire (le statut le dit). Un `/data` non inscriptible est signalé dans le
+  statut aussi (la cadence n’est alors pas gardée au redémarrage).
+
+## Vie privée
+
+L’intégration envoie les codes de gare et votre clé au Rail Data Marketplace seulement, avec son propre
+User-Agent (`gladys-national-rail/<version>`). Rien d’autre ne sort de votre Gladys.
+
+## Données et licence
+
+Données des trains : National Rail Enquiries (Darwin), par le Rail Data Marketplace, selon les conditions
+acceptées à l’abonnement. Powered by National Rail Enquiries. Le code de l’intégration est sous Apache-2.0.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par National Rail dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Démarrer | `section` | Non | 1. Créez un compte gratuit sur le Rail Data Marketplace, abonnez-vous au produit gratuit « Live Departure Board » et copiez sa clé « consumer key ». 2. Collez-la ci-dessous et tapez vos gares. 3. Enregistrez, puis ajoutez les tableaux depuis l’onglet « Découverte ». Intégration non officielle, sans lien avec National Rail ni le Rail Delivery Group ; données : National Rail Enquiries (Darwin). Jamais testé avec une vraie clé : écrit d’après la documentation officielle. |
+| Clé (consumer key) | `secret` | Oui | La clé « consumer key » de votre abonnement « Live Departure Board ». Gardée par Gladys dans sa base, jamais réaffichée, envoyée seulement au Rail Data Marketplace. |
+| Tableaux | `string` | Oui | Codes de gare (trois lettres, indiqués sur chaque page de gare de nationalrail.co.uk), séparés par des virgules. Seulement les trains qui desservent une seconde gare : ajoutez > et son code. Un nom pour l’appareil : ajoutez : et le nom. 6 tableaux au plus. |
+| Avancé | `section` | Non | Les valeurs par défaut conviennent à presque tout le monde. Chaque tableau coûte une requête par intervalle. |
+| Rafraîchissement (s) | `number` | Non | Fréquence de lecture de chaque tableau, en secondes. |
+| Trains par tableau | `number` | Non | Nombre de prochains trains exposés en fonctionnalités par tableau. |
+| Langue des valeurs | `select` | Non | Langue des noms de fonctionnalités et des textes publiés. |
+| Adresse de l’API | `string` | Non | À changer seulement si le Rail Data Marketplace déplace le produit (https, une adresse raildata.org.uk). |
+
+## Comment installer National Rail dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : National Rail apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-national-rail:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-national-rail](https://github.com/LM1LC3N7/gladys-national-rail).
+
+National Rail nécessite Gladys `>=5.3.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+National Rail est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-national-rail) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-national-rail/blob/HEAD/docs/fr.md)

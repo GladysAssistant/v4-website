@@ -19,7 +19,7 @@ https://github.com/PhilippeMA/gladys-Vaillant-SaunierDuval instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Saunier Duval","description":"Control your Saunier Duval boiler through your MiGo / MiGo Link account.","owner":"PhilippeMA","owner_avatar_url":"https://avatars.githubusercontent.com/u/25247304?v=4","repo_url":"https://github.com/PhilippeMA/gladys-Vaillant-SaunierDuval","cover_url":"https://integration-store-storage.gladysassistant.com/covers/PhilippeMA--gladys-Vaillant-SaunierDuval.png","type":"device","version":"1.0.2","gladys_version":">=4.86.0","stars":0,"pushed_at":"2026-08-14T17:01:00Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Saunier Duval","description":"Control your Saunier Duval boiler through your MiGo / MiGo Link account.","owner":"PhilippeMA","owner_avatar_url":"https://avatars.githubusercontent.com/u/25247304?v=4","repo_url":"https://github.com/PhilippeMA/gladys-Vaillant-SaunierDuval","cover_url":"https://integration-store-storage.gladysassistant.com/covers/PhilippeMA--gladys-Vaillant-SaunierDuval.png","type":"device","version":"1.1.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-11T21:12:54Z"}} />
 
 :::info
 
@@ -29,7 +29,9 @@ Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bi
 
 This integration connects your **Saunier Duval** boiler to Gladys Assistant:
 temperatures, setpoints, heating modes and domestic hot water become Gladys
-devices, usable in your scenes and your charts.
+devices, usable in your scenes and your charts. It also brings a dashboard
+**widget**, scene **triggers** (fault, gateway offline) and scene **actions**
+(temporary override of a zone).
 
 It goes through the **Saunier Duval cloud**, the one behind the **MiGo** /
 **MiGo Link** mobile application. These boilers have no local API: everything
@@ -42,6 +44,8 @@ travels over the Internet, so your gateway has to be online.
 - The **account** you already use in the mobile application: same email
   address, same password.
 - The **country** the account was created in.
+- **Gladys Assistant 5.1.0** or newer: the widget and the scene triggers and
+  actions do not exist in earlier versions.
 
 Nothing to install on the boiler, no API key to request.
 
@@ -70,12 +74,12 @@ Nothing to install on the boiler, no API key to request.
 
 For each installation, the integration creates:
 
-| Device                                  | What it exposes                                                                                                                                                |
-| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Boiler**                              | Outdoor temperature (current and 24 h average), heating water pressure, current activity (heating, hot water, standby), number of fault codes and their detail |
-| **Zone** (one per heating zone)         | Room temperature, humidity (if your thermostat measures it), target temperature, mode, override duration, and whether it is heating right now                  |
-| **Circuit** (one per hydraulic circuit) | Flow temperature actually produced, flow setpoint computed by the heating curve, circuit state                                                                 |
-| **Hot water**                           | Water temperature, setpoint, mode, a **Boost** button, and whether the boiler is heating the water                                                             |
+| Device                                  | What it exposes                                                                                                                                                                                |
+| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Boiler**                              | Outdoor temperature (current and 24 h average), heating water pressure, current activity (heating, hot water, standby), number of fault codes and their detail, a **Ventilation boost** button |
+| **Zone** (one per heating zone)         | Room temperature, humidity (if your thermostat measures it), target temperature, mode, override duration, and whether it is heating right now                                                  |
+| **Circuit** (one per hydraulic circuit) | Flow temperature actually produced, flow setpoint computed by the heating curve, circuit state                                                                                                 |
+| **Hot water**                           | Water temperature, setpoint, mode, a **Boost** button, and whether the boiler is heating the water                                                                                             |
 
 Zones carry the name you gave them in the boiler ("Living room", "Upstairs"…).
 A zone declared inactive in the boiler is skipped: it reports nothing.
@@ -163,11 +167,103 @@ it back as off at the next refresh.
 > the boost is off). The clickable one is correct. This is a display bug of the
 > Gladys core, not of the integration: updating Gladys fixes it.
 
+## Ventilation boost
+
+The **Boiler** device carries a **Ventilation boost** switch: the button of the
+same name in the Saunier Duval application. It addresses the whole
+installation, not one zone — hence its place on the boiler.
+
+It is the "airing" function of the control: according to the documentation of
+the Vaillant Group controls, the heating of the zones is paused for about
+thirty minutes, long enough to open the windows without heating for nothing,
+and a ventilation unit wired to the control, if there is one, runs at full
+speed. The function ends by itself; the switch also stops it early.
+
+The button is offered on every installation, with or without a ventilation
+unit, like in the application. If your control does not know the function, the
+platform refuses the command, or accepts it without effect: the switch then
+goes back to off a few seconds later.
+
+## Dashboard widget
+
+On a dashboard, add the **Saunier Duval boiler** widget (it shows up in the
+list of widgets once the integration is installed). One card gathers:
+
+- the temperatures that matter: up to two zones, the hot water, the outdoor
+  temperature, and the **water pressure**, which turns orange below 1 bar and
+  red below 0.6 bar;
+- the activity of the boiler, the mode and setpoint of each zone — in the
+  words of the application: **Manual**, **Schedule**, **Off** — and the word
+  "override" while a temporary override is running;
+- the state of the gateway and the active fault codes;
+- three buttons: **Hot water boost**, **Ventilation boost** (each offers the
+  opposite of the current state) and **Refresh**.
+
+If your account holds several installations, the **Installation** setting of
+the widget picks the one shown; without it, the first one.
+
+Displaying the widget never calls the Saunier Duval platform: it shows the last
+reading, and updates on every new cycle. Only the **Refresh** button triggers a
+reading — one request.
+
+## Scenes
+
+Every value of the boiler is a device feature: a scene watches it with the
+standard Gladys trigger ("when the pressure drops below 1 bar…") and drives it
+with the standard "Control a device" action. The integration adds what those
+two cannot express.
+
+### Triggers
+
+| Trigger                   | When it fires                                   | Available variables                                            |
+| ------------------------- | ----------------------------------------------- | -------------------------------------------------------------- |
+| **Boiler fault detected** | A new fault or maintenance code appears         | Code, title, description, kind of code, number of active codes |
+| **Boiler faults cleared** | The boiler no longer reports any code           | —                                                              |
+| **Gateway offline**       | The MiGo gateway no longer answers the platform | —                                                              |
+| **Gateway back online**   | The gateway answers again after an interruption | —                                                              |
+
+Each takes a **Boiler** filter, useful when your account holds several
+installations. The variables of the first one fit in a message: "The boiler
+reports F.28 — Ignition failure".
+
+Three things to know:
+
+- A trigger reports a **change**. A fault already there when the integration
+  starts fires nothing, and a lasting fault fires once. If it clears and comes
+  back, it is a new fault.
+- Fault codes and the gateway state are read every **30 minutes** (see "Rate
+  limiting"): a scene can therefore react up to half an hour late. The
+  **Refresh now** button of the integration forces a new reading.
+- If the boiler reports a burst of codes at once, five events at most are
+  sent; the "number of active codes" variable gives the total.
+
+### Actions
+
+| Action                          | What it does                                                                                     | Result usable later in the scene                            |
+| ------------------------------- | ------------------------------------------------------------------------------------------------ | ----------------------------------------------------------- |
+| **Override a zone temperature** | Applies a temperature (5 to 30 °C) for a duration on a scheduled zone, then the schedule resumes | **Override started**: false if the zone follows no schedule |
+| **Cancel a zone override**      | Ends the running override: the zone goes back to its schedule                                    | **Override cancelled**: false if no override was running    |
+
+The first one exists because a device command carries a single value: here the
+temperature **and** the duration travel together, without touching the
+"Override duration" control of the zone. The duration is in minutes, from 30 to
+1440; left empty, the one of the zone applies. If an override is already
+running, it is replaced and its duration starts over.
+
+"Nothing to do" is not an error: on a zone in manual mode or switched off, the
+action answers "false" and the scene goes on. A condition placed after it can
+test that result.
+
+In the zone selector, Gladys lists every device of the integration: make sure
+you pick a **zone**. On any other device, the action fails with an explicit
+message.
+
 ## Things to know
 
-- **Display delay.** After a command, Gladys shows the requested value right
-  away, then replaces it with the one the boiler confirms on the next cycle.
-  Needing one or two refreshes to see the real effect is normal.
+- **Command confirmation.** After a command, Gladys shows the requested value
+  right away; a few seconds later the integration reads the boiler again (one
+  request) and publishes what it actually kept. A value that goes back
+  therefore means the boiler did not take it into account.
 - **Rate limiting.** The Saunier Duval platform limits the number of requests,
   and you share it with the mobile application. A refresh cycle costs **one
   single request per installation**: every published value comes from the same
@@ -189,7 +285,8 @@ it back as off at the next refresh.
 An already-created device does not change by itself. The **Discovery** tab
 shows an **Update** button on the devices whose structure moved, and that
 button is what re-applies everything: new features, units, and the list of
-offered modes.
+offered modes. That is the case of the **Boiler** device after the update that
+brings the **Ventilation boost**.
 
 One case to know about: Gladys detects a "changed structure" by comparing the
 features, their units and their bounds — **not the list of modes**. If an
@@ -225,11 +322,11 @@ Diese Einstellungen fragt Saunier Duval in seinem Konfigurationsbildschirm in Gl
 ## So installierst du Saunier Duval in Gladys
 
 1. Öffne in Gladys **Integrationen**: Saunier Duval erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
-2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/philippema/gladys-vaillant-saunierduval:1.0.2`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/philippema/gladys-vaillant-saunierduval:1.1.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
 3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
 4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/PhilippeMA/gladys-Vaillant-SaunierDuval](https://github.com/PhilippeMA/gladys-Vaillant-SaunierDuval).
 
-Saunier Duval benötigt Gladys `>=4.86.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+Saunier Duval benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
 
 Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
 

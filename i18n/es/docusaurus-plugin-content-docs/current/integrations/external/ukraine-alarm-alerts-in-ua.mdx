@@ -1,0 +1,190 @@
+---
+title: "Integración domótica Ukraine Alarm (alerts.in.ua), gratuita y de código abierto"
+sidebar_label: "Ukraine Alarm (alerts.in.ua)"
+description: "Unofficial connector: Ukrainian air raid alerts by oblast, raion or hromada (alerts.in.ua). Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ukraine-alarm.png"
+keywords:
+  - "ukraine alarm (alerts.in.ua)"
+  - "domótica ukraine alarm (alerts.in.ua)"
+  - "gladys ukraine alarm (alerts.in.ua)"
+  - "ukraine alarm (alerts.in.ua) gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-ukraine-alarm instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Ukraine Alarm (alerts.in.ua)","description":"Unofficial connector: Ukrainian air raid alerts by oblast, raion or hromada (alerts.in.ua).","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-ukraine-alarm","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ukraine-alarm.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-11T21:31:25Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+Ukrainian air raid alerts in Gladys, by oblast, raion, hromada or city, read
+from the official API of [alerts.in.ua](https://alerts.in.ua).
+
+Unofficial connector, not affiliated with alerts.in.ua. Never tested with a
+real token: written from the official API documentation; please report what
+you see.
+
+**This is NOT a safety system.** The data comes with delays (technical or
+human) and the integration reads it every 30 s by default. Rely on the official
+channels: sirens, the Air Alert app, the local authorities.
+
+## What you get
+
+- One device per location you watch, with one feature, **Alert level**:
+  - `0` no alert;
+  - `1` alert in part of the location (some of its raions or hromadas, not the
+    whole of it);
+  - `2` alert of yellow level;
+  - `3` alert of red level.
+- Two scene triggers:
+  - **Air raid alert started**: an alert of yellow or red level started on the
+    whole location, or a yellow alert turned red. Filters: the location (empty:
+    any) and the level (empty: any). Information passed to the scene: the
+    location name, its UID, the level (`yellow` or `red`), whether a yellow
+    alert turned red, and whether the change was seen late (see below).
+  - **Air raid alert ended**: the alert of yellow or red level on the whole
+    location ended (level 0 or 1). Information: the location name, its UID, the
+    duration in minutes (empty when the start was not seen) and "seen late".
+- The level is also a normal device state: a scene can test it (for example
+  "Alert level of Kyiv is 2 or more").
+
+A level 1 (alert in part of the location) fires no trigger: watch the smallest
+location that holds your home (its hromada or its raion) to know whether the
+alert concerns it.
+
+## Step 1: get a token
+
+Request a free personal token with the form of alerts.in.ua:
+[https://alerts.in.ua/api-request](https://alerts.in.ua/api-request). They send it by e-mail. The token is
+yours: alerts.in.ua links every request made with it to you.
+
+## Step 2: configure
+
+In Gladys, **Integrations > Ukraine Alarm > Configuration**:
+
+1. **alerts.in.ua API token**: paste the token. Kept by Gladys in its
+   database, never shown again, sent only to alerts.in.ua (in the
+   `Authorization` header of each request, over HTTPS).
+2. **Locations to watch (UIDs)**: the UIDs of the locations, separated by
+   commas, 20 at most. Examples: `31` Kyiv city, `14` Kyiv Oblast, `1293`
+   Kharkiv city, `564` Zaporizhzhia city.
+   - The button **Find a location** gives the UID of an oblast, a raion or a
+     city from part of its name, in Ukrainian or Latin letters (`Kharkiv`,
+     `Львів`). It sends no request.
+   - A hromada: take its UID from the
+     [full list of the locations](https://docs.google.com/spreadsheets/d/1XnTOzcPHd1LZUrarR1Fk43FUyl8Ae6a6M7pcwDRjNdA/edit?usp=sharing)
+     linked by the API documentation. Its device is named "Alerts: Location \<UID>":
+     rename it in Gladys.
+3. **Read interval**: 30 s by default, 20 s to 600 s. One request reads every
+   location at once.
+4. Save, then **Test the connection**: it reads alerts.in.ua and shows the
+   level of each location.
+5. In the **Discover** tab, add the devices you want. Nothing is read before a
+   device is added.
+
+## How it reads
+
+- One GET request per interval, whatever the number of locations, with
+  `If-Modified-Since` (alerts.in.ua answers "not modified" when nothing
+  changed). One request at a time.
+- alerts.in.ua allows 8 to 10 requests a minute per Internet address (12 is the
+  hard limit, then the address and the token are blocked). Other applications
+  behind the same address count too: this is why 20 s is the fastest interval.
+- The pace survives a restart: the time of each attempt is written to the
+  integration folder before the request, and the next read waits for the end
+  of the interval.
+- The **Test the connection** button sends no new request less than 20 s after
+  the last one: it then shows the last answer.
+
+## When something goes wrong
+
+| What happens                                                                 | What the integration does                                                                                                                               |
+| ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The token is refused (HTTP 401)                                              | No automatic read any more. Saving a new token, or the test button reading with success, starts the reads again. The status says so.                    |
+| HTTP 403 (your address is blocked, or the API is not served in your country) | Not a refusal of the token: reads paused 30 min, then 1 h, 2 h... up to 6 h.                                                                            |
+| Too many requests (HTTP 429)                                                 | Reads paused for the time alerts.in.ua asks (`Retry-After`), else 1 min doubling; between 1 min and 6 h.                                                |
+| Server error, timeout, network, an answer cut or unreadable                  | Not a refusal: retried after one interval, then the wait doubles each time, up to 15 min (30 s, 1 min, 2, 4, 8, then 15 min with the default interval). |
+| No good read for 10 min                                                      | The status says the levels shown are not recent.                                                                                                        |
+| A UID without data                                                           | The status names it; its device gets no level.                                                                                                          |
+
+The pauses and the refusal are kept in the integration folder (`/data`) and
+survive a restart. Of a refused token, only 8 bits of a salted hash are kept,
+never the token. Two tokens share the same 8 bits once in 256: if a new
+token saved after a restart happens to match the refused one, click **Test the
+connection** once to start the reads.
+
+## Scene events after a restart or an outage
+
+The last level of each location is kept for 2 hours. After a restart or an
+outage, the first read is compared with it: an alert that started (or ended)
+meanwhile fires its trigger with "seen late" set. A level older than 2 hours
+is not compared: no trigger for a change that may be hours old. The new levels
+are written to the integration folder before the triggers fire; if that folder
+cannot be written, a trigger may fire a second time after a restart (at least
+once; not lost, unless the integration stops or the token changes at that
+very moment).
+
+## Limits
+
+- The level comes from the compact "IoT" status of alerts.in.ua (v2, with the
+  red and yellow levels). An active alert given without a level (`A`) counts
+  as red.
+- Whether the status of a hromada also shows an alert declared for its whole
+  oblast is up to alerts.in.ua (not checked without a real token).
+- Only air raid alerts: the other threats of alerts.in.ua (artillery, urban
+  fights, chemical, nuclear) and the details of each threat are not read in
+  this version.
+- The names of the raions are in Ukrainian only.
+
+## Privacy
+
+The integration sends nothing but the token and its own User-Agent
+(`gladys-ukraine-alarm/<version>`) to api.alerts.in.ua. It never follows a
+redirect. The token is never written to the logs, the status, nor the
+integration folder.
+
+## Source
+
+Data: [alerts.in.ua](https://alerts.in.ua), volunteer project; API:
+[https://devs.alerts.in.ua](https://devs.alerts.in.ua). Source code: Apache-2.0,
+[https://github.com/LM1LC3N7/gladys-ukraine-alarm](https://github.com/LM1LC3N7/gladys-ukraine-alarm).
+
+## Parámetros de configuración
+
+Estos son los parámetros que Ukraine Alarm (alerts.in.ua) te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Ukrainian air raid alerts in Gladys | `section` | No | Unofficial connector, not affiliated with alerts.in.ua. It reads the official API of alerts.in.ua with your own free token (request it with the form linked below) and gives one device per location you watch (oblast, raion, hromada or city, by its UID) with its alert level: 0 no alert, 1 alert in part of it, 2 yellow level, 3 red level. The scene triggers "Alert started" and "Alert ended" fire on each change. One request reads every location, every 30 s by default. This is NOT a safety system: delays happen, rely on the official channels (sirens, the Air Alert app). Never tested with a real token. |
+| alerts.in.ua API token | `secret` | Sí | The free personal token alerts.in.ua sends you by e-mail. Kept by Gladys in its database, never shown again, sent only to alerts.in.ua. |
+| Locations to watch (UIDs) | `string` | Sí | The UIDs of the locations, separated by commas (20 at most). Kyiv city is 31, Kyiv Oblast 14, Kharkiv city 1293. The button "Find a location" below gives the UID of an oblast, a raion or a city; a hromada: see the full list linked above. |
+| Read interval (seconds) | `number` | No | One request per interval reads every location. alerts.in.ua allows 8 to 10 requests a minute per Internet address, other applications included: 20 s at the fastest. |
+
+## Cómo instalar Ukraine Alarm (alerts.in.ua) en Gladys
+
+1. En Gladys, abre **Integraciones**: Ukraine Alarm (alerts.in.ua) aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-ukraine-alarm:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-ukraine-alarm](https://github.com/LM1LC3N7/gladys-ukraine-alarm).
+
+Ukraine Alarm (alerts.in.ua) requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Ukraine Alarm (alerts.in.ua) es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-ukraine-alarm) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-ukraine-alarm/blob/HEAD/docs/en.md)

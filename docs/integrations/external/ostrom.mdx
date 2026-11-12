@@ -1,0 +1,158 @@
+---
+title: "Ostrom smart home integration, free and open source"
+sidebar_label: "Ostrom"
+description: "Unofficial: Ostrom (Germany) SimplyDynamic prices and smart-meter consumption. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ostrom.png"
+keywords:
+  - "ostrom"
+  - "ostrom smart home"
+  - "gladys ostrom"
+  - "ostrom gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-ostrom instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Ostrom","description":"Unofficial: Ostrom (Germany) SimplyDynamic prices and smart-meter consumption.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-ostrom","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ostrom.png","type":"device","version":"0.1.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-12T02:36:34Z"}} />
+
+Unofficial integration for **Ostrom** electricity customers in Germany, not
+affiliated with Ostrom. It reads your own data through the official Ostrom
+API. **Read-only**: nothing is ever changed on your account.
+
+> This integration has never been tested with a real Ostrom account: it was
+> written from the official API documentation. Please report what you see
+> (GitHub issues of LM1LC3N7/gladys-ostrom).
+
+## What you get
+
+- **One device per Ostrom contract** (named "Ostrom electricity (contract
+  …1234)", the last 4 digits of the contract number):
+  - **Consumption (30 min)**: the smart-meter consumption, published after
+    the fact for the Gladys energy monitoring. Ostrom gives hours: each hour is
+    split in two equal halves. Only with a smart meter (iMSys) that sends its
+    readings to Ostrom.
+  - For a **SimplyDynamic** contract only: **Price per kWh now**, **Next price
+    per kWh** (EUR/kWh, taxes, levies, variable grid fees and VAT included,
+    every quarter of an hour) and **Base fee and grid fees per month** (EUR,
+    VAT included).
+- **The energy contract template "Ostrom SimplyDynamic"**: Gladys asks the
+  integration the cost of every half hour; it answers with the mean of the two
+  quarter-hour prices of your postcode times the consumption. A half hour whose
+  mean price is negative costs 0 (Gladys accepts no negative cost): the cost
+  shown by Gladys is then above your bill by the credit Ostrom grants, if it
+  grants one. The monthly fees are a fixed
+  amount you enter in the contract.
+
+## Setting up
+
+1. Log in to the **Ostrom Developer Portal** (https://developer.ostrom-api.io)
+   with the account of your Ostrom app.
+2. Create an **API client** for the **production** environment and accept the
+   developer consent. Copy its **client id** and **client secret**.
+3. In Gladys, open the integration's **Configuration**, paste both, keep
+   **Environment: Production** and save. **Test the connection** gets a token
+   and counts your contracts.
+4. In **Discovery**, add the device of your contract.
+5. For a SimplyDynamic contract: in the energy settings, create a contract
+   from the **Ostrom SimplyDynamic** template, attached to that device's
+   consumption. Leave "Last 4 digits of the Ostrom contract" empty when you
+   have one contract; enter them when you have several. Enter the monthly fees
+   shown by the "Base fee and grid fees per month" feature.
+
+The client secret is kept by Gladys in its database, never shown again and sent
+only to Ostrom to obtain an access token (valid one hour, held in memory only).
+The **Sandbox** environment is only for an API client created for Ostrom's
+sandbox (test data).
+
+## How often it reads
+
+- The contracts: every 6 hours.
+- The missing past prices (after a stop, an outage): up to 31 days back, at
+  most every 6 hours.
+- The prices: when the ones held do not cover the rest of today (or, from
+  15:00 German time, when Ostrom loads them, the whole of tomorrow), at most
+  once an hour. Once tomorrow is held, nothing until 15:00 the next day.
+- The consumption of the devices you added: every 3 hours (the last 3 days),
+  once a day after 06:00 and for a new device the last 7 days.
+- After a failed read of the contracts: again after 5, 10, 20, 40, then every
+  60 minutes. Ostrom asking to slow down (HTTP 429) or being unavailable
+  (5xx): no request at all until the time asked (at least 1 minute, at most
+  6 hours), kept across restarts.
+- A restart, Discovery or saving the configuration never reads sooner than
+  these intervals (new credentials are read after 1 minute).
+
+## What the prices are
+
+For each quarter of an hour, Ostrom's prices API gives, for your postcode, the
+day-ahead spot price with VAT and the taxes, levies and variable grid fees with
+VAT, in cents. The integration adds both and divides by 100. The prices of the
+past quarters are kept 40 days in `/data`, so Gladys can price the past
+intervals: create the contract from the day you install the integration.
+
+Not included: a §14a variable grid fee (module 3), any discount or bonus of
+your contract. Never a guessed or a zero price: when one quarter price of a
+period is missing, Gladys's whole request for that billing period fails and
+no cost is stored for it until the price is known. The integration therefore
+reads the missing past quarters again (up to 31 days back, at most every 6
+hours), for instance after Gladys was stopped; a price Ostrom never gives
+keeps those costs empty.
+
+## Messages
+
+- _Ostrom refused the client id or the client secret_: the token endpoint
+  answered `invalid_client` or `unauthorized_client`. Nothing is sent again
+  until you change the credentials or the **Test** button succeeds. Any other
+  error (an unreadable answer, a 401 or 403 of a data request, a 5xx) is never
+  taken as a refusal.
+- _no taxes nor grid fees for the postcode_: Ostrom answered prices without
+  taxes for the postcode of your contract; those prices are not yours and are
+  not kept (asked again every 6 hours).
+- _Ostrom gave no price for some past days_: the past days (up to 31 days
+  back) could not be filled, for instance because Ostrom does not serve past
+  prices. Today's and tomorrow's prices are not affected; the costs of the
+  billing period of those days stay empty (asked again every 6 hours).
+- _A dynamic contract has no readable postcode_: its prices cannot be read.
+
+## Privacy
+
+Your contract number, name, address and postcode are never written in a log,
+the status or `/data`: a contract is known by a keyed hash and its last 4
+digits. `/data` keeps the times of the last reads, the pause, the prices of
+the past quarters and a marker of refused credentials (8 bits of a salted hash,
+nothing to find them back from).
+
+## Configuration settings
+
+These are the settings Ostrom asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Ostrom API client | `section` | No | Unofficial connector, not affiliated with Ostrom. For Ostrom electricity customers in Germany. Log in to the Ostrom Developer Portal (developer.ostrom-api.io) with your Ostrom app account, create an API client for the production environment, accept the developer consent, then copy its client id and client secret here. The integration reads your contracts, the smart-meter consumption (hourly) for the Gladys energy monitoring and, for a SimplyDynamic contract, the prices of every quarter of an hour for your postcode (spot price, taxes, levies and VAT). Read-only: nothing is ever changed on your account. Then create an energy contract from the "Ostrom SimplyDynamic" template. |
+| Client id | `string` | Yes | The client id of your API client, from the Ostrom Developer Portal. |
+| Client secret | `secret` | Yes | Kept by Gladys in its database, never shown again, sent only to Ostrom (auth.production.ostrom-api.io, or the sandbox one) to obtain an access token. |
+| Environment | `select` | No | Production for your real contract. Sandbox only for an API client created for the Ostrom sandbox (test data). |
+
+## How to install Ostrom in Gladys
+
+1. In Gladys, open **Integrations**: Ostrom appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-ostrom:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-ostrom](https://github.com/LM1LC3N7/gladys-ostrom).
+
+Ostrom requires Gladys `>=5.3.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Ostrom is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-ostrom) — [source of this documentation](https://github.com/LM1LC3N7/gladys-ostrom/blob/HEAD/docs/en.md)

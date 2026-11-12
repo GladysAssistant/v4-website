@@ -1,0 +1,176 @@
+---
+title: "Integración domótica OpenRGB, gratuita y de código abierto"
+sidebar_label: "OpenRGB"
+description: "The RGB lighting of your computer through OpenRGB: on, off, color, effects, profiles. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-openrgb.png"
+keywords:
+  - "openrgb"
+  - "domótica openrgb"
+  - "gladys openrgb"
+  - "openrgb gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-openrgb instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"OpenRGB","description":"The RGB lighting of your computer through OpenRGB: on, off, color, effects, profiles.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-openrgb","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-openrgb.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-11T16:39:11Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+Brings into Gladys the RGB lighting of a computer driven by
+[OpenRGB](https://openrgb.org) (motherboard, RAM, graphics card, fans, LED
+strips, keyboard, mouse…), through the **SDK server** of OpenRGB on your
+local network: no account, no cloud.
+
+> Never tested with a real device: built from the protocol of the OpenRGB SDK
+> server (as the openrgb-sdk library reads it). Tell us on the forum how it
+> goes. Not affiliated with OpenRGB.
+
+## What you get
+
+One device per controller OpenRGB sees, with:
+
+- **Light**: on / off. Off sets every LED to black in the direct mode; on
+  brings back the last color seen on (white if none);
+- **Color**: every LED of the controller to that color, in the direct mode;
+- **Effect mode**: the active mode (Direct, Static, Rainbow…), shown; changing
+  it needs the option **Allow the effect modes**.
+
+And, when OpenRGB has saved profiles, an **OpenRGB profiles** device: choosing
+a profile loads it (every device at once), only with the option **Allow
+loading the profiles**. OpenRGB does not tell which profile is active: the
+list shows no read value.
+
+No feature is a switch. The lights obey "turn off the lights" like any other.
+
+Not handled: brightness, colors per LED or per zone, speed and direction of
+the effects, resizing zones. The integration never sends a save request (no
+mode saved to a device, no profile created or deleted); some devices keep
+their last mode on their own.
+
+Left out (the status says so): a controller without a "per-LED color" mode (it
+can be neither colored nor turned off this way), and two identical
+controllers without a serial at the same location (never a write on the wrong
+one).
+
+## Setup
+
+1. In OpenRGB, **SDK Server** tab, click **Start Server** (or run
+   `openrgb --server`, with `--server-port` if needed). Tick the automatic
+   start if OpenRGB starts with the computer.
+2. Give that computer a fixed address in your router.
+3. In **Address of the OpenRGB computer**, type its IP address (or name), with
+   `:port` only if not 6742.
+4. Save, then add the devices from the **Discover** tab.
+
+The SDK server has no password: any device on your network can drive it. Keep
+it on a trusted network, never open it to the Internet.
+
+The status tells how many controllers were read, those left out, a server that
+does not answer (and when it is tried again), a service that answers but not
+as OpenRGB.
+
+**Test the connection** reads the server, or shows the last read when it is
+younger than an interval (never faster than the interval).
+
+## Which controller a device drives
+
+OpenRGB numbers its controllers, but the number changes when it detects them
+again. A device is therefore tied to its controller by a fingerprint of the
+vendor, the name and the serial (or, without a serial, of the location OpenRGB
+shows: bus and address). Before every write, the controller is read at its
+number; if it is not that one anymore, the whole list is read to find it; if
+it is gone: "nothing sent". A read serves the writes that follow on the same
+connection until the next periodic read (plus 5 s), as long as OpenRGB does not
+say its list changed: a scene on several controllers leaves without one read
+per controller. Commands go one after the other (never interleaved); right
+after a list change, on a slow server, the last ones of a scene may answer
+"nothing sent" (Offs go one after the other and are kept). "On" always reads
+the state before deciding: a scene turning several controllers on with a slow
+server may set only some of them, even without a list change (measured: 3, 2
+or 1 of 5 with answers in 300, 500 or 900 ms; the others answer "nothing
+sent"). Space these actions in the scene (a wait of one to two seconds
+between two "on").
+
+If OpenRGB reorders its controllers without saying so, a command may reach,
+until the next read, the controller that took the place: an Off may thus turn
+a neighbor off. It is then not announced done: it is kept, and the next read
+(or a new click) turns the right controller off; the neighbor stays off until
+you turn it back on.
+
+A USB device without a serial plugged into another port may thus show up as a
+new device in Discover.
+
+## Turning off
+
+Off needs no option. It goes before the other commands and before the reads
+(a read stuck for 1 s is cut), and cancels the commands of that controller
+still waiting: nothing asked before the Off leaves after it. It also works
+before the configuration is read (the address kept in `/data` serves).
+
+When the read that follows does not show the controller off, the Off is kept
+(in `/data`) and sent again by the next reads, 3 times at most. A newer
+command that left for that controller (on, color, mode) or a profile asked
+after the Off and loaded stops these resends. A profile asked before an Off
+never leaves after it. At a start, a kept Off is sent again only when it is
+less than 10 minutes old.
+
+An Off is refused only when the controller is no longer on the server (or is
+there twice, without a serial). When
+the server does not answer, it is kept and sent at the next reads (3 times at
+most).
+
+## Answers to a command
+
+- "Done": the read that follows shows the value asked;
+- "Sent, without confirmation": it left, but the read does not show it (yet);
+- "Nothing sent": refused before anything left (option off, controller not
+  found, value not valid, an Off came after it, server unreachable).
+
+## Data kept
+
+In `/data`: the address of the server, the time of the last read (a restart
+never reads sooner than the interval), for each controller its number in
+OpenRGB and its last color on, the Offs to send again. No name, no serial.
+
+## Parámetros de configuración
+
+Estos son los parámetros que OpenRGB te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Your OpenRGB server | `section` | No | Brings into Gladys the RGB devices OpenRGB drives on a computer (motherboard, RAM, graphics card, fans, LED strips, keyboard, mouse…), through the SDK server of OpenRGB on your network: each one becomes a light (on / off, color) with its effect mode. Start the SDK server in OpenRGB (SDK Server tab, or openrgb --server). It has no password: anyone on your network can drive it, keep it on a trusted network. Turning off needs no option and goes first. Effect modes and profiles change only once you allow them below. The integration never asks a device to save its settings (some keep their last mode on their own). Never tested with a real device: tell us on the forum how it goes. Not affiliated with OpenRGB. |
+| Address of the OpenRGB computer | `string` | Sí | The IP address (or name) of the computer running OpenRGB, with :port only if the SDK server does not listen on 6742. Give that computer a fixed address in your router. |
+| Read every (seconds) | `number` | No | How often the devices are read: 10 s by default, 5 s at least. |
+| Allow the effect modes | `boolean` | No | Lets Gladys switch a device to another of its effect modes (rainbow, breathing…). Off by default: the mode is shown, not changed. |
+| Allow loading the profiles | `boolean` | No | Lets Gladys load a profile saved in OpenRGB (it sets every device at once). Off by default. Profiles are never saved nor deleted. |
+| Language of the names | `select` | No | Used for the names of the features added from now on. |
+
+## Cómo instalar OpenRGB en Gladys
+
+1. En Gladys, abre **Integraciones**: OpenRGB aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-openrgb:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-openrgb](https://github.com/LM1LC3N7/gladys-openrgb).
+
+OpenRGB requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+OpenRGB es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-openrgb) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-openrgb/blob/HEAD/docs/en.md)

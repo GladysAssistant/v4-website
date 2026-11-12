@@ -1,0 +1,165 @@
+---
+title: "Legrand In One CPL Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Legrand In One CPL"
+description: "Control Legrand In One (PLC) lights through the 882 13 USB serial interface Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/XDECO--gladys-integration-legrand-inone.png"
+keywords:
+  - "legrand in one cpl"
+  - "legrand in one cpl smart home"
+  - "gladys legrand in one cpl"
+  - "legrand in one cpl gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/XDECO/gladys-integration-legrand-inone instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Legrand In One CPL","description":"Control Legrand In One (PLC) lights through the 882 13 USB serial interface","owner":"XDECO","owner_avatar_url":"https://avatars.githubusercontent.com/u/154550253?v=4","repo_url":"https://github.com/XDECO/gladys-integration-legrand-inone","cover_url":"https://integration-store-storage.gladysassistant.com/covers/XDECO--gladys-integration-legrand-inone.png","type":"device","version":"0.4.0","gladys_version":">=4.86.0","stars":0,"pushed_at":"2026-11-11T13:23:23Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+Unofficial integration, not affiliated with Legrand. It turns on and off the lights of a Legrand In One (powerline, "CPL") installation from Gladys, and shows their state when someone presses a wall switch.
+
+## What you need
+
+- A Legrand USB / RS232 interface, reference 882 13, plugged into the machine that runs Gladys.
+- A small "serial gateway" container that exposes this USB device on a TCP port. Gladys integrations cannot access USB devices directly, so this container does it for them (see the project README for a ready-to-use `docker-compose.yml`).
+
+## Setup
+
+1. Start the serial gateway container. By default it listens on `172.17.0.1:2000`.
+2. Install this integration and check the address and port in its settings.
+3. **Press each wall switch once.** The Legrand bus cannot list its devices, so the integration learns each circuit from the frames the switches send when they are pressed.
+4. Open the Discovery tab and run a scan. Each circuit seen on the bus appears as a light named `Legrand <id>-<unit>`, followed in brackets by the kind of device: `(inter)` for a switch, `(inter scenario)` for the on/off key of a scenario switch. This is deduced from the keys heard so far: a scenario switch whose on/off key alone was pressed first shows as `(inter)`, then turns to `(inter scenario)` once one of its scene keys is heard. Create the circuits you want and rename them.
+
+If a switch does not appear, press it again and rescan. The list of known circuits is kept across restarts.
+
+## What it does
+
+- Turns lights on and off from Gladys (dashboard, scenes, voice).
+- Updates the state in Gladys when a wall switch is used.
+- Shows each Legrand scenario button as a button in Gladys (`Legrand scenario <id>-<unit>`). It clicks when the scenario is pressed, so you can use it as a trigger in Gladys scenes.
+
+## Linked devices
+
+The bus never reports the state of a receiver. When a button drives several lights (a group, a scenario), only the button sends a frame and the lights stay silent. The settings **Rule 1** to **Rule 12** (one rule per field) tell the integration which lights follow which button. Nothing is sent on the bus: only the state shown in Gladys is updated.
+
+Use the circuit numbers printed in the logs (`944559-1`). One rule per field. If you need more than 12 rules, put several in one field, separated by `;`:
+
+```
+648966-1 -> 944559-1, 944559-2
+648966-2 -> 944559-1=on, 944559-2=off
+```
+
+Several rules in one field: `929520-1 -> 944561-1; 929523-1 -> 944561-1`.
+
+- With a light on the left, the lights on the right copy its state (on, off), whether it comes from a wall switch or from a command in Gladys.
+- With a scenario button on the left, each light on the right takes the fixed state written after `=` (`on` or `off`).
+
+## Tested hardware
+
+This integration was developed on one installation, with:
+
+- the Legrand PLC/USB interface **ref. 882 13** (seen by Linux as a BTicino "SFERA Tele Loop" USB serial device);
+- double transmitter-receiver switches **ref. 672 02** (two directions: top key = on, bottom key = off);
+- a single transmitter-receiver switch **ref. 672 01** (frames received and decoded; command from Gladys not tested);
+- a lighting scenario switch **ref. 672 08** (on/off keys + two scenario keys);
+- a scenario transmitter **ref. 672 80** (four scenario keys);
+- Gladys Assistant 5.3 on a Home Assistant Yellow (64-bit ARM).
+
+## How to read the devices in Gladys
+
+In the In One system every product has a unique identifier, and every receiver *learns* the transmitters that drive it (LEARN key). Only **transmitter** orders travel on the bus: "direction 1 of transmitter 944559 says *on*". The receivers that learned this transmitter react, silently.
+
+So a device `Legrand 944559-1` in Gladys is **a transmitter key** (identifier 944559, direction 1), not a lamp. Driving it from Gladys is like pressing that key: every receiver that learned it reacts. This is why a transmitter learned by several receivers switches several lamps, and why the state of a receiver can never be read: it does not exist on the bus. The **Linked devices** setting describes these associations so that Gladys shows the right state.
+
+## References of the In One PLC range
+
+From the Céliane technical guide. Only the four references above were tested; for the others the "Expected" column says what the protocol suggests, **without verification**.
+
+**Lighting**
+
+| Reference | Product | Expected |
+|---|---|---|
+| 672 01 | Single transmitter-receiver switch 2,500 W | **Tested** for reception; command expected to work like the 672 02 |
+| 672 02 | Double transmitter-receiver switch 2 × 1,000 W | **Tested** |
+| 672 03 / 672 04 | Single / double switch with indicator | Like 672 01 / 672 02: should work (the indicator is local, nothing on the bus) |
+| 672 08 | Lighting scenario switch (on/off + 2 scenarios) | **Tested** |
+| 672 15 | Automatic switch 1,000 W (motion detector) | Should send on/off orders like a switch |
+| 672 10 / 672 12 / 672 14, 036 10 | Dimmers 300 W, 600 W and DIN dimmer 1,000 W | On/off only; no level control in this version |
+| 882 03 | Plug-in dimmer 500 W | On/off only |
+| 882 00, 882 01, 882 15, 882 20 | Infrared/radio remotes and scenario controls | No: they do not use the PLC bus, except through a PLC/IR receiver that relays |
+
+**Scenarios**
+
+| Reference | Product | Expected |
+|---|---|---|
+| 672 80 | Scenario transmitter (4 scenarios) | **Tested** |
+| 672 84 | Touch-screen scenario manager | Its scenarios should show up as buttons; not verified |
+
+**Roller shutters and blinds**
+
+| Reference | Product | Expected |
+|---|---|---|
+| 672 51 / 672 55 / 672 56 | Individual shutter switch (plain, with override, with programmable level) | Not supported in this version (up/down/stop orders, another family of the protocol) |
+| 672 53 / 672 54 | Central control / group control (4 zones) | Not supported in this version |
+
+**Heating, detectors, interfaces**: thermostats 674 40 / 674 42, cable outlet 674 45, local override 674 48, programmer 674 49, detectors 675 22 / 675 23 / 675 24, interfaces 036 06 / 036 07 / 036 18 — outside the scope of this integration. Filters 882 12 / 882 21 / 882 23 are passive accessories.
+
+If you test one of these references, say so on the project's GitHub repository: the table will be updated.
+
+## Limits of this version
+
+- The bus never reports the real state of a receiver. The state shown in Gladys is deduced from the frames and from the commands sent, so it can drift (for example after a Legrand scenario that switches lights off). A command from Gladys always puts it back in line.
+- To keep Gladys up to date after a Legrand scenario, use linked devices (rule `scenario -> light=on`).
+- On/off lights only: no dimmers, no shutters, and Gladys cannot start a Legrand scenario.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Legrand In One CPL in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Serial gateway address | `string` | Ja |  |
+| Serial gateway TCP port | `number` | Ja |  |
+| Linked devices | `section` | Nein | The bus never reports the state of a receiver. Each rule below tells which lights follow a button, in Gladys only (nothing is sent on the bus). Use the circuit numbers printed in the logs. A light on the left: the lights on the right copy its state, e.g. 648966-1 -> 944559-1, 944559-2. A scenario button on the left: give each light its state, e.g. 648966-3 -> 944559-1=off, 944559-2=off. More than 12 rules? Put several in one field, separated by ; |
+| Rule 1 | `string` | Nein |  |
+| Rule 2 | `string` | Nein |  |
+| Rule 3 | `string` | Nein |  |
+| Rule 4 | `string` | Nein |  |
+| Rule 5 | `string` | Nein |  |
+| Rule 6 | `string` | Nein |  |
+| Rule 7 | `string` | Nein |  |
+| Rule 8 | `string` | Nein |  |
+| Rule 9 | `string` | Nein |  |
+| Rule 10 | `string` | Nein |  |
+| Rule 11 | `string` | Nein |  |
+| Rule 12 | `string` | Nein |  |
+
+## So installierst du Legrand In One CPL in Gladys
+
+1. Öffne in Gladys **Integrationen**: Legrand In One CPL erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/xdeco/gladys-integration-legrand-inone:0.4.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/XDECO/gladys-integration-legrand-inone](https://github.com/XDECO/gladys-integration-legrand-inone).
+
+Legrand In One CPL benötigt Gladys `>=4.86.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Legrand In One CPL ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [XDECO](https://github.com/XDECO) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/XDECO/gladys-integration-legrand-inone) — [Quelle dieser Dokumentation](https://github.com/XDECO/gladys-integration-legrand-inone/blob/HEAD/docs/en.md)

@@ -1,0 +1,200 @@
+---
+title: "Integración domótica MyElectricalData (Linky), gratuita y de código abierto"
+sidebar_label: "MyElectricalData (Linky)"
+description: "Unofficial: Linky meter through MyElectricalData, consumption, production, real off-peak hours. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-myelectricaldata.png"
+keywords:
+  - "myelectricaldata (linky)"
+  - "domótica myelectricaldata (linky)"
+  - "gladys myelectricaldata (linky)"
+  - "myelectricaldata (linky) gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-myelectricaldata instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"MyElectricalData (Linky)","description":"Unofficial: Linky meter through MyElectricalData, consumption, production, real off-peak hours.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-myelectricaldata","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-myelectricaldata.png","type":"device","version":"0.1.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-12T01:49:57Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+Unofficial integration, not affiliated with Enedis nor with MyElectricalData.
+
+> **Status**: this integration has never been tested with a real Linky meter. It is written from the
+> public API description of MyElectricalData (its Swagger, version 1.5.15) and from the Enedis data
+> formats. Your feedback is welcome.
+
+[MyElectricalData](https://www.myelectricaldata.fr/) is a free community gateway to the Enedis data of
+your Linky meter. This integration reads, for each meter (PDL) you enter:
+
+- the **energy of each day** (kWh), shown on the device (a dated value per day): it never feeds the
+  costs of Gladys;
+- on request, the **30-minute consumption** (load curve): the only data that feeds the energy monitoring
+  costs and the energy contracts;
+- on request, the **daily peak power** (VA) and the **daily production** (solar panels);
+- the **off-peak hours** of the meter (its Enedis contract), which feed the `linky-offpeak` tariff
+  calendar of the "Linky peak / off-peak (hours of the meter)" contract template.
+
+Read-only: nothing is ever changed on your account nor on your meter.
+
+## Setup
+
+1. On [myelectricaldata.fr](https://www.myelectricaldata.fr/), give your consent to Enedis for your
+   meter and copy the **token** the site gives you.
+2. In Gladys, install the integration and fill in:
+   - **MyElectricalData token**: kept by Gladys in its database, never shown again, sent only to
+     MyElectricalData;
+   - **Meter number(s) (PDL)**: the 14 digits of your PDL (bill or Linky screen), leading zeros kept;
+     several separated by commas (5 at most). The off-peak calendar follows the **first** one;
+   - the options: **30-minute load curve** (the load curve collection must be enabled for your meter in
+     your Enedis customer area), **daily peak power** (on by default), **daily production**.
+3. Press **Test the access**: for each meter, the gateway says whether the access is valid, until when
+   the consent runs and how many calls it counted.
+4. In **Discovery**, create the "Linky meter …1234" device (only the last 4 digits of the PDL are shown).
+   Its data is read a minute later: 31 days of energy per day, of peak power and of production, 7 days of
+   load curve.
+
+## The energy contract with the real off-peak hours
+
+Create an energy contract on the Linky meter from the **"Linky peak / off-peak (hours of the meter)"**
+template and enter your peak and off-peak prices per kWh (taxes included) and your monthly subscription.
+
+**This template needs the "30-minute load curve" option.** Only the half hours feed the costs: Gladys
+would price a daily total as one interval stamped at midnight, at the price of the first half hour of
+the day (all off-peak with 22:00-06:00), so the energy of each day is published for display only.
+Without the load curve, **no cost is computed** at all, and the status says so. With it, every half hour
+is priced at its own price.
+
+Ticking or unticking the option never removes a feature: the device offered in Discovery keeps every
+feature already created (and its history). Ticking it adds the 30-minute feature: update the device in
+Discovery (the status reminds you); the energy of the days goes on meanwhile, no day is lost. The load
+curve starts 7 days back (the Enedis limit of one request).
+
+The off-peak half hours are not typed by you: they come from the contract data of your meter, read every
+day. Under the Enedis changes of 2025-2027 (part of the off-peak hours moved to the afternoon), the new
+hours of your meter are taken up within a day, with nothing to change in Gladys.
+
+- The calendar is published from today to 6 days ahead, one value per half hour of the local time of
+  France (46 or 50 on the days of the changes of time).
+- A half hour is off-peak when the off-peak hours cover its middle minute (xx:15 or xx:45). A meter
+  switching at 22:38 makes 22:30-23:00 off-peak; one switching at 22:15 makes 22:00-22:30 off-peak and
+  06:00-06:30 peak. The exact hours are shown on the device (`offpeak_hours` parameter).
+- The days between two reads that give the same hours are filled with them (31 days at most). When the
+  hours change, only the days from the read on get the new ones.
+- A half hour without calendar value (the integration stopped for more than 6 days, a contract starting
+  before the installation) is priced at the **peak** price: Gladys never guesses an off-peak hour.
+- If the meter has no off-peak hours in its Enedis contract, or if they cannot be read, the calendar is
+  not fed and the status says so.
+- If another integration already declares the `linky-offpeak` calendar, this one does not feed it.
+
+## How often, and the quotas
+
+The gateway is a free service: the integration asks for little.
+
+- One read a day, from 09:00 (local time of France; a minute between 09:00 and 11:00 proper to your
+  installation), asking only for the days not yet published. Enedis gives the data of a day the next
+  morning.
+- While yesterday is missing: again 3 hours later, at most 3 ordinary reads a day; then the next
+  morning. The reads after a pause, a new device or a changed configuration come on top, but the ceiling
+  below always holds.
+- A new device, or a new token or meter in the configuration: read a minute later.
+- At most 12 requests per meter and per day, counted before each request and kept in `/data` (a restart
+  does not reset the count).
+- A "slow down" answer (429) pauses every request, for the time asked (or 1 hour, then 2, 4, up to
+  6 hours); a request already in the queue is held too. A gateway error (5xx) on one route of one meter
+  (the load curve not collected, say) makes that route wait: it is tried again at the next ordinary read,
+  never sooner than 15 minutes (doubled up to 6 hours, back to 15 minutes after a success), and the
+  status gives the real time of that read. The other routes and meters go on, and each read starts with
+  another meter. When nothing answered and several routes (or a contract) failed, every request
+  pauses (15 minutes, doubled up to 6 hours). A pause is kept across a restart; one ending in the
+  night waits for the morning read.
+- A request waiting in the queue when a pause starts is not sent.
+- The test button asks once per meter, at most once a minute.
+
+## What is published, and when
+
+- **Energy of the day**: each day once, a dated value (the local midnight) shown on the device, never
+  priced (no index: nothing can go down). A day corrected later by Enedis is not published again. After a
+  stop, up to 92 days are caught up. A day missing from an answer stops
+  the publication there: it and the days after it are asked again at the next read (Enedis is sometimes
+  late); a day still missing 5 days later is given up.
+- **30-minute consumption**: the only consumption sent to the costs (dated consumption of Gladys); whole
+  days only (every half hour of the day known once); an hourly curve is
+  split in two halves, a 10 or 15-minute curve summed. At most the last 7 days (the Enedis limit of one
+  request): a gap longer than that is not filled.
+- **Peak power and production**: dated states (the time of the peak; the local midnight for the
+  production), by batches of 100, at most 250 a minute. After a long stop, only the last 31 days are
+  caught up. A peak of 0 is left out.
+- A value that is not a number, a day given twice with two values, an answer about another meter or in
+  another unit: left out, never published as 0.
+- Gladys should run in the Europe/Paris time zone: the days of Enedis are days of France.
+
+## Refusals and errors
+
+- **Refused**: when the contract of **every** meter is answered 401 or 403 in the same read, the token is
+  taken as refused: no request is sent any more, until you press **Test the access** with success or
+  change the token or the meter numbers, even while the integration is stopped (a mistyped PDL is
+  refused too). A 401/403 on a data route, or on one meter only, is not a refusal (the status
+  names the meter and the route).
+- The token and the PDL number are never written in the logs, the status nor `/data`. `/data` keeps a
+  keyed hash of each meter, the last day published per kind of data, the off-peak hours read, the count
+  of requests of the day, the pause and 8 bits of a salted hash of a refused token.
+- The device ids come from a key made once and kept in the Gladys configuration (not in the form).
+- The devices not read from Gladys at a start: tried again 30 seconds later (doubled up to
+  5 minutes); the status says so and nothing is published meanwhile.
+- `/data` that cannot be read, or whose write fails: the reads wait an hour after a start (the count of
+  the day cannot be trusted) and the status says so. A slow write that lands is fine.
+
+## Limits
+
+- Never tested with a real meter; the stamp of the load curve (end of each interval, as Enedis documents
+  it) is checked against each answer but not against real data.
+- The days before the installation are priced at the peak price by the template.
+- The template needs the load curve: a meter without load curve collection gets no cost computed.
+- Several meters: the calendar follows the first one only.
+
+## Data
+
+Data from Enedis, relayed by MyElectricalData under your consent. MyElectricalData is a community
+project not affiliated with Enedis.
+
+## Parámetros de configuración
+
+Estos son los parámetros que MyElectricalData (Linky) te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| MyElectricalData account | `section` | No | Unofficial connector, not affiliated with Enedis nor with MyElectricalData. MyElectricalData is a free community gateway to the Enedis data of your Linky meter: give your Enedis consent on myelectricaldata.fr, then copy the token it gives you. The integration reads once a day the days not yet published (energy of each day, shown only; on request the 30-minute load curve, the only data that feeds the energy costs; the daily peak power and the production) and the off-peak hours of your meter. Read-only. For an energy contract, tick the load curve, then create it from the "Linky peak / off-peak (hours of the meter)" template: its off-peak slots follow the real hours of your meter. |
+| MyElectricalData token | `secret` | Sí | The token myelectricaldata.fr gives once the Enedis consent is done. Kept by Gladys in its database, never shown again, sent only to MyElectricalData (www.myelectricaldata.fr). |
+| Meter number(s) (PDL) | `string` | Sí | The 14 digits of your PDL (on your bill, or on the Linky screen), leading zeros kept; several separated by commas (5 at most). The off-peak calendar follows the first one. Sent only to MyElectricalData; Gladys shows its last 4 digits only. |
+| 30-minute load curve | `boolean` | No | Reads the consumption of every half hour (from 7 days back): the only data that feeds the energy costs of Gladys, REQUIRED for any energy contract. Needs the load curve collection enabled for your meter (Enedis customer area). Adds a feature: update the device in Discovery (nothing is removed). |
+| Daily peak power | `boolean` | No | Reads the highest power (VA) reached each day. One more request a day. |
+| Daily production | `boolean` | No | Only for a meter that also counts a production (solar panels): reads the energy produced each day. One more request a day. |
+
+## Cómo instalar MyElectricalData (Linky) en Gladys
+
+1. En Gladys, abre **Integraciones**: MyElectricalData (Linky) aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-myelectricaldata:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-myelectricaldata](https://github.com/LM1LC3N7/gladys-myelectricaldata).
+
+MyElectricalData (Linky) requiere Gladys `>=5.3.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+MyElectricalData (Linky) es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-myelectricaldata) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-myelectricaldata/blob/HEAD/docs/en.md)

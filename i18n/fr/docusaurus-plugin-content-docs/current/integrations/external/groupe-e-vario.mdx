@@ -1,0 +1,195 @@
+---
+title: "Intégration domotique Groupe E Vario, gratuite et open source"
+sidebar_label: "Groupe E Vario"
+description: "Non officiel : tarif dynamique Groupe E Vario (Fribourg), au quart d’heure, en contrats d’énergie. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-groupe-e-vario.png"
+keywords:
+  - "groupe e vario"
+  - "domotique groupe e vario"
+  - "gladys groupe e vario"
+  - "groupe e vario gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-groupe-e-vario instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Groupe E Vario","description":"Non officiel : tarif dynamique Groupe E Vario (Fribourg), au quart d’heure, en contrats d’énergie.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-groupe-e-vario","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-groupe-e-vario.png","type":"provider","version":"0.1.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-12T02:44:32Z"}} />
+
+**Intégration non officielle, sans lien avec Groupe E. Jamais testée avec un vrai
+contrat d'énergie Gladys ni un vrai compteur pour l'instant ; l'API de Groupe E,
+elle, a été lue pour de vrai le 2026-11-11.**
+
+Vario est le tarif dynamique en option de Groupe E (canton de Fribourg et
+alentours) : un prix différent pour chaque quart d'heure, publié la veille vers
+15 h, et une facture calculée sur les relevés au quart d'heure du compteur.
+
+Cette intégration ajoute à Gladys deux **contrats d'énergie** et deux
+**calendriers de prix** :
+
+- **Groupe E Vario (prix intégré)** : le prix intégré Vario (énergie et réseau)
+  de chaque quart d'heure ;
+- **Groupe E Vario (réseau)** : le prix réseau Vario de chaque quart d'heure,
+  plus le prix de l'énergie que vous saisissez (si votre énergie est facturée à
+  part) ;
+- les calendriers `groupe-e-vario` (prix intégré) et `groupe-e-vario-grid` (prix
+  réseau), en CHF/kWh au quart d'heure, que d'autres modèles de contrat peuvent
+  lire.
+
+## Source
+
+L'API publique des tarifs de Groupe E, version 2 :
+`https://api.tariffs.groupe-e.ch/v2/tariffs` (sans compte ni clé). La version 1
+a été retirée par Groupe E (elle répond « 410 Gone ») ; si la version 2 l'est à
+son tour, le statut le dit (« l'API v2 a disparu ») et il faut mettre
+l'intégration à jour. Groupe E ne publie pas de conditions d'utilisation pour
+cette API (aucune trouvée le 2026-11-11) : l'intégration la ménage (voir plus
+bas) et s'annonce par son propre User-Agent. Votre facture fait toujours foi.
+
+## Mise en route
+
+1. Installez l’intégration (Gladys 5.3.0 ou plus récent, rien à configurer).
+2. Dans **Énergie → Contrats**, créez un contrat « Groupe E Vario (prix
+   intégré) » ou « Groupe E Vario (réseau) » sur votre compteur principal.
+3. Saisissez, si besoin :
+   - **Prix de l'énergie au kWh** (modèle réseau seulement), hors TVA, de 0 à
+     2 CHF ;
+   - **Supplément au kWh** : ce qui est facturé au kWh et absent du prix Vario
+     (supplément réseau fédéral, taxes communales…), hors TVA, de 0 à 2 CHF ;
+   - **TVA**, de 0 à 25 %, ajoutée au prix au kWh complet. 0 garde les prix
+     tels que Groupe E les publie : vérifiez sur votre facture s'ils comprennent
+     déjà la TVA (8,1 % en 2026) ;
+   - **Montant fixe par mois** (abonnement, comptage), TVA comprise, de 0 à
+     1000 CHF, calculé par Gladys.
+
+Une saisie hors de ces bornes n'est pas tarifée (le statut compte ces contrats),
+ni une demi-heure qui coûterait plus de 10 CHF par kWh, la limite de Gladys (la
+demande échoue avec ce motif).
+
+## Comment chaque demi-heure est tarifée
+
+Gladys envoie des demi-heures ; les prix Vario changent chaque quart d'heure.
+Une demi-heure est tarifée comme ses deux quarts d'heure, chacun avec la moitié
+de l'énergie (la convention de Gladys pour les calendriers au quart d'heure) :
+
+coût = (½ kWh × prix du 1er quart + ½ kWh × prix du 2e quart + kWh × (énergie
+saisie + supplément)) × (1 + TVA).
+
+- **Un prix manquant n'est jamais deviné ni compté 0** : si un quart d'heure
+  n'est pas encore connu, la demande de Gladys échoue, la demi-heure reste sans
+  coût, et Gladys la recalcule plus tard (toutes les 30 minutes environ). Le
+  jour manquant est demandé à Groupe E en arrière-plan. Gladys rattrape un
+  contrat délégué depuis sa plus ancienne demi-heure sans coût (31 jours au plus
+  par passage) : un quart d'heure que Groupe E ne publie jamais (ou illisible)
+  bloque le rattrapage de toute cette fenêtre jusqu'à ce qu'il sorte des
+  31 jours. Une limite du moteur de Gladys, qui ne sait pas laisser un
+  intervalle sans coût et tarifer les autres.
+- Le prix ne dépend jamais du réseau au moment du calcul : seuls les prix déjà
+  reçus servent ; une nouvelle tentative de Gladys donne le même résultat.
+- **Prix négatif** : Gladys refuse un coût négatif pour un contrat délégué. Une
+  demi-heure dont le total serait négatif est comptée 0 et étiquetée « negative
+  price, counted 0 ». Le prix courant, lui, reste affiché tel quel.
+- Le **prix courant** (widget du tableau de bord, condition de scène « prix
+  actuel ») est celui du quart d'heure en cours, avec le suivant s'il est
+  publié ; inconnu, il est vide, jamais 0.
+- Changements d'heure : le jour du printemps a 92 quarts d'heure, celui de
+  l'automne 100 ; l'heure de 2 h à 3 h vue deux fois en octobre a ses propres
+  prix.
+
+## Quand Groupe E est interrogé
+
+- Au premier démarrage : les 35 derniers jours, en fenêtres de 7 jours au plus,
+  une requête à la fois.
+- Ensuite : le lendemain, à partir de 15 h (heure suisse), puis toutes les
+  30 minutes tant qu'il n'est pas complet ; un jour complet n'est jamais
+  redemandé.
+- Un jour passé incomplet ou vide (avant le début de l'historique de l'API,
+  janvier 2026) : redemandé une fois par jour au plus.
+- Un jour qu'une demande de tarification de Gladys n'a pas trouvé : demandé au
+  plus tôt une minute après la dernière requête (plus tard après un échec).
+- En cas d'échec : nouvel essai après 5, 15, 30 minutes, 1 h, puis toutes les
+  3 heures ; un « 429 » respecte son `Retry-After` (entre 1 minute et 6 heures,
+  10 minutes sans en-tête), gardé dans `/data` ; une API retirée (404/410) est
+  redemandée toutes les 6 heures. Un échec arrête les autres fenêtres jusqu'à
+  la tentative suivante.
+- L'heure de chaque tentative est écrite dans `/data` avant la requête : un
+  redémarrage ou une reconnexion ne redemande pas plus tôt.
+- Réponses bornées : 30 secondes, 2 Mo, 1000 quarts d'heure ; une redirection
+  n'est jamais suivie.
+
+## Ce qui est refusé dans une réponse
+
+Un quart d'heure n'est gardé que si son début et sa fin sont des instants ISO
+exacts à 15 minutes d'écart, alignés sur le quart d'heure, et ses deux prix des
+nombres en `CHF_kWh` entre −5 et 5 CHF. Une autre unité n'est jamais convertie,
+un texte ou une valeur vide n'est jamais un 0, deux prix différents pour un même
+quart d'heure : aucun des deux n'est cru. Une réponse ne fait jamais oublier un
+prix déjà reçu. Un jour complet n'étant plus redemandé, une correction
+ultérieure de Groupe E n'est pas vue ; un quart d'heure reçu de nouveau avec un
+autre prix (jour redemandé tant qu'il est incomplet) remplace l'ancien et est
+republié dans le calendrier, mais les coûts déjà calculés par Gladys ne sont pas
+recalculés (Gladys ne le propose pas à un contrat délégué).
+
+## Statut
+
+Le statut de l'intégration dit : jusqu'à quel jour les prix sont connus,
+l'heure de la dernière publication de Groupe E, la dernière vérification,
+l'erreur de la dernière tentative et l'heure de la suivante, un aujourd'hui ou
+un demain incomplet, un calendrier refusé, les contrats dont une saisie est hors
+bornes, un `/data` illisible ou non inscriptible.
+
+## Calendriers
+
+Les clés `groupe-e-vario` et `groupe-e-vario-grid` désignent le tarif publié
+par Groupe E. Si une autre intégration les a déclarées avant, Gladys refuse
+l'alimentation de celle-ci (le statut le dit) ; les contrats de cette intégration
+continuent de fonctionner, ils ne lisent pas les calendriers. Un calendrier non
+alimenté (Gladys injoignable) est réessayé à la vérification ou à la reconnexion
+suivante, sans nouvelle requête à Groupe E.
+
+## Données gardées
+
+`/data/groupe-e-vario-state.json` : les prix par jour (400 jours au plus),
+l'heure des tentatives, la pause éventuelle, ce que chaque calendrier a reçu.
+Aucun secret ni donnée personnelle. Un fichier illisible est relu toutes les
+10 secondes sans rien demander à Groupe E, jamais écrasé par un état vide.
+
+## Limites
+
+- Gladys ne sait pas exprimer un coût négatif pour un contrat délégué : compté 0.
+- Une correction de Groupe E sur un jour déjà complet n'est pas vue, et Gladys
+  ne recalcule pas les coûts passés d'un contrat délégué.
+- Le prix « intégré » est repris tel que Groupe E le publie : ce qu'il comprend
+  (TVA, taxes) n'a pas été vérifié sur une facture.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Groupe E Vario dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Groupe E Vario | `section` | Non | Non officiel, sans lien avec Groupe E. Vario est le tarif dynamique en option de Groupe E : un prix par quart d’heure, publié la veille vers 15 h. Cette intégration lit l’API publique des tarifs de Groupe E (sans compte ni clé) et ajoute deux contrats d’énergie dans Énergie → Contrats : « Groupe E Vario » (le prix intégré, énergie et réseau) et « Groupe E Vario (réseau) » (le prix réseau plus le prix de l’énergie que vous saisissez). Gladys tarife chaque demi-heure avec les quarts d’heure publiés ; un quart d’heure pas encore publié reste sans coût jusqu’à sa publication, jamais un prix deviné. Les prix alimentent aussi les calendriers groupe-e-vario et groupe-e-vario-grid. Rien à configurer ici. Source : Groupe E ; votre facture fait toujours foi. |
+
+## Comment installer Groupe E Vario dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Groupe E Vario apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-groupe-e-vario:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-groupe-e-vario](https://github.com/LM1LC3N7/gladys-groupe-e-vario).
+
+Groupe E Vario nécessite Gladys `>=5.3.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Groupe E Vario est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-groupe-e-vario) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-groupe-e-vario/blob/HEAD/docs/fr.md)

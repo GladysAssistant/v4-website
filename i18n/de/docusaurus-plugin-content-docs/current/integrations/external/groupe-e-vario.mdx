@@ -1,0 +1,195 @@
+---
+title: "Groupe E Vario Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Groupe E Vario"
+description: "Unofficial: Groupe E Vario dynamic tariff (Fribourg), per quarter hour, as energy contracts. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-groupe-e-vario.png"
+keywords:
+  - "groupe e vario"
+  - "groupe e vario smart home"
+  - "gladys groupe e vario"
+  - "groupe e vario gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-groupe-e-vario instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Groupe E Vario","description":"Unofficial: Groupe E Vario dynamic tariff (Fribourg), per quarter hour, as energy contracts.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-groupe-e-vario","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-groupe-e-vario.png","type":"provider","version":"0.1.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-12T02:44:32Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+**Unofficial integration, not affiliated with Groupe E. Never tested with a real
+Gladys energy contract nor a real meter yet; the Groupe E API itself was read
+for real on 2026-11-11.**
+
+Vario is the optional dynamic tariff of Groupe E (canton of Fribourg and
+around): a different price for every quarter hour, published the day before at
+about 15:00, and a bill computed on the meter's quarter-hour readings.
+
+This integration adds two **energy contracts** and two **price calendars** to
+Gladys:
+
+- **Groupe E Vario (integrated price)**: the Vario integrated price (energy and
+  grid) of each quarter hour;
+- **Groupe E Vario (grid)**: the Vario grid price of each quarter hour, plus the
+  energy price you type (when your energy is billed apart);
+- the calendars `groupe-e-vario` (integrated price) and `groupe-e-vario-grid`
+  (grid price), in CHF/kWh per quarter hour, that other contract templates can
+  read.
+
+## Source
+
+The public tariff API of Groupe E, version 2:
+`https://api.tariffs.groupe-e.ch/v2/tariffs` (no account, no key). Groupe E
+retired the version 1 (it answers "410 Gone"); if the version 2 goes too, the
+status says so ("the API v2 is gone") and the integration needs an update.
+Groupe E publishes no terms of use for this API (none found on 2026-11-11): the
+integration spares it (see below) and names itself with its own User-Agent.
+Your bill always prevails.
+
+## Getting started
+
+1. Install the integration (Gladys 5.3.0 or later, nothing to configure).
+2. In **Energy → Contracts**, create a "Groupe E Vario (integrated price)" or
+   "Groupe E Vario (grid)" contract on your main meter.
+3. Type, if needed:
+   - **Energy price per kWh** (grid template only), before VAT, 0 to 2 CHF;
+   - **Supplement per kWh**: what is billed per kWh and not in the Vario price
+     (federal grid surcharge, municipal charges…), before VAT, 0 to 2 CHF;
+   - **VAT**, 0 to 25 %, added to the whole price per kWh. 0 keeps the prices
+     as Groupe E publishes them: check on your bill whether they already include
+     VAT (8.1 % in 2026);
+   - **Fixed amount per month** (subscription, metering), VAT included, 0 to
+     1000 CHF, computed by Gladys.
+
+An input out of these bounds is not priced (the status counts those contracts),
+nor a half hour that would cost more than 10 CHF per kWh, the Gladys limit (the
+request fails with that reason).
+
+## How each half hour is priced
+
+Gladys sends half hours; Vario prices change every quarter hour. A half hour is
+priced as its two quarter hours, each with half of the energy (the Gladys
+convention for quarter-hour calendars):
+
+cost = (½ kWh × price of the 1st quarter + ½ kWh × price of the 2nd quarter +
+kWh × (energy typed + supplement)) × (1 + VAT).
+
+- **A missing price is never guessed nor counted 0**: when a quarter hour is not
+  known yet, the Gladys request fails, the half hour stays without a cost, and
+  Gladys computes it again later (about every 30 minutes). The missing day is
+  asked from Groupe E in the background. Gladys catches up a delegated contract
+  from its oldest half hour without a cost (31 days at most per run): a quarter
+  hour Groupe E never publishes (or that does not read) holds the catch-up of
+  that whole window back until it leaves the 31 days. A limit of the Gladys
+  engine, which cannot leave one interval without a cost and price the others.
+- The price never depends on the network at pricing time: only the prices
+  already received are used; a retry of Gladys gets the same answer.
+- **Negative price**: Gladys refuses a negative cost for a delegated contract. A
+  half hour whose total would be negative is counted 0 and labelled "negative
+  price, counted 0". The current price is shown as it is.
+- The **current price** (dashboard widget, "current price" scene condition) is
+  the one of the current quarter hour, with the next one when published;
+  unknown, it is empty, never 0.
+- Clock changes: the spring day has 92 quarter hours, the autumn one 100; the
+  hour from 02:00 to 03:00 seen twice in October has its own prices.
+
+## When Groupe E is asked
+
+- At the first start: the last 35 days, in windows of 7 days at most, one
+  request at a time.
+- Then: the next day, from 15:00 (Swiss time), then every 30 minutes until it
+  is complete; a complete day is never asked again.
+- A past day incomplete or empty (before the start of the API history, January
+  2026): asked again once a day at most.
+- A day a pricing request of Gladys did not find: asked a minute after the last
+  request at the earliest (later after a failure).
+- After a failure: tried again after 5, 15, 30 minutes, 1 h, then every
+  3 hours; a "429" follows its `Retry-After` (between 1 minute and 6 hours,
+  10 minutes without the header), kept in `/data`; a retired API (404/410) is
+  asked again every 6 hours. A failure stops the other windows until the next
+  attempt.
+- The time of each attempt is written to `/data` before the request: a restart
+  or a reconnection does not ask sooner.
+- Bounded answers: 30 seconds, 2 MB, 1000 quarter hours; a redirect is never
+  followed.
+
+## What an answer may not carry
+
+A quarter hour is kept only when its start and end are exact ISO instants
+15 minutes apart, on the quarter, and both of its prices numbers in `CHF_kWh`
+between −5 and 5 CHF. Another unit is never converted, a text or an empty value
+is never a 0, two different prices for one quarter hour: neither is believed.
+An answer never makes a price already received forgotten. A complete day is
+not asked again, so a later correction by Groupe E is not seen; a quarter hour
+received again with another price (a day asked again while incomplete) replaces
+the old one and is published again to the calendar, but the costs Gladys
+already computed are not computed again (Gladys does not offer it to a
+delegated contract).
+
+## Status
+
+The status of the integration tells: up to which day the prices are known, the
+time of the last Groupe E publication, the last check, the error of the last
+attempt and the time of the next one, a today or tomorrow not complete, a
+calendar refused, the contracts with an input out of bounds, a `/data` that
+cannot be read or written.
+
+## Calendars
+
+The keys `groupe-e-vario` and `groupe-e-vario-grid` name the tariff Groupe E
+publishes. If another integration declared them first, Gladys refuses this one's
+writes (the status says so); this integration's contracts keep working, they do
+not read the calendars. A calendar not fed (Gladys unreachable) is tried again
+at the next check or reconnection, without a new request to Groupe E.
+
+## Data kept
+
+`/data/groupe-e-vario-state.json`: the prices per day (400 days at most), the
+time of the attempts, the pause if any, what each calendar received. No secret,
+no personal data. A file that does not read is read again every 10 seconds
+without asking Groupe E anything, and never overwritten with an empty state.
+
+## Limits
+
+- Gladys cannot express a negative cost for a delegated contract: counted 0.
+- A correction by Groupe E of a day already complete is not seen, and Gladys
+  does not compute again the past costs of a delegated contract.
+- The "integrated" price is taken as Groupe E publishes it: what it includes
+  (VAT, levies) was not checked against a bill.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Groupe E Vario in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Groupe E Vario | `section` | Nein | Unofficial, not affiliated with Groupe E. Vario is the optional dynamic tariff of Groupe E: a price for every quarter hour, published the day before at about 15:00. This integration reads the public Groupe E tariff API (no account, no key) and adds two energy contracts in Energy → Contracts: "Groupe E Vario" (the integrated price, energy and grid) and "Groupe E Vario (grid)" (the grid price plus the energy price you type). Gladys prices every half hour with the published quarter hours; a quarter hour not published stays without a cost until it is, never a guessed price. The prices also feed the calendars groupe-e-vario and groupe-e-vario-grid. Nothing to configure here. Source: Groupe E; your bill always prevails. |
+
+## So installierst du Groupe E Vario in Gladys
+
+1. Öffne in Gladys **Integrationen**: Groupe E Vario erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-groupe-e-vario:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-groupe-e-vario](https://github.com/LM1LC3N7/gladys-groupe-e-vario).
+
+Groupe E Vario benötigt Gladys `>=5.3.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Groupe E Vario ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-groupe-e-vario) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-groupe-e-vario/blob/HEAD/docs/en.md)

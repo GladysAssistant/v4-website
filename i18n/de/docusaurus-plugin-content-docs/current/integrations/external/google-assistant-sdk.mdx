@@ -1,0 +1,193 @@
+---
+title: "Google Assistant SDK Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Google Assistant SDK"
+description: "Unofficial. Broadcast a message on your Google speakers from a scene (Google Assistant API). Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-google-assistant-sdk.png"
+keywords:
+  - "google assistant sdk"
+  - "google assistant sdk smart home"
+  - "gladys google assistant sdk"
+  - "google assistant sdk gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-google-assistant-sdk instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Google Assistant SDK","description":"Unofficial. Broadcast a message on your Google speakers from a scene (Google Assistant API).","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-google-assistant-sdk","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-google-assistant-sdk.png","type":"provider","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-10T23:42:32Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+**Unofficial connector, not affiliated with Google.** It uses the Google Assistant API (the "Google
+Assistant SDK", gRPC service `embeddedassistant.googleapis.com`) with **your own Google Cloud project**,
+to **broadcast a message on your Google speakers** from a Gladys scene: every speaker of the home, or
+the speakers of one room.
+
+> This integration was **never tested with a real Google account or a real speaker**: it was written
+> from the official Google sample and the libraries that use it (see `THIRD_PARTY_NOTICES.md`), and
+> tested against a fake Google. On 2026-11-10 the API still answered (it refuses an invalid token with
+> the gRPC status `UNAUTHENTICATED`), but nothing proves that a broadcast is still played since Google
+> replaced the Assistant with Gemini on part of the speakers. Reports welcome.
+
+## What it does
+
+- **Scene action "Broadcast on Google speakers"**: a message (500 characters at most, scene variables
+  allowed) and an optional room (60 characters at most, the name of a room of the Google Home app).
+  The integration asks the Assistant, in the language you chose, the phrase a person would say: in
+  French « Diffuse \<message> » or « Diffuse dans \<room> \<message> », in English "broadcast \<message>"
+  or "broadcast to \<room> \<message>".
+- **"Test the connection" button**: asks the Assistant the time, silently (no speaker plays anything),
+  and shows its answer. It checks the account, the token and the API without disturbing anyone.
+- **"Send a test broadcast" button**: the scene action from the Configuration screen.
+
+What the result of a scene action or a button means:
+
+- **"Accepted by Google Assistant."**: Google accepted the request. It is not a proof that a speaker
+  played the message: the API gives none.
+- **"Nothing sent: …"**: the request did not leave, or Google said it did not run it (refused token,
+  quota, invalid request, API disabled). The scene action fails.
+- **"Sent to Google Assistant, without confirmation: …"**: the request left, but no clear answer
+  came back (timeout, connection lost, Google error). The broadcast may have been played. The scene
+  action fails.
+
+## Before you start: your Google Cloud project
+
+Google gives no shared key: each user creates their own (free) project.
+
+1. Open the [Google Cloud console](https://console.cloud.google.com/) and create a project ("Gladys").
+2. Enable the **Google Assistant API** in this project
+   ([direct link](https://console.cloud.google.com/apis/library/embeddedassistant.googleapis.com)).
+3. **Google Auth Platform** → **Get started**: app name ("Gladys"), support email, audience
+   **External**, contact address, accept the terms, **Create**.
+4. **Audience**: click **Publish app** to switch it **In production**. An app left **In testing** gets
+   permissions that **expire after 7 days** (you would have to click Connect every week), and only the
+   accounts listed under **Test users** can sign in. If you keep it in testing, add your Google account
+   there. No verification by Google is needed for your own use: the app stays "unverified".
+5. **Clients** → **Create client**: type **Web application**, name "Gladys", and under **Authorized
+   redirect URIs** add exactly:
+
+   ```
+   https://my.gladysassistant.com/redirect/oauth
+   ```
+
+   (If you use the Gladys option "use the instance address" on a Gladys served over HTTPS, add the
+   address it shows instead.) Copy the **client ID** and the **client secret**.
+
+## Configuration in Gladys
+
+1. **Client ID** (ends with `.apps.googleusercontent.com`) and **Client secret** (starts with
+   `GOCSPX-`). The secret is kept by Gladys in its database, never shown again, sent only to Google.
+2. **Assistant language**: the language of your Google Assistant (the broadcast phrase is said in it).
+3. **Save**, then **Connect** next to "Google account". Google shows a warning "Google hasn't verified
+   this app": it is your own app, click **Advanced** → **Go to Gladys (unsafe)**, then allow "Use your
+   Google Assistant". The status turns to **"Google account linked."**
+4. Click **Test the connection**, then **Send a test broadcast**.
+
+Use the Google account that owns the speakers (the one of your home in the Google Home app). One
+account per Gladys.
+
+## Limits and behaviour
+
+- **One request at a time** to Google, at least **1 s apart**, at most **30 in 10 minutes**, and 5
+  broadcasts waiting at most: a scene that loops gets "Nothing sent" instead of flooding Google.
+- Each broadcast answers within **25 s**, waiting included (Gladys waits 30 s for a scene action): a
+  broadcast stuck behind slow ones gets "Nothing sent: the broadcasts before it took too long."
+- **Google asks to slow down** (quota, HTTP 429, or a server error): every request to Google pauses
+  60 s, then 2, 4… minutes up to 6 h if it happens again (or the longer delay Google gives), kept across a
+  restart. The status shows when requests resume, and is updated when the pause ends. Only a
+  success of the Assistant resets the doubling (a token renewal says nothing about its quota); Connect
+  is refused during a pause. At the end of a pause, if the access token has expired, the integration
+  renews it once by itself (to show a true status): one request, spaced by the doubling.
+- **Google refuses the access** (revoked, password changed, app still "In testing" for more than 7
+  days) or **refuses the client ID or secret**: the integration stops asking and the status says so.
+  This holds after a restart. It is lifted by **Connect** (a new authorization) or by a changed client
+  ID or secret.
+- Any other error of the token endpoint (unreadable answer, another HTTP error, no network) is not a
+  refusal: the next renewal waits 5 s, then 10, 20 s… up to 1 h.
+- The access token (1 h) lives in memory only; a request made less than 5 minutes before it expires
+  renews it first. A renewal that does not end within the 25 s of the broadcast gives "Nothing sent". If Google
+  refuses a cached access token, it is renewed once and the request is sent again; a refused fresh token
+  is reported ("did not accept a fresh access token"), not taken for a refused account.
+
+Known limits of the Google Assistant SDK (also listed by Home Assistant's integration):
+
+- Broadcasting to a **room** often fails outside English; leave the room empty to reach every speaker.
+- Speakers in **Do not disturb** mode stay silent.
+- The API no longer returns text answers: "Test the connection" usually shows "without text", which is
+  normal.
+- With Gemini on the speakers, Google acknowledged in 2026 a bug where a broadcast is answered as a
+  question instead of being played.
+- The scope `assistant-sdk-prototype` is the one of the official samples: Google may close it.
+
+## What is stored where
+
+- In the Gladys configuration: the client ID, the client secret and the **refresh token** written
+  after Connect (an off-form key, never shown in the interface, never sent to the browser, sent only
+  to Google). The access token is never stored.
+- In `/data/google-assistant.json`: the end of a pause asked by Google, and, after a refusal only, an
+  8-bit salted fingerprint of the refused credentials (it can tell "maybe the same" but never rebuild a
+  token). Nothing else.
+- The authorization code passes through the static Gladys page `my.gladysassistant.com/redirect/oauth`
+  on its way back to your Gladys (see the Gladys documentation); it is useless without your client
+  secret, which only goes from your Gladys to Google. No token passes through it.
+- No token, secret or authorization code in the logs, the status or the error messages.
+
+To remove the access: [myaccount.google.com/permissions](https://myaccount.google.com/permissions) →
+your app → **Remove access**.
+
+## Troubleshooting
+
+- **"Error 400: redirect_uri_mismatch"**: the authorized redirect URI of the OAuth client is not
+  `https://my.gladysassistant.com/redirect/oauth` exactly (no trailing slash), or the client is not of
+  type **Web application**.
+- **"Error 403: access_denied"**: the app is "In testing" and your account is not a test user.
+  Publish it, or add your account under **Test users**.
+- **"Google refused the access … Click Connect again."** every week: the app stayed "In testing".
+  Publish it, then click Connect.
+- **"Google Assistant refused the request … Is the Google Assistant API enabled?"**: enable the
+  **Google Assistant API** in the project of the OAuth client, wait a few minutes, test again.
+- **"Google did not hand a refresh token"**: Google only gives one at the first consent. Remove the
+  access of your app (link above), then click Connect again.
+- **Accepted, but no speaker plays**: check Do not disturb, the Google account (the one of the home),
+  the room name, and try an empty room. On a speaker that runs Gemini, the broadcast may be answered
+  instead of played (Google bug, outside this integration).
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Google Assistant SDK in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Your Google Cloud project | `section` | Nein | Unofficial connector, not affiliated with Google. Google offers no shared key: create a free Google Cloud project, enable the Google Assistant API, set up the consent screen (External) and publish it “In production” (otherwise the access expires after 7 days), then create an OAuth client of type “Web application” whose authorized redirect URI is exactly https:\/\/my.gladysassistant.com/redirect/oauth. The documentation details every step. |
+| Client ID | `string` | Ja | Ends with .apps.googleusercontent.com. |
+| Client secret | `secret` | Ja | Shown by Google when the client is created (it starts with GOCSPX-). Kept by Gladys in its database, never shown again, sent only to Google. |
+| Assistant language | `select` | Ja | The language of your Google Assistant: the broadcast command is said in it. |
+| Google account | `oauth2` | Nein | Save the fields above first, then click Connect and allow “Use your Google Assistant”. The refresh token is kept by Gladys in its database, never shown, sent only to Google. |
+
+## So installierst du Google Assistant SDK in Gladys
+
+1. Öffne in Gladys **Integrationen**: Google Assistant SDK erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-google-assistant-sdk:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-google-assistant-sdk](https://github.com/LM1LC3N7/gladys-google-assistant-sdk).
+
+Google Assistant SDK benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Google Assistant SDK ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-google-assistant-sdk) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-google-assistant-sdk/blob/HEAD/docs/en.md)

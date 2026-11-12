@@ -1,0 +1,174 @@
+---
+title: "Intégration domotique AI-on-the-edge, gratuite et open source"
+sidebar_label: "AI-on-the-edge"
+description: "Compteurs d'eau, de gaz et d'électricité lus par une ESP32-CAM avec AI-on-the-edge-device. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-ai-on-the-edge.png"
+keywords:
+  - "ai-on-the-edge"
+  - "domotique ai-on-the-edge"
+  - "gladys ai-on-the-edge"
+  - "ai-on-the-edge gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/guim31/gladys-ai-on-the-edge instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"AI-on-the-edge","description":"Compteurs d'eau, de gaz et d'électricité lus par une ESP32-CAM avec AI-on-the-edge-device.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-ai-on-the-edge","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-ai-on-the-edge.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-12T07:58:25Z"}} />
+
+Relève votre compteur d'eau, de gaz ou d'électricité dans Gladys avec
+[AI-on-the-edge-device](https://github.com/jomjol/AI-on-the-edge-device) : une ESP32-CAM
+photographie le compteur et lit ses chiffres par réseau de neurones. L'intégration reçoit les
+relevés par MQTT ou par l'API REST de l'appareil.
+
+> Développée sans le matériel : les formats viennent des sources du firmware et de sa
+> documentation. Vos retours sont les bienvenus sur le forum Gladys.
+
+## Ce que vous obtenez
+
+- Un appareil **compteur** par nombre lu par une ESP32-CAM : son index (m³, L ou kWh), le débit
+  (L/h) ou la puissance (kW), une alerte **Fuite probable** (eau et gaz), un indicateur d'erreur
+  de lecture, l'état de la lecture et l'heure de la dernière lecture valide.
+- Un appareil **caméra** par ESP32-CAM : en ligne, signal Wi-Fi, température du processeur et,
+  en REST, l'état du traitement.
+- Un widget de tableau de bord **Compteurs**, une action de scène **Relevé d'un compteur** et un
+  bouton **Vérifier la connexion**.
+
+## Avant de commencer
+
+- Une ESP32-CAM sous AI-on-the-edge-device (version 15 ou plus récente conseillée), réglée et
+  lisant correctement votre compteur dans sa propre interface web.
+- **MQTT** (conseillé) : dans la page MQTT de l'appareil, réglez le broker et notez le
+  _MainTopic_ (`watermeter` par défaut). L'appareil publie après chaque cycle (toutes les 5
+  minutes par défaut). Le broker installé par Gladys convient : ses identifiants sont sur la page
+  MQTT de Gladys.
+- **REST** : l'appareil doit être joignable en HTTP depuis Gladys. Rien à régler sur l'appareil.
+
+## Configuration
+
+- **Adresse du broker MQTT**, **Nom d'utilisateur**, **Mot de passe** : le broker où publie
+  l'appareil. Laissez l'adresse vide pour n'utiliser que REST.
+- **Sujets principaux** : le _MainTopic_ de chaque appareil, séparés par des virgules
+  (`watermeter, gasmeter`). Un appareil par sujet.
+- **Adresses des appareils** : pour REST, l'adresse IP ou le nom de chaque appareil, séparés par
+  des virgules. **Utilisateur** et **mot de passe de l'interface web** seulement si elle est
+  protégée.
+- **Lire toutes les** : le rythme REST. Calquez-le sur l'intervalle des appareils : lire plus
+  souvent n'apporte rien de neuf.
+- **Type de compteur** : `water_m3` (eau, m³), `water_l` (eau, L), `gas_m3` (gaz, m³) ou
+  `electricity_kwh` (électricité, kWh). **Type par nombre** donne un autre type à un nombre d'un
+  appareil qui lit plusieurs compteurs : `main=water_m3, elec=electricity_kwh`.
+- **Fuite probable après** : de 1 à 24 heures, ou jamais.
+- **Langue des textes** : noms des fonctionnalités, état de la lecture, phrases des scènes.
+
+## Appareils
+
+Ouvrez l'onglet **Découverte** de l'intégration dès qu'un appareil a publié un cycle (ou a été
+lu en REST), et ajoutez les appareils voulus. **Le type de compteur se choisit avant d'ajouter
+le compteur** : il fixe la fonctionnalité et l'unité de l'index.
+
+- **Index** : pour l'électricité, un _Index_ en kWh, la fonctionnalité de compteur d'énergie que
+  Gladys connaît. Pour l'eau et le gaz, un capteur de volume en m³ ou en L : Gladys 5 n'a pas
+  encore de tableau de bord d'énergie pour eux.
+- **Débit (L/h)** ou **Puissance** : d'après le débit que le firmware calcule entre deux
+  lectures valides.
+- **Erreur de lecture** et **État de la lecture** : OK, un chiffre illisible, une baisse ou une
+  hausse trop forte refusée par les contrôles de plausibilité du firmware. L'index garde sa
+  dernière valeur valide.
+- **En ligne** : le LWT de l'appareil en MQTT (ou trois cycles sans nouvelles), la réponse de
+  l'appareil en REST.
+
+## Fuite probable
+
+Eau et gaz seulement. Quand l'index monte à chaque cycle pendant la durée choisie, la
+fonctionnalité **Fuite probable** passe à 1 : un robinet resté ouvert, une chasse d'eau qui fuit,
+une canalisation. Un cycle sans changement visible est toléré (un petit débit fait avancer le
+dernier chiffre lentement) ; l'alerte cesse quand l'index n'a pas bougé pendant trois cycles.
+Utilisez-la comme déclencheur de scène, comme tout détecteur de fuite.
+
+## Scènes
+
+- Déclencheur : n'importe quelle fonctionnalité, comme d'habitude, par exemple **Fuite probable**
+  à 1 ou **Erreur de lecture** à 1.
+- Action **Relevé d'un compteur** : le dernier index d'un compteur en une phrase prête pour un
+  message (`watermeter compteur : 1 234,568 m³, 10 L/h.`) et en valeurs : `index`, `flow`,
+  `reading_error`, `leak`.
+
+## Tableau de bord
+
+Le widget **Compteurs** liste les compteurs ajoutés à Gladys avec leur index, en rouge pour une
+fuite probable et en orange quand la dernière lecture a échoué. **Afficher le débit ou la
+puissance** masque la seconde valeur.
+
+## Vérifier la connexion
+
+Le bouton **Vérifier la connexion** indique si le broker répond, combien de sujets principaux
+ont été entendus et combien d'appareils REST répondent.
+
+## Limites
+
+- Développée sans ESP32-CAM : testée avec les formats exacts des messages du firmware, un vrai
+  broker Mosquitto et un faux appareil qui sert les réponses REST.
+- Le firmware ne publie pas l'état du traitement en MQTT : la fonctionnalité **État du
+  traitement** n'existe qu'en REST.
+- La détection de fuite dépend de la résolution du compteur (le dernier chiffre lu) et de
+  l'intervalle des cycles de l'appareil.
+- Changer un sujet principal ou l'adresse d'un appareil crée de nouveaux appareils dans Gladys.
+- Sans lien avec le projet AI-on-the-edge-device.
+
+## Dépannage
+
+- **Rien dans l'onglet Découverte** : attendez un cycle (5 minutes par défaut), vérifiez le
+  _MainTopic_ et que l'appareil utilise le même broker ; en REST, que Gladys joint l'adresse de
+  l'appareil.
+- **Erreur de lecture souvent à 1** : corrigez l'alignement et les chiffres dans l'interface web
+  de l'appareil ; l'intégration ne fait que rapporter ce que lit le firmware.
+- **Le broker refuse le nom d'utilisateur ou le mot de passe** : vérifiez les identifiants de la
+  page MQTT de Gladys ou de votre broker.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par AI-on-the-edge dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Connecter AI-on-the-edge-device | `section` | Non | Une ESP32-CAM photographie le compteur et lit ses chiffres par réseau de neurones. Gladys reçoit les relevés par MQTT (conseillé : l'appareil publie après chaque cycle) ou en interrogeant son API REST. Remplissez l'un des deux, ou les deux pour des appareils différents. |
+| Adresse du broker MQTT | `string` | Non | Le broker réglé dans la page MQTT de l'appareil : mqtt:\/\/ (port 1883) ou mqtts:\/\/ (port 8883). Laissez vide pour n'utiliser que REST. |
+| Nom d'utilisateur | `string` | Non | Laissez vide si le broker accepte les clients anonymes. |
+| Mot de passe | `secret` | Non |  |
+| Accepter un certificat auto-signé | `boolean` | Non | mqtts:\/\/ seulement : le certificat du broker n'est alors pas vérifié. |
+| Sujets principaux | `string` | Non | Le MainTopic de chaque appareil (page MQTT de l'appareil), séparés par des virgules : un appareil par sujet. |
+| API REST | `section` | Non | Sans MQTT, l'intégration demande ses relevés à chaque appareil (/json, /rssi, /cpu_temperature, /statusflow) au rythme choisi, une requête après l'autre. |
+| Adresses des appareils | `string` | Non | Adresse IP ou nom de chaque appareil, séparés par des virgules. Laissez vide pour n'utiliser que MQTT. |
+| Utilisateur de l'interface web | `string` | Non | Seulement si l'interface web des appareils est protégée par un mot de passe. |
+| Mot de passe de l'interface web | `secret` | Non |  |
+| Lire toutes les | `select` | Non | Calquez-le sur l'intervalle des appareils (5 minutes par défaut) : lire plus souvent n'apporte rien de neuf. |
+| Compteurs | `section` | Non | Chaque nombre lu par un appareil devient un compteur dans Gladys. Son type fixe la fonctionnalité et l'unité de l'index : choisissez-le avant d'ajouter le compteur. |
+| Type de compteur | `select` | Non |  |
+| Type par nombre | `string` | Non | Facultatif, pour un appareil qui lit plusieurs compteurs : nombre=type, séparés par des virgules. Types : water_m3, water_l, gas_m3, electricity_kwh. |
+| Fuite probable après | `select` | Non | Eau et gaz : l'index qui monte sans pause pendant cette durée active la fonctionnalité Fuite probable. |
+| Langue des textes | `select` | Non | Noms des fonctionnalités à l'ajout d'un appareil, état de la lecture, phrases des scènes et messages des actions. |
+
+## Comment installer AI-on-the-edge dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : AI-on-the-edge apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/guim31/gladys-ai-on-the-edge:1.0.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/guim31/gladys-ai-on-the-edge](https://github.com/guim31/gladys-ai-on-the-edge).
+
+AI-on-the-edge nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+AI-on-the-edge est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [guim31](https://github.com/guim31), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/guim31/gladys-ai-on-the-edge) — [source de cette documentation](https://github.com/guim31/gladys-ai-on-the-edge/blob/HEAD/docs/fr.md)

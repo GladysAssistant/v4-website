@@ -1,0 +1,194 @@
+---
+title: "OpenEI URDB (US tariffs) smart home integration, free and open source"
+sidebar_label: "OpenEI URDB (US tariffs)"
+description: "Unofficial: US utility electricity tariffs (OpenEI URDB) priced for Gladys energy contracts. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-openei-urdb.png"
+keywords:
+  - "openei urdb (us tariffs)"
+  - "openei urdb (us tariffs) smart home"
+  - "gladys openei urdb (us tariffs)"
+  - "openei urdb (us tariffs) gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-openei-urdb instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"OpenEI URDB (US tariffs)","description":"Unofficial: US utility electricity tariffs (OpenEI URDB) priced for Gladys energy contracts.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-openei-urdb","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-openei-urdb.png","type":"provider","version":"0.1.1","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-11-11T02:02:38Z"}} />
+
+Unofficial integration, not affiliated with OpenEI, NREL or any utility. It
+prices your electricity consumption in Gladys with the tariff of your US
+utility, read from the **Utility Rate Database** (URDB) of OpenEI: the public
+database of the rates of about 3,700 US utilities (time of use, seasons,
+tiers, fixed charges, demand charges), maintained for the Department of
+Energy (data under CC0).
+
+It adds **contract templates** to Energy > Contracts (one per US time zone),
+priced by the integration (Gladys "delegated" mode): you type the label of
+your URDB tariff in the contract, the integration reads that tariff and
+returns the cost of each half hour your meter reports.
+
+Tried against the real URDB API (version 7, `DEMO_KEY`) on 2026-11-11 with
+three real tariffs (PG&E E-TOU-C and E-1, APS R-3), with the fake Gladys of the
+SDK, and in a Gladys 5.3 sandbox in Docker (a contract created on the E-TOU-C
+tariff, its current price read); never tested with a real Gladys at home, on a
+real meter and a real bill.
+
+## Setup
+
+1. Get a free API key on the OpenEI sign-up page
+   ([https://openei.org/services/api/signup/](https://openei.org/services/api/signup/)). For a first try, `DEMO_KEY`
+   works too, but it is shared and limited to about 10 requests an hour.
+2. Install the integration, type the key in its configuration. The key is
+   kept by Gladys in its database, never shown again, sent only to
+   `api.openei.org` (in a request header, never in an address), never written
+   in the logs, the status or `/data`.
+3. Find the label of your tariff: the **Find tariffs** button lists the
+   approved tariffs in effect for a 5-digit ZIP code (residential by default),
+   label first. You can also search on [https://apps.openei.org/USURDB/](https://apps.openei.org/USURDB/): the
+   label is the end of the tariff page address (24 characters, for instance
+   `69de6fa62aa9e9994f0ed2bd`); the whole address is accepted too. Check the
+   name on your bill: a utility often has several regions and plans.
+4. In **Energy > Contracts**, create a contract on your electric meter with the
+   template **OpenEI URDB tariff** of your time zone (Eastern, Central,
+   Mountain, Arizona without daylight saving, Pacific, Alaska, Hawaii), type
+   the label, and the fixed charge (below). The contract timezone must be the
+   one of your utility: the time-of-use hours of URDB are its local hours.
+5. The status of the integration shows each tariff in use: its name, the
+   utility, the date it took effect, the date it was read, what Gladys does
+   not compute, and its fixed charge.
+
+## What is computed
+
+For each half hour, in the local time of the contract:
+
+- **Time of use and seasons**: the period of the URDB schedule for that month
+  and hour, the weekend schedule on Saturday and Sunday. Daylight saving
+  changes follow the contract timezone (the repeated hour of November is
+  priced as that local hour, twice).
+- **Tiers**: judged on the kWh of the billing period before that half hour
+  (Gladys sends them; the billing period starts on the day set in the
+  contract). A half hour straddling a bound is split pro rata. A bound in
+  "kWh daily" (the California baseline allowances) is summed over the days of
+  the billing period, counted inside the contract validity (a contract
+  starting mid-period gets the days it covers), each day with the bound of its
+  own season: a period across June 1 gets its May days at the winter
+  allowance and its June days at the summer one. The validity is read again
+  from Gladys for every pricing, so a contract whose dates you change is
+  priced with the new ones. With time of use, the tiers
+  count all the kWh of the period, every time slot together.
+- **Price** = rate + adjustment of the tier, plus the monthly fuel adjustment
+  when URDB has one, in $/kWh. The cost returned to Gladys is the energy only.
+- **Fixed charge**: Gladys computes it itself from the contract. URDB gives it
+  per day, month or year: the status shows it, type it in the field "Fixed
+  charge per day" or "Fixed charge per month" of the contract (a yearly charge
+  is shown divided by 12; a unit URDB does not give is shown as "unknown
+  unit": check it on your bill).
+- A tariff still in draft in URDB (not approved by its reviewers) is priced
+  too, and its line in the status says "not approved in URDB".
+
+The **current price** (dashboard, scenes) is the price of the time slot now
+for the kWh already counted in the billing period, with the time of the next
+change of time slot and its price. It cannot foresee a tier change that the
+consumption to come will cause.
+
+## What is not computed: said, never faked
+
+Gladys prices a delegated contract per half hour; some parts of a US tariff do
+not fit that model. They are **left out of the cost**. When the tariff has
+them, the first two are listed in the status of each tariff ("not computed by
+Gladys"); the others are never in the status:
+
+- **Demand charges** ($/kW of peak demand: `demandratestructure`, monthly
+  `flatdemandstructure`, coincident demand). They depend on the peak of the
+  whole billing period, which a half hour priced alone cannot know. Your bill
+  will be higher than the Gladys cost by these charges.
+- **Minimum bill** (`mincharge`).
+- **Holidays**: URDB has no holiday calendar; a holiday is priced like the
+  other days of its week (weekday rates on a weekday holiday).
+- **Selling back** (net metering, `sell` rates): Gladys prices consumption
+  only.
+- Taxes and local fees that URDB does not list.
+
+Some tariffs are **refused** (no cost at all rather than a wrong one, with the
+reason in the status): tiers bounded in kWh per kW of demand ("kWh/kW"), a
+rate below 0 or above 10 $/kWh (a data error), a schedule pointing nowhere, a
+tariff without energy charge, a tariff outside the USA. Gladys then shows
+those half hours without a cost and asks again later.
+
+## Freshness of the data
+
+URDB is maintained by hand: a tariff may be **years old** or may have been
+replaced by a newer one with another label. The status shows the date each
+tariff took effect ("in effect since") and, when URDB has one, the date it
+ended. When your utility changes its rates, find the new label and create a
+new contract from that date.
+
+Each tariff is read when a contract needs it, then **at most once a day**,
+and kept in `/data` with the date it was read: a restart (with `/data`
+readable), an outage of OpenEI or the quota never stops the pricing of a
+tariff already read.
+
+While `/data` cannot be read (a disk problem), nothing is written to it and
+**no tariff is read from OpenEI** (a refusal or a pause it holds would be
+unknown): a contract created meanwhile is not priced until `/data` is
+readable again; the status says so. It is read again every 10 seconds.
+
+## Quota and errors
+
+- OpenEI limits the requests per key and per hour (`DEMO_KEY`: about 10). The
+  integration sends one request at a time, at least 2 seconds apart, one per
+  tariff and per day, plus one per click of a button. A **429**, an
+  "over rate limit" answer or a quota at 0 pauses every request (an hour,
+  doubled, up to 6 hours; `Retry-After` honoured); a server error pauses a
+  minute, doubled. The pause survives a restart.
+- A **key refused** by OpenEI (`API_KEY_INVALID`, `API_KEY_DISABLED`...) stops
+  every request sent on its own until you save another key or the
+  **Test** button succeeds. Another 403 or a 401 is not a refusal. After a
+  restart, the refusal is recognized by a fingerprint of 8 bits of the key
+  (never the key): a different key has 1 chance in 256 to be taken for the
+  refused one at a restart; the Test button lifts it.
+- A tariff that cannot be read is tried again 10 minutes later, doubled up to
+  6 hours. Its pricing fails meanwhile (Gladys retries); a tariff already read
+  keeps pricing.
+- The **Test** button sends at most one request per click, and none when the
+  key was accepted less than 10 minutes ago and no tariff is due.
+
+## Data and licence
+
+Tariff data: Utility Rate Database, OpenEI (NREL, data collected for the US
+Department of Energy), under **CC0** (public domain dedication). This
+integration is under the Apache License 2.0; see `THIRD_PARTY_NOTICES.md`.
+
+## Configuration settings
+
+These are the settings OpenEI URDB (US tariffs) asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| US electricity tariffs (OpenEI URDB) | `section` | No | Unofficial, not affiliated with OpenEI or NREL. Adds contract templates to Energy > Contracts: pick the one of your time zone, then type the URDB label of your tariff ("Find tariffs" button below). The integration reads that tariff from the Utility Rate Database (once a day at most, kept in /data) and prices your consumption: time of use, seasons, tiers. Demand charges ($/kW) and the minimum bill are not computed; the fixed charge is typed in the contract. Holidays are priced like other days (URDB has no holiday calendar). URDB data can be old: the status shows the effective date. |
+| OpenEI API key | `secret` | Yes | Free, from the OpenEI sign-up page (40 letters and digits). Kept by Gladys in its database, never shown again, sent only to api.openei.org. |
+
+## How to install OpenEI URDB (US tariffs) in Gladys
+
+1. In Gladys, open **Integrations**: OpenEI URDB (US tariffs) appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-openei-urdb:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-openei-urdb](https://github.com/LM1LC3N7/gladys-openei-urdb).
+
+OpenEI URDB (US tariffs) requires Gladys `>=5.2.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+OpenEI URDB (US tariffs) is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-openei-urdb) — [source of this documentation](https://github.com/LM1LC3N7/gladys-openei-urdb/blob/HEAD/docs/en.md)

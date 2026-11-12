@@ -1,0 +1,231 @@
+---
+title: "YunoHost Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "YunoHost"
+description: "YunoHost server: upgrades waiting, services, diagnosis, backups; actions off by default. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-yunohost.png"
+keywords:
+  - "yunohost"
+  - "yunohost smart home"
+  - "gladys yunohost"
+  - "yunohost gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-yunohost instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"YunoHost","description":"YunoHost server: upgrades waiting, services, diagnosis, backups; actions off by default.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-yunohost","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-yunohost.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-11T00:26:40Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+A **YunoHost** server (version 11.1 or later) in Gladys, through the API of
+its web administration. Handy to know at a glance, or in a scene, that
+upgrades are waiting, that a service stopped, that the diagnosis found a
+problem, or that the last backup is getting old:
+
+- the server becomes a Gladys device (Discovery tab): **YunoHost version**,
+  **system packages to upgrade**, **apps to upgrade**, **major YunoHost
+  upgrade available** (yes / no), **pending migrations**, **package lists
+  age** (hours since YunoHost last fetched the lists of packages), **services
+  down**, **diagnosis errors** and **diagnosis warnings**, **local backups**
+  and **newest backup age** (hours), **last action** (the outcome of the last
+  button pressed); and for each service YunoHost lists: **running** (yes /
+  no);
+- buttons to **upgrade the system**, **upgrade the apps**, **back up the
+  server** and **restart** a service, each one refused until you allow it.
+
+Gladys only reads what YunoHost keeps: it never refreshes the update lists
+(YunoHost fetches the app catalog every day; the system package lists are
+fetched by YunoHost or by Debian, see "Package lists age"), and it never runs
+the diagnosis (YunoHost runs it twice a day). A service counts as **down**
+when it is enabled at boot and stopped or failed; a service disabled on
+purpose is not down; a service whose state YunoHost does not know (a
+one-shot service) is unknown, not down. The diagnosis counts what you did not
+ignore in the web admin.
+
+> **This integration has never been tested with a real YunoHost server.**
+> This first version follows the routes of the YunoHost administration API
+> (its "actionsmap", as the developer documentation describes it) and was
+> tested against a fake server only. Tell on the Gladys forum what works and
+> what does not, with your YunoHost version.
+
+Unofficial integration, not affiliated with the YunoHost project. YunoHost is
+free software under the AGPL: this integration only calls its API, it holds
+none of its code.
+
+## Before you start
+
+1. Gladys needs a YunoHost **administrator** (a member of the `admins` group,
+   such as the first user created at the installation). Its password is kept
+   by Gladys in its database, never shown again, and sent only to the
+   server.
+2. If the **allowlist** of the web admin is on (YunoHost settings, security),
+   add the address of Gladys to it, or the server answers HTTP 403.
+3. Add one integration per server.
+
+## Settings
+
+- **Address of the server**: its local IP address or its domain, as you type
+  it to open the web admin. HTTPS only (port 443, or `:port`); an address
+  copied from the browser (`https://.../yunohost/admin/`) is accepted.
+- **Administrator**, **Password**.
+- **Certificate fingerprint** (optional): see below.
+- **Refresh**: 5, 15 (default), 30 or 60 minutes. The test button, a save of
+  the form and a restart of Gladys or of the container do not read sooner
+  (the time of the last attempt is kept, written before the reading). The end
+  of an upgrade or of a backup brings one reading forward (15 s after it).
+- **Allow upgrades from Gladys**, **Allow backups from Gladys**: off by
+  default.
+- **Services Gladys may restart**: empty by default (no restart). The names
+  of the services, as the Services page of the web admin lists them,
+  separated by commas, 16 at most; each gets a **Restart** button.
+
+## The HTTPS certificate
+
+Gladys checks the certificate of the server right after the TLS handshake and
+**before** sending the password:
+
+- a certificate that a **public authority** vouches for, made out to the
+  address you typed (a domain with its Let's Encrypt certificate): accepted
+  as a browser would, never pinned; its renewals (every two or three months,
+  with a new key) are accepted too;
+- any other certificate (self-signed, an IP address, a `.local` name, or a
+  certificate made out to another name than the address typed): checked by
+  its SHA-256 fingerprint. The field empty, at the first connection: Gladys
+  writes the certificate met to its storage, **then** sends the password. If
+  its storage cannot be read, nothing is learned and nothing is sent (the
+  status shows the fingerprint met; the storage is read again every 10 s); if
+  it cannot be written, the same, tried again at the next start (a save of
+  the form, a reconnection of Gladys). Afterwards, another certificate stops everything (nothing is sent)
+  and the status shows its fingerprint;
+- a server whose certificate verified before and no longer does (expired,
+  made out to another name, or no known authority): everything stops, nothing
+  is sent, it is never learned silently; the status says which of the three;
+- after a stop, saving the form again changes nothing. Check the fingerprint
+  (your browser shows it: padlock, certificate, SHA-256), then press **Trust
+  the certificate met** twice within 2 minutes (the first press shows the
+  fingerprint, the second trusts it: it is pinned from then on), or type it in
+  **Certificate fingerprint**. A fingerprint typed in the form is the only one
+  trusted until you change it, even when an authority vouches for another.
+
+## The actions
+
+Each action is a button, never a switch: a "turn everything off" of a voice
+assistant or a scene never reaches it. Gladys never upgrades, backs up nor
+restarts anything by itself.
+
+- **Upgrade the system** and **Upgrade the apps** run what the Upgrade
+  buttons of the web admin run. An upgrade of YunoHost itself restarts its
+  API: the readings may fail for a minute meanwhile.
+- **Back up the server** makes a full local backup (every app and the
+  system), as the web admin does by default: mind the free disk space.
+- **Restart** (one button per service listed) restarts that service. Its
+  outcome is read again 5 s later: "done, the service is running", or "done,
+  but the service is not running", or "running, the restart is not seen yet"
+  when YunoHost still gives the time of its previous start. Restarting
+  nginx or yunohost-api from Gladys cuts its own answer.
+
+An upgrade or a backup runs inside YunoHost, for up to an hour: the press is
+answered as soon as the request left (and YunoHost did not refuse it within a
+few seconds); the outcome shows in **Last action** ("finished", "refused by
+YunoHost", "failed or refused", "sent, no final answer: it may still be
+running"). A restart is answered by YunoHost: without an answer within the 5 s
+Gladys gives a command, the press says "sent, without an answer yet", never a
+success.
+
+A press is refused, nothing sent, in these cases:
+
+- the option of the action is off, or the service is not listed (checked
+  again right before the request is written);
+- the configuration is incomplete, the login or the certificate was refused,
+  a login would be needed while the wait after a refusal runs, or Gladys is in a pause asked by the
+  server (HTTP 429 or 5xx);
+- the same action was sent a short while ago: 30 minutes for an upgrade, 1
+  hour for a backup, 2 minutes for the restart of a service (kept across
+  restarts), or this delay cannot be written to the storage of the
+  integration (/data), or that storage cannot be read;
+- an action is already running, or a reading in progress does not end within
+  2.5 s of the press;
+- the server does not answer the read made just before within 2.5 s (for a
+  restart: YunoHost does not know the service);
+- the request could not be written within 3.5 s of the press.
+
+## Failures
+
+- **Credentials refused** (by the login route of YunoHost only, HTTP 401):
+  nothing is sent again until the user name or the password is saved again in
+  the form (the password saved is then tried once, even the same one); the
+  **Test the connection** button tries once more, when a reading is due.
+  After a refusal, **no login at all** for 5 minutes, then 10, 20... (6 hours
+  at most) for each refusal in a row, kept across restarts: fail2ban on the
+  server bans an address after a few refused logins. Gladys keeps an 8-bit
+  marker of the refused password (shared by 1 password in 256, never the
+  password) so that a restart does not try it again.
+- **HTTP 403** (the allowlist of the web admin): said as such, tried again,
+  never a refusal of the password.
+- **HTTP 429 or 5xx** on the login or on the versions route: a pause of every
+  request (the refresh interval at least, up to 6 hours, or what the server asks), kept across restarts. The
+  other routes (updates, services, diagnosis, backups) never pause nor stop
+  the reading (a refused certificate or login aside, which stops everything
+  wherever it is met): what they did not give this time is said in the
+  status, and a route failing is asked again 1, 2, 4... readings later, at
+  most 6 hours apart.
+- **No answer**: tried again after the refresh interval, then twice as long
+  each time, up to an hour. After a refused login, the status adds that
+  fail2ban may be banning Gladys.
+
+Neither the password nor the session cookie is logged or published; the
+domains, app names and messages of the server are not either. The storage
+keeps the certificate fingerprint, the 8-bit marker above, the login wait,
+the pause and the time of the last press of each action.
+
+## Not done (yet)
+
+Refreshing the update lists, running the diagnosis, the free disk space, the
+list of apps and their versions, the domains and their certificates:
+say on the forum if you need one.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt YunoHost in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| How it works | `section` | Nein | Gladys reads one YunoHost server (version 11.1 or later) through the API of its web administration, with an administrator account, in HTTPS. The server becomes a device: YunoHost version, system packages and apps to upgrade, major upgrade available, pending migrations, age of the package lists, services down and, for each service, whether it runs, diagnosis errors and warnings, local backups and the age of the newest, and the last action sent from Gladys. Gladys never refreshes the update lists nor runs the diagnosis: it reads what YunoHost keeps (YunoHost runs its diagnosis twice a day). Buttons can upgrade the system or the apps, back up the server, or restart a service: each one is refused unless you allow it below. Add one integration per server. Unofficial integration, not affiliated with the YunoHost project. |
+| Address of the server | `string` | Ja | The local IP address (or the domain) of the YunoHost server, as you type it to open its web admin (https:\/\/\<address>/yunohost/admin). HTTPS only; an optional port after a colon (443 by default). |
+| Administrator | `string` | Ja | The user name of a YunoHost administrator (a member of the admins group, such as the first user created at the installation). |
+| Password | `secret` | Ja | The password of this administrator. Kept by Gladys in its database, never shown again, sent only to the YunoHost server (on a connection whose certificate was checked first). After a refusal, Gladys waits 5 minutes or more before any other login, so that fail2ban does not ban it. |
+| Certificate fingerprint (optional) | `string` | Nein | Empty: a certificate a public authority vouches for, made out to the address typed (a domain with Let's Encrypt), is accepted as a browser would, renewals included. Any other one (self-signed, an IP address) is pinned at the first connection (written to the storage of Gladys before the password is sent); then another certificate, or one that no longer verifies, is refused, its fingerprint shown, until the "Trust the certificate met" button (two clicks) accepts it. To trust only one certificate yourself, type its SHA-256 fingerprint here (as your browser shows it). |
+| Refresh | `select` | Ja | How often the server is read. The test button, a save of the form or a restart do not read sooner; the end of an action brings one reading forward. |
+| Actions | `section` | Nein | Reading only by default. Each action is a button (never a switch: a "turn everything off" never reaches it), refused unless allowed here, with a delay before the same action can be sent again (30 min for an upgrade, 1 h for a backup, 2 min for a restart). An upgrade or a backup runs inside YunoHost for up to an hour: the button answers once the request left, the outcome shows in "Last action". Gladys never upgrades, backs up nor restarts anything by itself. |
+| Allow upgrades from Gladys | `boolean` | Nein | Off: the "Upgrade the system" and "Upgrade the apps" buttons are refused and nothing is sent. On: they run what the Upgrade buttons of the web admin run. |
+| Allow backups from Gladys | `boolean` | Nein | Off: the "Back up the server" button is refused and nothing is sent. On: it makes a full local backup (every app and the system), as the web admin does by default; mind the free disk space. |
+| Services Gladys may restart | `string` | Nein | Empty: no service can be restarted. Otherwise the names of the services (as the Services page of the web admin lists them), separated by commas, 16 at most: each gets a "Restart" button. Restarting nginx or yunohost-api from Gladys cuts its own answer. |
+
+## So installierst du YunoHost in Gladys
+
+1. Öffne in Gladys **Integrationen**: YunoHost erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-yunohost:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-yunohost](https://github.com/LM1LC3N7/gladys-yunohost).
+
+YunoHost benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+YunoHost ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-yunohost) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-yunohost/blob/HEAD/docs/en.md)

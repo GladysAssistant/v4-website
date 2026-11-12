@@ -1,0 +1,152 @@
+---
+title: "Intégration domotique IOmeter, gratuite et open source"
+sidebar_label: "IOmeter"
+description: "Non officiel : lecteur de compteur IOmeter en local : puissance, index consommé et injecté. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-iometer.png"
+keywords:
+  - "iometer"
+  - "domotique iometer"
+  - "gladys iometer"
+  - "iometer gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-iometer instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"IOmeter","description":"Non officiel : lecteur de compteur IOmeter en local : puissance, index consommé et injecté.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-iometer","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-iometer.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-11T16:29:16Z"}} />
+
+Intégration non officielle, sans lien avec IOmeter GmbH. **Jamais testé avec un
+vrai IOmeter** : construite d'après la bibliothèque cliente publiée par le
+fabricant. Merci de signaler ce que vous voyez.
+
+## Ce qu'elle fait
+
+IOmeter est un lecteur posé sur l'interface optique d'un compteur intelligent
+allemand (moderne Messeinrichtung ou passerelle de compteur), avec un pont
+Wi-Fi sur votre réseau. Cette intégration lit **l'API locale du pont**, sans
+cloud ni compte, et **en lecture seule** : elle n'écrit rien sur le pont ni sur
+le compteur.
+
+| Valeur                                                                                   | Dans Gladys                                     | Quand           |
+| ---------------------------------------------------------------------------------------- | ----------------------------------------------- | --------------- |
+| Puissance prélevée sur le réseau (W)                                                     | capteur d'énergie, puissance                    | toutes les 10 s |
+| Puissance nette, négative en injection (W)                                               | capteur                                         | toutes les 10 s |
+| Index de consommation 1.8.0 (kWh)                                                        | capteur d'énergie, index : le suivi énergétique | chaque minute   |
+| Index des tarifs 1 et 2, index d'injection 2.8.0 (kWh)                                   | capteurs                                        | chaque minute   |
+| Puissance de chaque phase (W)                                                            | capteurs                                        | toutes les 10 s |
+| Pile du lecteur (%), signaux du pont et du lecteur (dBm), lecteur connecté et posé (1/0) | capteurs                                        | chaque minute   |
+
+Seules les valeurs que votre compteur donne sont créées. Gladys calcule
+lui-même la consommation et son coût à partir de l'index de consommation.
+L'injection n'y entre pas : c'est un simple capteur. Ce n'est pas l'intégration
+Discovergy (inexogy), qui lit le cloud de l'opérateur de comptage.
+
+## Mise en place
+
+1. Installez votre IOmeter avec son application, pour que le pont soit sur
+   votre Wi-Fi.
+2. Trouvez l'adresse IP du pont dans votre box ou dans l'application IOmeter.
+   Vous pouvez aussi laisser l'adresse vide et ouvrir l'onglet **Découverte** :
+   les ponts annoncés sur votre réseau sont listés dans l'état de
+   l'intégration (rien n'est lu tant que vous n'avez pas saisi d'adresse).
+3. Saisissez l'adresse dans la configuration de l'intégration et enregistrez.
+   Cliquez sur **Tester la connexion** : elle lit une fois la puissance nette
+   et l'index de consommation.
+4. Dans l'onglet **Découverte**, créez l'appareil IOmeter.
+
+Donnez au pont une adresse fixe dans votre box. Si elle change, saisissez la
+nouvelle : l'appareil et son historique sont gardés.
+
+## La garde de l'index de consommation
+
+L'index de consommation est facturé par Gladys : un faux saut compterait des
+kWh jamais consommés. L'intégration ne publie donc un nouvel index que s'il est
+plausible après le précédent (pas plus bas, pas plus de 100 kW en moyenne
+depuis). Un saut ou une baisse est **retenu** : la dernière valeur acceptée est
+renvoyée, l'état de l'intégration dit ce qui est retenu, et cela reste retenu
+après un redémarrage. Ni le temps ni la répétition ne le confirment.
+
+Si la valeur est juste (nouveau compteur, remise à zéro, longue coupure),
+cliquez deux fois sur **Accepter l'index retenu** dans la configuration : le
+premier clic liste la valeur et n'accepte rien, le second, quelques secondes
+plus tard et dans les 5 minutes, prend exactement cette valeur. Un saut est
+alors compté d'un coup comme consommation ; une baisse ne facture rien et la
+consommation repart de là. Enregistrer la configuration n'accepte rien.
+
+Les index de tarif et d'injection ne sont jamais publiés plus bas qu'avant ni
+à 0 ; accepter une baisse de l'index de consommation (nouveau compteur) les
+laisse repartir des nouvelles valeurs. Un saut de l'un d'eux plus grand que ce
+qu'un foyer peut consommer est retenu aussi (il ne devient jamais le nouveau
+plancher) : il reprend dès que le compteur redonne une valeur plausible, ou
+quand le compteur a donné la nouvelle valeur pendant une heure, chaque relevé
+plausible après le précédent (ces index ne sont pas facturés). Sur un nouvel appareil, leur première
+valeur est envoyée quand un second relevé la confirme.
+
+## Ce que dit l'état
+
+- **Connecté**, avec des notes : la page d'état qui ne répond pas (la lecture
+  continue), aucun nouveau relevé du compteur depuis 5 minutes (la puissance
+  n'est alors plus envoyée : lecteur décroché, pile vide ou hors de portée
+  radio), un relevé vieux de plus de 2 heures, jugé sur l'horloge du pont
+  quand il la donne (rien n'en est alors envoyé, les index non plus), pas de
+  registre d'index, un compteur lu plus bas qu'avant, un index
+  retenu.
+- **N'a pas pu être lu** : pas de réponse, injoignable, erreur HTTP, réponse
+  trop grande (plus de 64 Kio) ou qui n'est pas celle d'un IOmeter, aucun
+  relevé pour l'instant. L'intégration réessaie après 10 s, puis attend deux
+  fois plus à chaque fois, jusqu'à 5 minutes.
+- Quand Gladys ne donne pas la configuration à une connexion, l'intégration
+  réessaie de la même façon, sans fin.
+
+Le bouton **Tester la connexion** et l'onglet **Découverte** lisent le pont
+tout de suite, hors du rythme de 10 secondes et sans attendre un délai de
+nouvel essai (une requête à la fois).
+
+## Vie privée
+
+Le numéro du compteur, l'identifiant d'installation et celui du pont sont
+ignorés par l'intégration (jamais extraits des réponses) : ils n'atteignent ni
+journal, ni état, ni fichier. /data ne garde que la référence de l'index de consommation et la
+valeur retenue.
+
+## Limites
+
+- Jamais testé avec un vrai IOmeter : les pages, unités et codes OBIS sont
+  ceux de la bibliothèque du fabricant (version 1.0.3).
+- Le pont propose aussi un flux (Server-Sent Events) ; cette intégration
+  l'interroge plutôt toutes les 10 secondes.
+- Un pont par intégration.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par IOmeter dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| IOmeter | `section` | Non | Connecteur non officiel, sans lien avec IOmeter GmbH. Il lit votre IOmeter (le lecteur posé sur l'interface optique d'un compteur intelligent allemand, et son pont Wi-Fi) par l'API locale du pont, sans cloud : la puissance toutes les 10 secondes, l'index de consommation (1.8.0) chaque minute pour le suivi énergétique de Gladys, et, quand le compteur les donne, les index par tarif et d'injection, la puissance de chaque phase, la pile et le signal du lecteur. Lecture seule. Ce n'est pas l'intégration Discovergy (inexogy). Jamais testé avec un vrai IOmeter. |
+| Adresse du pont IOmeter | `string` | Oui | L'adresse IP du pont IOmeter sur votre réseau (visible dans votre box ou l'application IOmeter ; sans adresse, l'onglet Découverte le cherche sur le réseau), avec un port seulement s'il n'est pas 80. Donnez-lui de préférence une adresse fixe dans votre box ; si elle change, saisissez la nouvelle : l'appareil et son historique sont gardés. |
+
+## Comment installer IOmeter dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : IOmeter apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-iometer:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-iometer](https://github.com/LM1LC3N7/gladys-iometer).
+
+IOmeter nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+IOmeter est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-iometer) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-iometer/blob/HEAD/docs/fr.md)

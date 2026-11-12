@@ -1,0 +1,184 @@
+---
+title: "Intégration domotique Apple WeatherKit, gratuite et open source"
+sidebar_label: "Apple WeatherKit"
+description: "Non officiel : météo, prévisions et alertes Apple WeatherKit, avec votre clé Apple. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-apple-weatherkit.png"
+keywords:
+  - "apple weatherkit"
+  - "domotique apple weatherkit"
+  - "gladys apple weatherkit"
+  - "apple weatherkit gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-apple-weatherkit instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Apple WeatherKit","description":"Non officiel : météo, prévisions et alertes Apple WeatherKit, avec votre clé Apple.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-apple-weatherkit","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-apple-weatherkit.png","type":"weather","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-11T20:11:56Z"}} />
+
+Connecteur **non officiel**, sans lien avec Apple. Il fait d'**Apple WeatherKit** le fournisseur météo de
+Gladys : conditions actuelles, prévisions sur 24 heures et 8 jours, et alertes officielles du pays saisi. Le
+widget météo, l'assistant et les déclencheurs de scène d'alerte météo de Gladys s'en servent directement.
+
+> Ce module n'a **jamais été testé avec un vrai compte** Apple Developer : il est écrit d'après la
+> documentation de l'API REST WeatherKit. Vos retours sont les bienvenus.
+
+## Ce qu'il faut
+
+- Un abonnement **Apple Developer Program** à votre nom (payant : 99 USD par an). Il inclut **500 000 appels
+  WeatherKit par mois** pour toute l'équipe ; au-delà, Apple propose des forfaits payants dans votre compte
+  développeur.
+- Gladys 5.1 ou plus récent, et au moins une maison localisée (Paramètres → Maisons) pour le bouton de test.
+
+## Obtenir les identifiants
+
+Sur [developer.apple.com/account](https://developer.apple.com/account) :
+
+1. **Team ID** : _Membership details_, 10 caractères.
+2. **Service ID** : _Certificates, Identifiers & Profiles_ → _Identifiers_ → **+** → _Services IDs_, par exemple
+   `com.exemple.meteo`.
+3. **Clé** : _Keys_ → **+** → cochez **WeatherKit** → enregistrez, puis téléchargez le fichier
+   `AuthKey_XXXXXXXXXX.p8` (Apple ne le donne qu'une fois). Les 10 caractères après `AuthKey_` sont le **Key ID**.
+
+Voir aussi [WeatherKit : premiers pas](https://developer.apple.com/weatherkit/get-started/).
+
+## Configuration
+
+| Champ                       | Rôle                                                                                                                                                                                                                                                                                                                                        |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Team ID, Key ID, Service ID | Les identifiants ci-dessus.                                                                                                                                                                                                                                                                                                                 |
+| Clé privée (.p8)            | Tout le contenu du fichier `.p8`, lignes `-----BEGIN/END PRIVATE KEY-----` comprises (collée sur une ligne, elle est aussi acceptée). Gardée par Gladys dans sa base, jamais réaffichée, utilisée seulement pour signer les requêtes envoyées à Apple WeatherKit. Elle n'apparaît ni dans les journaux, ni dans le statut, ni dans `/data`. |
+| Pays des alertes            | Code à deux lettres (FR, BE, US…). WeatherKit ne donne les alertes qu'avec lui. Vide : pas d'alertes.                                                                                                                                                                                                                                       |
+| Alertes météo               | Activées par défaut (si un pays est saisi).                                                                                                                                                                                                                                                                                                 |
+| Intervalle de lecture       | 15 minutes par défaut (10 à 120). Un lieu est lu chez Apple au plus une fois par intervalle.                                                                                                                                                                                                                                                |
+| Budget mensuel              | 50 000 appels par défaut (1 000 à 500 000), par mois civil UTC.                                                                                                                                                                                                                                                                             |
+
+Le bouton **Tester WeatherKit** fait un appel (données disponibles à votre première maison localisée, ou à
+Cupertino si aucune maison n'a de position) : il dit si Apple accepte les identifiants, si les alertes existent
+pour votre pays, et le nombre d'appels du mois. Il fonctionne au plus une fois toutes les 30 secondes, et pas
+pendant une pause demandée par Apple ni une fois le budget atteint.
+
+## Coûts, quotas et rythme
+
+- Gladys demande la météo quand un tableau de bord s'affiche, quand l'assistant répond, et toutes les
+  30 minutes pour les alertes. Le module répond avec la copie gardée tant qu'elle a moins d'un intervalle :
+  avec 15 minutes, comptez **environ 3 000 appels par mois et par lieu**.
+- Chaque appel est compté dans `/data` avant de partir. Le budget atteint, plus rien n'est envoyé jusqu'au
+  1er du mois suivant (UTC). Apple compte aussi les appels de vos autres applications dans le même quota.
+- **HTTP 429** : pause selon l'en-tête `Retry-After` (comparé à l'en-tête `Date` d'Apple), entre 60 s et
+  6 heures ; sans en-tête, 60 s puis doublée.
+- **Erreur serveur, réponse illisible, trop grande (plus de 1 Mo) ou absente** : pause de 60 s, doublée à
+  chaque échec jusqu'à 1 heure.
+- **Autre 4xx (400, 404…)** : le lieu ou le pays n'est pas servi ; seul ce lieu est retenu pendant un intervalle
+  de lecture, les autres continuent.
+- Gladys attend 15 s une réponse : un appel (ou sa reprise après un 401) qui ne peut pas finir à temps ne part
+  pas.
+- Pendant une pause ou une panne, Gladys reçoit la dernière copie si elle a moins d'une heure, avec sa propre
+  date (jamais présentée comme neuve) ; sinon une erreur, et Gladys passe à son fournisseur suivant.
+- Les pauses, le compteur et les copies sont gardés dans `/data` : un redémarrage ne relance pas d'appel.
+
+## Identifiants refusés
+
+Un 401 ou 403 isolé n'arrête rien : la requête est refaite une fois avec un jeton neuf. Refusés **deux fois de
+suite**, les identifiants sont notés comme refusés et plus aucune requête ne part avec eux. `/data` ne garde
+qu'**un octet** d'une empreinte salée des identifiants et de la clé **publique** : rien de secret, et rien contre
+quoi vérifier une hypothèse (une sur 256 correspond). Enregistrer d'autres identifiants pendant que le module
+tourne lève le refus tout de suite. Après un redémarrage, seul cet octet est connu : de nouveaux identifiants
+dont l'octet tombe pareil (1 chance sur 256) restent retenus jusqu'à un succès du bouton **Tester WeatherKit**,
+qui fait toujours son appel.
+
+## Ce qui est envoyé à Apple
+
+Les coordonnées de la maison arrondies à 3 décimales (environ 100 m), la langue de l'utilisateur (sa base :
+`pt-BR` → `pt`), le pays des alertes, et un jeton signé valable une heure. `/data/state.json` contient le
+compteur du mois, la pause, un octet qui marque des identifiants refusés, et les dernières réponses. Elles ne
+contiennent pas de coordonnées, mais chacune est rangée sous une empreinte salée du lieu arrondi : avec le sel à
+côté, le lieu peut être retrouvé par force brute, et les alertes nomment leur zone. `/data` reste sur votre
+Gladys.
+
+## Correspondances
+
+| WeatherKit                           | Gladys                   |
+| ------------------------------------ | ------------------------ |
+| Clear, MostlyClear, Hot, Frigid      | clear                    |
+| PartlyCloudy / MostlyCloudy, Cloudy  | partly-cloudy / cloud    |
+| Fog, Haze, Smoke                     | fog                      |
+| Drizzle / Rain, Showers… / HeavyRain | drizzle / rain / pouring |
+| FreezingDrizzle, FreezingRain        | freezing-rain            |
+| Sleet, WintryMix, MixedRainAndSnow…  | sleet                    |
+| Snow, Flurries, Blizzard…            | snow                     |
+| Hail                                 | hail                     |
+| Thunderstorms, StrongStorms…         | thunderstorm             |
+| Breezy, Windy / Dust, BlowingDust    | wind / sandstorm         |
+| TropicalStorm, Hurricane / Tornado   | hurricane / tornado      |
+| autre code                           | unknown                  |
+
+Unités : WeatherKit répond en métrique ; le module convertit en m/s, km (métrique) ou °F, mph, pouces, miles
+(US) ; la pression reste en hPa ; humidité, nébulosité et probabilité de pluie en pourcentage. Une valeur absente
+reste absente, jamais 0.
+
+Alertes : la gravité CAP d'Apple est reprise ; « unknown » devient « minor » (l'alerte est gardée). Le type de
+phénomène (orage, vent, neige…) est déduit du titre en anglais, français, allemand ou espagnol ; sans
+correspondance, l'alerte est montrée avec son titre seul. La description donne la zone et la source ; le texte
+long n'est pas demandé (un appel de plus par alerte). Les alertes expirées selon l'heure d'Apple sont retirées.
+
+## Attribution
+
+Apple demande d'afficher la marque Apple Météo et un lien vers les sources de ses données :
+[https://weatherkit.apple.com/legal-attribution.html](https://weatherkit.apple.com/legal-attribution.html). Le widget météo de Gladys ne sait pas encore l'afficher :
+le lien est dans l'écran de configuration et ici.
+
+## Statuts
+
+- « Saisissez le Team ID… » : rien de configuré.
+- « Configuration invalide : … » : nomme les champs fautifs (jamais leur valeur) ; rien n'est envoyé.
+- « Prêt » puis « WeatherKit répond ».
+- « Apple a refusé ces identifiants… », « WeatherKit a demandé de ralentir… », « n'a pas répondu
+  correctement… », « Budget mensuel atteint… ».
+- « /data/state.json est illisible » : relu toutes les 10 s, rien n'est envoyé en attendant (un fichier
+  illisible n'est pas traité comme vide).
+- « La configuration n'a pas pu être lue » : nouvel essai après 5 s, puis doublé jusqu'à 5 minutes.
+
+## Limites
+
+Pas de prévision minute par minute, pas d'image radar, pas de qualité de l'air. Licence Apache-2.0.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Apple WeatherKit dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Apple WeatherKit dans Gladys | `section` | Non | Connecteur non officiel, sans lien avec Apple. Il fait d'Apple WeatherKit le fournisseur météo de Gladys : conditions actuelles, 24 heures, 8 jours, et les alertes officielles du pays saisi. Il faut votre propre abonnement Apple Developer Program (payant, 99 USD par an, qui inclut 500 000 appels WeatherKit par mois pour toute l'équipe) : une clé WeatherKit (.p8), son Key ID, votre Team ID et un Service ID. Chaque lieu est lu au plus une fois par intervalle, et un budget mensuel arrête les appels avant votre quota. Données : Apple Météo (voir le lien d'attribution). |
+| Team ID | `string` | Oui | Les 10 caractères de votre équipe Apple Developer (Membership details). |
+| Key ID | `string` | Oui | Les 10 caractères de la clé WeatherKit (Certificates, Identifiers & Profiles → Keys). |
+| Service ID | `string` | Oui | L'identifiant d'un Services ID enregistré avec WeatherKit, sous forme de domaine inversé. |
+| Clé privée (.p8) | `secret` | Oui | Tout le contenu du fichier AuthKey_XXXXXXXXXX.p8, lignes d'en-tête comprises. Gardée par Gladys dans sa base, jamais réaffichée, utilisée seulement pour signer les requêtes envoyées à Apple WeatherKit. |
+| Pays des alertes | `string` | Non | Code pays à deux lettres de vos maisons (FR, BE, US...). WeatherKit ne donne les alertes qu'avec lui. Vide : pas d'alertes. |
+| Alertes météo | `boolean` | Non | Demande à WeatherKit les alertes officielles du pays saisi, affichées par le widget météo et utilisées par les déclencheurs de scène d'alerte météo de Gladys. |
+| Intervalle de lecture (minutes) | `number` | Non | Un lieu est lu chez Apple au plus une fois par intervalle ; Gladys reçoit la copie gardée entre-temps. 15 minutes font environ 3 000 appels par mois et par lieu. |
+| Budget mensuel (appels) | `number` | Non | Appels permis par mois civil (UTC), comptés par cette intégration seulement. Atteint : aucun appel avant le mois suivant. Apple compte les appels de toutes vos applications dans le même quota. |
+
+## Comment installer Apple WeatherKit dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Apple WeatherKit apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-apple-weatherkit:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-apple-weatherkit](https://github.com/LM1LC3N7/gladys-apple-weatherkit).
+
+Apple WeatherKit nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Apple WeatherKit est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-apple-weatherkit) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-apple-weatherkit/blob/HEAD/docs/fr.md)
