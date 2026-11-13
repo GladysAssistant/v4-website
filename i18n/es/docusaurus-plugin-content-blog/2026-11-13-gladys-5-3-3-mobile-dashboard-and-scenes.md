@@ -91,7 +91,7 @@ Ya no hace falta: una condición compara ahora **o bien una variable, o bien el 
 
 ![El campo «Dispositivo o variable» en el ordenador: los dispositivos están agrupados por habitación](../../../static/img/articles/gladys-assistant-5-3-3/04-condition-desktop-es.webp)
 
-En el ordenador, un único campo «Dispositivo o variable» propone las variables de los pasos anteriores y luego todos los dispositivos de la casa agrupados por habitación. En el móvil, un botón «Elegir un dispositivo» abre el selector por habitaciones (mira la captura de más arriba).
+En el ordenador, un único campo «Dispositivo o variable» propone las variables de los pasos anteriores y luego todos los dispositivos de la casa agrupados por habitación. En el móvil, un botón «Elegir un dispositivo» abre el selector por habitaciones, y el dispositivo elegido aparece luego en el panel de la condición (el móvil de la derecha en la captura de las escenas).
 
 Dos reglas que conviene conocer: un dispositivo que nunca ha comunicado un estado no cumple ninguna condición, sea cual sea el operador, y un dispositivo eliminado detiene la escena. Las escenas existentes, que comparan una variable, no cambian. ¡Gracias a quienes lo habían pedido [en el foro](https://community.gladysassistant.com/t/6502)!
 

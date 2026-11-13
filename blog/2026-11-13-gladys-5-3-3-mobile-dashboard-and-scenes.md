@@ -91,7 +91,7 @@ Not anymore: a condition now compares **either a variable or the current state o
 
 ![The "Device or variable" field on a computer: devices are grouped by room](../static/img/articles/gladys-assistant-5-3-3/04-condition-desktop-en.webp)
 
-On a computer, a single "Device or variable" field offers the variables of the previous steps, then every device of the house grouped by room. On a phone, a "Choose a device" button opens the room-based picker (see the screenshot above).
+On a computer, a single "Device or variable" field offers the variables of the previous steps, then every device of the house grouped by room. On a phone, a "Choose a device" button opens the room-based picker, and the picked device then shows in the condition panel (the right-hand phone in the scenes screenshot).
 
 Two rules worth knowing: a device that has never reported a state verifies no condition, whatever the operator, and a deleted device stops the scene. Existing scenes, which compare a variable, don't change. Thanks to everyone who asked for it [on the forum](https://community.gladysassistant.com/t/6502)!
 

@@ -91,7 +91,7 @@ Das ist vorbei: Eine Bedingung vergleicht jetzt **entweder eine Variable oder de
 
 ![Das Feld „Gerät oder Variable“ am Computer: Die Geräte sind nach Raum gruppiert](../../../static/img/articles/gladys-assistant-5-3-3/04-condition-desktop-de.webp)
 
-Am Computer bietet ein einziges Feld „Gerät oder Variable“ die Variablen der vorherigen Schritte und dann alle Geräte des Hauses nach Raum gruppiert an. Auf dem Smartphone öffnet ein Button „Gerät auswählen“ die Raum-Auswahl (siehe Screenshot oben).
+Am Computer bietet ein einziges Feld „Gerät oder Variable“ die Variablen der vorherigen Schritte und dann alle Geräte des Hauses nach Raum gruppiert an. Auf dem Smartphone öffnet ein Button „Gerät auswählen“ die Raum-Auswahl, und das gewählte Gerät erscheint dann im Panel der Bedingung (das rechte Smartphone im Screenshot zu den Szenen).
 
 Zwei Regeln, die man kennen sollte: Ein Gerät, das noch nie einen Zustand gemeldet hat, erfüllt keine Bedingung, egal mit welchem Operator, und ein gelöschtes Gerät stoppt die Szene. Bestehende Szenen, die eine Variable vergleichen, ändern sich nicht. Danke an alle, die sich das [im Forum](https://community.gladysassistant.com/t/6502) gewünscht haben!
 

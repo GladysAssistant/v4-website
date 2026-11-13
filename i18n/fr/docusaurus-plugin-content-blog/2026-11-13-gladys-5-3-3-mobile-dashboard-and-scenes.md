@@ -91,7 +91,7 @@ Ce n'est plus nécessaire : une condition compare maintenant **soit une variable
 
 ![Le champ « Appareil ou variable » sur ordinateur : les appareils sont regroupés par pièce](../../../static/img/articles/gladys-assistant-5-3-3/04-condition-desktop-fr.webp)
 
-Sur ordinateur, un seul champ « Appareil ou variable » propose les variables des étapes précédentes, puis tous les appareils de la maison regroupés par pièce. Sur téléphone, un bouton « Choisir un appareil » ouvre le sélecteur par pièce (voir la capture plus haut).
+Sur ordinateur, un seul champ « Appareil ou variable » propose les variables des étapes précédentes, puis tous les appareils de la maison regroupés par pièce. Sur téléphone, un bouton « Choisir un appareil » ouvre le sélecteur par pièce, puis l'appareil choisi s'affiche dans le panneau de la condition (le téléphone de droite dans la capture des scènes).
 
 Deux règles à connaître : un appareil qui n'a encore jamais remonté d'état ne valide aucune condition, quel que soit l'opérateur, et un appareil supprimé arrête la scène. Les scènes existantes, qui comparent une variable, ne changent pas. Merci à ceux qui l'avaient demandé [sur le forum](https://community.gladysassistant.com/t/6502) !
 
