@@ -13,6 +13,8 @@ Für die meisten Geräte, für die früher Matterbridge empfohlen wurde, gibt es
 
 [Matterbridge](https://github.com/Luligu/matterbridge) ist eine Matter-Bridge, mit der du Nicht-Matter-Geräte in ein Matter-Ökosystem einbinden kannst. Dank seiner zahlreichen Plugins kann Matterbridge Geräte verschiedenster Hersteller über das Matter-Protokoll an Gladys weitergeben.
 
+Matterbridge bringt Geräte **in** Gladys. Für den umgekehrten Weg, also um deine Gladys-Geräte für Apple Home, Google Home oder Alexa bereitzustellen, nutze die Integration [Matter-Bridge](/de/docs/integrations/matter-bridge/).
+
 ## Matterbridge aktivieren
 
 Öffne in Gladys `Integrationen / Matterbridge`.
@@ -20,6 +22,10 @@ Für die meisten Geräte, für die früher Matterbridge empfohlen wurde, gibt es
 ![Liste der Integrationen](../../../../../static/img/docs/en/configuration/matterbridge/matterbridge-integration-list.png)
 
 Gladys muss einen Docker-Container installieren, um Matterbridge auszuführen. Keine Sorge, alles ist automatisiert.
+
+:::note
+Matterbridge und die [Matter-Bridge](/de/docs/integrations/matter-bridge/) von Gladys brauchen beide den Port 5540, den Standard-Matter-Port: Sie können nicht gleichzeitig laufen. Solange die Matter-Bridge aktiviert ist, ist die Schaltfläche Aktivieren von Matterbridge deaktiviert: Deaktiviere zuerst die Matter-Bridge.
+:::
 
 Klicke auf die Schaltfläche **Aktivieren**, um den Matterbridge-Container zu starten.
 

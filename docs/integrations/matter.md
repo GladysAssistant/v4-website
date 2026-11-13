@@ -13,6 +13,8 @@ Not sure what you need for Matter and Thread devices? Read [Do you need a Matter
 
 Gladys Assistant is compatible with Matter, so you can integrate Matter devices into your setup. Gladys acts as your **Matter controller**, running on your own machine: for a Matter device on Wi-Fi or Ethernet, you do not need to buy a hub at all. Thread devices are the exception, and are covered below. If you are wondering which box you need, read our guide on [which Matter hub to choose](/matter-hub/).
 
+Want the opposite, and control your Gladys devices from Apple Home, Google Home or Alexa? Use the [Matter Bridge](/docs/integrations/matter-bridge/) integration.
+
 ## Compatibility
 
 Gladys supports the following features:
