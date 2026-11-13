@@ -75,7 +75,7 @@ Les gestes sont ceux qu'on attend d'une app :
 - un panneau se ferme en le glissant vers le bas, ou avec le bouton « retour » du téléphone ;
 - glisser une étape vers la gauche la supprime, avec un bouton « Annuler » ;
 - un **appui long** sur une étape permet de la déplacer (le menu « ••• » propose aussi « Réorganiser les étapes », avec des flèches) ;
-- la barre du bas affiche « Lancer la scène », ou « ● 2 modifications · Tester · Enregistrer » quand il y a des changements.
+- la barre du bas affiche « Lancer la scène », ou « ● 2 modifications · Tester · Sauvegarder » quand il y a des changements.
 
 Et sur toutes les tailles d'écran, ordinateur compris :
 
