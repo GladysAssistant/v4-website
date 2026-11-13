@@ -98,7 +98,7 @@ Deux règles à connaître : un appareil qui n'a encore jamais remonté d'état 
 Deux autres petites choses dans l'éditeur de scènes :
 
 - **Le « ET » est affiché** entre les blocs de conditions d'un « Si… Alors… Sinon… » ou d'un « Tant que… Répéter… ». Deux blocs empilés ressemblaient à deux alternatives, alors qu'ils doivent être vrais tous les deux.
-- **Taper « {{ » ouvre la liste des variables** tout de suite, comme l'annonce le texte d'aide. Avant, il fallait taper un troisième caractère.
+- **Taper `{{` ouvre la liste des variables** tout de suite, comme l'annonce le texte d'aide. Avant, il fallait taper un troisième caractère.
 
 ## Gladys vous prévient quand son horloge est fausse
 

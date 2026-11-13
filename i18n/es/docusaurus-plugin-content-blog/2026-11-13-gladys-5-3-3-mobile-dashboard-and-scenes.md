@@ -98,7 +98,7 @@ Dos reglas que conviene conocer: un dispositivo que nunca ha comunicado un estad
 Otras dos cosas pequeñas en el editor de escenas:
 
 - **Se muestra el «Y»** entre los bloques de condiciones de un «Si… entonces… si no…» o de un «Mientras… repetir…». Dos bloques apilados parecían dos alternativas, cuando ambos deben cumplirse.
-- **Escribir «{{» abre la lista de variables** enseguida, como dice el texto de ayuda. Antes había que escribir un tercer carácter.
+- **Escribir `{{` abre la lista de variables** enseguida, como dice el texto de ayuda. Antes había que escribir un tercer carácter.
 
 ## Gladys te avisa cuando su reloj va mal
 

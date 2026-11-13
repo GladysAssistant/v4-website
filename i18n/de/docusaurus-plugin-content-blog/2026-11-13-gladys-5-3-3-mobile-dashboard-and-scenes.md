@@ -98,7 +98,7 @@ Zwei Regeln, die man kennen sollte: Ein Gerät, das noch nie einen Zustand gemel
 Zwei weitere Kleinigkeiten im Szeneneditor:
 
 - **Das „UND“ wird angezeigt** zwischen den Bedingungsblöcken eines „Wenn… dann… sonst…“ oder eines „Solange… wiederholen…“. Zwei übereinander gestapelte Blöcke sahen wie zwei Alternativen aus, obwohl beide erfüllt sein müssen.
-- **„{{“ zu tippen öffnet sofort die Liste der Variablen**, wie es der Hilfetext verspricht. Vorher musste man ein drittes Zeichen tippen.
+- **`{{` zu tippen öffnet sofort die Liste der Variablen**, wie es der Hilfetext verspricht. Vorher musste man ein drittes Zeichen tippen.
 
 ## Gladys warnt dich, wenn ihre Uhr falsch geht
 

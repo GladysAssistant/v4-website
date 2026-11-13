@@ -98,7 +98,7 @@ Two rules worth knowing: a device that has never reported a state verifies no co
 Two other small things in the scene editor:
 
 - **The "AND" is shown** between the condition boxes of an "If… then… else…" or an "As long as… repeat…" block. Two stacked boxes looked like two alternatives, when both must be true.
-- **Typing "{{" opens the list of variables** right away, as the help text says. Before, you had to type a third character.
+- **Typing `{{` opens the list of variables** right away, as the help text says. Before, you had to type a third character.
 
 ## Gladys warns you when its clock is off
 
