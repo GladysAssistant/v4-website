@@ -99,6 +99,14 @@ Deine Einwilligung ist 2 Jahre gültig und muss erneuert werden, wenn Gladys dei
 
 Synchronisiert sich dein Konto nicht mehr, empfehle ich dir im Zweifel, deine Einwilligung zu erneuern, indem du auf den blauen Button „Ich greife auf meinen Enedis-Kundenbereich zu“ klickst.
 
+### Ich habe mehrere Stromzähler (mehrere PDL)?
+
+Eine einzige Enedis-Einwilligung kann mehrere Zähler abdecken. Kreuze auf der Einwilligungsseite von Enedis jeden Lieferpunkt (PDL) an, den du in Gladys haben möchtest: Gladys legt im Reiter „Meine Zähler“ pro Zähler ein Gerät an, benannt mit „Enedis“ und der PDL-Nummer. Du kannst jedes davon umbenennen, zum Beispiel nach dem Haus, das es misst.
+
+Ein Zähler, der in deinem Enedis-Kundenbereich noch nicht aktiv ist (neuer Anschluss, Inbetriebnahme läuft...), kann nicht ausgewählt werden. Sobald er in deinem Enedis-Kundenbereich erscheint, erteile die Einwilligung erneut und kreuze alle deine Zähler an, auch die bereits verbundenen: Ihre Historie in Gladys bleibt erhalten.
+
+Wie du jeden Zähler mit seinem eigenen Vertrag (Anschlussleistung, Grundgebühr, Preise) abrechnest, erfährst du unter [Energiemonitoring](/de/docs/integrations/energy-monitoring/).
+
 <JsonLd
   data={{
     "@context": "https://schema.org",

@@ -99,6 +99,14 @@ Tu consentimiento es válido durante 2 años y debe renovarse si quieres que Gla
 
 Si tu cuenta ya no se sincroniza, ante la duda te aconsejo que renueves tu consentimiento haciendo clic en el botón azul "Accedo a mi área de cliente de Enedis".
 
+### ¿Tengo varios contadores eléctricos (varios PDL)?
+
+Un solo consentimiento de Enedis puede cubrir varios contadores. En la página de consentimiento de Enedis, marca cada punto de suministro (PDL) que quieras tener en Gladys: Gladys crea un dispositivo por contador, llamado "Enedis" seguido del número de PDL, en la pestaña «Mis contadores». Puedes renombrar cada uno, por ejemplo con el nombre de la vivienda que mide.
+
+Un contador que todavía no está activo en tu área de cliente de Enedis (conexión nueva, puesta en servicio en curso...) no se puede seleccionar. En cuanto aparezca en tu área de cliente de Enedis, vuelve a dar tu consentimiento marcando todos tus contadores, también los que ya estaban conectados: su historial en Gladys se conserva.
+
+Para tarificar cada contador con su propio contrato (potencia contratada, término fijo, precios), consulta [Monitorización de energía](/es/docs/integrations/energy-monitoring/).
+
 <JsonLd
   data={{
     "@context": "https://schema.org",

@@ -121,6 +121,10 @@ Click "Save": the contract appears in the list, with its status (active, schedul
 
 When your prices change, you don't touch the past: end the current contract at the date of the change, and create a new one starting the day after. A meter has at most one active contract on a given date.
 
+:::tip[Several meters?]
+If you have several meters (a second home, an outbuilding with its own meter...), create one contract per meter, each with its own subscribed power, subscription and prices. With the Enedis integration, each meter (PDL) is a separate device: select the right one at the "Meter" step of the wizard. The subscription is counted once per meter.
+:::
+
 :::info[Coming from an older version?]
 Your energy prices created before Gladys 5.2 are converted automatically into contracts on the first start, without touching the cost history already computed. Check them in the "Contracts" tab: a converted contract whose calculation differs from the old one is flagged.
 :::
@@ -210,6 +214,10 @@ You can display your consumption:
 You can also display each device individually, for example my washing machine:
 
 ![Energy monitoring chart](../../static/img/docs/en/configuration/energy-monitoring/dashboard-washing-machine-widget.png)
+
+:::note[Several meters?]
+When the widget shows costs, it adds the subscription of a single meter: the meter of the first device selected. If you have several meters, create one widget per meter to see the subscription of each of them.
+:::
 
 ### Step 8: Display the current electricity price
 
