@@ -111,6 +111,10 @@ Cliquez sur "Enregistrer" : le contrat apparaît dans la liste, avec son statut 
 
 Quand vos prix changent, vous ne touchez pas au passé : terminez le contrat en cours à la date du changement, et créez-en un nouveau qui commence le lendemain. Un compteur a au plus un contrat actif à une date donnée.
 
+:::tip[Plusieurs compteurs ?]
+Si vous avez plusieurs compteurs (une résidence secondaire, une dépendance avec son propre compteur...), créez un contrat par compteur, chacun avec sa puissance souscrite, son abonnement et ses prix. Avec l'intégration Enedis, chaque compteur (PDL) est un appareil distinct : sélectionnez le bon à l'étape "Compteur" de l'assistant. L'abonnement est compté une fois par compteur.
+:::
+
 :::info[Vous venez d'une version précédente ?]
 Vos prix d'énergie créés avant Gladys 5.2 sont convertis automatiquement en contrats au premier démarrage, sans toucher à l'historique des coûts déjà calculés. Vérifiez-les dans l'onglet "Contrats" : un contrat converti dont le calcul diffère de l'ancien est signalé.
 :::
@@ -206,6 +210,10 @@ Ce qui vous donnera un bel affichage comme ceci :
 Vous pouvez aussi afficher chaque appareil en particulier, par exemple mon lave-linge :
 
 ![Suivi de l'énergie graphique](../../../../../static/img/docs/fr/configuration/energy-monitoring/dashboard-washing-machine-widget.png)
+
+:::note[Plusieurs compteurs ?]
+Quand le widget affiche des coûts, il ajoute l'abonnement d'un seul compteur : celui du premier appareil sélectionné. Si vous avez plusieurs compteurs, créez un widget par compteur pour voir l'abonnement de chacun.
+:::
 
 ### Étape n°8 : Afficher le prix actuel de l'électricité
 

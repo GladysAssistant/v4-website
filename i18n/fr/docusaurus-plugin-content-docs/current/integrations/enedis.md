@@ -99,6 +99,14 @@ Votre consentement est valide 2 ans, et doit être renouvellé si vous voulez qu
 
 Si votre compte ne se synchronise plus, en cas de doutes je vous conseille de refaire un consentement en cliquant sur le bouton bleu "J'accède à mon espace client Enedis".
 
+### J'ai plusieurs compteurs électriques (plusieurs PDL) ?
+
+Un seul consentement Enedis peut couvrir plusieurs compteurs. Sur la page de consentement Enedis, cochez tous les points de livraison (PDL) que vous voulez retrouver dans Gladys : Gladys crée un appareil par compteur, nommé "Enedis" suivi du numéro de PDL, dans l'onglet "Mes compteurs". Vous pouvez renommer chacun d'eux, par exemple avec le nom du logement qu'il mesure.
+
+Un compteur qui n'est pas encore actif dans votre espace client Enedis (raccordement en cours, mise en service...) ne peut pas être sélectionné. Une fois qu'il apparaît dans votre espace client Enedis, refaites le consentement en cochant tous vos compteurs, y compris ceux déjà connectés : leur historique dans Gladys est conservé.
+
+Pour tarifer chaque compteur avec son propre contrat (puissance souscrite, abonnement, prix), consultez [Suivi de l'énergie](/fr/docs/integrations/energy-monitoring/).
+
 <JsonLd
   data={{
     "@context": "https://schema.org",

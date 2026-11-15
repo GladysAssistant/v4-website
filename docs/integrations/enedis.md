@@ -99,6 +99,14 @@ Your consent is valid for 2 years, and must be renewed if you want Gladys to con
 
 If your account does not synchronize anymore, in case of doubt I advise you to renew your consent by clicking on the blue button "I access my Enedis customer space".
 
+### I have several electricity meters (several PDL)?
+
+A single Enedis consent can cover several meters. On the Enedis consent page, tick every delivery point (PDL) you want in Gladys: Gladys creates one device per meter, named "Enedis" followed by the PDL number, in the "My meters" tab. You can rename each of them, for example after the home it measures.
+
+A meter that is not active yet in your Enedis customer space (new connection, commissioning in progress...) can't be selected. Once it shows up in your Enedis customer space, give your consent again and tick all your meters, including the ones already connected: their history in Gladys is kept.
+
+To price each meter with its own contract (subscribed power, subscription, prices), see [Energy Monitoring](/docs/integrations/energy-monitoring/).
+
 <JsonLd
   data={{
     "@context": "https://schema.org",

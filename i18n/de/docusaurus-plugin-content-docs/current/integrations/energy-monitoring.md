@@ -121,6 +121,10 @@ Klicke auf „Speichern“: Der Vertrag erscheint in der Liste, mit seinem Statu
 
 Wenn sich deine Preise ändern, fasst du die Vergangenheit nicht an: Beende den laufenden Vertrag zum Datum der Änderung und lege einen neuen an, der am Tag danach beginnt. Ein Zähler hat an einem bestimmten Datum höchstens einen aktiven Vertrag.
 
+:::tip[Mehrere Zähler?]
+Wenn du mehrere Zähler hast (ein Zweitwohnsitz, ein Nebengebäude mit eigenem Zähler...), lege pro Zähler einen Vertrag an, jeweils mit eigener Anschlussleistung, Grundgebühr und eigenen Preisen. Mit der Enedis-Integration ist jeder Zähler (PDL) ein eigenes Gerät: Wähle im Schritt „Zähler“ des Assistenten den richtigen aus. Die Grundgebühr wird pro Zähler einmal gezählt.
+:::
+
 :::info[Du kommst von einer älteren Version?]
 Deine vor Gladys 5.2 angelegten Energiepreise werden beim ersten Start automatisch in Verträge umgewandelt, ohne die bereits berechnete Kostenhistorie anzutasten. Prüfe sie im Reiter „Verträge“: Ein umgewandelter Vertrag, dessen Berechnung von der alten abweicht, wird markiert.
 :::
@@ -210,6 +214,10 @@ So kannst du deinen Verbrauch anzeigen:
 Du kannst auch jedes Gerät einzeln anzeigen, zum Beispiel meine Waschmaschine:
 
 ![Energiemonitoring-Diagramm](../../../../../static/img/docs/en/configuration/energy-monitoring/dashboard-washing-machine-widget.png)
+
+:::note[Mehrere Zähler?]
+Zeigt das Widget Kosten an, rechnet es die Grundgebühr eines einzigen Zählers hinzu: die des Zählers des ersten ausgewählten Geräts. Wenn du mehrere Zähler hast, lege pro Zähler ein Widget an, um die Grundgebühr jedes Zählers zu sehen.
+:::
 
 ### Schritt 8: Den aktuellen Strompreis anzeigen
 

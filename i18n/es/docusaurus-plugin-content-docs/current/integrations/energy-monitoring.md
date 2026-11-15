@@ -121,6 +121,10 @@ Haz clic en «Guardar»: el contrato aparece en la lista, con su estado (activo,
 
 Cuando tus precios cambian, no tocas el pasado: termina el contrato en curso en la fecha del cambio y crea uno nuevo que empiece al día siguiente. Un contador tiene como máximo un contrato activo en una fecha dada.
 
+:::tip[¿Varios contadores?]
+Si tienes varios contadores (una segunda residencia, un anexo con su propio contador...), crea un contrato por contador, cada uno con su potencia contratada, su término fijo y sus precios. Con la integración Enedis, cada contador (PDL) es un dispositivo distinto: elige el correcto en el paso «Contador» del asistente. El término fijo se cuenta una vez por contador.
+:::
+
 :::info[¿Vienes de una versión anterior?]
 Tus precios de energía creados antes de Gladys 5.2 se convierten automáticamente en contratos en el primer arranque, sin tocar el historial de costes ya calculado. Revísalos en la pestaña «Contratos»: un contrato convertido cuyo cálculo difiere del anterior aparece señalado.
 :::
@@ -210,6 +214,10 @@ Puedes mostrar tu consumo:
 También puedes mostrar cada dispositivo por separado, por ejemplo mi lavadora:
 
 ![Gráfico de monitorización de energía](../../../../../static/img/docs/en/configuration/energy-monitoring/dashboard-washing-machine-widget.png)
+
+:::note[¿Varios contadores?]
+Cuando el widget muestra costes, añade el término fijo de un solo contador: el del primer dispositivo seleccionado. Si tienes varios contadores, crea un widget por contador para ver el término fijo de cada uno.
+:::
 
 ### Paso 8: Mostrar el precio actual de la electricidad
 
