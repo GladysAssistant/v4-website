@@ -1,0 +1,154 @@
+---
+title: "Intégration domotique Meteobridge, gratuite et open source"
+sidebar_label: "Meteobridge"
+description: "Connecteur non officiel : la station météo derrière votre Meteobridge, lue en local. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-meteobridge.png"
+keywords:
+  - "meteobridge"
+  - "domotique meteobridge"
+  - "gladys meteobridge"
+  - "meteobridge gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-meteobridge instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Meteobridge","description":"Connecteur non officiel : la station météo derrière votre Meteobridge, lue en local.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-meteobridge","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-meteobridge.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-15T04:33:24Z"}} />
+
+Intégration non officielle, sans lien avec smartbedded (Meteobridge).
+
+Elle lit la station météo branchée sur votre passerelle **Meteobridge** (NANO SD,
+PRO, PRO2, NANO, ou la version logicielle : Davis, Ecowitt, Fine Offset,
+WeatherFlow et les autres stations qu'elle prend en charge) directement sur
+votre réseau local, sans le cloud.
+
+**Cette intégration n'a jamais été testée avec un vrai Meteobridge** : elle a
+été écrite d'après le wiki officiel de Meteobridge (pages « Add-On Services » et
+« Templates »). Les retours sont les bienvenus sur le dépôt GitHub.
+
+## Ce que vous obtenez
+
+Un appareil Gladys par passerelle (repérée par son adresse MAC), avec une
+fonctionnalité pour chaque valeur que la passerelle a donnée au moins une fois :
+
+- température, humidité et point de rosée extérieurs ; refroidissement éolien
+  (les valeurs extérieures sont des sondes : elles n'entrent jamais dans la
+  moyenne de température de la pièce dans Gladys) ;
+- température et humidité intérieures (console) ;
+- pression au niveau de la mer et à la station (hPa) ;
+- vitesse moyenne du vent et vitesse du vent (`wind0wind`, affichée comme la
+  rafale) en km/h, direction du vent (degrés) ;
+- intensité de pluie (mm/h) et pluie du jour depuis minuit (mm, heure de la passerelle) ;
+- indice UV, rayonnement solaire (affiché en lux : 1 W/m² ≈ 126,6 lx, le cœur n'a
+  pas d'unité W/m²) ;
+- particules fines (`air0pm`, µg/m³, affichées comme PM2.5) ;
+- les capteurs supplémentaires de température et d'humidité 1 à 8 ;
+- les piles faibles (capteur extérieur, anémomètre, pluviomètre, console).
+
+Les stations sol et feuilles Davis ne sont pas lues dans cette version.
+
+## Configuration
+
+1. Dans l'interface web de votre Meteobridge, notez son adresse IP. Donnez-lui
+   une adresse fixe dans votre box.
+2. Dans Gladys, ouvrez l'intégration et saisissez :
+   - l'**adresse** (par exemple `192.168.1.50`, ou `192.168.1.50:8080` si
+     l'interface web n'est pas sur le port 80) ;
+   - le **nom d'utilisateur** et le **mot de passe** de l'interface web du
+     Meteobridge (le nom d'utilisateur est souvent `meteobridge`) ;
+   - l'**intervalle de lecture** en minutes (1 par défaut, de 1 à 60).
+3. Cliquez sur **Tester le Meteobridge**, puis ajoutez l'appareil depuis
+   l'onglet Découverte.
+
+## Fonctionnement
+
+À chaque intervalle, l'intégration envoie **une** requête à la page de gabarits
+de la passerelle (`/cgi-bin/template.cgi`), avec un gabarit qui demande la
+valeur actuelle de chaque capteur. Rien ne lit plus tôt que l'intervalle : ni le
+bouton de test, ni un redémarrage, ni une reconnexion (l'heure de la dernière
+requête est gardée dans `/data`, écrite avant chaque requête). Seule exception :
+de nouveaux identifiants ou une nouvelle adresse, enregistrés dans la
+configuration, sont essayés dans les 15 secondes.
+
+- Un capteur que la passerelle n'a pas entendu depuis son délai de maintien est
+  écrit `--` par la passerelle : la valeur reste inconnue dans Gladys, elle
+  n'est jamais publiée comme 0. Un texte, une valeur vide, hors bornes ou une
+  humidité de 0 % (console sans capteur) est écarté aussi.
+- La pluie du jour n'est publiée que tant que le pluviomètre lui-même est
+  entendu (son intensité de pluie est à jour).
+- Une mesure est publiée pendant deux intervalles (5 minutes au moins, 2 heures
+  au plus) ; au-delà, rien d'ancien n'est renvoyé.
+- Une autre passerelle qui répond à la même adresse (autre adresse MAC) devient
+  son propre appareil ; les valeurs de la première ne lui sont jamais données.
+
+## Mot de passe et sécurité
+
+Le mot de passe est gardé par Gladys dans sa base et jamais réaffiché. Il est
+envoyé seulement au Meteobridge, dans l'authentification HTTP Basic de chaque
+requête. La passerelle parle en HTTP simple : sur votre réseau local, le mot de
+passe circule comme lorsque vous ouvrez l'interface web dans votre navigateur.
+N'exposez jamais la passerelle sur Internet. Le mot de passe n'est jamais écrit
+dans un journal, un statut ni dans `/data` ; une redirection n'est jamais suivie.
+
+Si la passerelle refuse le nom d'utilisateur ou le mot de passe (HTTP 401),
+l'intégration s'arrête : elle ne les renvoie jamais d'elle-même (ni après un
+redémarrage, ni quand ils sont ressaisis après avoir vidé un champ). Corrigez-les et
+enregistrez (ils sont alors essayés dans les 15 secondes), ou cliquez sur
+**Tester le Meteobridge** (un essai par intervalle). Après un redémarrage,
+`/data` ne garde que 8 bits d'une empreinte salée des identifiants refusés,
+assez pour ne pas renvoyer les mêmes ; avec 1 chance sur 256, de nouveaux
+identifiants tombent sur ces 8 bits et attendent un clic sur Tester. Un 403
+n'est pas un refus du mot de passe (quelque chose s'interpose entre Gladys et la
+passerelle) : les lectures continuent.
+
+Une passerelle occupée (HTTP 429 ou 5xx) obtient une pause : le délai qu'elle
+demande (`Retry-After`), sinon 1 minute doublée à chaque fois, 30 minutes au
+plus, gardée après un redémarrage.
+
+## Lecture seule
+
+L'intégration ne modifie jamais rien sur la passerelle : elle lit une page, avec
+la seule méthode GET.
+
+## Sources
+
+La syntaxe des gabarits, les noms des capteurs et les unités sont ceux du wiki
+officiel de Meteobridge : https://www.meteobridge.com/wiki/index.php/Templates et
+https://www.meteobridge.com/wiki/index.php/Add-On_Services. Aucun code n'a été copié.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Meteobridge dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Meteobridge dans Gladys | `section` | Non | Connecteur non officiel, sans lien avec smartbedded (Meteobridge). Il lit la station météo branchée sur votre passerelle Meteobridge (Davis, Ecowitt, Fine Offset, WeatherFlow et les autres stations qu'elle prend en charge) sur votre réseau local, sans le cloud : température, humidité, point de rosée, pression, vent, pluie, UV, rayonnement solaire, PM2.5, capteurs supplémentaires et piles faibles. Une requête par intervalle à la page de gabarits de la passerelle. Lecture seule : rien n'est jamais modifié sur la passerelle. Jamais testé avec un vrai Meteobridge pour l'instant. |
+| Adresse du Meteobridge | `string` | Oui | Son adresse IP sur votre réseau (affichée dans son interface web, ou dans votre box), avec un port s'il n'est pas 80. Donnez-lui une adresse fixe dans votre box. |
+| Nom d'utilisateur | `string` | Oui | Le nom d'utilisateur de l'interface web du Meteobridge (souvent « meteobridge »). |
+| Mot de passe | `secret` | Oui | Le mot de passe de l'interface web du Meteobridge. Gardé par Gladys dans sa base, jamais réaffiché ; envoyé seulement au Meteobridge, dans l'authentification HTTP Basic de chaque requête (HTTP simple sur votre réseau local, comme la passerelle le demande), jamais dans une URL ni un journal. |
+| Intervalle de lecture (minutes) | `number` | Non | Une requête à chaque fois. Rien ne lit plus tôt, ni le bouton de test ni un redémarrage ; seuls de nouveaux identifiants ou une nouvelle adresse sont essayés dans les 15 secondes. |
+
+## Comment installer Meteobridge dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Meteobridge apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-meteobridge:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-meteobridge](https://github.com/LM1LC3N7/gladys-meteobridge).
+
+Meteobridge nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Meteobridge est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-meteobridge) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-meteobridge/blob/HEAD/docs/fr.md)

@@ -1,0 +1,243 @@
+---
+title: "Intégration domotique File watch, gratuite et open source"
+sidebar_label: "File watch"
+description: "Surveillez dossiers et fichiers : nouveaux fichiers, nombre, taille, sauvegarde qui n'arrive plus. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-file-watch.png"
+keywords:
+  - "file watch"
+  - "domotique file watch"
+  - "gladys file watch"
+  - "file watch gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/guim31/gladys-file-watch instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"File watch","description":"Surveillez dossiers et fichiers : nouveaux fichiers, nombre, taille, sauvegarde qui n'arrive plus.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-file-watch","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-file-watch.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-15T22:15:10Z"}} />
+
+Surveillez des dossiers et des fichiers depuis Gladys : les scans de
+l'imprimante, les photos d'un téléphone, les enregistrements d'une caméra, la
+sauvegarde de la nuit copiée sur le NAS. Chaque chemin surveillé devient un
+appareil avec son nombre de fichiers, sa taille totale, son dernier fichier et
+le temps écoulé depuis la dernière modification. Des scènes réagissent à un
+**nouveau fichier**, à un dossier **non modifié depuis un moment** (une
+sauvegarde qui n'arrive plus) et à une taille **au-dessus d'un seuil** ; un
+widget du tableau de bord liste les derniers fichiers.
+
+Seuls les noms, tailles et dates sont lus, jamais le contenu des fichiers. Les
+dossiers sont analysés à intervalle régulier, ce qui fonctionne sur les
+partages réseau (NFS, SMB), où les notifications de changement ne voient rien
+de ce qu'écrit une autre machine.
+
+Testé pour de vrai dans un conteneur Docker verrouillé (le bac à sable de
+Gladys : système en lecture seule, aucune capacité, 256 Mo), avec créations,
+suppressions, renommages, une arborescence de 10 000 fichiers, un dossier
+supprimé puis recréé et des motifs d'exclusion ; pas encore dans un vrai
+Gladys : vos retours sont les bienvenus dans
+[les issues](https://github.com/guim31/gladys-file-watch/issues).
+
+## Ce qu'il faut
+
+- Gladys Assistant 5.1.0 ou plus récent.
+- Un accès à la machine qui fait tourner Gladys (un terminal, ou le partage de
+  fichiers d'un NAS), pour placer ou monter les dossiers à surveiller dans le
+  dossier de surveillance ci-dessous.
+
+## Mise en route
+
+### 1. Où placer les dossiers
+
+Gladys donne à chaque intégration **un seul dossier de sa machine**, et
+l'intégration ne peut en ouvrir aucun autre (elle tourne dans un bac à sable).
+Pour cette intégration, avec une installation standard de Gladys, c'est :
+
+```
+/var/lib/gladysassistant/external-integrations/ext-guim31-gladys-file-watch/watch
+```
+
+Il est créé au premier démarrage ; dans l'intégration, il s'appelle
+`/data/watch`. Le bouton **Vérifier les dossiers surveillés** de la page de
+l'intégration donne le chemin exact de votre installation. Placez-y ce que vous
+voulez surveiller, d'une de ces façons :
+
+- **Des fichiers écrits directement dedans** : faites pointer l'outil de
+  sauvegarde, le scanner ou la caméra vers ce dossier (ou un de ses
+  sous-dossiers), par exemple en le partageant avec Samba.
+- **Un partage réseau monté dedans** (NFS ou SMB d'un NAS), par exemple dans
+  `/etc/fstab` :
+  `//nas.local/backups /var/lib/gladysassistant/external-integrations/ext-guim31-gladys-file-watch/watch/backups cifs ro,credentials=/root/.nas 0 0`
+- **Un dossier de la machine monté dedans** (montage bind, en lecture seule) :
+  `mount --bind -o ro /srv/photos /var/lib/gladysassistant/external-integrations/ext-guim31-gladys-file-watch/watch/photos`
+
+Un lien symbolique vers un dossier extérieur ne fonctionne **pas** :
+l'intégration ne voit que son propre dossier. Après un montage, **redémarrez
+l'intégration** (Intégrations → File watch → Arrêter, puis Démarrer) : un
+montage fait pendant qu'elle tourne lui reste invisible.
+
+### 2. Configurer l'intégration
+
+- **Chemins à surveiller** : vide, chaque dossier et fichier à la racine du
+  dossier de surveillance est suivi, un nouveau apparaît tout seul. Ou une
+  liste séparée par des virgules, relative au dossier de surveillance :
+  `sauvegardes, nas/scans, logs/app.log` (un sous-dossier ou un seul fichier
+  peut être surveillé).
+- **Seulement ces fichiers** : motifs glob, par exemple `*.pdf, *.jpg`. Vide :
+  tous les fichiers.
+- **Ignorer** : motifs des fichiers et dossiers à laisser de côté. Par défaut :
+  fichiers cachés, fichiers temporaires des téléchargements et des copies
+  (`*.tmp`, `*.part`), fichiers système de Windows, macOS et Synology.
+- **Profondeur** : niveaux de sous-dossiers lus, 5 par défaut ; 1 pour les
+  seuls fichiers du dossier.
+- **Intervalle d'analyse** : de 30 secondes à 1 heure, 1 minute par défaut.
+- **Langue des noms** : langue des noms de fonctionnalités, des dates, des
+  tailles et des résultats de scène.
+
+Motifs : un motif sans `/` s'applique au nom, à toute profondeur (`*.mkv`,
+`@eaDir`) ; avec un `/`, au chemin dans le dossier surveillé
+(`daily/*.tar.gz`). `*` et `?` restent dans un dossier, `**` traverse les
+dossiers, `[abc]` et `[!abc]` sont des classes de caractères. La casse ne
+compte pas. Un dossier ignoré n'est pas parcouru.
+
+Cliquez ensuite sur **Vérifier les dossiers surveillés** : la réponse liste
+chaque chemin, son nombre de fichiers, et le chemin du dossier de surveillance
+sur la machine.
+
+### 3. Ajouter les appareils
+
+Dans l'onglet **Découverte**, ajoutez les chemins à suivre. Les déclencheurs de
+scène et le widget fonctionnent pour tous les chemins, ajoutés ou non.
+
+## Les appareils
+
+Un appareil par chemin surveillé, nommé d'après son chemin :
+
+| Fonctionnalité                        | Ce qu'elle indique                                               |
+| ------------------------------------- | ---------------------------------------------------------------- |
+| Fichiers                              | nombre de fichiers comptés (après les motifs)                    |
+| Taille totale                         | leur taille totale, en Mo                                        |
+| Dernier fichier                       | le dernier fichier arrivé, avec son chemin dans le dossier       |
+| Date du dernier fichier               | sa date                                                          |
+| Temps depuis la dernière modification | minutes depuis l'arrivée du dernier fichier                      |
+| Accessible                            | Oui, ou Non si le chemin manque ou est illisible (partage coupé) |
+
+Un fichier « arrive » à la plus récente de ses dates de modification et de
+changement : une copie qui garde la date d'origine (`rsync -a`, `cp -p`) compte
+quand même comme nouvelle.
+
+## Tableau de bord
+
+Le widget **Derniers fichiers** liste les huit derniers fichiers des dossiers
+choisis (tous par défaut), du plus récent au plus ancien, avec leur dossier,
+leur taille et leur date, sous deux tuiles : nombre de fichiers et taille
+totale. Une ligne nomme les dossiers inaccessibles. Ses réglages masquent les
+totaux et le bouton **Actualiser**, qui analyse les dossiers aussitôt.
+
+## Scènes
+
+### Déclencheurs
+
+- **Nouveau fichier** : un fichier apparaît dans un dossier surveillé. Un
+  fichier renommé ou déplacé dans le dossier n'est pas nouveau. Filtres :
+  dossiers, extension en minuscules, sans le point (`pdf`). Transmet le dossier, le fichier (chemin dans le
+  dossier), son extension, sa taille et le nombre de nouveaux fichiers :
+  au-delà de 5 nouveaux fichiers dans une analyse (un dossier copié d'un coup),
+  un seul événement porte le plus récent et le nombre.
+- **Dossier non modifié depuis un moment** : aucun fichier arrivé depuis la
+  durée choisie (de 1 heure à 7 jours). Se déclenche une fois par seuil (le plus haut seulement quand plusieurs sont passés d'un coup, après une interruption), puis à
+  nouveau après un nouveau fichier. Transmet le dossier, le seuil, les heures
+  depuis le dernier fichier, son nom et sa date.
+- **Taille au-dessus d'un seuil** : la taille totale dépasse le seuil choisi
+  (de 100 Mo à 1 To). Se redéclenche après être repassée 5 % en dessous.
+  Transmet le dossier, le seuil, la taille et le nombre de fichiers.
+
+Un chemin vu pour la première fois ne déclenche rien : les seuils déjà passés
+sont pris en silence. Après un redémarrage de l'intégration, les fichiers
+arrivés entre-temps sont annoncés une fois.
+
+### Actions
+
+- **État d'un dossier** : lit un chemin surveillé pour les actions suivantes :
+  accessible ou non, fichiers, taille, dernier fichier et sa date, heures
+  écoulées depuis, et une phrase toute faite (« sauvegardes : 12 fichier(s),
+  45 Go, dernier : nightly.tar.gz (14/11/26 03:12) »).
+
+### Idées de scènes
+
+- **Nouveau fichier** dans `scans`, extension `pdf` → envoyer « Nouveau scan »
+  et le nom du fichier sur Telegram.
+- **Dossier non modifié depuis un moment**, `sauvegardes`, 48 heures →
+  prévenir que la sauvegarde de la nuit n'arrive plus.
+- **Taille au-dessus d'un seuil**, `camera`, 100 Go → un message pour faire du
+  ménage dans les enregistrements.
+- Chaque matin, **État d'un dossier** puis envoyer sa phrase.
+
+## Dépannage
+
+- **« Rien à surveiller »** : le dossier de surveillance est vide. Placez-y ou
+  montez-y un dossier, puis redémarrez l'intégration s'il s'agit d'un montage.
+- **Un chemin « inaccessible »** : le dossier manque (faute de frappe dans les
+  chemins, partage non monté) ou l'intégration ne peut pas le lire (elle tourne
+  sous l'utilisateur 1000 : donnez-lui la lecture, par exemple
+  `chmod -R o+rX` sur le dossier, ou l'option `uid=1000` d'un montage CIFS).
+- **Un partage monté apparaît vide** : le montage a été fait après le
+  démarrage de l'intégration : redémarrez-la.
+- **« more than 100000 files »** dans les logs : l'analyse d'un chemin s'arrête
+  à 100 000 fichiers (200 000 pour l'ensemble des chemins) pour tenir dans les 256 Mo du bac à sable. Surveillez un
+  sous-dossier, baissez la profondeur ou ajoutez des motifs.
+- **Logs détaillés** : `LOG_LEVEL=debug` (les analyses normales n'écrivent
+  rien).
+
+## Limites
+
+- Pas encore testée dans un vrai Gladys : vos retours sont les bienvenus.
+- Gladys ne laisse pas une intégration choisir un dossier de sa machine : les
+  dossiers doivent être placés ou montés dans le dossier de surveillance (voir
+  plus haut).
+- Analyse périodique, pas de notifications : un fichier créé puis supprimé
+  entre deux analyses n'est pas vu ; avec un intervalle d'une minute, un
+  nouveau fichier est annoncé en moins d'une minute.
+- Les liens symboliques à l'intérieur des dossiers surveillés sont ignorés.
+- 100 000 fichiers par chemin et 200 000 au total au plus, 50 chemins.
+- La syntaxe de motif `{a,b}` n'est pas prise en charge (la virgule sépare les
+  motifs).
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par File watch dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Où placer les dossiers | `section` | Non | Gladys ne donne à l'intégration qu'un dossier de son hôte. Placez ou montez (NFS, SMB, montage bind) les dossiers à surveiller dans son sous-dossier « watch », puis redémarrez l'intégration. Le guide donne le chemin exact. |
+| Chemins à surveiller | `string` | Non | Dossiers ou fichiers sous /data/watch, séparés par des virgules. Vide : chaque dossier et fichier à la racine de /data/watch. |
+| Filtres | `section` | Non |  |
+| Seulement ces fichiers | `string` | Non | Motifs glob, séparés par des virgules : *.pdf, daily/*.tar.gz. Vide : tous les fichiers. |
+| Ignorer | `string` | Non | Motifs glob des fichiers et dossiers à ignorer. Par défaut : fichiers cachés, temporaires et système. |
+| Profondeur | `number` | Non | Niveaux de sous-dossiers lus : 1 pour les seuls fichiers du dossier. |
+| Options | `section` | Non |  |
+| Intervalle d'analyse | `select` | Non | Fréquence d'analyse des dossiers (noms, tailles et dates seulement, jamais le contenu). |
+| Langue des noms | `select` | Non | Langue des noms de fonctionnalités (fixés à l'ajout d'un appareil), des dates, tailles et résultats de scène. |
+
+## Comment installer File watch dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : File watch apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/guim31/gladys-file-watch:1.0.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/guim31/gladys-file-watch](https://github.com/guim31/gladys-file-watch).
+
+File watch nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+File watch est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [guim31](https://github.com/guim31), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/guim31/gladys-file-watch) — [source de cette documentation](https://github.com/guim31/gladys-file-watch/blob/HEAD/docs/fr.md)

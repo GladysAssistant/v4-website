@@ -1,0 +1,229 @@
+---
+title: "File watch smart home integration, free and open source"
+sidebar_label: "File watch"
+description: "Watch folders and files: new files, count, size, a backup that no longer arrives. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-file-watch.png"
+keywords:
+  - "file watch"
+  - "file watch smart home"
+  - "gladys file watch"
+  - "file watch gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-file-watch instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"File watch","description":"Watch folders and files: new files, count, size, a backup that no longer arrives.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-file-watch","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-file-watch.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-15T22:15:10Z"}} />
+
+Watch folders and files from Gladys: the scans of the printer, the photos of a
+phone, the recordings of a camera, the nightly backup copied to the NAS. Each
+watched path becomes a device with its number of files, total size, latest file
+and time since the last change. Scenes react to a **new file**, to a folder
+**not modified for a while** (a backup that no longer arrives) and to a size
+**above a threshold**; a dashboard widget lists the latest files.
+
+Only names, sizes and dates are read, never the content of the files. The
+folders are scanned at a regular interval, which works on network shares (NFS,
+SMB), where change notifications see nothing of what another machine writes.
+
+Tested for real in a locked-down Docker container (the sandbox of Gladys:
+read-only system, no capability, 256 MB), with creations, deletions, renames,
+a tree of 10,000 files, a folder deleted then created again and exclusion
+patterns; not yet in a real Gladys: feedback welcome on
+[the issues](https://github.com/guim31/gladys-file-watch/issues).
+
+## What you need
+
+- Gladys Assistant 5.1.0 or later.
+- Access to the machine that runs Gladys (a terminal, or the file sharing of a
+  NAS), to put or mount the folders to watch in the watch folder below.
+
+## Getting started
+
+### 1. Where to put the folders
+
+Gladys gives each integration **a single folder of its machine**, and the
+integration cannot open any other one (it runs in a sandbox). For this
+integration, with a standard installation of Gladys, it is:
+
+```
+/var/lib/gladysassistant/external-integrations/ext-guim31-gladys-file-watch/watch
+```
+
+It is created at the first start; inside the integration it is called
+`/data/watch`. The **Check the watched folders** button of the integration
+page gives the exact path of your installation. Put in it what you want to
+watch, in one of these ways:
+
+- **Files written there directly**: point the backup tool, the scanner or the
+  camera at this folder (or at a sub-folder of it), for example by sharing it
+  with Samba.
+- **A network share mounted there** (NFS or SMB of a NAS), for example in
+  `/etc/fstab`:
+  `//nas.local/backups /var/lib/gladysassistant/external-integrations/ext-guim31-gladys-file-watch/watch/backups cifs ro,credentials=/root/.nas 0 0`
+- **A folder of the machine mounted there** (a bind mount, read-only):
+  `mount --bind -o ro /srv/photos /var/lib/gladysassistant/external-integrations/ext-guim31-gladys-file-watch/watch/photos`
+
+A symbolic link to a folder outside does **not** work: the integration only
+sees its own folder. After mounting, **restart the integration** (Integrations
+→ File watch → Stop, then Start): a mount made while it runs stays invisible to
+it.
+
+### 2. Configure the integration
+
+- **Paths to watch**: empty, every folder and file at the top of the watch
+  folder is followed, a new one appears by itself. Or a list separated by
+  commas, relative to the watch folder: `backups, nas/scans, logs/app.log` (a
+  sub-folder or a single file can be watched).
+- **Only these files**: glob patterns, for example `*.pdf, *.jpg`. Empty: every
+  file.
+- **Ignore**: patterns of files and folders to leave aside. The default skips
+  hidden files, temporary files of downloads and copies (`*.tmp`, `*.part`),
+  and the system files of Windows, macOS and Synology.
+- **Depth**: levels of sub-folders read, 5 by default; 1 for the files of the
+  folder only.
+- **Scan interval**: 30 seconds to 1 hour, 1 minute by default.
+- **Language of the names**: language of the feature names, dates, sizes and
+  scene results.
+
+Patterns: a pattern without `/` applies to the name at any depth (`*.mkv`,
+`@eaDir`); with a `/`, to the path in the watched folder (`daily/*.tar.gz`).
+`*` and `?` stay within a folder, `**` crosses folders, `[abc]` and `[!abc]`
+are character classes. Case does not matter. An ignored folder is not entered.
+
+Then click **Check the watched folders**: the answer lists each path, its
+number of files, and the path of the watch folder on the machine.
+
+### 3. Add the devices
+
+In the **Discover** tab, add the paths to follow. The scene triggers and the
+widget work for every path, added or not.
+
+## The devices
+
+One device per watched path, named after its path:
+
+| Feature                | What it shows                                                  |
+| ---------------------- | -------------------------------------------------------------- |
+| Files                  | number of files counted (after the patterns)                   |
+| Total size             | their total size, in MB                                        |
+| Latest file            | the latest file arrived, with its path in the folder           |
+| Latest file date       | its date                                                       |
+| Time since last change | minutes since the latest file arrived                          |
+| Accessible             | Yes, or No when the path is missing or unreadable (share down) |
+
+A file "arrives" at the latest of its modification and change dates: a copy
+that keeps the original date (`rsync -a`, `cp -p`) still counts as new.
+
+## Dashboard
+
+The **Latest files** widget lists the eight latest files of the chosen folders
+(all by default), newest first, with their folder, size and date, under two
+tiles: number of files and total size. A line names the folders not
+accessible. Its settings hide the totals and the **Refresh** button, which
+scans the folders at once.
+
+## Scenes
+
+### Triggers
+
+- **New file**: a file appears in a watched folder. A renamed or moved file
+  within the folder is not new. Filters: folders, extension in lowercase, without the dot (`pdf`). Passes on
+  the folder, the file (path in the folder), its extension, its size and the
+  number of new files: beyond 5 new files in one scan (a folder copied at
+  once), a single event carries the newest file and the count.
+- **Folder not modified for a while**: no file arrived for the chosen time (1
+  hour to 7 days). Fires once per threshold (the highest one only when several are passed at once, after an interruption), then again after a new file.
+  Passes on the folder, the threshold, the hours since the latest file, its
+  name and date.
+- **Size above a threshold**: the total size goes above the chosen threshold
+  (100 MB to 1 TB). Fires again once the size went 5 % below. Passes on the
+  folder, the threshold, the size and the number of files.
+
+A path seen for the first time fires nothing: the thresholds already passed
+are taken silently. After a restart of the integration, the files arrived in
+between are announced once.
+
+### Actions
+
+- **State of a folder**: reads a watched path for the next actions: accessible
+  or not, files, size, latest file and its date, hours since then, and a
+  ready-made sentence ("backups: 12 file(s), 45 GB, latest: nightly.tar.gz
+  (14/11/26 03:12)").
+
+### Scene ideas
+
+- **New file** in `scans`, extension `pdf` → send "New scan" and the file
+  name on Telegram.
+- **Folder not modified for a while**, `backups`, 48 hours → warn that the
+  nightly backup no longer arrives.
+- **Size above a threshold**, `camera`, 100 GB → a message to clean the
+  recordings.
+- Every morning, **State of a folder** then send its sentence.
+
+## Troubleshooting
+
+- **"Nothing to watch yet"**: the watch folder is empty. Put or mount a folder
+  in it, then restart the integration if it is a mount.
+- **A path "not accessible"**: the folder is missing (typo in the paths, share
+  not mounted) or unreadable by the integration (it runs as user 1000: give it
+  read access, for example `chmod -R o+rX` on the folder, or the `uid=1000`
+  option of a CIFS mount).
+- **A mounted share shows an empty folder**: the mount was made after the
+  start of the integration: restart it.
+- **"more than 100000 files"** in the logs: the scan of one path stops at 100,000 files (200,000 for all the paths) to stay within the 256 MB of the sandbox. Watch a sub-folder,
+  lower the depth or add patterns.
+- **Detailed logs**: set `LOG_LEVEL=debug` (normal scans write nothing).
+
+## Limits
+
+- Not yet tested in a real Gladys: feedback welcome.
+- Gladys does not let an integration choose a folder of its machine: the
+  folders must be placed or mounted in the watch folder (see above).
+- Scanning, not notifications: a file created then deleted between two scans
+  is not seen; with a 1-minute interval, a new file is announced within a
+  minute.
+- Symbolic links inside the watched folders are skipped.
+- 100,000 files per path and 200,000 in total at most, 50 paths.
+- The `{a,b}` pattern syntax is not supported (the comma separates patterns).
+
+## Configuration settings
+
+These are the settings File watch asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Where to put the folders | `section` | No | Gladys gives the integration a single folder of its host. Put, link or mount (NFS, SMB, bind mount) the folders to watch in its "watch" sub-folder, then restart the integration. The guide gives the exact path. |
+| Paths to watch | `string` | No | Folders or files under /data/watch, separated by commas. Empty: every folder and file at the top of /data/watch. |
+| Filters | `section` | No |  |
+| Only these files | `string` | No | Glob patterns, separated by commas: *.pdf, daily/*.tar.gz. Empty: every file. |
+| Ignore | `string` | No | Glob patterns of files and folders to ignore. The default skips hidden, temporary and system files. |
+| Depth | `number` | No | Levels of sub-folders read: 1 for the files of the folder only. |
+| Options | `section` | No |  |
+| Scan interval | `select` | No | How often the folders are scanned (names, sizes and dates only, never the content). |
+| Language of the names | `select` | No | Language of the feature names (set when a device is added), of the dates, sizes and scene results. |
+
+## How to install File watch in Gladys
+
+1. In Gladys, open **Integrations**: File watch appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-file-watch:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-file-watch](https://github.com/guim31/gladys-file-watch).
+
+File watch requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+File watch is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-file-watch) — [source of this documentation](https://github.com/guim31/gladys-file-watch/blob/HEAD/docs/en.md)

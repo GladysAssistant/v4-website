@@ -1,0 +1,208 @@
+---
+title: "AESO pool price (Alberta) smart home integration, free and open source"
+sidebar_label: "AESO pool price (Alberta)"
+description: "Unofficial: the Alberta hourly pool price (AESO) for your energy contract. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-aeso.png"
+keywords:
+  - "aeso pool price (alberta)"
+  - "aeso pool price (alberta) smart home"
+  - "gladys aeso pool price (alberta)"
+  - "aeso pool price (alberta) gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-aeso instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"AESO pool price (Alberta)","description":"Unofficial: the Alberta hourly pool price (AESO) for your energy contract.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-aeso","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-aeso.png","type":"provider","version":"0.1.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-14T09:08:27Z"}} />
+
+**Unofficial integration, not affiliated with the AESO (Alberta Electric System
+Operator). Never tested with a real AESO key nor a real Gladys energy contract
+yet.**
+
+For Alberta households on a **floating (variable) retail rate** that follows
+the hourly pool price. This integration reads the pool price of every settled
+hour, feeds the Gladys energy calendar `spot-ca-ab` and offers the contract
+template **"AESO pool price (floating rate)"**. Wholesale prices are not the
+Regulated Rate Option (RRO) nor a fixed-rate contract: this template is for a
+rate that tracks the pool price.
+
+## Get a key (free)
+
+1. Sign up on the AESO developer portal, [https://developer-apim.aeso.ca/](https://developer-apim.aeso.ca/).
+2. Subscribe to the **public** product (subscribing means accepting the terms
+   of use of the product) and copy its **primary key**.
+3. In Gladys, paste it in the **AESO API key** field of the integration and
+   save. Press **Test the key**: it reads today's settled hours once and tells
+   you the last one.
+
+The key is kept by Gladys in its database, never shown again, sent only to the
+AESO (`apimgw.aeso.ca`) in the `API-KEY` header, never in a URL, a log, the
+status or `/data`.
+
+## Create the contract
+
+In Gladys, **Energy monitoring → Contracts → New contract**, pick **AESO pool
+price (floating rate)** and fill in:
+
+| Input                     | What to type                                                                                                                                 |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Retailer adder per kWh    | The adder (margin) of your floating-rate retailer, CAD/kWh, before GST. 0 counts the pool price alone.                                       |
+| Provisional price per kWh | **Required.** Your usual energy price, adder included, before GST: counted for an hour whose pool price is not published yet, then replaced. |
+| Delivery charges per kWh  | Your variable distribution and transmission charges and riders, CAD/kWh, before GST. 0 leaves them out.                                      |
+| Fixed charges per month   | Your fixed administration and delivery charges of a month, before GST.                                                                       |
+| GST                       | 5 % in Alberta.                                                                                                                              |
+
+Per kWh: (pool price + adder) + delivery, then GST on everything, fixed charges
+included. A negative pool price (not allowed by today's market rules) would be
+counted as published.
+
+## How the price of an hour gets there
+
+The pool price of an hour is the average of its 60 one-minute system marginal
+prices: it is known only once the hour has ended. So:
+
+- during an hour, and for a few minutes after it, Gladys counts the
+  **provisional price** of the contract (labelled "Provisional (hour not
+  settled yet)"); the price widget and the "current price" scene condition show
+  that provisional price too;
+- 5 minutes after the end of each hour, the integration asks the AESO for the
+  settled hours of the day and writes the new one to the calendar; Gladys then
+  recomputes the costs from that hour with the real price (at most once every
+  10 minutes per calendar, by the Gladys core);
+- while the integration is stopped, the provisional price stays counted; when
+  it comes back, it reads the missing hours and Gladys recomputes them.
+
+A missing hour is never guessed by the integration nor written to the
+calendar: it stays unknown there, and Gladys counts the provisional price you
+chose (the price you type, even 0 if you type 0: Gladys does not refuse it).
+The AESO forecast pool price is never used.
+
+## What the template does not express
+
+- Each hour of your meter is priced at the pool price of that hour. A retailer
+  that bills a monthly average (weighted by the provincial load profile, for
+  example) gives another amount: the template then only approximates your
+  bill.
+- The integration keeps 400 days of prices: an interval older than that, in a
+  contract starting earlier, keeps the provisional price.
+
+## AESO terms of use
+
+The pool prices are the AESO's data. The AESO allows a non-commercial,
+personal or educational use ([https://www.aeso.ca/legal](https://www.aeso.ca/legal)); the terms of use of
+the API product are accepted when you subscribe to it, and the AESO may refuse
+or revoke a key. Use your key for your own home only: do not share it, and do
+not share nor resell the prices. The conversion from /MWh to /kWh and the
+30-minute slots are made in your own Gladys; nothing of the AESO data ships
+with the integration. Each status says "Source: AESO".
+
+## Source and requests
+
+The Pool Price Report of the AESO API, version 1.1:
+`https://apimgw.aeso.ca/public/poolprice-api/v1.1/price/poolPrice?startDate=…&endDate=…`
+(the days of Mountain time, both included).
+
+- At the first start: the last 35 days, in two requests (31 days at most per
+  request). When a contract on the template starts earlier, its days too (400
+  days at most), three requests at most in a row, then a minute apart.
+- Then one request an hour, 5 minutes after the end of the hour: the day of
+  that hour. If the hour is late, again 10, 20, 40 minutes later, then every
+  hour while it stays late.
+- A past day answered incomplete: asked again once a day.
+- A complete day is never asked again. A restart, a reconnection, a new key or
+  the button never ask sooner than a minute after the last request.
+- One request at a time, 20 seconds and 1 MB at most, the integration's own
+  User-Agent (`gladys-aeso/<version>`), no redirect followed.
+
+Answers are read strictly: an hour is kept only when its UTC and Mountain start
+times agree, the hour has ended, and the price is a plain number between
+−1,000 and 3,000 CAD/MWh (the market rules bound it to 0 .. 999.99 today).
+An empty price (the current and next hours, which only carry a forecast) is
+unknown, and so is a "-" (a late hour, whatever its age); any other
+non-numeric price is unknown during the hour after the end of its hour, then
+unreadable. An answer never erases a price held; a corrected price replaces it.
+
+## Errors and pauses
+
+| Answer                                                | What the integration does                                                                                                                                                                                                                             |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 401                                                   | The key is refused: no automatic request any more, even after a restart, until the key is changed or the **Test the key** button succeeds. Only 8 bits of a salted hash of the refused key are kept in `/data` (many keys share them), never the key. |
+| 403 "quota"                                           | A pause until the quota comes back (the time the AESO gives, 1 minute to 6 hours, 10 minutes when none); not a refused key.                                                                                                                           |
+| Other 403                                             | Not a refused key: retried after 5, 15, 30, 60 minutes, then every 3 hours.                                                                                                                                                                           |
+| 429                                                   | A pause for the `Retry-After` time (1 minute to 6 hours, 10 minutes when absent), kept in `/data` across a restart. The button waits for it too.                                                                                                      |
+| 5xx, timeout, network, unreadable or too large answer | Retried after 5, 15, 30, 60 minutes, then every 3 hours.                                                                                                                                                                                              |
+| 404 or 410                                            | The version 1.1 may be retired: asked again every 6 hours; update the integration.                                                                                                                                                                    |
+
+A key changed while the integration was stopped shares those 8 bits with the
+refused one once in 256: it is then held as refused too until you press **Test
+the key** (a key changed while it runs is always tried).
+
+The calendar owned by another integration (Gladys refuses it): said in the
+status, the prices are still read.
+
+## Time zone
+
+Alberta keeps UTC-6 all year: by law since 18 June 2026, and the clocks did not
+go back on 1 November 2026. The settlement days follow the time zone database
+of the integration's Node.js (2026c or later knows the change); with an older one, every winter hour would be an hour off the AESO's
+own Mountain times, so the integration asks nothing and says so. The history
+before November 2026 keeps its 23- and 25-hour days.
+
+## Status
+
+The integration status shows the last settled hour held, an unreadable
+answer (no hour of it reads while hours are expected: not connected, retried
+with the growing back-off), the settled hours that alone do not read (they
+keep the provisional price and are asked again a day later, the other hours
+go on hourly), no new pool price for more than 3 hours (the AESO late, or its
+answer changed: not connected, the contracts count the provisional price), the last check, the
+last error and the next attempt, the calendar not fed, the number of contracts
+on the template, a `/data` that cannot be written. `/data` unreadable: read
+again every 10 seconds, nothing asked meanwhile. The configuration not
+readable from Gladys: asked again after 10 seconds, then twice as long each
+time up to 5 minutes.
+
+## Limits
+
+- Never tested with a real key nor a real contract.
+- Corrections the AESO makes to a day already complete are not read again.
+- At each connection the calendar is read back from the day of the last entry
+  Gladys holds: days lost at its end (a database restored) are sent again. The
+  oldest days Gladys purges every night (it keeps the calendar back to its
+  oldest stored state) are never sent again. An empty calendar is sent again
+  whole, once.
+- No device, no scene trigger: the price is used through the contract.
+
+## Configuration settings
+
+These are the settings AESO pool price (Alberta) asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| AESO pool price | `section` | No | Unofficial, not affiliated with the AESO (Alberta Electric System Operator). For Alberta households on a floating (variable) retail rate that follows the pool price. The integration reads the hourly pool price from the official AESO API with your free API key, feeds it to the Gladys energy calendar spot-ca-ab and offers the "AESO pool price" contract template (pool price plus your retailer adder, delivery per kWh, fixed charges, GST). The pool price of an hour is known only once the hour has ended: until then Gladys counts the provisional price you type in the contract, then recomputes the cost with the real price. Get a key: sign up on developer-apim.aeso.ca, subscribe to the "public" product, copy its primary key here. Personal, non-commercial use only, under the AESO terms you accept when subscribing (aeso.ca/legal). Read-only. |
+| AESO API key | `secret` | Yes | The primary key of your "public" subscription on developer-apim.aeso.ca. Kept by Gladys in its database, never shown again, sent only to the AESO (apimgw.aeso.ca) in the API-KEY header. |
+
+## How to install AESO pool price (Alberta) in Gladys
+
+1. In Gladys, open **Integrations**: AESO pool price (Alberta) appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-aeso:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-aeso](https://github.com/LM1LC3N7/gladys-aeso).
+
+AESO pool price (Alberta) requires Gladys `>=5.3.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+AESO pool price (Alberta) is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-aeso) — [source of this documentation](https://github.com/LM1LC3N7/gladys-aeso/blob/HEAD/docs/en.md)

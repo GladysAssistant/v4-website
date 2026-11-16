@@ -1,0 +1,201 @@
+---
+title: "Raspberry Shake smart home integration, free and open source"
+sidebar_label: "Raspberry Shake"
+description: "Your Raspberry Shake seismograph: vibration level, shaking detection and station status. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-raspberry-shake.png"
+keywords:
+  - "raspberry shake"
+  - "raspberry shake smart home"
+  - "gladys raspberry shake"
+  - "raspberry shake gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-raspberry-shake instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Raspberry Shake","description":"Your Raspberry Shake seismograph: vibration level, shaking detection and station status.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-raspberry-shake","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-raspberry-shake.png","type":"device","version":"1.0.0","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-11-15T23:33:50Z"}} />
+
+Your [Raspberry Shake](https://raspberryshake.org) personal seismograph in Gladys: the vibration level
+of the ground at home, minute by minute, shaking detection with its peak and its duration, and the
+online status of the station. Works with every Shake model (1D, 3D, 4D, RS&BOOM).
+
+Two sources, used together:
+
+- the **UDP output** of the Shake (Datacast), sent straight to Gladys on your local network: the live
+  samples, from which Gladys computes the vibration level (RSAM), the peak and an STA/LTA trigger;
+- the **public data** of the Raspberry Shake network (AM), when your Shake shares its data: whether the
+  station is still sending, even without the UDP output.
+
+It is not an early warning system: a home seismograph also feels footsteps, doors, washing machines and
+trucks, and the detection says that the ground moved, not that an earthquake happened. For the
+earthquakes reported by seismologists near your home, see the EMSC Earthquakes integration.
+
+Developed without the hardware: feedback welcome. The analysis was tested on a real recording of a
+public station (the magnitude 3.7 Pyrenees earthquake of 3 August 2026, 5 km from station AM.R6881),
+replayed in the UDP format of the Shake; no physical Shake was connected. Not affiliated with Raspberry
+Shake, S.A.
+
+## What you get
+
+- A **Raspberry Shake** device per station: online status and last data received; with the UDP output,
+  vibration level (RSAM, counts), peak amplitude (counts) and shaking detected, with their history.
+- A **dashboard widget**: station status, live vibration level and peak, and the vibration level of the
+  last day as a chart.
+- Three **scene triggers**: shaking detected, back to calm (with the peak and the duration), station
+  offline.
+- A **Check the station now** action in the configuration screen.
+
+## Requirements
+
+- Gladys Assistant 5.2 or later (the integration publishes a UDP port through a sub-container).
+- A Raspberry Shake on the same network as Gladys, for the UDP output.
+- Internet access from the Gladys host for the online status (`data.raspberryshake.org`, HTTPS).
+
+## Configuration
+
+### Station and UDP output
+
+1. Find the code of your station: on the web page of your Shake (`http://rs.local`, or its address),
+   or on the [station map](https://stationview.raspberryshake.org). It looks like `R1A2B` (network
+   `AM`).
+2. In Gladys, Integrations → Raspberry Shake → Configuration, type the code and save.
+3. The top of the configuration screen shows the address and the UDP port Gladys chose for the
+   integration (for example `192.168.1.20`, port `40123`). On the web page of the Shake, open Settings →
+   **Datacast**, add this address as target host and this port as target port, then save and restart
+   the data producer as the Shake asks.
+4. Create the device in the **Discover** tab.
+
+The Shake sends its samples about four times a second per channel: a few kilobytes per second on your
+local network. The port is chosen by Gladys and kept: the Shake only needs to be set once. If your
+Shake gets its address from your router, a fixed address (DHCP reservation) lets you fill **Address of
+the Shake**: packets from any other device are then ignored.
+
+### Settings
+
+| Setting               | Default | Meaning                                                                     |
+| --------------------- | ------- | --------------------------------------------------------------------------- |
+| Station code          | empty   | `R1A2B` or `AM.R1A2B`, any case.                                            |
+| Use the UDP output    | on      | Off: online status and last data only, from the public data of the network. |
+| Address of the Shake  | empty   | Optional IPv4 address: UDP packets from any other address are ignored.      |
+| Shaking detection     | Normal  | STA/LTA ratio that starts a detection: low 6, normal 4, high 3.             |
+| Offline after         | 1 hour  | Time without data before the station is offline (1, 2 or 6 hours).          |
+| Language of the texts | French  | Names of the features (at their creation) and dates.                        |
+
+## Device
+
+| Feature                | Type             | Meaning                                                                  |
+| ---------------------- | ---------------- | ------------------------------------------------------------------------ |
+| Station online         | binary           | Data received in time: UDP in the last 2 minutes, or recent public data. |
+| Last data              | text             | Date and time of the last data received (updated every 10 minutes).      |
+| Vibration level (RSAM) | number, counts   | Mean absolute amplitude over each minute, offset removed.                |
+| Peak amplitude         | number, counts   | Largest absolute amplitude over each minute.                             |
+| Shaking detected       | vibration sensor | 1 from the trigger until 10 seconds of calm.                             |
+
+The last three need the UDP output. Values are in **counts**, the raw unit of the Shake: compare them
+with your own station's usual level (the station of the recording read about 900 counts before the M3.7
+earthquake, 5 km away, which peaked at 1.16 million). The vertical geophone (EHZ) is used, else the
+first seismic channel received; the infrasound channel of a Boom is ignored.
+
+The **detection** compares the mean amplitude over 1 second with the mean over 30 seconds (STA/LTA),
+the classic trigger of seismology: it starts at the chosen ratio and ends after 10 seconds below 1.5
+(2 in low sensitivity). The long term average needs 30 seconds of data after a start or a gap.
+
+## Dashboard widget
+
+Add the **Raspberry Shake** widget to a dashboard: name of the station, live vibration level and peak,
+a 24-hour chart of the vibration level (can be hidden in the widget settings), and a status block
+(online, last data, ground calm or shaking, UDP packets in the last minute). Without the UDP output,
+only the status block is shown.
+
+## Scene triggers
+
+- **Shaking detected**: the trigger went on. Variables: the station code and the STA/LTA ratio.
+- **Back to calm**: the shaking is over. Variables: the station, the peak amplitude (counts) and the
+  duration (seconds). Use the peak to tell a footstep from an earthquake in a scene condition.
+- **Station offline**: the station was online and no data came within the configured delay. Variables:
+  the station and the date of the last data.
+
+The **Shaking detected** device feature can also be used as a regular device trigger.
+
+## Scene examples
+
+- When **Back to calm** fires, if the peak is above your usual level by a large margin, send yourself a
+  message with the peak and the duration.
+- When **Station offline** fires, send a message: the Shake may have lost its power or its network.
+- Every evening, read the vibration level of the day on the chart to see the traffic, the wind and the
+  activity of the house.
+
+## Data sources, terms and quotas
+
+- UDP output: the samples never leave your local network; nothing is stored, the analysis runs in
+  memory.
+- Public data: the FDSN web services of Raspberry Shake (`https://data.raspberryshake.org/fdsnws/`),
+  free and without account, for stations that share their data. The integration reads only the
+  headers of a few kilobytes of data every 10 minutes (a short window, then narrow probes further back
+  when the station is silent). The archive lags about 30 minutes behind real time, hence the one-hour
+  minimum before offline. Citation of the network: Raspberry Shake, S.A. (2016), Raspberry Shake
+  [Data set], International Federation of Digital Seismograph Networks,
+  https://doi.org/10.7914/SN/AM.
+
+## Troubleshooting
+
+- **"No UDP data from the Shake"**: check the Datacast target (the address and the port shown in the
+  configuration screen, not port 8888), that the data producer was restarted, and that no firewall on
+  the Gladys host blocks incoming UDP. With an address of the Shake set, check it: the logs say once
+  which address was ignored.
+- **"Station is not on the Raspberry Shake network"**: the code is wrong, or the Shake does not share
+  its data. The UDP output still works.
+- **Many detections**: footsteps and doors near the Shake trigger at high sensitivity: choose normal or
+  low, or move the Shake to the floor of a quiet room.
+- **The Configuration screen shows `{{port:shake_udp}}`**: the receiver has not started yet; reload the
+  page after a few seconds.
+- Logs: Integrations → Raspberry Shake → Supervision; `LOG_LEVEL=debug` shows every minute and every
+  detection.
+
+## Limits
+
+- One station per Gladys. The counts are not converted into ground velocity, and no magnitude is
+  computed: a home seismograph cannot locate an earthquake on its own.
+- The detection is a simple STA/LTA trigger on one channel, without any filter: it says that the ground
+  shook near the Shake, whatever the cause.
+- The online status without UDP needs a station that shares its data on the network, and arrives
+  about 30 minutes late.
+
+## Configuration settings
+
+These are the settings Raspberry Shake asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Connect your Raspberry Shake | `section` | No | Type the code of your station below. For live data, open the web page of your Shake (rs.local), Settings, Datacast, and add the target host \{\{gladys_host\}\}, port \{\{port:shake_udp\}\} (chosen by Gladys). Without it, only the online status is followed, through the public data of the network. |
+| Station code | `string` | Yes | Shown on the web page of your Shake and on the station map, e.g. R1A2B. |
+| Use the UDP output | `boolean` | No | Vibration level, peak and shaking detection, computed in Gladys from the live samples. |
+| Address of the Shake (optional) | `string` | No | When set, UDP packets from any other address are ignored. |
+| Shaking detection | `select` | No | STA/LTA trigger ratio: high also catches footsteps and doors near the Shake. |
+| Offline after | `select` | No | Without UDP, the public data of the network arrives about 30 minutes late. |
+| Language of the names and texts | `select` | No | Feature names (set when the device is added) and dates. |
+
+## How to install Raspberry Shake in Gladys
+
+1. In Gladys, open **Integrations**: Raspberry Shake appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-raspberry-shake:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-raspberry-shake](https://github.com/guim31/gladys-raspberry-shake).
+
+Raspberry Shake requires Gladys `>=5.2.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Raspberry Shake is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-raspberry-shake) — [source of this documentation](https://github.com/guim31/gladys-raspberry-shake/blob/HEAD/docs/en.md)

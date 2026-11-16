@@ -19,7 +19,7 @@ https://github.com/guim31/gladys-solaredge instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"SolarEdge","description":"Producción solar, consumo de la casa, intercambios con la red y batería desde SolarEdge.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-solaredge","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-solaredge.jpg","type":"device","version":"1.4.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-10-29T18:32:33Z"}} />
+<ExternalIntegrationHeader integration={{"name":"SolarEdge","description":"Producción solar, consumo de la casa, intercambios con la red y batería desde SolarEdge.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-solaredge","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-solaredge.jpg","type":"device","version":"2.0.0","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-11-14T20:31:11Z"}} />
 
 :::info
 
@@ -28,9 +28,18 @@ La documentación de esta integración la escribe su autor y, por ahora, solo es
 :::
 
 This integration connects your **SolarEdge** photovoltaic installation to
-Gladys Assistant. It reads the SolarEdge Monitoring API — the same service the
-mobile app uses — and creates up to four devices in Gladys: solar production,
-home consumption, grid exchanges and home battery.
+Gladys Assistant. It reads the SolarEdge Monitoring API **V2** and creates up
+to four devices in Gladys: solar production, home consumption, grid exchanges
+and home battery.
+
+> **SolarEdge retired the V1 API on 3 November 2026.** Since then the old API
+> keys (those of the portal, _Admin → Site Access → API Access_) are refused
+> and the 1.x versions of the integration receive nothing. Version 2 uses V2:
+> you create a (free) SolarEdge developer account and connect the integration
+> once. See "Upgrading from version 1.x" below.
+>
+> This version was written from the official V2 documentation, without a real
+> V2 account to test it: feedback welcome.
 
 No extra hardware is needed: everything goes through the SolarEdge cloud, read
 only. The integration never sends a command to your inverter.
@@ -46,15 +55,17 @@ The integration detects all of this on its own at startup.
 
 Always created.
 
-| Reading          | Unit  | Description                                    |
-| ---------------- | ----- | ---------------------------------------------- |
-| Produced power   | W     | Instantaneous output of the panels             |
-| Production today | kWh   | Energy produced since midnight                 |
-| Total production | kWh   | Lifetime counter since commissioning           |
-| Revenue today\*  | € / $ | Revenue computed by SolarEdge from your tariff |
+| Reading          | Unit | Description                          |
+| ---------------- | ---- | ------------------------------------ |
+| Produced power   | W    | Instantaneous output of the panels   |
+| Production today | kWh  | Energy produced since midnight       |
+| Total production | kWh  | Lifetime counter since commissioning |
 
-\* Only when you have entered a feed-in tariff in the SolarEdge portal (see
-"Revenue today" below). Without a tariff the feature is not created at all.
+Total production is the counter of the inverter (or of the production meter),
+read once a day, plus today's production.
+
+The **revenue today** of the 1.x versions is gone: the V2 API does not provide
+it.
 
 Production this month and this year are not features: the **Solar
 production** widget shows them. Gladys has no type for an energy that resets
@@ -82,8 +93,7 @@ Created when your installation measures the grid exchanges.
 | Exported today | kWh  | Surplus sold since midnight                              |
 | Import index\* | kWh  | Energy bought from the grid since commissioning          |
 
-\* When SolarEdge measures the imported energy and knows the site's
-commissioning date.
+\* When the SolarEdge meter measures the imported energy.
 
 The sign of the grid power is what makes scenes interesting: "when grid power
 drops below −1000 W, start the water heater" means exactly "use the surplus
@@ -103,9 +113,9 @@ your billed consumption with your contract's rates. The house consumption is
 not used as an index: it includes the self-consumed solar, which costs you
 nothing.
 
-SolarEdge has no lifetime import counter: the integration rebuilds it (the
-import up to yesterday, read once a day, plus today's import). It therefore
-moves at the pace of the **daily breakdown** (30 min by default).
+The integration reads the import counter of the SolarEdge meter once a day and
+adds today's import to it: it moves at the pace of the refreshes, and never
+goes down.
 
 If Gladys already has a Linky meter as its main meter, that meter measures the
 same energy: the Import index sits under it by default, and you can turn its
@@ -123,11 +133,15 @@ Created when your site has storage (SolarEdge Energy Bank, LG RESU…).
 | Charge level          | %    | Battery state of charge                                   |
 | Battery power         | W    | **Positive** when charging, **negative** when discharging |
 | Battery state         | text | Charging / discharging / idle / disabled                  |
-| Battery low           | 0-1  | The "critical" flag reported by SolarEdge                 |
+| Battery low           | 0-1  | Charge level at 10 % or below                             |
 | Stored energy\*       | kWh  | Energy actually available in the battery                  |
 | Battery temperature\* | °C   | Internal temperature of the pack                          |
 
 \* Only when the **Detailed battery telemetry** setting is enabled.
+
+V2 no longer gives SolarEdge's "critical" flag (the live power flow is kept
+for paid developer plans): **Battery low** now flags a charge level of 10 % or
+below.
 
 ## Dashboard widgets
 
@@ -147,120 +161,124 @@ feature Gladys does not have stays empty.
   depending on what your site measures. A chart of the powers (production,
   consumption and grid) over the **period** chosen in the widget settings (24
   hours or a week). Then today's balance: production, consumption,
-  self-consumption, imported and exported energy, today's revenue (when a
-  tariff is entered in the SolarEdge portal) and the battery level with its
-  state. The **Refresh** button reads SolarEdge right away, like the _Refresh
+  self-consumption, imported and exported energy, and the battery level with
+  its state. The **Refresh** button reads SolarEdge right away, like the _Refresh
   now_ button of the configuration screen: it counts against the request
   budget, and once the day's budget is spent the widget says so instead of
   calling the API.
 - **Solar production** — production today, this month, this year and since
   commissioning as tiles (no decimals from 1000 kWh on; month, year and total
   come from the last SolarEdge reading), the PV power curve over the chosen **period** (24
-  hours, a week or a month), today's revenue when it exists and the time of
-  the last reading.
+  hours, a week or a month) and the time of the last reading.
 - **Battery** — the charge level gauge, the battery power, its state
   (_Charging_ in green, _Discharging_ in blue, _Idle_ or _Disabled_ in grey),
   the stored energy and the temperature when **Detailed battery telemetry** is
-  enabled, and a red **Battery low** row when SolarEdge raises its critical
-  flag. On a site without a battery the widget simply says so.
+  enabled, and a red **Battery low** row at 10 % or below. On a site without a battery the widget simply says so.
 
 Widgets refresh every five minutes at most, and as soon as a new SolarEdge
 reading lands. The values therefore never move faster than your **refresh
-interval**: the same 300 requests/day budget applies.
+interval**: the same SolarEdge credit budget applies.
 
 ## Setup
 
-### 1. Get a SolarEdge API key
+You need **Gladys 5.2 or later** (the "Connect" button came with 5.2).
 
-The key is generated from the SolarEdge monitoring portal, with an account
-holding admin rights on the site:
+### 1. Create the SolarEdge developer account and application
 
-1. Sign in at [https://monitoring.solaredge.com/](https://monitoring.solaredge.com/).
-2. Open **Admin** → **Site Access** → **API Access**.
-3. Accept the terms of service, then click **Generate a new key** and **Save**.
-4. Copy the key (32 uppercase characters) and the **site id** shown on the
-   same page.
+This is the path SolarEdge provides for homeowners ("Homeowner and
+Self-Access" guide of the SolarEdge documentation). It is free.
 
-If the "API Access" menu is not there, your account does not have the admin
-role on the installation: ask your installer for it.
+1. Go to [https://developer.solaredge.com/](https://developer.solaredge.com/) and sign in with your
+   **mySolarEdge** login (the site owner's). Fill in the developer profile: as
+   company name, your own name will do (unaccented letters and digits only);
+   industry "Other / Hobbyist", usage "Low - personal project". The **Free**
+   plan is enabled right away: 2,000 credits a month.
+2. Click **Create Application**: a name ("Gladys", for instance), the
+   **Monitoring API** service, then **Site Access**.
+3. In the OAuth configuration of the application:
+   - **Redirect URI**: the address shown in Gladys under the **Connect** button
+     (**Configuration** tab of the integration), usually
+     `https://my.gladysassistant.com/redirect/oauth`;
+   - **Origin URL**: `https://my.gladysassistant.com`;
+   - scopes: **SITE_DATA** and **DEVICE_DATA** (without DEVICE_DATA, only the
+     production is available).
+4. Copy the **Client ID** and the **Client Secret**. The secret is shown
+   **only once**.
+5. Note your **site ID**: mySolarEdge app, site details, or the number in the
+   address bar of the [https://monitoring.solaredge.com/](https://monitoring.solaredge.com/) portal.
 
-### 2. Fill in the integration
+Only the site **owner** can connect a site. If your login is not the owner,
+ask your installer to make you the owner (or use SolarEdge's site ownership
+transfer form).
+
+### 2. Connect the integration
 
 1. Open the **Configuration** tab of the integration in Gladys.
-2. Paste your **API key**.
-3. Leave **Site ID** empty when your key covers a single site: it is detected
-   automatically. Otherwise, press **List my sites** to find the id to enter.
-4. Save, then press **Test the connection**. The message shown under the
-   button confirms the site name and the list of available devices.
-5. The devices appear in the **Discovery** tab, ready to be added.
+2. Fill in the **Client ID**, the **Client Secret** and the **Site ID**, then
+   **save**.
+3. Press **Connect**. The SolarEdge page opens: sign in with your mySolarEdge
+   login, pick the site if you have several, then approve. You come back to
+   Gladys and the status turns to "connected".
+4. Press **Test the connection**: the message confirms the site name and the
+   list of available devices.
+5. The devices show up in the **Discovery** tab, ready to be added.
 
-### 3. Choose the refresh rate
+The authorization renews itself every two hours. It only expires after **14
+days without any refresh** (Gladys stopped for two weeks, for instance): the
+connection status then says so, and pressing **Connect** again is enough.
 
-SolarEdge limits each API key to **300 requests per day and per site**. Once
-the quota is spent, the API refuses everything until the next day — so the
-integration stops on its own before reaching it.
+**Installers**: with an installer account and a **Fleet Access** application,
+paste the **Fleet API key** in its field instead, without "Connect". The site
+ID can stay empty when the key covers a single site; otherwise **List my
+sites** gives the IDs.
 
-The budget reads as follows:
+### 3. The refresh rate
 
-- each refresh cycle costs **2 requests**, whatever the number of devices
-  created (they all share the same reading);
-- the **daily breakdown** (consumption, self-consumption, imported, exported)
-  costs **1 request** on its own, slower cadence;
-- the **detailed battery telemetry**, if you enable it, costs **1 more
-  request** at the daily-breakdown cadence;
-- the **Import index** costs **1 request a day** (plus one more when
-  the integration starts, for the past years).
+The free plan gives **2,000 credits a month** for the whole developer account,
+and every API call costs one. Once they are spent, SolarEdge refuses
+everything until the next billing cycle: the integration therefore never
+spends more than 1/31 of your **Monthly credits** a day (64 on the free plan),
+keeping a small reserve for your buttons.
 
-With the default settings (15 min for live values, 30 min for the breakdown),
-the integration uses about **240 requests per day**: it stays inside the
-budget with room to spare.
+One refresh costs:
 
-Lowering the interval to 5 minutes costs roughly 620 requests per day: the
-quota is reached around midday and the values freeze until tomorrow. The
-**API usage** button tells you where you stand at any moment.
+- **2 requests** for a lone inverter (today's balance and the power);
+- **1 more** with a meter (home and grid powers), unless that meter measures
+  the production too;
+- **1 more** with a battery, and 1 more again with **Detailed battery
+  telemetry** (the temperature);
+- and every day, **2 or 3 requests** for the month, the year, the total
+  production and the Import index.
+
+The integration stretches your **Refresh interval** on its own until it fits
+in that budget. On the free plan, expect a reading **about every 50 minutes**
+for a lone inverter, every 80 minutes with a meter, every 1 h 45 with a meter
+and a battery. The **API usage** button tells the interval actually used.
+
+With a paid plan (Business Starter: 20,000 credits), fill in your **Monthly
+credits**: the interval comes down to the one you chose, 15 minutes at the
+shortest (the finest resolution of the API). If other applications use the
+same developer account, lower that setting accordingly.
 
 > **Why do the devices say "every minute"?** Gladys can only wake an
-> integration at a fixed set of cadences, the slowest of which is one minute.
-> That wake-up is just a tick: it costs no request. The integration reads
-> SolarEdge on its own, at your **Refresh interval**, and publishes the values
-> itself; a tick from Gladys only reuses the last cached reading.
+> integration up at predefined rates, the slowest being one minute. That
+> wake-up is a mere heartbeat: it costs no request. The integration reads
+> SolarEdge on its own and publishes the values itself; a Gladys heartbeat
+> only gets the last cached reading.
 
-## Revenue today
+## Upgrading from version 1.x (V2 API)
 
-This one deserves an explanation, because it is easy to misread.
-
-SolarEdge does not know your contract. The revenue it reports comes from a
-rate you enter yourself in the monitoring portal, under **Admin → Revenue**
-(you need _account manager_ rights on the site). Two models are offered
-there: a flat rate per kWh, or a time-of-use rate.
-
-**Until that tariff is set, the API returns no revenue for the day** (only a
-lifetime revenue of 0) and the integration simply does not create the
-feature. That is deliberate: a feature
-that could never hold a value looks like a broken sensor, when it is really an
-unconfigured option. If you set the tariff later, run a scan from the
-**Discovery** tab and the feature appears.
-
-### Why the number misleads with self-consumption
-
-SolarEdge computes **tariff × energy produced**. Not × energy exported.
-
-On an installation that self-consumes and sells the surplus, your production
-splits into two flows worth very different amounts:
-
-- the energy you consume on site saves you from **buying** from the grid, at
-  your supply contract price;
-- the surplus is **sold**, at the feed-in tariff, usually much lower.
-
-SolarEdge applies a single rate to the whole thing. Enter your feed-in tariff
-and the reported revenue is badly overstated; enter your purchase price and
-the savings are. The honest calculation would be `(self-consumed kWh × avoided
-purchase price) + (exported kWh × feed-in tariff)`, which this field cannot
-express.
-
-Our advice: only set the tariff if you know exactly what you want out of it,
-and remember the figure covers total production. A missing feature is more
-honest than a wrong number.
+1. Update Gladys to **5.2 or later** if needed, then the integration.
+2. Follow "Setup" above: developer account, application, **Connect**. The old
+   API key is no longer used (you can clear the field; left as is, it is
+   ignored as soon as the application is filled in).
+3. Your devices and their history are kept: same IDs, same readings. If your
+   site had a tariff, the **Solar production** device shows **Update** in the
+   **Discovery** tab: clicking it deletes the **Revenue today** feature, which
+   V2 no longer provides (with its history). Without a click, it just stays
+   frozen.
+4. **Revenue today** also leaves the widgets, and the **Revenue currency**
+   setting leaves the form.
 
 ## Upgrading from version 1.2.0
 
@@ -304,56 +322,59 @@ today, which the integration still publishes.
 
 ## Available actions
 
-- **Test the connection** — checks the key, resolves the site and lists the
-  devices your installation can feed.
-- **List my sites** — shows every site the key gives access to, with its id,
-  ready to copy into the matching setting.
-- **Refresh now** — reads SolarEdge immediately, without waiting for the next
-  cycle.
-- **API usage** — how many requests were used today and how many refreshes
-  are left.
+- **Test the connection** — checks the SolarEdge access, resolves the site and
+  lists the devices your installation can feed.
+- **List my sites** — with a Fleet key, every site it covers with its ID; with
+  "Connect", the authorized site.
+- **Refresh now** — reads SolarEdge right away, without waiting for the next
+  cycle (within the same budget).
+- **API usage** — requests used today, the daily share of the monthly credits,
+  the cost of one refresh and the interval actually used.
 
 ## Troubleshooting
 
-**"SolarEdge refused the API key"** — the key is invalid, has been
-regenerated, or does not grant access to this site. Generate a new one from
-the portal and paste it again (trailing spaces are stripped automatically).
+**"SolarEdge retired its V1 API"** — the integration has no V2 application
+yet: follow "Setup".
 
-**"Site not found", or several sites** — your key covers more than one
-installation: press **List my sites** and copy the id you want into the
-**Site ID** setting.
+**"SolarEdge refused access"** — check the **Site ID** (it must be the site you
+authorized), and that the application has the DEVICE_DATA scope. An old V1 API
+key left alone in the Fleet field ends up here too.
 
-**The Consumption and Grid devices do not show up** — your installation has no
-consumption meter. SolarEdge still lists empty "Grid" and "Consumption" slots
-in its answers: the integration only creates a device for a value that is
-really measured. This is a hardware option (a Modbus meter) fitted by the
-installer; without it, SolarEdge only knows about production.
+**"SolarEdge access expired or was refused"** — the Client Secret is wrong, or
+the authorization expired (14 days without a refresh) or was revoked: check the
+secret, save, then press **Connect**.
 
-**One reading stays empty while the others fill in** — SolarEdge does not
-report that one for your site. The integration never publishes 0 in place of a
-missing value: a 0 would be indistinguishable from a genuine zero and would
-skew your charts and your scenes. The usual causes are a Modbus meter that
-stopped communicating (imported and exported energy stay empty, while grid
-power may show a real 0 reported by the inverter), or a feed-in tariff that
-was never configured.
+**"Connect" shows a redirect error at SolarEdge** — the redirect URI declared
+in the SolarEdge application must be **exactly** the one shown under the
+button in Gladys.
 
-**Revenue today is not in the list of readings** — expected when no tariff is
-set in the SolarEdge portal: see "Revenue today" above. After entering the
-tariff, run a scan from the Discovery tab for the feature to appear.
+**The Consumption and Grid devices do not appear** — your installation has no
+meter (a hardware option fitted by the installer), or the application lacks
+the DEVICE_DATA scope. The integration only creates a device for a value that
+is actually measured.
 
-**Values stop moving in the afternoon** — the daily quota is probably spent.
-Check with **API usage** and raise the refresh interval. An orange dot then
-appears on the devices to signal that the values are no longer refreshed.
+**A reading stays empty while the others fill in** — SolarEdge does not report
+it for your site. The integration never publishes 0 in place of a missing
+value: a 0 could not be told from a real zero. One exception, the produced
+power: a sleeping inverter (at night) sends nothing, and that is 0 W.
 
-**An "unreachable" badge on the devices** — the SolarEdge cloud is not
-answering. The integration retries automatically; the integration logs
-(`LOG_LEVEL=debug` for the full detail) show the exact cause.
+**The values stop moving** — the day's budget is spent (it resets at midnight
+UTC), or the month's credits are (they reset at the next billing cycle). **API
+usage** tells where you stand; an orange badge shows on the devices.
+
+**An "unreachable" badge on the devices** — the SolarEdge cloud does not
+answer. The integration retries on its own; its logs (`LOG_LEVEL=debug` for
+the details) give the exact cause.
 
 ## Privacy
 
-The integration only talks to `monitoringapi.solaredge.com`, read only. Your
-API key is stored by Gladys as a secret and is never sent back to the
-frontend. No data is sent anywhere else.
+The integration only talks to `monitoringapi.solaredge.com`, read only. The
+Client Secret and the Fleet key are stored by Gladys as secrets, never sent
+back to the interface; the access tokens are kept by the integration in its
+configuration, outside the form. During "Connect", SolarEdge sends your
+browser to the Gladys redirect page (`my.gladysassistant.com`), which sends it
+straight back to your instance: it sees the authorization code go by, useless
+without the Client Secret. No data is sent anywhere else.
 
 ## Parámetros de configuración
 
@@ -361,23 +382,24 @@ Estos son los parámetros que SolarEdge te pide en su pantalla de configuración
 
 | Parámetro | Tipo | Obligatorio | Descripción |
 | --- | --- | --- | --- |
-| Primeros pasos | `section` | No | Esta integración lee su instalación a través de la API SolarEdge Monitoring. Genere una clave de API en el portal de monitorización (Admin > Site Access > API Access), péguela abajo y pulse «Probar conexión». SolarEdge permite 300 solicitudes al día por sitio: el intervalo de actualización predeterminado queda muy por debajo de ese límite. |
-| Clave de API | `secret` | Sí | Clave de la API SolarEdge Monitoring, generada en Admin > Site Access > API Access. |
-| ID del sitio | `string` | No | ID numérico del sitio. Déjelo vacío si la clave de API solo da acceso a un sitio: se detecta automáticamente. Si no, use el botón «Listar mis sitios». |
-| Intervalo de actualización (s) | `number` | No | Frecuencia de actualización de los valores en directo (flujo de potencia, contadores de producción). Cada ciclo consume 2 de las 300 solicitudes diarias que permite SolarEdge, sea cual sea el número de dispositivos. |
-| Intervalo del balance diario (s) | `number` | No | Frecuencia de actualización del balance del día (consumo, autoconsumo, energía importada y exportada). Más lenta que los valores en directo a propósito: cada actualización consume una solicitud más. |
-| Telemetría detallada de la batería | `boolean` | No | Añade la energía almacenada y la temperatura de la batería, leídas en el endpoint de almacenamiento. Consume una solicitud más por ciclo de balance diario y solo afecta a los sitios con batería. |
-| Presupuesto diario de solicitudes | `number` | No | La integración deja de llamar a SolarEdge cuando alcanza este número de solicitudes en el día, para que la clave de API nunca quede bloqueada. El límite de SolarEdge es de 300 al día por sitio. |
-| Moneda de los ingresos | `select` | No | Moneda de los ingresos diarios que comunica SolarEdge, tal como está configurada en su sitio. |
+| Primeros pasos | `section` | No | SolarEdge retiró su API V1 (y sus claves de API) el 3 de noviembre de 2026. Para leer su instalación: 1. inicie sesión en developer.solaredge.com con sus credenciales de mySolarEdge y cree la cuenta de desarrollador gratuita; 2. cree una aplicación, servicio Monitoring API, acceso «Site Access», ámbitos SITE_DATA y DEVICE_DATA, y declare la dirección de redirección que aparece bajo el botón «Conectar»; 3. pegue su Client ID y su Client Secret, y el ID de su sitio (aplicación mySolarEdge, detalles del sitio), y guarde; 4. pulse «Conectar» y autorice con sus credenciales de mySolarEdge. El plan gratuito ofrece 2000 solicitudes al mes: el intervalo de actualización se adapta a ello. |
+| Client ID | `string` | No | Client ID de su aplicación «Site Access», en la consola de desarrollador de SolarEdge. |
+| Client Secret | `secret` | No | Solo se muestra una vez, al crear la aplicación. |
+| ID del sitio | `string` | No | ID numérico de su sitio (aplicación mySolarEdge, detalles del sitio; o barra de direcciones del portal de monitorización). Obligatorio con «Conectar»; puede quedar vacío con una clave Fleet que solo cubre un sitio. |
+| Acceso a SolarEdge | `oauth2` | No | Guarde primero los campos de arriba y conéctese con sus credenciales de mySolarEdge (las del propietario del sitio). Solo hay que repetirlo si el acceso caduca (14 días sin ninguna actualización). |
+| Clave de API Fleet (instaladores) | `secret` | No | Solo para una cuenta de instalador con una aplicación «Fleet Access», en lugar de «Conectar». Las antiguas claves de API V1 ya no funcionan. |
+| Intervalo de actualización (s) | `number` | No | Intervalo deseado entre dos lecturas. Se alarga automáticamente para no superar los créditos mensuales: unos 50 min para un inversor solo con el plan gratuito, más con un contador o una batería (vea «Uso de la API»). |
+| Créditos mensuales | `number` | No | Asignación mensual de su cuenta de desarrollador de SolarEdge (2000 con el plan gratuito, 20 000 con Business Starter). La integración gasta como máximo 1/31 al día. Redúzcala si otras aplicaciones comparten la cuenta. |
+| Telemetría detallada de la batería | `boolean` | No | Añade la temperatura de la batería. Consume una solicitud más por actualización (por tanto, un intervalo más largo) y solo afecta a los sitios con batería. |
 
 ## Cómo instalar SolarEdge en Gladys
 
 1. En Gladys, abre **Integraciones**: SolarEdge aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
-2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-solaredge:1.4.2`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-solaredge:2.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
 3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
 4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-solaredge](https://github.com/guim31/gladys-solaredge).
 
-SolarEdge requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+SolarEdge requiere Gladys `>=5.2.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
 
 ¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
 

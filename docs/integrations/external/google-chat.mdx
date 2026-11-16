@@ -1,0 +1,191 @@
+---
+title: "Google Chat smart home integration, free and open source"
+sidebar_label: "Google Chat"
+description: "Unofficial: Gladys messages and alerts in a Google Chat space, through an incoming webhook. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-google-chat.png"
+keywords:
+  - "google chat"
+  - "google chat smart home"
+  - "gladys google chat"
+  - "google chat gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-google-chat instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Google Chat","description":"Unofficial: Gladys messages and alerts in a Google Chat space, through an incoming webhook.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-google-chat","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-google-chat.png","type":"communication","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-14T08:31:32Z"}} />
+
+Unofficial integration, not affiliated with Google. **Send only**: Gladys posts
+its messages and alerts in a Google Chat space through an **incoming webhook**.
+Nothing is read back from Google Chat: you cannot talk to Gladys from there.
+
+This integration has never been tested with a real Google Chat space: it is
+written from Google's public documentation, and tested against simulated
+answers.
+
+## What you need
+
+- A **Google Workspace Business or Enterprise** account with access to Google
+  Chat. A free personal Google account (gmail.com) cannot create webhooks.
+- Your Workspace administrator must allow users to add incoming webhooks
+  (Admin console → Apps → Google Workspace → Google Chat → Chat apps).
+- A space where the webhook is added (a webhook posts in its own space only).
+
+## Create the webhook
+
+1. In Google Chat, open the space, click its name → **Apps & integrations** →
+   **Webhooks** → **Add webhook**.
+2. Give it a name (e.g. "Gladys") and an avatar if you like, save.
+3. Copy the URL. It looks like
+   `https://chat.googleapis.com/v1/spaces/…/messages?key=…&token=…`.
+
+**The URL is a secret**: anyone holding it can post in the space. Gladys keeps
+it in its database, never shows it again and sends it only to Google Chat; the
+integration never writes it in its logs, its status or its `/data` folder
+(logs name a space by a short fingerprint, like `space #3fa91c`). If it leaks,
+delete the webhook in the space and create a new one.
+
+## Configuration
+
+**Configuration** screen (administrator):
+
+- **Default space: webhook URL** (optional): the space of the "Post in Google
+  Chat" scene action and of the **Test** button.
+- **Messages per hour, at most** (default 60, 1 to 600): all spaces together,
+  the Test button included. Beyond it a message is **not sent** (the refusal is
+  logged), it is never kept for later.
+
+**My account** block (each user, administrators or not): paste the webhook URL
+of the space where you want the messages Gladys sends **you** (scene action
+"Send a message", system messages such as a failed backup or a low battery,
+the answers of the assistant to a message you typed in Gladys). Clear it to
+stop.
+
+## The scene action "Post in Google Chat"
+
+Posts a text in the default space. Optional **thread key**: messages with the
+same key are grouped in one thread (letters, digits and `. _ : -`, 64 at
+most). Outputs for the next actions: `posted`, `deduplicated` and
+`message_name` (the name Google gives the message). When the same text (and
+thread key) was sent to that space less than 15 s earlier and posted, nothing
+is posted again: `posted` stays true (the message is in the space) and
+`deduplicated` is true, so a fallback branch on `posted` does not fire.
+
+The scene action waits for Google's answer: if the message is refused, or if
+Google does not answer, the action fails and the scene goes on.
+
+## What is sent, and when
+
+- Nothing is sent without a Gladys message, a scene or a click on **Test**.
+  No polling, no background traffic.
+- Gladys writes Markdown; it is turned into the Google Chat syntax: bold,
+  italic, strikethrough, code, links `[text](https://…)`, titles become a bold
+  line. Texts longer than 4,096 characters are cut (ending with "…"), never
+  inside a link or a code block. A mention typed in a text, code included (`<users/all>`),
+  becomes plain `@all`: it never notifies the whole space.
+- **Images are not sent** (a camera snapshot attached to a message): an
+  incoming webhook posts text only. The text of the message is still posted.
+- A "space" here is the **Google space** (the `spaces/…` part of the URL),
+  shared by all its webhooks: two users with two webhooks of one space share
+  its limits.
+- **One message every 1.1 s per space** (Google's limit is one a second): a
+  message waits its turn for up to about 2 s; a burst beyond that is not sent
+  ("too many messages at once").
+- **The same text to the same space within 15 s is posted once**: when several
+  users receive the same space, a message Gladys sends to all of them appears
+  once. A duplicate gets the outcome of the first message: if the first one
+  failed, the duplicate fails too; it is never said "posted" before the first
+  one is.
+
+## Never sent twice
+
+A message that may have reached Google is **never sent again**, so the integration
+never posts it twice. What each answer leads to:
+
+| Answer of Google Chat                          | What happens                                                                                                                                                                                                                                                                                                                                                                           |
+| ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Posted (200)                                   | Done.                                                                                                                                                                                                                                                                                                                                                                                  |
+| 429 (too many requests)                        | Nothing posted. The Google space (all its webhooks) is paused (the delay Google gives, else 1 min, then 2, 4… up to 6 h). During the pause, messages to that space are not sent. The pause survives a restart.                                                                                                                                                                         |
+| 401, 403, 404                                  | The URL is **refused**: webhook deleted, token revoked, or webhooks turned off by the administrator. Nothing more is sent to that URL until a new URL is saved, the **Test** button succeeds (default space), or **Forget the refused webhook URLs** is clicked. Kept across restarts as an 8-bit salted fingerprint, never the URL. Other webhooks of the same space are not refused. |
+| Another 4xx                                    | Nothing posted (the message was rejected); the next message is tried.                                                                                                                                                                                                                                                                                                                  |
+| 5xx                                            | Maybe posted, maybe not: **not sent again**, the space paused like a 429.                                                                                                                                                                                                                                                                                                              |
+| No answer within 10 s                          | Maybe posted: not sent again.                                                                                                                                                                                                                                                                                                                                                          |
+| Network, DNS, certificate error before sending | Nothing sent; the next message is tried.                                                                                                                                                                                                                                                                                                                                               |
+
+Gladys gives a message 5 seconds: the integration answers it within 3.5 s;
+a message still waiting for Google then goes on and its outcome is logged.
+
+## Test button
+
+**Test the default space** posts one test message in the default space and
+says what Google answered. It counts in the hourly cap and is not sent during a
+pause, like any message; a click tries the default URL again even when it was
+refused. Two clicks within 15 s: the second says "Already posted".
+
+**Forget the refused webhook URLs** (administrator) clears every refusal: the
+next message to each refused URL, of the default space or of a user, is tried
+once. The click sends nothing. A user can also save a new URL in "My account".
+
+## Status
+
+The Configuration screen shows: ready (with or without a default space), a
+default URL that is not a Google Chat webhook URL, a default URL refused by
+Google, a pause in progress, or a configuration that could not be read (read
+again every 5 s, then less and less often, up to every 5 min).
+
+## Privacy
+
+What leaves Gladys: the text of the messages, to Google Chat
+(`chat.googleapis.com`) only, over HTTPS. A redirect is never followed. What
+`/data/state.json` keeps: a random salt, 8-bit salted fingerprints of the
+refused URLs and of the paused spaces (one URL in 256 shares a fingerprint, so
+the file never confirms a URL), the end dates of the pauses and the times of the
+messages of the last hour (for the hourly cap). Never a URL, a key, a token or
+a message text.
+
+A collision is possible: after a restart, the first message to a URL whose
+fingerprint is the one of a refused URL is held back, with a message saying
+it may be another URL. A default URL saved after the restart never inherits
+such a mark. A user whose contact URL is held back this way asks the
+administrator to click **Forget the refused webhook URLs** (or saves a new
+URL); for the default space, the Test button also lifts it.
+
+If `/data` cannot be read when the integration starts, messages still go; the
+refusals, pauses and messages learnt since the start are kept in memory, but
+those kept from before the restart are unknown until `/data` is read again
+(every 10 s).
+
+## Configuration settings
+
+These are the settings Google Chat asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Google Chat in Gladys | `section` | No | Unofficial connector, not affiliated with Google. Send only: Gladys posts in a Google Chat space, nothing is read back. Incoming webhooks need a Google Workspace Business or Enterprise account, and the Workspace administrator must allow users to add webhooks; a free personal Google account cannot create one. In the space: name of the space → Apps & integrations → Webhooks → Add webhook, then copy its URL. Each Gladys user pastes the URL of their space in “My account” to receive the messages Gladys sends them; the default space below serves the “Post in Google Chat” scene action and the Test button. Nothing is ever sent without a Gladys message, a scene or a click. |
+| Default space: webhook URL (optional) | `secret` | No | Used by the scene action and the Test button. The URL lets anyone post in the space: kept by Gladys in its database, never shown again, sent only to Google Chat, never written in the logs. |
+| Messages per hour, at most | `number` | No | All spaces together, the Test button included. Beyond it, a message is not sent (it is logged). Google Chat itself takes one message a second per space. |
+
+## How to install Google Chat in Gladys
+
+1. In Gladys, open **Integrations**: Google Chat appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-google-chat:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-google-chat](https://github.com/LM1LC3N7/gladys-google-chat).
+
+Google Chat requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Google Chat is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-google-chat) — [source of this documentation](https://github.com/LM1LC3N7/gladys-google-chat/blob/HEAD/docs/en.md)

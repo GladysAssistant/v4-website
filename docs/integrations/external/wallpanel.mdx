@@ -1,0 +1,246 @@
+---
+title: "WallPanel smart home integration, free and open source"
+sidebar_label: "WallPanel"
+description: "Android wall tablets with WallPanel: sensors, screen, brightness, voice and URL, over MQTT. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-wallpanel.png"
+keywords:
+  - "wallpanel"
+  - "wallpanel smart home"
+  - "gladys wallpanel"
+  - "wallpanel gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-wallpanel instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"WallPanel","description":"Android wall tablets with WallPanel: sensors, screen, brightness, voice and URL, over MQTT.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-wallpanel","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-wallpanel.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-14T15:28:21Z"}} />
+
+[WallPanel](https://github.com/TheTimeWalker/wallpanel-android) is a free
+Android app (Apache-2.0) that turns a tablet into a wall dashboard: it shows a
+web page (your Gladys dashboard, for example) full screen and publishes the
+sensors of the tablet on MQTT. This integration reads what WallPanel publishes
+on **your** MQTT broker and sends it the commands its documentation
+describes. Nothing goes through a third-party service of the integration:
+only your broker is reached, at the address you type (on your local network
+in the usual setup).
+
+What Gladys gets, per tablet:
+
+- **read**: battery level, charging, ambient light, temperature, pressure,
+  humidity (the sensors the tablet has), motion and face detected by the
+  camera (when turned on in WallPanel), screen awake, screen brightness, page
+  displayed;
+- **commands**: wake the screen or let it sleep, set the brightness, and, in
+  scenes, speak a text, show a URL, reload the page, go back to the home
+  page, wake the screen for a given time.
+
+The WallPanel repository is archived: v0.12.0 is its last release.
+
+Never tested with a real tablet: only with a fake broker and a fake Gladys,
+from the WallPanel documentation (`website/docs/remote-control` of its
+repository). Unofficial, not affiliated with WallPanel.
+
+## Before you start
+
+1. An MQTT broker on your network (Mosquitto, or the one of the Gladys MQTT
+   integration), reachable from the Gladys machine (port 1883, or 8883 in TLS).
+2. In WallPanel, **Settings → MQTT**: turn MQTT on, type the address of the
+   broker (and its user name and password if it asks for them). Keep the base
+   topic `wallpanel/<name>/` and give each tablet its own name (`kitchen`,
+   `hall`...): `wallpanel/kitchen/`. The name is letters, digits, `_` and `-`.
+   The base topic must end with `/` (the default `wallpanel/mywallpanel/`
+   does): WallPanel appends `state`, `sensor/...` to it without a separator.
+3. In WallPanel, **Settings → Sensors**: turn sensor publishing on (battery,
+   light...), and **Settings → Camera** for motion and face detection.
+4. For the brightness: WallPanel's "use screen brightness" setting must be on,
+   and Android must let WallPanel change the system settings.
+
+Quick check from a machine of the network:
+`mosquitto_sub -h <broker> -t 'wallpanel/#' -v` must print the sensors and the
+state of the tablet.
+
+## Settings
+
+The password of the broker travels in clear on your network with `mqtt://`
+(as for every MQTT client of that broker); with `mqtts://` it is protected by
+TLS, but if you turn the certificate check off, it leaves to a server that is
+not verified.
+
+| Setting                       | Role                                                                                                                                                                              |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| MQTT broker address           | The IP address or name of the broker (port 1883), or `mqtts://address:8883` in TLS.                                                                                               |
+| User name, Password           | Those of the broker, if it asks for them. The password is kept by Gladys in its database, never shown again, sent only to your broker. A password without a user name is refused. |
+| Verify the TLS certificate    | On by default; turn off only for a broker with a self-signed certificate on your local network.                                                                                   |
+| Topic prefix                  | Empty: `wallpanel`. Only if the base topics of your tablets start otherwise: `home/tablets` for `home/tablets/kitchen/` (one to three levels).                                    |
+| Language of the feature names | French or English.                                                                                                                                                                |
+
+The **Test the connection** button connects to the broker with the saved
+settings, listens for 10 s and names the tablets heard. WallPanel publishes
+its sensors at its own reading frequency: a tablet that says nothing within
+10 s is not listed (look again in the Discovery tab later). Two tests are at
+least 10 s apart.
+
+## Adding a tablet
+
+The tablets appear in the Discovery tab once they published something (their
+sensors, their state, or their `connection` topic, which the broker keeps).
+Click "Add to Gladys". A tablet always has "Screen awake" and "Screen
+brightness" (the commands work before anything is read), plus the features it
+published a value for.
+
+The id of a tablet is the name in its base topic: `tablet:kitchen` for
+`wallpanel/kitchen/`. Renaming the base topic in WallPanel therefore makes a
+new device. At most 30 tablets are followed.
+
+## Features
+
+| Feature                | Gladys type              | Read from                                 |
+| ---------------------- | ------------------------ | ----------------------------------------- |
+| Screen awake           | switch, can be commanded | `state` → `screenOn`                      |
+| Screen brightness      | dimmer 1 to 255          | `state` → `brightness`                    |
+| Page displayed         | text                     | `state` → `currentUrl`, without its query |
+| Battery                | battery, %               | `sensor/battery` → `value`                |
+| Charging               | battery charging         | `sensor/battery` → `charging`             |
+| Ambient light          | light sensor, lux        | `sensor/light`                            |
+| Temperature            | temperature, °C          | `sensor/temperature`                      |
+| Pressure               | pressure, hPa            | `sensor/pressure`                         |
+| Humidity               | humidity, %              | `sensor/humidity`                         |
+| Motion (camera)        | motion sensor            | `sensor/motion`                           |
+| Face detected (camera) | presence sensor          | `sensor/face`                             |
+
+Not read: the magnetic field (no Gladys type), the QR codes (their content can
+be anything), the camera state.
+
+The **page displayed** is shown without what follows `?` or `#`, nor a user
+name or password: a dashboard URL may carry a token. For an `http://` or
+`https://` page, only the scheme, the address and the path reach Gladys (the
+path is published: avoid a token in it); for any other scheme (`file:`,
+`data:`...), the scheme alone.
+
+A value out of its range, empty, of another unit than the documented one
+(°F, for example), or not readable is unknown: nothing is published, the last
+value stays. A battery level of -1 (Android: "no level") is unknown. The
+measurements (battery, light, temperature, pressure, humidity) reach Gladys
+at most every 10 s per feature; the screen, the brightness, the page, the
+motion and the face at once, every change of the motion and of the face
+included (a short "true" is not lost).
+
+WallPanel never keeps its states and sensors on the broker ("retained"): a
+retained state or sensor message was left by another tool, maybe long ago,
+and is never read. So after a restart of the integration, the screen, the
+brightness and the page stay without a new value until the tablet publishes
+again (WallPanel publishes its state when it connects to MQTT, when the
+screen or the page changes, and with every sensor reading). When Gladys adds
+a tablet later, the values read in the
+last 2 hours are sent, dated when they were read (they start no scene).
+
+## Commands
+
+From the device page or a scene:
+
+- **Screen awake** on: WallPanel wakes the screen until its own inactivity
+  time; off: WallPanel lets the screen sleep again at the end of the Android
+  display timeout (the screen does not go off at once).
+- **Screen brightness**: 1 to 255 (0 is sent as 1, the lowest WallPanel
+  takes; above 255, 255).
+
+In scenes ("Integrations" actions):
+
+- **Speak a text on a WallPanel tablet**: the voice of the tablet (Android's
+  text-to-speech) says the text, 500 characters at most (line breaks become
+  spaces).
+- **Show a URL on a WallPanel tablet**: `http://` or `https://` only; a URL
+  with a user name or a password is refused (it would travel in clear on the
+  broker).
+- **Reload the page**, **Back to the home page** (the launch URL set in
+  WallPanel).
+- **Wake the screen**, for a number of seconds (1 to 86,400), or empty for
+  WallPanel's inactivity time.
+
+Each command is published on `wallpanel/<name>/command`, not "retained" and
+in QoS 0: a broker such as Mosquitto (default settings) does not keep it for
+a tablet offline, which therefore does not run it later.
+WallPanel answers nothing on MQTT: a command handed to the broker counts as
+sent, and the next state of the tablet shows what it did. Gladys shows what
+the tablet reports, never an assumed value.
+
+A command is refused, with **nothing sent**, when:
+
+- the MQTT broker is not connected;
+- WallPanel said the tablet is offline (its `connection` topic, "offline");
+- more than 30 commands went to that tablet within a minute (a looping
+  scene);
+- the value is not valid (see above).
+
+When the broker does not take a command within 3 s, the answer says the
+tablet may or may not get it. The texts spoken and the URLs sent are never
+written in the logs (only the kind of command).
+
+## Status and badges
+
+The integration status says whether the broker is reached, how many tablets
+are heard and how many are offline. The badge of a tablet is "unreachable"
+while the broker is not connected or while WallPanel says the tablet is
+offline.
+
+## When something goes wrong
+
+- **The broker refused the connection**: check the user name and the
+  password. Gladys stops trying for 15 min, then 1 h, 6 h and every 24 h
+  (kept across a restart); saving other credentials or pressing "Test the
+  connection" tries again at once.
+- **Broker unreachable**: tried again every 10 s, then every minute after 3
+  failures in a row.
+- **Connected, but no tablet**: check that the tablet uses the same broker,
+  that its base topic starts with the prefix (`wallpanel/` by default), and
+  that sensor publishing is on.
+- **The brightness does not change**: turn on "use screen brightness" in
+  WallPanel and allow it to change the system settings in Android.
+- A message larger than 64 KB cuts the connection to the broker (it is never
+  read); with MQTT 5 (Mosquitto), the broker does not even send it.
+
+## Privacy
+
+The broker password is never written in the logs, the status or `/data`.
+`/data` only keeps the pause after a refusal of the credentials. The camera
+of the tablet is never turned on by Gladys; only what WallPanel publishes
+(motion, face: true or false) is read, never an image.
+
+## Configuration settings
+
+These are the settings WallPanel asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your WallPanel tablets in Gladys | `section` | No | WallPanel is an Android app that turns a tablet into a wall dashboard. Gladys reads what it publishes on YOUR MQTT broker (battery, charging, light, temperature, pressure, humidity, camera motion and face detection, screen awake, brightness, page displayed) and sends it commands: wake the screen, brightness, speak a text, show a URL, reload. In WallPanel, turn on MQTT with the same broker and keep the base topic wallpanel/\<name>/ (one name per tablet). Only your broker is reached, no third-party service. Never tested with a real tablet. Unofficial, not affiliated with WallPanel. |
+| MQTT broker address | `string` | Yes | The broker WallPanel publishes to (its MQTT settings): its IP address (port 1883), or mqtts:\/\/address:8883 in TLS. |
+| User name | `string` | No | The user of the broker, if it asks for one. |
+| Password | `secret` | No | The password of the broker: kept by Gladys in its database, never shown again, sent only to your broker. |
+| Verify the TLS certificate of the broker (mqtts) | `boolean` | No | Turn off only for a broker with a self-signed certificate on your local network. |
+| Topic prefix (optional) | `string` | No | Empty: wallpanel, the start of WallPanel's default base topic wallpanel/mywallpanel/. Change it only if the base topics of your tablets start otherwise (home/tablets for home/tablets/kitchen/). |
+| Language of the feature names | `select` | No |  |
+
+## How to install WallPanel in Gladys
+
+1. In Gladys, open **Integrations**: WallPanel appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-wallpanel:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-wallpanel](https://github.com/LM1LC3N7/gladys-wallpanel).
+
+WallPanel requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+WallPanel is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-wallpanel) — [source of this documentation](https://github.com/LM1LC3N7/gladys-wallpanel/blob/HEAD/docs/en.md)

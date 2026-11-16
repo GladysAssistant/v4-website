@@ -19,7 +19,7 @@ https://github.com/LM1LC3N7/gladys-bsblan instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"BSB-LAN","description":"Chaudières et PAC par l'adaptateur local BSB-LAN : températures, modes, commandes en option.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-bsblan","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-bsblan.png","type":"device","version":"0.3.3","gladys_version":">=5.1.0","stars":1,"pushed_at":"2026-11-10T17:58:42Z"}} />
+<ExternalIntegrationHeader integration={{"name":"BSB-LAN","description":"Chaudières et PAC par l'adaptateur local BSB-LAN : températures, modes, commandes en option.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-bsblan","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-bsblan.png","type":"device","version":"0.4.0","gladys_version":">=5.1.0","stars":1,"pushed_at":"2026-11-15T09:22:36Z"}} />
 
 Affiche votre **chaudière ou pompe à chaleur à régulateur Siemens** (ELCO,
 Brötje, Baxi, MHG, Atlantic, Thision…) dans Gladys par l'adaptateur
@@ -197,6 +197,24 @@ d'une consigne confort suit la consigne réduite). Une valeur hors de la
 plage lue juste avant est refusée avec cette plage, et la carte reprend la
 valeur réelle.
 
+Chaque refus donne la valeur demandée et l'origine de chaque borne, pour
+savoir quel réglage changer sur le régulateur, par exemple : « Consigne de
+28,5 °C refusée : le régulateur l'accepte entre 17 °C (consigne réduite, 1012) et 25 °C (confort maximum, 1016) ; non envoyée. » Une valeur hors des
+limites du module (5 à 35 °C pour le chauffage, 10 à 65 °C pour l'eau
+chaude) est refusée dès son arrivée, avec la plage du régulateur de la
+dernière lecture quand elle est connue. Gladys n'écrit **jamais une autre
+valeur** que celle demandée (pas la borne la plus proche) : le refus est
+écrit dans les journaux (avertissement, avec la valeur). Si les bornes lues
+se contredisent (consigne réduite au-dessus du confort maximum, par exemple),
+le message nomme les deux paramètres ; si BSB-LAN ne donne pas l'un d'eux, le
+message le nomme. Chaque commande relit ses bornes elle-même juste avant
+d'écrire : un réglage corrigé sur BSB-LAN vaut dès la commande suivante.
+
+Saisir une consigne au clavier dans la carte de Gladys envoie aussi les
+valeurs intermédiaires (« 2 » avant « 22,5 ») si la frappe marque une pause :
+elles sont refusées (« Consigne de 2 °C refusée… »), la valeur complète part
+ensuite. Les boutons + et − n'ont pas cet effet.
+
 ### Protection et eau chaude à l'arrêt : jamais bloquées
 
 Le mode **Protection (hors-gel)** des circuits 1 et 2 et le mode **Arrêt** de
@@ -206,7 +224,8 @@ autre commande, sans relecture préalable, et depuis un mode inconnu. Ils
 passent avant toute requête en attente et annulent les commandes pas
 encore parties (« une commande de protection est arrivée après »). BSB-LAN
 ne sert qu'une requête à la fois : ils attendent la fin de celle qu'il
-traite. S'il est encore occupé au bout de 3,5 s, Gladys répond « la commande
+traite (une commande en cours s'arrête là, avant sa requête suivante).
+S'il est encore occupé au bout de 3,5 s, Gladys répond « la commande
 passe en tête et part dès qu'il est libre » et l'envoie dès que possible
 (sous 30 s).
 
@@ -313,8 +332,20 @@ seule ; aucune
 autre requête ne passe entre cette relecture et l'écriture, et l'option (et
 le plafond) est revérifiée juste avant l'envoi. Si une valeur ou la plage
 manque, la commande est refusée. Une valeur déjà en place n'est pas
-renvoyée. Une commande qui ne peut pas partir dans les 3,5 secondes est
-refusée sans être envoyée ; Gladys reçoit la réponse dans ses 5 secondes.
+renvoyée. BSB-LAN est souvent lent quelques secondes après une écriture
+(1 à 2 secondes par paramètre lu). Une commande obtient donc l'adaptateur
+sous 15 secondes (la requête qu'il traite se termine d'abord), puis a
+12 secondes pour son `/JI` et sa relecture, et son écriture part juste
+après ou pas du tout ; la réponse de l'écriture et sa relecture ont au
+moins 3,8 secondes. Une écriture part donc au plus tard environ
+27 secondes après le clic, environ 42 secondes pour une commande qui a
+attendu derrière une autre. Gladys reçoit une réponse au plus tard
+4,2 secondes après le clic : une commande pas encore terminée reçoit
+« BSB-LAN répond lentement : la commande continue », et son issue suit
+dans les journaux (la carte reprend la valeur réelle si elle échoue).
+Tant que son écriture n'est pas partie, une valeur plus récente du même
+réglage la remplace : elle n'est pas envoyée (« remplacée par une valeur
+plus récente », ligne d'information), la plus récente l'est.
 BSB-LAN accepte une écriture par un statut 1 ; l'intégration **relit alors
 le paramètre** et n'annonce un succès que si la relecture montre la valeur
 demandée (encore l'ancienne : « relue juste après, encore la précédente » ;
@@ -327,7 +358,7 @@ deux écritures. Une commande qui arrive pendant une autre (ou dans ces 3
 secondes) **attend** et part après elle, avec sa propre relecture et
 toutes les vérifications à nouveau (l'option, le plafond de l'eau chaude,
 la plage, une pause, l'adaptateur) ; Gladys répond alors « celle-ci attend
-et part après elle ». Celle qui ne peut pas partir sous 30 secondes est
+et part après elle ». Celle qui ne peut pas commencer sous 30 secondes est
 abandonnée, non envoyée. Une seule attend par réglage : une valeur plus
 récente du même réglage la remplace. Une Protection ou une eau chaude à
 l'arrêt arrivée après elle l'annule (jamais envoyée après une commande de
@@ -336,9 +367,28 @@ protection n'attendent jamais derrière elle.
 
 Après une commande refusée avant de partir, annulée, abandonnée ou relue
 inchangée, la carte reprend tout de suite la valeur lue (sinon Gladys
-garde la valeur saisie). Une exception : une commande précédente du même
-réglage est encore « envoyée, sans confirmation » et ce réglage n'a pas
-été relu depuis ; la carte attend alors la première lecture.
+garde la valeur saisie). Deux exceptions : une commande précédente du
+même réglage est encore « envoyée, sans confirmation » et ce réglage n'a
+pas été relu depuis ; ou BSB-LAN est dans son délai de nouvel essai
+(ci-dessous) et n'a pas répondu non plus à la commande, donc aucune
+valeur n'est connue. La carte attend alors la première lecture.
+
+Après une lecture en échec (BSB-LAN n'a pas répondu à temps), la lecture
+suivante attend le délai de nouvel essai, jamais plus court que
+l'intervalle de lecture (10 minutes avec un intervalle de 10 minutes).
+Une commande pendant ce temps n'est pas refusée pour cela seul : elle
+relit elle-même l'adaptateur (`/JI`, attendu 3 secondes au plus, puis la
+relecture) et ne part que si l'adresse MAC est celle de l'appareil.
+Refusée après cette relecture, sa carte reprend la valeur relue. Elle
+reste refusée après une lecture qui a donné un autre adaptateur, pas
+d'adresse MAC ou pas d'API JSON, et pendant une pause ou un arrêt sur
+identifiants refusés. Si BSB-LAN ne lui répond pas non plus, les
+commandes suivantes ne réessaient pas pendant 30 secondes (« n'a pas
+répondu à une commande il y a quelques secondes ») ; les commandes de
+protection n'en sont jamais retenues. Une telle commande ne change ni le
+statut ni l'heure de la lecture suivante
+(pas de lectures 5 et 20 secondes après tant que l'adaptateur est dit
+injoignable).
 
 Après « envoyée, sans confirmation », le régulateur a pu appliquer la
 valeur. Jusqu'à 10 minutes après la dernière commande de ce réglage
@@ -361,8 +411,25 @@ lignes d'information, chacune avec son texte ; les autres refus sont des
 avertissements. Quand Gladys est injoignable (mise à jour, redémarrage),
 « Sending to Gladys failed » n'est écrit qu'une fois, une de plus
 par nouvelle cause (3 au plus ; une cause qui ne diffère que par ses
-nombres est la même), puis « Sending to Gladys works again ». Les heures des lignes sont en UTC (le `Z` final),
+nombres est la même), puis « Sending to Gladys works again ». Les heures des
+lignes sont en UTC (le `Z` final),
 comme les écrit le journal du SDK des intégrations Gladys.
+
+## Widget du tableau de bord
+
+Le widget « Chauffage (BSB-LAN) » (Gladys avec les widgets d'intégration)
+montre, en lecture seule : la température ambiante de chaque circuit, l'eau
+chaude et l'extérieur, puis pour chaque circuit son mode, ses consignes de
+confort et réduite et son état, et pour l'eau chaude son mode, ses consignes
+et son état. Seules les valeurs que le régulateur donne apparaissent. Il n'a
+aucun bouton : les commandes passent par les cartes de l'appareil. Quand
+BSB-LAN ne répond plus, le widget le dit au lieu d'afficher d'anciennes
+valeurs (pendant une pause ou après des identifiants refusés, il affiche cet
+état). Il suit les lectures : quand son contenu change, il demande aux
+tableaux de bord de le relire. Gladys accepte au plus une demande par 10 s,
+un changement apparaît donc en 11 s environ ; un tableau de bord le relit
+aussi au moins chaque minute (ou à l'intervalle de lecture s'il est plus
+court), ce qui couvre une demande perdue pendant un redémarrage de Gladys.
 
 ## Erreurs et limites
 
@@ -382,13 +449,15 @@ comme les écrit le journal du SDK des intégrations Gladys.
   traite une requête à la fois. Si BSB-LAN publie en MQTT vers un broker
   (par exemple pour Home Assistant), la charge sur l'adaptateur peut faire
   échouer les commandes de Gladys (délais dépassés : « répondu trop
-  lentement », « envoyée, sans confirmation (timeout) » ; ces messages le
-  rappellent alors). Désactivez le MQTT sur BSB-LAN, ou allégez-le
+  lentement », « n'a pas pu être relue juste avant (timeout) », « envoyée,
+  sans confirmation (timeout) » ; ces messages le rappellent alors).
+  Désactivez le MQTT sur BSB-LAN, ou allégez-le
   (intervalle plus long, moins de paramètres), et gardez un intervalle de
   lecture raisonnable dans Gladys (30 s ou plus). Constaté sur une vraie
-  installation : MQTT désactivé et 30 s, toutes les commandes passent. Les
-  délais des commandes et les 3 s entre deux écritures ne changent pas
-  (ils protègent le chauffage).
+  installation : MQTT désactivé et 30 s, toutes les commandes passent.
+  Depuis la 0.3.4, les délais des commandes comptent à partir du moment où
+  la commande obtient l'adaptateur (voir « Comment une commande part ») ;
+  les 3 s entre deux écritures restent (elles protègent le chauffage).
 - **« The state could not be saved in /data (EACCES) »** dans les journaux,
   et « /data n'est pas accessible en écriture » dans le statut (dit dès le
   démarrage : un fichier d'essai est écrit puis supprimé au lancement,
@@ -470,7 +539,7 @@ Voici les paramètres demandés par BSB-LAN dans son écran de configuration dan
 ## Comment installer BSB-LAN dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : BSB-LAN apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-bsblan:0.3.3`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-bsblan:0.4.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-bsblan](https://github.com/LM1LC3N7/gladys-bsblan).
 

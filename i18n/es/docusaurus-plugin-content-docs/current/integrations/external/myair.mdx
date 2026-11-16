@@ -1,0 +1,126 @@
+---
+title: "Integración domótica myAir, gratuita y de código abierto"
+sidebar_label: "myAir"
+description: "Read your ResMed CPAP sleep data (usage, AHI, mask leak, score) from the myAir cloud. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/vincentBesseau--gladys-resmed-myair.jpg"
+keywords:
+  - "myair"
+  - "domótica myair"
+  - "gladys myair"
+  - "myair gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/vincentBesseau/gladys-resmed-myair instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"myAir","description":"Read your ResMed CPAP sleep data (usage, AHI, mask leak, score) from the myAir cloud.","owner":"vincentBesseau","owner_avatar_url":"https://avatars.githubusercontent.com/u/33568805?v=4","repo_url":"https://github.com/vincentBesseau/gladys-resmed-myair","cover_url":"https://integration-store-storage.gladysassistant.com/covers/vincentBesseau--gladys-resmed-myair.jpg","type":"device","version":"1.0.0","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-11-13T21:31:47Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+This integration reads the nightly therapy data of your ResMed CPAP machine (AirSense, AirCurve…) from the **ResMed myAir** cloud — the same account used by the [myAir](https://myair.resmed.eu) app and website.
+
+It is **read-only**: it never changes any setting on your machine. It creates one "CPAP" device with, for the most recent night, the following sensors:
+
+| Sensor                | Description                        | Unit     |
+| --------------------- | ---------------------------------- | -------- |
+| **Usage**             | How long the machine was used      | hours    |
+| **AHI**               | Apnea-Hypopnea Index               | events/h |
+| **Mask leak**         | Leak level (`leakPercentile`)      | L/min    |
+| **myAir score**       | Overall score for the night        | /100     |
+| **Mask on/off count** | How many times the mask was put on | —        |
+
+> ⚠️ **Unofficial API.** ResMed publishes no API. This integration reproduces how the myAir website works (Okta authentication + GraphQL API). ResMed can change it without notice; if it breaks, check the [reference Home Assistant component](https://github.com/Snuffy2/resmed_myair_sensors).
+
+## Requirements
+
+- An active **myAir** account linked to a ResMed machine that syncs its data.
+- Your account **region**:
+  - **Europe** → `myair.resmed.eu`
+  - **North America** → `myair.resmed.com`
+
+## Configuration
+
+1. In Gladys, open the **ResMed myAir** integration.
+2. Pick your **myAir region**.
+3. Enter the **email** and **password** of your myAir account.
+4. Save.
+
+### Verification code (two-factor authentication)
+
+On the first connection, ResMed emails you a **one-time verification code**. The connection status asks for it:
+
+1. Check your inbox.
+2. Use the **"Enter verification code"** action and type the code you received.
+
+The device is then **remembered**: you should not be asked for a code again. If the remembered device ever expires, the status will prompt you to use the **"Reconnect"** action to get a fresh code.
+
+## Available actions
+
+- **Enter verification code** — finishes the connection after you receive the emailed code.
+- **Reconnect (send a new code)** — forces a fresh login; emails a code if needed.
+- **Test connection** — checks that account access works.
+- **Refresh sleep data now** — fetches the latest data immediately.
+- **Disconnect** — removes the stored tokens.
+
+## Filter maintenance (reminders)
+
+The integration can track filter wear and **remind you when to replace them**:
+
+1. In **Configuration**, set a **replacement interval in days** for the **device filter** and/or the **mask filter** (0 disables tracking). Default: 30 days.
+2. A **"Filter life"** sensor (%) is created for each enabled filter — it counts down from 100% to 0% over the interval.
+3. Create a **scene** triggered by that sensor (e.g. _when "Device filter life" ≤ 10% → send me a notification_). That is your reminder.
+4. Each time you change one, run the **"Mark a filter as replaced"** action (pick the filter): its life resets to 100%.
+
+The countdown is in **calendar days** since the last replacement.
+
+## Dashboard widget
+
+The integration provides a **"Last night"** widget for your dashboards (editor → **+** → "Last night"). It shows the four latest-night metrics (usage, AHI, mask leak, score) as color-coded tiles (green / amber / red by threshold). With no recent data, it shows a clear empty state.
+
+## Update frequency
+
+ResMed machines only sync their data **about once a day**. The integration polls the cloud hourly to pick up the latest night as soon as it appears, so it is normal for the values to change only once a day.
+
+## Parámetros de configuración
+
+Estos son los parámetros que myAir te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Connect your ResMed myAir account | `section` | No | This integration reads the nightly therapy data your ResMed CPAP machine (AirSense, AirCurve...) reports to the myAir cloud - the same account used by the myAir app and website. It is READ-ONLY (it never changes any setting on your machine) and everything goes through ResMed's cloud: no local network access. This is an UNOFFICIAL, reverse-engineered API: ResMed can change it without notice. The data is updated once a day, when your machine syncs. |
+| myAir region | `select` | Sí |  |
+| myAir email | `string` | Sí |  |
+| Password | `secret` | Sí |  |
+| Verification code (sent by email) | `section` | No | After saving, ResMed emails you a one-time verification code. The connection status below will ask for it: use the "Enter verification code" action to finish connecting. This device is then remembered, so you should not be asked again unless the remembered device expires - in which case use the "Reconnect" action to receive a fresh code. |
+| Filter maintenance | `section` | No | Track when to replace your filters. Set a replacement interval in days (0 disables tracking). A "Filter life" sensor (%) is created for each enabled filter: trigger a scene on it (e.g. life below 10%) to be reminded. Use the "Mark a filter as replaced" action each time you change one. |
+| Device filter interval (days, 0 = off) | `number` | No |  |
+| Mask filter interval (days, 0 = off) | `number` | No |  |
+
+## Cómo instalar myAir en Gladys
+
+1. En Gladys, abre **Integraciones**: myAir aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/vincentbesseau/gladys-resmed-myair:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/vincentBesseau/gladys-resmed-myair](https://github.com/vincentBesseau/gladys-resmed-myair).
+
+myAir requiere Gladys `>=5.2.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+myAir es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [vincentBesseau](https://github.com/vincentBesseau), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/vincentBesseau/gladys-resmed-myair) — [fuente de esta documentación](https://github.com/vincentBesseau/gladys-resmed-myair/blob/HEAD/docs/en.md)

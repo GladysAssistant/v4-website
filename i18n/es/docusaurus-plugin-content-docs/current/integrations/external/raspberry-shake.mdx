@@ -1,0 +1,205 @@
+---
+title: "Integración domótica Raspberry Shake, gratuita y de código abierto"
+sidebar_label: "Raspberry Shake"
+description: "Su sismógrafo Raspberry Shake: nivel de vibración, detección de sacudidas y estado de la estación. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-raspberry-shake.png"
+keywords:
+  - "raspberry shake"
+  - "domótica raspberry shake"
+  - "gladys raspberry shake"
+  - "raspberry shake gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-raspberry-shake instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Raspberry Shake","description":"Su sismógrafo Raspberry Shake: nivel de vibración, detección de sacudidas y estado de la estación.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-raspberry-shake","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-raspberry-shake.png","type":"device","version":"1.0.0","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-11-15T23:33:50Z"}} />
+
+Su sismógrafo personal [Raspberry Shake](https://raspberryshake.org) en Gladys: el nivel de vibración
+del suelo en su casa, minuto a minuto, la detección de sacudidas con su pico y su duración, y el estado
+en línea de la estación. Funciona con todos los modelos de Shake (1D, 3D, 4D, RS&BOOM).
+
+Dos fuentes, usadas juntas:
+
+- la **salida UDP** del Shake (Datacast), enviada directamente a Gladys en su red local: las muestras en
+  directo, con las que Gladys calcula el nivel de vibración (RSAM), el pico y un disparador STA/LTA;
+- los **datos públicos** de la red Raspberry Shake (AM), si su Shake comparte sus datos: si la estación
+  sigue enviando, incluso sin la salida UDP.
+
+No es un sistema de alerta temprana: un sismógrafo doméstico también siente pasos, puertas, lavadoras y
+camiones, y la detección dice que el suelo se movió, no que hubo un terremoto. Para los terremotos
+informados por los sismólogos cerca de su casa, vea la integración EMSC Earthquakes.
+
+Desarrollada sin el hardware: sus comentarios son bienvenidos. El análisis se probó con una grabación
+real de una estación pública (el terremoto de magnitud 3,7 de los Pirineos del 3 de agosto de 2026, a
+5 km de la estación AM.R6881), reproducida en el formato UDP del Shake; no se conectó ningún Shake
+físico. Sin afiliación con Raspberry Shake, S.A.
+
+## Lo que obtiene
+
+- Un dispositivo **Raspberry Shake** por estación: estado en línea y último dato recibido; con la salida
+  UDP, nivel de vibración (RSAM, counts), amplitud máxima (counts) y sacudida detectada, con su
+  historial.
+- Un **widget de panel**: estado de la estación, nivel de vibración y pico en directo, y la curva del
+  nivel de vibración del último día.
+- Tres **disparadores de escena**: sacudida detectada, vuelta a la calma (con el pico y la duración),
+  estación fuera de línea.
+- Una acción **Comprobar la estación ahora** en la pantalla de configuración.
+
+## Requisitos
+
+- Gladys Assistant 5.2 o posterior (la integración publica un puerto UDP mediante un subcontenedor).
+- Un Raspberry Shake en la misma red que Gladys, para la salida UDP.
+- Acceso a Internet desde el equipo de Gladys para el estado en línea (`data.raspberryshake.org`,
+  HTTPS).
+
+## Configuración
+
+### Estación y salida UDP
+
+1. Busque el código de su estación: en la página web de su Shake (`http://rs.local`, o su dirección), o
+   en el [mapa de estaciones](https://stationview.raspberryshake.org). Se parece a `R1A2B` (red `AM`).
+2. En Gladys, Integraciones → Raspberry Shake → Configuración, introduzca el código y guarde.
+3. La parte superior de la pantalla de configuración muestra la dirección y el puerto UDP elegidos por
+   Gladys para la integración (por ejemplo `192.168.1.20`, puerto `40123`). En la página web del Shake,
+   abra Settings → **Datacast**, añada esta dirección como host de destino y este puerto como puerto de
+   destino, guarde y reinicie el productor de datos como pide el Shake.
+4. Cree el dispositivo en la pestaña **Descubrir**.
+
+El Shake envía sus muestras unas cuatro veces por segundo y por canal: unos kilobytes por segundo en su
+red local. El puerto lo elige Gladys y se conserva: el Shake solo se configura una vez. Si su Shake
+recibe su dirección del router, una dirección fija (reserva DHCP) le permite rellenar **Dirección del
+Shake**: los paquetes de cualquier otro equipo se ignoran entonces.
+
+### Ajustes
+
+| Ajuste                 | Por defecto | Significado                                                                        |
+| ---------------------- | ----------- | ---------------------------------------------------------------------------------- |
+| Código de la estación  | vacío       | `R1A2B` o `AM.R1A2B`, mayúsculas o minúsculas.                                     |
+| Usar la salida UDP     | activado    | Desactivado: solo estado en línea y último dato, con los datos públicos de la red. |
+| Dirección del Shake    | vacío       | Dirección IPv4 opcional: se ignoran los paquetes UDP de otras direcciones.         |
+| Detección de sacudidas | Normal      | Relación STA/LTA que inicia una detección: baja 6, normal 4, alta 3.               |
+| Fuera de línea tras    | 1 hora      | Tiempo sin datos antes de que la estación esté fuera de línea (1, 2 o 6 horas).    |
+| Idioma de los textos   | Francés     | Nombres de las funciones (al crearlas) y fechas.                                   |
+
+## Dispositivo
+
+| Función                   | Tipo                | Significado                                                                         |
+| ------------------------- | ------------------- | ----------------------------------------------------------------------------------- |
+| Estación en línea         | binario             | Datos recibidos a tiempo: UDP en los últimos 2 minutos, o datos públicos recientes. |
+| Último dato               | texto               | Fecha y hora del último dato recibido (actualizada cada 10 minutos).                |
+| Nivel de vibración (RSAM) | número, counts      | Amplitud absoluta media de cada minuto, sin el desplazamiento.                      |
+| Amplitud máxima           | número, counts      | Mayor amplitud absoluta de cada minuto.                                             |
+| Sacudida detectada        | sensor de vibración | 1 desde el disparo hasta 10 segundos de calma.                                      |
+
+Las tres últimas necesitan la salida UDP. Los valores están en **counts**, la unidad bruta del Shake:
+compárelos con el nivel habitual de su estación (la estación de la grabación leía unos 900 counts antes
+del terremoto de magnitud 3,7, a 5 km, que alcanzó 1,16 millones). Se usa el geófono vertical (EHZ), si
+no el primer canal sísmico recibido; el canal de infrasonido de un Boom se ignora.
+
+La **detección** compara la amplitud media en 1 segundo con la media en 30 segundos (STA/LTA), el
+disparador clásico de la sismología: empieza en la relación elegida y termina tras 10 segundos por
+debajo de 1,5 (2 en sensibilidad baja). La media larga necesita 30 segundos de datos tras un inicio o un
+corte.
+
+## Widget de panel
+
+Añada el widget **Raspberry Shake** a un panel: nombre de la estación, nivel de vibración y pico en
+directo, una curva de 24 horas del nivel de vibración (se puede ocultar en los ajustes del widget) y un
+bloque de estado (en línea, último dato, suelo en calma o sacudida, paquetes UDP del último minuto). Sin
+la salida UDP, solo se muestra el bloque de estado.
+
+## Disparadores de escena
+
+- **Sacudida detectada**: el disparador se activó. Variables: el código de la estación y la relación
+  STA/LTA.
+- **Vuelta a la calma**: la sacudida terminó. Variables: la estación, la amplitud máxima (counts) y la
+  duración (segundos). Con el pico puede distinguir un paso de un terremoto en una condición de escena.
+- **Estación fuera de línea**: la estación estaba en línea y no llegó ningún dato en el plazo
+  configurado. Variables: la estación y la fecha del último dato.
+
+La función **Sacudida detectada** del dispositivo también sirve como disparador de dispositivo normal.
+
+## Ejemplos de escenas
+
+- Cuando se dispare **Vuelta a la calma**, si el pico supera con creces su nivel habitual, envíese un
+  mensaje con el pico y la duración.
+- Cuando se dispare **Estación fuera de línea**, envíe un mensaje: el Shake quizá perdió la alimentación
+  o la red.
+- Cada noche, lea en la curva el nivel de vibración del día para ver el tráfico, el viento y la
+  actividad de la casa.
+
+## Fuentes de datos, condiciones y cuotas
+
+- Salida UDP: las muestras nunca salen de su red local; no se guarda nada, el análisis se hace en
+  memoria.
+- Datos públicos: los servicios web FDSN de Raspberry Shake
+  (`https://data.raspberryshake.org/fdsnws/`), gratuitos y sin cuenta, para las estaciones que comparten
+  sus datos. La integración solo lee las cabeceras de unos kilobytes de datos cada 10 minutos (una
+  ventana corta, luego sondeos estrechos más atrás cuando la estación calla). El archivo lleva unos 30
+  minutos de retraso respecto al tiempo real, de ahí el mínimo de una hora antes de «fuera de línea».
+  Cita de la red: Raspberry Shake, S.A. (2016), Raspberry Shake [Data set], International Federation of
+  Digital Seismograph Networks, https://doi.org/10.7914/SN/AM.
+
+## Solución de problemas
+
+- **«Ningún dato UDP del Shake»**: compruebe el destino Datacast (la dirección y el puerto mostrados en
+  la pantalla de configuración, no el puerto 8888), que el productor de datos se haya reiniciado y que
+  ningún cortafuegos del equipo de Gladys bloquee el UDP entrante. Si indicó una dirección del Shake,
+  compruébela: los registros dicen una vez qué dirección se ignoró.
+- **«La estación no está en la red Raspberry Shake»**: el código es erróneo, o el Shake no comparte sus
+  datos. La salida UDP funciona igualmente.
+- **Muchas detecciones**: los pasos y las puertas cerca del Shake disparan en sensibilidad alta: elija
+  normal o baja, o ponga el Shake en el suelo de una habitación tranquila.
+- **La pantalla de configuración muestra `{{port:shake_udp}}`**: el receptor aún no ha arrancado;
+  recargue la página tras unos segundos.
+- Registros: Integraciones → Raspberry Shake → Supervisión; `LOG_LEVEL=debug` muestra cada minuto y cada
+  detección.
+
+## Límites
+
+- Una estación por Gladys. Los counts no se convierten en velocidad del suelo y no se calcula ninguna
+  magnitud: un sismógrafo doméstico solo no puede localizar un terremoto.
+- La detección es un simple disparador STA/LTA sobre un canal, sin filtro: dice que el suelo tembló
+  cerca del Shake, sea cual sea la causa.
+- El estado en línea sin UDP necesita una estación que comparta sus datos en la red, y llega con unos 30
+  minutos de retraso.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Raspberry Shake te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Conecte su Raspberry Shake | `section` | No | Introduzca abajo el código de su estación. Para los datos en directo, abra la página web de su Shake (rs.local), Settings, Datacast, y añada el host \{\{gladys_host\}\}, puerto \{\{port:shake_udp\}\} (elegido por Gladys). Sin ello, solo se sigue el estado en línea, con los datos públicos de la red. |
+| Código de la estación | `string` | Sí | Indicado en la página web de su Shake y en el mapa de estaciones, p. ej. R1A2B. |
+| Usar la salida UDP | `boolean` | No | Nivel de vibración, pico y detección de sacudidas, calculados en Gladys con las muestras en directo. |
+| Dirección del Shake (opcional) | `string` | No | Si se indica, se ignoran los paquetes UDP de cualquier otra dirección. |
+| Detección de sacudidas | `select` | No | Umbral del disparador STA/LTA: alta también capta pasos y puertas cerca del Shake. |
+| Fuera de línea tras | `select` | No | Sin UDP, los datos públicos de la red llegan con unos 30 minutos de retraso. |
+| Idioma de los nombres y textos | `select` | No | Nombres de las funciones (fijados al añadir el dispositivo) y fechas. |
+
+## Cómo instalar Raspberry Shake en Gladys
+
+1. En Gladys, abre **Integraciones**: Raspberry Shake aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-raspberry-shake:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-raspberry-shake](https://github.com/guim31/gladys-raspberry-shake).
+
+Raspberry Shake requiere Gladys `>=5.2.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Raspberry Shake es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-raspberry-shake) — [fuente de esta documentación](https://github.com/guim31/gladys-raspberry-shake/blob/HEAD/docs/es.md)

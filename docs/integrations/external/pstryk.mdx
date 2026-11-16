@@ -1,0 +1,175 @@
+---
+title: "Pstryk smart home integration, free and open source"
+sidebar_label: "Pstryk"
+description: "Unofficial: Pstryk (Poland) hourly dynamic prices and meter consumption. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-pstryk.png"
+keywords:
+  - "pstryk"
+  - "pstryk smart home"
+  - "gladys pstryk"
+  - "pstryk gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-pstryk instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Pstryk","description":"Unofficial: Pstryk (Poland) hourly dynamic prices and meter consumption.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-pstryk","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-pstryk.png","type":"device","version":"0.1.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-14T08:14:24Z"}} />
+
+Unofficial integration for **Pstryk** electricity customers in Poland, not
+affiliated with Pstryk. It reads your own data through the official Pstryk
+integration API (api.pstryk.pl). **Read-only**: nothing is ever changed on
+your account.
+
+> This integration has never been tested with a real Pstryk account: it was
+> written from the official API description. Please report what you see
+> (GitHub issues of LM1LC3N7/gladys-pstryk).
+
+## What you get
+
+- **One device**, "Pstryk", offered in Discovery once Pstryk has
+  answered your key:
+  - **Price per kWh now (PLN)** and **Next price per kWh (PLN)**: the gross
+    price (VAT included) Pstryk gives for the current hour and the next one,
+    in złoty per kWh. Gladys has no złoty unit: the features show the bare
+    number.
+  - **Sale price per kWh now (PLN, prosumer)**: the price Pstryk gives for the
+    energy you export during the current hour, when it gives one.
+  - **Consumption (30 min)**: the consumption of your meter, published after
+    the fact for the Gladys energy monitoring. Pstryk gives hours: each hour is
+    split in two equal halves. The hour still running is never published.
+- **The energy contract template "Pstryk dynamic price"**: Gladys asks the
+  integration the cost of every half hour; it answers with the consumption
+  times the gross price of that hour. An hour whose price is negative costs 0
+  (Gladys accepts no negative cost): the cost shown by Gladys is then above
+  your bill by the credit, if Pstryk grants one. The energy you export is not
+  credited (Gladys prices the consumption only). The fixed monthly fees
+  (subscription, fixed part of the distribution, capacity fee) are an amount
+  you enter in the contract.
+
+## Setting up
+
+1. In the **Pstryk app**, create an **API key** for integrations and copy it.
+2. In Gladys, open the integration's **Configuration**, paste the key and
+   save. **Test the connection** reads the price of the current hour with it.
+3. In **Discovery**, add the "Pstryk electricity" device.
+4. In the energy settings, create a contract from the **Pstryk dynamic price**
+   template, attached to that device's consumption, and enter your fixed fees
+   per month (VAT included, from your invoice).
+
+The API key is kept by Gladys in its database, never shown again and sent only
+to Pstryk (api.pstryk.pl), in the `Authorization` header of each request.
+
+## How often it reads
+
+- The recent prices (yesterday to the end of tomorrow): when the ones held do
+  not cover the rest of today (or, from 14:00 Polish time, the whole of
+  tomorrow), at most once an hour. Tomorrow's prices, once first kept, are
+  read once more to confirm them (3 hours later, aiming before 23:00, at least
+  an hour later): the hours not started yet take the values read again. Then
+  nothing until 14:00 the next day.
+- The missing past prices (after a stop, an outage): up to 31 days back, at
+  most every 6 hours.
+- The consumption, once you added the device: every 3 hours (the last 3
+  days), once a day after 06:00 and for a new device the last 7 days.
+- After a failed read of the prices: again after 5, 10, 20, 40, then every 60
+  minutes.
+- Pstryk asking to slow down (HTTP 429): no request at all for the time its
+  `Retry-After` asks, else 15 minutes, doubled at each new 429 (30, 60, 120…),
+  at most 6 hours. Pstryk unavailable (5xx): no request for 5 minutes, doubled
+  at each new 5xx, at most 6 hours, or at most 1 hour while no price of the
+  current hour is held (an outage lasting past midnight). Pauses are kept
+  across restarts: after a long outage the next read may wait up to 6 hours.
+- A restart, Discovery or saving the configuration never reads sooner than
+  these intervals (a new key is read after 1 minute). When `/data` cannot be
+  read at a start, the last reads are unknown: the first read waits 5
+  minutes. One request at a time, 2 seconds apart at least.
+
+## What the prices are
+
+For each hour, Pstryk's API gives the gross price per kWh of your contract
+(`price_gross`, VAT included). The integration keeps it as given. What it
+includes (the energy only, or the variable distribution charges and the
+excise too) is not confirmed on a real account yet: if it leaves out the
+variable distribution, the cost shown by Gladys is below your bill. The
+prices of the past hours are kept 40 days in `/data`, so Gladys can price the
+past intervals; an interval older than the prices kept (a contract created
+with a start date long ago) gets no cost. The template is for Pstryk's
+dynamic price only: a fixed-price contract (the same price every hour) is
+never priced.
+
+An unknown price is never counted 0 (a half hour where nothing was consumed
+costs 0 whatever the price). Provisional prices are filtered by a rule that
+is not confirmed on a real account: a Polish day is kept only whole (every
+one of its hours priced, 23 or 25 on the days the clocks change) and not one
+value repeated over more than 90 % of it (what Pstryk may answer before
+tomorrow's prices are published); a provisional answer that passes this rule
+is replaced by the confirmation read in the hours not started yet if Pstryk
+gives the real prices by then (when that read no longer gives the day whole,
+its hours to come are dropped and read again hourly until whole); an hour
+already started keeps the price kept for it. A provisional answer that lasts
+past the confirmation is kept as such. When one hour of a billing period has no price,
+Gladys's whole request for that period fails and no cost is stored for it
+until the price is known: the integration reads the missing past days again
+(up to 31 days back, at most every 6 hours), for instance after Gladys was
+stopped; a day Pstryk never gives keeps those costs empty.
+
+Another API key (maybe another account, with another distribution tariff)
+drops the prices held and reads them again. After a restart the prices held in
+`/data` are kept whatever the key: change the key while Gladys runs.
+
+## Messages
+
+- _Pstryk refused the API key_: Pstryk answered 401 or 403 saying the key is
+  wrong ("Incorrect authentication credentials."). Nothing is sent again until
+  you change the key or the **Test** button succeeds. Any other answer (a 403
+  saying something else, an unreadable answer, a 404, a 5xx) is never taken as
+  a refusal: it is tried again later.
+- _No price of today is known yet_: the energy contract is not priced
+  meanwhile.
+- _Pstryk gave no complete prices for some past days_: some of the last 31
+  days could not be filled. Today's and tomorrow's prices are not affected;
+  the costs of the billing period of those days stay empty (asked again every
+  6 hours).
+- _Consumption not read_: the prices go on; the consumption is asked again 3
+  hours later.
+
+## Privacy
+
+The API key is never written in a log, the status or `/data`. `/data` keeps
+the times of the last reads, the pause, the hourly prices and a marker of a
+refused key (8 bits of a salted hash, nothing to find the key back from). The
+device id holds nothing of the key, the meter nor the customer.
+
+## Configuration settings
+
+These are the settings Pstryk asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Pstryk API key | `section` | No | Unofficial connector, not affiliated with Pstryk. For Pstryk electricity customers in Poland. Create an API key in the Pstryk app, then paste it here. The integration reads, through the official Pstryk integration API, the gross price per kWh of every hour of your contract (to price a Gladys energy contract and to show the current price) and the hourly consumption of your meter for the Gladys energy monitoring. Read-only: nothing is ever changed on your account. Then create an energy contract from the "Pstryk dynamic price" template. |
+| API key | `secret` | Yes | Kept by Gladys in its database, never shown again, sent only to Pstryk (api.pstryk.pl). |
+
+## How to install Pstryk in Gladys
+
+1. In Gladys, open **Integrations**: Pstryk appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-pstryk:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-pstryk](https://github.com/LM1LC3N7/gladys-pstryk).
+
+Pstryk requires Gladys `>=5.3.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Pstryk is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-pstryk) — [source of this documentation](https://github.com/LM1LC3N7/gladys-pstryk/blob/HEAD/docs/en.md)

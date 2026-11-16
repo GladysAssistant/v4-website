@@ -1,0 +1,168 @@
+---
+title: "Intégration domotique Arrosage conseillé, gratuite et open source"
+sidebar_label: "Arrosage conseillé"
+description: "Eau à apporter à chaque zone du jardin d'après l'évapotranspiration et la pluie (Open-Meteo). Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-arrosage.png"
+keywords:
+  - "arrosage conseillé"
+  - "domotique arrosage conseillé"
+  - "gladys arrosage conseillé"
+  - "arrosage conseillé gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/guim31/gladys-arrosage instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Arrosage conseillé","description":"Eau à apporter à chaque zone du jardin d'après l'évapotranspiration et la pluie (Open-Meteo).","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-arrosage","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-arrosage.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-14T22:03:34Z"}} />
+
+La quantité d'eau dont chaque zone du jardin a besoin aujourd'hui, d'après le bilan hydrique du sol :
+l'évapotranspiration de référence (ET0, FAO-56) moins la pluie, à la position de votre maison. Les données viennent
+d'[Open-Meteo](https://open-meteo.com/), gratuit et sans compte. L'intégration conseille : elle ne commande aucune
+vanne, ce sont vos scènes qui lancent le programmateur d'arrosage.
+
+## Ce que vous obtenez
+
+Un appareil par zone, avec des capteurs en lecture seule :
+
+- **Eau à apporter** (mm) : le déficit du bilan, 0 quand le sol en a assez ou quand de la pluie est prévue ;
+- **Durée d'arrosage conseillée** (minutes) : l'eau à apporter divisée par le débit d'arrosage de la zone (seulement
+  si un débit en mm/h, ou un débit en L/min et une surface, sont configurés) ;
+- **Bilan hydrique du sol** (mm) : négatif = eau manquante, positif = eau gardée en réserve ;
+- **ET0 d'hier** et **ET0 du jour** (mm/jour), et la **Pluie prévue aujourd'hui** (mm/jour).
+
+## Comment le conseil est calculé
+
+Chaque jour à l'heure du calcul, la veille est ajoutée au bilan de chaque zone :
+
+`bilan = min(plafond de réserve, bilan de la veille + pluie − Kc × ET0)`
+
+- L'**ET0** est l'évapotranspiration de référence d'un gazon bien arrosé (FAO-56 Penman-Monteith), calculée par
+  Open-Meteo d'après la température, le vent, l'humidité et l'ensoleillement.
+- **Kc**, le coefficient cultural, l'adapte à la plantation : gazon 0,85, potager 1, massifs fleuris 0,75, haies et
+  arbustes 0,5, ou la valeur que vous saisissez.
+- Le **plafond de réserve** est l'excédent d'eau que le sol garde après une forte pluie ; il est consommé avant tout
+  conseil d'arrosage.
+- **Eau à apporter** = −bilan quand le bilan est négatif. Quand la pluie prévue dans la journée atteint le seuil, le
+  conseil est 0 (le déficit reste dans le bilan, et la pluie sera comptée le lendemain).
+- **Durée** = eau à apporter ÷ débit × 60. Le débit en mm/h est saisi, ou calculé d'après le débit en L/min et la
+  surface (1 L sur 1 m² = 1 mm).
+
+Le bilan est conservé dans `/data` au redémarrage. Après un arrêt, les jours manquants sont comptés au calcul suivant
+(jusqu'à 7 jours en arrière). Notez un arrosage avec l'action de scène « Zone arrosée » ou le bouton du widget : sans
+quantité, le bilan revient à 0 (ration complète).
+
+## Configuration
+
+Renseignez les coordonnées de votre maison dans Gladys (Paramètres → Maisons) : l'intégration les lit.
+
+- **Langue des noms et des textes** : les noms des fonctionnalités (figés à l'ajout de l'appareil) et les textes du
+  widget.
+- **Pluie qui annule l'arrosage** : en mm, décimales acceptées (2,5) ; 0 la désactive.
+- **Heure du calcul quotidien** (0-23, 5 par défaut) : choisissez-la avant l'heure d'arrosage.
+- **Zones 1 à 4** : une zone existe dès qu'elle a un nom. Puis son type de plantation (ou un Kc), son débit d'arrosage
+  en mm/h, ou son débit en L/min et sa surface arrosée en m², et son plafond de réserve en mm (25 par défaut, 0 pour
+  aucun report, par exemple des pots).
+
+Ordres de grandeur : arroseur oscillant 5 à 10 mm/h, tuyère escamotable 25 à 40 mm/h, goutte-à-goutte : débit des
+goutteurs × nombre ÷ surface.
+
+## Actions
+
+**Voir le conseil maintenant** lit Open-Meteo si besoin et affiche l'eau et la durée de chaque zone.
+
+## Scènes
+
+- Déclencheur **Arrosage conseillé** : une fois par jour, à l'heure du calcul, pour chaque zone qui a besoin d'eau
+  (filtre sur une zone ou non). Ses variables : zone, eau à apporter (mm), durée conseillée (minutes, 0 si inconnue).
+  Scène type : « Arrosage conseillé » sur la pelouse → ouvrir la vanne du programmateur (OpenSprinkler, Rain Bird, une
+  prise connectée…) → attendre la durée conseillée → la fermer → « Zone arrosée ».
+- Action **Zone arrosée** : compte un arrosage dans le bilan, la quantité donnée en mm ou une ration complète si elle
+  est vide. Sans zone, toutes les zones.
+- Les déclencheurs habituels de Gladys sur les valeurs de l'appareil marchent aussi, par exemple « Durée d'arrosage
+  conseillée supérieure à 0 » avec une condition horaire.
+
+## Tableau de bord
+
+Le widget **Arrosage conseillé** affiche l'ET0 et la pluie du jour, l'eau et la durée de chaque zone, et un bouton
+« arrosé » par zone. Ses réglages masquent la ligne météo ou les boutons. Les capteurs des appareils peuvent aussi être
+ajoutés au tableau de bord, avec leur historique.
+
+## Limites et dépannage
+
+- Une estimation, pas une mesure : le type de sol, la pente, l'ombre ou le vent ne sont pas connus. Ajustez le Kc ou
+  le plafond de réserve après quelques semaines si la pelouse jaunit (Kc plus haut) ou reste détrempée (Kc plus bas).
+- La pluie comptée est celle modélisée par Open-Meteo à vos coordonnées, pas celle de votre pluviomètre. Un orage
+  local peut être manqué.
+- Open-Meteo est gratuit pour un usage non commercial (moins de 10 000 requêtes par jour) : l'intégration le lit toutes
+  les 3 heures. Données sous licence CC BY 4.0, par Open-Meteo.com.
+- « Aucune position de maison » : renseignez les coordonnées de votre maison. « Open-Meteo est injoignable » : le
+  conseil garde les dernières prévisions et l'intégration réessaie toutes les 15 minutes.
+- Détails dans les journaux : réglez `LOG_LEVEL=debug`.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Arrosage conseillé dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Fonctionnement | `section` | Non | Chaque jour, le bilan hydrique de chaque zone ajoute la pluie et retire l'évapotranspiration (ET0 × coefficient cultural), lues sur Open-Meteo à la position de votre maison dans Gladys. Un appareil par zone. |
+| Langue des noms et des textes | `select` | Non |  |
+| Pluie qui annule l'arrosage (mm) | `string` | Non | Quand la pluie prévue dans la journée atteint cette quantité, le conseil est de ne pas arroser. 0 pour désactiver. Décimales acceptées (2,5). |
+| Heure du calcul quotidien | `number` | Non | À cette heure (0-23), la veille est ajoutée aux bilans et le déclencheur « Arrosage conseillé » part. Choisissez-la avant l'heure d'arrosage. |
+| Zone 1 | `section` | Non | Une zone existe dès qu'elle a un nom. Le débit en mm/h, ou le débit en L/min et la surface, donnent la durée d'arrosage conseillée. |
+| Nom | `string` | Non |  |
+| Type de plantation | `select` | Non |  |
+| Coefficient cultural Kc (facultatif) | `string` | Non | Remplace le coefficient du type, de 0 à 2. |
+| Débit d'arrosage (mm/h) | `string` | Non | Hauteur d'eau apportée en une heure par l'arroseur ou le goutte-à-goutte. Prioritaire sur le débit et la surface. |
+| Débit (L/min) | `string` | Non |  |
+| Surface arrosée (m²) | `string` | Non |  |
+| Plafond de réserve du sol (mm) | `number` | Non | Excédent d'eau que le sol garde après une forte pluie, déduit des jours suivants. 0 : aucun report. |
+| Zone 2 | `section` | Non |  |
+| Nom | `string` | Non |  |
+| Type de plantation | `select` | Non |  |
+| Coefficient cultural Kc (facultatif) | `string` | Non | Remplace le coefficient du type, de 0 à 2. |
+| Débit d'arrosage (mm/h) | `string` | Non | Hauteur d'eau apportée en une heure par l'arroseur ou le goutte-à-goutte. Prioritaire sur le débit et la surface. |
+| Débit (L/min) | `string` | Non |  |
+| Surface arrosée (m²) | `string` | Non |  |
+| Plafond de réserve du sol (mm) | `number` | Non | Excédent d'eau que le sol garde après une forte pluie, déduit des jours suivants. 0 : aucun report. |
+| Zone 3 | `section` | Non |  |
+| Nom | `string` | Non |  |
+| Type de plantation | `select` | Non |  |
+| Coefficient cultural Kc (facultatif) | `string` | Non | Remplace le coefficient du type, de 0 à 2. |
+| Débit d'arrosage (mm/h) | `string` | Non | Hauteur d'eau apportée en une heure par l'arroseur ou le goutte-à-goutte. Prioritaire sur le débit et la surface. |
+| Débit (L/min) | `string` | Non |  |
+| Surface arrosée (m²) | `string` | Non |  |
+| Plafond de réserve du sol (mm) | `number` | Non | Excédent d'eau que le sol garde après une forte pluie, déduit des jours suivants. 0 : aucun report. |
+| Zone 4 | `section` | Non |  |
+| Nom | `string` | Non |  |
+| Type de plantation | `select` | Non |  |
+| Coefficient cultural Kc (facultatif) | `string` | Non | Remplace le coefficient du type, de 0 à 2. |
+| Débit d'arrosage (mm/h) | `string` | Non | Hauteur d'eau apportée en une heure par l'arroseur ou le goutte-à-goutte. Prioritaire sur le débit et la surface. |
+| Débit (L/min) | `string` | Non |  |
+| Surface arrosée (m²) | `string` | Non |  |
+| Plafond de réserve du sol (mm) | `number` | Non | Excédent d'eau que le sol garde après une forte pluie, déduit des jours suivants. 0 : aucun report. |
+
+## Comment installer Arrosage conseillé dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Arrosage conseillé apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/guim31/gladys-arrosage:1.0.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/guim31/gladys-arrosage](https://github.com/guim31/gladys-arrosage).
+
+Arrosage conseillé nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Arrosage conseillé est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [guim31](https://github.com/guim31), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/guim31/gladys-arrosage) — [source de cette documentation](https://github.com/guim31/gladys-arrosage/blob/HEAD/docs/fr.md)

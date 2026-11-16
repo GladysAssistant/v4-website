@@ -1,0 +1,294 @@
+---
+title: "Kubernetes smart home integration, free and open source"
+sidebar_label: "Kubernetes"
+description: "Watch your Kubernetes cluster (k3s, k0s, MicroK8s…): nodes, pods and deployments, read-only. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-kubernetes.png"
+keywords:
+  - "kubernetes"
+  - "kubernetes smart home"
+  - "gladys kubernetes"
+  - "kubernetes gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-kubernetes instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Kubernetes","description":"Watch your Kubernetes cluster (k3s, k0s, MicroK8s…): nodes, pods and deployments, read-only.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-kubernetes","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-kubernetes.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-15T17:33:39Z"}} />
+
+This integration brings the state of your **Kubernetes cluster** into Gladys —
+k3s, k0s, MicroK8s, Talos, kubeadm, a Raspberry Pi cluster or a single-node
+home server alike: the cluster itself, one device per node and one per
+Deployment, StatefulSet and DaemonSet you choose. Scenes can react when a node
+is no longer ready, a workload is degraded, a pod is in CrashLoopBackOff or the
+API server no longer answers, and a dashboard widget sums the cluster up.
+
+It only **reads**: a ServiceAccount with a read-only role is enough, and Gladys
+never changes anything in the cluster. Everything stays on your local network.
+
+Tested against a real k3s v1.31.4 cluster (Docker): a healthy Deployment, a
+crashing one, a pod that cannot be scheduled, an image that does not exist, a
+StatefulSet, a DaemonSet, filtered namespaces, a wrong token, a stopped server
+and a node under disk pressure. Not yet with a real Gladys instance nor on
+every distribution: feedback welcome on
+[the issues](https://github.com/guim31/gladys-kubernetes/issues).
+
+## What you need
+
+- Gladys Assistant 5.1.0 or later.
+- A Kubernetes cluster whose API server (port 6443 by default) is reachable
+  from the Gladys machine.
+- `kubectl` with administrator rights, once, to create the read-only account.
+- Optional: metrics-server (installed by default with k3s) for the CPU and
+  memory of the nodes.
+
+## Getting started
+
+### 1. Create a read-only account
+
+Save this file as `gladys-reader.yaml`, then run
+`kubectl apply -f gladys-reader.yaml`. It creates a `gladys` namespace, a
+ServiceAccount `gladys-reader`, a role that can only read (get, list, watch)
+nodes, pods, namespaces, Deployments, StatefulSets, DaemonSets and the node
+metrics, and a long-lived token.
+
+```yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gladys
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: gladys-reader
+  namespace: gladys
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: gladys-reader
+rules:
+  - apiGroups: ['']
+    resources: ['nodes', 'pods', 'namespaces']
+    verbs: ['get', 'list', 'watch']
+  - apiGroups: ['apps']
+    resources: ['deployments', 'statefulsets', 'daemonsets']
+    verbs: ['get', 'list', 'watch']
+  - apiGroups: ['metrics.k8s.io']
+    resources: ['nodes']
+    verbs: ['get', 'list']
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: gladys-reader
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: gladys-reader
+subjects:
+  - kind: ServiceAccount
+    name: gladys-reader
+    namespace: gladys
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: gladys-reader-token
+  namespace: gladys
+  annotations:
+    kubernetes.io/service-account.name: gladys-reader
+type: kubernetes.io/service-account-token
+```
+
+Then print the token:
+
+```sh
+kubectl -n gladys get secret gladys-reader-token -o jsonpath='{.data.token}' | base64 -d
+```
+
+### 2. Configure the integration
+
+In Gladys, **Integrations → Kubernetes → Configuration**:
+
+- **API server address**: the `server:` line of your kubeconfig, e.g.
+  `https://192.168.1.30:6443`. A bare IP gets `https://` and port 6443.
+- **ServiceAccount token**: the token printed above.
+- **Trust the certificate**: the cluster signs its own certificate. Either
+  paste the **cluster authority** — the value of `certificate-authority-data`
+  in your kubeconfig, or the content of the `ca.crt` file, as is — or leave it
+  empty, click **Test the connection**: the message shows the SHA-256
+  fingerprint the server sent. Check it, then paste it in **Certificate
+  fingerprint**. Until one of the two is filled, the token is never sent.
+- **Namespaces** (optional): `home, media` to follow only these namespaces.
+  Empty: every namespace.
+- **Cluster name**, **Refresh interval** (1 minute by default) and **Language
+  of the names**.
+
+To check a fingerprint, on a machine that has your kubeconfig:
+
+```sh
+kubectl config view --raw --minify -o jsonpath='{.clusters[0].cluster.certificate-authority-data}' | base64 -d | openssl x509 -noout -fingerprint -sha256
+```
+
+On a k3s server: `openssl x509 -in /var/lib/rancher/k3s/server/tls/server-ca.crt -noout -fingerprint -sha256`.
+
+### 3. Add the devices
+
+In the **Discover** tab, add the cluster, the nodes and the workloads you
+want to follow. The others are not sent to Gladys, but the triggers and the
+widget still watch them.
+
+## The devices
+
+### The cluster
+
+| Feature                  | Meaning                                                 |
+| ------------------------ | ------------------------------------------------------- |
+| Reachable                | 1 while the API server answers, 0 once it is silent     |
+| Version                  | the Kubernetes version, e.g. `v1.31.4+k3s1`             |
+| Nodes ready              | nodes whose `Ready` condition is true                   |
+| Nodes                    | every node                                              |
+| Pods running             | pods in the `Running` phase                             |
+| Pods pending             | pods waiting to be scheduled or started                 |
+| Pods failed              | `Failed` pods and pods stuck on an error (image, crash) |
+| Pods in CrashLoopBackOff | pods with a container that keeps crashing               |
+| Pods restarted (1 h)     | pods with a container that ended within the last hour   |
+| Degraded workloads       | workloads with fewer ready replicas than wanted         |
+
+The pods and workloads counted are those of the chosen namespaces; the
+finished pods (Jobs) are left out.
+
+### Nodes
+
+Ready, Memory pressure and Disk pressure (1 = yes). With metrics-server, also
+CPU and Memory, in percent of what the node can give to pods. A node added
+before metrics-server was installed gets them through **Update** in the
+Discover tab.
+
+### Deployments, StatefulSets and DaemonSets
+
+Ready replicas, Desired replicas, and Healthy (1 when every wanted replica is
+ready). A workload scaled to zero is healthy.
+
+## Dashboard
+
+The **Kubernetes cluster** widget shows four tiles — nodes ready, pods
+running, pods failed, degraded workloads — then the problems: nodes not ready
+or under pressure, degraded workloads with their replicas, pods in
+CrashLoopBackOff, or one green row when all is well. Its settings hide the
+problem list and the **Refresh** button.
+
+## Scenes
+
+### Triggers
+
+- **Node not ready**: a node is no longer ready on two reads in a row.
+  Filter: a node, or every node. Variables: node, reason (e.g.
+  `NodeStatusUnknown`).
+- **Workload degraded**: a Deployment, StatefulSet or DaemonSet has fewer
+  ready replicas than wanted for 3 minutes (a rolling update heals before).
+  Filter: a workload. Variables: name, namespace, kind, ready and desired
+  replicas.
+- **Pod in CrashLoopBackOff**: a container keeps crashing. Announced once,
+  and again only after it ran 10 minutes without crashing. Filter: the
+  workload of the pod. Variables: pod, container, namespace, workload,
+  restarts.
+- **Cluster unreachable**: the API server no longer answers, on two reads 15
+  seconds apart. Variables: cluster, reason.
+
+What is already wrong when the integration starts for the first time is only
+recorded, not announced. The integration remembers what it announced across
+restarts.
+
+### Actions
+
+- **State of the cluster**: reads the cluster (again if the last read is
+  older than 15 seconds) and gives the next actions a ready-made summary —
+  "Home lab: nodes ready: 3/3, pods running: 42, degraded: web (home)" — and
+  every figure: version, nodes, pods running, pending, failed, in
+  CrashLoopBackOff, degraded workloads. A silent cluster is not an error:
+  "Answers" is false and the summary says why.
+
+### Scene ideas
+
+- **Morning report**: every day at 8:00, State of the cluster → send the
+  summary on Telegram.
+- **Home server lost**: Cluster unreachable or Node not ready → send a
+  message, flash a light.
+- **Broken update**: Pod in CrashLoopBackOff on the Deployment of your home
+  automation → send a message with the pod and its restarts.
+
+## Troubleshooting
+
+- **"certificate not trusted"**: paste the cluster authority, or check and
+  paste the fingerprint the message shows. After a reinstallation of the
+  cluster, its authority changed: paste the new one.
+- **"token refused"**: the token is incomplete, or belongs to another cluster.
+  Print it again with the command of step 1.
+- **"access refused"**: the role of step 1 is missing or was changed; apply
+  the file again.
+- **"the API server does not answer"**: check the address and the port, and
+  that a firewall lets the Gladys machine reach port 6443.
+- **"no Kubernetes API at this address"**: another service answers there
+  (the Rancher interface, a dashboard).
+- **No CPU nor memory on the nodes**: metrics-server is not installed, or not
+  started yet; **Test the connection** says so.
+- **Test the connection lists "unknown namespaces"**: a namespace name is
+  misspelled.
+
+## Limits
+
+- Read only: the integration never starts, stops nor scales anything.
+- One cluster per installation of the integration.
+- Pods are counted, not proposed one by one: they come and go at every
+  update. Jobs, CronJobs and bare pods are counted but have no device.
+- The CPU and memory of the nodes need metrics-server.
+- The values of the devices that are not added are not sent to Gladys; the
+  triggers and the widget still use them.
+- A large cluster (thousands of pods) is read in full at every interval:
+  choose a longer interval, or the namespaces to follow.
+- Not affiliated with the Kubernetes project nor the Cloud Native Computing
+  Foundation.
+
+## Configuration settings
+
+These are the settings Kubernetes asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your cluster | `section` | No | Create a read-only ServiceAccount in the cluster (YAML in the setup guide), then enter the address of the API server and its token below. Gladys only reads: it never changes anything in the cluster. |
+| API server address | `string` | No | The "server:" line of your kubeconfig, or the IP of a control-plane node (port 6443 by default). |
+| ServiceAccount token | `secret` | No | The token of the gladys-reader ServiceAccount (command in the setup guide). |
+| Cluster authority (optional) | `string` | No | The certificate-authority-data of your kubeconfig, or the ca.crt of the cluster, pasted as is. Or leave empty and use the fingerprint below. |
+| Certificate fingerprint (optional) | `string` | No | Without an authority, "Test the connection" shows the SHA-256 fingerprint the server sends: check it, then paste it here to trust that server. |
+| Options | `section` | No | Only the devices added to Gladys receive values; the scene triggers work for every node and workload. |
+| Cluster name (optional) | `string` | No | Shown in the device name, the widget and the messages. |
+| Namespaces (optional) | `string` | No | The namespaces whose pods and workloads are followed, separated by commas. Empty: every namespace. |
+| Refresh interval | `select` | No | How often the cluster is read. |
+| Language of the names | `select` | No | Language of the feature names (set when a device is added), of the scene results and of the connection test. |
+
+## How to install Kubernetes in Gladys
+
+1. In Gladys, open **Integrations**: Kubernetes appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-kubernetes:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-kubernetes](https://github.com/guim31/gladys-kubernetes).
+
+Kubernetes requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Kubernetes is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-kubernetes) — [source of this documentation](https://github.com/guim31/gladys-kubernetes/blob/HEAD/docs/en.md)

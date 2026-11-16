@@ -1,0 +1,205 @@
+---
+title: "Integración domótica SIP voice calls (Asterisk), gratuita y de código abierto"
+sidebar_label: "SIP voice calls (Asterisk)"
+description: "Llame a un teléfono desde una escena con un mensaje; reaccione a las llamadas (Asterisk, FreePBX). Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-sip.png"
+keywords:
+  - "sip voice calls (asterisk)"
+  - "domótica sip voice calls (asterisk)"
+  - "gladys sip voice calls (asterisk)"
+  - "sip voice calls (asterisk) gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-sip instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"SIP voice calls (Asterisk)","description":"Llame a un teléfono desde una escena con un mensaje; reaccione a las llamadas (Asterisk, FreePBX).","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-sip","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-sip.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-13T08:28:27Z"}} />
+
+Llame a un teléfono desde una escena de Gladys y reprodúzcale un mensaje (alarma, fuga de agua, puerta abierta), y
+reaccione a las llamadas recibidas (abrir el portón cuando llama un número conocido). La integración controla **su
+propio Asterisk o FreePBX** mediante ARI, la interfaz REST de Asterisk: nunca habla SIP por sí misma, lo hace su
+servidor telefónico.
+
+Desarrollada sin línea de operador: probada con Asterisk 23.5 en Docker y teléfonos simulados. Sus comentarios son
+bienvenidos.
+
+## Lo que obtiene
+
+- Una acción de escena **«Llamar y reproducir un mensaje»**: llama a un número permitido, reproduce el mensaje una o
+  varias veces y vuelve a llamar si nadie contesta. Opcionalmente, la llamada solo queda **confirmada** cuando alguien
+  pulsa **1**: hasta entonces, la integración sigue llamando (hasta el número de intentos).
+- Una acción de escena **«Detener las llamadas»**: cuelga y cancela los reintentos (falsa alarma).
+- Un desencadenante **«Llamada recibida»**, filtrado por número de quien llama y número llamado, con el número y el
+  nombre de quien llama como variables.
+- Un desencadenante **«Llamada realizada terminada»**, filtrado por número y resultado (confirmada, contestada, sin
+  respuesta, ocupado, error, cancelada).
+- Un dispositivo **Servidor Asterisk**: servidor accesible, última llamada recibida, última llamada realizada.
+- Un widget de panel **Llamadas telefónicas**.
+
+## Requisitos: Asterisk
+
+1. Active el servidor HTTP en `/etc/asterisk/http.conf`:
+
+   ```ini
+   [general]
+   enabled=yes
+   bindaddr=0.0.0.0
+   bindport=8088
+   ```
+
+2. Cree un usuario ARI en `/etc/asterisk/ari.conf` (elija una contraseña larga):
+
+   ```ini
+   [general]
+   enabled=yes
+
+   [gladys]
+   type=user
+   read_only=no
+   password=una-contrasena-larga-y-aleatoria
+   ```
+
+3. Grabe sus mensajes. Un mensaje es uno o varios sonidos de Asterisk: coloque `alarma.wav` (8 kHz mono) en
+   `/var/lib/asterisk/sounds/es/custom/` y use `custom/alarma`. Los medios `digits:1234`, `number:42` y `tone:ring`
+   también funcionan.
+4. Para las llamadas recibidas, envíe las llamadas a la integración desde el contexto del trunk de su operador en
+   `extensions.conf`, antes de hacer sonar sus teléfonos:
+
+   ```ini
+   [from-trunk]
+   exten => _X.,1,Stasis(gladys)
+    same => n,Dial(PJSIP/100,30)
+   ```
+
+   Cuando la integración está detenida, `Stasis()` falla en el acto y la llamada continúa: sus teléfonos siguen
+   sonando.
+
+5. Las llamadas salientes usan el trunk de su operador: la cadena de marcación `PJSIP/{number}@mi-trunk` llama por
+   el endpoint PJSIP `mi-trunk`. Ejecute `core reload` después de estos cambios.
+
+## Requisitos: FreePBX
+
+1. **Settings → Asterisk REST Interface Users**: añada un usuario (lectura/escritura) y anote su contraseña.
+   Compruebe en **Settings → Advanced Settings** que el mini servidor HTTP de Asterisk está activado (puerto 8088).
+2. **Admin → System Recordings**: grabe o suba los mensajes; una grabación llamada `alarma` es el sonido
+   `custom/alarma`.
+3. Cadena de marcación: `Local/{number}@from-internal`, para que las rutas salientes de FreePBX elijan el trunk.
+4. Llamadas recibidas: en `extensions_custom.conf`, añada un contexto que pase por Stasis y luego por su ruta
+   entrante, y haga que un **Custom Destination** o el contexto del trunk apunte a él:
+
+   ```ini
+   [gladys-incoming]
+   exten => _X.,1,Stasis(gladys)
+    same => n,Goto(from-trunk,${EXTEN},1)
+   ```
+
+## Configuración
+
+| Campo                    | Uso                                                                                       |
+| ------------------------ | ----------------------------------------------------------------------------------------- |
+| Dirección ARI            | `http://<dirección del servidor>:8088`                                                    |
+| Usuario, contraseña      | El usuario de `ari.conf` o de FreePBX                                                     |
+| Aplicación Stasis        | `gladys` por defecto: el nombre usado en `Stasis(gladys)`                                 |
+| Números permitidos       | Los únicos números a los que pueden llamar las escenas, separados por comas               |
+| Cadena de marcación      | `{number}` se sustituye por el número llamado                                             |
+| Identificador de llamada | Se muestra en el teléfono llamado, p. ej. `Gladys <100>` (el operador puede sustituirlo)  |
+| Llamadas entrantes       | Seguir en el plan (suenan los teléfonos) o colgar sin contestar (gratis para quien llama) |
+| Idioma de los textos     | Idioma de los nombres de las funciones y de los resultados de llamada                     |
+
+**Probar la conexión** comprueba la dirección y el usuario. **Llamada de prueba** realiza una llamada (un intento,
+una reproducción).
+
+## Escenas
+
+- **Alarma por teléfono**: desencadenante «Alarma activada» → acción «Llamar y reproducir un mensaje», número
+  `+34612345678`, mensaje `custom/alarma`, 3 reproducciones, 5 intentos, 60 s entre intentos, «Esperar a que se
+  pulse 1» marcado.
+- **Falsa alarma**: desencadenante «Alarma desarmada» → acción «Detener las llamadas».
+- **Portón por teléfono**: desencadenante «Llamada recibida», número de quien llama `+34612345678` → abrir el
+  portón. En el modo «colgar sin contestar», la llamada no le cuesta nada a quien llama.
+- **Nadie ha confirmado**: desencadenante «Llamada realizada terminada», resultado «Sin respuesta» → enviar un
+  mensaje a otra persona.
+
+La acción de escena termina en el acto (una llamada con reintentos dura más de lo que permite una acción de
+escena): el resultado llega por el desencadenante «Llamada realizada terminada» y la función «Última llamada
+realizada». El número se escribe como en los números permitidos; se ignoran espacios, puntos y guiones. No se
+realiza una segunda llamada a un número al que ya se está llamando.
+
+El número de quien llama del desencadenante «Llamada recibida» se compara tal cual: escríbalo exactamente como lo
+muestra la función «Última llamada recibida», sin el nombre entre paréntesis (los operadores envían a menudo `+34612345678` o `34612345678`).
+
+## Panel
+
+El widget **Llamadas telefónicas** muestra el enlace con Asterisk, las llamadas en curso, la hora de la última
+llamada recibida y realizada con su resultado y, durante una llamada, un botón para detener las llamadas (se puede
+ocultar en la configuración del widget).
+
+## Limitaciones
+
+- **Sin síntesis de voz**: Asterisk reproduce sonidos grabados. Grabe sus mensajes una vez (System Recordings de
+  FreePBX o una herramienta de síntesis de voz en su ordenador).
+- Solo se puede llamar a los **números permitidos**. No añada nunca números de tarificación especial: una escena
+  podría llamarlos en bucle.
+- El **número de quien llama puede falsificarse**: no lo use por sí solo para abrir una puerta o desarmar una
+  alarma.
+- Las llamadas en curso cuando Asterisk se reinicia o se corta el enlace terminan con error; cuando la propia
+  integración se reinicia, se pierden (sin desencadenante).
+- Solo se ven las llamadas enviadas a `Stasis(gladys)`.
+- Desarrollada sin el hardware: no se usó ninguna línea de operador real en las pruebas, solo Asterisk 23.5 con
+  teléfonos simulados. Sus comentarios son bienvenidos.
+
+## Solución de problemas
+
+- **«Asterisk no responde»**: compruebe la dirección y el puerto, `http show status` en la consola de Asterisk, y
+  que el equipo de Gladys alcanza el puerto 8088.
+- **«Asterisk rechaza el usuario ARI»**: compruebe `ari.conf` (o el usuario ARI de FreePBX) y ejecute
+  `module reload res_ari.so`.
+- **«Error» inmediato**: la cadena de marcación es incorrecta (`pjsip show endpoints`), o el trunk rechaza la
+  llamada: la consola de Asterisk indica el motivo.
+- **El mensaje no suena**: el sonido no existe; compruebe `core show file formats` y la ruta bajo
+  `sounds/<idioma>/`.
+- **Ningún desencadenante al recibir una llamada**: el plan de marcación no llega a `Stasis(gladys)`, o el nombre de
+  la aplicación difiere de la configuración.
+
+## Parámetros de configuración
+
+Estos son los parámetros que SIP voice calls (Asterisk) te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Servidor Asterisk | `section` | No | La integración controla su propio Asterisk o FreePBX mediante ARI (Asterisk REST Interface). Cree primero un usuario ARI: la documentación detalla cada paso. |
+| Dirección ARI | `string` | Sí | Dirección del servidor HTTP de Asterisk (http.conf), con el puerto. |
+| Usuario ARI | `string` | Sí |  |
+| Contraseña ARI | `secret` | Sí |  |
+| Aplicación Stasis | `string` | No | Nombre usado en el plan de marcación: Stasis(gladys). |
+| Llamadas | `section` | No | Solo se puede llamar a los números permitidos. No añada nunca números de tarificación especial: una escena podría llamarlos en bucle. |
+| Números permitidos | `string` | No | Números a los que pueden llamar las escenas, separados por comas, escritos como los marcaría. |
+| Cadena de marcación | `string` | No | Canal al que llamar, \{number\} se sustituye: PJSIP/\{number\}@mi-trunk para el trunk del operador, PJSIP/\{number\} para un teléfono local, Local/\{number\}@from-internal en FreePBX. |
+| Identificador de llamada | `string` | No | Se muestra en el teléfono llamado; el operador puede sustituirlo. |
+| Llamadas entrantes | `select` | No | Qué ocurre con una llamada enviada a Stasis una vez vista por Gladys. |
+| Idioma de los textos | `select` | No | Idioma de los nombres de las funciones y de los resultados de llamada. |
+
+## Cómo instalar SIP voice calls (Asterisk) en Gladys
+
+1. En Gladys, abre **Integraciones**: SIP voice calls (Asterisk) aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-sip:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-sip](https://github.com/guim31/gladys-sip).
+
+SIP voice calls (Asterisk) requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+SIP voice calls (Asterisk) es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-sip) — [fuente de esta documentación](https://github.com/guim31/gladys-sip/blob/HEAD/docs/es.md)

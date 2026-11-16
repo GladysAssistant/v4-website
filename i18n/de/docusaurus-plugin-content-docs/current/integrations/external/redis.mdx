@@ -1,0 +1,214 @@
+---
+title: "Redis Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Redis"
+description: "Redis- oder Valkey-Schlüssel als Gladys-Sensoren, und Schreiben aus deinen Szenen. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-redis.png"
+keywords:
+  - "redis"
+  - "redis smart home"
+  - "gladys redis"
+  - "redis gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-redis instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Redis","description":"Redis- oder Valkey-Schlüssel als Gladys-Sensoren, und Schreiben aus deinen Szenen.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-redis","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-redis.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-14T22:06:12Z"}} />
+
+Deine Redis- (oder Valkey-)Schlüssel als Gladys-Sensoren, und Schreiben aus
+deinen Szenen: eine einfache Brücke zwischen Gladys und den eigenen Skripten,
+die schon Zähler, Zustände oder Warteschlangen in Redis ablegen.
+
+Getestet mit echtem Redis 7.4 und Valkey 8.1 (Docker), mit und ohne Passwort,
+mit einem ACL-Benutzer und mit Keyspace-Benachrichtigungen. Rückmeldungen und
+Fehlerberichte gern auf
+[GitHub](https://github.com/guim31/gladys-redis/issues).
+
+## Was du bekommst
+
+- **Ein Gerät pro hinzugefügtem Schlüssel**: Ein String oder ein Hash-Feld
+  liefert seinen Wert (eine Zahl oder einen Text), eine Liste, eine Menge, eine
+  sortierte Menge oder ein Stream liefert ihre Länge.
+- **Ein Gerät für den Server**: erreichbar, Version, belegter Speicher,
+  verbundene Clients, Schlüssel in der Datenbank.
+- **Sofortige Aktualisierungen** mit den Keyspace-Benachrichtigungen, wenn dein
+  Server sie sendet; sonst werden die Schlüssel im gewählten Intervall gelesen.
+- **Szenenaktionen**, um einen Wert zu schreiben, eine Zahl zu erhöhen und eine
+  Nachricht zu veröffentlichen, standardmäßig aus.
+- Ein **Szenenauslöser**, wenn sich ein Schlüssel ändert (gesetzt, gelöscht,
+  abgelaufen…).
+- Ein **Dashboard-Widget** mit dem Wert jedes Schlüssels.
+
+## Voraussetzungen
+
+- Redis 6 oder neuer, oder Valkey, von Gladys aus über das Netzwerk erreichbar
+  (nicht `localhost`: Die Integration läuft in ihrem eigenen Container).
+- Ein ACL-Benutzer braucht Redis 6 oder neuer; bei einem einfachen
+  `requirepass` lässt du den Benutzer leer.
+
+## Konfiguration
+
+- **Adresse**: Name oder IP-Adresse des Servers. `redis://host:port` und
+  `rediss://host:port` (TLS) gehen auch, ohne Zugangsdaten.
+- **Port**, **Datenbanknummer** (0, außer deine Skripte nutzen `SELECT`).
+- **Benutzer (ACL, optional)** und **Passwort (optional)**.
+- **TLS-Verbindung**, und **Selbstsignierte Zertifikate akzeptieren** für ein
+  eigenes Zertifikat.
+- **Aktualisierungsintervall**: von 10 Sekunden bis 10 Minuten; jeder Schlüssel
+  kostet zwei Befehle pro Lesevorgang (`TYPE`, dann das Lesen selbst).
+- **Schreiben aus Szenen erlauben**: standardmäßig aus; siehe Szenen.
+- **Erlaubte Kanäle zum Veröffentlichen**: die Kanäle, die „Redis-Nachricht
+  veröffentlichen“ nutzen darf, durch Kommas getrennt.
+- **Sprache der Namen und Meldungen**: die Namen der Serverfunktionen und die
+  Meldungen der Aktionen.
+
+Nutze danach **Verbindung testen**: Die Aktion liest den Server und jeden
+Schlüssel und sagt, was nicht stimmt.
+
+Ein ACL-Benutzer muss nur die hinzugefügten Schlüssel lesen können. Zum
+Beispiel nur lesend:
+`ACL SETUSER gladys on >passwort ~sensors:* +@read +info +dbsize +ping +hello +select +type`,
+dazu `+@write +publish &*`, um aus Szenen zu schreiben und zu veröffentlichen,
+und `+subscribe &__keyspace@0__:*` für die Benachrichtigungen.
+
+### Keyspace-Benachrichtigungen
+
+Aktiviere **Keyspace-Benachrichtigungen verfolgen**, um einen Schlüssel zu
+lesen, sobald er sich ändert. Die Integration abonniert den genauen Kanal jedes
+hinzugefügten Schlüssels (nie ein Muster), **ändert aber nie die Konfiguration
+des Servers**: Er muss sie senden. Zum Beispiel in `redis.conf`:
+`notify-keyspace-events KA`, oder zur Laufzeit:
+`CONFIG SET notify-keyspace-events KA`. **Verbindung testen** sagt, ob der
+Server sie sendet. Das regelmäßige Lesen bleibt als Sicherheitsnetz.
+
+## Schlüssel hinzufügen
+
+Gladys hat kein Listenfeld in einem Konfigurationsformular: Die Schlüssel werden
+mit der Aktion **Schlüssel hinzufügen** der Konfigurationsseite hinzugefügt und
+von der Integration gespeichert.
+
+- **Schlüssel**: der genaue Name, z. B. `sensors:garage:temperature`. Kein
+  Muster: Die Integration durchsucht nie die Datenbank.
+- **Hash-Feld (nur Hash)**: bei einem Hash das zu lesende Feld, z. B. `power`.
+- **Typ in Gladys**: Automatisch (Zahl oder Text), Zahl, Temperatur (°C),
+  Luftfeuchtigkeit (%), Prozentsatz (%), Leistung (W), Energie (kWh), Text.
+  Automatisch entscheidet nach dem aktuellen Wert: eine Zahl oder Text. Eine
+  Liste, eine Menge, eine sortierte Menge oder ein Stream wird als ihre Länge
+  gelesen.
+- **Name (optional)**: der Name des Geräts; standardmäßig der Schlüssel.
+
+Derselbe Schlüssel erneut hinzugefügt ändert seinen Namen oder Typ (ein neuer
+Typ ist eine neue Funktion: Nutze „Aktualisieren“ im Tab „Entdecken“).
+**Schlüssel entfernen** verfolgt einen Schlüssel nicht mehr; sein Gerät bleibt
+in Gladys, bis du es löschst. Bis zu 50 Schlüssel.
+
+## Geräte
+
+Füge die Geräte, denen du folgen willst, im Tab **Entdecken** der Integration
+hinzu: den Server und ein Gerät pro Schlüssel. Die Werte werden gesendet, wenn
+sie sich ändern, und sonst alle 6 Stunden erneut. Solange der Server nicht
+antwortet, erscheinen die Schlüsselgeräte als nicht erreichbar und die Funktion
+„Erreichbar“ des Servers geht auf 0.
+
+## Szenen
+
+### Auslöser
+
+**Ein Redis-Schlüssel ändert sich**: Eine Keyspace-Benachrichtigung ist für
+einen verfolgten Schlüssel angekommen. Filter: der Schlüssel (leer: alle) und
+das Redis-Ereignis (`set`, `del`, `expired`, `incrbyfloat`, `hset`…, leer:
+alle). Variablen: der Schlüssel, sein Name, das Ereignis und der neue Wert (leer,
+wenn keiner). Braucht die Keyspace-Benachrichtigungen (siehe oben). Um auf einen
+Wert zu reagieren (über einem Schwellwert…), nutze besser das Schlüsselgerät in
+einem Auslöser „Gerätezustand“.
+
+### Aktionen
+
+Schreiben wird abgelehnt, solange **Schreiben aus Szenen erlauben** nicht aktiv
+ist, und erreicht nur die verfolgten Schlüssel: Die Szene wählt ein
+Schlüsselgerät. Eine Liste, eine Menge oder ein Stream wird nie überschrieben.
+
+- **Redis-Wert schreiben**: `SET` (oder `HSET` für ein Hash-Feld), mit optionalem
+  Ablauf in Sekunden (bei einem Hash gilt der Ablauf für den ganzen Schlüssel).
+  Der Wert akzeptiert Szenenvariablen.
+- **Redis-Wert erhöhen**: `INCRBYFLOAT` (oder `HINCRBYFLOAT`), um 1 wenn leer,
+  negativ zum Verringern, ein Komma geht auch. Liefert den neuen Wert.
+- **Redis-Nachricht veröffentlichen**: `PUBLISH` auf einem Kanal aus **Erlaubte
+  Kanäle zum Veröffentlichen**. Liefert die Zahl der erreichten Abonnenten.
+
+## Dashboard
+
+Das Widget **Redis-Werte** listet den Wert jedes verfolgten Schlüssels (oder der
+in seinen Einstellungen gewählten), eine Zeile für den Server und eine
+Schaltfläche **Aktualisieren**. In den Einstellungen lassen sich die Serverzeile
+und die Schaltfläche ausblenden.
+
+## Grenzen
+
+- Strings, Hash-Felder, Listen, Mengen, sortierte Mengen und Streams; andere
+  Typen (Module wie RedisJSON) werden nicht gelesen.
+- Weder Redis Cluster noch Sentinel: ein Server.
+- Ein Text wird bei 255 Zeichen abgeschnitten.
+
+## Fehlerbehebung
+
+- **„antwortet nicht“**: Prüfe Adresse und Port, und dass Redis im Netzwerk
+  lauscht (`bind`, `protected-mode`), nicht nur auf `127.0.0.1`.
+- **„Zugriff verweigert“**: Prüfe Benutzer und Passwort; lass den Benutzer bei
+  einem einfachen `requirepass` leer.
+- **„von den ACL des Benutzers abgelehnt“**: Der ACL-Benutzer darf diesen
+  Schlüssel nicht lesen oder diesen Befehl nicht ausführen (siehe
+  Konfiguration).
+- **Keine sofortige Aktualisierung**: Der Server sendet die
+  Keyspace-Benachrichtigungen nicht; **Verbindung testen** sagt es.
+- Mehr Details mit `LOG_LEVEL=debug` in den Protokollen der Integration. Melde
+  ein Problem auf [GitHub](https://github.com/guim31/gladys-redis/issues).
+
+Redis ist eine Marke von Redis Ltd. Diese Integration ist weder mit Redis Ltd
+noch mit dem Valkey-Projekt verbunden.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Redis in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Dein Redis-Server | `section` | Nein | Redis 6 oder neuer, oder Valkey. Gib seine Adresse ein, füge dann die zu verfolgenden Schlüssel mit „Schlüssel hinzufügen“ unten hinzu und ihre Geräte im Tab „Entdecken“. |
+| Adresse | `string` | Ja | Name oder IP-Adresse des Servers, von Gladys aus gesehen (nicht localhost). |
+| Port | `number` | Nein |  |
+| Datenbanknummer | `number` | Nein | 0, außer deine Skripte schreiben woanders hin (SELECT). |
+| Benutzer (ACL, optional) | `string` | Nein | Leer bei einem einfachen requirepass-Passwort. |
+| Passwort (optional) | `secret` | Nein |  |
+| TLS-Verbindung | `boolean` | Nein |  |
+| Selbstsignierte Zertifikate akzeptieren | `boolean` | Nein |  |
+| Lesen und Schreiben | `section` | Nein |  |
+| Aktualisierungsintervall | `select` | Nein | Wie oft die Schlüssel gelesen werden: zwei Befehle pro Schlüssel. |
+| Keyspace-Benachrichtigungen verfolgen | `boolean` | Nein | Ein Schlüssel wird gelesen, sobald er sich ändert. Der Server muss sie senden (notify-keyspace-events, siehe Anleitung): Die Integration ändert das nie. |
+| Schreiben aus Szenen erlauben | `boolean` | Nein | Aus: Die Szenenaktionen schreiben nicht. An: Nur die verfolgten Schlüssel sind schreibbar. |
+| Erlaubte Kanäle zum Veröffentlichen | `string` | Nein | Für „Nachricht veröffentlichen“: Kanalnamen durch Kommas getrennt. |
+| Sprache der Namen und Meldungen | `select` | Nein | Namen der Serverfunktionen, Meldungen der Szenen und Aktionen. |
+
+## So installierst du Redis in Gladys
+
+1. Öffne in Gladys **Integrationen**: Redis erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-redis:1.0.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-redis](https://github.com/guim31/gladys-redis).
+
+Redis benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Redis ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-redis) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-redis/blob/HEAD/docs/de.md)

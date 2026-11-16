@@ -1,0 +1,155 @@
+---
+title: "Intégration domotique Mailjet, gratuite et open source"
+sidebar_label: "Mailjet"
+description: "Non officiel : messages de Gladys et e-mails de scènes envoyés via votre compte Mailjet. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-mailjet.png"
+keywords:
+  - "mailjet"
+  - "domotique mailjet"
+  - "gladys mailjet"
+  - "mailjet gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-mailjet instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Mailjet","description":"Non officiel : messages de Gladys et e-mails de scènes envoyés via votre compte Mailjet.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-mailjet","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-mailjet.png","type":"communication","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-14T07:53:35Z"}} />
+
+Intégration non officielle, sans lien avec Mailjet. Elle **envoie** des e-mails via votre compte Mailjet avec
+l’API Send v3.1 ; elle n’en lit jamais. Cette intégration n’a jamais été testée avec un vrai compte Mailjet :
+elle a été construite d’après la documentation officielle de Mailjet et testée sur de faux serveurs locaux.
+Les retours sont les bienvenus.
+
+## Ce qui part, et quand
+
+Un e-mail ne part que par l’un de ces trois chemins :
+
+1. **L’action de scène « Envoyer un e-mail avec Mailjet »** : un e-mail en texte brut à une adresse, avec un
+   objet facultatif (sinon l’objet de la configuration). Sa sortie `message_id` est l’identifiant Mailjet de
+   l’e-mail.
+2. **Un message de Gladys, seulement si l’option « Envoyer aussi les messages de Gladys » est activée
+   (désactivée par défaut)**, à un utilisateur qui a saisi son adresse dans le bloc **Mon compte**. Gladys
+   relaie vers ce canal, entre autres : l’action de scène « Envoyer un message » du cœur, les messages
+   système aux administrateurs (mise à jour, échec de sauvegarde, piles faibles, Gladys Plus, résumé
+   hebdomadaire) et le **lien ou le code d’un mot de passe oublié**. L’intégration ne reçoit qu’une adresse
+   et un texte : elle ne peut pas distinguer un message destiné à ce canal d’un message envoyé à tous les
+   canaux, l’option les couvre donc tous, y compris quand Mailjet est le canal choisi pour les messages
+   système. Chacun compte dans le plafond horaire et dans votre forfait Mailjet. Option désactivée, ces
+   messages sont refusés et rien ne part ; le refus n’apparaît **que dans les journaux de Gladys** (ni dans
+   la scène, ni dans le chat). L’image de caméra de l’action « Envoyer une image de caméra » est jointe
+   (JPEG, PNG ou WebP, 2 Mo au plus).
+3. **Le bouton Tester**, en **mode bac à sable** de Mailjet : Mailjet vérifie les clés et le message de test
+   et ne distribue rien. Qu’il vérifie aussi l’expéditeur en bac à sable n’est pas confirmé : le premier
+   vrai e-mail le dira. Le bouton appelle Mailjet à chaque clic, hors plafond horaire (borné par les 2
+   requêtes à la fois et la pause). Il repose sur le drapeau `SandboxMode` de l’API Send, jamais vérifié sur
+   un vrai compte : si Mailjet l’ignorait, l’e-mail de test serait vraiment distribué.
+
+Rien n’est envoyé au démarrage ni à intervalle régulier.
+
+## Mise en place
+
+1. Dans Mailjet, **Paramètres du compte → API REST → Gestion des clés API** : copiez la clé d’API et la clé
+   secrète.
+2. **Expéditeurs et domaines** : validez l’adresse de l’expéditeur (ou tout son domaine). Sans cela, Mailjet
+   refuse chaque e-mail (« pas l’adresse de l’expéditeur »).
+3. Dans Gladys, saisissez les clés, l’adresse de l’expéditeur, au besoin le nom de l’expéditeur, l’objet des
+   messages de Gladys, le plafond horaire et l’option « Envoyer aussi les messages de Gladys » ;
+   enregistrez, puis cliquez sur **Tester**.
+4. Si l’option est activée, chaque utilisateur saisit son adresse dans **Mon compte** (l’effacer pour
+   arrêter).
+
+La clé secrète est gardée par Gladys dans sa base, jamais réaffichée, et envoyée seulement à Mailjet.
+
+## Ce qui protège votre compte et votre forfait
+
+- **Plafond horaire** (20 par défaut, de 1 à 200) : au plus ce nombre d’e-mails sur 60 minutes glissantes,
+  messages de Gladys et actions de scène ensemble. Au-delà, rien n’est envoyé et l’action échoue avec l’heure
+  du prochain e-mail possible. Le compte est gardé dans `/data` aux redémarrages. Un e-mail est compté avant
+  de partir. Il n’est décompté que si rien n’est parti : Mailjet a répondu un 4xx (400, 401, 403, 429), ou la
+  connexion ne s’est jamais ouverte (connexion refusée, nom inconnu, réseau injoignable). Pas de réponse,
+  une connexion coupée, un 5xx ou une réponse illisible le laissent compté.
+- **Jamais envoyé deux fois** : l’intégration ne renvoie aucun e-mail, quoi qu’il arrive (pas de réponse,
+  connexion coupée, erreur du serveur). Quand Mailjet n’a pas confirmé, l’action échoue avec « il a pu être
+  envoyé, il n’est donc pas renvoyé ».
+- **Messages de Gladys** : Gladys attend 5 secondes une réponse. Si Mailjet est plus lent, l’intégration
+  répond au bout de 3,5 secondes « sans réponse pour l’instant » et laisse la requête se terminer (20
+  secondes au plus) ; le statut dit ensuite comment cela s’est passé. Un e-mail qui attend encore son tour à
+  ce moment-là est abandonné et ne part pas.
+- **Au plus 2 e-mails à la fois**, 10 en attente ; au-delà, « trop d’e-mails à la fois » et rien n’est
+  envoyé.
+- **Ralentir** : après un 429 (trop de requêtes) ou une erreur du serveur Mailjet (5xx, même au corps
+  illisible), rien n’est envoyé pendant 60 secondes, durée doublée à chaque nouvel échec jusqu’à 1 heure (un
+  `Retry-After` de Mailjet est suivi jusqu’à 6 heures), Tester compris. La pause est gardée dans `/data` ; un
+  e-mail accepté alors qu’elle commençait ne la lève pas.
+- **Clés refusées** : seulement un 401 portant un code d’erreur de clé Mailjet (`mj-0001` clé suspendue,
+  `mj-0015` identifiants erronés). Alors plus rien n’est envoyé avec ces clés tant qu’elles ne changent pas
+  ou que le bouton Tester ne réussit pas (le bouton Tester essaie aussi des clés refusées, hors pause).
+  Seuls 8 bits d’une empreinte salée sont gardés dans `/data`, jamais une clé. Pas un refus des clés : un
+  401 sans un tel code (vide, page d’un proxy, réponse coupée), un 403 (expéditeur non validé, envoi
+  refusé), une adresse ou un e-mail refusés (400). Un 401 sans code et un 403 ne sont pas non plus
+  réessayés à chaque e-mail : ils posent la même pause qu’un 429 (60 secondes doublées jusqu’à 1 heure,
+  gardée dans `/data`, Tester compris) ; rien n’est retenu sur les clés. Enregistrer d’autres clés ou une autre adresse
+  d’expéditeur lève aussitôt une telle pause (une pause 429 ou 5xx reste).
+
+## Statut
+
+| Statut                                                                  | Sens                                                                                                  |
+| ----------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Prêt                                                                    | Clés et expéditeur saisis ; vérifiés par Mailjet au premier e-mail ou avec le bouton Tester.          |
+| Mailjet a accepté le dernier e-mail                                     | Avec le compte de la dernière heure et le plafond.                                                    |
+| Mailjet a accepté les clés et le message de test                        | Le dernier test a réussi (rien n’a été distribué).                                                    |
+| Clés refusées / expéditeur non validé / pause / plafond horaire atteint | Rien n’est envoyé ; le texte dit jusqu’à quand ou quoi changer.                                       |
+| Compteur horaire non enregistré                                         | `/data` est non lu, en lecture seule ou lent : le plafond ne tient que jusqu’au prochain redémarrage. |
+
+## Vie privée
+
+Les journaux montrent les adresses masquées (`j***@e***.com`) ; les clés, objets et textes ne sont jamais
+journalisés, mis dans le statut ni écrits dans `/data`. `/data/mailjet.json` contient les heures des e-mails
+de la dernière heure, la pause et l’empreinte des clés refusées.
+
+## Limites
+
+- Texte brut seulement (le Markdown des messages de Gladys est envoyé tel quel) ; un destinataire par action
+  de scène.
+- Les e-mails ne sont pas reçus : c’est un canal d’envoi seul.
+- Les quotas d’envoi de votre forfait Mailjet s’appliquent en plus du plafond horaire.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Mailjet dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Mailjet dans Gladys | `section` | Non | Intégration non officielle, sans lien avec Mailjet. Elle envoie des e-mails, n’en lit jamais : l’action de scène « Envoyer un e-mail avec Mailjet » et, seulement si l’option ci-dessous est activée, les messages de Gladys à chaque utilisateur qui a saisi une adresse dans « Mon compte ». Créez les clés d’API dans Mailjet (Paramètres du compte, API REST, gestion des clés API), validez l’adresse de l’expéditeur ou son domaine (Expéditeurs et domaines), puis cliquez sur « Tester » : Mailjet vérifie les clés et un message de test en mode bac à sable et ne distribue rien. Chaque e-mail compte dans votre forfait Mailjet ; le plafond horaire ci-dessous arrête une scène qui s’emballe. |
+| Clé d’API | `string` | Oui | La partie publique de la paire de clés (32 caractères), envoyée seulement à Mailjet. |
+| Clé secrète | `secret` | Oui | La partie privée de la paire de clés. Gardée par Gladys dans sa base, jamais réaffichée, envoyée seulement à Mailjet. |
+| Adresse de l’expéditeur | `string` | Oui | Doit être validée chez Mailjet (l’adresse ou son domaine), sinon Mailjet refuse chaque e-mail. |
+| Nom de l’expéditeur | `string` | Non |  |
+| Objet des messages de Gladys | `string` | Non | Aussi utilisé par l’action de scène quand elle ne donne pas d’objet. |
+| Plafond horaire d’e-mails | `number` | Non | Au plus ce nombre d’e-mails sur 60 minutes glissantes (messages de Gladys et actions de scène ensemble, Tester exclu) ; au-delà, rien n’est envoyé et l’action échoue. Conservé aux redémarrages. |
+| Envoyer aussi les messages de Gladys | `boolean` | Non | Désactivé par défaut. Activé : chaque message que Gladys relaie vers ce canal part par e-mail à l’adresse « Mon compte » de l’utilisateur, compté dans le plafond horaire et dans votre forfait Mailjet : l’action de scène « Envoyer un message » du cœur, les messages système aux administrateurs (mise à jour, échec de sauvegarde, piles faibles, Gladys Plus, résumé hebdomadaire), et le lien ou le code d’un mot de passe oublié. L’intégration ne peut pas distinguer un message destiné à ce canal d’un message envoyé à tous les canaux, l’option vaut donc aussi quand Mailjet est le canal choisi pour les messages système. Désactivé : ces messages sont refusés, et le refus n’apparaît que dans les journaux de Gladys. |
+
+## Comment installer Mailjet dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Mailjet apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-mailjet:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-mailjet](https://github.com/LM1LC3N7/gladys-mailjet).
+
+Mailjet nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Mailjet est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-mailjet) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-mailjet/blob/HEAD/docs/fr.md)

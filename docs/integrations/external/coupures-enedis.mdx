@@ -1,0 +1,141 @@
+---
+title: "Coupures Enedis smart home integration, free and open source"
+sidebar_label: "Coupures Enedis"
+description: "Power outages in your commune and on your street, from the Enedis map. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-enedis-outages.jpg"
+keywords:
+  - "coupures enedis"
+  - "coupures enedis smart home"
+  - "gladys coupures enedis"
+  - "coupures enedis gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/William-De71/gladys-enedis-outages instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Coupures Enedis","description":"Power outages in your commune and on your street, from the Enedis map.","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-enedis-outages","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-enedis-outages.jpg","type":"device","version":"0.1.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-13T23:55:24Z"}} />
+
+## Overview
+
+This integration brings the **power outages** Enedis publishes on its outage map (enedis.fr, "Panne et interruption") into Gladys, for up to three places: a house of Gladys or an address you type.
+
+- a device per place: whether an outage is in progress on your street or elsewhere in the commune, how many, and the situation as a sentence (until when);
+- scene triggers (power outage, power back, restoration time moved, exceptional event such as a storm) and a scene action (read the outages of a place);
+- a "Power outages" dashboard widget.
+
+Enedis publishes no open API for its outages: the integration reads the public outage map of enedis.fr, the way the page does, with no account and no key (cloud transport). The addresses are found with the geocoder of the Géoplateforme (IGN). This is a community integration, not an Enedis service.
+
+![Power outages widget, a quiet commune and an outage on the street (generated illustration, not a screenshot)](https://raw.githubusercontent.com/William-De71/gladys-enedis-outages/main/docs/assets/widgets.en.png)
+
+## Requirements
+
+- Gladys Assistant 5.3.0 or later.
+- A place in mainland France served by Enedis (about 95 % of communes). Communes served by a local company (Strasbourg, Grenoble, Metz, some rural areas…) are not covered, nor Corsica and the overseas departments.
+- Either a house of Gladys placed on the map (Settings → Houses), or an address.
+
+## Configuration
+
+1. Integrations → Coupures Enedis → Configuration.
+2. For each place, choose a house or type an address, then save.
+
+| Field                 | Description                                                                                                  |
+| --------------------- | ------------------------------------------------------------------------------------------------------------ |
+| House                 | A house of Gladys: the nearest address to its position gives the commune and the street.                     |
+| Or an address         | "12 rue des Ursulines 71000 Mâcon" (street watched) or "Mâcon 71000" (commune only). It wins over the house. |
+| Enedis read every     | 5, 10, 15 (default), 30 or 60 minutes. One request per place and per reading.                                |
+| Language of the texts | Device names, situations and scene summaries. Automatic: the language of your dashboard.                     |
+
+**Check the places** shows the commune (INSEE code) and the street found for each place, and reads Enedis at once. Check it once: a house placed roughly on the map may land on the neighbouring street.
+
+## Usage
+
+### Devices
+
+Devices → Coupures Enedis → **Discover**, then add your place ("Enedis Rue des Ursulines, Mâcon").
+
+| Feature                | Gladys type                                                                                   |
+| ---------------------- | --------------------------------------------------------------------------------------------- |
+| Power outage           | Risk, 0 to 2: 0 none, 1 an outage in the commune, 2 an outage on your street                  |
+| Outages in the commune | Counter: outages in progress in the commune (or the arrondissement in Paris, Lyon, Marseille) |
+| Situation              | Text: "Outage on your street (1 in the commune). Restoration expected around 01:30."          |
+
+Enedis lists streets or transformer substations, not homes: "on your street" means Enedis names your street among the places cut, likely but not certain. A medium-voltage (HTA) outage often lists only substation names: it then counts for the commune.
+
+### Scenes
+
+Triggers:
+
+- **Enedis: power outage**: a new outage in the commune. Filters: the place, "on my street only" or "elsewhere in the commune", and the kind (breakdown, planned works, load shedding).
+- **Enedis: power is back**: an outage is closed or no longer listed, with its duration.
+- **Enedis: restoration time moved**: Enedis postpones or brings forward the expected restoration.
+- **Enedis: exceptional event**: Enedis starts or ends a crisis (storm…), during which it may not list every outage.
+
+Action:
+
+- **Enedis: read the outages**: outage in the commune, on my street, level, count, expected restoration and a ready-made sentence.
+
+Examples:
+
+- When a power outage starts on my street → send a message with `{{triggerEvent.data.summary}}`.
+- When the power is back → restart the heat pump or the scenes a cut may have stopped.
+- When the restoration time is postponed → send the new time.
+- Before running the washing machine at night → read the outages and skip it when planned works are announced.
+
+### Widget
+
+Dashboard → Edit → add **Power outages**. Choose the place, and whether to show every outage of the commune or only those of your street. The widget shows your street (green or red), the number of outages in the commune and the expected restoration, then one card per outage: places cut, kind, network (low or medium voltage) and the end Enedis expects; the card opens on the details.
+
+## Troubleshooting
+
+- **"Enedis does not serve this commune"**: the commune is served by a local distribution company, whose outages are not on the Enedis map.
+- **"Address not found"**: check the spelling, add the postal code, or type only the commune.
+- **The wrong street**: use "Check the places"; if the house is roughly placed, type the address instead.
+- **"enedis.fr refused the request" or "the outage service is down"**: the integration tries again at the next reading; keep the interval at 15 minutes or more.
+- **"Unexpected answer"**: Enedis may have changed its page; open an issue.
+- **An outage ends without a closing**: Enedis removes an outage when the power is back; the trigger fires when it disappears.
+- **Logs**: add the environment variable `DEBUG=gladys-integration-sdk`, then open an issue on [GitHub](https://github.com/William-De71/gladys-enedis-outages/issues) with the Gladys and integration versions and the logs.
+
+## Configuration settings
+
+These are the settings Coupures Enedis asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Enedis outage map | `section` | No | The outages come from the public outage map of enedis.fr (“Panne et interruption”): no account, no key. Enedis serves about 95 % of mainland France; a commune served by a local company (Strasbourg, Grenoble, Metz…) is not covered. Enedis lists streets or substations, not homes: “on my street” is likely, not certain. This is not an official Enedis service. |
+| Places | `section` | No | Choose a house of Gladys (located in Settings > Houses), or type an address. Each place becomes a device in the Discover tab. Up to three places. |
+| House | `select` | No | Its location in Gladys gives the nearest address. |
+| Or an address | `string` | No | Wins over the house. Without a street, only the commune is watched. |
+| Place 2 | `section` | No |  |
+| House | `select` | No | Its location in Gladys gives the nearest address. |
+| Or an address | `string` | No | Wins over the house. Without a street, only the commune is watched. |
+| Place 3 | `section` | No |  |
+| House | `select` | No | Its location in Gladys gives the nearest address. |
+| Or an address | `string` | No | Wins over the house. Without a street, only the commune is watched. |
+| Options | `section` | No |  |
+| Enedis read every | `select` | No | One request per place and per reading. |
+| Language of the texts | `select` | No | Device names and scene summaries. Automatic follows the language of the dashboard. |
+
+## How to install Coupures Enedis in Gladys
+
+1. In Gladys, open **Integrations**: Coupures Enedis appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/william-de71/gladys-enedis-outages:0.1.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/William-De71/gladys-enedis-outages](https://github.com/William-De71/gladys-enedis-outages).
+
+Coupures Enedis requires Gladys `>=5.3.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Coupures Enedis is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [William-De71](https://github.com/William-De71), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/William-De71/gladys-enedis-outages) — [source of this documentation](https://github.com/William-De71/gladys-enedis-outages/blob/HEAD/docs/en.md)

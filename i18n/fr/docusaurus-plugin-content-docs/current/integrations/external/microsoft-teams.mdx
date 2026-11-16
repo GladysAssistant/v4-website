@@ -1,0 +1,168 @@
+---
+title: "Intégration domotique Microsoft Teams, gratuite et open source"
+sidebar_label: "Microsoft Teams"
+description: "Non officiel : messages et alertes de Gladys dans un canal ou une conversation Teams. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-microsoft-teams.png"
+keywords:
+  - "microsoft teams"
+  - "domotique microsoft teams"
+  - "gladys microsoft teams"
+  - "microsoft teams gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-microsoft-teams instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Microsoft Teams","description":"Non officiel : messages et alertes de Gladys dans un canal ou une conversation Teams.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-microsoft-teams","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-microsoft-teams.png","type":"communication","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-14T07:47:00Z"}} />
+
+Intégration non officielle, sans lien avec Microsoft. **Jamais testée avec un vrai compte Teams** : elle
+suit la documentation Microsoft (« Create an Incoming Webhook », webhooks Workflows). Vos retours sont les
+bienvenus sur le forum de Gladys.
+
+Gladys publie ses messages et alertes dans un canal ou une conversation Teams. **Envoi seul** :
+l'intégration ne lit rien dans Teams, un message écrit dans Teams n'arrive pas à Gladys.
+
+## Ce qu'il faut
+
+Un **webhook Workflows** (Power Automate). Les anciens connecteurs Office 365 (connecteur « Incoming
+Webhook », adresses `webhook.office.com`) ont été retirés par Microsoft en mai 2026 ; une telle adresse est
+refusée avec une explication.
+
+1. Dans Teams, ouvrez le canal (ou la conversation), puis **...** > **Workflows**.
+2. Choisissez un modèle comme **Send webhook alerts to a channel** (ou **Send webhook alerts to a
+   chat**), choisissez où publier, enregistrez.
+3. Copiez le lien du webhook. Il commence par `https://` ; son hôte finit par l'un des hôtes que Microsoft
+   donne pour le déclencheur HTTP de Power Automate (« IP address configuration ») :
+   `api.powerplatform.com` ou `logic.azure.com` (cloud public), `api.gov.powerplatform.microsoft.us` ou
+   `logic.azure.us` (gouvernement américain GCC), `api.high.powerplatform.microsoft.us` (GCC High),
+   `api.appsplatform.us` (DoD), `api.powerplatform.partner.microsoftonline.cn` ou `logic.azure.cn`
+   (Chine). Tout autre hôte est refusé.
+4. Dans le déclencheur du workflow, **Who can trigger the flow?** doit valoir **Anyone** : Gladys ne se
+   connecte pas à Microsoft. Un lien sans sa signature `sig=` est refusé avec cette explication.
+
+Le lien est un **secret** : quiconque l'a peut publier là où il pointe. Il est gardé par Gladys dans sa
+base, jamais réaffiché, envoyé seulement à Microsoft. L'intégration ne l'écrit ni dans ses journaux, ni
+dans son statut, ni dans `/data`.
+
+## Deux emplacements de webhook
+
+- **Configuration > URL du webhook du canal** (facultatif) : le canal où vos scènes publient avec l'action
+  **Publier dans le canal Teams**, et où publie le bouton **Envoyer un message de test**.
+- **Mon compte > URL de mon webhook Teams** (chaque utilisateur de Gladys) : la conversation ou le canal
+  où Gladys publie les messages **qui vous sont adressés** : l'action de scène **Envoyer un message**
+  (quand elle vise Microsoft Teams ou tous les canaux) et les messages système (Gladys mise à jour,
+  sauvegarde en échec, pile faible…) quand l'administrateur les laisse aller vers Teams ou vers tous les
+  canaux (paramètres de Gladys).
+
+## Ce qui est publié
+
+Une carte adaptative avec le texte. Teams affiche le Markdown simple (gras, italique, listes, liens) ; les
+titres deviennent des lignes en gras. Les textes sont coupés à 4096 caractères. Les images (scène
+« Envoyer une image de caméra ») ne sont pas publiées : les webhooks Teams acceptent 28 Ko par message au
+plus ; le texte d'un tel message est publié.
+
+L'action de scène **Publier dans le canal Teams** a un texte, un titre facultatif et une importance
+(**Urgente** affiche le titre en rouge). Sa sortie `status` vaut :
+
+- `accepted` : Microsoft Workflows a accepté le message ;
+- `unconfirmed` : le message est parti mais Microsoft n'a pas répondu à temps, ou a répondu par une
+  erreur (5xx) ; il est peut-être publié, peut-être pas.
+
+Quand rien n'a été publié (plafond atteint, pause, webhook refusé, réseau coupé…), l'action échoue avec la
+raison dans le journal de la scène, et la scène continue.
+
+« Accepté » veut dire accepté par Workflows : le workflow s'exécute ensuite chez Microsoft. S'il y échoue
+(propriétaire parti, canal supprimé), Teams n'affiche rien ; voyez l'historique d'exécution du workflow
+dans Power Automate.
+
+## Limites et sécurité
+
+- **Messages par heure** (configuration, 30 par défaut, de 1 à 200) : tous les messages de l'intégration
+  ensemble (canal, webhooks personnels, bouton de test), comptés sur la dernière heure, gardés après un
+  redémarrage. Au-delà, le message n'est pas envoyé et la raison donne l'attente. Après un redémarrage,
+  tant que Gladys n'a pas redonné la configuration, le dernier plafond lu sert (gardé dans `/data`).
+- **Pas de deuxième essai** : un message part une fois. Si Microsoft ne répond pas, il n'est pas renvoyé
+  (il a pu être publié : pas de doublon).
+- Deux requêtes partent à **300 ms d'écart au moins** (Microsoft limite au-delà de quatre par seconde).
+  Dans une rafale, un message écarté pendant son attente (son webhook refusé ou mis en pause entre-temps)
+  garde son créneau de 300 ms : les suivants de la rafale partent jusqu'à 0,3 s plus tard par message
+  écarté, dans leur budget.
+- Pauses et refus sont **par webhook** : un webhook en difficulté ne retient jamais le canal ni les
+  autres utilisateurs.
+- **429** (Microsoft demande de ralentir) : ce webhook attend le délai `Retry-After`, entre 60 s et 6 h
+  (60 s, puis doublé jusqu'à 1 h quand Microsoft ne donne pas de délai). **5xx** : 60 s, doublé jusqu'à
+  30 min, retour à 60 s après un succès. La pause est gardée après un redémarrage.
+- **401, 403, 404** (workflow supprimé, désactivé, mauvais lien) : le webhook est refusé et n'est plus
+  utilisé pendant **24 h**. Avant cela, un **nouveau lien** est essayé aussitôt (une rare exception après un redémarrage, voir plus bas) ; pour le webhook du canal,
+  un **Envoyer un message de test** réussi le lève ; pour un webhook personnel, un clic sur **Envoyer un
+  message de test** le laisse réessayer à son prochain message (une fois : refusé de nouveau, il attend
+  encore 24 h).
+- Un message de Gladys doit avoir sa réponse en 5 s : l'intégration abandonne à 3,5 s. Si elle attend
+  encore Microsoft à ce moment, le message compte comme « envoyé, sans confirmation ».
+
+## Statut
+
+L'écran Configuration affiche **Prêt** (avec ou sans webhook de canal, et le plafond horaire), une
+**pause** du webhook du canal demandée par Microsoft et sa fin, un webhook de canal **refusé**, ou un lien
+de canal inutilisable, avec la raison. Derrière **Prêt**, il compte aussi les **webhooks personnels**
+refusés ou en pause (sans dire lesquels : aucun nom n'est gardé). L'utilisateur concerné voit pourquoi
+dans le journal de la scène qui a envoyé le message (« Rien envoyé : … »), et le journal de l'intégration
+désigne chaque webhook par une courte référence qui change à chaque démarrage.
+
+## Ce qui reste sur votre Gladys
+
+`/data/state.json` : les dates des messages de la dernière heure, le dernier plafond horaire, une valeur
+au hasard et, pour chaque webhook refusé ou en pause, une empreinte de 2 caractères avec la date du refus
+ou la fin de la pause. Aucun lien, aucun texte, aucun nom. Une empreinte est partagée par environ un lien
+sur 256. Une marque gardée dans `/data` est reprise par le premier lien utilisé avec la même empreinte,
+une fois : dans le cas rare où c'est un autre lien (un lien personnel jamais refusé, ou saisi par un
+utilisateur depuis le redémarrage), ce lien est retenu comme refusé jusqu'aux 24 h, à un clic sur le
+bouton de test ou à un changement de lien, et le lien vraiment refusé est essayé une fois de plus (une
+requête vers un webhook refusé, sans gravité). Le lien du canal changé dans la Configuration pendant une
+exécution ne prend jamais de marque. Sinon, pendant une exécution, chaque lien a son propre état.
+
+Si `/data` est illisible au démarrage, l'intégration fonctionne sans et le relit toutes les 10 s : d'ici
+là, seuls les messages depuis le démarrage comptent dans le plafond horaire, et les pauses et refus
+d'avant le redémarrage ne sont pas connus (les webhooks Teams sont gratuits ; le fichier n'est jamais
+écrasé avant d'avoir été lu). Les messages eux-mêmes passent par les serveurs de Microsoft (Power Automate, Teams).
+
+## Questions
+
+- **Gladys peut-elle lire les messages Teams ?** Non, cette intégration ne fait qu'envoyer.
+- **Plusieurs canaux ?** Un webhook de canal par Gladys pour l'action de scène ; chaque utilisateur peut
+  diriger son propre webhook vers n'importe quelle conversation ou canal.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Microsoft Teams dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Teams dans Gladys | `section` | Non | Connecteur non officiel, sans lien avec Microsoft. Envoi seul : Gladys publie dans Teams, elle n'y lit rien. Il utilise un webhook Workflows (les connecteurs Office 365 ont été retirés par Microsoft en mai 2026). Dans Teams, ouvrez le canal ou la conversation, puis ... > Workflows, choisissez un modèle comme « Send webhook alerts to a channel » (ou « to a chat »), enregistrez et copiez le lien du webhook. Votre webhook personnel se met dans « Mon compte » ci-dessous : les messages que Gladys vous adresse (scène « Envoyer un message », messages système) y sont publiés. Le webhook du canal se met ici : il sert à l'action de scène « Publier dans le canal Teams » et au bouton de test. Jamais testé avec un vrai compte Teams. |
+| URL du webhook du canal (facultatif) | `secret` | Non | Lien du webhook Workflows du canal (ou de la conversation de groupe) où publient les scènes. Quiconque l'a peut y publier : il est gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement à Microsoft. Dans le déclencheur du workflow, « Who can trigger the flow? » doit valoir « Anyone ». |
+| Messages par heure, au plus | `number` | Non | Plafond de tous les messages envoyés par cette intégration (canal et webhooks personnels ensemble), compté sur la dernière heure. Au-delà, le message n'est pas envoyé et le journal de la scène dit pourquoi. |
+
+## Comment installer Microsoft Teams dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Microsoft Teams apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-microsoft-teams:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-microsoft-teams](https://github.com/LM1LC3N7/gladys-microsoft-teams).
+
+Microsoft Teams nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Microsoft Teams est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-microsoft-teams) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-microsoft-teams/blob/HEAD/docs/fr.md)
