@@ -1,0 +1,232 @@
+---
+title: "Activepieces smart home integration, free and open source"
+sidebar_label: "Activepieces"
+description: "Your Activepieces flows in Gladys: start them from a scene, react when one fails. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-activepieces.png"
+keywords:
+  - "activepieces"
+  - "activepieces smart home"
+  - "gladys activepieces"
+  - "activepieces gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-activepieces instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Activepieces","description":"Your Activepieces flows in Gladys: start them from a scene, react when one fails.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-activepieces","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-activepieces.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-15T17:13:14Z"}} />
+
+[Activepieces](https://www.activepieces.com/) is an open-source automation
+tool you can host yourself: flows made of a trigger and steps fetch data, call
+services, send messages. This integration brings your Activepieces flows into
+Gladys: each flow becomes a device with its state (enabled or not, last run
+succeeded or failed, failures in the last 24 hours), scenes can **start a
+flow** through its webhook and use its answer, react when **any** run fails or
+a flow gets disabled, and a dashboard widget lists the failing flows first.
+
+Tested against a real self-hosted Activepieces 0.82 (Docker, Community
+Edition); not on Activepieces Cloud: feedback welcome on
+[the issues](https://github.com/guim31/gladys-activepieces/issues).
+
+## What you need
+
+- Gladys Assistant 5.1.0 or later.
+- Activepieces, self-hosted, reachable from the Gladys machine.
+- The email and password of an Activepieces user. The Community Edition has
+  **no API keys** (they belong to the paid editions), so the integration signs
+  in like the web interface. Create a dedicated user if you can: Gladys sees
+  the flows of its project.
+
+At each refresh (one minute by default) the integration sends four requests to
+Activepieces, a few more the first time, and signs in again once a week (the
+session lasts 7 days). The Community Edition sets no rate limit on its API.
+
+## Getting started
+
+### 1. Prepare Activepieces
+
+Note the address you open Activepieces with (port 8080 with the official
+docker-compose file) and the email and password of the user whose flows
+Gladys should follow. Sign-in with Google or another provider only: set a
+password for that user first.
+
+### 2. Configure the integration
+
+In Gladys, open the configuration of the Activepieces integration:
+
+- **Activepieces address**: for example `http://192.168.1.2:8080`. An IP
+  address alone gets port 8080. A URL copied from the browser works too.
+- **Email** and **Password**: of the user of step 1.
+- **Project (optional)**: empty, the user's own project. Otherwise the id of
+  the project, or the address of one of its pages copied from the browser.
+- **Refresh interval**: 30 seconds to 5 minutes.
+- **Allow switching flows from Gladys**: off by default, see below.
+- **Language of the names**: language of the feature names, of the states and
+  of the scene results.
+
+Click **Test the connection**: it shows the version, the flows, the enabled
+ones and the failures of the last 24 hours.
+
+### 3. Add the flows
+
+Open the **Discover** tab of the integration and add the flows to follow, and
+the **Activepieces** device if you want the figures of the whole instance.
+Nothing is added on your behalf. The scene triggers work for every flow, added
+or not.
+
+## The devices
+
+Each flow gives a device:
+
+| Feature           | Value                                                  |
+| ----------------- | ------------------------------------------------------ |
+| Enabled           | the flow is enabled or not                             |
+| Last run          | Succeeded, Failed, Timed out, Running, Paused, Queued… |
+| Working           | No when the last finished run failed, Yes otherwise    |
+| Failures in 24 h  | failed runs over the last 24 hours                     |
+| Last run start    | start of the last run, day/month hours:minutes         |
+| Last run duration | of the last finished run, in seconds                   |
+
+A run under way keeps the verdict of the previous one in **Working**: a
+failing flow that runs again does not look repaired for a few seconds.
+
+The **Enabled** switch only shows the state by default. With **Allow switching
+flows from Gladys** on, it enables and disables the flow: click **Update** on
+the devices in the Discover tab after changing the option. A flow never
+published cannot be enabled.
+
+The **Activepieces** device gives **Reachable** (No while Activepieces does
+not answer), the **Version**, the **Enabled flows**, the **Failures in 24 h**
+and the **Flows in total**.
+
+## Dashboard
+
+The **Activepieces flows** widget shows three tiles (enabled flows, failures in
+24 hours, runs under way), then one row per flow: the failing ones first, then
+the running ones, then the others, with the state of the last run, when it
+started and the failures of the day. By default it lists the enabled flows;
+choose others in its settings (devices added to Gladys, shown with the name
+you gave them). The **Refresh** button reads Activepieces again; a setting
+hides it.
+
+## Scenes
+
+### Triggers
+
+- **A flow run fails**: a run ends failed, timed out, out of memory, over a quota
+  or a log size limit, or in an internal error. Filter: the flows (empty: any). Information passed on: flow
+  name, error message, failing step, run status, link to the run in
+  Activepieces.
+- **A flow is disabled**: an enabled flow becomes disabled, by hand, by
+  Activepieces or by a scene: its trigger no longer runs. Filter: the flows.
+  Information passed on: flow name.
+
+The first reading only notes what already happened: nothing is announced for
+the past. A failure that happens while Gladys or the integration restarts is
+announced once, at the next reading. For "Activepieces does not answer", use
+the **Reachable** feature of the Activepieces device in a scene.
+
+### Actions
+
+- **Start an Activepieces flow**: the flow must start with the **Catch
+  Webhook** trigger (authentication: None) and be published. In the scene,
+  choose the flow (a device added to Gladys), or paste the URL the trigger
+  shows (`…/api/v1/webhooks/…`) for a flow not added. Body: JSON such as
+  `{"room": "living room"}`, or a text sent as `{"text": "…"}`; scene values
+  can be inserted, and the flow reads them in `trigger.body`. Without **Wait
+  for the answer**, Activepieces answers at once and the run goes on alone.
+  With it, the flow must end with a **Return Response** step (Webhook piece),
+  within 30 seconds. Results: answered successfully, HTTP status (404: the
+  flow is disabled or not published; 0: no answer in time), message answered
+  (the `message` or `text` field of the answer), full answer.
+- **State of a flow**: enabled or not, last run failed or not, state, failures
+  in 24 h, last run, duration, last error and a ready-made sentence, for the
+  next actions (a message, a condition).
+- **Enable a flow** / **Disable a flow**: for example a flow that should only
+  run during the holidays. These actions work whatever the option of the
+  switch.
+
+### Scene ideas
+
+- **A flow run fails** → send a message: "Activepieces: \{flow\} failed in
+  \{step\}: \{error\}" with the link to the run.
+- A button on the dashboard or "I am leaving" → **Start an Activepieces flow**
+  with `{"user": "…"}` and **Wait for the answer**, then send the **Message
+  answered** by the flow.
+- **A flow is disabled** → send a message: a flow you rely on stopped.
+- Every morning → **State of a flow** "Nightly backup" → only continue if
+  "Last run failed" is true → send the **Sentence**.
+
+## Troubleshooting
+
+- **Email or password refused**: check them in the Activepieces sign-in page.
+  A user created through Google sign-in only has no password.
+- **Refused by Activepieces: this user may not do it**: the user is not a
+  member of the project, or its role cannot change flows.
+- **Project not found**: check the id, or leave the field empty.
+- **No Activepieces API at this address**: check the address (port 8080 with
+  the official docker-compose file). Behind a reverse proxy with a sub-path,
+  put the sub-path in the address.
+- **The address redirects**: enter the `https://` address.
+- **Certificate refused**: a self-signed certificate is not accepted; use the
+  `http://` address on the local network.
+- **The webhook answers 404**: the flow is disabled, was never published, or
+  its trigger is not Catch Webhook. The test URL (`/draft`) is not accepted.
+- **Wait for the answer gives status 0 or an empty answer**: add a Return
+  Response step at the end of the flow.
+- Logs: in Gladys, the integration page shows the logs of its container;
+  `LOG_LEVEL=debug` gives every reading.
+
+## Limits
+
+- Developed and tested against Activepieces 0.82 in Docker, without
+  Activepieces Cloud or the paid editions: feedback welcome.
+- One project per configuration; the user's password is stored by Gladys like
+  the other secrets of the integrations.
+- API keys of the paid editions are not supported yet.
+- Flows are not created or edited from Gladys.
+- At most 500 failed runs of the last 24 hours are read per reading, and at
+  most 10 failures are announced per reading.
+- Webhooks protected by basic or header authentication are not supported.
+- Activepieces keeps the runs 30 days by default
+  (`AP_EXECUTION_DATA_RETENTION_DAYS`).
+
+## Configuration settings
+
+These are the settings Activepieces asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Activepieces | `section` | No | Enter the address of Activepieces and the email and password of a user: the Community Edition has no API keys. Then add the flows to follow from the Discover tab. |
+| Activepieces address | `string` | No | The address you open Activepieces with. Port 8080 is added to a bare IP address. |
+| Email | `string` | No | Of the Activepieces user whose flows Gladys follows. A dedicated user is best. |
+| Password | `secret` | No |  |
+| Project (optional) | `string` | No | Empty: the user's own project. Otherwise its id, or the address of one of its pages. |
+| Options | `section` | No |  |
+| Refresh interval | `select` | No | How often Activepieces is read: four API requests or more each time. |
+| Allow switching flows from Gladys | `boolean` | No | Off: the Enabled switch only shows the state. On: it enables and disables the flow (then click Update in the Discover tab). |
+| Language of the names | `select` | No | Language of the feature names (set when a device is added), of the states and of the scene results. |
+
+## How to install Activepieces in Gladys
+
+1. In Gladys, open **Integrations**: Activepieces appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-activepieces:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-activepieces](https://github.com/guim31/gladys-activepieces).
+
+Activepieces requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Activepieces is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-activepieces) — [source of this documentation](https://github.com/guim31/gladys-activepieces/blob/HEAD/docs/en.md)

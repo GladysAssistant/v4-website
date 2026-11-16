@@ -1,0 +1,145 @@
+---
+title: "Intégration domotique DeepL, gratuite et open source"
+sidebar_label: "DeepL"
+description: "Non officiel : traduisez des textes dans vos scènes avec votre clé d'API DeepL (Free ou Pro). Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-deepl.png"
+keywords:
+  - "deepl"
+  - "domotique deepl"
+  - "gladys deepl"
+  - "deepl gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-deepl instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"DeepL","description":"Non officiel : traduisez des textes dans vos scènes avec votre clé d'API DeepL (Free ou Pro).","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-deepl","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-deepl.png","type":"provider","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-15T08:55:31Z"}} />
+
+Connecteur non officiel, sans lien avec DeepL. Il ajoute l'action de scène
+**« Traduire (DeepL) »** : un texte part chez DeepL, et la traduction est
+donnée aux actions suivantes de la scène (l'envoyer par message, la lire sur
+une enceinte, l'afficher…). Il utilise votre propre clé d'API DeepL, Free ou
+Pro.
+
+Jamais testé avec une vraie clé DeepL pour l'instant : dites-nous ce qu'il en
+est.
+
+## Ce qu'il faut
+
+- Un compte **DeepL API** (pas l'abonnement DeepL Traducteur) : créez-le sur
+  [deepl.com/pro-api](https://www.deepl.com/pro-api).
+  - **DeepL API Free** : 500 000 caractères par mois sans frais. Sa clé finit
+    par `:fx` et est envoyée à `api-free.deepl.com`.
+  - **DeepL API Pro** : un abonnement mensuel de base, puis une facturation au
+    caractère traduit (voir les prix sur deepl.com ; une limite de coût se
+    règle dans votre compte DeepL). Sa clé est envoyée à `api.deepl.com`.
+- La **clé d'authentification**, dans votre compte DeepL, onglet « Clés API ».
+
+## Configuration
+
+| Champ                                       | Rôle                                                                                                                                                                                                                        |
+| ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Clé d'authentification DeepL API            | Gardée par Gladys dans sa base, jamais réaffichée, envoyée seulement à DeepL. Le module choisit l'adresse Free ou Pro d'après la clé.                                                                                       |
+| Nombre maximal de caractères par traduction | De 1 à 5000 (1000 par défaut). Un texte plus long est refusé, jamais coupé. Chaque point de code Unicode compte, espaces et ponctuation compris, comme sur la facture DeepL (la plupart des emoji : 1, certains plusieurs). |
+| Nombre maximal de caractères sur 24 heures  | De 100 à 1000000 (10000 par défaut), sur 24 heures glissantes. Plafond de sécurité contre une scène qui s'emballe. 10 000 par jour restent sous 310 000 par mois, dans l'offre Free.                                        |
+
+Le bouton **« Vérifier la clé »** demande à DeepL s'il accepte la clé et
+affiche les caractères consommés sur la période de facturation, et ceux que ce
+module a comptés sur 24 heures. Il ne traduit rien et ne compte aucun
+caractère.
+
+## L'action de scène
+
+Champs :
+
+- **Texte à traduire** (obligatoire) : peut contenir des variables de scène,
+  comme la sortie d'une action précédente.
+- **Vers** : la langue cible (anglais américain par défaut).
+- **Depuis** : la langue source ; vide, DeepL la détecte.
+- **Formalité** : par défaut, plus formel, moins formel (pour les langues qui
+  distinguent vouvoiement et tutoiement, comme l'allemand, le français ou
+  l'espagnol ; ignoré sinon).
+
+Sorties, pour les actions suivantes : `translation` (le texte, coupé à 10 000
+caractères, le maximum que Gladys garde), `detected_language` (par exemple
+`EN`), `characters` (les caractères comptés pour cette traduction) et
+`truncated` (la traduction a été coupée).
+
+Exemple : une action « Traduire (DeepL) » sur `{{triggerEvent.data.title}}`
+vers le français, suivie d'une action « Envoyer un message » avec la sortie
+traduction.
+
+## Coûts et plafonds
+
+- Une traduction est **comptée avant de partir**, et le décompte est d'abord
+  enregistré dans `/data` : un redémarrage ne remet pas le plafond sur 24
+  heures à zéro. Si `/data` ne peut pas être écrit, rien n'est envoyé.
+- Une traduction que DeepL a pu compter (pas de réponse en 10 secondes, une
+  connexion coupée, une erreur 5xx) n'est **jamais renvoyée**, et reste dans le
+  plafond : un second essai pourrait être facturé deux fois. L'action de scène
+  échoue alors avec « Envoyé à DeepL sans réponse ».
+- Une traduction que DeepL n'a sûrement pas prise (une erreur 4xx, une erreur
+  réseau avant le départ de la requête) est rendue au plafond.
+- Quand DeepL annonce plus de caractères facturés que le module n'en a
+  comptés, le plus grand nombre est gardé.
+- Un quota DeepL atteint (erreur 456 : le quota de caractères du compte, sa
+  limite de coût ou une limite de la clé) met le module en pause 1 heure au
+  moins ; un 429 « trop de requêtes » suit le délai demandé par DeepL (60 s à
+  6 h) ; une panne DeepL (5xx) met en pause 60 s, doublées en cas de répétition,
+  6 h au plus (ou plus longtemps quand DeepL envoie un Retry-After, toujours 6 h
+  au plus).
+- Une requête à la fois ; 10 traductions au plus dans la file, celle en cours
+  comprise.
+
+## Quand l'action de scène échoue
+
+La scène continue ; l'erreur est dans le journal de la scène. Causes
+principales : texte vide, texte plus long que le maximum, plafond sur 24 heures
+atteint, clé refusée par DeepL (403 : plus aucune scène ne l'utilise tant que
+vous n'avez pas saisi une autre clé ou que le bouton « Vérifier la clé » n'a
+pas réussi ; rarement, une nouvelle clé saisie pendant l'arrêt de
+l'intégration demande aussi le bouton), pause demandée par DeepL, `/data` illisible ou non inscriptible.
+
+## Vie privée
+
+Le texte, la traduction et la clé ne sont jamais écrits dans les journaux, le
+statut ni `/data`. `/data` ne garde que les dates et nombres de caractères des
+dernières 24 heures, une pause éventuelle, et une empreinte de 8 bits d'une clé
+refusée. Les textes partent chez DeepL, selon les conditions de votre compte
+DeepL.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par DeepL dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Traduction DeepL dans vos scènes | `section` | Non | Connecteur non officiel, sans lien avec DeepL. L'action de scène « Traduire (DeepL) » traduit un texte et donne la traduction aux actions suivantes de la scène (pour l'envoyer, la lire à voix haute…). Créez un compte DeepL API sur deepl.com (API Free : 500 000 caractères par mois sans frais ; API Pro : facturé au caractère) et copiez ici sa clé d'authentification. DeepL n'est appelé que par l'action de scène et le bouton de vérification, jamais au démarrage ni sur une minuterie. Jamais testé avec une vraie clé DeepL pour l'instant. |
+| Clé d'authentification DeepL API | `secret` | Oui | Gardée par Gladys dans sa base, jamais réaffichée, envoyée seulement à DeepL (api-free.deepl.com pour une clé Free finissant par « :fx », api.deepl.com sinon). |
+| Nombre maximal de caractères par traduction | `number` | Non | Un texte plus long est refusé, jamais coupé (de 1 à 5000). Espaces et ponctuation comptent, comme sur la facture DeepL. |
+| Nombre maximal de caractères sur 24 heures | `number` | Non | Plafond de sécurité contre une scène qui s'emballe, sur 24 heures glissantes, gardé au redémarrage (de 100 à 1000000). Compté avant chaque requête ; au-delà, rien n'est envoyé et l'action de scène échoue. 10 000 par jour restent sous 310 000 par mois. |
+
+## Comment installer DeepL dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : DeepL apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-deepl:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-deepl](https://github.com/LM1LC3N7/gladys-deepl).
+
+DeepL nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+DeepL est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-deepl) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-deepl/blob/HEAD/docs/fr.md)

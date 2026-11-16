@@ -1,0 +1,198 @@
+---
+title: "Intégration domotique Heatmiser neoHub, gratuite et open source"
+sidebar_label: "Heatmiser neoHub"
+description: "Thermostats Heatmiser neoStat par le neoHub, en local : zones, consignes, veille, absence. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-heatmiser-neohub.png"
+keywords:
+  - "heatmiser neohub"
+  - "domotique heatmiser neohub"
+  - "gladys heatmiser neohub"
+  - "heatmiser neohub gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-heatmiser-neohub instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Heatmiser neoHub","description":"Thermostats Heatmiser neoStat par le neoHub, en local : zones, consignes, veille, absence.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-heatmiser-neohub","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-heatmiser-neohub.png","type":"device","version":"0.1.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-14T14:13:12Z"}} />
+
+Ajoute à Gladys les zones thermostat d'un **neoHub Heatmiser**, sur votre réseau
+local, par l'API locale officielle du hub (un WebSocket sécurisé sur le port
+4243, authentifié par un jeton d'API du hub). Non officiel, sans lien avec
+Heatmiser. **Jamais testé avec un vrai appareil pour l'instant** : écrit
+d'après le document officiel « neoHub API » d'IMI Heatmiser ; vos retours sont
+bienvenus.
+
+## Ce que vous obtenez
+
+- Un appareil par **zone thermostat** (neoStat, neoAir) : la température de la
+  pièce, la consigne, et le mode : **Programme** (la zone suit son programme)
+  ou **Veille** (hors gel : la zone tient sa température hors gel).
+- Un appareil pour le **hub** : le **mode absence** (Présent / Absent). Absent
+  met tous les thermostats en veille et coupe les horloges et les neoPlug (PDF
+  de Heatmiser) : il agit sur tout ce que le hub pilote.
+- Les horloges, les prises et la partie horloge d'un neoAir combiné ne sont pas
+  affichées dans cette version.
+
+## Mise en place
+
+1. Dans l'app **Heatmiser Neo** : Paramètres > API Access > Tokens, créez un jeton.
+2. Dans Gladys, ouvrez l'intégration : saisissez l'**adresse IP** du hub (visible
+   dans votre box ; donnez-lui une adresse fixe) et le **jeton**, enregistrez.
+3. Cliquez une fois sur **Tester la connexion**, **depuis votre réseau
+   domestique** : le certificat présenté par le hub est lu et son empreinte
+   **apprise** (affichée dans la réponse et dans le statut). Elle est apprise,
+   **pas vérifiée** : le hub fabrique son propre certificat, aucune autorité ne
+   permet de le contrôler. Quelqu'un qui contrôle votre réseau local à ce clic
+   précis pourrait faire apprendre son propre certificat et recevoir le jeton.
+   Pour vérifier, comparez l'empreinte affichée avec celle de votre hub, lue
+   depuis un ordinateur de votre réseau : `openssl s_client -connect \<adresse du
+hub>:4243 \</dev/null 2>/dev/null | openssl x509 -noout -fingerprint -sha256`.
+   Vous pouvez aussi saisir l'empreinte vous-même au lieu de cliquer. Ensuite,
+   le jeton ne part que vers ce certificat.
+4. Ouvrez l'onglet **Découverte** et ajoutez les zones et le hub.
+
+Le jeton est gardé par Gladys dans sa base, jamais réaffiché, et envoyé
+seulement au hub à l'adresse saisie, sur le certificat appris. Il n'apparaît ni
+dans les journaux, ni dans le statut, ni dans les fichiers de l'intégration.
+
+## Commandes
+
+La **Veille** d'une zone et l'**Absence** du hub ne demandent aucune option.
+La veille ne fait que baisser le chauffage de sa zone ; l'absence met tous les
+thermostats en veille et coupe les horloges et les neoPlug. Elles partent tout
+de suite, avant toute autre commande en attente (une lecture du hub bloquée
+depuis 1 s est coupée pour elles), adressées par le numéro d'appareil de la
+zone ; les veilles d'une scène partent ensemble en une commande. Un hub qui
+refuse les numéros reçoit tout de suite la zone par le nom que lui donne sa
+dernière lecture (une commande par zone) ; un hub qui répond aux numéros sans
+rien faire la reçoit par son nom au renvoi (environ 90 s plus tard, voir
+plus bas). Dès que le hub a refusé un numéro puis accepté le nom, il
+reçoit des noms ensuite, même après un redémarrage ; une zone dont le nom
+contient une apostrophe, un guillemet ou une barre oblique inverse part
+toujours par son numéro. Sur un hub qui ignore les numéros, une telle zone ne
+peut pas être mise en veille par Gladys (le statut et le badge disent « pas
+appliqué ») : renommez-la dans l'app Heatmiser Neo. Gladys a sa réponse en 3,4 s environ ; un arrêt qui n'a pas pu partir
+d'ici là reste dans la file et part dès que le hub est libre. Un arrêt est fait
+dès qu'une lecture du hub le montre, et un changement fait ensuite dans l'app
+l'emporte (jamais renvoyé). Le hub rafraîchit ses données environ toutes les
+90 s : un arrêt auquel il a répondu est « pas encore visible » jusqu'à une
+lecture partie au moins 90 s après sa réponse ; si cette lecture ne le montre
+pas, ou si le hub n'a pas répondu, l'arrêt est renvoyé avec les prochaines
+lectures (par numéro, et par nom quand le nom peut partir), 3 fois au plus, et
+le statut et le badge de la zone le disent. Cette fenêtre dure jusqu'à la première
+lecture faite 90 s ou plus après la réponse, donc jusqu'à l'intervalle de
+lecture s'il est plus long (600 s au plus). Un changement fait dans l'app
+pendant cette fenêtre ne se distingue pas d'un arrêt non appliqué : il peut
+être écrasé, 3 fois au plus. Un Programme (ou Présent) plus
+récent parti lève l'arrêt : il n'est plus renvoyé, même après un redémarrage.
+Un Programme (ou Présent) refusé avant de partir (option désactivée, pause,
+trop tard) laisse l'arrêt partir. Une commande demandée avant une mise en
+veille de la même zone (avant une absence, sur toute zone) et pas encore partie
+est annulée. Ce dont un arrêt a besoin malgré tout : l'adresse, le jeton et le
+certificat appris (sans eux, rien ne peut partir vers le hub) ; il est refusé
+quand un autre hub répond à l'adresse, et il n'est pas renvoyé tout seul après
+un refus du jeton par le hub (un clic l'envoie, ou un nouveau jeton).
+
+Ces commandes sont **désactivées par défaut** et demandent l'option
+**Autoriser les commandes de chauffage** :
+
+- la **consigne** d'une zone (de 5 °C au plafond, 24 °C par défaut, arrondi à
+  0,5 °C vers le bas, par pas de 0,5 °C) ;
+- **Programme** sur une zone (quitte la veille) ;
+- **Présent** sur le hub (quitte le mode absence).
+
+Chacune est décidée sur une lecture fraîche du hub (une lecture partie après
+l'arrivée de la commande ; le hub, la zone à son numéro d'appareil et son nom à
+la lecture précédente vérifiés), adressée par le numéro d'appareil de la zone,
+envoyée en 2,8 s ou refusée sans envoi, puis relue ; Gladys a sa réponse en 3,4 s
+environ. Comme pour les arrêts, une valeur que les données du hub ne montrent
+pas encore est « pas encore visible », et n'est dite non appliquée que par une
+lecture faite 90 s ou plus après son envoi (une lecture de suivi est faite
+95 s après). La même consigne (ou le même
+Programme) demandée à plusieurs zones à la fois part en une commande ; des
+consignes différentes partent l'une après l'autre, chacune dans ses 2,8 s, les
+autres refusées sans envoi (« trop tard »). Une consigne est refusée :
+
+- quand l'option est désactivée, ou que la valeur sort de 5 °C au plafond ou
+  n'est pas un multiple de 0,5 °C ;
+- tant que la zone est en veille, absente ou en vacances, ou que le hub est
+  absent ou en vacances (choisissez d'abord Programme ou Présent) ;
+- pendant 10 minutes après une mise en veille de la zone ou une absence du hub,
+  sauf si Programme ou Présent est parti depuis ;
+- quand le hub est réglé en °F (seul le °C est pris en charge), ou que son unité
+  n'est pas encore lue (de nouveau après tout changement du système du hub) ;
+- quand la zone est hors ligne, disparue, ou renommée depuis la lecture
+  précédente (réessayez) ; juste après un redémarrage, le nom gardé au Scan et
+  une lecture de l'unité pendant la commande servent ;
+- quand 8 commandes attendent déjà, pendant une pause après des lectures en
+  échec, après un jeton refusé, ou quand son tour ne vient pas à temps (rien
+  envoyé).
+
+Programme et Présent sont refusés quand /data ne peut pas garder qu'ils lèvent
+un arrêt (rien envoyé).
+
+Une commande qui a pu atteindre le hub n'est jamais dite « pas envoyée » : vous
+obtenez « envoyé, sans confirmation » et les prochaines lectures montrent le
+résultat. Aucune commande ne passe par un interrupteur : un « tout éteindre »
+n'atteint jamais le chauffage.
+
+## Lectures et rythme
+
+Le hub est lu toutes les 60 s par défaut (30 à 600 s ; le hub rafraîchit ses
+propres données environ toutes les 90 s) ; le bouton, l'onglet Découverte ou un
+redémarrage ne le lisent jamais avant l'intervalle. Une commande ajoute ses
+propres lectures : une avant elle, une juste après, puis 5 s et 20 s plus tard. Après un échec,
+l'intégration attend 1, 2, 5, 10 puis 15 minutes. Un jeton refusé par le hub
+arrête les lectures automatiques jusqu'à un nouveau jeton ou un clic sur
+Tester la connexion.
+
+Si le hub est remplacé ou réinitialisé, son certificat change : rien n'est
+envoyé et le statut montre la nouvelle empreinte ; saisissez-la dans la
+configuration après avoir vérifié qu'il s'agit bien de votre hub.
+
+## Données
+
+`/data/heatmiser-neohub-state.json` garde l'heure de la dernière lecture, la
+pause, les empreintes de certificat apprises, les commandes d'arrêt encore à
+envoyer et, pour un jeton refusé, une étiquette de 8 bits (jamais le jeton).
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Heatmiser neoHub dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre neoHub Heatmiser | `section` | Non | Ajoute les zones thermostat de votre neoHub Heatmiser à Gladys, sur votre réseau local, par l'API locale officielle du hub (WebSocket sécurisé, port 4243) : la température, la consigne et le mode (programme ou veille) de chaque zone, et le mode absence du hub. Créez un jeton d'API dans l'app Heatmiser Neo (Paramètres > API Access > Tokens), saisissez-le ci-dessous avec l'adresse du hub, enregistrez, puis cliquez une fois sur « Tester la connexion », depuis votre réseau domestique : l'empreinte du certificat du hub est apprise (apprise, non vérifiée : le guide explique comment la comparer). La veille et l'absence ne demandent aucune option ; les consignes et le retour au programme restent désactivés tant qu'ils ne sont pas autorisés ci-dessous. Jamais testé avec un vrai appareil pour l'instant. Non officiel, sans lien avec Heatmiser. |
+| Adresse du neoHub | `string` | Oui | L'adresse IP locale de votre neoHub, par exemple 192.168.1.40 (visible dans votre box). Port 4243 sauf si vous ajoutez « :port ». |
+| Jeton d'API du hub | `secret` | Oui | Créé dans l'app Heatmiser Neo : Paramètres > API Access > Tokens. Gardé par Gladys dans sa base, jamais réaffiché, et envoyé seulement au hub à l'adresse ci-dessus, sur son certificat appris. |
+| Empreinte du certificat (facultatif) | `string` | Non | L'empreinte SHA-256 du certificat du hub (le hub fabrique son propre certificat). Vide : apprise à votre premier clic sur « Tester la connexion » (apprise, non vérifiée : faites-le depuis votre réseau domestique et comparez-la comme l'explique le guide), puis vérifiée à chaque connexion ; le jeton ne part jamais vers un autre certificat. Si le hub est remplacé ou réinitialisé, saisissez ici l'empreinte que montre le statut. |
+| Commandes de chauffage (désactivées par défaut) | `section` | Non | La mise en veille d'une zone (hors gel) et le mode absence du hub ne demandent aucune option : la veille ne fait que baisser le chauffage de sa zone ; l'absence met tous les thermostats en veille et coupe les horloges et les neoPlug. Sans l'option ci-dessous, Gladys n'envoie rien d'autre. Consignes, Programme et Présent sont décidés sur une lecture fraîche du hub. Aucune commande ne passe par un interrupteur : un « tout éteindre » n'atteint jamais le chauffage. |
+| Autoriser les commandes de chauffage | `boolean` | Non | Le tableau de bord, les scènes et les assistants vocaux peuvent changer la consigne d'une zone, remettre une zone sur son programme et quitter le mode absence. |
+| Plafond des consignes (°C) | `number` | Non | Une consigne au-dessus de cette valeur est refusée (16 à 35 °C). |
+| Intervalle de rafraîchissement (s) | `number` | Non | Secondes entre deux lectures du hub (30 à 600). Le hub rafraîchit ses propres données environ toutes les 90 s. |
+| Langue des noms | `select` | Non | Sert aux noms des appareils, fonctionnalités et options ajoutés désormais. |
+
+## Comment installer Heatmiser neoHub dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Heatmiser neoHub apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-heatmiser-neohub:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-heatmiser-neohub](https://github.com/LM1LC3N7/gladys-heatmiser-neohub).
+
+Heatmiser neoHub nécessite Gladys `>=5.3.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Heatmiser neoHub est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-heatmiser-neohub) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-heatmiser-neohub/blob/HEAD/docs/fr.md)

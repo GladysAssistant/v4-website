@@ -1,0 +1,139 @@
+---
+title: "EFFIS smart home integration, free and open source"
+sidebar_label: "EFFIS"
+description: "Wildfire danger forecast, fires seen by satellite and burnt areas near your home (Copernicus). Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-effis.jpg"
+keywords:
+  - "effis"
+  - "effis smart home"
+  - "gladys effis"
+  - "effis gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/William-De71/gladys-effis instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"EFFIS","description":"Wildfire danger forecast, fires seen by satellite and burnt areas near your home (Copernicus).","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-effis","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-effis.jpg","type":"device","version":"0.1.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-15T20:53:49Z"}} />
+
+## Overview
+
+EFFIS, the European Forest Fire Information System of the Copernicus Emergency Management Service (European Commission), in Gladys. For each of your places (up to three):
+
+- the **fire danger** of today and of the next 9 days: the Fire Weather Index (FWI) of the EFFIS forecast and its level, from low to very extreme;
+- the **fires seen by satellite** in the last 24 hours within a radius you choose (MODIS, VIIRS and Sentinel-3 hot spots);
+- the **burnt areas** EFFIS mapped in the last 7 days within that radius.
+
+No account, no key: EFFIS data is open data under the CC BY 4.0 licence. This is not an official alert service: a fire seen by satellite can be a farm burn or an industrial heat source, and a missing detection does not mean there is no fire. Always follow the instructions of the authorities.
+
+![The Wildfire danger and Fires nearby widgets of a house near Barcelona, from recorded EFFIS data (generated illustration, not a screenshot)](https://raw.githubusercontent.com/William-De71/gladys-effis/main/docs/assets/widgets.en.png)
+
+## Requirements
+
+- Gladys Assistant 5.3.0 or later.
+- A house located in Gladys (Settings > Houses), or the coordinates of the place to watch.
+- Internet access from Gladys: the data comes from the EFFIS servers.
+
+## Configuration
+
+1. Install the integration from **Integrations** (EFFIS).
+2. For each place, choose a **House**, or type **coordinates** ("43.2965, 5.3698"; they win over the house).
+3. Choose the **radius** around each place, then save. **Check the places** shows the coordinates used and what EFFIS says there now.
+4. In the **Discover** tab, add the devices you want.
+
+| Field          | Default   | What it does                                                                   |
+| -------------- | --------- | ------------------------------------------------------------------------------ |
+| House          |           | A house of Gladys: its location is used.                                       |
+| Or coordinates |           | Latitude, longitude: a second home, a forest nearby. Win over the house.       |
+| Radius         | 25 km     | Fires and burnt areas are watched within this distance (10, 25, 50 or 100 km). |
+| Language       | Automatic | Feature names, scene texts and status.                                         |
+
+## Usage
+
+### Devices
+
+One device per place, "EFFIS \<place>", read-only:
+
+- **Fire Weather Index**: the FWI of today, rounded.
+- **Fire danger today** and **Fire danger tomorrow**: 0 low (FWI under 11.2), 1 moderate, 2 high (from 21.3), 3 very high (from 38), 4 extreme (from 50), 5 very extreme (from 70), the classes of the EFFIS maps.
+- **Fires nearby (24 h)**: the fires seen by satellite within the radius. Hot spots closer than 2 km are counted as one fire.
+- **Situation**: the danger and the nearest fire, as a sentence.
+
+The forecast is read every 3 hours and at each new day, the hot spots every 30 minutes, the burnt areas every hour.
+
+### Scenes
+
+Triggers:
+
+- **Fire danger level changed**: when the level of today changes (a new forecast, or a new day). Filters: device, new level, rises or falls.
+- **Fire detected nearby**: a fire seen by satellite within the radius, not seen before. Variables: distance, direction, time, hot spots, position.
+- **Burnt area mapped nearby**: a burnt area mapped by EFFIS within the radius. Variables: area in hectares, municipality, province, country, fire date, distance.
+
+The first reading after a start is a reference: no trigger replays a fire or a level already there.
+
+Action **Get the fire danger** (today, tomorrow or the day after): FWI, level, fires nearby, nearest fire, and a summary sentence.
+
+Examples:
+
+- "Fire danger level changed", level very high, extreme or very extreme → send "\{\{triggerEvent.data.summary\}\}" and turn the garden watering on in the evening.
+- "Fire detected nearby" → send "\{\{triggerEvent.data.summary\}\}" to the family.
+- Every morning at 7:00 (scheduled scene) → "Get the fire danger" (today) → send its summary when the level is high or more.
+
+### Widgets
+
+- **Wildfire danger**: the level of today and of the next days (3 to 9, setting "Days"), with the FWI.
+- **Fires nearby**: the fires seen by satellite in 24 hours (distance, direction, time) and the burnt areas mapped in 7 days (municipality, area, distance, date).
+
+Both credit the source, as the licence of EFFIS asks.
+
+## Troubleshooting
+
+- **"The house has no position"**: locate the house in Settings > Houses, or type coordinates.
+- **"Coordinates not understood"**: type the latitude, then the longitude, in decimal degrees: "43.2965, 5.3698".
+- **"EFFIS does not answer for now"**: the EFFIS servers are busy or in maintenance; the integration tries again by itself and keeps the last data.
+- **A fire on the EFFIS map but not in Gladys**: the satellites pass a few times a day, and clouds or smoke can hide a fire; EFFIS maps a burnt area from the satellite images, usually a day or more after the fire.
+- Logs: the **Logs** tab of the integration. In developer mode, `DEBUG=gladys-integration-sdk` adds the SDK logs.
+
+## Configuration settings
+
+These are the settings EFFIS asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| EFFIS, Copernicus | `section` | No | The data comes from EFFIS, the European Forest Fire Information System of the Copernicus Emergency Management Service (European Commission), open data under CC BY 4.0: no account, no key. For each place: the Fire Weather Index forecast for 9 days, the fires seen by satellite in the last 24 hours and the burnt areas EFFIS mapped in the last 7 days. Fires seen by satellite include farm burns and industrial heat: a detection is not a confirmed wildfire. This is not an official alert service: follow the instructions of the authorities. |
+| Places | `section` | No | Choose a house of Gladys, or type coordinates. Each place becomes a device in the Discover tab. Up to three places. |
+| House | `select` | No | Its location in Gladys (Settings > Houses) is used. |
+| Or coordinates | `string` | No | Latitude, longitude. Win over the house (a second home, a forest nearby). |
+| Place 2 | `section` | No |  |
+| House | `select` | No | Its location in Gladys (Settings > Houses) is used. |
+| Or coordinates | `string` | No | Latitude, longitude. Win over the house (a second home, a forest nearby). |
+| Place 3 | `section` | No |  |
+| House | `select` | No | Its location in Gladys (Settings > Houses) is used. |
+| Or coordinates | `string` | No | Latitude, longitude. Win over the house (a second home, a forest nearby). |
+| Options | `section` | No |  |
+| Radius around each place | `select` | No | Fires and burnt areas are watched within this distance. |
+| Language of the texts | `select` | No | Feature names, scene texts and status. Automatic: the language of your dashboard once a widget has been shown. |
+
+## How to install EFFIS in Gladys
+
+1. In Gladys, open **Integrations**: EFFIS appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/william-de71/gladys-effis:0.1.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/William-De71/gladys-effis](https://github.com/William-De71/gladys-effis).
+
+EFFIS requires Gladys `>=5.3.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+EFFIS is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [William-De71](https://github.com/William-De71), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/William-De71/gladys-effis) — [source of this documentation](https://github.com/William-De71/gladys-effis/blob/HEAD/docs/en.md)

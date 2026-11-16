@@ -1,0 +1,157 @@
+---
+title: "Intégration domotique owserver (1-Wire), gratuite et open source"
+sidebar_label: "owserver (1-Wire)"
+description: "Non officiel : sondes 1-Wire lues sur un owserver (OWFS) du réseau : températures, compteurs. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-owserver.png"
+keywords:
+  - "owserver (1-wire)"
+  - "domotique owserver (1-wire)"
+  - "gladys owserver (1-wire)"
+  - "owserver (1-wire) gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-owserver instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"owserver (1-Wire)","description":"Non officiel : sondes 1-Wire lues sur un owserver (OWFS) du réseau : températures, compteurs.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-owserver","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-owserver.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-15T07:44:53Z"}} />
+
+Connecteur non officiel, sans lien avec le projet OWFS. Il lit les appareils
+1-Wire servis par un **owserver** (le serveur réseau d'OWFS) qui tourne sur
+votre réseau, par son protocole TCP (port 4304), sans cloud.
+
+Testé contre owserver en mode adaptateur simulé (`owserver --fake`), jamais
+testé avec un vrai bus 1-Wire : dites-nous comment il se comporte avec le vôtre.
+
+## Ce que vous obtenez
+
+Un appareil Gladys par appareil 1-Wire listé à la racine d'owserver, repéré par
+son identifiant ROM (par exemple `28-4AEC29CDBAAB`) : une nouvelle adresse de
+l'owserver, ou la sonde déplacée sur un autre bus, garde son appareil et son
+historique.
+
+| Famille            | Puce                                       | Fonctions                        |
+| ------------------ | ------------------------------------------ | -------------------------------- |
+| 10, 22, 28, 3B, 42 | DS18S20, DS1822, DS18B20, DS1825, DS28EA00 | Température (°C)                 |
+| 26                 | DS2438                                     | Température (°C)                 |
+| 1D                 | DS2423                                     | Compteur A, Compteur B           |
+| 05, 12, 3A, 29     | DS2405, DS2406, DS2413, DS2408             | Entrées, en capteurs d'ouverture |
+
+Les autres familles (DS2450, concentrateurs DS2409, capteurs EDS…) sont
+nommées dans l'état comme « pas encore prises en charge ». Les appareils
+derrière un concentrateur DS2409 ne sont pas lus.
+
+Lecture seule : seules des demandes de liste et de lecture partent, rien n'est
+jamais écrit sur le bus. Les sorties des interrupteurs (DS2406, DS2408,
+DS2413) viendront plus tard.
+
+## Préparer owserver
+
+owserver doit écouter sur le réseau, pas seulement sur localhost. Dans
+`/etc/owfs.conf` de la machine qui porte l'adaptateur 1-Wire :
+
+```
+server: usb = all          # ou : server: i2c = ALL:ALL pour un DS2482
+server: port = 0.0.0.0:4304
+```
+
+puis redémarrez owserver. Vérifiez depuis une autre machine avec
+`owdir -s 192.168.1.30:4304 /`.
+
+## Configuration
+
+- **Adresse de l'owserver** : son adresse IP ou son nom d'hôte, avec un port
+  seulement s'il n'est pas 4304.
+- **Intervalle de lecture** : 30 s, 1 min (par défaut), 2 ou 5 min. Avec
+  beaucoup d'appareils, l'intervalle est allongé pour qu'une lecture complète
+  reste sous 250 valeurs par minute (64 appareils lus au plus).
+
+Ouvrez ensuite l'onglet **Découverte** et créez les appareils voulus.
+
+## Comment les valeurs sont vérifiées
+
+- Les températures sont demandées en Celsius quel que soit le réglage
+  d'owserver. Une valeur hors de -55 à +125 °C, ou un texte qui n'est pas un
+  nombre, n'est pas publiée.
+- **85 °C** est la valeur d'une DS18x20 qui n'a pas converti (une coupure
+  d'alimentation, une sonde en alimentation parasite qui l'a perdue) : elle est
+  retenue, sauf si la température précédente de cette sonde en était à moins de
+  10 °C (cette valeur précédente n'est gardée qu'en mémoire : après un
+  redémarrage, un premier 85 °C est retenu). L'état nomme la sonde ; vérifiez
+  son alimentation.
+- Les **compteurs** (DS2423) ne baissent pas dans Gladys (sauf après une baisse
+  acceptée, ou quand `/data` a été perdu et que l'appareil n'est pas encore créé
+  dans Gladys, rien ne gardant alors sa dernière valeur) : une valeur plus
+  basse (un compteur sans pile repart de 0 après une coupure de courant) est
+  retenue et l'état le dit. Quand elle est juste, cliquez sur **Accepter les
+  baisses de compteur** : chaque compteur retenu prend sa valeur plus basse
+  comme nouveau départ, publiée dès la lecture suivante. Enregistrer la
+  configuration ne le fait jamais.
+- **Entrées** : owserver donne le niveau de la broche. Une broche tirée au
+  niveau bas (un contact fermé à la masse) s'affiche **fermée**, une broche au
+  niveau haut (un contact ouvert, avec sa résistance de rappel) **ouverte**.
+- Un appareil en échec (parti du bus, erreur de bus, valeur illisible) laisse
+  seulement cet appareil non lu ; l'état le nomme. Un tour de lecture ne commence
+  plus d'appareil après 60 s : les appareils restants sont lus en premier la
+  fois suivante. Après un tour, le bus se repose au moins la moitié de
+  l'intervalle.
+
+## Boutons
+
+- **Tester la connexion** : lit l'owserver une fois quand une lecture est due
+  (jamais plus d'une par intervalle), sinon donne la dernière lecture.
+- **Accepter les baisses de compteur** : voir plus haut.
+
+## Messages d'état
+
+L'écran de configuration montre l'adresse, le nombre d'appareils lus, et des
+notes : appareils non lus (et pourquoi), 85 °C retenu, compteurs retenus,
+familles pas encore prises en charge, appareils pas créés dans Gladys, dossier
+`/data` illisible (les compteurs ne sont alors vérifiés que par rapport aux
+valeurs que Gladys garde et rien n'est enregistré ; nouvel essai toutes les
+10 s), ou qui ne finit pas d'écrire (les valeurs sont toujours lues ; rien
+n'est gardé pour un redémarrage). Un fichier d'état qui n'est pas du JSON
+valide repart de zéro.
+
+## Vie privée et sécurité
+
+owserver n'a pas d'identifiants : rien de secret n'est configuré, gardé ni
+journalisé. L'intégration ne garde dans son dossier `/data` que l'heure de la
+dernière lecture, les identifiants ROM vus et les valeurs des compteurs.
+
+OWFS est distribué sous GPL 2.0 ; cette intégration n'en contient aucun code et
+parle seulement à owserver par le réseau (voir `THIRD_PARTY_NOTICES.md`).
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par owserver (1-Wire) dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| owserver (1-Wire) | `section` | Non | Connecteur non officiel, sans lien avec le projet OWFS. Il lit les appareils 1-Wire servis par un owserver (le serveur réseau d'OWFS, port 4304) qui tourne sur votre réseau, par exemple sur un Raspberry Pi avec un adaptateur DS9490R ou DS2482 : un appareil par appareil 1-Wire, avec la température des sondes DS18B20, DS18S20, DS1822, DS1825, DS28EA00 et DS2438, les deux compteurs d'un DS2423, et les entrées des DS2405, DS2406, DS2408 et DS2413 en capteurs d'ouverture. Lecture seule : rien n'est jamais écrit sur le bus (les sorties viendront plus tard). Testé contre owserver en mode adaptateur simulé, jamais testé avec un vrai bus 1-Wire. |
+| Adresse de l'owserver | `string` | Oui | L'adresse IP (ou le nom d'hôte) de la machine où tourne owserver, avec un port seulement s'il n'est pas 4304. owserver doit écouter sur le réseau (par exemple « server: port = 0.0.0.0:4304 » dans /etc/owfs.conf), pas seulement sur localhost. Chaque appareil 1-Wire garde son appareil Gladys si l'adresse change (ils sont repérés par leur identifiant ROM). |
+| Intervalle de lecture | `select` | Non | La fréquence de lecture des appareils 1-Wire. Avec beaucoup d'appareils, l'intervalle est allongé pour qu'une lecture complète reste sous 250 valeurs par minute. |
+
+## Comment installer owserver (1-Wire) dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : owserver (1-Wire) apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-owserver:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-owserver](https://github.com/LM1LC3N7/gladys-owserver).
+
+owserver (1-Wire) nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+owserver (1-Wire) est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-owserver) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-owserver/blob/HEAD/docs/fr.md)

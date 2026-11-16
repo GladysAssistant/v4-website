@@ -1,0 +1,175 @@
+---
+title: "Elasticsearch / OpenSearch smart home integration, free and open source"
+sidebar_label: "Elasticsearch / OpenSearch"
+description: "Health of your Elasticsearch or OpenSearch cluster: status, shards, nodes, disks, scenes, widget. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-elasticsearch.png"
+keywords:
+  - "elasticsearch / opensearch"
+  - "elasticsearch / opensearch smart home"
+  - "gladys elasticsearch / opensearch"
+  - "elasticsearch / opensearch gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-elasticsearch instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Elasticsearch / OpenSearch","description":"Health of your Elasticsearch or OpenSearch cluster: status, shards, nodes, disks, scenes, widget.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-elasticsearch","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-elasticsearch.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-15T14:53:29Z"}} />
+
+The health of your Elasticsearch or OpenSearch cluster in Gladys: status,
+nodes, shards, disks, scene triggers and a dashboard widget. Read only: the
+integration never writes to the cluster.
+
+Tested against real Elasticsearch 8.19 and OpenSearch 2.19 clusters (in
+Docker, with and without security). Feedback is welcome on
+[GitHub](https://github.com/guim31/gladys-elasticsearch/issues).
+
+## What you get
+
+In the **Discover** tab, one device for the cluster and one per node.
+
+The cluster device:
+
+- **Status (0 green, 1 yellow, 2 red)**: the health status of the cluster.
+  Yellow: a replica is not allocated (normal on a single node with replicas).
+  Red: a primary shard is missing, data is not searchable.
+- **Nodes**, **Data nodes**, **Active shards**, **Unassigned shards**.
+- **Indices**, **Documents**, **Size of the indices** (GB).
+- **Version**: the product and its version, e.g. `OpenSearch 2.19.3`.
+
+Each node device:
+
+- **Disk used**, **JVM heap used**, **CPU** (%), **Load (1 min)**.
+- **Shards**: the shards it holds.
+- **In the cluster**: 1 while the node is part of the cluster, 0 once it left
+  (its badge then says unreachable).
+
+## Configuration
+
+1. With security enabled (the default of Elasticsearch 8), create an API key
+   for Gladys limited to monitoring, for example in Kibana → Dev Tools:
+
+   ```
+   POST /_security/api_key
+   {"name": "gladys", "role_descriptors": {"gladys": {
+     "cluster": ["monitor"],
+     "indices": [{"names": ["*"], "privileges": ["monitor"]}]}}}
+   ```
+
+   Copy the `encoded` value into **API key (Elasticsearch)**. With
+   OpenSearch, or without API keys, create a user with the `cluster_monitor`
+   permission (and `indices_monitor` to name the red indices) and fill in
+   **User** and **Password**. Never the `elastic` or `admin` account.
+
+2. **Address**: any node, e.g. `192.168.1.20` (port 9200, HTTPS tried first,
+   then HTTP) or `https://es.lan:9200`.
+3. HTTPS with a self-signed certificate (the default of Elasticsearch 8 and
+   OpenSearch): click **Test the connection**. It shows the SHA-256
+   fingerprint of the certificate. Check it is the one of your cluster: on
+   the server, `openssl s_client -connect localhost:9200 </dev/null | openssl x509 -noout -fingerprint -sha256`
+   prints it. Then
+   copy it into **Certificate fingerprint** and save. Only this certificate is
+   then accepted. **Accept any certificate** skips every check: avoid it.
+4. Add the cluster and the nodes you want from the **Discover** tab.
+
+The **Refresh interval** (1 minute by default) sets how often the cluster is
+read: five light monitoring requests each time (six when red). The
+**Language of the names** sets the names of the features, frozen when a
+device is added, and the texts sent to scenes.
+
+## Actions
+
+- **Test the connection**: reads the cluster now and says what it found
+  (product, status, nodes), with the fingerprint of an HTTPS certificate.
+
+## Scenes
+
+Triggers, which work without adding any device:
+
+- **Cluster status changes**: the status becomes green, yellow or red. Choose
+  the new status, or leave it empty for every change. Variables: the cluster,
+  the new and previous status, the unassigned shards, the red indices.
+- **Node disk almost full**: the disk of a node reaches 80, 85, 90 or 95 %.
+  85 % is the low watermark of Elasticsearch (no new shard on the node), 90 %
+  the high one (shards move away), 95 % the flood stage (its indices turn read
+  only). Announced again once the disk went 2 points below.
+- **Cluster unreachable**: the cluster no longer answers, on two reads in a
+  row (a failed read is retried after 20 seconds). Variable: the reason.
+
+Action:
+
+- **Health of the cluster**: reads the cluster for the next actions: status,
+  nodes, unassigned shards, documents, fullest disk, and a ready-made summary
+  to send in a message ("Cluster logs: yellow, 3 nodes, 2 unassigned shards,
+  disk of es-1 87 %…").
+
+## Dashboard
+
+The **Search cluster** widget shows the status in its color, the nodes, the
+unassigned shards, the documents and the size of the indices, then the red
+indices and one row per node (disk and heap, the fullest disk first, ★ for
+the elected master). Its **Refresh** button reads the cluster again. Both
+the list and the button can be hidden in the widget settings.
+
+## Limits
+
+- One cluster per installation of the integration.
+- Tested with Elasticsearch 8 and OpenSearch 2; Elasticsearch 7 and OpenSearch 1 answer the same APIs (untested). Elastic Cloud works too
+  (API key, `https://…:443`), but the integration is designed for a cluster
+  on your network.
+- The health of the indices themselves is not followed index by index: only
+  the names of the red ones are given.
+
+## Troubleshooting
+
+- "Certificate not trusted": see step 3 of the configuration.
+- "Access refused": the key or the user lacks the `monitor` cluster
+  privilege. With the cluster health only, the cluster device still works,
+  without nodes, documents and size.
+- The full detail of each read is in the integration logs with
+  `LOG_LEVEL=debug`.
+
+Elasticsearch is a trademark of Elasticsearch B.V., OpenSearch of LF
+Projects, LLC. This integration is not affiliated with either.
+
+## Configuration settings
+
+These are the settings Elasticsearch / OpenSearch asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your cluster | `section` | No | Read only. With security enabled, create an API key (or a user) with the "monitor" cluster privilege for Gladys. Then add the cluster and its nodes from the Discover tab. |
+| Address | `string` | Yes | Any node of the cluster. Without http:\/\/ or https:\/\/, HTTPS is tried, then HTTP; port 9200 unless typed. |
+| API key (Elasticsearch) | `secret` | No | Recommended with Elasticsearch: the "encoded" value of the key. Empty: user and password below, or none. |
+| User (without API key) | `string` | No |  |
+| Password (without API key) | `secret` | No | Never the elastic or admin account: a user limited to monitoring. |
+| HTTPS certificate | `section` | No | A self-signed certificate (the default of Elasticsearch 8 and OpenSearch) is refused until you confirm it: "Test the connection" shows its fingerprint. |
+| Certificate fingerprint | `string` | No | SHA-256, copied from "Test the connection": only this certificate is then accepted. |
+| Accept any certificate (not recommended) | `boolean` | No | No check at all: anyone on the network could pose as the cluster. Prefer the fingerprint. |
+| Options | `section` | No |  |
+| Refresh interval | `select` | No | How often the cluster is read: five light monitoring requests each time. |
+| Language of the names | `select` | No | Names of the device features (frozen when the device is added) and texts of the scenes. |
+
+## How to install Elasticsearch / OpenSearch in Gladys
+
+1. In Gladys, open **Integrations**: Elasticsearch / OpenSearch appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-elasticsearch:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-elasticsearch](https://github.com/guim31/gladys-elasticsearch).
+
+Elasticsearch / OpenSearch requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Elasticsearch / OpenSearch is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-elasticsearch) — [source of this documentation](https://github.com/guim31/gladys-elasticsearch/blob/HEAD/docs/en.md)

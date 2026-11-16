@@ -1,0 +1,182 @@
+---
+title: "Intégration domotique Elasticsearch / OpenSearch, gratuite et open source"
+sidebar_label: "Elasticsearch / OpenSearch"
+description: "Santé de votre cluster Elasticsearch ou OpenSearch : état, shards, nœuds, disques, scènes, widget. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-elasticsearch.png"
+keywords:
+  - "elasticsearch / opensearch"
+  - "domotique elasticsearch / opensearch"
+  - "gladys elasticsearch / opensearch"
+  - "elasticsearch / opensearch gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/guim31/gladys-elasticsearch instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Elasticsearch / OpenSearch","description":"Santé de votre cluster Elasticsearch ou OpenSearch : état, shards, nœuds, disques, scènes, widget.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-elasticsearch","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-elasticsearch.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-15T14:53:29Z"}} />
+
+La santé de votre cluster Elasticsearch ou OpenSearch dans Gladys : état,
+nœuds, shards, disques, déclencheurs de scène et un widget. Lecture seule :
+l'intégration n'écrit jamais dans le cluster.
+
+Testée contre de vrais clusters Elasticsearch 8.19 et OpenSearch 2.19 (sous
+Docker, avec et sans sécurité). Vos retours sont les bienvenus sur
+[GitHub](https://github.com/guim31/gladys-elasticsearch/issues).
+
+## Ce que vous obtenez
+
+Dans l'onglet **Découverte**, un appareil pour le cluster et un par nœud.
+
+L'appareil du cluster :
+
+- **État (0 vert, 1 jaune, 2 rouge)** : l'état de santé du cluster. Jaune :
+  une réplique n'est pas allouée (normal sur un nœud unique avec répliques).
+  Rouge : un shard primaire manque, des données ne sont plus consultables.
+- **Nœuds**, **Nœuds de données**, **Shards actifs**, **Shards non assignés**.
+- **Index**, **Documents**, **Taille des index** (Go).
+- **Version** : le produit et sa version, ex. `OpenSearch 2.19.3`.
+
+Chaque appareil de nœud :
+
+- **Disque utilisé**, **Tas JVM utilisé**, **Processeur** (%), **Charge (1 min)**.
+- **Shards** : les shards qu'il porte.
+- **Dans le cluster** : 1 tant que le nœud fait partie du cluster, 0 une fois
+  qu'il l'a quitté (son badge indique alors injoignable).
+
+## Configuration
+
+1. Si la sécurité est activée (le cas par défaut d'Elasticsearch 8), créez
+   pour Gladys une clé d'API limitée à la supervision, par exemple dans
+   Kibana → Dev Tools :
+
+   ```
+   POST /_security/api_key
+   {"name": "gladys", "role_descriptors": {"gladys": {
+     "cluster": ["monitor"],
+     "indices": [{"names": ["*"], "privileges": ["monitor"]}]}}}
+   ```
+
+   Copiez la valeur `encoded` dans **Clé d'API (Elasticsearch)**. Avec
+   OpenSearch, ou sans clé d'API, créez un utilisateur avec la permission
+   `cluster_monitor` (et `indices_monitor` pour nommer les index rouges), et
+   remplissez **Utilisateur** et **Mot de passe**. Jamais le compte `elastic`
+   ou `admin`.
+
+2. **Adresse** : n'importe quel nœud, ex. `192.168.1.20` (port 9200, HTTPS
+   essayé d'abord, puis HTTP) ou `https://es.lan:9200`.
+3. HTTPS avec un certificat auto-signé (le cas par défaut d'Elasticsearch 8
+   et d'OpenSearch) : cliquez sur **Tester la connexion**. Le bouton affiche
+   l'empreinte SHA-256 du certificat. Vérifiez que c'est celle de votre
+   cluster : sur le serveur,
+   `openssl s_client -connect localhost:9200 </dev/null | openssl x509 -noout -fingerprint -sha256`
+   l'affiche. Copiez-la ensuite dans **Empreinte du certificat** et
+   enregistrez. Seul ce certificat est alors accepté. **Accepter tout
+   certificat** saute toute vérification : à éviter.
+4. Ajoutez le cluster et les nœuds voulus depuis l'onglet **Découverte**.
+
+L'**Intervalle de rafraîchissement** (1 minute par défaut) règle la
+fréquence de lecture du cluster : cinq requêtes légères de supervision à
+chaque fois (six quand il est rouge). La **Langue des noms** règle les noms
+des fonctionnalités, figés à l'ajout d'un appareil, et les textes envoyés aux
+scènes.
+
+## Actions
+
+- **Tester la connexion** : lit le cluster maintenant et dit ce qu'il a
+  trouvé (produit, état, nœuds), avec l'empreinte d'un certificat HTTPS.
+
+## Scènes
+
+Déclencheurs, qui fonctionnent sans ajouter d'appareil :
+
+- **L'état du cluster change** : l'état passe au vert, au jaune ou au rouge.
+  Choisissez le nouvel état, ou laissez vide pour tout changement. Variables :
+  le cluster, le nouvel état et le précédent, les shards non assignés, les
+  index rouges.
+- **Disque de nœud presque plein** : le disque d'un nœud atteint 80, 85, 90
+  ou 95 %. 85 % est le seuil bas d'Elasticsearch (plus de nouveau shard sur
+  le nœud), 90 % le seuil haut (les shards partent ailleurs), 95 % le seuil
+  d'inondation (ses index passent en lecture seule). Annoncé de nouveau une
+  fois le disque redescendu de 2 points.
+- **Cluster injoignable** : le cluster ne répond plus, sur deux lectures de
+  suite (une lecture en échec est retentée après 20 secondes). Variable : la
+  raison.
+
+Action :
+
+- **Santé du cluster** : lit le cluster pour les actions suivantes : état,
+  nœuds, shards non assignés, documents, disque le plus plein, et un résumé
+  prêt à envoyer dans un message (« Cluster logs : jaune, 3 nœuds, 2 shards
+  non assignés, disque de es-1 87 %… »).
+
+## Tableau de bord
+
+Le widget **Cluster de recherche** affiche l'état dans sa couleur, les
+nœuds, les shards non assignés, les documents et la taille des index, puis
+les index rouges et une ligne par nœud (disque et tas, le disque le plus
+plein d'abord, ★ pour le maître élu). Son bouton **Actualiser** relit le
+cluster. La liste comme le bouton se masquent dans les réglages du widget.
+
+## Limites
+
+- Un seul cluster par installation de l'intégration.
+- Testée avec Elasticsearch 8 et OpenSearch 2 ; Elasticsearch 7 et OpenSearch 1 répondent aux mêmes API (non testé). Elastic Cloud
+  fonctionne aussi (clé d'API, `https://…:443`), mais l'intégration est pensée
+  pour un cluster sur votre réseau.
+- La santé des index n'est pas suivie index par index : seuls les noms des
+  index rouges sont donnés.
+
+## Dépannage
+
+- « Certificat non reconnu » : voir l'étape 3 de la configuration.
+- « Accès refusé » : la clé ou l'utilisateur n'a pas le privilège de cluster
+  `monitor`. Avec la seule santé du cluster, l'appareil du cluster fonctionne
+  quand même, sans nœuds, documents ni taille.
+- Le détail de chaque lecture est dans les logs de l'intégration avec
+  `LOG_LEVEL=debug`.
+
+Elasticsearch est une marque d'Elasticsearch B.V., OpenSearch de LF
+Projects, LLC. Cette intégration n'est affiliée ni à l'une ni à l'autre.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Elasticsearch / OpenSearch dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre cluster | `section` | Non | Lecture seule. Si la sécurité est activée, créez pour Gladys une clé d'API (ou un utilisateur) avec le privilège de cluster « monitor ». Ajoutez ensuite le cluster et ses nœuds depuis l'onglet Découverte. |
+| Adresse | `string` | Oui | N'importe quel nœud du cluster. Sans http:\/\/ ni https:\/\/, HTTPS est essayé, puis HTTP ; port 9200 sauf saisi. |
+| Clé d'API (Elasticsearch) | `secret` | Non | Conseillé avec Elasticsearch : la valeur « encoded » de la clé. Vide : utilisateur et mot de passe ci-dessous, ou aucun. |
+| Utilisateur (sans clé) | `string` | Non |  |
+| Mot de passe (sans clé) | `secret` | Non | Jamais le compte elastic ou admin : un utilisateur limité à la supervision. |
+| Certificat HTTPS | `section` | Non | Un certificat auto-signé (celui d'Elasticsearch 8 et d'OpenSearch par défaut) est refusé tant que vous ne l'avez pas confirmé : « Tester la connexion » affiche son empreinte. |
+| Empreinte du certificat | `string` | Non | SHA-256, copiée depuis « Tester la connexion » : seul ce certificat est alors accepté. |
+| Accepter tout certificat (déconseillé) | `boolean` | Non | Aucune vérification : n'importe qui sur le réseau pourrait se faire passer pour le cluster. Préférez l'empreinte. |
+| Options | `section` | Non |  |
+| Intervalle de rafraîchissement | `select` | Non | Fréquence de lecture du cluster : cinq requêtes légères de supervision à chaque fois. |
+| Langue des noms | `select` | Non | Noms des fonctionnalités des appareils (figés à l'ajout de l'appareil) et textes des scènes. |
+
+## Comment installer Elasticsearch / OpenSearch dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Elasticsearch / OpenSearch apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/guim31/gladys-elasticsearch:1.0.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/guim31/gladys-elasticsearch](https://github.com/guim31/gladys-elasticsearch).
+
+Elasticsearch / OpenSearch nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Elasticsearch / OpenSearch est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [guim31](https://github.com/guim31), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/guim31/gladys-elasticsearch) — [source de cette documentation](https://github.com/guim31/gladys-elasticsearch/blob/HEAD/docs/fr.md)

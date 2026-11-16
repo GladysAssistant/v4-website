@@ -1,0 +1,196 @@
+---
+title: "Integración domótica smsmode, gratuita y de código abierto"
+sidebar_label: "smsmode"
+description: "Unofficial: send SMS from your scenes through your smsmode account (France). Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-smsmode.png"
+keywords:
+  - "smsmode"
+  - "domótica smsmode"
+  - "gladys smsmode"
+  - "smsmode gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-smsmode instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"smsmode","description":"Unofficial: send SMS from your scenes through your smsmode account (France).","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-smsmode","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-smsmode.png","type":"provider","version":"0.1.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-14T07:39:51Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+**Unofficial**, not affiliated with smsmode. Never tested with a real smsmode account: the API format
+comes from its public documentation (read on 14 November 2026).
+
+This integration sends SMS from your Gladys scenes, through your own [smsmode](https://www.smsmode.com/)
+account (a French SMS provider). Each SMS is paid from your smsmode credit.
+
+- **Send only**: nothing is received, no SMS reply is read.
+- An SMS leaves only from a **scene action** "Send an SMS (smsmode)" or a click on the "Send a test SMS"
+  button. No SMS at start, on a reconnection, nor when you save the configuration.
+- For France: French mobiles (06, 07, overseas included). A foreign number written with + or 00 is
+  accepted too, at the smsmode price of its country.
+
+## Before you start
+
+1. Create an account on [smsmode.com](https://www.smsmode.com/) and buy credit.
+2. In your smsmode customer area, API section, create an **API key**.
+3. In Gladys, install the integration, paste the key, save.
+4. Click **Check the key and the credit**: smsmode says whether it accepts the key and gives the balance
+   of the account. This button sends no SMS.
+5. If you like, click **Send a test SMS** with your number (one paid SMS, counted in the hourly cap).
+
+## Configuration
+
+| Setting                 | Role                                                                                                                                                                           |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| smsmode API key         | Kept by Gladys in its database, never shown again, sent only to smsmode (`X-Api-Key` header of `https://rest.smsmode.com`).                                                    |
+| Default numbers         | Used when the scene action gives none. Separated by commas, 5 at most.                                                                                                         |
+| Sender name             | Optional: 3 to 11 letters or digits, at least one letter ("MyHouse"). Empty: smsmode's default sender. An invalid sender blocks sending (the status says so).                  |
+| Add the STOP mention    | smsmode adds "STOP" and a short number at the end of the SMS. smsmode asks for it with a custom sender on a marketing channel; without it, an operator may replace the sender. |
+| Maximum SMS per hour    | Safety cap, 1 to 200 (20 by default). See below.                                                                                                                               |
+| Maximum SMS per message | 1 to 10 (3 by default): beyond, the text is cut and ends with "...".                                                                                                           |
+| Accents                 | "Keep them" (default) or "Simplify" (see below).                                                                                                                               |
+
+### Numbers accepted
+
+- French mobiles: `06 12 34 56 78`, `07.12.34.56.78`, `+33 6 12 34 56 78`, `0033 6...`, `33612345678`.
+- Overseas mobiles written the French way: 0692 and 0693 (La Réunion), 0639 (Mayotte), 0690 and 0691
+  (Guadeloupe, Saint-Martin, Saint-Barthélemy), 0694 (French Guiana), 0696 and 0697 (Martinique): the
+  calling code of the territory is put in their place.
+- Any international number written with `+` or `00` (8 to 15 digits).
+- Refused: French landlines and special numbers (01 to 05, 08, 09: they receive no SMS), short codes,
+  letters.
+
+A number is never written whole in the logs nor in the messages: only the first 3 and the last 2 digits
+show (`336******78`).
+
+## The scene action "Send an SMS (smsmode)"
+
+Fields:
+
+- **Text** (required): Gladys replaces the scene variables in it.
+- **Numbers** (optional): empty, the default numbers.
+
+Outputs, for the following actions of the scene:
+
+- `sent`: SMS accepted by smsmode;
+- `not_sent`: recipients not reached (refused, not tried, or without confirmation);
+- `message_ids`: smsmode ids of the accepted messages, separated by commas;
+- `truncated`: true when the text was cut.
+
+When no SMS is accepted, the action fails with the reason in the scene log ("Nothing sent: the hourly
+cap is reached", …); the scene goes on. Several recipients are served one after the other: a 400 on one
+number does not stop the next one; a refused key, a 402, a 403, a failure or a timeout stop the next
+ones.
+
+Gladys gives the action one minute, its own wait for the connection included; the module takes 40
+seconds of it. A request lasts 10 seconds at most; a recipient with less than 16.5 seconds left (the
+request and the two `/data` writes around it) is not tried.
+
+## The safeguards
+
+- **Hourly cap**: a send that would bring the SMS billed over the last 60 minutes above the setting
+  is refused (a 2-SMS text counts 2, each recipient counts, the STOP mention too). The number of SMS is
+  the one the module computes; when smsmode announces more in its answer, the count is raised
+  afterwards. An SMS is counted and written to `/data` before its request leaves; it is given back
+  only when smsmode surely did not take it (a 4xx error, server not found, connection refused). A
+  restart therefore does not reset the count. At start, a send waits for `/data` to be read (3 seconds
+  at most). When `/data` is unreadable, too slow, or cannot be written (the status says so in each
+  case), the cap counts only the SMS sent since the start, and a restart may forget it; sending is not
+  blocked for that (an alert must leave).
+- **Never tried again** when an SMS may have left (timeout, connection cut, 5xx error): a second try
+  could be a second paid SMS. The result says "sent without confirmation".
+- **One send at a time** to smsmode; at most 20 sends wait for their turn, more are refused.
+- **Pause**: after a 429 (smsmode asks to slow down), the time smsmode gives, between 60 s and 6 h;
+  after a 5xx error, 60 s, doubled on each new error, 6 h at most. Nothing is sent during the pause,
+  buttons included; it is kept in `/data`.
+- **Key refused for sending** (401 on sending an SMS): no scene uses it any more. A short fingerprint
+  (8 bits, salted) is kept in `/data`, never the key. The refusal is lifted by changing the key, or by
+  a success of either button (which do try the key). A 401 of the "Check the key and the credit"
+  button (account API) does not block sending: a key may be allowed to send without reading its
+  account.
+- **402** or **sender refused** (403): the status says so; the next send is tried all the same
+  (smsmode decides). The 402 (payment required, expected for an empty credit) is not in the smsmode
+  documentation: to be confirmed with a real account.
+
+## Text, accents and cost
+
+An SMS holds 160 characters of the SMS alphabet (GSM 7-bit), or 153 per part beyond. This alphabet has
+é, è, à, ù, ì, ò, Ç but **not** ê, â, î, ô, û, ë, ï, ç, œ, ’, « », nor emojis: one of them turns the
+whole text into Unicode, 70 characters per SMS (67 per part). The characters € [ ] \{ \} ^ ~ | \ count
+twice.
+
+"Simplify" replaces ê with e, ç with c, œ with oe, ’ with ', « » with ", – with -, … with ..., the
+no-break space with a space: a French text keeps 160 characters per SMS. An emoji stays as it is.
+
+With the STOP mention, 20 characters are kept for it: the text is cut sooner, and it counts in the
+number of SMS and the cap.
+
+Control and invisible characters are removed, line breaks are kept.
+
+## Status
+
+The status of the integration tells: ready (with the cap), key missing or refused, invalid sender,
+pause in progress and its end time (Paris time), 402 or 403 at the last send, configuration not
+read yet (new try after 5 s, 10 s, 30 s, 1 min, then every 5 min), unreadable default numbers,
+`/data` unreadable or too slow, `/data` not written.
+
+## Data
+
+- Sent to smsmode: the key (header), the number, the text, the sender and the STOP mention when set.
+- Kept in `/data/smsmode-state.json`: the time and the number of parts of the SMS of the last hour, the
+  pause in progress, the salt and the 8-bit fingerprint of a refused key. No key, no number, no text.
+- Logs: masked numbers, the number of SMS parts never the text, never the key.
+
+## Limits
+
+- This is not a Gladys messaging channel: the Gladys "Send a message" action does not go through
+  smsmode. On purpose: a channel would also get the Gladys system messages (backups, batteries…), as
+  many paid SMS sent without a scene action.
+- Delivery reports (delivered, undelivered) are not followed: "accepted" means smsmode took the SMS,
+  not that it arrived.
+- The credit check reads the first organisation of the key; a key with a restricted role may not be
+  allowed to (the button then only says the key is accepted).
+
+## Parámetros de configuración
+
+Estos son los parámetros que smsmode te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| SMS through smsmode | `section` | No | Unofficial connector, not affiliated with smsmode. Your scenes send SMS with the "Send an SMS (smsmode)" action, through your own smsmode account: each SMS is paid from your smsmode credit. Nothing is ever sent at another time (no SMS at start, nor when you save this page), and nothing is received. Create an account on smsmode.com, buy credit, then create an API key in your smsmode customer area (API section) and paste it below. |
+| smsmode API key | `secret` | Sí | Kept by Gladys in its database, never shown again, sent only to smsmode (X-Api-Key header). |
+| Default numbers (optional) | `string` | No | Used when a scene action names no number. French mobiles (06, 07, overseas included) or international numbers starting with + or 00, separated by commas, 5 at most. |
+| Sender name (optional) | `string` | No | 3 to 11 letters or digits, at least one letter, shown instead of a number. Empty: smsmode's default sender. A custom sender may need the STOP mention below, or the operators may replace it. |
+| Add the STOP mention | `boolean` | No | smsmode adds "STOP" and a short number at the end of each SMS (a few characters more). Asked by smsmode for a custom sender on a marketing channel. |
+| Maximum SMS per hour | `number` | No | Safety cap against a runaway scene: the SMS billed over the last 60 minutes (a long text counts as several), 1 to 200. Beyond it, nothing is sent and the scene action fails. |
+| Maximum SMS per message | `number` | No | A text longer than one SMS (160 characters, 70 with an accent outside the SMS alphabet like ê or ç, or an emoji) is billed as several. Beyond this number (1 to 10), the text is cut and ends with "...". |
+| Accents | `select` | No | "Simplify" replaces the letters outside the SMS alphabet (ê, ç, ô, œ…) and the typographic signs (’ « » …) by the closest ones (e, c, o, oe, ' " ...), so a French text keeps 160 characters per SMS. |
+
+## Cómo instalar smsmode en Gladys
+
+1. En Gladys, abre **Integraciones**: smsmode aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-smsmode:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-smsmode](https://github.com/LM1LC3N7/gladys-smsmode).
+
+smsmode requiere Gladys `>=5.3.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+smsmode es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-smsmode) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-smsmode/blob/HEAD/docs/en.md)

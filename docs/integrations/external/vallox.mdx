@@ -1,0 +1,184 @@
+---
+title: "Vallox smart home integration, free and open source"
+sidebar_label: "Vallox"
+description: "Control your Vallox heat recovery ventilation unit locally: profiles, fans, temperatures. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-vallox.png"
+keywords:
+  - "vallox"
+  - "vallox smart home"
+  - "gladys vallox"
+  - "vallox gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/prohand/gladys-vallox instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Vallox","description":"Control your Vallox heat recovery ventilation unit locally: profiles, fans, temperatures.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-vallox","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-vallox.png","type":"device","version":"1.0.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-16T09:21:08Z"}} />
+
+Control your **Vallox** heat recovery ventilation unit (MVHR) from Gladys Assistant: profiles
+(home, away, boost, fireplace), fan speeds, supply air temperatures, and every sensor of the unit
+(temperatures, humidity, CO2, filter). Scene triggers, scene actions and a dashboard widget come
+with it.
+
+Everything stays on your local network: the integration talks to the unit the way its own web
+interface does. No cloud account, no internet access needed.
+
+## Supported units
+
+Vallox units with the **MV** controller and a network port, which have a web interface reachable
+at `http://<unit address>`: Vallox 51/90/96/99/101/110/125/139/145/245 MV, ValloPlus 180/240/270/350/
+370/510/850 MV, ValloMulti 200/300 MV, TSK Multi MV, and the Helios KWL units built on the same
+controller.
+
+Older units without a network port (Digit SE, Digit 2…) are not supported.
+
+## Before you start
+
+1. Connect the unit to your network (cable on the unit's Ethernet port).
+2. Give it a **fixed IP address** in your router (DHCP reservation): the integration finds the
+   unit by its address.
+3. Check that `http://<that address>` opens the Vallox web interface in a browser, from a
+   computer on the same network as Gladys.
+
+## Installation
+
+In Gladys, go to **Integrations**, search for **Vallox** and install it.
+
+## Configuration
+
+| Field                  | What to put                                                                         |
+| ---------------------- | ----------------------------------------------------------------------------------- |
+| IP address of the unit | The address of the unit, e.g. `192.168.1.50`. Several units: separate with commas.  |
+| Refresh interval (s)   | How often the unit is read. 60 s by default, 15 s minimum.                          |
+| Filter warning (days)  | The "Filter change due" trigger fires when the filter life left reaches this value. |
+
+Save, then click **Test the connection**: the answer gives the model, the firmware, the profile and
+the temperatures of each unit, or the reason why it did not answer.
+
+Then go to **Discover** in the integration and create the device.
+
+## The device
+
+The unit becomes one Gladys device, named after its model. It is identified by the unique id the
+unit carries: changing its IP address later does not create a new device.
+
+| Feature                             | Type            | What it does                                            |
+| ----------------------------------- | --------------- | ------------------------------------------------------- |
+| Ventilation on/off                  | switch          | Stops or starts the unit                                |
+| Away mode                           | switch          | Away profile on / back to home                          |
+| Boost                               | switch          | Boost for the duration set on the unit / stop the boost |
+| Fireplace mode                      | switch          | Fireplace mode for the duration set on the unit / stop  |
+| Fan speed                           | sensor (%)      | Current fan speed                                       |
+| Indoor air (extract)                | temperature     | Air extracted from the rooms                            |
+| Outdoor air                         | temperature     | Fresh air coming in                                     |
+| Supply air                          | temperature     | Air blown into the rooms                                |
+| Exhaust air                         | temperature     | Air leaving the house                                   |
+| Humidity                            | humidity (%)    | If the unit has the sensor                              |
+| CO2                                 | CO2 (ppm)       | If the unit has the sensor                              |
+| Fan speed (home/away/boost)         | setting (%)     | Fan speed of each profile                               |
+| Supply air target (home/away/boost) | setpoint (°C)   | Supply air temperature of each profile (5 to 25 °C)     |
+| Boost / fireplace time left         | duration (min)  | Time left of the running boost or fireplace mode        |
+| Filter change in                    | duration (days) | Days left before the next filter change                 |
+
+The device card shows a **local** badge while the unit answers, **unreachable** when it does not.
+
+## Scenes
+
+### Triggers
+
+| Trigger                      | When                                                                     | Variables                                 |
+| ---------------------------- | ------------------------------------------------------------------------ | ----------------------------------------- |
+| Ventilation profile changed  | The profile changed from the unit's panel, its app or a timer            | unit name, new profile, previous profile  |
+| Ventilation alarm            | A new alarm is active (fan fault, frozen cell, dirty filters…)           | unit name, severity, alarm, code, message |
+| Filter change due            | The filter life left reached the number of days set in the configuration | unit name, days left, change date         |
+| Ventilation unit unreachable | The unit stopped answering (two reads in a row failed)                   | unit name, address                        |
+
+Each trigger can be limited to one unit, and "profile changed" to some profiles, "alarm" to a
+severity.
+
+Orders given by Gladys (dashboard, scenes, widget) never fire "profile changed": a scene that
+reacts to a profile change and changes it again cannot loop.
+
+Profile values in the variables: `home`, `away`, `boost`, `fireplace`, `extra`.
+
+### Actions
+
+| Action                         | What it does                                                   | Result for the next actions                                       |
+| ------------------------------ | -------------------------------------------------------------- | ----------------------------------------------------------------- |
+| Set the ventilation profile    | Home, away, boost or fireplace; optional duration in minutes   | profile                                                           |
+| Set the fan speed of a profile | Fan speed (%) of the home, away or boost profile               | fan speed                                                         |
+| Record a filter change         | The filters were changed today: the unit restarts its reminder | next change date                                                  |
+| Read the ventilation values    | Reads the unit now                                             | profile, temperatures, humidity, CO2, fan speed, filter days left |
+
+Example: _when the bathroom humidity goes above 75 %, set the profile to boost for 30 minutes_.
+
+## Dashboard widget
+
+Add the **Vallox ventilation** widget to a dashboard. It shows:
+
+- live tiles: indoor and outdoor temperature, fan speed, and CO2 (or humidity, or supply air);
+- a status list: profile and time left, heat exchanger state (heat recovery, bypass, defrost),
+  filter change, alarms, connection;
+- three buttons: **Home**, **Away**, **Boost**.
+
+With several units, pick the unit in the widget settings.
+
+## Configuration screen buttons
+
+- **Test the connection**: reads each unit now and tells what it found.
+- **Filters changed today**: after changing the filters, choose the unit; its reminder restarts
+  from today.
+
+## Troubleshooting
+
+| Problem                       | What to check                                                                              |
+| ----------------------------- | ------------------------------------------------------------------------------------------ |
+| "No answer from 192.168.1.50" | The address, the cable, and that `http://<address>` opens in a browser on Gladys' network. |
+| The device is not in Discover | The unit must have answered once: click **Test the connection**, then **Discover** again.  |
+| Humidity or CO2 stays empty   | The unit has no such sensor: the value is not published.                                   |
+| The values arrive late        | Lower the refresh interval (15 s minimum).                                                 |
+| The Vallox app stops working  | The unit accepts few connections at a time: avoid a refresh interval below 30 s.           |
+
+The integration logs (Integrations → Vallox → Logs) say which unit failed and why.
+
+## Privacy
+
+The integration only talks to the address you typed, on your local network (port 80). Nothing is
+sent to Vallox or to any other service. The only file it writes is `/data/units.json`, which keeps
+the id, model and firmware of the units already met.
+
+## Configuration settings
+
+These are the settings Vallox asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Getting started | `section` | No | The integration talks to the unit directly on your local network, like the Vallox web interface does: no cloud account. Give the unit a fixed IP address in your router, check that you can open http:\/\/\<that address> in a browser, then type the address below. |
+| IP address of the unit | `string` | Yes | Several units: separate their addresses with commas. |
+| Refresh interval (s) | `number` | No | How often the unit is read, in seconds (15 to 3600). |
+| Filter warning (days) | `number` | No | The "Filter change due" scene trigger fires when the filter life left reaches this number of days. |
+
+## How to install Vallox in Gladys
+
+1. In Gladys, open **Integrations**: Vallox appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-vallox:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-vallox](https://github.com/prohand/gladys-vallox).
+
+Vallox requires Gladys `>=5.3.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Vallox is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [prohand](https://github.com/prohand), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/prohand/gladys-vallox) — [source of this documentation](https://github.com/prohand/gladys-vallox/blob/HEAD/docs/en.md)

@@ -1,0 +1,148 @@
+---
+title: "Threema Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Threema"
+description: "Unofficial: Threema messages from your Gladys scenes, through Threema Gateway (send only). Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-threema.png"
+keywords:
+  - "threema"
+  - "threema smart home"
+  - "gladys threema"
+  - "threema gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-threema instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Threema","description":"Unofficial: Threema messages from your Gladys scenes, through Threema Gateway (send only).","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-threema","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-threema.png","type":"communication","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-14T07:57:08Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+Unofficial connector, not affiliated with Threema. It sends Threema messages from your Gladys scenes, with your
+own **Threema Gateway** account. Send only: Gladys does not read the answers.
+
+> This integration has never been tested with a real Threema Gateway account: it follows the official API
+> documentation. Feedback is welcome.
+
+## What you need
+
+- A **Threema Gateway ID in basic mode**, created on [gateway.threema.ch](https://gateway.threema.ch/en/):
+  8 characters starting with `*`, with its **API secret**.
+- Threema Gateway **credits**: every message sent uses some; they are bought from Threema.
+
+**Basic mode**: the Threema Gateway server holds the private key of your ID and prepares each message for the
+recipient itself. It is the simplest mode to set up; if you want the key to stay with you, this connector does
+not fit (end-to-end mode not supported).
+
+## Configuration
+
+| Field                                  | Role                                                                                                                                                                                                                                                                                                                            |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Gateway ID                             | `*XXXXXXX`, 8 characters.                                                                                                                                                                                                                                                                                                       |
+| API secret                             | Kept by Gladys in its database, never shown again, sent only to Threema.                                                                                                                                                                                                                                                        |
+| Allowed recipients                     | Up to 20, separated by commas: Threema IDs (8 characters), phone numbers in international format (`+41…` or `0041…`) or e-mail addresses linked to a Threema account. **The only** recipients this connector ever sends to (scene action, test button, and the "My account" recipients of users); the first one is the default. |
+| Messages per hour, at most             | 20 by default, from 1 to 500.                                                                                                                                                                                                                                                                                                   |
+| Also send the Gladys messages of users | Off by default (see below).                                                                                                                                                                                                                                                                                                     |
+
+Buttons:
+
+- **Check the account**: asks Threema for the credits left. Free, nothing sent, not counted in the limit.
+- **Send a test message**: a short message to an allowed recipient (the first one when empty). Costs credits and
+  counts in the limit.
+
+## Scene action "Send a Threema message"
+
+- **Text**: may hold scene variables. Beyond 3,500 bytes (the Threema limit), it is cut and ends with "…".
+- **Recipient** (optional): one of the allowed recipients, written as you like (`alice123`,
+  `+41 79 123 45 67`); empty, the first one of the list. A recipient outside the list is refused, even when it
+  comes from a scene variable: nothing is sent.
+- **Output**: `message_id`, the message ID given by Threema (empty when it could not be read).
+
+## Gladys messages to users (option)
+
+This connector is also a Gladys message channel. When the administrator turns on **"Also send the Gladys
+messages of users"**, a user who enters their Threema recipient in "My account" receives through Threema the
+messages Gladys sends them, **only if this recipient is also in the allowed recipients** of the configuration
+(any user can fill "My account"; a recipient outside the list gets nothing, the logs and the status say so,
+masked). What goes through, each one costing credits and counting in the same hourly limit:
+
+- the core "Send a message" scene action (to every channel, or to Threema only);
+- the answers of the core "Ask the AI" scene action, when the scene picks no channel or picks Threema;
+- the Gladys system messages to **every administrator**: Gladys upgraded (at the next start), backup failure,
+  Gladys Plus subscription, weekly digest, low batteries. The **system message channel** setting of Gladys can
+  keep them out of Threema.
+
+Gladys waits 5 s for a channel to answer: the connector answers 3.5 s after the message came in at most (even
+while its configuration or `/data` is still being read), and the send goes on behind (15 s at most for the
+request); its outcome, failure included, goes to the logs.
+
+## What protects your account
+
+- **Nothing leaves by itself**: not at start, not at a reconnection, not on a timer; only a scene action, a
+  click on "Send a test message", or a Gladys message when the option is on and its recipient is allowed.
+- **No duplicate**: a message is never sent again. When Threema does not answer in time or the connection is
+  cut, the message may have left: the error says so, and it is not sent again.
+- **Hourly limit**: counted before the send, over a sliding hour, kept in `/data` (a restart does not reset
+  it). A message refused by Threema (400, 401, 402, 404, 413, 429) does not count; a server error (5xx), a
+  timeout or a cut connection does. When `/data` is unreadable, read-only or slow, the send does not wait
+  (1 s at most) and the status warns that the limit only holds until the next restart.
+- **One message at a time**, 10 waiting at most, the others refused.
+- **Refused ID or secret** (401): nothing more sent with them (an 8-bit fingerprint, never the secret, kept in
+  `/data`) until they change or a button succeeds.
+- **Pause** after a 429 or a server error: 60 s, doubled each time up to 1 h, or the delay Threema asks up to
+  6 h; buttons included, kept across a restart.
+- **No credits left** (402): the status says so; nothing was sent.
+- The secret, the text of the messages and whole recipients never appear in the logs, the status or `/data`:
+  an ID becomes `AL******`, a number `+…67`, an address `j…@…`.
+
+## Statuses
+
+"Ready" as long as nothing was sent (the ID and the secret are only checked at the first message or with the
+"Check the account" button); "Threema Gateway answered" after a success; otherwise the reason: refusal, pause,
+limit reached, no credits, network.
+
+## Privacy
+
+The messages go through the Threema servers (Switzerland). What Threema does with them falls under the terms of
+its Gateway service.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Threema in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Your Threema Gateway account | `section` | Nein | Unofficial connector, not affiliated with Threema. It needs a Threema Gateway ID in basic mode, created on gateway.threema.ch. In basic mode the Gateway server holds the private key of this ID and prepares each message for the recipient itself. Every message costs credits, bought from Threema. Send only: Gladys cannot read the answers. Nothing leaves without a scene action or a click on a button, and never more than the hourly limit below. |
+| Gateway ID | `string` | Ja | The Gateway ID in basic mode: 8 characters starting with *. |
+| API secret | `secret` | Ja | The API secret of this ID (gateway.threema.ch, your ID). Kept by Gladys in its database, never shown again, sent only to Threema. |
+| Allowed recipients | `string` | Nein | The only recipients this integration ever sends to, separated by commas (20 at most): Threema IDs (8 characters), phone numbers in international format (+41…) or e-mail addresses linked to a Threema account. The first one is used when a scene names none. A user's “My account” recipient must be in this list too. |
+| Messages per hour, at most | `number` | Nein | Beyond it, nothing is sent until the oldest message of the last hour is an hour old (from 1 to 500). Every path counts: scenes, buttons and forwarded Gladys messages. |
+| Also send the Gladys messages of users | `boolean` | Nein | Off by default. On: the messages Gladys sends to a user whose “My account” recipient is in the allowed list go through Threema too, each one costing credits: the core “Send a message” and “Ask the AI” scene actions, and the Gladys system messages to administrators (upgrade at the next start, backup failure, Gladys Plus, weekly digest, low batteries) unless the system message channel setting of Gladys keeps them elsewhere. |
+
+## So installierst du Threema in Gladys
+
+1. Öffne in Gladys **Integrationen**: Threema erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-threema:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-threema](https://github.com/LM1LC3N7/gladys-threema).
+
+Threema benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Threema ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-threema) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-threema/blob/HEAD/docs/en.md)

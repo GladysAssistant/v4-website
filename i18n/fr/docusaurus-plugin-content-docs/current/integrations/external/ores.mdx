@@ -1,0 +1,184 @@
+---
+title: "Intégration domotique ORES, gratuite et open source"
+sidebar_label: "ORES"
+description: "Statut du réseau ORES (Wallonie) : pannes et travaux planifiés à votre adresse. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/gboulvin--Gladys-ORES.png"
+keywords:
+  - "ores"
+  - "domotique ores"
+  - "gladys ores"
+  - "ores gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/gboulvin/Gladys-ORES instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"ORES","description":"Statut du réseau ORES (Wallonie) : pannes et travaux planifiés à votre adresse.","owner":"gboulvin","owner_avatar_url":"https://avatars.githubusercontent.com/u/78817935?v=4","repo_url":"https://github.com/gboulvin/Gladys-ORES","cover_url":"https://integration-store-storage.gladysassistant.com/covers/gboulvin--Gladys-ORES.png","type":"device","version":"0.2.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-13T18:31:04Z"}} />
+
+Cette intégration surveille le réseau de distribution **ORES** (Wallonie, Belgique) à votre
+domicile et, si vous le souhaitez, à une seconde adresse : pannes en cours, travaux planifiés
+avec coupure, retards annoncés. Elle lit la carte publique des pannes d'ORES
+([Pannes et interruptions](https://www.ores.be/pannes-et-interruptions/)).
+
+> Intégration **non officielle**, sans lien avec ORES. Elle utilise le service web qui
+> alimente la carte publique des pannes du site ores.be, sans authentification. ORES peut le
+> modifier à tout moment.
+
+Tag : **cloud** (l'intégration interroge le site d'ORES, rien n'est lu en local).
+
+## Configuration
+
+### Domicile
+
+Par défaut, le domicile est **votre maison Gladys** (Paramètres → Maisons, avec sa position
+sur la carte). L'intégration demande à Gladys l'accès à la position des maisons (autorisation
+affichée à l'installation). Gladys ne donnant que des coordonnées GPS, l'intégration les
+convertit **une seule fois** en adresse postale via
+[OpenStreetMap Nominatim](https://operations.osmfoundation.org/policies/nominatim/), puis
+garde le résultat en cache dans `/data`. Les coordonnées ne sont envoyées nulle part
+ailleurs, et jamais à ORES.
+
+| Champ               | Rôle                                                                                   |
+| ------------------- | -------------------------------------------------------------------------------------- |
+| Adresse du domicile | « Position de la maison Gladys » (défaut) ou « Adresse saisie ci-dessous ».            |
+| Maison Gladys       | Nom de la maison à surveiller si Gladys en a plusieurs (vide : la première localisée). |
+
+Le bouton **Tester la carte des pannes ORES** affiche l'adresse trouvée : vérifiez-la. Si
+elle est fausse (position imprécise, maison en bout de rue…), choisissez « Adresse saisie
+ci-dessous » et remplissez les champs.
+
+Vous venez de la version 0.1 ? Tant que vous n'enregistrez pas la configuration, l'adresse
+déjà saisie reste utilisée.
+
+### Adresse saisie à la main
+
+| Champ       | Rôle                                                                |
+| ----------- | ------------------------------------------------------------------- |
+| Code postal | Obligatoire en mode manuel : la commune surveillée.                 |
+| Localité    | Uniquement si plusieurs localités partagent le même code postal.    |
+| Rue         | Pour savoir si **votre** rue est touchée, pas seulement la commune. |
+| Numéro      | Affine à votre côté de la rue (ORES publie des plages pair/impair). |
+
+Sans rue, toute la commune compte comme « votre adresse ». La rue est comparée sans accents, ni
+majuscules, ni ponctuation : « Rue de l'Église » correspond à « RUE DE L EGLISE ».
+
+### Seconde adresse (facultatif)
+
+Une autre adresse à surveiller : seconde résidence, parents, lieu de travail… Donnez-lui un
+**nom** (par exemple « Parents ») et remplissez au moins son code postal. Elle a son propre
+appareil, et les déclencheurs, l'action de scène et le widget peuvent la cibler. Videz le code
+postal pour la désactiver.
+
+### Autres réglages
+
+- **Horizon des travaux (jours)** : les travaux annoncés plus tard sont ignorés (7 par défaut).
+- **Intervalle (s)** : fréquence de lecture de la carte (300 s par défaut, 60 s minimum).
+
+## Les appareils « ORES network status »
+
+Créez-les depuis l'onglet **Découverte** : un pour le domicile, un pour la seconde adresse.
+Chacun expose quatre capteurs binaires (0/1) :
+
+- **Panne à mon adresse** : une panne non planifiée touche l'adresse ;
+- **Travaux à mon adresse** : des travaux planifiés avec coupure y sont en cours ;
+- **Travaux à venir à mon adresse** : des travaux sont annoncés dans l'horizon choisi ;
+- **Incident dans ma commune** : au moins une panne ou un chantier est en cours dans la commune.
+
+## Déclencheurs de scène
+
+| Déclencheur                       | Quand                                                   |
+| --------------------------------- | ------------------------------------------------------- |
+| Début de panne ou de travaux ORES | une panne ou un chantier commence                       |
+| Fin de panne ou de travaux ORES   | une panne ou un chantier en cours se termine            |
+| Panne ou travaux ORES en retard   | ORES annonce une fin plus tardive                       |
+| Travaux ORES annoncés             | de nouveaux travaux planifiés apparaissent sur la carte |
+
+Filtres : **Adresse** (domicile / seconde adresse), **Type** (panne / travaux planifiés) et
+**Où** (à l'adresse / ailleurs dans la commune). Variables disponibles dans les actions
+suivantes : `{{triggerEvent.data.reference}}`, `city`, `start_time`, `end_time` (dates ISO,
+UTC) et `customers` (clients impactés).
+
+La première lecture après l'installation (ou un changement d'adresse) sert de référence : les
+incidents déjà en cours ne déclenchent rien. L'état est conservé dans `/data`, donc un
+redémarrage ne rejoue ni ne perd de transition.
+
+## Actions de scène
+
+- **Vérifier une adresse sur le réseau ORES** : n'importe quelle adresse, saisie dans la scène.
+  Sorties : `outage`, `planned_interruption`, `upcoming_interruption`, `commune_incidents`,
+  `reference`, `end_time`, `next_start_time`.
+- **Obtenir le statut du réseau ORES** : le dernier statut connu du domicile ou de la seconde
+  adresse (champ **Adresse**), sans appel réseau, avec les mêmes sorties.
+
+## Widget
+
+Le widget **Statut du réseau ORES** affiche les capteurs en direct, l'état de l'adresse, le
+nombre d'incidents dans la commune, la liste des pannes et travaux (détail au toucher) et un
+bouton **Actualiser**. Son réglage **Adresse** choisit le domicile ou la seconde adresse :
+ajoutez deux widgets pour voir les deux.
+
+## Consommations gaz et électricité
+
+Non prévues. Le portail my.ores.be n'a pas d'API publique et n'accepte plus que la connexion
+par itsme ou carte d'identité (la connexion e-mail / mot de passe est abandonnée). Ces
+connexions demandent une validation humaine à chaque fois et ne peuvent pas être automatisées.
+
+Un import ponctuel de l'export de consommation de my.ores.be reste envisageable. Si cela vous
+intéresse, ouvrez une [issue](https://github.com/gboulvin/Gladys-ORES/issues).
+
+## Confidentialité
+
+- Seule la liste publique des incidents est téléchargée chez ORES. Vos adresses ne quittent
+  jamais votre Gladys : la comparaison est faite en local.
+- En mode « maison Gladys », les coordonnées de la maison sont envoyées une seule fois à
+  OpenStreetMap Nominatim (puis à chaque déplacement de la maison). Pour l'éviter, saisissez
+  votre adresse à la main.
+- Les adresses ne sont jamais écrites dans les logs.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par ORES dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Adresses surveillées | `section` | Non | L'intégration lit la carte publique des pannes ORES toutes les quelques minutes et surveille votre domicile et, si vous le souhaitez, une seconde adresse. Par défaut, le domicile est votre maison Gladys : ses coordonnées sont converties UNE fois en adresse postale via OpenStreetMap (Nominatim), puis mises en cache. Vous préférez la saisir ? Choisissez « Adresse saisie ci-dessous ». Intégration non officielle, sans lien avec ORES. |
+| Adresse du domicile | `select` | Non | D'où vient l'adresse du domicile. |
+| Maison Gladys (facultatif) | `string` | Non | Nom de la maison à surveiller si Gladys en a plusieurs. Vide : la première maison localisée. |
+| Adresse du domicile saisie à la main | `section` | Non | Utilisée uniquement avec « Adresse saisie ci-dessous ». Le code postal est obligatoire ; ajoutez la rue (et le numéro) pour savoir si VOTRE logement est touché, et pas seulement votre commune. |
+| Code postal | `string` | Non |  |
+| Localité (facultatif) | `string` | Non | Uniquement si plusieurs localités partagent votre code postal. |
+| Rue (facultatif) | `string` | Non |  |
+| Numéro (facultatif) | `string` | Non |  |
+| Seconde adresse (facultatif) | `section` | Non | Une autre adresse à surveiller (seconde résidence, proches...). Elle a son propre appareil, et les déclencheurs de scène et le widget peuvent la cibler. Laissez le code postal vide pour la désactiver. |
+| Nom | `string` | Non |  |
+| Code postal | `string` | Non |  |
+| Localité (facultatif) | `string` | Non | Uniquement si plusieurs localités partagent votre code postal. |
+| Rue (facultatif) | `string` | Non |  |
+| Numéro (facultatif) | `string` | Non |  |
+| Horizon des travaux planifiés (jours) | `number` | Non | Les travaux annoncés plus tard sont ignorés. |
+| Intervalle de rafraîchissement (s) | `number` | Non | Fréquence de lecture de la carte des pannes ORES, en secondes (une minute minimum). |
+
+## Comment installer ORES dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : ORES apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/gboulvin/gladys-ores:0.2.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/gboulvin/Gladys-ORES](https://github.com/gboulvin/Gladys-ORES).
+
+ORES nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+ORES est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [gboulvin](https://github.com/gboulvin), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/gboulvin/Gladys-ORES) — [source de cette documentation](https://github.com/gboulvin/Gladys-ORES/blob/HEAD/docs/fr.md)

@@ -1,0 +1,148 @@
+---
+title: "Intégration domotique Threema, gratuite et open source"
+sidebar_label: "Threema"
+description: "Non officiel : messages Threema depuis vos scènes Gladys, via Threema Gateway (envoi seul). Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-threema.png"
+keywords:
+  - "threema"
+  - "domotique threema"
+  - "gladys threema"
+  - "threema gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-threema instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Threema","description":"Non officiel : messages Threema depuis vos scènes Gladys, via Threema Gateway (envoi seul).","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-threema","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-threema.png","type":"communication","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-14T07:57:08Z"}} />
+
+Connecteur non officiel, sans lien avec Threema. Il envoie des messages Threema depuis vos scènes Gladys, avec
+votre propre compte **Threema Gateway**. Envoi seul : Gladys ne lit pas les réponses.
+
+> Cette intégration n’a jamais été testée avec un vrai compte Threema Gateway : elle suit la documentation
+> officielle de l’API. Vos retours sont les bienvenus.
+
+## Ce qu’il vous faut
+
+- Un **identifiant Threema Gateway en mode simple** (« Basic mode »), créé sur
+  [gateway.threema.ch](https://gateway.threema.ch/en/) : 8 caractères commençant par `*`, avec son **secret
+  d’API**.
+- Des **crédits** Threema Gateway : chaque message envoyé en consomme, ils s’achètent chez Threema.
+
+**Mode simple** : le serveur Gateway de Threema détient la clé privée de votre identifiant et prépare lui-même
+chaque message pour le destinataire. C’est le mode le plus simple à mettre en place ; si vous voulez que la clé
+reste chez vous, ce connecteur ne convient pas (mode « End-to-end » non pris en charge).
+
+## Configuration
+
+| Champ                                              | Rôle                                                                                                                                                                                                                                                                                                                                                      |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Identifiant Gateway                                | `*XXXXXXX`, 8 caractères.                                                                                                                                                                                                                                                                                                                                 |
+| Secret d’API                                       | Gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement à Threema.                                                                                                                                                                                                                                                                              |
+| Destinataires autorisés                            | Jusqu’à 20, séparés par des virgules : identifiants Threema (8 caractères), numéros au format international (`+33…` ou `0033…`) ou adresses e-mail liées à un compte Threema. **Les seuls** destinataires auxquels ce connecteur envoie (action de scène, bouton de test, et destinataires « Mon compte » des utilisateurs) ; le premier sert par défaut. |
+| Messages par heure, au plus                        | 20 par défaut, de 1 à 500.                                                                                                                                                                                                                                                                                                                                |
+| Envoyer aussi les messages Gladys des utilisateurs | Désactivé par défaut (voir plus bas).                                                                                                                                                                                                                                                                                                                     |
+
+Boutons :
+
+- **Vérifier le compte** : demande à Threema les crédits restants. Gratuit, rien n’est envoyé, ne compte pas dans
+  le plafond.
+- **Envoyer un message de test** : un court message à un destinataire autorisé (le premier si vide). Coûte des
+  crédits et compte dans le plafond.
+
+## Action de scène « Envoyer un message Threema »
+
+- **Texte** : peut contenir des variables de scène. Au-delà de 3 500 octets (limite de Threema), il est coupé et
+  finit par « … ».
+- **Destinataire** (facultatif) : l’un des destinataires autorisés, écrit comme vous voulez (`alice123`,
+  `+33 6 12 34 56 78`) ; vide, le premier de la liste. Un destinataire hors de la liste est refusé, même s’il vient
+  d’une variable de scène : rien n’est envoyé.
+- **Sortie** : `message_id`, l’identifiant du message donné par Threema (vide s’il n’a pas pu être lu).
+
+## Messages de Gladys aux utilisateurs (option)
+
+Ce connecteur est aussi un canal de messages de Gladys. Si l’administrateur coche **« Envoyer aussi les messages
+Gladys des utilisateurs »**, un utilisateur qui saisit son destinataire Threema dans « Mon compte » reçoit par
+Threema les messages que Gladys lui envoie, **seulement si ce destinataire est aussi dans les destinataires
+autorisés** de la configuration (tout utilisateur peut remplir « Mon compte » ; un destinataire hors de la liste ne
+reçoit rien, les journaux et le statut le disent, masqué). Ce qui passe, chaque message coûtant des crédits et
+comptant dans le même plafond horaire :
+
+- l’action de scène « Envoyer un message » du cœur (vers tous les canaux, ou vers Threema seul) ;
+- les réponses de l’action de scène « Demander à l’IA » du cœur, quand la scène ne choisit aucun canal ou choisit
+  Threema ;
+- les messages système de Gladys à **chaque administrateur** : Gladys mise à jour (au démarrage suivant), échec de
+  sauvegarde, abonnement Gladys Plus, résumé hebdomadaire, piles faibles. Le réglage **canal des messages
+  système** de Gladys peut les garder hors de Threema.
+
+Gladys attend 5 s la réponse d’un canal : le connecteur répond au plus tard 3,5 s après l’arrivée du message (même
+pendant la lecture de sa configuration ou de `/data`), et l’envoi continue derrière (15 s au plus pour la
+requête) ; son résultat, échec compris, va dans les journaux.
+
+## Ce qui protège votre compte
+
+- **Rien ne part tout seul** : ni au démarrage, ni à une reconnexion, ni sur une minuterie ; seulement une
+  action de scène, un clic sur « Envoyer un message de test », ou un message de Gladys quand l’option est cochée et son destinataire autorisé.
+- **Pas de doublon** : un message n’est jamais renvoyé. Si Threema ne répond pas à temps ou si la connexion est
+  coupée, le message est peut-être parti : l’erreur le dit, et il n’est pas renvoyé.
+- **Plafond horaire** : compté avant l’envoi, sur une heure glissante, gardé dans `/data` (un redémarrage ne le
+  remet pas à zéro). Un message refusé par Threema (400, 401, 402, 404, 413, 429) ne compte pas ; une erreur
+  du serveur (5xx), un délai dépassé ou une coupure comptent. Si `/data` est illisible, en lecture seule ou
+  lent, l’envoi n’attend pas (1 s au plus) et le statut prévient que le plafond n’est garanti que jusqu’au
+  prochain redémarrage.
+- **Un message à la fois**, 10 en attente au plus, les autres refusés.
+- **Identifiant ou secret refusé** (401) : plus rien n’est envoyé avec eux (une empreinte de 8 bits, jamais le
+  secret, gardée dans `/data`) tant qu’ils ne changent pas ou qu’un bouton ne réussit pas.
+- **Pause** après un 429 ou une erreur du serveur : 60 s, doublée à chaque fois jusqu’à 1 h, ou la durée
+  demandée par Threema jusqu’à 6 h ; boutons compris, gardée au redémarrage.
+- **Plus de crédits** (402) : le statut le dit ; rien n’a été envoyé.
+- Le secret, le texte des messages et les destinataires complets n’apparaissent jamais dans les journaux, le
+  statut ni `/data` : un identifiant y devient `AL******`, un numéro `+…67`, une adresse `j…@…`.
+
+## Statuts
+
+« Prêt » tant que rien n’a été envoyé (l’identifiant et le secret ne sont vérifiés qu’au premier message ou au
+bouton « Vérifier le compte ») ; « Threema Gateway a répondu » après un succès ; sinon la raison : refus, pause,
+plafond atteint, plus de crédits, réseau.
+
+## Confidentialité
+
+Les messages passent par les serveurs de Threema (Suisse). Ce que Threema en fait relève de ses conditions du
+service Gateway.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Threema dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre compte Threema Gateway | `section` | Non | Connecteur non officiel, sans lien avec Threema. Il faut un identifiant Threema Gateway en mode simple (basic), créé sur gateway.threema.ch. En mode simple, le serveur Gateway détient la clé privée de cet identifiant et prépare lui-même chaque message pour le destinataire. Chaque message coûte des crédits, achetés à Threema. Envoi seul : Gladys ne peut pas lire les réponses. Rien ne part sans action de scène ou clic sur un bouton, et jamais plus que le plafond horaire ci-dessous. |
+| Identifiant Gateway | `string` | Oui | L’identifiant Gateway en mode simple : 8 caractères commençant par *. |
+| Secret d’API | `secret` | Oui | Le secret d’API de cet identifiant (gateway.threema.ch, votre identifiant). Gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement à Threema. |
+| Destinataires autorisés | `string` | Non | Les seuls destinataires auxquels ce module envoie, séparés par des virgules (20 au plus) : identifiants Threema (8 caractères), numéros au format international (+33…) ou adresses e-mail liées à un compte Threema. Le premier sert quand une scène n’en nomme aucun. Le destinataire de « Mon compte » d’un utilisateur doit aussi être dans cette liste. |
+| Messages par heure, au plus | `number` | Non | Au-delà, rien n’est envoyé avant que le plus ancien message de la dernière heure ait une heure (de 1 à 500). Tout compte : scènes, boutons et messages de Gladys transmis. |
+| Envoyer aussi les messages Gladys des utilisateurs | `boolean` | Non | Désactivé par défaut. Activé : les messages que Gladys envoie à un utilisateur dont le destinataire de « Mon compte » est dans la liste autorisée passent aussi par Threema, chacun coûtant des crédits : les actions de scène « Envoyer un message » et « Demander à l’IA » du cœur, et les messages système de Gladys aux administrateurs (mise à jour au démarrage suivant, échec de sauvegarde, Gladys Plus, résumé hebdomadaire, piles faibles), sauf si le réglage du canal des messages système de Gladys les envoie ailleurs. |
+
+## Comment installer Threema dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Threema apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-threema:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-threema](https://github.com/LM1LC3N7/gladys-threema).
+
+Threema nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Threema est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-threema) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-threema/blob/HEAD/docs/fr.md)

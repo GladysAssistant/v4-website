@@ -1,0 +1,180 @@
+---
+title: "OpenAgenda smart home integration, free and open source"
+sidebar_label: "OpenAgenda"
+description: "Unofficial: OpenAgenda cultural agendas (concerts, exhibitions) as Gladys calendars. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-openagenda.png"
+keywords:
+  - "openagenda"
+  - "openagenda smart home"
+  - "gladys openagenda"
+  - "openagenda gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-openagenda instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"OpenAgenda","description":"Unofficial: OpenAgenda cultural agendas (concerts, exhibitions) as Gladys calendars.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-openagenda","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-openagenda.png","type":"calendar","version":"0.1.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-14T16:02:20Z"}} />
+
+**Unofficial integration**, not affiliated with OpenAgenda. Never tested with a
+real OpenAgenda key: the answer format comes from the official API v2
+documentation (developers.openagenda.com, read on 2026-11-14, when the API
+answered 403 without a key, as documented). The test answers are made up.
+
+The cultural agendas published on [OpenAgenda](https://openagenda.com) (concerts,
+exhibitions, shows, events of your town…) become Gladys calendars: calendar view,
+"An event is coming" scene trigger, calendar scene actions and the assistant, like
+a CalDAV calendar.
+
+## What you need
+
+- A free OpenAgenda account and its **public key** (`oa_pk_…`), in
+  [your account settings](https://openagenda.com/settings/apiKey). A secret key
+  (`oa_sk_…`) is refused: it can write to your agendas, and the integration only
+  reads.
+- Gladys 5.3.0 or later.
+
+## Configuration (administrator)
+
+1. **Configuration** tab: paste the public key. It is kept by Gladys in its
+   database, never shown again, sent only to OpenAgenda (`key` header, never in
+   an address).
+2. Optional settings:
+   - **Refresh interval**: each agenda is read again every 6 h by default (2 to
+     24 h).
+   - **Days ahead**: 60 days by default (7 to 365). Yesterday's events stay a
+     day, then go.
+   - **Time slots per agenda**: 500 by default (50 to 2,000), the soonest first.
+     An event on several dates counts one slot per date.
+3. **Test the key**: one small request to OpenAgenda; the answer lists the
+   agendas followed and the licence of their data.
+
+## Your agendas (each user)
+
+In the **My calendars** block of the integration page, each user enables the
+integration for themselves (their consent) and gives:
+
+- **Agendas**: up to 10, separated by commas: the link of the agenda
+  (`https://openagenda.com/my-city-agenda`), its short name (the end of the
+  link) or its number (`https://openagenda.com/agendas/12345678`).
+- **City** (optional): only the events in this city, written as OpenAgenda
+  writes it (the "commune" of the places). An unreadable city (signs other
+  than letters, digits, space, apostrophe, dot, hyphen, brackets): nothing is
+  read nor changed for that account until it is fixed.
+
+Each agenda becomes a **private** calendar of that user. To have it seen by the
+whole household and able to trigger scenes, share it ("Shared" toggle). The
+"Sync" toggle empties and stops it; turned back on, it is filled again from the
+last read, without asking OpenAgenda. Removing an agenda from the list deletes
+its calendar (once OpenAgenda has answered for every entry of the list).
+
+## What is read
+
+- The **published** events of the agendas, in the user's language (French by
+  default), from yesterday to the horizon set. Each date of an event is one
+  Gladys event (start, end, place, link to OpenAgenda).
+- Left out: **cancelled** and **postponed** events. Marked: "Full:" and
+  "Online:". A time without a time zone, an end before the start or a slot
+  longer than 48 h is not read.
+- An event removed from the agenda leaves Gladys at the next read.
+
+Rhythm: an agenda is read once per interval, all its pages in a row, one request
+at a time, 2 s apart at least. After a failure: tried again 5 min, 15 min,
+30 min, 1 h later, then at the interval; an agenda not found (404) waits the
+interval at once. Texts are cleaned (HTML tags, entities, invisible and
+direction-changing characters removed). An event seen twice (pages that overlap)
+counts once; an empty page announcing more (unless the API gave the total and all came), or the same next page served twice,
+is a read cut short (nothing sent, tried again as after a failure). When the time-slot cap is reached before the last page, yesterday's
+events are read on their own (the API lists them last). A restart, a reconnection, a new
+account following an agenda already read or a toggle start no read: the last
+read, kept in `/data`, is published again. Two users following the same agenda
+in the same language and city share one read.
+
+## Data licence
+
+The licence is set by each publisher, **event by event** (the `rights` field of
+the API): most often the **Licence Ouverte / Etalab 2.0** (French open licence),
+which allows reuse, commercial included, crediting the source and the date of
+the last update. The integration therefore shows it:
+
+- in the description of **each event**: "Source: \<publisher> via OpenAgenda,
+  licence \<licence>, updated \<date>" ("licence not stated" when the publisher
+  gives none);
+- in the description of **each calendar**: the licences and sources seen at the
+  last read;
+- in the answer of the **Test the key** button, agenda by agenda.
+
+Check an agenda's licence before reusing its data outside Gladys: the terms are
+at [https://developers.openagenda.com/licence](https://developers.openagenda.com/licence). The integration reads the API
+`https://api.openagenda.com/v2`; nothing is shipped in the image.
+
+## What the integration does not do
+
+- It never writes to OpenAgenda (read only).
+- It does not read the private agendas the key cannot see: the agenda is marked
+  "not readable with this key", the others go on.
+- No full-day events: each slot keeps its times.
+
+## Status and failures
+
+The integration tab shows: the number of agendas followed and read, the date of
+the last read, the agendas in error and why, the accounts to fix (an entry that
+is not an agenda, an agenda not found, an unreadable city; the typed text is
+never shown back), and a pause if any.
+
+- **Key refused** (401 or 403 on the agendas list, the key's own route): no
+  automatic request any more, restarts included, until a new key or a successful
+  click on **Test the key**. A 403 on a single agenda is not a refused key.
+- **429 or 5xx**: every request stops for the time given by `Retry-After` (1 min
+  to 6 h), else 10 min, then 20, 40… up to 6 h; refusals in a row lengthen it even
+  with a short `Retry-After`; the pause is kept in `/data`.
+- **Read cut short** (network, unreadable answer or over 6 MB): nothing is sent
+  to Gladys, the calendar keeps the previous read.
+- **Gladys** takes 30 calendar writes a minute: the integration makes 25 at most
+  and, on a 429, waits a minute and writes again (3 times at most). A calendar
+  Gladys did not take whole is sent again from the last read (no request to
+  OpenAgenda) 5, 15, 30 min later, then every hour, until it goes through, each
+  calendar on its own (another one going through does not clear it); the status
+  warning stays while one waits. A read
+  that changes nothing writes nothing; a reconnection to Gladys sends everything
+  once.
+- **`/data` unreadable**: nothing asked to OpenAgenda, read again every 10 s. The
+  file is written under 16 MB (read up to 32 MB): past it, the oldest reads stay
+  in memory only (their calendars keep their events).
+  **`/data` not writable**: no read (a restart could not know it happened).
+
+## Configuration settings
+
+These are the settings OpenAgenda asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| OpenAgenda key | `section` | No | Unofficial integration, read only, through the official OpenAgenda API v2. Create a free account on openagenda.com, then copy the PUBLIC key (oa_pk_…) from your account settings. Each user then enables the integration in their own "My calendars" block and lists the agendas they follow. The data licence is set by each publisher, event by event (most often the Licence Ouverte / Etalab 2.0): it is shown in each calendar and each event. |
+| Public API key | `secret` | Yes | The public key (oa_pk_…) of your OpenAgenda account; a secret key (oa_sk_…) is refused, reading needs none. Kept by Gladys in its database, never shown again, sent only to OpenAgenda. |
+| Refresh interval (hours) | `number` | No | How often each agenda is read again (2 to 24 hours). |
+| Days ahead | `number` | No | How far ahead the events are read (7 to 365 days); yesterday's stay a day. |
+| Time slots per agenda | `number` | No | At most this many time slots per agenda, the soonest first (50 to 2,000). An event on several dates counts one slot per date. |
+
+## How to install OpenAgenda in Gladys
+
+1. In Gladys, open **Integrations**: OpenAgenda appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-openagenda:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-openagenda](https://github.com/LM1LC3N7/gladys-openagenda).
+
+OpenAgenda requires Gladys `>=5.3.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+OpenAgenda is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-openagenda) — [source of this documentation](https://github.com/LM1LC3N7/gladys-openagenda/blob/HEAD/docs/en.md)

@@ -1,0 +1,177 @@
+---
+title: "Visual Crossing smart home integration, free and open source"
+sidebar_label: "Visual Crossing"
+description: "Unofficial connector: Visual Crossing weather, 15-day forecasts and alerts, with your API key. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-visual-crossing.png"
+keywords:
+  - "visual crossing"
+  - "visual crossing smart home"
+  - "gladys visual crossing"
+  - "visual crossing gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-visual-crossing instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Visual Crossing","description":"Unofficial connector: Visual Crossing weather, 15-day forecasts and alerts, with your API key.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-visual-crossing","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-visual-crossing.png","type":"weather","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-15T09:07:41Z"}} />
+
+**Unofficial** connector, not affiliated with Visual Crossing Corporation. It makes **Visual Crossing** the weather
+provider of Gladys: current conditions, 24-hour and 8-day forecasts (Visual Crossing gives 15 days, Gladys keeps
+8), and the active alerts of the location. The weather widget, the assistant and the weather-alert scene triggers
+of Gladys use it directly.
+
+> This integration was **never tested with a real account**: it is written from the official documentation of the
+> Visual Crossing Timeline Weather API. Feedback is welcome.
+
+## What you need
+
+- A Visual Crossing account of your own and its **API key** (sign up at
+  [visualcrossing.com](https://www.visualcrossing.com/sign-up), the key is on the _Account_ page).
+- Gladys 5.1 or later.
+
+## Costs
+
+Visual Crossing counts **records**. A forecast query (what this integration sends) costs **1 record**, whatever its
+days, hours and alerts; the integration reads the `queryCost` of each answer and counts it.
+
+- **Free plan**: **1,000 records a day**. Above that, Visual Crossing answers 429 until the next day.
+- **Pay-as-you-go plan**: the records beyond the free ones are **billed** by Visual Crossing (**0.0001 USD** per
+  record at the time of writing, see [the plans](https://www.visualcrossing.com/weather-data-editions)).
+- Other plans: see your account.
+
+The integration has its own **daily cap** (500 records by default), counted **before** each call and kept in `/data`
+across restarts: once reached, nothing is sent before midnight UTC. A call that may have been billed is **not
+retried**: after a timeout, a network error or a 5xx, the location waits 15 minutes; after a 401, the key is no
+longer used. With the default refresh of
+60 minutes, one location costs at most 24 records a day.
+
+## Configuration
+
+| Field            | Purpose                                                                                                                                                     |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| API key          | Kept by Gladys in its database, never shown again, sent only to Visual Crossing. It never appears in the logs, the status, the error messages or `/data`.   |
+| Weather alerts   | On by default. Same cost (the alerts come in the same answer).                                                                                              |
+| Refresh interval | 60 minutes by default (60 to 180). A location is read from Visual Crossing at most once per interval; Gladys gets the kept copy in between.                 |
+| Daily cap        | 500 records by default (10 to 100,000), per day in UTC. Visual Crossing counts all the uses of your key in the same account: keep room for your other uses. |
+
+**Test Visual Crossing** makes one call (the current conditions at Greenwich, 1 record, no personal data): it says
+whether the key is accepted and the records counted today. It runs at most once a minute, and not during a pause
+(after a 429, an error or a timeout) nor once the daily cap is reached.
+
+## Pacing, pauses and errors
+
+- Gladys asks for the weather when a dashboard shows it, when the assistant answers, and every 30 minutes for the
+  alerts when a scene uses the weather-alert trigger. The integration answers from its kept copy while it is younger than the interval.
+- One call at a time to Visual Crossing, whatever the number of locations.
+- **HTTP 429**: paused as long as `Retry-After` says (compared with the server's `Date` header), between 60 s and
+  6 hours; without the header, 60 s then doubled up to 6 hours.
+- **Timeout (10 s), network error, server error, 403, unreadable or oversized (over 1 MB) answer**: a 60 s pause
+  for every location (or the `Retry-After` of the answer, 60 s to 1 hour), doubled at each failure up to 1 hour
+  (the step survives a restart and is reset by a success), and **this location** is not asked again for
+  15 minutes (the failed call may have been billed).
+- **HTTP 400 or 404**: the location is not served; only that location is held back for one refresh interval.
+- Gladys waits 15 s for an answer: a call that cannot end in time does not leave.
+- A clock that jumps forward then back never freezes the cap: a count filed under a day further than tomorrow is
+  kept, on the safe side, but filed under today and reset at the next midnight UTC.
+- A request that could not even be prepared (a local error before it leaves) counts no record, holds nothing and
+  pauses nothing.
+- If the count of a call cannot be written to `/data` within 1 s, the call does not leave (the cap must survive a
+  restart).
+- During a pause or an outage, Gladys gets the last copy if it is under 4 hours old, with its own date (never
+  presented as new); otherwise an error, and Gladys moves on to its next provider.
+- The pause, the holds, the counter and the copies are kept in `/data`: a restart or a reconnection does not
+  trigger a call. A saved configuration asks Gladys to read the weather again, answered from the copy while it is
+  younger than the interval.
+
+## Refused key
+
+An **HTTP 401** is a refusal of the key (Visual Crossing: key, account or subscription problem): no request leaves
+with it any more, and it is not retried. `/data` keeps only **one byte** of a salted hash of the key: nothing a
+reader could check a guess against (one guess in 256 matches). Saving another key while the integration runs
+lifts the refusal at once. After a restart only that byte is known: a new key whose byte happens to be the same
+(1 chance in 256) stays held back until a success of **Test Visual Crossing**, which tries even a refused key. A 403
+is not taken as a refusal (it can come from a proxy or a firewall): it pauses.
+
+## What is sent to Visual Crossing
+
+The coordinates of the house rounded to 3 decimals (about 100 m) and the API key (in the address of the request,
+as Visual Crossing asks; this address is never logged). Neither the language nor the unit system is sent: the
+answer is asked in metric and converted here, so one call serves every user. `/data/state.json` holds the day
+counter, the pause, the holds, one byte marking a refused key, and the last answers. The answers carry no
+coordinates, but each is filed under a salted hash of the rounded location: with the salt beside it, the
+location can be found back by brute force. `/data` stays on your Gladys.
+
+## Mappings
+
+| Visual Crossing icon (icons2 set)       | Gladys                                                                   |
+| --------------------------------------- | ------------------------------------------------------------------------ |
+| clear-day, clear-night                  | clear                                                                    |
+| partly-cloudy-day/night / cloudy        | partly-cloudy / cloud                                                    |
+| fog / wind                              | fog / wind                                                               |
+| rain, showers-day/night                 | rain; pouring from 7.6 mm in an hour; freezing-rain or sleet by the type |
+| snow, snow-showers-day/night            | snow; sleet when rain or ice is mixed in                                 |
+| thunder-rain, thunder-showers-day/night | thunderstorm (snow-thunderstorm with snow only)                          |
+| any other icon                          | unknown                                                                  |
+
+Day or night comes from the sunrise and sunset times, else from the icon (`-day`/`-night`). Units: metric is
+converted to m/s (wind) and km, or to °F, mph, inches and miles (US); pressure stays in hPa; humidity, cloud cover
+and precipitation chance in percent. A missing value stays missing, never 0.
+
+Alerts: Visual Crossing gives no level. It is read from the title: a "watch", yellow or moderate → moderate (even
+an "Extreme ... Watch"); red, extreme, emergency, tornado or hurricane warning → extreme; orange, severe or
+"warning" → severe; anything else → minor (the alert is kept). The phenomenon
+(storm, wind, snow...) is read from the title in English, French, German or Spanish. Alerts ended by the server's
+clock are removed.
+
+## Attribution
+
+Weather data provided by Visual Crossing ([https://www.visualcrossing.com/](https://www.visualcrossing.com/)). The Gladys weather widget cannot show
+an attribution yet: it is on the configuration screen and here.
+
+## Statuses
+
+- "Enter the API key...": nothing configured.
+- "Invalid configuration: ...": names the wrong fields (never their value); nothing is sent.
+- "Ready", then "Visual Crossing answers".
+- "Visual Crossing refused this API key...", "asked to slow down...", "did not answer properly...",
+  "Daily cap reached...".
+- "/data/state.json is unreadable": read again every 10 s, nothing is sent meanwhile (an unreadable file is not
+  taken as empty).
+- "The configuration could not be read": new try after 5 s, then doubled up to 5 minutes.
+
+## Configuration settings
+
+These are the settings Visual Crossing asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Visual Crossing in Gladys | `section` | No | Unofficial connector, not affiliated with Visual Crossing. It makes Visual Crossing the weather provider of Gladys: current conditions, 24 hours, 8 days and the alerts given for your area. It needs your own Visual Crossing account and API key. The free plan includes 1,000 records a day; a forecast costs 1 record. On the pay-as-you-go plan, records beyond the free ones are billed by Visual Crossing (0.0001 USD each at the time of writing): the daily cap below stops the calls first. Each location is read at most once per refresh interval (one hour by default). Weather data provided by Visual Crossing. |
+| API key | `secret` | Yes | The key of your Visual Crossing account (Account page). Kept by Gladys in its database, never shown again, sent only to Visual Crossing. |
+| Weather alerts | `boolean` | No | Asks Visual Crossing for the active alerts of the location (same cost), shown by the weather widget and used by the weather-alert scene triggers of Gladys. |
+| Refresh interval (minutes) | `number` | No | A location is read from Visual Crossing at most once per interval; Gladys gets the kept copy in between. 60 minutes is at most 24 records a day per location. |
+| Daily cap (records) | `number` | No | Records allowed per day (UTC), counted by this integration before each call and kept across restarts. Reached: no call until midnight UTC. Visual Crossing counts the records of all your uses of the key in the same account. |
+
+## How to install Visual Crossing in Gladys
+
+1. In Gladys, open **Integrations**: Visual Crossing appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-visual-crossing:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-visual-crossing](https://github.com/LM1LC3N7/gladys-visual-crossing).
+
+Visual Crossing requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Visual Crossing is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-visual-crossing) — [source of this documentation](https://github.com/LM1LC3N7/gladys-visual-crossing/blob/HEAD/docs/en.md)

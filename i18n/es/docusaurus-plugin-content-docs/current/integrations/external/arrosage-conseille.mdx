@@ -1,0 +1,168 @@
+---
+title: "Integración domótica Arrosage conseillé, gratuita y de código abierto"
+sidebar_label: "Arrosage conseillé"
+description: "Agua a aportar a cada zona del jardín según la evapotranspiración y la lluvia (Open-Meteo). Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-arrosage.png"
+keywords:
+  - "arrosage conseillé"
+  - "domótica arrosage conseillé"
+  - "gladys arrosage conseillé"
+  - "arrosage conseillé gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-arrosage instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Arrosage conseillé","description":"Agua a aportar a cada zona del jardín según la evapotranspiración y la lluvia (Open-Meteo).","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-arrosage","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-arrosage.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-14T22:03:34Z"}} />
+
+Cuánta agua necesita hoy cada zona de su jardín, según el balance hídrico del suelo: la evapotranspiración de
+referencia (ET0, FAO-56) menos la lluvia, en la ubicación de su casa. Los datos vienen de
+[Open-Meteo](https://open-meteo.com/), gratuito y sin cuenta. La integración aconseja: no controla ninguna válvula,
+sus escenas inician el programador de riego.
+
+## Lo que obtiene
+
+Un dispositivo por zona, con sensores de solo lectura:
+
+- **Agua a aportar** (mm): el déficit del balance, 0 cuando el suelo tiene suficiente o cuando se prevé lluvia;
+- **Duración de riego aconsejada** (minutos): el agua a aportar dividida por la tasa de riego de la zona (solo si se
+  configura una tasa, o un caudal y una superficie);
+- **Balance hídrico del suelo** (mm): negativo = agua que falta, positivo = agua guardada en reserva;
+- **ET0 de ayer** y **ET0 de hoy** (mm/día), y la **Lluvia prevista hoy** (mm/día).
+
+## Cómo se calcula el consejo
+
+Cada día, a la hora del cálculo, se suma el día anterior al balance de cada zona:
+
+`balance = min(límite de reserva, balance del día anterior + lluvia − Kc × ET0)`
+
+- La **ET0** es la evapotranspiración de referencia de un césped bien regado (FAO-56 Penman-Monteith), calculada por
+  Open-Meteo a partir de la temperatura, el viento, la humedad y la insolación.
+- **Kc**, el coeficiente de cultivo, la adapta a la plantación: césped 0,85, huerto 1, macizos de flores 0,75, setos y
+  arbustos 0,5, o el valor que usted indique.
+- El **límite de reserva** es el excedente de agua que el suelo guarda tras una lluvia fuerte; se consume antes de
+  aconsejar cualquier riego.
+- **Agua a aportar** = −balance cuando el balance es negativo. Cuando la lluvia prevista del día alcanza el umbral, el
+  consejo es 0 (el déficit queda en el balance y la lluvia se contará mañana).
+- **Duración** = agua a aportar ÷ tasa × 60. La tasa en mm/h se indica, o se calcula a partir del caudal y la
+  superficie (1 L en 1 m² = 1 mm).
+
+El balance se conserva en `/data` al reiniciar. Tras una parada, los días que faltan se cuentan en el cálculo
+siguiente (hasta 7 días atrás). Marque un riego con la acción de escena «Zona regada» o el botón del widget: sin
+cantidad, el balance vuelve a 0 (ración completa).
+
+## Configuración
+
+Indique las coordenadas de su casa en Gladys (Ajustes → Casas): la integración las lee.
+
+- **Idioma de los nombres y textos**: los nombres de las funciones (fijados al añadir el dispositivo) y los textos del
+  widget.
+- **Lluvia que anula el riego**: en mm, se aceptan decimales (2,5); 0 la desactiva.
+- **Hora del cálculo diario** (0-23, 5 por defecto): elíjala antes de la hora de riego.
+- **Zonas 1 a 4**: una zona existe en cuanto tiene un nombre. Luego su tipo de plantación (o un Kc), su tasa de riego
+  en mm/h, o su caudal en L/min y su superficie regada en m², y su límite de reserva en mm (25 por defecto, 0 sin
+  arrastre, por ejemplo macetas).
+
+Órdenes de magnitud: aspersor oscilante 5 a 10 mm/h, difusor emergente 25 a 40 mm/h, goteo: caudal de los goteros ×
+número ÷ superficie.
+
+## Acciones
+
+**Ver el consejo ahora** lee Open-Meteo si hace falta y muestra el agua y la duración de cada zona.
+
+## Escenas
+
+- Disparador **Riego aconsejado**: una vez al día, a la hora del cálculo, para cada zona que necesita agua (filtro por
+  zona o no). Sus variables: zona, agua a aportar (mm), duración aconsejada (minutos, 0 si desconocida). Escena típica:
+  «Riego aconsejado» en el césped → abrir la válvula del programador (OpenSprinkler, Rain Bird, un enchufe
+  inteligente…) → esperar la duración aconsejada → cerrarla → «Zona regada».
+- Acción **Zona regada**: cuenta un riego en el balance, la cantidad indicada en mm o una ración completa si está
+  vacía. Sin zona, todas las zonas.
+- Los disparadores habituales de Gladys sobre los valores del dispositivo también funcionan, por ejemplo «Duración de
+  riego aconsejada mayor que 0» con una condición horaria.
+
+## Panel
+
+El widget **Riego aconsejado** muestra la ET0 y la lluvia de hoy, el agua y la duración de cada zona, y un botón
+«regada» por zona. Sus ajustes ocultan la línea del tiempo o los botones. Los sensores de los dispositivos también
+pueden añadirse al panel, con su historial.
+
+## Límites y solución de problemas
+
+- Una estimación, no una medida: el tipo de suelo, la pendiente, la sombra o el viento no se conocen. Ajuste el Kc o
+  el límite de reserva tras unas semanas si el césped amarillea (Kc más alto) o sigue empapado (Kc más bajo).
+- La lluvia contada es la modelizada por Open-Meteo en sus coordenadas, no la de su pluviómetro. Una tormenta local
+  puede no detectarse.
+- Open-Meteo es gratuito para uso no comercial (menos de 10 000 solicitudes al día): la integración lo lee cada 3
+  horas. Datos bajo licencia CC BY 4.0, por Open-Meteo.com.
+- «Ninguna ubicación de casa»: indique las coordenadas de su casa. «Open-Meteo no está disponible»: el consejo
+  conserva la última previsión y la integración lo reintenta cada 15 minutos.
+- Detalles en los registros: configure `LOG_LEVEL=debug`.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Arrosage conseillé te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Funcionamiento | `section` | No | Cada día, el balance hídrico de cada zona suma la lluvia y resta la evapotranspiración (ET0 × coeficiente de cultivo), leídas en Open-Meteo en la ubicación de su casa en Gladys. Un dispositivo por zona. |
+| Idioma de los nombres y textos | `select` | No |  |
+| Lluvia que anula el riego (mm) | `string` | No | Cuando la lluvia prevista del día alcanza esta cantidad, el consejo es no regar. 0 para desactivar. Se aceptan decimales (2,5). |
+| Hora del cálculo diario | `number` | No | A esta hora (0-23) se suma el día anterior a los balances y se activa el disparador «Riego aconsejado». Elíjala antes de la hora de riego. |
+| Zona 1 | `section` | No | Una zona existe en cuanto tiene un nombre. La tasa en mm/h, o el caudal en L/min y la superficie, dan la duración de riego aconsejada. |
+| Nombre | `string` | No |  |
+| Tipo de plantación | `select` | No |  |
+| Coeficiente de cultivo Kc (opcional) | `string` | No | Sustituye el coeficiente del tipo, de 0 a 2. |
+| Tasa de riego (mm/h) | `string` | No | Altura de agua que aporta el aspersor o el goteo en una hora. Tiene prioridad sobre el caudal y la superficie. |
+| Caudal (L/min) | `string` | No |  |
+| Superficie regada (m²) | `string` | No |  |
+| Límite de reserva del suelo (mm) | `number` | No | Excedente de agua que el suelo guarda tras una lluvia fuerte, descontado de los días siguientes. 0: sin arrastre. |
+| Zona 2 | `section` | No |  |
+| Nombre | `string` | No |  |
+| Tipo de plantación | `select` | No |  |
+| Coeficiente de cultivo Kc (opcional) | `string` | No | Sustituye el coeficiente del tipo, de 0 a 2. |
+| Tasa de riego (mm/h) | `string` | No | Altura de agua que aporta el aspersor o el goteo en una hora. Tiene prioridad sobre el caudal y la superficie. |
+| Caudal (L/min) | `string` | No |  |
+| Superficie regada (m²) | `string` | No |  |
+| Límite de reserva del suelo (mm) | `number` | No | Excedente de agua que el suelo guarda tras una lluvia fuerte, descontado de los días siguientes. 0: sin arrastre. |
+| Zona 3 | `section` | No |  |
+| Nombre | `string` | No |  |
+| Tipo de plantación | `select` | No |  |
+| Coeficiente de cultivo Kc (opcional) | `string` | No | Sustituye el coeficiente del tipo, de 0 a 2. |
+| Tasa de riego (mm/h) | `string` | No | Altura de agua que aporta el aspersor o el goteo en una hora. Tiene prioridad sobre el caudal y la superficie. |
+| Caudal (L/min) | `string` | No |  |
+| Superficie regada (m²) | `string` | No |  |
+| Límite de reserva del suelo (mm) | `number` | No | Excedente de agua que el suelo guarda tras una lluvia fuerte, descontado de los días siguientes. 0: sin arrastre. |
+| Zona 4 | `section` | No |  |
+| Nombre | `string` | No |  |
+| Tipo de plantación | `select` | No |  |
+| Coeficiente de cultivo Kc (opcional) | `string` | No | Sustituye el coeficiente del tipo, de 0 a 2. |
+| Tasa de riego (mm/h) | `string` | No | Altura de agua que aporta el aspersor o el goteo en una hora. Tiene prioridad sobre el caudal y la superficie. |
+| Caudal (L/min) | `string` | No |  |
+| Superficie regada (m²) | `string` | No |  |
+| Límite de reserva del suelo (mm) | `number` | No | Excedente de agua que el suelo guarda tras una lluvia fuerte, descontado de los días siguientes. 0: sin arrastre. |
+
+## Cómo instalar Arrosage conseillé en Gladys
+
+1. En Gladys, abre **Integraciones**: Arrosage conseillé aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-arrosage:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-arrosage](https://github.com/guim31/gladys-arrosage).
+
+Arrosage conseillé requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Arrosage conseillé es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-arrosage) — [fuente de esta documentación](https://github.com/guim31/gladys-arrosage/blob/HEAD/docs/es.md)

@@ -1,0 +1,243 @@
+---
+title: "File watch Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "File watch"
+description: "Überwache Ordner und Dateien: neue Dateien, Anzahl, Größe, ein ausbleibendes Backup. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-file-watch.png"
+keywords:
+  - "file watch"
+  - "file watch smart home"
+  - "gladys file watch"
+  - "file watch gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-file-watch instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"File watch","description":"Überwache Ordner und Dateien: neue Dateien, Anzahl, Größe, ein ausbleibendes Backup.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-file-watch","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-file-watch.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-15T22:15:10Z"}} />
+
+Überwache Ordner und Dateien in Gladys: die Scans des Druckers, die Fotos
+eines Handys, die Aufnahmen einer Kamera, das nächtliche Backup auf dem NAS.
+Jeder überwachte Pfad wird ein Gerät mit der Anzahl seiner Dateien, der
+Gesamtgröße, der neuesten Datei und der Zeit seit der letzten Änderung.
+Szenen reagieren auf eine **neue Datei**, auf einen Ordner, der **länger nicht
+geändert** wurde (ein ausbleibendes Backup), und auf eine Größe **über einer
+Schwelle**; ein Dashboard-Widget listet die neuesten Dateien.
+
+Gelesen werden nur Namen, Größen und Daten, nie der Inhalt der Dateien. Die
+Ordner werden in regelmäßigen Abständen durchsucht; das funktioniert auch auf
+Netzwerkfreigaben (NFS, SMB), wo Änderungsbenachrichtigungen nichts von dem
+sehen, was ein anderer Rechner schreibt.
+
+Wirklich getestet in einem abgeschotteten Docker-Container (der Sandbox von
+Gladys: schreibgeschütztes System, keine Capability, 256 MB), mit Anlegen,
+Löschen, Umbenennen, einem Baum aus 10.000 Dateien, einem gelöschten und neu
+angelegten Ordner und Ausschlussmustern; noch nicht in einem echten Gladys:
+Rückmeldungen gern in
+[den Issues](https://github.com/guim31/gladys-file-watch/issues).
+
+## Was du brauchst
+
+- Gladys Assistant 5.1.0 oder neuer.
+- Zugriff auf den Rechner, auf dem Gladys läuft (ein Terminal oder die
+  Dateifreigabe eines NAS), um die zu überwachenden Ordner in den unten
+  genannten Überwachungsordner zu legen oder einzuhängen.
+
+## Erste Schritte
+
+### 1. Wohin mit den Ordnern
+
+Gladys gibt jeder Integration **einen einzigen Ordner seines Rechners**, und
+die Integration kann keinen anderen öffnen (sie läuft in einer Sandbox). Für
+diese Integration ist das bei einer Standardinstallation von Gladys:
+
+```
+/var/lib/gladysassistant/external-integrations/ext-guim31-gladys-file-watch/watch
+```
+
+Er wird beim ersten Start angelegt; in der Integration heißt er `/data/watch`.
+Die Schaltfläche **Überwachte Ordner prüfen** auf der Seite der Integration
+nennt den genauen Pfad deiner Installation. Lege dort ab, was du überwachen
+willst, auf eine dieser Arten:
+
+- **Dateien, die direkt dort geschrieben werden**: Lass das Backup-Werkzeug,
+  den Scanner oder die Kamera in diesen Ordner (oder einen Unterordner)
+  schreiben, zum Beispiel über eine Samba-Freigabe.
+- **Eine dort eingehängte Netzwerkfreigabe** (NFS oder SMB eines NAS), zum
+  Beispiel in `/etc/fstab`:
+  `//nas.local/backups /var/lib/gladysassistant/external-integrations/ext-guim31-gladys-file-watch/watch/backups cifs ro,credentials=/root/.nas 0 0`
+- **Ein dort eingehängter Ordner des Rechners** (Bind-Mount, schreibgeschützt):
+  `mount --bind -o ro /srv/photos /var/lib/gladysassistant/external-integrations/ext-guim31-gladys-file-watch/watch/photos`
+
+Ein symbolischer Link auf einen Ordner außerhalb funktioniert **nicht**: Die
+Integration sieht nur ihren eigenen Ordner. Starte die Integration nach dem
+Einhängen **neu** (Integrationen → File watch → Stoppen, dann Starten): Ein
+Mount, der während des Betriebs entsteht, bleibt für sie unsichtbar.
+
+### 2. Die Integration konfigurieren
+
+- **Zu überwachende Pfade**: leer wird jeder Ordner und jede Datei direkt im
+  Überwachungsordner verfolgt, ein neuer erscheint von selbst. Oder eine durch
+  Kommas getrennte Liste, relativ zum Überwachungsordner:
+  `backups, nas/scans, logs/app.log` (auch ein Unterordner oder eine einzelne
+  Datei).
+- **Nur diese Dateien**: Glob-Muster, zum Beispiel `*.pdf, *.jpg`. Leer: alle
+  Dateien.
+- **Ignorieren**: Muster der Dateien und Ordner, die außen vor bleiben.
+  Standard: versteckte Dateien, temporäre Dateien von Downloads und Kopien
+  (`*.tmp`, `*.part`) und Systemdateien von Windows, macOS und Synology.
+- **Tiefe**: gelesene Unterordner-Ebenen, standardmäßig 5; 1 nur für die
+  Dateien des Ordners selbst.
+- **Scan-Intervall**: 30 Sekunden bis 1 Stunde, standardmäßig 1 Minute.
+- **Sprache der Namen**: Sprache der Funktionsnamen, Daten, Größen und
+  Szenenergebnisse.
+
+Muster: Ein Muster ohne `/` gilt für den Namen in jeder Tiefe (`*.mkv`,
+`@eaDir`); mit einem `/` für den Pfad im überwachten Ordner
+(`daily/*.tar.gz`). `*` und `?` bleiben in einem Ordner, `**` geht über
+Ordner hinweg, `[abc]` und `[!abc]` sind Zeichenklassen. Groß- und
+Kleinschreibung spielen keine Rolle. Ein ignorierter Ordner wird nicht
+betreten.
+
+Klicke dann auf **Überwachte Ordner prüfen**: Die Antwort listet jeden Pfad,
+seine Anzahl Dateien und den Pfad des Überwachungsordners auf dem Rechner.
+
+### 3. Die Geräte hinzufügen
+
+Füge im Tab **Entdecken** die zu verfolgenden Pfade hinzu. Die
+Szenenauslöser und das Widget funktionieren für alle Pfade, hinzugefügt oder
+nicht.
+
+## Die Geräte
+
+Ein Gerät pro überwachtem Pfad, benannt nach seinem Pfad:
+
+| Funktion                       | Was sie zeigt                                                       |
+| ------------------------------ | ------------------------------------------------------------------- |
+| Dateien                        | Anzahl der gezählten Dateien (nach den Mustern)                     |
+| Gesamtgröße                    | ihre Gesamtgröße in MB                                              |
+| Neueste Datei                  | die zuletzt angekommene Datei, mit ihrem Pfad im Ordner             |
+| Datum der neuesten Datei       | ihr Datum                                                           |
+| Zeit seit der letzten Änderung | Minuten seit Ankunft der neuesten Datei                             |
+| Erreichbar                     | Ja, oder Nein, wenn der Pfad fehlt oder unlesbar ist (Freigabe weg) |
+
+Eine Datei „kommt an“ zum späteren ihrer Änderungs- und Statusänderungsdaten:
+Eine Kopie, die das Originaldatum behält (`rsync -a`, `cp -p`), zählt trotzdem
+als neu.
+
+## Dashboard
+
+Das Widget **Neueste Dateien** listet die acht neuesten Dateien der gewählten
+Ordner (standardmäßig alle), die neueste zuerst, mit Ordner, Größe und Datum,
+unter zwei Kacheln: Anzahl der Dateien und Gesamtgröße. Eine Zeile nennt die
+nicht erreichbaren Ordner. In den Einstellungen lassen sich die Summen und die
+Schaltfläche **Aktualisieren** ausblenden, die die Ordner sofort durchsucht.
+
+## Szenen
+
+### Auslöser
+
+- **Neue Datei**: Eine Datei erscheint in einem überwachten Ordner. Eine im
+  Ordner umbenannte oder verschobene Datei ist nicht neu. Filter: Ordner,
+  Endung kleingeschrieben, ohne Punkt (`pdf`). Übergibt den Ordner, die Datei (Pfad im Ordner), ihre
+  Endung, ihre Größe und die Anzahl neuer Dateien: Ab 6 neuen Dateien in einem
+  Scan (ein auf einmal kopierter Ordner) trägt ein einziges Ereignis die
+  neueste Datei und die Anzahl.
+- **Ordner länger nicht geändert**: Seit der gewählten Zeit (1 Stunde bis 7
+  Tage) ist keine Datei angekommen. Löst einmal pro Schwelle aus (nur die höchste, wenn nach einer Unterbrechung mehrere zugleich überschritten sind), nach einer
+  neuen Datei erneut. Übergibt den Ordner, die Schwelle, die Stunden seit der
+  neuesten Datei, ihren Namen und ihr Datum.
+- **Größe über einer Schwelle**: Die Gesamtgröße überschreitet die gewählte
+  Schwelle (100 MB bis 1 TB). Löst erneut aus, nachdem sie 5 % darunter lag.
+  Übergibt den Ordner, die Schwelle, die Größe und die Anzahl der Dateien.
+
+Ein zum ersten Mal gesehener Pfad löst nichts aus: Bereits überschrittene
+Schwellen werden still übernommen. Nach einem Neustart der Integration werden
+die zwischenzeitlich angekommenen Dateien einmal gemeldet.
+
+### Aktionen
+
+- **Zustand eines Ordners**: Liest einen überwachten Pfad für die nächsten
+  Aktionen: erreichbar oder nicht, Dateien, Größe, neueste Datei und ihr
+  Datum, Stunden seitdem und einen fertigen Satz („backups: 12 Datei(en),
+  45 GB, neueste: nightly.tar.gz (14.11.26 03:12)“).
+
+### Szenenideen
+
+- **Neue Datei** in `scans`, Endung `pdf` → „Neuer Scan“ und den Dateinamen
+  per Telegram senden.
+- **Ordner länger nicht geändert**, `backups`, 48 Stunden → melden, dass das
+  nächtliche Backup ausbleibt.
+- **Größe über einer Schwelle**, `camera`, 100 GB → eine Nachricht, die
+  Aufnahmen aufzuräumen.
+- Jeden Morgen **Zustand eines Ordners** und dann seinen Satz senden.
+
+## Fehlerbehebung
+
+- **„Noch nichts zu überwachen“**: Der Überwachungsordner ist leer. Lege oder
+  hänge einen Ordner darin ein und starte die Integration bei einem Mount neu.
+- **Ein Pfad „nicht erreichbar“**: Der Ordner fehlt (Tippfehler in den
+  Pfaden, Freigabe nicht eingehängt) oder die Integration kann ihn nicht lesen
+  (sie läuft als Benutzer 1000: Gib ihr Leserechte, zum Beispiel
+  `chmod -R o+rX` auf den Ordner, oder die Option `uid=1000` eines
+  CIFS-Mounts).
+- **Eine eingehängte Freigabe erscheint leer**: Der Mount entstand nach dem
+  Start der Integration: Starte sie neu.
+- **„more than 100000 files“** in den Protokollen: Der Scan eines Pfads stoppt
+  bei 100.000 Dateien (200.000 für alle Pfade zusammen), um in den 256 MB der Sandbox zu bleiben. Überwache einen
+  Unterordner, verringere die Tiefe oder füge Muster hinzu.
+- **Ausführliche Protokolle**: `LOG_LEVEL=debug` (normale Scans schreiben
+  nichts).
+
+## Grenzen
+
+- Noch nicht in einem echten Gladys getestet: Rückmeldungen willkommen.
+- Gladys lässt eine Integration keinen Ordner ihres Rechners wählen: Die
+  Ordner müssen im Überwachungsordner liegen oder dort eingehängt sein (siehe
+  oben).
+- Scannen statt Benachrichtigungen: Eine zwischen zwei Scans angelegte und
+  wieder gelöschte Datei wird nicht gesehen; bei 1 Minute Intervall wird eine
+  neue Datei innerhalb einer Minute gemeldet.
+- Symbolische Links innerhalb der überwachten Ordner werden übersprungen.
+- Höchstens 100.000 Dateien pro Pfad und 200.000 insgesamt, 50 Pfade.
+- Die Mustersyntax `{a,b}` wird nicht unterstützt (das Komma trennt Muster).
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt File watch in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Wohin mit den Ordnern | `section` | Nein | Gladys gibt der Integration nur einen Ordner ihres Hosts. Lege oder hänge (NFS, SMB, Bind-Mount) die zu überwachenden Ordner in dessen Unterordner „watch“ ein und starte die Integration neu. Die Anleitung nennt den genauen Pfad. |
+| Zu überwachende Pfade | `string` | Nein | Ordner oder Dateien unter /data/watch, durch Kommas getrennt. Leer: jeder Ordner und jede Datei direkt in /data/watch. |
+| Filter | `section` | Nein |  |
+| Nur diese Dateien | `string` | Nein | Glob-Muster, durch Kommas getrennt: *.pdf, daily/*.tar.gz. Leer: alle Dateien. |
+| Ignorieren | `string` | Nein | Glob-Muster der zu ignorierenden Dateien und Ordner. Standard: versteckte, temporäre und Systemdateien. |
+| Tiefe | `number` | Nein | Gelesene Unterordner-Ebenen: 1 nur für die Dateien des Ordners selbst. |
+| Optionen | `section` | Nein |  |
+| Scan-Intervall | `select` | Nein | Wie oft die Ordner durchsucht werden (nur Namen, Größen und Daten, nie der Inhalt). |
+| Sprache der Namen | `select` | Nein | Sprache der Funktionsnamen (beim Hinzufügen eines Geräts festgelegt), der Daten, Größen und Szenenergebnisse. |
+
+## So installierst du File watch in Gladys
+
+1. Öffne in Gladys **Integrationen**: File watch erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-file-watch:1.0.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-file-watch](https://github.com/guim31/gladys-file-watch).
+
+File watch benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+File watch ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-file-watch) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-file-watch/blob/HEAD/docs/de.md)

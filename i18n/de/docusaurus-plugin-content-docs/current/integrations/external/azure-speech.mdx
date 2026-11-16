@@ -1,0 +1,158 @@
+---
+title: "Azure Speech Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Azure Speech"
+description: "Microsoft Azure Speech neural voices for Gladys announcements, with your own key. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-azure-speech.png"
+keywords:
+  - "azure speech"
+  - "azure speech smart home"
+  - "gladys azure speech"
+  - "azure speech gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-azure-speech instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Azure Speech","description":"Microsoft Azure Speech neural voices for Gladys announcements, with your own key.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-azure-speech","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-azure-speech.png","type":"tts","version":"0.1.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-14T16:11:30Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+Gives Gladys the neural voices of **Microsoft Azure Speech** for its announcements (the "Play a notification"
+scene action) and the voice assistant reply, with **the key of your own Speech resource**. Unofficial: not
+affiliated with Microsoft.
+
+This integration has never been tested with a real Azure account yet: it was built from the Azure Speech REST
+API documentation and tested against a local imitation of that API.
+
+## What it does
+
+Gladys sends a text (2,000 characters at most) and the language of the user. The integration picks the voice
+you chose for that language (French, English or German; the "Language when unknown" voice otherwise), asks
+Azure Speech for an MP3 clip (24 kHz, 48 kbit/s) and hands it to Gladys, which plays it on your speakers.
+
+Then, in Gladys, open **Integrations → Artificial Intelligence**, card **Voice**, and select **Azure Speech**.
+
+Limits of Gladys itself (not of this integration): the clip is served to speakers on your local network, and the
+voice assistant reply stays in text in an HTTPS page (see the Gladys documentation).
+
+## What it costs
+
+Azure Speech is billed per character sent, on your Azure subscription (prices on
+[azure.microsoft.com](https://azure.microsoft.com/pricing/details/cognitive-services/speech-services/), November
+2026): the **free tier (F0)** of a Speech resource gives 500,000 characters of neural voices a month; on the paid
+tier (S0), standard neural voices cost about 15 USD per million characters. Only standard neural voices are
+offered here: the HD voices cost more.
+
+To keep the bill under control:
+
+- **Monthly limit** (default 500,000 characters, the free tier): counted in memory before each request leaves,
+  and written to `/data` (the write waited for 1 s at most); once reached, nothing more is sent until the next
+  calendar month (UTC) or a higher limit. The integration counts what Azure bills: every character
+  of the request, the speaking rate tag included (about 32 characters per announcement when the rate is not
+  "Normal"), `&`, `<` and `>` as their XML entity (5 or 4 characters), and a Chinese character twice. The free
+  tier follows the Azure month of the resource, so keep a margin. A request that may have
+  been billed (no answer, connection cut, unusable clip) stays counted; a request Azure answered with an error
+  status is not. An announcement is never blocked by `/data` (delayed 3 s at most): when it is not read yet
+  (2 s at most), read-only or slow, the request leaves all the same and the status says "the monthly counter is
+  not saved: the limit is only guaranteed until the next restart" (the pause and a refusal kept there may be
+  unknown too). A cut of power or a crash at the wrong moment can lose the count of one request.
+- The same text in the same voice is played again from memory (24 hours, 20 clips), not billed twice; asked
+  several times at once (a scene announcing on several speakers), it makes one request whose answer all share.
+- At most 2 requests at once and 8 waiting; more at the same moment are refused ("Too many announcements").
+- No retry: a failed request is not sent again by the integration (a retry could be billed twice).
+- The free tier also accepts only 20 requests per 60 seconds: beyond that Azure answers HTTP 429, and the
+  integration pauses every announcement for 60 s (longer if it goes on, see below).
+- With the free tier, Azure stops by itself at its quota (the integration then shows the error Azure answers).
+  With S0, nothing stops on the Azure side: set a **budget alert** in Azure Cost Management as well.
+
+## Create the Speech resource
+
+1. In the [Azure portal](https://portal.azure.com), **Create a resource → Speech** (or "Speech service").
+2. Choose a region (for example West Europe) and the **Free F0** pricing tier, or Standard S0.
+3. Once created, open **Keys and Endpoint**: copy **KEY 1** (or KEY 2) and note the **Location/Region**
+   (`westeurope`, `francecentral`…).
+
+## Configuration
+
+| Field                           | What it does                                                                                                              |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Resource key                    | Kept by Gladys in its database, never shown again, sent only to Azure Speech (in the `Ocp-Apim-Subscription-Key` header). |
+| Region of the resource          | The region shown next to the key (default `westeurope`). A key works only in its own region.                              |
+| French / English / German voice | The voice for each language (standard neural voices; "multilingual" ones also read other languages).                      |
+| Language when unknown           | The voice used when Gladys sends no language or another one.                                                              |
+| Speaking rate                   | Very slow to very fast (SSML `prosody`).                                                                                  |
+| Monthly limit (characters)      | 1,000 to 100,000,000; default 500,000.                                                                                    |
+
+The **Test the voice** button asks Azure for a short sentence (about 50 billed characters, about 80 with a speaking rate other than "Normal") with the saved
+settings and says how long it took. Nothing is played.
+
+## When something goes wrong
+
+The status of the Configuration screen says why:
+
+- **Azure refused this key** (HTTP 401: wrong or regenerated key, or a key of a resource in another region):
+  nothing more is sent with it in that region, even after a restart (once `/data` is read), until you enter
+  another key, choose another region, or the **Test** button succeeds (it sends anyway). `/data` keeps only 8
+  bits of a salted hash of the refused key and region, never the key: after a restart, another key has 1
+  chance in 256 to look refused; the Test button then clears it.
+- **Azure denied the synthesis** (HTTP 403): for example the quota of the free tier is used up, or the network
+  rules of the resource block the address of Gladys. This is not a refusal of the key: the next announcement
+  tries again.
+- **Slow down / Azure failed** (HTTP 429 or 5xx): no request for 60 s, then 2, 4… minutes up to 1 hour if it
+  goes on (longer when Azure asks for it with `Retry-After`, 6 hours at most); the Test button waits too. The
+  pause is kept in `/data` across a restart; a success ends it.
+- **Azure refused the request** (HTTP 400 or another 4xx): usually a voice the region does not offer; only the
+  status code is shown (the body of the answer could quote your text); nothing is billed.
+- **Could not be reached, or the connection was cut**: a cut after the request left stays counted.
+- **Did not answer in time**: Gladys waits 30 s; the integration gives up at 25 s.
+
+## Privacy
+
+The text to speak is sent to Microsoft Azure, to the region of your resource. The integration never writes it
+to the logs or to `/data` (only its length); the clips stay in memory only. A redirect from the Azure address
+is never followed, so the key goes nowhere else.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Azure Speech in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Your Azure Speech resource | `section` | Nein | Azure Speech is billed to your own Azure subscription, per character spoken; the free tier (F0) gives 500,000 characters of neural voices a month. Create a Speech resource in the Azure portal, then copy one of its keys and its region (Keys and Endpoint page). |
+| Resource key | `secret` | Ja | KEY 1 or KEY 2 of the Speech resource. Kept by Gladys in its database, never shown again, sent only to Azure Speech. |
+| Region of the resource | `select` | Nein | The “Location/Region” shown on the Keys and Endpoint page: a key works only in its own region. |
+| French voice | `select` | Nein | Standard neural voices (HD voices cost more and are not offered). A voice the region does not offer is refused by Azure, not billed. |
+| English voice | `select` | Nein | Standard neural voices (HD voices cost more and are not offered). A voice the region does not offer is refused by Azure, not billed. |
+| German voice | `select` | Nein | Standard neural voices (HD voices cost more and are not offered). A voice the region does not offer is refused by Azure, not billed. |
+| Language when unknown | `select` | Nein | The voice used when Gladys sends no language, or another one. |
+| Speaking rate | `select` | Nein |  |
+| Monthly limit (characters) | `number` | Nein | Nothing more is sent to Azure once this many billable characters were sent in the calendar month (UTC), counted as Azure bills them: the speaking rate tag (about 32 characters per announcement when it is not Normal) and a Chinese character twice. The default, 500,000, is the free tier (F0); on the paid tier (S0), 1,000,000 characters of neural voices cost about 15 USD (see the price page). |
+
+## So installierst du Azure Speech in Gladys
+
+1. Öffne in Gladys **Integrationen**: Azure Speech erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-azure-speech:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-azure-speech](https://github.com/LM1LC3N7/gladys-azure-speech).
+
+Azure Speech benötigt Gladys `>=5.3.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Azure Speech ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-azure-speech) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-azure-speech/blob/HEAD/docs/en.md)

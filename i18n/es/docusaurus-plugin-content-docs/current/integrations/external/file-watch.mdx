@@ -1,0 +1,241 @@
+---
+title: "Integración domótica File watch, gratuita y de código abierto"
+sidebar_label: "File watch"
+description: "Vigile carpetas y archivos: archivos nuevos, número, tamaño, una copia que ya no llega. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-file-watch.png"
+keywords:
+  - "file watch"
+  - "domótica file watch"
+  - "gladys file watch"
+  - "file watch gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-file-watch instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"File watch","description":"Vigile carpetas y archivos: archivos nuevos, número, tamaño, una copia que ya no llega.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-file-watch","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-file-watch.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-15T22:15:10Z"}} />
+
+Vigile carpetas y archivos desde Gladys: los escaneos de la impresora, las
+fotos de un teléfono, las grabaciones de una cámara, la copia de seguridad
+nocturna copiada al NAS. Cada ruta vigilada se convierte en un dispositivo con
+su número de archivos, su tamaño total, su último archivo y el tiempo desde la
+última modificación. Las escenas reaccionan a un **archivo nuevo**, a una
+carpeta **sin cambios desde hace tiempo** (una copia que ya no llega) y a un
+tamaño **por encima de un umbral**; un widget del panel lista los últimos
+archivos.
+
+Solo se leen nombres, tamaños y fechas, nunca el contenido de los archivos. Las
+carpetas se analizan a intervalos regulares, lo que funciona en las carpetas
+compartidas de red (NFS, SMB), donde las notificaciones de cambio no ven nada
+de lo que escribe otra máquina.
+
+Probado de verdad en un contenedor Docker bloqueado (el entorno aislado de
+Gladys: sistema de solo lectura, ninguna capacidad, 256 MB), con creaciones,
+eliminaciones, cambios de nombre, un árbol de 10 000 archivos, una carpeta
+eliminada y creada de nuevo y patrones de exclusión; todavía no en un Gladys
+real: sus comentarios son bienvenidos en
+[las issues](https://github.com/guim31/gladys-file-watch/issues).
+
+## Qué necesita
+
+- Gladys Assistant 5.1.0 o posterior.
+- Acceso a la máquina que ejecuta Gladys (un terminal, o el uso compartido de
+  archivos de un NAS), para colocar o montar las carpetas que vigilar en la
+  carpeta de vigilancia indicada abajo.
+
+## Primeros pasos
+
+### 1. Dónde colocar las carpetas
+
+Gladys da a cada integración **una sola carpeta de su máquina**, y la
+integración no puede abrir ninguna otra (se ejecuta en un entorno aislado).
+Para esta integración, con una instalación estándar de Gladys, es:
+
+```
+/var/lib/gladysassistant/external-integrations/ext-guim31-gladys-file-watch/watch
+```
+
+Se crea en el primer arranque; dentro de la integración se llama
+`/data/watch`. El botón **Comprobar las carpetas vigiladas** de la página de la
+integración indica la ruta exacta de su instalación. Coloque en ella lo que
+quiera vigilar, de una de estas formas:
+
+- **Archivos escritos directamente en ella**: haga que la herramienta de copia,
+  el escáner o la cámara escriban en esta carpeta (o en una subcarpeta), por
+  ejemplo compartiéndola con Samba.
+- **Una carpeta compartida de red montada en ella** (NFS o SMB de un NAS), por
+  ejemplo en `/etc/fstab`:
+  `//nas.local/backups /var/lib/gladysassistant/external-integrations/ext-guim31-gladys-file-watch/watch/backups cifs ro,credentials=/root/.nas 0 0`
+- **Una carpeta de la máquina montada en ella** (montaje bind, de solo
+  lectura):
+  `mount --bind -o ro /srv/photos /var/lib/gladysassistant/external-integrations/ext-guim31-gladys-file-watch/watch/photos`
+
+Un enlace simbólico a una carpeta exterior **no** funciona: la integración
+solo ve su propia carpeta. Tras montar, **reinicie la integración**
+(Integraciones → File watch → Detener, luego Iniciar): un montaje hecho
+mientras se ejecuta le resulta invisible.
+
+### 2. Configurar la integración
+
+- **Rutas que vigilar**: vacío, se sigue cada carpeta y archivo en la raíz de
+  la carpeta de vigilancia, y uno nuevo aparece solo. O una lista separada por
+  comas, relativa a la carpeta de vigilancia: `copias, nas/scans, logs/app.log`
+  (se puede vigilar una subcarpeta o un solo archivo).
+- **Solo estos archivos**: patrones glob, por ejemplo `*.pdf, *.jpg`. Vacío:
+  todos los archivos.
+- **Ignorar**: patrones de archivos y carpetas que dejar de lado. Por defecto:
+  archivos ocultos, archivos temporales de descargas y copias (`*.tmp`,
+  `*.part`) y archivos de sistema de Windows, macOS y Synology.
+- **Profundidad**: niveles de subcarpetas leídos, 5 por defecto; 1 solo para
+  los archivos de la carpeta.
+- **Intervalo de análisis**: de 30 segundos a 1 hora, 1 minuto por defecto.
+- **Idioma de los nombres**: idioma de los nombres de funciones, fechas,
+  tamaños y resultados de escena.
+
+Patrones: un patrón sin `/` se aplica al nombre a cualquier profundidad
+(`*.mkv`, `@eaDir`); con una `/`, a la ruta dentro de la carpeta vigilada
+(`daily/*.tar.gz`). `*` y `?` se quedan en una carpeta, `**` atraviesa
+carpetas, `[abc]` y `[!abc]` son clases de caracteres. Las mayúsculas no
+importan. Una carpeta ignorada no se recorre.
+
+Pulse después **Comprobar las carpetas vigiladas**: la respuesta lista cada
+ruta, su número de archivos y la ruta de la carpeta de vigilancia en la
+máquina.
+
+### 3. Añadir los dispositivos
+
+En la pestaña **Descubrir**, añada las rutas que seguir. Los disparadores de
+escena y el widget funcionan para todas las rutas, añadidas o no.
+
+## Los dispositivos
+
+Un dispositivo por ruta vigilada, con el nombre de su ruta:
+
+| Función                             | Qué muestra                                                             |
+| ----------------------------------- | ----------------------------------------------------------------------- |
+| Archivos                            | número de archivos contados (tras los patrones)                         |
+| Tamaño total                        | su tamaño total, en MB                                                  |
+| Último archivo                      | el último archivo llegado, con su ruta en la carpeta                    |
+| Fecha del último archivo            | su fecha                                                                |
+| Tiempo desde la última modificación | minutos desde la llegada del último archivo                             |
+| Accesible                           | Sí, o No si la ruta falta o no se puede leer (carpeta compartida caída) |
+
+Un archivo «llega» en la más reciente de sus fechas de modificación y de
+cambio: una copia que conserva la fecha original (`rsync -a`, `cp -p`) cuenta
+igualmente como nueva.
+
+## Panel
+
+El widget **Últimos archivos** lista los ocho últimos archivos de las carpetas
+elegidas (todas por defecto), del más reciente al más antiguo, con su carpeta,
+tamaño y fecha, bajo dos mosaicos: número de archivos y tamaño total. Una línea
+nombra las carpetas no accesibles. Sus ajustes ocultan los totales y el botón
+**Actualizar**, que analiza las carpetas al momento.
+
+## Escenas
+
+### Disparadores
+
+- **Archivo nuevo**: aparece un archivo en una carpeta vigilada. Un archivo
+  renombrado o movido dentro de la carpeta no es nuevo. Filtros: carpetas,
+  extensión en minúsculas, sin el punto (`pdf`). Transmite la carpeta, el archivo (ruta en la carpeta), su
+  extensión, su tamaño y el número de archivos nuevos: más de 5 archivos nuevos
+  en un análisis (una carpeta copiada de golpe) dan un solo evento con el más
+  reciente y el número.
+- **Carpeta sin cambios desde hace tiempo**: ningún archivo ha llegado durante
+  el tiempo elegido (de 1 hora a 7 días). Se activa una vez por umbral (solo el más alto si se superan varios a la vez, tras una interrupción), y de
+  nuevo tras un archivo nuevo. Transmite la carpeta, el umbral, las horas desde
+  el último archivo, su nombre y su fecha.
+- **Tamaño por encima de un umbral**: el tamaño total supera el umbral elegido
+  (de 100 MB a 1 TB). Se vuelve a activar tras bajar un 5 % por debajo.
+  Transmite la carpeta, el umbral, el tamaño y el número de archivos.
+
+Una ruta vista por primera vez no activa nada: los umbrales ya superados se
+toman en silencio. Tras un reinicio de la integración, los archivos llegados
+mientras tanto se anuncian una vez.
+
+### Acciones
+
+- **Estado de una carpeta**: lee una ruta vigilada para las acciones
+  siguientes: accesible o no, archivos, tamaño, último archivo y su fecha,
+  horas desde entonces y una frase lista («copias: 12 archivo(s), 45 GB,
+  último: nightly.tar.gz (14/11/26 03:12)»).
+
+### Ideas de escenas
+
+- **Archivo nuevo** en `scans`, extensión `pdf` → enviar «Nuevo escaneo» y el
+  nombre del archivo por Telegram.
+- **Carpeta sin cambios desde hace tiempo**, `copias`, 48 horas → avisar de que
+  la copia nocturna ya no llega.
+- **Tamaño por encima de un umbral**, `camera`, 100 GB → un mensaje para
+  limpiar las grabaciones.
+- Cada mañana, **Estado de una carpeta** y luego enviar su frase.
+
+## Solución de problemas
+
+- **«Nada que vigilar»**: la carpeta de vigilancia está vacía. Coloque o monte
+  una carpeta en ella y reinicie la integración si es un montaje.
+- **Una ruta «no accesible»**: la carpeta falta (error en las rutas, carpeta
+  compartida no montada) o la integración no puede leerla (se ejecuta como el
+  usuario 1000: dele permiso de lectura, por ejemplo `chmod -R o+rX` en la
+  carpeta, o la opción `uid=1000` de un montaje CIFS).
+- **Una carpeta compartida montada aparece vacía**: el montaje se hizo después
+  del arranque de la integración: reiníciela.
+- **«more than 100000 files»** en los registros: el análisis de una ruta se
+  detiene en 100 000 archivos (200 000 para todas las rutas) para no superar los 256 MB del entorno aislado.
+  Vigile una subcarpeta, reduzca la profundidad o añada patrones.
+- **Registros detallados**: `LOG_LEVEL=debug` (los análisis normales no
+  escriben nada).
+
+## Límites
+
+- Todavía no probada en un Gladys real: sus comentarios son bienvenidos.
+- Gladys no deja que una integración elija una carpeta de su máquina: las
+  carpetas deben colocarse o montarse en la carpeta de vigilancia (ver arriba).
+- Análisis periódico, no notificaciones: un archivo creado y eliminado entre
+  dos análisis no se ve; con un intervalo de un minuto, un archivo nuevo se
+  anuncia en menos de un minuto.
+- Los enlaces simbólicos dentro de las carpetas vigiladas se omiten.
+- 100 000 archivos por ruta y 200 000 en total como máximo, 50 rutas.
+- La sintaxis de patrón `{a,b}` no se admite (la coma separa los patrones).
+
+## Parámetros de configuración
+
+Estos son los parámetros que File watch te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Dónde colocar las carpetas | `section` | No | Gladys solo da a la integración una carpeta de su host. Coloque o monte (NFS, SMB, montaje bind) las carpetas que vigilar en su subcarpeta «watch» y reinicie la integración. La guía indica la ruta exacta. |
+| Rutas que vigilar | `string` | No | Carpetas o archivos bajo /data/watch, separados por comas. Vacío: cada carpeta y archivo en la raíz de /data/watch. |
+| Filtros | `section` | No |  |
+| Solo estos archivos | `string` | No | Patrones glob, separados por comas: *.pdf, daily/*.tar.gz. Vacío: todos los archivos. |
+| Ignorar | `string` | No | Patrones glob de archivos y carpetas que ignorar. Por defecto: archivos ocultos, temporales y de sistema. |
+| Profundidad | `number` | No | Niveles de subcarpetas leídos: 1 solo para los archivos de la carpeta. |
+| Opciones | `section` | No |  |
+| Intervalo de análisis | `select` | No | Frecuencia de análisis de las carpetas (solo nombres, tamaños y fechas, nunca el contenido). |
+| Idioma de los nombres | `select` | No | Idioma de los nombres de funciones (fijados al añadir un dispositivo), de las fechas, tamaños y resultados de escena. |
+
+## Cómo instalar File watch en Gladys
+
+1. En Gladys, abre **Integraciones**: File watch aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-file-watch:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-file-watch](https://github.com/guim31/gladys-file-watch).
+
+File watch requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+File watch es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-file-watch) — [fuente de esta documentación](https://github.com/guim31/gladys-file-watch/blob/HEAD/docs/es.md)

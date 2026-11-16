@@ -1,0 +1,159 @@
+---
+title: "Intégration domotique ERCOT real-time prices (Texas), gratuite et open source"
+sidebar_label: "ERCOT real-time prices (Texas)"
+description: "Non officiel. Prix temps réel ERCOT (Texas) par zone, pour les contrats d'énergie Gladys. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ercot.png"
+keywords:
+  - "ercot real-time prices (texas)"
+  - "domotique ercot real-time prices (texas)"
+  - "gladys ercot real-time prices (texas)"
+  - "ercot real-time prices (texas) gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-ercot instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"ERCOT real-time prices (Texas)","description":"Non officiel. Prix temps réel ERCOT (Texas) par zone, pour les contrats d'énergie Gladys.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-ercot","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ercot.png","type":"device","version":"0.1.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-14T08:16:01Z"}} />
+
+Intégration non officielle, sans lien avec ERCOT. Elle lit les **prix temps réel** (Settlement Point
+Prices, rapport NP6-905-CD) des zones de charge texanes choisies, par
+l'[API publique officielle d'ERCOT](https://developer.ercot.com/applications/pubapi/user-guide/registration-and-authentication/),
+toutes les 15 minutes, et en alimente les contrats d'énergie de Gladys.
+
+Jamais testée avec un vrai compte ERCOT : les requêtes suivent la documentation officielle et sa
+description OpenAPI, les réponses n'ont été vérifiées que sur des réponses synthétiques.
+
+## Mise en place
+
+1. Créez un compte gratuit sur l'[ERCOT API Explorer](https://apiexplorer.ercot.com/) (Sign In / Sign Up,
+   vérification de l'e-mail, mot de passe de votre choix).
+2. Dans **Products**, abonnez-vous au produit **Public API** ; dans votre **Profile**, affichez et copiez
+   la **Primary key** de l'abonnement.
+3. Dans Gladys, remplissez la configuration : l'e-mail du compte, son mot de passe, la clé d'abonnement et
+   les zones de charge à lire (celle de votre logement : votre fournisseur ou distributeur la connaît).
+4. Créez les appareils voulus depuis l'onglet Découverte, et un contrat d'énergie à partir du modèle
+   « Prix temps réel ERCOT » de votre zone.
+
+ERCOT bloque les requêtes venant de hors des États-Unis : l'intégration ne fonctionne que depuis un Gladys
+installé aux États-Unis.
+
+Le mot de passe ne sert qu'à une chose : le jeton d'identité d'une heure, demandé comme la documentation
+d'ERCOT le montre (un POST vers `ercotb2c.b2clogin.com`, identifiant et mot de passe dans le corps du
+formulaire, jamais dans l'adresse). Le mot de passe et la clé d'abonnement sont gardés par Gladys dans sa
+base ; l'intégration garde le jeton en mémoire seulement et n'écrit jamais le mot de passe, la clé ni le
+jeton, ni ne les journalise.
+
+## Ce que vous obtenez
+
+- **Un calendrier d'énergie Gladys par zone** : `spot-ercot-rt-lz-houston`, `-north`, `-south`, `-west`, un
+  prix par intervalle de 15 minutes en USD par kWh (le prix ERCOT en $/MWh divisé par 1 000), heure locale
+  du Texas (America/Chicago). La première lecture remonte trois jours ; après une panne, la lecture
+  reprend au dernier prix connu (trois jours au plus).
+- **Un modèle de contrat par zone**, « Prix temps réel ERCOT, zone de charge \<zone> » : le prix temps réel
+  plus votre supplément par kWh (marge du fournisseur, frais d'acheminement au kWh), vos redevances
+  mensuelles et un taux de taxe, tous à 0 par défaut, et un **prix de repli que vous choisissez** (sans
+  valeur par défaut).
+- **Un appareil par zone** avec un capteur, « Real-time price ($/MWh) » : le prix du dernier intervalle
+  publié par ERCOT, envoyé une fois. Sans date tant que cet intervalle s'est terminé il y a moins de
+  30 minutes (une scène peut y réagir), daté de sa fin jusqu'à 2 heures, plus envoyé au-delà.
+
+## Ce que le moteur de Gladys ne sait pas exprimer
+
+- **L'intervalle en cours n'a pas encore de prix.** ERCOT publie un prix temps réel quelques minutes après
+  la fin de son intervalle de 15 minutes. Le widget de prix et la condition de scène « prix actuel »
+  montrent donc le **prix de repli** du contrat pour l'intervalle en cours, et le coût d'un intervalle lu
+  avant l'arrivée de son prix est calculé au prix de repli, puis corrigé quand le prix arrive (Gladys
+  recalcule les coûts qui lisaient une valeur de calendrier changée). Gladys le signale sur sa page des
+  tâches à chaque usage du prix de repli.
+- **Prix négatifs et extrêmes.** Un prix temps réel négatif est publié tel quel (−250 $/MWh =
+  −0,25 USD/kWh) : le moteur compte cet intervalle comme un crédit qui baisse la facture, taxe comprise.
+  Le plafond d'ERCOT de 5 000 $/MWh (5 USD/kWh) est gardé. Une valeur au-delà de ±10 000 $/MWh est jugée
+  illisible : l'intervalle reste inconnu et le prix de repli s'applique. Le supplément peut être négatif ;
+  le prix de repli ne le peut pas (Gladys refuse un repli négatif).
+- **Le prix de repli remplace le prix ERCOT et le supplément** pour un intervalle sans prix ; la taxe s'y
+  applique. Il est obligatoire : le contrat ne s'enregistre pas sans lui.
+- **Un prix manquant n'est jamais deviné** : un intervalle qu'ERCOT donne sans nombre lisible (vide,
+  texte) est laissé hors du calendrier ; il ne vaut jamais 0.
+- Le modèle est la forme simple d'une offre indexée sur le prix de gros (prix + supplément + redevances
+  mensuelles + taxe) ; ni frais de puissance, ni tranches, ni prix plafonné.
+- Les prix de gros ne sont pas votre tarif : la plupart des offres texanes sont à prix fixe.
+
+## Lectures, rythme et erreurs
+
+- Un cycle toutes les 15 minutes, jamais plus tôt (ERCOT publie un prix par quart d'heure ; seules
+  exceptions, après un refus : de nouveaux identifiants, le bouton, une fois par minute au plus) : un jeton si
+  besoin (réutilisé 55 minutes), puis une requête par zone, une à la fois. Au plus 6 requêtes par cycle,
+  bien sous les 30 requêtes par minute permises par ERCOT. L'heure de chaque cycle est écrite dans `/data`
+  avant sa première requête : un redémarrage ou une nouvelle configuration garde le rythme.
+- Les erreurs (pas de réponse, HTTP 5xx, 403) mettent les lectures en pause 15 minutes, puis 30, 60…
+  jusqu'à 6 heures. Un HTTP 429 ou 5xx les met en pause de la même façon, plus longtemps si son
+  `Retry-After` le demande (6 heures au plus). Une pause survit aux redémarrages et vaut aussi pour le bouton.
+- Un HTTP 403 signifie en général que la requête venait de hors des États-Unis : c'est un échec, pas un
+  refus.
+- Un HTTP 401 qui ne nomme pas la clé d'abonnement : le jeton est renouvelé une fois et la zone relue ; si
+  un nouveau jeton n'est pas accepté non plus, c'est un échec, réessayé après 15 minutes, puis au plus
+  toutes les heures.
+- **Refus** : une réponse OAuth `invalid_grant` à la demande de jeton (identifiant ou mot de passe refusé),
+  ou un 401 qui nomme la clé d'abonnement, arrête les lectures. L'intégration ne réessaie pas d'elle-même
+  les mêmes identifiants, même après un redémarrage (elle en garde 8 bits d'une empreinte salée dans
+  `/data` : de quoi ne rien retrouver). De nouveaux identifiants sont essayés dans la minute. Le bouton
+  **Tester la connexion** réessaie le compte (une fois par minute au plus) et lève le refus si ERCOT
+  accepte.
+- Une réponse illisible pour une zone n'arrête pas les autres zones. Quand aucune zone ne donne de prix
+  lisible (format inattendu), le statut le dit (non connecté, « réponse illisible ou format inattendu ») et
+  les lectures continuent toutes les 15 minutes ; les lignes illisibles sont journalisées une fois par
+  zone.
+- Un calendrier que Gladys ne prend pas (clé tenue par une autre intégration, ou refusé) est nommé dans le
+  statut.
+- `/data` illisible ou non inscriptible : rien n'est lu tant que ce n'est pas réglé (nouvel essai toutes
+  les 10 secondes).
+
+## Hors périmètre
+
+- Prix du lendemain (day-ahead), prix des hubs, prix de zone pondérés par l'énergie (LZEW), autres zones
+  de charge (Austin Energy, CPS Energy, LCRA, Rayburn) : pas dans cette version.
+- Demande et production du réseau ERCOT : voir l'intégration gladys-us-grid.
+- Aucune commande : lecture seule.
+
+## Données
+
+Les prix viennent des informations de marché publiques d'ERCOT, lues par son API publique avec votre
+propre compte et soumises aux [conditions d'utilisation](https://www.ercot.com/help/terms/data-portal) d'ERCOT. Rien
+n'est livré avec l'intégration.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par ERCOT real-time prices (Texas) dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Prix temps réel ERCOT | `section` | Non | Connecteur non officiel, sans lien avec ERCOT. Il lit les prix temps réel (Settlement Point Prices, rapport NP6-905-CD) des zones de charge texanes choisies, toutes les 15 minutes, par l'API publique officielle d'ERCOT. Il faut un compte gratuit ERCOT API Explorer : son identifiant et son mot de passe (servant seulement à obtenir le jeton d'une heure, comme ERCOT le documente) et la clé d'abonnement (Primary key) de votre profil. ERCOT bloque les requêtes venant de hors des États-Unis. Chaque zone a un capteur (dernier prix, $/MWh) et un calendrier d'énergie Gladys spot-ercot-rt-lz-\<zone>, lu par les modèles de contrat « Prix temps réel ERCOT ». Prix de gros, publiés après chaque intervalle : ce n'est pas votre tarif. |
+| Identifiant API Explorer (e-mail) | `string` | Oui | L'adresse e-mail de votre compte ERCOT API Explorer. |
+| Mot de passe API Explorer | `secret` | Oui | Gardé par Gladys dans sa base, jamais réaffiché, envoyé seulement à ERCOT (ercotb2c.b2clogin.com) pour obtenir le jeton d'une heure. Jamais écrit par l'intégration. |
+| Clé d'abonnement (Primary key) | `secret` | Oui | Dans votre profil API Explorer, après l'abonnement au produit Public API. Gardée par Gladys dans sa base, jamais réaffichée, envoyée seulement à ERCOT (api.ercot.com). |
+| Zones de charge | `multi_select` | Oui | Les zones de charge à lire : celle de votre logement (votre fournisseur ou distributeur la connaît). Une requête par zone toutes les 15 minutes. |
+
+## Comment installer ERCOT real-time prices (Texas) dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : ERCOT real-time prices (Texas) apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-ercot:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-ercot](https://github.com/LM1LC3N7/gladys-ercot).
+
+ERCOT real-time prices (Texas) nécessite Gladys `>=5.3.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+ERCOT real-time prices (Texas) est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-ercot) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-ercot/blob/HEAD/docs/fr.md)

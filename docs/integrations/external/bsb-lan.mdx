@@ -19,7 +19,7 @@ https://github.com/LM1LC3N7/gladys-bsblan instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"BSB-LAN","description":"Boilers and heat pumps through the local BSB-LAN adapter: temperatures, modes, optional commands.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-bsblan","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-bsblan.png","type":"device","version":"0.3.3","gladys_version":">=5.1.0","stars":1,"pushed_at":"2026-11-10T17:58:42Z"}} />
+<ExternalIntegrationHeader integration={{"name":"BSB-LAN","description":"Boilers and heat pumps through the local BSB-LAN adapter: temperatures, modes, optional commands.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-bsblan","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-bsblan.png","type":"device","version":"0.4.0","gladys_version":">=5.1.0","stars":1,"pushed_at":"2026-11-15T09:22:36Z"}} />
 
 Shows your **boiler or heat pump with a Siemens controller** (ELCO, Brötje,
 Baxi, MHG, Atlantic, Thision…) in Gladys through the **BSB-LAN** adapter,
@@ -186,6 +186,25 @@ and the range of the controller moves (the low bound of a comfort setpoint
 follows the reduced one). A value outside the range read just before is
 refused with that range, and the card goes back to the real value.
 
+Every refusal gives the value asked and where each bound comes from, so that
+you know which setting to change on the controller, for example: "Setpoint
+of 28.5 °C refused: the controller accepts it between 17 °C (reduced
+setpoint, 1012) and 25 °C (comfort maximum, 1016); not sent." A value
+outside the limits of the integration (5–35 °C for heating, 10–65 °C for hot
+water) is refused on arrival, with the range of the controller at the last
+read when it is known. Gladys **never writes another value** than the one
+asked (not the nearest bound): the refusal is in the logs (a warning, with
+the value). When the bounds read contradict each other (a reduced setpoint
+above the comfort maximum, say), the message names both parameters; when
+BSB-LAN does not give one of them, the message names it. Every command reads
+its bounds itself right before writing: a setting fixed on BSB-LAN counts
+from the next command.
+
+Typing a setpoint on the keyboard in the Gladys card also sends the values
+in between ("2" before "22.5") when the typing pauses: they are refused
+("Setpoint of 2 °C refused…"), the whole value leaves next. The + and −
+buttons do not do that.
+
 ### Protection and hot water Off: never held back
 
 The **Protection (frost protection)** mode of circuits 1 and 2 and the hot
@@ -194,7 +213,8 @@ during a pause (429/5xx), after refused credentials, during another
 command, without a fresh read, and from an unknown mode. They pass before
 every queued request and cancel the commands not sent yet ("a protective
 command came after this one"). BSB-LAN serves one request at a time: they
-wait for the end of the one it serves. Still busy after 3.5 s, Gladys
+wait for the end of the one it serves (a command in progress stops there,
+before its next request). Still busy after 3.5 s, Gladys
 answers "the command is queued first and leaves as soon as it is free" and
 sends it as soon as possible (within 30 s).
 
@@ -291,9 +311,21 @@ IP address is never commanded). Then it **reads again** the current value
 and the range the controller allows, and decides on that read only; no other
 request runs between that read and the write, and the option (and the
 ceiling) is checked again right before the request leaves. A missing value
-or range refuses the command. A value already in place is not sent again. A
-command that cannot leave within 3.5 seconds is refused unsent; Gladys gets
-its answer within its 5 seconds. BSB-LAN accepts a write with a status 1;
+or range refuses the command. A value already in place is not sent again.
+BSB-LAN is often slow for a few seconds after a write (1 to 2 seconds per
+parameter read). So a command gets the adapter within 15 seconds (the
+request it is serving ends first), then has 12 seconds for its `/JI` and
+its fresh read, and its write leaves right after them or not at all; the
+answer of the write and its read back have at least 3.8 seconds. So a
+write leaves at the latest about 27 seconds after the click, about 42
+seconds for a command that waited behind another one. Gladys gets an
+answer 4.2 seconds after the click at the latest: a command not over by
+then is answered "BSB-LAN answers slowly: the command goes on" and its
+outcome follows in the logs (the card shows the real value again if it
+fails). Until its write leaves, a newer value of the same setting
+replaces it: it is not sent ("replaced by a newer value", an information
+line), the newer one is.
+BSB-LAN accepts a write with a status 1;
 the integration **then reads the parameter again** and says success only
 when that read shows the value asked (still the previous one: "read again
 just after, still the previous one"; not read in time: "sent, without
@@ -305,16 +337,32 @@ between two writes. A command that arrives while another one runs (or
 within those 3 seconds) **waits** and leaves after it, with its own
 fresh read and every check again (the option, the hot water ceiling, the
 range, a pause, the adapter); Gladys then answers "this one waits and is
-sent after it". One that cannot leave within 30 seconds is dropped, not
+sent after it". One that cannot start within 30 seconds is dropped, not
 sent. At most one waits per setting: a newer value of the
 same setting replaces it. A Protection or hot water Off that arrives after
 it drops it (never sent after a protective command), and so does a
 restart of the integration. Protective commands never wait behind it.
 After a command refused before it left, cancelled, dropped or read back
 unchanged, the card shows the value read again at once (Gladys otherwise
-keeps the value typed). The exception: an earlier command of the same
+keeps the value typed). Two exceptions: an earlier command of the same
 setting is still "sent, without confirmation" and that setting was not
-read since; then the card waits for the first read.
+read since; or BSB-LAN is in its retry delay (below) and did not answer
+the command either, so no value is known. Then the card waits for the
+first read.
+
+After a failed read (BSB-LAN did not answer in time), the next read waits
+for the retry delay, never shorter than the refresh interval (10 minutes
+with an interval of 10 minutes). A command meanwhile is not refused for
+that alone: it reads the adapter itself (`/JI`, waited 3 seconds at most,
+then the fresh read) and leaves only if the MAC address is the device's.
+Refused after that read, its card shows the value read. It is still
+refused after a read that gave another adapter, no MAC address or no JSON
+API, and during a pause or a stop on refused credentials. When BSB-LAN
+does not answer it either, the next commands do not try again for 30
+seconds ("did not answer a command a few seconds ago"); protective
+commands are never held by that. Such a command changes neither the
+status nor the time of the next read (no reads 5 and 20 seconds later
+while the adapter is said unreachable).
 
 After "sent, without confirmation", the controller may have applied the
 value. Until 10 minutes after the last command of that setting (the
@@ -339,6 +387,21 @@ for each new cause (3 at most, a cause that only differs by its numbers is
 the same), then "Sending to Gladys works again". The times of the log lines are in UTC
 (the `Z` at the end), as the logger of the Gladys integration SDK writes them.
 
+## Dashboard widget
+
+The "Heating (BSB-LAN)" widget (a Gladys with integration widgets) shows,
+read only: the room temperature of each circuit, the hot water and the
+outside, then for each circuit its mode, its comfort and reduced setpoints
+and its status, and for the hot water its mode, setpoints and status. Only
+the values the controller gives appear. It has no button: the commands go
+through the cards of the device. When BSB-LAN stops answering, the widget
+says so instead of showing old values (during a pause or after refused
+credentials, it shows that status). It follows the reads: when its content
+changes, it asks the dashboards to refresh it. Gladys takes at most one such
+request per 10 s, so a change shows within about 11 s; a dashboard also
+pulls it again at least every minute (or at the read interval, when
+shorter), which covers a request lost while Gladys was restarting.
+
 ## Errors and limits
 
 - **BSB-LAN unreachable**: "Heating mode (read)" shows "BSB-LAN
@@ -354,13 +417,15 @@ the same), then "Sending to Gladys works again". The times of the log lines are 
 - **Commands failing when BSB-LAN also publishes in MQTT**: the adapter
   serves one request at a time. If BSB-LAN publishes in MQTT to a broker
   (for Home Assistant, for example), that load can make the commands of
-  Gladys run out of time ("answered too slowly", "sent, without
-  confirmation (timeout)"; these messages then remind it). Turn MQTT off in
+  Gladys run out of time ("answered too slowly", "could not be read just
+  before (timeout)", "sent, without confirmation (timeout)"; these messages
+  then remind it). Turn MQTT off in
   BSB-LAN, or lighten it (a longer interval, fewer parameters), and keep a
   reasonable refresh interval in Gladys (30 s or more). Seen on a real
-  installation: with MQTT off and 30 s, every command went through. The
-  deadlines of the commands and the 3 s between two writes stay as they
-  are (they protect the heating).
+  installation: with MQTT off and 30 s, every command went through. Since
+  0.3.4 the deadlines of the commands count from the moment a command gets
+  the adapter (see "How a command leaves"); the 3 s between two writes
+  stay (they protect the heating).
 - **"The state could not be saved in /data (EACCES)"** in the logs, and
   "/data is not writable" in the status (said from the start: a test file
   is written then removed when the integration starts, the state itself is
@@ -438,7 +503,7 @@ These are the settings BSB-LAN asks for in its configuration screen in Gladys.
 ## How to install BSB-LAN in Gladys
 
 1. In Gladys, open **Integrations**: BSB-LAN appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-bsblan:0.3.3`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-bsblan:0.4.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-bsblan](https://github.com/LM1LC3N7/gladys-bsblan).
 

@@ -1,0 +1,254 @@
+---
+title: "Integración domótica Woodpecker CI, gratuita y de código abierto"
+sidebar_label: "Woodpecker CI"
+description: "Sus pipelines de Woodpecker CI en Gladys: estado, alertas de fallo, relanzar desde una escena. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-woodpecker.png"
+keywords:
+  - "woodpecker ci"
+  - "domótica woodpecker ci"
+  - "gladys woodpecker ci"
+  - "woodpecker ci gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-woodpecker instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Woodpecker CI","description":"Sus pipelines de Woodpecker CI en Gladys: estado, alertas de fallo, relanzar desde una escena.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-woodpecker","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-woodpecker.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-15T16:51:56Z"}} />
+
+[Woodpecker CI](https://woodpecker-ci.org/) es un motor de integración continua
+libre y autoalojado, a menudo junto a Forgejo, Gitea o GitHub. Esta integración
+sigue sus pipelines: cada repositorio se convierte en un dispositivo con el
+estado de su último pipeline, su número, su rama, su evento y su duración, e
+indica si hay un pipeline en curso; un dispositivo **Woodpecker CI** indica si el
+servidor responde y resume la cola, los agentes libres y los repositorios
+fallidos. Las escenas pueden reaccionar a un **pipeline terminado** o a un
+repositorio que **empieza a fallar o vuelve a estar en verde**, leer un
+repositorio y, si usted lo permite, **relanzar el último pipeline**. Un widget
+del panel muestra los últimos pipelines de un vistazo.
+
+Probada con un servidor Woodpecker 3.20 real, una forja Forgejo y un agente
+(Docker); todavía no con una instancia real de Gladys: sus comentarios son
+bienvenidos en [las issues](https://github.com/guim31/gladys-woodpecker/issues).
+
+## Lo que necesita
+
+- Gladys Assistant 5.1.0 o posterior.
+- Un servidor Woodpecker, versión 3 o posterior, accesible desde la máquina de
+  Gladys.
+- Un token de acceso personal de un usuario de Woodpecker. Se siguen los
+  repositorios activos que ve este usuario. La cola y los agentes solo se dan al
+  token de un administrador; relanzar un pipeline requiere el permiso push en el
+  repositorio.
+
+En cada actualización (cada minuto por defecto), la integración hace dos
+solicitudes ligeras (los repositorios con su último pipeline, la cola), más una
+por repositorio cuyos pipelines han cambiado desde la lectura anterior (sus diez
+pipelines más recientes). Relanzar un pipeline añade una solicitud, solo cuando
+una escena lo pide.
+
+## Primeros pasos
+
+### 1. Crear un token de acceso personal
+
+En Woodpecker, haga clic en su avatar arriba a la derecha, luego en **Token de
+acceso personal**, y copie el token mostrado. Manténgalo en secreto: da los
+derechos de su usuario. Un usuario dedicado, miembro solo de los repositorios
+que seguir, limita lo que Gladys puede ver; la cola y los agentes quedan
+entonces desconocidos.
+
+### 2. Configurar la integración
+
+En Gladys, abra **Integraciones → Woodpecker CI → Configuración** y rellene:
+
+- **Dirección de Woodpecker**: la dirección con la que abre Woodpecker,
+  `http://192.168.1.2:8000` o `https://ci.example.com` (conserve la subruta si
+  Woodpecker funciona bajo una).
+- **Token de acceso personal**: el token del paso 1.
+- **Repositorios que seguir**: vacío para todos los repositorios activos (50
+  como máximo), o `propietario/nombre` o enlaces copiados de la forja,
+  separados por comas. Un propietario solo sigue todos sus repositorios.
+  Ejemplo: `alice/web, mi-org`.
+- **Pipelines que cuentan**: **Solo la rama predeterminada** (por defecto) toma
+  los push, los pipelines programados y manuales y los despliegues de la rama
+  predeterminada: una pull request fallida no pone el repositorio en rojo.
+  **Todos** toma todos los pipelines: ramas, pull requests y etiquetas.
+- **Permitir que las escenas relancen pipelines**: desactivado por defecto.
+  Actívelo para usar la acción **Relanzar el último pipeline de Woodpecker**.
+- **Intervalo de actualización** e **Idioma de los nombres**.
+
+Haga clic en **Probar la conexión**: Woodpecker y su versión, cuántos
+repositorios se siguen y fallan, la cola y los agentes libres (o que hace falta
+un token de administrador para verlos), si las escenas pueden relanzar
+pipelines, y los repositorios de la lista que Woodpecker no conoce.
+
+### 3. Añadir los dispositivos
+
+En **Descubrimiento**, añada el dispositivo **Woodpecker CI** y los repositorios
+que desee. Sus valores llegan enseguida. Los desencadenantes de escena y el
+widget funcionan incluso para un repositorio no añadido como dispositivo.
+
+## Los dispositivos
+
+### Un dispositivo por repositorio
+
+Nombrado según el nombre completo del repositorio (`propietario/nombre`),
+identificado por su id de Woodpecker: renombrar el repositorio en la forja
+conserva el dispositivo.
+
+| Función                      | Tipo     | Valor                                                                                                                   |
+| ---------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Estado                       | texto    | Correcto, Fallido, Error, Cancelado, Rechazado, Omitido, En espera, En curso, Pendiente de aprobación o Ningún pipeline |
+| Último pipeline correcto     | binario  | 1 cuando el último pipeline terminado fue correcto, 0 cuando falló o no pudo ejecutarse (error)                         |
+| Pipeline en curso            | binario  | 1 mientras un pipeline se ejecuta o espera un agente                                                                    |
+| Número del último pipeline   | contador | número del último pipeline                                                                                              |
+| Duración del último pipeline | duración | duración del último pipeline terminado, en segundos                                                                     |
+| Rama                         | texto    | rama del último pipeline                                                                                                |
+| Evento                       | texto    | lo que lo inició: Push, Pull request, Etiqueta, Release, Despliegue, Programado, Manual                                 |
+
+Mientras un pipeline se ejecuta, el estado indica **En curso**; **Último
+pipeline correcto** y **Duración del último pipeline** conservan los valores del
+anterior. Un pipeline cancelado u omitido deja **Último pipeline correcto** sin
+cambios.
+
+### El dispositivo Woodpecker CI
+
+| Función               | Tipo     | Valor                                                               |
+| --------------------- | -------- | ------------------------------------------------------------------- |
+| Accesible             | binario  | 1 cuando el servidor responde, 0 si no                              |
+| Workflows en espera   | contador | workflows que esperan un agente (token de administrador)            |
+| Workflows en curso    | contador | workflows en curso (token de administrador)                         |
+| Agentes libres        | contador | agentes conectados y libres: un agente ocupado no se cuenta (admin) |
+| Repositorios fallidos | contador | repositorios seguidos cuyo último pipeline decisivo falló           |
+
+Con un token que no es de un administrador, las tres cifras de la cola no se
+publican.
+
+## Panel
+
+El widget **Pipelines de Woodpecker** muestra una fila por repositorio, con el
+estado, el número y la rama de su último pipeline: primero los repositorios
+fallidos (todavía en rojo mientras se ejecuta un nuevo pipeline), luego los que
+están en curso. Una línea encima da los workflows en espera y en curso y los
+agentes libres (token de administrador). Elija repositorios en sus ajustes, o
+déjelo vacío para todos; la línea de la cola y el botón **Actualizar** se pueden
+ocultar. **Actualizar** vuelve a leer Woodpecker enseguida. Las filas llevan los
+nombres dados en Gladys.
+
+## Escenas
+
+### Desencadenantes
+
+- **Pipeline de Woodpecker terminado**: ha terminado un pipeline de un
+  repositorio seguido, sea cual sea su resultado (filtro por repositorio y
+  resultado: correcto, fallido, error, cancelado). Variables: el nombre del
+  repositorio, el número del pipeline, el resultado en palabras, la rama, el
+  evento, la duración en segundos, el enlace y un resumen listo para un mensaje.
+- **Repositorio de Woodpecker fallido o de nuevo en verde**: un repositorio
+  empieza a fallar (un pipeline fallido o con error tras un éxito, o su primer
+  pipeline fallido), o vuelve a pasar tras un fallo (filtro por repositorio y
+  cambio). Variables: el nombre del repositorio, el número del pipeline, el
+  resultado, la rama, el enlace y un resumen.
+
+Solo los pipelines que cuentan (vea **Pipelines que cuentan**) activan estas
+escenas. La primera lectura de un repositorio solo aprende su estado: el pasado
+nunca se anuncia. Se anuncian como máximo tres pipelines por repositorio y
+lectura. Lo visto se guarda en la integración: un reinicio no pierde ningún
+evento ni lo anuncia dos veces.
+
+### Acciones
+
+- **Relanzar el último pipeline de Woodpecker**: relanza el pipeline que cuenta
+  más reciente de un repositorio seguido, sobre el mismo commit; Woodpecker crea
+  un nuevo pipeline. Requiere **Permitir que las escenas relancen pipelines** en
+  la configuración. Variables: el nombre del repositorio, el número del pipeline
+  relanzado, el del nuevo y su enlace. Use **Pipeline de Woodpecker terminado**
+  para reaccionar a su fin.
+- **Leer un repositorio de Woodpecker**: el estado de un repositorio seguido
+  como variables para las siguientes acciones: estado en palabras, último
+  resultado, último pipeline correcto, pipeline en curso, número y duración del
+  último pipeline, rama, evento, enlace.
+
+### Ideas de escenas
+
+- **Repositorio de Woodpecker fallido o de nuevo en verde**, cambio «Fallido» →
+  poner la lámpara del despacho en rojo y enviar el resumen; cambio «De nuevo en
+  verde» → volver a ponerla en blanco.
+- **Pipeline de Woodpecker terminado** para su repositorio de despliegue con el
+  resultado «Correcto» → enviarse «la nueva versión está en línea».
+- Cada mañana a las 7:00 → **Relanzar el último pipeline de Woodpecker** de un
+  repositorio cuyas pruebas dependen de datos externos, si falló por la noche.
+
+## Solución de problemas
+
+- **Woodpecker no responde**: compruebe la dirección desde la máquina de Gladys
+  (mismo puerto, mismo protocolo); un Gladys en Docker llega al host por su
+  dirección IP, no por `localhost`.
+- **La dirección redirige**: introduzca la dirección `https://` en la que acaba
+  el navegador, con la subruta si la hay.
+- **Token rechazado**: el token se regeneró (Woodpecker solo guarda uno por
+  usuario) o se copió mal: cópielo de nuevo.
+- **No hay ninguna API de Woodpecker en esta dirección**: la dirección apunta a
+  la forja o a otro servicio, o falta la subruta.
+- **Woodpecker lo ha rechazado: el token necesita el permiso push en este
+  repositorio**: use el token de un usuario que pueda hacer push, o deje el
+  relanzamiento desactivado.
+- Un repositorio no aparece: no está activo en Woodpecker, su usuario no lo ve,
+  o más de 50 repositorios coinciden con la lista.
+- **Certificado rechazado**: no se acepta un certificado autofirmado; use la
+  dirección `http://` en la red local.
+
+## Límites
+
+- Relanzar el último pipeline es el único comando, y está desactivado por
+  defecto. Los pipelines no se pueden cancelar ni aprobar desde Gladys.
+- 50 repositorios como máximo; Woodpecker se lee como mucho cada minuto: un
+  evento llega hasta un intervalo más tarde.
+- Se leen los diez pipelines más recientes de un repositorio: cuando terminan
+  más de diez entre dos lecturas, los más antiguos no se anuncian.
+- No se leen los pasos, los registros ni los workflows de un pipeline, ni los
+  agentes uno por uno.
+- Woodpecker 3 o posterior: las versiones anteriores no dan el último pipeline
+  de cada repositorio.
+- Los textos de los dispositivos y de las escenas siguen el idioma de la
+  configuración; los nombres de las funciones se fijan al añadir un dispositivo.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Woodpecker CI te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Su servidor Woodpecker | `section` | No | Introduzca la dirección de su servidor Woodpecker y un token de acceso personal (haga clic en su avatar arriba a la derecha → Token de acceso personal). Se siguen los pipelines de los repositorios que ve este usuario. |
+| Dirección de Woodpecker | `string` | No | La dirección con la que abre Woodpecker: http:\/\/192.168.1.2:8000 o https:\/\/ci.example.com. |
+| Token de acceso personal | `secret` | No | Lee los repositorios de su usuario. El token de un administrador también da la cola y los agentes conectados. |
+| Repositorios que seguir | `string` | No | Vacío: todos los repositorios activos (50 como máximo). Si no, propietario/nombre o enlaces, separados por comas; un propietario solo sigue todos sus repositorios. |
+| Opciones | `section` | No |  |
+| Pipelines que cuentan | `select` | No | Qué pipelines dan el estado de un repositorio y activan las escenas. |
+| Permitir que las escenas relancen pipelines | `boolean` | No | Desactivado por defecto. Si se activa, la acción «Relanzar el último pipeline de Woodpecker» puede relanzar el pipeline de cualquier repositorio seguido: el usuario del token necesita el permiso push. |
+| Intervalo de actualización | `select` | No | Con qué frecuencia se lee Woodpecker: dos solicitudes ligeras, más una por repositorio cuyos pipelines han cambiado. |
+| Idioma de los nombres | `select` | No | Idioma de los nombres de las funciones (fijados al añadir un dispositivo), de los estados y de los textos de escena. |
+
+## Cómo instalar Woodpecker CI en Gladys
+
+1. En Gladys, abre **Integraciones**: Woodpecker CI aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-woodpecker:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-woodpecker](https://github.com/guim31/gladys-woodpecker).
+
+Woodpecker CI requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Woodpecker CI es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-woodpecker) — [fuente de esta documentación](https://github.com/guim31/gladys-woodpecker/blob/HEAD/docs/es.md)

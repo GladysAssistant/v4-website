@@ -1,0 +1,148 @@
+---
+title: "BfS ODL smart home integration, free and open source"
+sidebar_label: "BfS ODL"
+description: "Ambient gamma dose rate of the 1,700 ODL probes of the German BfS, every hour. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-odl.png"
+keywords:
+  - "bfs odl"
+  - "bfs odl smart home"
+  - "gladys bfs odl"
+  - "bfs odl gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-odl instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"BfS ODL","description":"Ambient gamma dose rate of the 1,700 ODL probes of the German BfS, every hour.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-odl","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-odl.png","type":"device","version":"1.0.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-15T11:51:52Z"}} />
+
+## What it does
+
+Brings into Gladys the **ambient gamma dose rate** measured by the probes of the **ODL network** of the German
+Federal Office for Radiation Protection (Bundesamt für Strahlenschutz, BfS): about 1,700 probes across Germany, one
+value per hour. The integration reads the open data service of the BfS, the same data as the
+[ODL-Info](https://odlinfo.bfs.de) map, with no account and no key.
+
+For each followed probe you get the dose rate, its cosmic and terrestrial parts, the time and state of the
+measurement, a dashboard widget with the 24-hour curve, and scene triggers when the dose rate crosses an alert
+threshold.
+
+**This integration is not an official alert system**: in an emergency, follow the instructions of the authorities.
+Natural levels vary: rain washes radon decay products to the ground and can add up to 0.1 µSv/h for a few hours. The
+integration is not affiliated with the BfS. Data: Bundesamt für Strahlenschutz (BfS), free of charge, source cited.
+
+Same integration for France: [Téléray](https://github.com/guim31/gladys-teleray) (ASNR network).
+
+## Requirements
+
+- Gladys 5.3.0 or later.
+- Internet access from Gladys.
+- The location of your house (Settings → Houses), to follow the closest probe automatically.
+
+## Configuration
+
+1. Install the integration: Integrations → Install from GitHub, address `https://github.com/guim31/gladys-odl`.
+2. **Probes**: leave it empty to follow the probe closest to your house, or type up to 5 probe ids (9 digits),
+   names or postcodes separated by commas (e.g. `091620001, 80637, Feldberg`). A postcode gives its lowest probe in
+   operation. Two buttons help: **Find the probes near a house** lists the closest ones with their id and distance,
+   **Search for probes** lists those of a postcode (or its first digits) or whose name holds a text.
+3. **Alert threshold**: the dose rate that fires the "Dose rate above the threshold" trigger, 0.3 µSv/h by default
+   (see Scenes).
+4. **Language**: language of the feature names (set when a device is added) and of the texts.
+5. Open the **Discovery** tab and add the probe.
+
+## Devices
+
+One device per probe, named after it (e.g. `München-Neuhausen (ODL)`):
+
+| Feature                  | What it is                                                                                      |
+| ------------------------ | ----------------------------------------------------------------------------------------------- |
+| Dose rate (µSv/h)        | ambient gamma dose rate of the last hour, in microsieverts per hour                             |
+| Cosmic part (µSv/h)      | the share of cosmic radiation, estimated by the BfS (it grows with altitude)                    |
+| Terrestrial part (µSv/h) | the rest: radiation from the ground and the air (radon), the part that varies                   |
+| Measurement time         | end of the measurement hour (the BfS publishes it 60 to 90 minutes later)                       |
+| Probe state              | Measurement checked, Not checked yet, Test operation, Probe out of order, No recent measurement |
+
+Gladys has no radiation unit: the unit is in the feature names. A measurement older than 4 hours is not published as
+current (the state then says "No recent measurement"). A probe out of order publishes no value.
+
+## Widget
+
+**ODL dose rate**: the dose rate and its cosmic and terrestrial parts as tiles (the dose rate turns red at the alert
+threshold), the curve of the last 24 hours, and the time, state, threshold and source. Settings: the probe (empty: the
+first one added), and two switches to hide the curve or the rows below it.
+
+## Scenes
+
+- Trigger **Dose rate above the threshold**: the hourly dose rate of a probe in operation reaches the alert threshold
+  of the configuration, checked or not yet (a fast alert rather than a late one). Fired once when it is crossed; it
+  stays crossed until the dose rate falls 0.02 µSv/h below it. Never on the first look at a probe, nor for a probe in
+  test operation. Variables: probe name, dose rate, threshold, end of the measurement hour.
+- Trigger **Dose rate back to normal**: after an exceedance, the dose rate is at least 0.02 µSv/h below the threshold
+  again.
+- Action **Get the dose rate of a probe**: the last values and a ready-made sentence (`summary`) for a notification;
+  `status` is one of `checked`, `not_checked`, `test_operation`, `defective`, `no_recent`.
+
+The default threshold, **0.3 µSv/h**, is a cautious one: natural levels in Germany sit between 0.05 and 0.18 µSv/h
+(median about 0.11), up to some 0.25 µSv/h on a mountain top, and a heavy rain can add up to 0.1 µSv/h for a few
+hours. 0.3 µSv/h is therefore rarely reached without a real cause; 0.2 µSv/h will fire on rain at some probes. The
+devices also give their values to the usual scene conditions, for a threshold of your own.
+
+## Scene examples
+
+- Notify me when the dose rate is high: trigger "Dose rate above the threshold", then "Get the dose rate of a probe"
+  and a notification with its summary.
+- A weekly report: a scheduled scene, "Get the dose rate of a probe", then a message with the summary.
+
+## Troubleshooting
+
+- **"No probe"**: set the location of a house (Settings → Houses) or type a probe in the configuration.
+- **"Unknown probes"**: the id, name or postcode was not found; use the search buttons and copy the id.
+- **"The BfS does not answer"**: the measurements are read again every 20 minutes.
+- **"No recent measurement"**: the probe has published nothing for 4 hours (maintenance, transmission). The values
+  come back with its next measurement.
+- **"Probe out of order"**: the BfS marks the probe defective; choose a neighbour until it is repaired.
+
+## Limits
+
+- One value per hour, published 60 to 90 minutes after its hour: the integration reads every 20 minutes (one request
+  for all the followed probes), the probe list once a day.
+- 5 probes at most.
+- The cosmic and terrestrial parts are estimates of the BfS; some probes do not provide them.
+- Safecast measurements are not included (a possible follow-up).
+- A device's feature names are set when it is added; changing the language afterwards does not rename them.
+
+## Configuration settings
+
+These are the settings BfS ODL asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| ODL probes | `section` | No | Reads the open data service of the Federal Office for Radiation Protection (no account). Data © BfS. Not an official alert system, and not affiliated with the BfS. |
+| Probes | `string` | No | Ids, names or postcodes of the probes to follow, separated by commas, 5 at most. Empty: the probe closest to your house. The buttons below list them. |
+| Alert threshold | `select` | No | Dose rate that fires the "Dose rate above the threshold" trigger. Natural levels: 0.05 to 0.18 µSv/h, up to 0.25 on a mountain; rain can add 0.1 for a few hours. |
+| Language | `select` | No | Language of the feature names (set when a device is added), of the state texts and of the scene texts. |
+
+## How to install BfS ODL in Gladys
+
+1. In Gladys, open **Integrations**: BfS ODL appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-odl:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-odl](https://github.com/guim31/gladys-odl).
+
+BfS ODL requires Gladys `>=5.3.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+BfS ODL is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-odl) — [source of this documentation](https://github.com/guim31/gladys-odl/blob/HEAD/docs/en.md)
