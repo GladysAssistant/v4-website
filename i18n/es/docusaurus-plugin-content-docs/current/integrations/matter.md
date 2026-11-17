@@ -65,14 +65,17 @@ Muchos dispositivos comerciales son routers Thread:
 
 - Apple TV 4K Ethernet 128 GB
 - Apple HomePod
+- Google Home Speaker (2026)
 - Google Nest Hub Max
 - Google Nest Hub (2.ª generación)
 - Google Nest Wi-Fi Pro
 - Google TV Streamer 4K
 - Amazon Echo (4.ª generación)
+- Amazon Echo Dot Max
 - Amazon Echo Hub
 - Amazon Echo Studio
-- Amazon Echo Show (21, 15, 10 y 8)
+- Amazon Echo Show 8 (3.ª generación), 10 (3.ª generación), 11, 15 (2.ª generación), 16 y 21. Los Echo Show más antiguos y el Echo Show 5 no son routers Thread
+- Los routers Amazon eero recientes (eero 6 y posteriores, eero Pro, eero Beacon)
 
 También puedes montar tu propio router Thread con un dongle USB Thread y OpenThread.
 

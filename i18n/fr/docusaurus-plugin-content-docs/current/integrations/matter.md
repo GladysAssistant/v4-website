@@ -65,14 +65,17 @@ Beaucoup d'appareils du commerce sont des routeurs Thread :
 
 - Apple TV 4K Ethernet 128 Go
 - Apple HomePod
+- Google Home Speaker (2026)
 - Google Nest Hub Max
 - Google Nest Hub (2ème génération)
 - Google Nest Wi-Fi Pro
 - Google TV Streamer 4K
 - Amazon Echo (4ème génération)
+- Amazon Echo Dot Max
 - Amazon Echo Hub
 - Amazon Echo Studio
-- Amazon Echo Show (21, 15, 10 et 8)
+- Amazon Echo Show 8 (3ème génération), 10 (3ème génération), 11, 15 (2ème génération), 16 et 21. Les Echo Show plus anciens et l'Echo Show 5 ne sont pas des routeurs Thread
+- Les routeurs Amazon eero récents (eero 6 et suivants, eero Pro, eero Beacon)
 
 Il est aussi possible de mettre en place un routeur Thread soi-même avec un dongle USB Thread et OpenThread.
 

@@ -587,7 +587,7 @@ export const matterHubFaqEn = [
   {
     question: "Which devices are Thread border routers?",
     answer:
-      "Common ones include the Apple TV 4K (Ethernet model) and HomePod, the Google Nest Hub second generation, Nest Hub Max, Nest Wifi Pro and TV Streamer 4K, and the Amazon Echo fourth generation, Echo Hub, Echo Studio and Echo Show. You can also build one yourself with a USB Thread dongle and OpenThread, but be aware that a border router only routes traffic: it does not do the Bluetooth pairing a new Matter over Thread device needs, so with Gladys today you still go through one of the full controllers above.",
+      "Common ones include the Apple TV 4K (Ethernet model) and HomePod, the Google Home Speaker (2026), Nest Hub second generation, Nest Hub Max, Nest Wifi Pro and TV Streamer 4K, the Amazon Echo fourth generation, Echo Dot Max, Echo Hub, Echo Studio and some Echo Show models only (Echo Show 8 third generation, 10 third generation, 11, 15 second generation, 16 and 21), as well as recent Amazon eero routers. You can also build one yourself with a USB Thread dongle and OpenThread, but be aware that a border router only routes traffic: it does not do the Bluetooth pairing a new Matter over Thread device needs, so with Gladys today you still go through a full Matter controller such as an Apple TV, a Matter compatible Echo or a Google Nest device, not an eero router or a homemade border router.",
   },
   {
     question: "Can I use Matter without Apple, Google or Amazon?",
@@ -630,7 +630,7 @@ export const matterHubFaqFr = [
   {
     question: "Quels appareils sont des routeurs de bordure Thread ?",
     answer:
-      "Parmi les plus courants : l'Apple TV 4K (modèle Ethernet) et le HomePod, les Google Nest Hub 2e génération, Nest Hub Max, Nest Wifi Pro et TV Streamer 4K, ainsi que les Amazon Echo 4e génération, Echo Hub, Echo Studio et Echo Show. Vous pouvez aussi en fabriquer un avec une clé USB Thread et OpenThread, mais sachez qu'un routeur de bordure ne fait que router le trafic : il n'assure pas l'appairage Bluetooth dont a besoin un nouvel appareil Matter over Thread, si bien qu'avec Gladys aujourd'hui vous passez toujours par l'un des contrôleurs complets ci-dessus.",
+      "Parmi les plus courants : l'Apple TV 4K (modèle Ethernet) et le HomePod, le Google Home Speaker (2026), les Google Nest Hub 2e génération, Nest Hub Max, Nest Wifi Pro et TV Streamer 4K, les Amazon Echo 4e génération, Echo Dot Max, Echo Hub, Echo Studio et certains Echo Show seulement (Echo Show 8 3e génération, 10 3e génération, 11, 15 2e génération, 16 et 21), ainsi que les routeurs Amazon eero récents. Vous pouvez aussi en fabriquer un avec une clé USB Thread et OpenThread, mais sachez qu'un routeur de bordure ne fait que router le trafic : il n'assure pas l'appairage Bluetooth dont a besoin un nouvel appareil Matter over Thread, si bien qu'avec Gladys aujourd'hui vous passez toujours par un contrôleur Matter complet, comme une Apple TV, une Echo compatible Matter ou un appareil Google Nest, et non par un routeur eero ou un routeur de bordure fait maison.",
   },
   {
     question: "Peut-on utiliser Matter sans Apple, Google ni Amazon ?",
@@ -673,7 +673,7 @@ export const matterHubFaqDe = [
   {
     question: "Welche Geräte sind Thread-Border-Router?",
     answer:
-      "Verbreitet sind unter anderem das Apple TV 4K (Ethernet-Modell) und der HomePod, der Google Nest Hub der zweiten Generation, Nest Hub Max, Nest Wifi Pro und TV Streamer 4K sowie der Amazon Echo der vierten Generation, Echo Hub, Echo Studio und Echo Show. Du kannst auch selbst einen mit einem USB-Thread-Stick und OpenThread bauen. Beachte aber: Ein Border-Router leitet nur Datenverkehr weiter, er übernimmt nicht die Bluetooth-Kopplung, die ein neues Matter-over-Thread-Gerät braucht. Mit Gladys führt der Weg derzeit also weiterhin über einen der oben genannten vollwertigen Controller.",
+      "Verbreitet sind unter anderem das Apple TV 4K (Ethernet-Modell) und der HomePod, der Google Home Speaker (2026), der Google Nest Hub der zweiten Generation, Nest Hub Max, Nest Wifi Pro und TV Streamer 4K, der Amazon Echo der vierten Generation, Echo Dot Max, Echo Hub, Echo Studio und nur bestimmte Echo-Show-Modelle (Echo Show 8 der dritten Generation, 10 der dritten Generation, 11, 15 der zweiten Generation, 16 und 21) sowie neuere Amazon-eero-Router. Du kannst auch selbst einen mit einem USB-Thread-Stick und OpenThread bauen. Beachte aber: Ein Border-Router leitet nur Datenverkehr weiter, er übernimmt nicht die Bluetooth-Kopplung, die ein neues Matter-over-Thread-Gerät braucht. Mit Gladys führt der Weg derzeit also weiterhin über einen vollwertigen Matter-Controller wie ein Apple TV, einen Matter-fähigen Echo oder ein Google-Nest-Gerät, nicht über einen eero-Router oder einen selbst gebauten Border-Router.",
   },
   {
     question: "Kann ich Matter ohne Apple, Google oder Amazon nutzen?",
@@ -716,7 +716,7 @@ export const matterHubFaqEs = [
   {
     question: "¿Qué dispositivos son routers de borde Thread?",
     answer:
-      "Entre los más habituales están el Apple TV 4K (modelo con Ethernet) y el HomePod, el Google Nest Hub de segunda generación, el Nest Hub Max, el Nest Wifi Pro y el TV Streamer 4K, así como el Amazon Echo de cuarta generación, el Echo Hub, el Echo Studio y el Echo Show. También puedes montar uno tú mismo con un dongle USB Thread y OpenThread, pero ten en cuenta que un router de borde solo enruta el tráfico: no hace el emparejamiento por Bluetooth que necesita un nuevo dispositivo Matter over Thread, así que con Gladys hoy en día sigues teniendo que pasar por uno de los controladores completos anteriores.",
+      "Entre los más habituales están el Apple TV 4K (modelo con Ethernet) y el HomePod, el Google Home Speaker (2026), el Google Nest Hub de segunda generación, el Nest Hub Max, el Nest Wifi Pro y el TV Streamer 4K, el Amazon Echo de cuarta generación, el Echo Dot Max, el Echo Hub, el Echo Studio y solo algunos modelos de Echo Show (Echo Show 8 de tercera generación, 10 de tercera generación, 11, 15 de segunda generación, 16 y 21), además de los routers Amazon eero recientes. También puedes montar uno tú mismo con un dongle USB Thread y OpenThread, pero ten en cuenta que un router de borde solo enruta el tráfico: no hace el emparejamiento por Bluetooth que necesita un nuevo dispositivo Matter over Thread, así que con Gladys hoy en día sigues teniendo que pasar por un controlador Matter completo, como un Apple TV, un Echo compatible con Matter o un dispositivo Google Nest, y no por un router eero ni por un router de borde casero.",
   },
   {
     question: "¿Puedo usar Matter sin Apple, Google ni Amazon?",

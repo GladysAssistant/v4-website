@@ -65,14 +65,17 @@ Viele handelsübliche Geräte sind Thread-Router:
 
 - Apple TV 4K Ethernet 128 GB
 - Apple HomePod
+- Google Home Speaker (2026)
 - Google Nest Hub Max
 - Google Nest Hub (2. Generation)
 - Google Nest Wi-Fi Pro
 - Google TV Streamer 4K
 - Amazon Echo (4. Generation)
+- Amazon Echo Dot Max
 - Amazon Echo Hub
 - Amazon Echo Studio
-- Amazon Echo Show (21, 15, 10 und 8)
+- Amazon Echo Show 8 (3. Generation), 10 (3. Generation), 11, 15 (2. Generation), 16 und 21. Ältere Echo-Show-Modelle und der Echo Show 5 sind keine Thread-Router
+- Neuere Amazon-eero-Router (eero 6 und neuer, eero Pro, eero Beacon)
 
 Du kannst auch deinen eigenen Thread-Router mit einem USB-Thread-Dongle und OpenThread aufsetzen.
 
