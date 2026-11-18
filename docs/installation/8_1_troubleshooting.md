@@ -83,7 +83,7 @@ Docker keeps the images of previous versions. Remove the ones no container uses 
 
 ### My Zigbee dongle is not detected, or Zigbee2MQTT does not start
 
-In **Integrations > Zigbee2MQTT > Setup**, Gladys lists the USB ports with the name of the device plugged into each one, and preselects the port and the model of the most common dongles. If your dongle is not in the list, check that the machine sees it with `ls /dev/serial/by-id/`. If Zigbee2MQTT does not turn green, Gladys tells you why on the same page: see the [common Zigbee2MQTT errors and their fixes](/docs/integrations/zigbee2mqtt#troubleshooting-common-zigbee2mqtt-errors). If Gladys runs in a virtual machine, the dongle must be passed through to it (see the [Proxmox guide](/docs/installation/proxmox)).
+In **Integrations > Zigbee2MQTT > Setup**, Gladys lists the USB ports with the name of the device plugged into each one, and preselects the port and the model of the most common dongles. If your dongle is not in the list, check that the machine sees it with `ls /dev/serial/by-id/`. If Zigbee2MQTT does not turn green, Gladys tells you why on the same page, and what to do. A Sonoff ZBDongle-E with an old firmware is switched to the `ezsp` driver on its own. See the [common Zigbee2MQTT errors and their fixes](/docs/integrations/zigbee2mqtt#troubleshooting-common-zigbee2mqtt-errors). If Gladys runs in a virtual machine, the dongle must be passed through to it (see the [Proxmox guide](/docs/installation/proxmox)).
 
 ### A sensor no longer shows its value on the dashboard
 
@@ -185,7 +185,7 @@ Before posting, read your logs: if you reset your password recently, remove the 
         name: "My Zigbee dongle is not detected, or Zigbee2MQTT does not start",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "In Integrations > Zigbee2MQTT > Setup, Gladys lists the USB ports with the name of the device plugged into each one, and preselects the port and the model of the most common dongles. If your dongle is not in the list, check that the machine sees it with ls /dev/serial/by-id/. If Zigbee2MQTT does not turn green, Gladys tells you why on the same page. If Gladys runs in a virtual machine, the dongle must be passed through to it.",
+          text: "In Integrations > Zigbee2MQTT > Setup, Gladys lists the USB ports with the name of the device plugged into each one, and preselects the port and the model of the most common dongles. If your dongle is not in the list, check that the machine sees it with ls /dev/serial/by-id/. If Zigbee2MQTT does not turn green, Gladys tells you why on the same page, and what to do. A Sonoff ZBDongle-E with an old firmware is switched to the ezsp driver on its own. If Gladys runs in a virtual machine, the dongle must be passed through to it.",
         },
       },
       {
