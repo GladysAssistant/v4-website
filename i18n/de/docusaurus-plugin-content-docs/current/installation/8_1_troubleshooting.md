@@ -83,7 +83,7 @@ Docker behält die Images früherer Versionen. Entferne die, die kein Container 
 
 ### Mein Zigbee-Dongle wird nicht erkannt oder Zigbee2MQTT startet nicht
 
-Unter **Integrationen > Zigbee2MQTT > Einrichtung** listet Gladys die USB-Ports mit dem Namen des jeweils angeschlossenen Geräts auf und wählt Port und Modell der gängigsten Dongles bereits aus. Taucht dein Dongle nicht in der Liste auf, prüfe mit `ls /dev/serial/by-id/`, ob der Rechner ihn sieht. Wird Zigbee2MQTT nicht grün, zeigt dir Gladys auf derselben Seite den Grund an und was zu tun ist. Ein Sonoff ZBDongle-E mit alter Firmware wird automatisch auf den `ezsp`-Treiber umgestellt. Siehe die [häufigen Zigbee2MQTT-Fehler und ihre Lösungen](/de/docs/integrations/zigbee2mqtt#häufige-zigbee2mqtt-fehler-beheben). Läuft Gladys in einer virtuellen Maschine, muss der Dongle an sie durchgereicht werden (siehe die [Proxmox-Anleitung](/de/docs/installation/proxmox)).
+Unter **Integrationen > Zigbee2MQTT > Einrichtung** listet Gladys die USB-Ports mit dem Namen des jeweils angeschlossenen Geräts auf und wählt Port und Modell der gängigsten Dongles bereits aus. Taucht dein Dongle nicht in der Liste auf, prüfe mit `ls /dev/serial/by-id/`, ob der Rechner ihn sieht. Wird Zigbee2MQTT nicht grün, zeigt dir Gladys auf derselben Seite den Grund an. Seit Gladys 5.3.3 zeigt die Seite auch, was zu tun ist, und ein Sonoff ZBDongle-E mit alter Firmware wird automatisch auf den `ezsp`-Treiber umgestellt. Siehe die [häufigen Zigbee2MQTT-Fehler und ihre Lösungen](/de/docs/integrations/zigbee2mqtt#häufige-zigbee2mqtt-fehler-beheben). Läuft Gladys in einer virtuellen Maschine, muss der Dongle an sie durchgereicht werden (siehe die [Proxmox-Anleitung](/de/docs/installation/proxmox)).
 
 ### Ein Sensor zeigt im Dashboard keinen Wert mehr an
 
@@ -185,7 +185,7 @@ Lies deine Logs vor dem Posten durch: Wenn du dein Passwort kürzlich zurückges
         name: "Mein Zigbee-Dongle wird nicht erkannt oder Zigbee2MQTT startet nicht",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Unter Integrationen > Zigbee2MQTT > Einrichtung listet Gladys die USB-Ports mit dem Namen des jeweils angeschlossenen Geräts auf und wählt Port und Modell der gängigsten Dongles bereits aus. Taucht dein Dongle nicht in der Liste auf, prüfe mit ls /dev/serial/by-id/, ob der Rechner ihn sieht. Wird Zigbee2MQTT nicht grün, zeigt dir Gladys auf derselben Seite den Grund an und was zu tun ist. Ein Sonoff ZBDongle-E mit alter Firmware wird automatisch auf den ezsp-Treiber umgestellt. Läuft Gladys in einer virtuellen Maschine, muss der Dongle an sie durchgereicht werden.",
+          text: "Unter Integrationen > Zigbee2MQTT > Einrichtung listet Gladys die USB-Ports mit dem Namen des jeweils angeschlossenen Geräts auf und wählt Port und Modell der gängigsten Dongles bereits aus. Taucht dein Dongle nicht in der Liste auf, prüfe mit ls /dev/serial/by-id/, ob der Rechner ihn sieht. Wird Zigbee2MQTT nicht grün, zeigt dir Gladys auf derselben Seite den Grund an. Seit Gladys 5.3.3 zeigt die Seite auch, was zu tun ist, und ein Sonoff ZBDongle-E mit alter Firmware wird automatisch auf den ezsp-Treiber umgestellt. Läuft Gladys in einer virtuellen Maschine, muss der Dongle an sie durchgereicht werden.",
         },
       },
       {

@@ -137,7 +137,7 @@ Vous pouvez maintenant utiliser ces appareils Zigbee depuis le [Tableau de bord]
 
 ## Résoudre les erreurs Zigbee2MQTT les plus fréquentes
 
-La grande majorité des problèmes Zigbee2MQTT vient de trois causes : le mauvais port USB, le mauvais type de coordinateur, ou des interférences en 2,4 GHz. Voici les erreurs que vous rencontrerez le plus souvent, et ce qu'elles signifient vraiment.
+La grande majorité des problèmes Zigbee2MQTT vient de trois causes : le mauvais port USB, le mauvais type de coordinateur, ou des interférences en 2,4 GHz. Voici les erreurs que vous rencontrerez le plus souvent, et ce qu'elles signifient vraiment. Depuis Gladys 5.3.3, la page `Configuration` vous indique aussi la cause et quoi faire : les messages en gras ci-dessous sont ceux qu'elle affiche.
 
 ### Error while starting zigbee-herdsman
 
@@ -162,7 +162,13 @@ Avec un [coordinateur réseau](#utiliser-un-coordinateur-réseau), Gladys affich
 
 ### Refusing to start because configuration is not valid
 
-Zigbee2MQTT refuse son fichier de configuration (`configuration.yaml`) et attend sans s'arrêter. Gladys affiche **Zigbee2MQTT refuse de démarrer, car sa configuration n'est pas valide**, suivi des réglages refusés. Gladys écrit ce fichier pour vous : cela arrive surtout après une modification à la main. Corrigez les réglages indiqués dans `/var/lib/gladysassistant/zigbee2mqtt/z2m/configuration.yaml`, puis redémarrez Zigbee2MQTT (`docker restart gladys-z2m-zigbee2mqtt`). Si vous n'avez jamais modifié ce fichier, signalez-le sur le [forum de Gladys](https://community.gladysassistant.com/) avec les réglages refusés.
+Zigbee2MQTT refuse son fichier de configuration (`configuration.yaml`) et attend sans s'arrêter. Gladys affiche **Zigbee2MQTT refuse de démarrer, car sa configuration n'est pas valide**, suivi des réglages refusés. Gladys écrit ce fichier pour vous : cela arrive surtout après une modification à la main. Corrigez les réglages indiqués dans `configuration.yaml`, dans le dossier de données de Zigbee2MQTT. Sur une installation standard, c'est `/var/lib/gladysassistant/zigbee2mqtt/z2m`. Si vous avez monté un autre dossier de l'hôte au lancement de Gladys, cette commande affiche le bon :
+
+```bash
+sudo docker inspect -f '{{range .Mounts}}{{if eq .Destination "/app/data"}}{{.Source}}{{end}}{{end}}' gladys-z2m-zigbee2mqtt
+```
+
+Redémarrez ensuite Zigbee2MQTT (`sudo docker restart gladys-z2m-zigbee2mqtt`). Si vous n'avez jamais modifié ce fichier, signalez-le sur le [forum de Gladys](https://community.gladysassistant.com/) avec les réglages refusés.
 
 ### Adapter EZSP protocol version (8) is not supported by host
 
@@ -205,7 +211,7 @@ Oui. Zigbee2MQTT tourne en local sur votre propre matériel et dialogue avec vos
 
 ### Pourquoi Zigbee2MQTT ne démarre-t-il pas ?
 
-Presque toujours parce que Zigbee2MQTT n'arrive pas à joindre le coordinateur : mauvais port USB sélectionné, modèle de clé qui ne correspond pas au matériel, clé mal alimentée, ou firmware trop ancien (l'erreur `EZSP protocol version is not supported` sur les Sonoff ZBDongle-E, que Gladys règle seul en basculant sur le pilote `ezsp`). La page `Configuration` vous indique la cause et quoi faire. Vérifiez d'abord le port et le modèle dans les paramètres de l'intégration, puis débranchez et rebranchez la clé via un hub alimenté ou une rallonge USB.
+Presque toujours parce que Zigbee2MQTT n'arrive pas à joindre le coordinateur : mauvais port USB sélectionné, modèle de clé qui ne correspond pas au matériel, clé mal alimentée, ou firmware trop ancien (l'erreur `EZSP protocol version is not supported` sur les Sonoff ZBDongle-E, que Gladys règle seul depuis la version 5.3.3, en basculant sur le pilote `ezsp`). Depuis cette version, la page `Configuration` vous indique aussi la cause et quoi faire. Vérifiez d'abord le port et le modèle dans les paramètres de l'intégration, puis débranchez et rebranchez la clé via un hub alimenté ou une rallonge USB.
 
 ### Pourquoi mes appareils Zigbee se déconnectent-ils ?
 
@@ -245,7 +251,7 @@ Les interférences sur la bande 2,4 GHz sont la cause principale, et elles appar
         name: "Pourquoi Zigbee2MQTT ne démarre-t-il pas ?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Presque toujours parce que Zigbee2MQTT n'arrive pas à joindre le coordinateur : mauvais port USB sélectionné, modèle de clé qui ne correspond pas au matériel, clé mal alimentée, ou firmware trop ancien (l'erreur EZSP protocol version is not supported sur les Sonoff ZBDongle-E, que Gladys règle seul en basculant sur le pilote ezsp). La page Configuration vous indique la cause et quoi faire. Vérifiez d'abord le port et le modèle dans les paramètres de l'intégration, puis débranchez et rebranchez la clé via un hub alimenté ou une rallonge USB.",
+          text: "Presque toujours parce que Zigbee2MQTT n'arrive pas à joindre le coordinateur : mauvais port USB sélectionné, modèle de clé qui ne correspond pas au matériel, clé mal alimentée, ou firmware trop ancien (l'erreur EZSP protocol version is not supported sur les Sonoff ZBDongle-E, que Gladys règle seul depuis la version 5.3.3, en basculant sur le pilote ezsp). Depuis cette version, la page Configuration vous indique aussi la cause et quoi faire. Vérifiez d'abord le port et le modèle dans les paramètres de l'intégration, puis débranchez et rebranchez la clé via un hub alimenté ou une rallonge USB.",
         },
       },
       {
