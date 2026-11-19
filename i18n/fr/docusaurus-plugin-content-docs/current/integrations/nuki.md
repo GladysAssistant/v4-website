@@ -7,7 +7,7 @@ sidebar_label: Nuki
 
 # Intégration de votre serrure connectée Nuki à Gladys
 Cette intégration ajoute la possibilité de :
--   contrôler les serrures connectées de marque Nuki : verrouiller, déverouiller
+-   contrôler les [serrures connectées de marque Nuki](https://www.amazon.fr/s?k=Nuki%20Smart%20Lock) : verrouiller, déverouiller
 -   remonter certaines informations dans Gladys (niveau de batterie, état de la serrure)  
 
 Allez dans  `Intégrations / Nuki`  dans Gladys

@@ -5,7 +5,7 @@ description: "Faites parler Gladys Assistant sur une enceinte Google Cast : ajou
 sidebar_label: Google Cast
 ---
 
-Gladys Assistant peut diffuser des messages vocaux sur une enceinte Google ou tout autre appareil compatible Google Cast.
+Gladys Assistant peut diffuser des messages vocaux sur une [enceinte Google](https://www.amazon.fr/s?k=Google%20Nest%20Mini) ou tout autre appareil compatible Google Cast.
 
 ## Ajouter une enceinte Google à Gladys Assistant
 

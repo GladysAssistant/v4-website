@@ -65,7 +65,7 @@ Wenn du in einem Szenen-Auslöser „Änderung des Gerätezustands" eine Geräte
 Zwei Neuerungen für Zigbee2mqtt-Nutzer:
 
 - **DEVELCO-Keypad:** Unterstützung der Keypad-Aktionen (Unscharf schalten, Scharf schalten Tag/Nacht/alle Zonen, Ausgangsverzögerung, Notfall).
-- **Alarmsirenen:** neue Aktionen `trigger_alarm` und `stop_alarm` (z. B. Bosch-Außensirene), nutzbar in deinen Szenen und Automatisierungen.
+- **Alarmsirenen:** neue Aktionen `trigger_alarm` und `stop_alarm` (z. B. [Bosch-Außensirene](https://www.amazon.com/s?k=Bosch%20Smart%20Home%20outdoor%20siren)), nutzbar in deinen Szenen und Automatisierungen.
 
 ---
 

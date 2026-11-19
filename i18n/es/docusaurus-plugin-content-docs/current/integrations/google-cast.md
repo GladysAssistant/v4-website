@@ -5,7 +5,7 @@ description: "Haz que Gladys Assistant hable en un altavoz Google Cast: añade t
 sidebar_label: Google Cast
 ---
 
-Gladys Assistant puede reproducir mensajes de voz en un altavoz de Google o en cualquier otro dispositivo compatible con Google Cast.
+Gladys Assistant puede reproducir mensajes de voz en un [altavoz de Google](https://www.amazon.com/s?k=Google%20Nest%20Mini) o en cualquier otro dispositivo compatible con Google Cast.
 
 ## Añadir un altavoz de Google a Gladys Assistant
 

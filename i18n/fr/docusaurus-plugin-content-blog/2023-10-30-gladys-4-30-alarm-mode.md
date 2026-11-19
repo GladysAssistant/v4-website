@@ -38,7 +38,7 @@ Désormais, rendez-vous dans l'intégration "Node-RED" puis cliquer sur "Activer
 
 ## Tuya: Gestion de la consommation électrique
 
-L'intégration Tuya supporte désormais les prises connectées qui remontent des données de consommations électriques.
+L'intégration Tuya supporte désormais les [prises connectées](https://www.amazon.fr/s?k=prise%20connect%C3%A9e%20Tuya%20mesure%20de%20consommation) qui remontent des données de consommations électriques.
 
 Merci Lokkye pour le développement 🙏
 

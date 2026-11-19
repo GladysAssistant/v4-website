@@ -150,7 +150,7 @@ Pour les utilisateurs Enedis : le nouveau callback de consentement **DataConnect
 
 - **Exporter l'historique d'un appareil en CSV**, directement depuis la liste des appareils.
 - **Matter** : détecteurs de fuite d'eau, capteurs d'ouverture et de pluie, et **serrures**.
-- **Zigbee2MQTT 2.13**, la prise en charge des **coordinateurs réseau** (SMLIGHT SLZB-06/07 et compagnie), des sirènes solaires d'extérieur et du Heiman HS2WD-E.
+- **Zigbee2MQTT 2.13**, la prise en charge des **coordinateurs réseau** ([SMLIGHT SLZB-06/07](https://www.amazon.fr/s?k=SMLIGHT%20SLZB-06) et compagnie), des sirènes solaires d'extérieur et du [Heiman HS2WD-E](https://www.amazon.fr/s?k=Heiman%20HS2WD-E).
 - **MQTT** : topics d'état avec joker dans la découverte Home Assistant.
 - **Google Home** : les capteurs de température et d'humidité sont exposés.
 - **Caméras** : désactiver une caméra sans la supprimer, un vrai mode privé.

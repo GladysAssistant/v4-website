@@ -18,6 +18,7 @@ export default function PresenceSimulationPage() {
 
   return (
     <UseCasePage
+      productsPage="presence-simulation"
       content={content}
       faq={faq}
       schemaData={getPresenceSimulationPageSchema(lang)}

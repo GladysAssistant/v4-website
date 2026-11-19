@@ -3,7 +3,10 @@ import classnames from "classnames";
 import styles from "./styles.module.css";
 import Link from "@docusaurus/Link";
 import useBaseUrl from "@docusaurus/useBaseUrl";
-import { addAffiliateTag } from "@site/src/utils/affiliateLinks";
+import {
+  addAffiliateTag,
+  amazonSearchLink,
+} from "@site/src/utils/affiliateLinks";
 
 import Translate, { translate } from "@docusaurus/Translate";
 
@@ -28,7 +31,12 @@ function Integration({
   if (description.length > MAX_DESCRIPTION_LENGTH) {
     description = truncate(description, MAX_DESCRIPTION_LENGTH) + " ...";
   }
-  buyLink = addAffiliateTag(buyLink);
+  // A discontinued product links to an Amazon search for its name, which
+  // lists its successor and refurbished units, rather than to nothing.
+  buyLink =
+    buyLink === "#discontinued"
+      ? amazonSearchLink(title, lang === "fr" ? "fr" : "en")
+      : addAffiliateTag(buyLink);
   return (
     <div class={classnames("card", styles.integrationCard)}>
       <div class="card__image">

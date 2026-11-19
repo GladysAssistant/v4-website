@@ -38,7 +38,7 @@ Ab sofort gehst du einfach in die Integration „Node-RED“ und klickst auf „
 
 ## Tuya: Verwaltung des Stromverbrauchs
 
-Die Tuya-Integration unterstützt jetzt smarte Steckdosen, die Daten zum Stromverbrauch melden.
+Die Tuya-Integration unterstützt jetzt [smarte Steckdosen](https://www.amazon.com/s?k=Tuya%20smart%20plug%20energy%20monitoring), die Daten zum Stromverbrauch melden.
 
 Danke an Lokkye für die Entwicklung 🙏
 

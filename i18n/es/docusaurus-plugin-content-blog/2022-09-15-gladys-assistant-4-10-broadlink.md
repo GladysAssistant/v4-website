@@ -20,7 +20,7 @@ Hoy publico Gladys Assistant v4.10, una gran versión con nuevas funciones incre
 
 ¡Tenemos una nueva integración! 🎉
 
-Los dispositivos Broadlink son pequeños emisores de infrarrojos que funcionan como mando a distancia y se pueden controlar por Wi-Fi.
+Los [dispositivos Broadlink](https://www.amazon.com/s?k=Broadlink%20RM4%20mini) son pequeños emisores de infrarrojos que funcionan como mando a distancia y se pueden controlar por Wi-Fi.
 
 ![Integración Broadlink en Gladys](../../../static/img/articles/en/gladys-4-10/broadlink.jpg)
 

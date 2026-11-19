@@ -51,6 +51,8 @@ Tenemos guías específicas, con el formato exacto de la URL RTSP, para las marc
 - [Imou](/es/docs/integrations/imou)
 - [LSC Smart Connect (Action)](/es/docs/integrations/lsc)
 - [Rollei IPC-88 (Aldi)](/es/docs/integrations/rollei)
+
+¿Aún no tienes cámara? Elige un modelo que documente su flujo RTSP, como una [cámara Reolink PoE](https://www.amazon.com/s?k=Reolink%20PoE%20camera).
 :::
 
 ## Probar el flujo en VLC

@@ -5,7 +5,7 @@ description: "Contrôlez vos appareils Broadlink avec Gladys Assistant et rempla
 sidebar_label: Broadlink
 ---
 
-Gladys permet de gérer les appareils Broadlink et de créer des télécommandes permettant de piloter vos appareils par infrarouge.
+Gladys permet de gérer les [appareils Broadlink](https://www.amazon.fr/s?k=Broadlink%20RM4%20mini) et de créer des télécommandes permettant de piloter vos appareils par infrarouge.
 
 ## Connectez l'appareil sur votre réseau
 

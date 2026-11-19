@@ -65,7 +65,7 @@ When selecting a device property in a "device state change" scene trigger, devic
 Two additions for Zigbee2mqtt users:
 
 - **DEVELCO keypad:** support for keypad actions (disarm, arm day/night/all zones, exit delay, emergency).
-- **Alarm sirens:** new `trigger_alarm` and `stop_alarm` actions (e.g. Bosch outdoor siren), usable in your scenes and automations.
+- **Alarm sirens:** new `trigger_alarm` and `stop_alarm` actions (e.g. [Bosch outdoor siren](https://www.amazon.com/s?k=Bosch%20Smart%20Home%20outdoor%20siren)), usable in your scenes and automations.
 
 ---
 

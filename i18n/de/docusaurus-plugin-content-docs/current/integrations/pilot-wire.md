@@ -36,8 +36,8 @@ Module und Heizkörper mit „6 Befehlen“ ergänzen **Komfort -1** und **Komfo
 
 Ein Steuerdrahtmodul sitzt zwischen deiner Elektroinstallation und dem Heizkörper: Es empfängt Befehle über Zigbee und legt den entsprechenden Befehl auf den Steuerdraht. Zwei Module werden in der Gladys-Community immer wieder genannt, beide werden von Zigbee2MQTT erkannt:
 
-- **NodOn SIN-4-FP-21**: ein Mikromodul, das in die Anschlussdose hinter dem Heizkörper oder in den Verteilerkasten passt. Kompakt, 6 Befehle und am weitesten verbreitet.
-- **Legrand 064882**: das Steuerdrahtmodul von Legrand, gleiches Prinzip, für den Verteilerkasten oder eine Unterputzdose.
+- **[NodOn SIN-4-FP-21](https://www.amazon.fr/s?k=NodOn%20SIN-4-FP-21)**: ein Mikromodul, das in die Anschlussdose hinter dem Heizkörper oder in den Verteilerkasten passt. Kompakt, 6 Befehle und am weitesten verbreitet.
+- **[Legrand 064882](https://www.amazon.fr/s?k=Legrand%20064882)**: das Steuerdrahtmodul von Legrand, gleiches Prinzip, für den Verteilerkasten oder eine Unterputzdose.
 
 Vor dem Kauf solltest du ein paar Dinge prüfen:
 

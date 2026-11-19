@@ -22,7 +22,7 @@ Pour l'occasion, j'ai aussi réécrit le tutoriel d'installation sur le site, av
 
 ## Mon avis sur le Raspberry Pi
 
-Je le dis franchement : je ne pense toujours pas que le Raspberry Pi soit la meilleure option sur le long terme, un mini-PC reste plus performant et plus fiable pour une installation quotidienne. Je déconseille aussi fortement l'utilisation d'une carte micro-SD : en pratique, la corruption des données arrive souvent au bout de quelques mois. Si vous partez sur un Pi, prévoyez plutôt un SSD NVMe.
+Je le dis franchement : je ne pense toujours pas que le Raspberry Pi soit la meilleure option sur le long terme, un mini-PC reste plus performant et plus fiable pour une installation quotidienne. Je déconseille aussi fortement l'utilisation d'une carte micro-SD : en pratique, la corruption des données arrive souvent au bout de quelques mois. Si vous partez sur [un Pi](https://www.amazon.fr/s?k=Raspberry%20Pi%205), prévoyez plutôt un [SSD NVMe](https://www.amazon.fr/s?k=SSD%20NVMe%20Raspberry%20Pi%205).
 
 Mais pour des utilisateurs qui ont déjà un Pi sous la main, c'est une excellente façon de découvrir Gladys sans se prendre la tête avec Docker ou la ligne de commande 🙂
 

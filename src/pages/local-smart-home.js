@@ -6,6 +6,7 @@ import useBaseUrl from "@docusaurus/useBaseUrl";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import JsonLd from "../components/seo/JsonLd";
+import AmazonProducts from "../components/AmazonProducts";
 import { getLocalSmartHomePageSchema } from "../data/schemas/localSmartHome";
 import localSmartHomeContent, {
   localSmartHomeFaqEn,
@@ -141,6 +142,8 @@ function PillarContent({ content, faq, lang }) {
         </section>
 
         {/* RELATED / INTERNAL MESH */}
+        <AmazonProducts page="local-smart-home" lang={lang} />
+
         <section className={styles.section} aria-labelledby="related-title">
           <h2 id="related-title" className={styles.sectionTitle}>
             {content.related.title}

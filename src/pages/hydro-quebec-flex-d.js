@@ -16,6 +16,7 @@ export default function HydroQuebecFlexDPage() {
 
   return (
     <UseCasePage
+      productsPage="hydro-quebec-flex-d"
       content={content}
       faq={faq}
       schemaData={getHydroQuebecFlexDPageSchema(lang)}

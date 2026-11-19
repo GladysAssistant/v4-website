@@ -14,8 +14,8 @@ keywords:
 
 La integración «Termostato» hace dos cosas, disponibles desde Gladys Assistant 5.2:
 
-- **Gladys se convierte en el termostato.** Un sensor de temperatura y un interruptor (un relé, un enchufe inteligente, un contacto de caldera) bastan para crear una zona de calefacción regulada: Gladys lee la temperatura y enciende o apaga la calefacción para alcanzar la consigna.
-- **Gladys programa los termostatos que ya tienes.** Un Netatmo, un cabezal termostático Zigbee, un termostato Matter o MQTT se regula muy bien solo: Gladys escribe su consigna según una programación semanal, justo al lado del resto de tu casa.
+- **Gladys se convierte en el termostato.** Un [sensor de temperatura](https://www.amazon.com/s?k=Zigbee%20temperature%20sensor) y un interruptor (un relé, un enchufe inteligente, un contacto de caldera) bastan para crear una zona de calefacción regulada: Gladys lee la temperatura y enciende o apaga la calefacción para alcanzar la consigna.
+- **Gladys programa los termostatos que ya tienes.** Un [Netatmo](https://www.amazon.com/s?k=Netatmo%20Smart%20Thermostat), un [cabezal termostático Zigbee](https://www.amazon.com/s?k=Zigbee%20thermostatic%20radiator%20valve), un termostato Matter o MQTT se regula muy bien solo: Gladys escribe su consigna según una programación semanal, justo al lado del resto de tu casa.
 
 En ambos casos obtienes lo mismo: preajustes (Antihielo, Ausencia, Eco, Noche, Confort), programaciones semanales por casa, un widget para el panel y funciones de dispositivo que las escenas, la IA y los asistentes de voz pueden leer y escribir.
 

@@ -19,6 +19,7 @@ export default function TuyaZigbeeWithoutHubPage() {
 
   return (
     <UseCasePage
+      productsPage="tuya-zigbee-without-hub"
       content={content}
       faq={faq}
       schemaData={getTuyaZigbeeWithoutHubPageSchema(lang)}

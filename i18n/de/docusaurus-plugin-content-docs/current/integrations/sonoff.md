@@ -5,7 +5,7 @@ description: "Verbinde Sonoff-Geräte über die Tasmota-Firmware und ein eWeLink
 sidebar_label: Sonoff
 ---
 
-Sonoff-Geräte lassen sich mit der Open-Source-Firmware [Tasmota](/de/docs/integrations/tasmota/) verwenden.
+[Sonoff-Geräte](https://www.amazon.com/s?k=Sonoff%20WiFi%20smart%20switch) lassen sich mit der Open-Source-Firmware [Tasmota](/de/docs/integrations/tasmota/) verwenden.
 
 So verbindest du sie mit Gladys:
 

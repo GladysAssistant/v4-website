@@ -15,7 +15,7 @@ keywords:
 
 import JsonLd from '@site/src/components/seo/JsonLd';
 
-Les caméras Imou (une marque de Dahua) sont un choix abordable et très répandu, et la plupart fonctionnent avec Gladys Assistant.
+Les [caméras Imou](https://www.amazon.fr/s?k=cam%C3%A9ra%20Imou) (une marque de Dahua) sont un choix abordable et très répandu, et la plupart fonctionnent avec Gladys Assistant.
 
 Les caméras Imou exposent un flux **RTSP** standard : elles se connectent donc via l'[intégration caméra](/docs/integrations/camera) générique. Gladys communique avec la caméra directement sur votre réseau local, ce qui signifie que votre flux vidéo reste chez vous et ne transite jamais par le cloud Imou.
 

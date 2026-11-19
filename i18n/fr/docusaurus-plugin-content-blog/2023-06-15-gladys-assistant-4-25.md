@@ -10,7 +10,7 @@ Salut à tous !
 
 Nouvelle version de Gladys aujourd'hui avec des changements vraiment sympa qui améliorent l'utilisation de Gladys au quotidien
 
-Juste avant de commencer : si vous cherchez du matériel pour faire tourner Gladys, un mini-PC Beelink est un excellent moyen de démarrer en domotique avec du matériel fiable et performant.
+Juste avant de commencer : si vous cherchez du matériel pour faire tourner Gladys, un [mini-PC Beelink](https://www.amazon.fr/s?k=mini%20PC%20Beelink) est un excellent moyen de démarrer en domotique avec du matériel fiable et performant.
 
 Certains dans la communauté en ont même commandés plusieurs, c'est pour dire 😂
 

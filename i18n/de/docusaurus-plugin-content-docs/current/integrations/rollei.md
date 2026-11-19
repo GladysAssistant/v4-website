@@ -91,7 +91,7 @@ Aldi verkauft mehrere Kamerafamilien unter dem Namen Rollei, und sie verhalten s
 - **WLAN-Überwachungskameras für innen und außen** (die IPC-88 und ihre Geschwister) basieren auf Tuya und stellen in der Regel ONVIF/RTSP bereit, die obige Methode funktioniert also.
 - **Wildkameras** (Fotofallen) zeichnen auf eine SD-Karte auf und versenden bei 4G-Modellen Bilder per E-Mail oder MMS. Sie haben keinen Live-RTSP-Stream und kein Video im lokalen Netzwerk und können daher nicht zu Gladys hinzugefügt werden.
 
-Wenn du eine Kamera kaufen möchtest, statt eine vorhandene weiterzuverwenden, sparst du Zeit mit einem Modell, das seine RTSP-Unterstützung klar dokumentiert. Auf den Seiten zu [Reolink](/de/docs/integrations/external/reolink/) und [Imou](/de/docs/integrations/imou) findest du zwei Produktreihen mit einer vorhersehbaren RTSP-URL.
+Wenn du eine Kamera kaufen möchtest, statt eine vorhandene weiterzuverwenden, sparst du Zeit mit einem Modell, das seine RTSP-Unterstützung klar dokumentiert. Auf den Seiten zu [Reolink](/de/docs/integrations/external/reolink/) und [Imou](/de/docs/integrations/imou) findest du zwei Produktreihen mit einer vorhersehbaren RTSP-URL. Beide gibt es bei Amazon: [Reolink-Kameras](https://www.amazon.com/s?k=Reolink%20security%20camera), [Imou-Kameras](https://www.amazon.com/s?k=Imou%20security%20camera).
 
 ## Häufige Fragen
 

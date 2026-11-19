@@ -14,8 +14,8 @@ keywords:
 
 The "Thermostat" integration does two things, available since Gladys Assistant 5.2:
 
-- **Gladys becomes the thermostat.** A temperature sensor and a switch (a relay, a smart plug, a boiler contact) are enough to make a regulated heating zone: Gladys reads the temperature and turns the heater on and off to reach the setpoint.
-- **Gladys programmes the thermostats you already have.** A Netatmo, a Zigbee radiator valve, a Matter or MQTT thermostat regulates itself perfectly well: Gladys writes its setpoint according to a weekly schedule, right next to the rest of your home.
+- **Gladys becomes the thermostat.** A [temperature sensor](https://www.amazon.com/s?k=Zigbee%20temperature%20sensor) and a switch (a relay, a smart plug, a boiler contact) are enough to make a regulated heating zone: Gladys reads the temperature and turns the heater on and off to reach the setpoint.
+- **Gladys programmes the thermostats you already have.** A [Netatmo](https://www.amazon.com/s?k=Netatmo%20Smart%20Thermostat), a [Zigbee radiator valve](https://www.amazon.com/s?k=Zigbee%20thermostatic%20radiator%20valve), a Matter or MQTT thermostat regulates itself perfectly well: Gladys writes its setpoint according to a weekly schedule, right next to the rest of your home.
 
 In both cases you get the same thing: presets (Frost protection, Away, Eco, Night, Comfort), weekly schedules per house, a dashboard widget, and features that scenes, the AI and the voice assistants can read and write.
 

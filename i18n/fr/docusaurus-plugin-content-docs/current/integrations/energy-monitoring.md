@@ -48,6 +48,8 @@ Idéal pour suivre un appareil en particulier, chez moi j'utilise cette prise NO
 
 [Prise NOUS A1Z avec mesure de consommation sur Domadoo](https://www.domadoo.fr/fr/prises-connectees/6165-nous-prise-intelligente-zigbee-30-mesure-de-consommation-5907772033517.html?domid=17)
 
+[Prise NOUS A1Z avec mesure de consommation sur Amazon](https://www.amazon.fr/s?k=NOUS%20A1Z%20prise%20Zigbee)
+
 ### 4. **Avec un appareil personnalisé MQTT**
 
 Si vous avez un compteur exotique ou des appareils qui renvoient des valeurs de consommation en kWh, vous pouvez les intégrer avec Gladys Assistant en utilisant l'intégration MQTT.

@@ -14,6 +14,6 @@ Peut-on vraiment faire tourner une IA performante en local, sur un petit mini-PC
 
 [![Un LLM en local sur un mini-PC](../../../static/img/articles/run-local-llm-on-mini-pc/youtube.jpg)](https://youtu.be/ZhqBSgQCO4o)
 
-Faire tourner l'IA en local, c'est un sujet qui tient particulièrement à cœur au projet Gladys : la vie privée d'abord, vos données restent chez vous. Dans cette vidéo, je vous montre comment j'ai fait tourner un modèle d'IA sur un mini-PC, quel matériel il faut, et ce à quoi on peut réellement s'attendre.
+Faire tourner l'IA en local, c'est un sujet qui tient particulièrement à cœur au projet Gladys : la vie privée d'abord, vos données restent chez vous. Dans cette vidéo, je vous montre comment j'ai fait tourner un modèle d'IA sur un [mini-PC](https://www.amazon.fr/s?k=mini%20PC), quel matériel il faut, et ce à quoi on peut réellement s'attendre.
 
 Si vous avez des questions, n'hésitez pas à les laisser en commentaire sur YouTube, ça aide beaucoup pour le référencement 😉

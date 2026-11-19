@@ -14,7 +14,7 @@ Une nouvelle version de Gladys Assistant est disponible 🥳, avec le nouveau dr
 
 ## Zigbee2mqtt : le nouveau driver Ember
 
-Zigbee2mqtt propose désormais un nouveau driver, **Ember**, pour certains dongles comme le Sonoff ZBDongle-E. L'intégration Zigbee2mqtt dans Gladys vous permet maintenant de sélectionner ce driver Ember pour les dongles compatibles.
+Zigbee2mqtt propose désormais un nouveau driver, **Ember**, pour certains dongles comme le [Sonoff ZBDongle-E](https://www.amazon.fr/s?k=Sonoff%20ZBDongle-E). L'intégration Zigbee2mqtt dans Gladys vous permet maintenant de sélectionner ce driver Ember pour les dongles compatibles.
 
 Si vous utilisez EZSP, Zigbee2mqtt ne touchera pas à votre installation sans action de votre part, pour éviter de casser votre installation. **La stabilité est une valeur très importante du projet**, et cette mise à jour a été pensée pour ne pas impacter votre quotidien.
 

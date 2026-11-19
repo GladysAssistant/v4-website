@@ -36,8 +36,8 @@ Les modules et radiateurs dits « 6 ordres » ajoutent **Confort -1** et **Confo
 
 Un module fil pilote se place entre votre installation électrique et le radiateur : il reçoit les commandes en Zigbee et applique l'ordre correspondant sur le fil pilote. Deux modules reviennent régulièrement dans la communauté Gladys, tous deux reconnus par Zigbee2MQTT :
 
-- **NodOn SIN-4-FP-21** : un micromodule à encastrer dans la boîte de connexion derrière le radiateur, ou à placer dans le tableau électrique. Compact, 6 ordres, et le plus utilisé.
-- **Legrand 064882** : le module fil pilote de Legrand, dans la même logique, à intégrer au tableau ou en boîte d'encastrement.
+- **[NodOn SIN-4-FP-21](https://www.amazon.fr/s?k=NodOn%20SIN-4-FP-21)** : un micromodule à encastrer dans la boîte de connexion derrière le radiateur, ou à placer dans le tableau électrique. Compact, 6 ordres, et le plus utilisé.
+- **[Legrand 064882](https://www.amazon.fr/s?k=Legrand%20064882)** : le module fil pilote de Legrand, dans la même logique, à intégrer au tableau ou en boîte d'encastrement.
 
 Quelques points à regarder avant d'acheter :
 

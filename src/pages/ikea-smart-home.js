@@ -4,6 +4,7 @@ import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import JsonLd from "../components/seo/JsonLd";
+import AmazonProducts from "../components/AmazonProducts";
 import { getIkeaSmartHomePageSchema } from "../data/schemas/ikeaSmartHome";
 import ikeaSmartHomeContent, {
   ikeaSmartHomeFaqEn,
@@ -38,7 +39,7 @@ function LinkCard({ label, href, text }) {
   );
 }
 
-function IkeaContent({ content, faq }) {
+function IkeaContent({ content, faq, lang }) {
   return (
     <main className={styles.main}>
       <div className={`container ${styles.container}`}>
@@ -125,6 +126,8 @@ function IkeaContent({ content, faq }) {
         </section>
 
         {/* RELATED / INTERNAL MESH */}
+        <AmazonProducts page="ikea-smart-home" lang={lang} />
+
         <section className={styles.section} aria-labelledby="related-title">
           <h2 id="related-title" className={styles.sectionTitle}>
             {content.related.title}
@@ -185,7 +188,7 @@ export default function IkeaSmartHomePage() {
   return (
     <HorizonPage title={content.meta.title} description={content.meta.description}>
       <JsonLd data={getIkeaSmartHomePageSchema(lang)} />
-      <IkeaContent content={content} faq={faq} />
+      <IkeaContent content={content} faq={faq} lang={lang} />
     </HorizonPage>
   );
 }

@@ -14,6 +14,6 @@ Kann man wirklich ein leistungsfähiges KI-Modell lokal auf einem kleinen Mini-P
 
 [![Ein lokales LLM auf einem Mini-PC betreiben](../../../static/img/articles/run-local-llm-on-mini-pc/youtube.jpg)](https://youtu.be/ZhqBSgQCO4o)
 
-Lokale KI ist ein Thema, das dem Gladys-Projekt besonders am Herzen liegt: Privatsphäre zuerst, deine Daten bleiben zu Hause. In diesem Video zeige ich, wie ich ein KI-Modell auf einem Mini-PC zum Laufen gebracht habe, welche Hardware dafür nötig ist und was du realistischerweise erwarten kannst.
+Lokale KI ist ein Thema, das dem Gladys-Projekt besonders am Herzen liegt: Privatsphäre zuerst, deine Daten bleiben zu Hause. In diesem Video zeige ich, wie ich ein KI-Modell auf einem [Mini-PC](https://www.amazon.com/s?k=mini%20PC) zum Laufen gebracht habe, welche Hardware dafür nötig ist und was du realistischerweise erwarten kannst.
 
 Wenn du Fragen hast, stell sie gerne in den Kommentaren auf YouTube – das hilft wirklich bei der Sichtbarkeit 😉

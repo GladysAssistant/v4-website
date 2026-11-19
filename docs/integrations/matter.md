@@ -63,19 +63,19 @@ A Thread router (or “Thread Border Router”) bridges your Thread devices to y
 
 Many commercial devices are Thread routers:
 
-- Apple TV 4K Ethernet 128 GB
-- Apple HomePod
+- [Apple TV 4K Ethernet 128 GB](https://www.amazon.com/s?k=Apple%20TV%204K%20Ethernet%20128GB)
+- [Apple HomePod](https://www.amazon.com/s?k=Apple%20HomePod)
 - Google Home Speaker (2026)
 - Google Nest Hub Max
-- Google Nest Hub (2nd generation)
-- Google Nest Wi-Fi Pro
-- Google TV Streamer 4K
-- Amazon Echo (4th generation)
-- Amazon Echo Dot Max
-- Amazon Echo Hub
-- Amazon Echo Studio
-- Amazon Echo Show 8 (3rd generation), 10 (3rd generation), 11, 15 (2nd generation), 16 and 21. Older Echo Show models and the Echo Show 5 are not Thread routers
-- Recent Amazon eero routers (eero 6 and later, eero Pro, eero Beacon)
+- [Google Nest Hub (2nd generation)](https://www.amazon.com/s?k=Google%20Nest%20Hub%202nd%20generation)
+- [Google Nest Wi-Fi Pro](https://www.amazon.com/s?k=Google%20Nest%20Wifi%20Pro)
+- [Google TV Streamer 4K](https://www.amazon.com/s?k=Google%20TV%20Streamer%204K)
+- [Amazon Echo (4th generation)](https://www.amazon.com/s?k=Amazon%20Echo%204th%20generation)
+- [Amazon Echo Dot Max](https://www.amazon.com/s?k=Amazon%20Echo%20Dot%20Max)
+- [Amazon Echo Hub](https://www.amazon.com/s?k=Amazon%20Echo%20Hub)
+- [Amazon Echo Studio](https://www.amazon.com/s?k=Amazon%20Echo%20Studio)
+- [Amazon Echo Show 8](https://www.amazon.com/s?k=Amazon%20Echo%20Show%208) (3rd generation), 10 (3rd generation), 11, 15 (2nd generation), 16 and 21. Older Echo Show models and the Echo Show 5 are not Thread routers
+- Recent [Amazon eero routers](https://www.amazon.com/s?k=Amazon%20eero%206) (eero 6 and later, eero Pro, eero Beacon)
 
 You can also set up your own Thread router using a USB Thread dongle and OpenThread.
 

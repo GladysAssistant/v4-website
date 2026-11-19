@@ -25,6 +25,7 @@ export default function MiniPcHomeAutomationPage() {
 
   return (
     <UseCasePage
+      productsPage="mini-pc-home-automation"
       content={content}
       faq={faq}
       schemaData={getMiniPcHomeAutomationPageSchema(lang)}

@@ -5,7 +5,7 @@ description: "Steuere Broadlink-Geräte mit Gladys Assistant und ersetze deine I
 sidebar_label: Broadlink
 ---
 
-Mit Gladys kannst du Broadlink-Geräte steuern oder Infrarot-Fernbedienungen erstellen.
+Mit Gladys kannst du [Broadlink-Geräte](https://www.amazon.com/s?k=Broadlink%20RM4%20mini) steuern oder Infrarot-Fernbedienungen erstellen.
 
 ## Broadlink-Gerät mit dem Netzwerk verbinden
 

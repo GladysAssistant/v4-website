@@ -5,7 +5,7 @@ description: "Connectez vos appareils Sonoff à Gladys Assistant avec le firmwar
 sidebar_label: Sonoff
 ---
 
-Les appareils Sonoff peuvent aussi être utilisé avec le firmware OpenSource [Tasmota](/fr/docs/integrations/tasmota/).
+Les [appareils Sonoff](https://www.amazon.fr/s?k=Sonoff%20interrupteur%20connect%C3%A9%20WiFi) peuvent aussi être utilisé avec le firmware OpenSource [Tasmota](/fr/docs/integrations/tasmota/).
 
 Pour connecter vos appareils:
 

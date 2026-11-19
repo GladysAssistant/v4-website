@@ -16,6 +16,7 @@ export default function HeuresCreusesPage() {
 
   return (
     <UseCasePage
+      productsPage="heures-creuses"
       content={content}
       faq={faq}
       schemaData={getHeuresCreusesPageSchema(lang)}

@@ -35,4 +35,29 @@ const addAffiliateTag = (href) => {
   return url.toString();
 };
 
-module.exports = { AFFILIATE_PARAMS, addAffiliateTag };
+// Amazon store of each language that has a partner id. The pages of the other
+// languages (de, es) show no Amazon links until a partner id is added above
+// and the store here.
+const AMAZON_STORES = {
+  en: "https://www.amazon.com",
+  fr: "https://www.amazon.fr",
+};
+
+// ("Aqara Motion Sensor P1", "fr") ->
+// "https://www.amazon.fr/s?k=Aqara%20Motion%20Sensor%20P1&tag=gladproj-21"
+// Search links rather than product pages: they never go out of stock and work
+// in every store. Returns null for a language with no store.
+const amazonSearchLink = (query, locale) => {
+  const store = AMAZON_STORES[locale];
+  if (!store) {
+    return null;
+  }
+  return addAffiliateTag(`${store}/s?k=${encodeURIComponent(query)}`);
+};
+
+module.exports = {
+  AFFILIATE_PARAMS,
+  AMAZON_STORES,
+  addAffiliateTag,
+  amazonSearchLink,
+};

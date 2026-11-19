@@ -24,7 +24,7 @@ When I released the [new Raspberry Pi image](/blog/new-raspberry-pi-image/) in J
 
 Until now, installing Gladys on a mini-PC meant installing Ubuntu Server yourself (without forgetting to check the OpenSSH box), connecting over SSH, installing Docker, copying a long `docker run` command, then setting up Watchtower for the updates. Nothing impossible, but many steps, and many people got stuck on one of them.
 
-The mini-PC is the setup I recommend for a long-term smart home, so it deserved an installation as simple as on the Raspberry Pi.
+The [mini-PC](https://www.amazon.com/s?k=mini%20PC%20Intel%20N150) is the setup I recommend for a long-term smart home, so it deserved an installation as simple as on the Raspberry Pi.
 
 ## What Gladys Assistant OS does
 
