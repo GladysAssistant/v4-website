@@ -1,0 +1,166 @@
+---
+title: "Integración domótica GO Transit, gratuita y de código abierto"
+sidebar_label: "GO Transit"
+description: "GO Transit (Toronto region): next departures, delays and service alerts. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-go-transit.png"
+keywords:
+  - "go transit"
+  - "domótica go transit"
+  - "gladys go transit"
+  - "go transit gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-go-transit instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"GO Transit","description":"GO Transit (Toronto region): next departures, delays and service alerts.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-go-transit","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-go-transit.png","type":"device","version":"0.1.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-19T04:55:56Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+The next departures of your GO Transit stations (Toronto region), their delays and platforms, and
+the service alerts of the network, from the official GO API of Metrolinx.
+
+> Contains information licensed under the Open Government Licence – Ontario – Metrolinx
+> ([licence](https://assets.metrolinx.com/image/upload/v1663237565/Documents/Metrolinx/Open-Government-Licence-Ontario-Metrolinx.pdf)).
+> This integration is not affiliated with Metrolinx. It was never tested with a real key: the
+> formats come from the API documentation (help pages and samples), and the first users may meet
+> a field the samples did not show.
+
+## 1. Get a key
+
+1. Fill in the [registration form](https://api.openmetrolinx.com/OpenDataAPI/Help/Registration/en)
+   of the GO API (free). Metrolinx handles the requests by hand: up to ten business days.
+2. The key arrives by e-mail. It does not expire, but Metrolinx switches off a key that calls too
+   much, by hand. The integration therefore keeps to its own limits (below).
+
+## 2. Configure
+
+- **GO API key**: paste the key. Kept by Gladys in its database, never shown again, sent only to
+  `api.openmetrolinx.com` (in the address of each call, as the API asks), never written in the
+  logs, the status or the integration files.
+- **Stations and stops**: the GO stop codes, comma-separated, 6 at most: `UN` for Union Station,
+  `OA` for Oakville… The **Find a stop** button at the bottom of the page gives the codes (it reads
+  the list of stops once, then keeps it a week; at most one read every 30 s). After the code, an optional line filter (`@LW`,
+  several joined by `+`: `@LW+LE`) and a name (`:Oakville to work`):
+  `UN, OA@LW:Oakville to work`.
+- **Watch the service alerts**: proposes the alerts device. **Lines of the alerts**: only the
+  alerts of these lines (`LW, LE`); empty, every alert.
+- **Advanced**: the refresh of the departures (60 s by default, 60 s at least), of the alerts
+  (300 s, 120 s at least), the number of departures per station (1 to 5), the language of the
+  values (the alerts come in English and French from Metrolinx).
+
+Then open the **Discover** tab and add your stations and the alerts device. Only the devices you
+added are read: a station left in the Discovery screen costs nothing.
+
+## 3. What you get
+
+For each station:
+
+- **Next departure**, **Departure 2**…: minutes to wait. 999 = no departure or no recent reading,
+  see the status text (empty, or `No recent reading`). A scene comparing the minutes should exclude 999.
+- **… line**: line and direction (`LW - Aldershot GO`).
+- **… status**: `On time`, `+5 min`, `2 min early`, `Cancelled`, or `Scheduled` when the API gives
+  only the timetable time; then the platform when known (`Pl. 4`).
+- **Next departures**: one line for a dashboard (`LW 17:23 +5 min · Pl. 4 | LE 17:30 On time`),
+  in Toronto time.
+
+The **alerts** device: **Active alerts** (number, of the watched lines) and **Latest alert** (its
+subject).
+
+The **GO departures** dashboard widget shows the board of a station, counted down from the last
+reading.
+
+When a station has not been read for 15 minutes (or twice its refresh interval, when longer), its
+countdowns go to 999, the line texts are emptied, and the status texts and **Next departures** say
+`No recent reading`; the widget shows nothing either. This also applies after a restart that cannot
+read (pause, refused key). A departure board whose own time is more than 10 minutes away from the
+`Date` header of the answer is an old snapshot: neither published nor used for the scenes, and the
+status says so. Without that header the board is used as it is (the clock of the Gladys host is not
+trusted for this). The alerts are not checked this way.
+
+### Scenes
+
+- **GO departure delayed**: a departure of a station is late by at least 5, 10, 15 or 30 minutes,
+  or is cancelled. Once per departure and per threshold (a departure that goes from 0 to 12 minutes
+  fires 5 and 10). Filters: station, event, threshold, line. Variables: line, direction, trip
+  number, delay, minutes to wait, times, status.
+- **New GO service alert**: Metrolinx posted an alert for a watched line, one event per line of the
+  alert (5 at most). The first reading after installing only learns the alerts already there, so you
+  do not get them all at once. The alerts already announced are remembered across restarts.
+
+## 4. Limits kept by the integration
+
+- **One call at a time**, and **450 calls per rolling hour** at most, all together, counted before
+  each call and kept across restarts (6 stations every minute and the alerts every 5 minutes make
+  372).
+- Each source is read **once per its interval**, restarts included.
+- After a **429**, a **5xx**, no answer within **10 s** or an unreadable answer: every call pauses
+  1 minute, then 2, 4… up to 6 hours (`Retry-After` honored), kept across restarts. A success
+  resets the ladder.
+- Answers bounded: 512 KB (2 MB for the list of stops), cut beyond.
+- **Key refused** (403 while the key has read nothing else, or 401): reads stop, and the status says
+  so. Kept in `/data` as 8 bits of a salted hash, never the key. Lifted by a new key or a successful
+  **Test the key** click. Saving the same key again does not send it again. Rare limit: after a
+  restart, a new key whose 8-bit mark matches the refused one (1 chance in 256) waits for one click
+  on **Test the key**.
+- A 403 on one kind of data while the key reads the other (the key lost one right): only that kind
+  waits, 2 minutes doubled up to 1 hour.
+- **Test the key**: once a minute at most; it counts in the hourly limit and is not sent during a
+  pause (the answer says so).
+- A stop code the API does not know is asked again every 30 minutes, and named in the status.
+- `/data` unreadable: no call until it can be read (read again every 10 s); nothing written over it.
+
+## 5. Status messages
+
+The Configuration screen says what to do next: add the key, key refused, pause and its length,
+hourly limit reached, codes ignored, stations unknown to the API, no access to the alerts.
+
+## Privacy
+
+The only service called is `api.openmetrolinx.com`. The location of your house is never read.
+
+## Parámetros de configuración
+
+Estos son los parámetros que GO Transit te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Get started | `section` | No | 1. Ask Metrolinx for a free GO API key (link below; it arrives by e-mail). Metrolinx handles requests by hand, up to ten business days. 2. Paste it here and type the codes of your stations (UN for Union Station; the “Find a stop” button at the bottom gives the others). 3. Save, then open the “Discover” tab and add your stations and the alerts device. Contains information licensed under the Open Government Licence – Ontario – Metrolinx. Not affiliated with Metrolinx. Never tested with a real key. |
+| GO API key | `secret` | Sí | The access key Metrolinx sent you. Kept by Gladys in its database, never shown again, sent only to api.openmetrolinx.com. Metrolinx switches off a key that calls too much: the integration keeps under 450 calls an hour. If Metrolinx refuses the key, reads stop until you change it or click “Test the key”. |
+| Stations and stops | `string` | No | GO stop codes, comma-separated, 6 at most (each one costs a call per refresh). Optional line filter after @ (several joined by +) and name after : — e.g. “UN, OA@LW:Oakville to work”. |
+| Watch the service alerts | `boolean` | No | Proposes a “GO Transit – Service alerts” device: the number of current alerts and the latest one. |
+| Lines of the alerts | `string` | No | Only the alerts of these lines (codes, comma-separated). Empty: every alert of the network. |
+| Advanced | `section` | No | The defaults suit almost everyone and keep the key well under the limits of Metrolinx. |
+| Departures refresh (s) | `number` | No | Seconds between two reads of each station. |
+| Alerts refresh (s) | `number` | No | Seconds between two reads of the service alerts. |
+| Departures per station | `number` | No | How many upcoming departures each station device shows. |
+| Language of the values | `select` | No | Language of the feature names, the statuses and the alerts (Metrolinx writes them in both). |
+
+## Cómo instalar GO Transit en Gladys
+
+1. En Gladys, abre **Integraciones**: GO Transit aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-go-transit:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-go-transit](https://github.com/LM1LC3N7/gladys-go-transit).
+
+GO Transit requiere Gladys `>=5.3.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+GO Transit es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-go-transit) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-go-transit/blob/HEAD/docs/en.md)
