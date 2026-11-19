@@ -127,11 +127,14 @@ each of the four languages): the site reaches that limit at about 1,700
 integrations. A Worker with static assets on the Workers Paid plan accepts
 100,000 files, so the site is moving from Pages to a Worker. Nothing else
 changes: `build.sh` produces the same `build` folder, and Workers apply the
-same `_redirects` and `_headers` files, with the same limits.
+same `_redirects` and `_headers` files, with the same limits. The first rule
+of `_headers` spells out the three headers Pages adds to every response on its
+own and a Worker does not.
 
 The `Deploy` workflow (`.github/workflows/deploy.yml`) builds the site on
 GitHub and uploads it with `wrangler deploy --config wrangler.workers.jsonc`,
-on every push to master and once a day. Building on GitHub rather than on
+on every push to master and once a day. It only ever deploys master, also
+when started by hand from another branch. Building on GitHub rather than on
 Cloudflare also lifts the 8 GB of memory and the 20-minute timeout of their
 build machines: with 3,000 integrations the build peaks around 12 GB and takes
 about 12 minutes on four cores. The workflow builds cold, without the Rspack
@@ -149,7 +152,9 @@ One-time setup:
    online at `gladys-website.<account>.workers.dev`, marked `noindex` by
    `_headers`, while Cloudflare Pages keeps serving gladysassistant.com.
    Check it there: pages in the four languages, a redirect of `_redirects`,
-   an unknown URL (404 page), and an image under `/fr/img/`.
+   an unknown URL (404 page), and an image under `/fr/img/`. Compare the
+   response headers with production as well (`curl -sI` on both), not only
+   the status codes.
 4. Move the domain. Cloudflare refuses to create a Worker custom domain on a
    hostname that still has the CNAME record of the Pages project, so the site
    is unreachable between the two steps below: do them back to back, at a
