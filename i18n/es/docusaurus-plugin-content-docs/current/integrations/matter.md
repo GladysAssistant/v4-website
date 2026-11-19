@@ -74,7 +74,7 @@ Muchos dispositivos comerciales son routers Thread:
 - [Amazon Echo Dot Max](https://www.amazon.com/s?k=Amazon%20Echo%20Dot%20Max)
 - [Amazon Echo Hub](https://www.amazon.com/s?k=Amazon%20Echo%20Hub)
 - [Amazon Echo Studio](https://www.amazon.com/s?k=Amazon%20Echo%20Studio)
-- [Amazon Echo Show 8](https://www.amazon.com/s?k=Amazon%20Echo%20Show%208) (3.ª generación), 10 (3.ª generación), 11, 15 (2.ª generación), 16 y 21. Los Echo Show más antiguos y el Echo Show 5 no son routers Thread
+- [Amazon Echo Show 8](https://www.amazon.com/s?k=Amazon%20Echo%20Show%208%203rd%20generation) (3.ª generación), 10 (3.ª generación), 11, 15 (2.ª generación), 16 y 21. Los Echo Show más antiguos y el Echo Show 5 no son routers Thread
 - Los [routers Amazon eero](https://www.amazon.com/s?k=Amazon%20eero%206) recientes (eero 6 y posteriores, eero Pro, eero Beacon)
 
 También puedes montar tu propio router Thread con un dongle USB Thread y OpenThread.

@@ -3,8 +3,11 @@ const { addAffiliateTag } = require("../src/utils/affiliateLinks");
 // Remark plugin adding the affiliate partner id to every Amazon (amazon.fr,
 // amazon.com) and Domadoo link of the Markdown/MDX content: Markdown links
 // ([text](url)), reference definitions ([id]: url) and JSX/HTML elements
-// (<a href="...">). The external integration pages are generated from the
-// store, so their links can't be tagged by hand.
+// (<a href="...">). Docusaurus compiles .md files as MDX too (no
+// `markdown.format` is set), so a raw <a> tag in a .md file, such as the
+// product cards of the recommended hardware page, is a JSX element here.
+// The external integration pages are generated from the store, so their links
+// can't be tagged by hand.
 //
 // A link that ends up carrying a partner id also gets rel="sponsored", as
 // search engines ask for affiliate links. Docusaurus' <Link> only sets

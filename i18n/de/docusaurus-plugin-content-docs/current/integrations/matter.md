@@ -74,7 +74,7 @@ Viele handelsübliche Geräte sind Thread-Router:
 - [Amazon Echo Dot Max](https://www.amazon.com/s?k=Amazon%20Echo%20Dot%20Max)
 - [Amazon Echo Hub](https://www.amazon.com/s?k=Amazon%20Echo%20Hub)
 - [Amazon Echo Studio](https://www.amazon.com/s?k=Amazon%20Echo%20Studio)
-- [Amazon Echo Show 8](https://www.amazon.com/s?k=Amazon%20Echo%20Show%208) (3. Generation), 10 (3. Generation), 11, 15 (2. Generation), 16 und 21. Ältere Echo-Show-Modelle und der Echo Show 5 sind keine Thread-Router
+- [Amazon Echo Show 8](https://www.amazon.com/s?k=Amazon%20Echo%20Show%208%203rd%20generation) (3. Generation), 10 (3. Generation), 11, 15 (2. Generation), 16 und 21. Ältere Echo-Show-Modelle und der Echo Show 5 sind keine Thread-Router
 - Neuere [Amazon-eero-Router](https://www.amazon.com/s?k=Amazon%20eero%206) (eero 6 und neuer, eero Pro, eero Beacon)
 
 Du kannst auch deinen eigenen Thread-Router mit einem USB-Thread-Dongle und OpenThread aufsetzen.

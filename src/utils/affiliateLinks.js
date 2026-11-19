@@ -35,9 +35,12 @@ const addAffiliateTag = (href) => {
   return url.toString();
 };
 
-// Amazon store of each language that has a partner id. The pages of the other
-// languages (de, es) show no Amazon links until a partner id is added above
-// and the store here.
+// Amazon store of each language that has a partner id. The generated product
+// boxes (landing pages, external integrations) are hidden in the other
+// languages (de, es) until a partner id is added above and the store here.
+// Hand-written Markdown links are a different matter: the German and Spanish
+// docs and blog keep the amazon.com links of the English text, tagged with
+// the amazon.com partner id.
 const AMAZON_STORES = {
   en: "https://www.amazon.com",
   fr: "https://www.amazon.fr",

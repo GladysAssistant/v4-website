@@ -5,7 +5,9 @@
  * shown in a box on the page. Same format as integrationProducts.js:
  * - a string when the same words work in every language (a brand and a model);
  * - `{ en, fr }` when they need translating, or when the product is only worth
- *   showing in one of the two stores (leave the other language out).
+ *   showing in one of the two stores (leave the other language out). Both
+ *   names must be the same product, or its local equivalent: two unrelated
+ *   products go in two entries, `{ en: ... }` and `{ fr: ... }`.
  *
  * The words are both the text of the link ("<product> on Amazon") and the
  * Amazon search, so they read as a product name: a brand and a model, not a
@@ -27,6 +29,8 @@
  */
 const ZIGBEE_DONGLE = "Sonoff ZBDongle-E";
 const ZIGBEE_DONGLE_EN = { en: ZIGBEE_DONGLE };
+// The same product in each store: a Z-Wave stick for the frequency of the
+// store's country (908.42 MHz in North America, 868.42 MHz in Europe).
 const ZWAVE_STICK = { en: "Zooz ZST39 800", fr: "Aeotec Z-Stick 7" };
 const ENERGY_PLUG = {
   en: "THIRDREALITY Zigbee Smart Plug",
@@ -81,8 +85,10 @@ module.exports = {
   ],
   "z-wave-js-ui-without-home-assistant": [
     ZWAVE_STICK,
-    { en: "Aeotec Z-Stick 7 Plus", fr: "Fibaro Door/Window Sensor 2" },
-    { en: "Zooz ZSE18", fr: "Fibaro Wall Plug" },
+    { en: "Aeotec Z-Stick 7 Plus" },
+    { en: "Zooz ZSE18" },
+    { fr: "Fibaro Door/Window Sensor 2" },
+    { fr: "Fibaro Wall Plug" },
   ],
   "zigbee-vs-matter-vs-zwave": [ZIGBEE_DONGLE, ZWAVE_STICK, "Eve Energy"],
   "matter-hub": [
