@@ -65,7 +65,7 @@ Al seleccionar una propiedad de dispositivo en un disparador de escena "cambio d
 Dos novedades para los usuarios de Zigbee2mqtt:
 
 - **Teclado DEVELCO:** compatibilidad con las acciones del teclado (desarmar, armar día/noche/todas las zonas, retardo de salida, emergencia).
-- **Sirenas de alarma:** nuevas acciones `trigger_alarm` y `stop_alarm` (por ejemplo, la [sirena exterior de Bosch](https://www.amazon.com/s?k=Bosch%20Smart%20Home%20outdoor%20siren)), utilizables en tus escenas y automatizaciones.
+- **Sirenas de alarma:** nuevas acciones `trigger_alarm` y `stop_alarm` (por ejemplo, la sirena exterior de Bosch), utilizables en tus escenas y automatizaciones.
 
 ---
 

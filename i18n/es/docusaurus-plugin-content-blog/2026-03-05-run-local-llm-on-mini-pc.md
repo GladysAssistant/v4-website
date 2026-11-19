@@ -14,6 +14,6 @@ slug: run-local-llm-on-mini-pc
 
 [![Ejecutar un LLM local en un mini-PC](../../../static/img/articles/run-local-llm-on-mini-pc/youtube.jpg)](https://youtu.be/ZhqBSgQCO4o)
 
-Ejecutar la IA en local es un tema muy importante para el proyecto Gladys: la privacidad primero, tus datos se quedan en casa. En este vídeo te muestro cómo conseguí que un modelo de IA funcionara en un [mini-PC](https://www.amazon.com/s?k=mini%20PC), qué tipo de hardware hace falta y qué puedes esperar de forma realista.
+Ejecutar la IA en local es un tema muy importante para el proyecto Gladys: la privacidad primero, tus datos se quedan en casa. En este vídeo te muestro cómo conseguí que un modelo de IA funcionara en un mini-PC, qué tipo de hardware hace falta y qué puedes esperar de forma realista.
 
 Si tienes preguntas, no dudes en dejarlas en los comentarios de YouTube, ¡eso ayuda mucho a la visibilidad! 😉

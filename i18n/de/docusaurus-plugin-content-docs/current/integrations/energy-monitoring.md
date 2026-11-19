@@ -56,7 +56,7 @@ Das ist die empfohlene Option für internationale Nutzer. Ideal, um ein bestimmt
 
 [NOUS-A1Z-Steckdose mit Verbrauchsmessung bei Domadoo](https://www.domadoo.fr/fr/prises-connectees/6165-nous-prise-intelligente-zigbee-30-mesure-de-consommation-5907772033517.html?domid=17)
 
-Außerhalb Frankreichs funktioniert jede von Zigbee2MQTT unterstützte [Zigbee-Steckdose mit Verbrauchsmessung](https://www.amazon.com/s?k=Zigbee%20smart%20plug%20energy%20monitoring) genauso.
+Außerhalb Frankreichs funktioniert jede von Zigbee2MQTT unterstützte Zigbee-Steckdose mit Verbrauchsmessung genauso.
 
 ### 4. **Mit einem eigenen MQTT-Gerät (international)**
 

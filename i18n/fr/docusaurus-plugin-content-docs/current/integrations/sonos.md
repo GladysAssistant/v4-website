@@ -7,7 +7,7 @@ sidebar_label: Sonos
 
 ## Prérequis
 
-Vous devez disposer de l’application Sonos pour connecter vos [enceintes Sonos](https://www.amazon.fr/s?k=enceinte%20Sonos) (sonos Play 1, sonos One, sonos Playbar, sonos Sub, sonos Port, …)
+Vous devez disposer de l’application Sonos pour connecter vos enceintes Sonos (sonos Play 1, sonos One, sonos Playbar, sonos Sub, sonos Port, …)
 
 - [Sonos pour Android](https://play.google.com/store/apps/details?id=com.sonos.acr2&hl=fr&gl=US)
 - [Sonos pour Apple](https://apps.apple.com/fr/app/sonos/id1488977981)

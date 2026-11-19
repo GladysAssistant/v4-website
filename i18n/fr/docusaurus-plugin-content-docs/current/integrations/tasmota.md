@@ -30,7 +30,7 @@ Pour connecter un appareil Tasmota à Gladys, trois étapes :
 
 - **100 % local et privé** : l'appareil ne communique plus avec les serveurs du fabricant. Il dialogue uniquement avec votre broker MQTT local et Gladys.
 - **Sans cloud, sans abonnement** : Tasmota est gratuit et open source, et continue de fonctionner même si le fabricant d'origine ferme son service.
-- **Réutilisez du matériel bon marché** : de nombreuses prises et interrupteurs connectés abordables ([Sonoff](https://www.amazon.fr/s?k=Sonoff%20Basic%20R2) et autres appareils à base d'ESP) peuvent être reflashés plutôt que jetés.
+- **Réutilisez du matériel bon marché** : de nombreuses prises et interrupteurs connectés abordables (Sonoff et autres appareils à base d'ESP) peuvent être reflashés plutôt que jetés.
 - **Fiable et rapide** : les commandes locales ne dépendent pas de votre connexion Internet, vos automatisations s'exécutent instantanément.
 
 :::tip[Tasmota ou Zigbee ?]
@@ -41,7 +41,7 @@ Tasmota fonctionne sur des appareils Wi-Fi, chacun se connectant directement à 
 
 Le moyen le plus simple d'installer Tasmota est le **web installer** officiel : [tasmota.github.io/install](https://tasmota.github.io/install/). Il flashe votre appareil directement depuis un navigateur Chrome ou Edge via USB (grâce à l'API WebSerial), sans aucun logiciel à installer.
 
-Il prend en charge tous les appareils à base d'Espressif ESP8266, ESP8285, [ESP32](https://www.amazon.fr/s?k=ESP32%20DevKit), ESP32-S et ESP32-C3.
+Il prend en charge tous les appareils à base d'Espressif ESP8266, ESP8285, ESP32, ESP32-S et ESP32-C3.
 
 Si votre appareil nécessite un flash manuel, suivez le [guide d'installation de Tasmota](https://tasmota.github.io/docs/Getting-Started/). Il existe de nombreux tutoriels spécifiques à chaque appareil ; vous trouverez le bon en cherchant le nom de votre modèle suivi de « Tasmota ».
 

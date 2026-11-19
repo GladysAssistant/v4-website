@@ -10,7 +10,7 @@ Hi everyone!
 
 New version of Gladys today with some really nice changes that improve the way Gladys is used on a daily basis.
 
-Just before I get started: if you're looking for hardware to run Gladys on, a [Beelink mini-PC](https://www.amazon.com/s?k=Beelink%20mini%20PC) is a great way to start in home automation with reliable, high-performance equipment.
+Just before I get started: if you're looking for hardware to run Gladys on, a [Beelink mini-PC](https://www.amazon.com/s?k=Beelink%20Mini%20S13) is a great way to start in home automation with reliable, high-performance equipment.
 
 Some people in the community have even ordered several, so to speak 😂
 

@@ -5,7 +5,7 @@ description: "Controla los dispositivos Broadlink con Gladys Assistant y sustitu
 sidebar_label: Broadlink
 ---
 
-Gladys te permite controlar [dispositivos Broadlink](https://www.amazon.com/s?k=Broadlink%20RM4%20mini) o crear mandos a distancia infrarrojos.
+Gladys te permite controlar dispositivos Broadlink o crear mandos a distancia infrarrojos.
 
 ## Conectar el dispositivo Broadlink a la red
 

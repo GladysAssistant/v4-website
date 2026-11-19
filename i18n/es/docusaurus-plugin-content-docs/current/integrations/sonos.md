@@ -7,7 +7,7 @@ sidebar_label: Sonos
 
 ## Requisitos previos
 
-Necesitas la aplicación Sonos para configurar tus [altavoces Sonos](https://www.amazon.com/s?k=Sonos%20speaker) (Sonos Play 1, Sonos One, Sonos Playbar, Sonos Sub, Sonos Port, ...)
+Necesitas la aplicación Sonos para configurar tus altavoces Sonos (Sonos Play 1, Sonos One, Sonos Playbar, Sonos Sub, Sonos Port, ...)
 
 - [Sonos para Android](https://play.google.com/store/apps/details?id=com.sonos.acr2&hl=fr&gl=US)
 - [Sonos para Apple](https://apps.apple.com/fr/app/sonos/id1488977981)

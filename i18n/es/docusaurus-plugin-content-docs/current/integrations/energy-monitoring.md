@@ -56,7 +56,7 @@ Es la opción recomendada para usuarios fuera de Francia. Ideal para seguir un a
 
 [Enchufe NOUS A1Z con medición de consumo en Domadoo](https://www.domadoo.fr/fr/prises-connectees/6165-nous-prise-intelligente-zigbee-30-mesure-de-consommation-5907772033517.html?domid=17)
 
-Fuera de Francia, cualquier [enchufe Zigbee con medición de consumo](https://www.amazon.com/s?k=Zigbee%20smart%20plug%20energy%20monitoring) compatible con Zigbee2MQTT funciona igual.
+Fuera de Francia, cualquier enchufe Zigbee con medición de consumo compatible con Zigbee2MQTT funciona igual.
 
 ### 4. **Con un dispositivo MQTT personalizado (internacional)**
 

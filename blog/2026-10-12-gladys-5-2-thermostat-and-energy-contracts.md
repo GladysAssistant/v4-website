@@ -24,7 +24,7 @@ There is now a native **Thermostat** integration, and it handles two cases.
 
 **Gladys is the thermostat.** You pick a temperature sensor and a switch (a relay, a plug, a boiler contact), and Gladys regulates: it reads the temperature every minute and turns the heater on and off to reach the setpoint. You choose between a hysteresis (heat below 20.5 °C, stop above 21.5 °C) and TPI regulation, which heats for a share of a fixed cycle proportional to the gap. The latter is gentler on heaters with a lot of inertia. A window sensor cuts the heating the second the window opens.
 
-**Gladys programmes your existing thermostat.** A [Netatmo](https://www.amazon.com/s?k=Netatmo%20smart%20thermostat), a [Zigbee radiator valve](https://www.amazon.com/s?k=Zigbee%20thermostatic%20radiator%20valve), a Matter or MQTT thermostat already regulates itself very well. What it lacked was a schedule living in Gladys, next to the rest of the house, rather than in the vendor app. Gladys now writes its setpoint according to the schedule, switches its mode to Off when needed, and shows whether it's heating.
+**Gladys programmes your existing thermostat.** A [Netatmo](https://www.amazon.com/s?k=Netatmo%20smart%20thermostat), a [Zigbee radiator valve](https://www.amazon.com/s?k=Sonoff%20TRVZB), a Matter or MQTT thermostat already regulates itself very well. What it lacked was a schedule living in Gladys, next to the rest of the house, rather than in the vendor app. Gladys now writes its setpoint according to the schedule, switches its mode to Off when needed, and shows whether it's heating.
 
 ![The form of a real thermostat: Gladys drives the setpoint, the heating state and the mode of the device](../static/img/articles/gladys-assistant-5-2/03-thermostat-external-en.webp)
 

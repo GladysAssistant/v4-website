@@ -91,7 +91,7 @@ Aldi vende varias familias de cámaras con la marca Rollei, y no todas se compor
 - Las **cámaras de seguridad Wi-Fi de interior y exterior** (la IPC-88 y sus hermanas) están basadas en Tuya y suelen ofrecer ONVIF/RTSP, así que el método anterior funciona.
 - Las **cámaras de caza** (fototrampeo) graban en una tarjeta SD y, en los modelos 4G, envían fotos por correo electrónico o MMS. No tienen flujo RTSP en directo ni vídeo en la red local, así que no se pueden añadir a Gladys.
 
-Si vas a comprar una cámara en lugar de reutilizar una que ya tienes, un modelo que documente claramente su compatibilidad con RTSP te ahorrará tiempo. Consulta las páginas de [Reolink](/es/docs/integrations/external/reolink/) e [Imou](/es/docs/integrations/imou) para conocer dos gamas que ofrecen una URL RTSP predecible. Ambas se encuentran en Amazon: [cámaras Reolink](https://www.amazon.com/s?k=Reolink%20security%20camera), [cámaras Imou](https://www.amazon.com/s?k=Imou%20security%20camera).
+Si vas a comprar una cámara en lugar de reutilizar una que ya tienes, un modelo que documente claramente su compatibilidad con RTSP te ahorrará tiempo. Consulta las páginas de [Reolink](/es/docs/integrations/external/reolink/) e [Imou](/es/docs/integrations/imou) para conocer dos gamas que ofrecen una URL RTSP predecible.
 
 ## Preguntas frecuentes
 

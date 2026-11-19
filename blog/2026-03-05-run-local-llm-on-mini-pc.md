@@ -14,6 +14,6 @@ Can you really run a capable AI model locally, on a small mini-PC, without sendi
 
 [![Running a local LLM on a mini-PC](../static/img/articles/run-local-llm-on-mini-pc/youtube.jpg)](https://youtu.be/ZhqBSgQCO4o)
 
-Running AI locally is a topic that's very close to the heart of the Gladys project: privacy first, your data stays at home. In this video I show how I got an AI model running on a [mini-PC](https://www.amazon.com/s?k=mini%20PC), what kind of hardware it takes, and what you can realistically expect.
+Running AI locally is a topic that's very close to the heart of the Gladys project: privacy first, your data stays at home. In this video I show how I got an AI model running on a mini-PC, what kind of hardware it takes, and what you can realistically expect.
 
 If you have questions, feel free to leave them in the comments on YouTube, it really helps with visibility 😉

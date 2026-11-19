@@ -14,6 +14,6 @@ Hoy quiero compartir contigo una automatización realmente útil que he configur
 
 [![Cómo hacer inteligente cualquier lavadora](../../../static/img/articles/make-any-washing-machine-smart/youtube.jpg)](https://youtu.be/gn-bBBs39G0)
 
-La idea es sencilla: midiendo el consumo eléctrico del enchufe, Gladys sabe exactamente cuándo empieza y cuándo termina un ciclo de lavado, y puede enviarte una notificación para que nunca vuelvas a olvidarte la ropa dentro de la lavadora. No necesitas ningún electrodoméstico especial, solo un [enchufe Zigbee con medición de consumo](https://www.amazon.com/s?k=Zigbee%20smart%20plug%20energy%20monitoring) y una escena de Gladys.
+La idea es sencilla: midiendo el consumo eléctrico del enchufe, Gladys sabe exactamente cuándo empieza y cuándo termina un ciclo de lavado, y puede enviarte una notificación para que nunca vuelvas a olvidarte la ropa dentro de la lavadora. No necesitas ningún electrodoméstico especial, solo un [enchufe Zigbee con medición de consumo](https://www.amazon.com/s?k=THIRDREALITY%20Zigbee%20smart%20plug%20energy%20monitoring) y una escena de Gladys.
 
 En el vídeo de arriba te explico toda la configuración paso a paso. Si tienes preguntas, déjalas en los comentarios de YouTube 🙏

@@ -18,7 +18,7 @@ Pero si ya tienes una Raspberry Pi a mano, úsala para probar Gladys. ¡Precisam
 ## Lo que necesitas
 
 - Una **[Raspberry Pi 3, 4 o 5](https://www.amazon.com/s?k=Raspberry%20Pi%205)** (modelo de 64 bits)
-- Preferiblemente un **SSD USB** ([adaptador USB 3.0](https://www.amazon.com/s?k=USB%203.0%20NVMe%20SATA%20SSD%20enclosure) + SSD SATA o NVMe). Para hacer pruebas, también sirve una tarjeta microSD de 16 GB.
+- Preferiblemente un **SSD USB** (adaptador USB 3.0 + SSD SATA o NVMe). Para hacer pruebas, también sirve una tarjeta microSD de 16 GB.
 - Una **[fuente de alimentación oficial](https://www.amazon.com/s?k=Raspberry%20Pi%20official%20power%20supply)** adecuada para tu modelo (5 V / 3 A para la Pi 4, 5 V / 5 A para la Pi 5)
 - Un **cable Ethernet** o una conexión wifi
 - Un ordenador (Windows, macOS o Linux) para grabar la imagen

@@ -5,7 +5,7 @@ description: "Make Gladys Assistant speak on a Google Cast speaker: add your dev
 sidebar_label: Google Cast
 ---
 
-Gladys Assistant can broadcast voice messages on a [Google speaker](https://www.amazon.com/s?k=Google%20Nest%20Mini) or any other Google Cast-compatible device.
+Gladys Assistant can broadcast voice messages on a Google speaker or any other Google Cast-compatible device.
 
 ## Adding a Google Speaker to Gladys Assistant
 

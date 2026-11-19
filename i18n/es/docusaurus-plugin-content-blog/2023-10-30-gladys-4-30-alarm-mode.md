@@ -38,7 +38,7 @@ A partir de ahora, solo tienes que ir a la integración "Node-RED" y hacer clic 
 
 ## Tuya: gestión del consumo eléctrico
 
-La integración Tuya ahora es compatible con los [enchufes inteligentes](https://www.amazon.com/s?k=Tuya%20smart%20plug%20energy%20monitoring) que envían datos de consumo eléctrico.
+La integración Tuya ahora es compatible con los enchufes inteligentes que envían datos de consumo eléctrico.
 
 Gracias a Lokkye por el desarrollo 🙏
 

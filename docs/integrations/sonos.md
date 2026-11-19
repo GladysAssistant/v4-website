@@ -7,7 +7,7 @@ sidebar_label: Sonos
 
 ## Prerequisites
 
-You must have the Sonos application to connect your [Sonos speakers](https://www.amazon.com/s?k=Sonos%20speaker) (sonos Play 1, sonos One, sonos Playbar, sonos Sub, sonos Port, ...)
+You must have the Sonos application to connect your Sonos speakers (sonos Play 1, sonos One, sonos Playbar, sonos Sub, sonos Port, ...)
 
 - [Sonos for Android](https://play.google.com/store/apps/details?id=com.sonos.acr2&hl=fr&gl=US)
 - [Sonos for Apple](https://apps.apple.com/fr/app/sonos/id1488977981)

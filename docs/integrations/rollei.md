@@ -91,7 +91,7 @@ Aldi sells several camera families under the Rollei name, and they do not all be
 - **Indoor and outdoor Wi-Fi security cameras** (the IPC-88 and its siblings) are Tuya based and generally expose ONVIF/RTSP, so the method above applies.
 - **Trail cameras** (game or wildlife cameras) record to an SD card and, on 4G models, send pictures by email or MMS. They have no live RTSP stream and no local network video, so they cannot be added to Gladys.
 
-If you are shopping for a camera rather than trying to reuse one you already own, a model that documents its RTSP support up front will save you time. See the [Reolink](/docs/integrations/external/reolink/) and [Imou](/docs/integrations/imou) pages for two ranges that expose a predictable RTSP URL. Both are sold on Amazon: [Reolink cameras](https://www.amazon.com/s?k=Reolink%20security%20camera) and [Imou cameras](https://www.amazon.com/s?k=Imou%20security%20camera).
+If you are shopping for a camera rather than trying to reuse one you already own, a model that documents its RTSP support up front will save you time. See the [Reolink](/docs/integrations/external/reolink/) and [Imou](/docs/integrations/imou) pages for two ranges that expose a predictable RTSP URL.
 
 ## Frequently asked questions
 

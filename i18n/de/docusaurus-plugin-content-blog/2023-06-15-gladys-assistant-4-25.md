@@ -10,7 +10,7 @@ Hallo zusammen!
 
 Heute gibt es eine neue Gladys-Version mit einigen richtig schönen Änderungen, die die tägliche Nutzung von Gladys verbessern.
 
-Kurz bevor ich loslege: Wenn du nach Hardware suchst, auf der du Gladys betreiben kannst, ist ein [Beelink-Mini-PC](https://www.amazon.com/s?k=Beelink%20mini%20PC) eine super Möglichkeit, mit zuverlässiger und leistungsstarker Hardware in die Hausautomation einzusteigen.
+Kurz bevor ich loslege: Wenn du nach Hardware suchst, auf der du Gladys betreiben kannst, ist ein [Beelink-Mini-PC](https://www.amazon.com/s?k=Beelink%20Mini%20S13) eine super Möglichkeit, mit zuverlässiger und leistungsstarker Hardware in die Hausautomation einzusteigen.
 
 Manche in der Community haben sogar gleich mehrere bestellt, sozusagen 😂
 

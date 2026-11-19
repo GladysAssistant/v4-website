@@ -91,7 +91,7 @@ Aldi vend plusieurs familles de caméras sous la marque Rollei, et elles ne se c
 - Les **caméras de surveillance Wi-Fi d'intérieur et d'extérieur** (l'IPC-88 et ses cousines) sont basées sur Tuya et exposent généralement l'ONVIF/RTSP : la méthode ci-dessus s'applique.
 - Les **caméras de chasse** enregistrent sur une carte SD et, sur les modèles 4G, envoient les photos par e-mail ou MMS. Elles n'ont aucun flux RTSP en direct ni vidéo sur le réseau local : elles ne peuvent donc pas être ajoutées à Gladys.
 
-Si vous cherchez à acheter une caméra plutôt qu'à réutiliser celle que vous avez déjà, un modèle qui documente clairement son support RTSP vous fera gagner du temps. Voyez les pages [Reolink](/fr/docs/integrations/external/reolink/) et [Imou](/fr/docs/integrations/imou/) pour deux gammes qui exposent une URL RTSP prévisible. Les deux se trouvent sur Amazon : [caméras Reolink](https://www.amazon.fr/s?k=cam%C3%A9ra%20Reolink), [caméras Imou](https://www.amazon.fr/s?k=cam%C3%A9ra%20Imou).
+Si vous cherchez à acheter une caméra plutôt qu'à réutiliser celle que vous avez déjà, un modèle qui documente clairement son support RTSP vous fera gagner du temps. Voyez les pages [Reolink](/fr/docs/integrations/external/reolink/) et [Imou](/fr/docs/integrations/imou/) pour deux gammes qui exposent une URL RTSP prévisible.
 
 ## Questions fréquentes
 

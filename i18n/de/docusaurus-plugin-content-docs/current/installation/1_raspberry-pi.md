@@ -18,7 +18,7 @@ Wenn du aber schon einen Raspberry Pi zur Hand hast, nutze ihn, um Gladys auszup
 ## Was du brauchst
 
 - Einen **[Raspberry Pi 3, 4 oder 5](https://www.amazon.com/s?k=Raspberry%20Pi%205)** (64-Bit-Modell)
-- Am besten eine **USB-SSD** ([USB-3.0-Adapter](https://www.amazon.com/s?k=USB%203.0%20NVMe%20SATA%20SSD%20enclosure) + SATA- oder NVMe-SSD). Zum Testen reicht auch eine 16-GB-microSD-Karte.
+- Am besten eine **USB-SSD** (USB-3.0-Adapter + SATA- oder NVMe-SSD). Zum Testen reicht auch eine 16-GB-microSD-Karte.
 - Ein **[offizielles Netzteil](https://www.amazon.com/s?k=Raspberry%20Pi%20official%20power%20supply)** passend zu deinem Modell (5 V / 3 A für den Pi 4, 5 V / 5 A für den Pi 5)
 - Ein **Ethernet-Kabel** oder eine WLAN-Verbindung
 - Einen Computer (Windows, macOS oder Linux), um das Image zu schreiben

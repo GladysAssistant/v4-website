@@ -38,7 +38,7 @@ From now on, just go to the "Node-RED" integration and click on "Activate" to la
 
 ## Tuya: Power consumption management
 
-Tuya integration now supports [connected sockets](https://www.amazon.com/s?k=Tuya%20smart%20plug%20energy%20monitoring) that report electricity consumption data.
+Tuya integration now supports connected sockets that report electricity consumption data.
 
 Thanks to Lokkye for the development 🙏
 

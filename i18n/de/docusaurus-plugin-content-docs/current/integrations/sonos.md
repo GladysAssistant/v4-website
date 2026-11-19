@@ -7,7 +7,7 @@ sidebar_label: Sonos
 
 ## Voraussetzungen
 
-Du brauchst die Sonos-App, um deine [Sonos-Lautsprecher](https://www.amazon.com/s?k=Sonos%20speaker) einzurichten (Sonos Play 1, Sonos One, Sonos Playbar, Sonos Sub, Sonos Port, ...)
+Du brauchst die Sonos-App, um deine Sonos-Lautsprecher einzurichten (Sonos Play 1, Sonos One, Sonos Playbar, Sonos Sub, Sonos Port, ...)
 
 - [Sonos für Android](https://play.google.com/store/apps/details?id=com.sonos.acr2&hl=fr&gl=US)
 - [Sonos für Apple](https://apps.apple.com/fr/app/sonos/id1488977981)

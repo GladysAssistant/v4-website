@@ -9,7 +9,7 @@ sidebar_label: Airplay
 
 Comprueba que tu altavoz sea accesible desde todos los dispositivos de la misma red.
 
-Para reproducir en un [HomePod](https://www.amazon.com/s?k=Apple%20HomePod), abre la aplicación Casa, ve a `Ajustes de la casa` y elige `Altavoces y televisores` -> después selecciona `Cualquier usuario de la misma red` y desactiva la contraseña.
+Para reproducir en un HomePod, abre la aplicación Casa, ve a `Ajustes de la casa` y elige `Altavoces y televisores` -> después selecciona `Cualquier usuario de la misma red` y desactiva la contraseña.
 
 Si quieres transmitir audio a un Mac de la red, abre los Ajustes de tu Mac, ve a `General`, haz clic en `AirDrop y Handoff`, activa el `Receptor AirPlay`, autoriza a `Todas las personas de la misma red` y desactiva también la contraseña. ATENCIÓN: por motivos de seguridad, debes validar manualmente la conexión AirPlay cada vez que reproduzcas en un Mac, aceptando la notificación que aparece en pantalla.
 

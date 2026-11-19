@@ -9,7 +9,7 @@ sidebar_label: Airplay
 
 Stelle sicher, dass dein Lautsprecher von allen Geräten im selben Netzwerk erreichbar ist.
 
-Für die Wiedergabe auf einem [HomePod](https://www.amazon.com/s?k=Apple%20HomePod) öffnest du die Home-App, gehst zu `Einstellungen für Zuhause` und wählst `Lautsprecher und TVs` -> dann `Alle Personen im selben Netzwerk` und deaktivierst das Passwort.
+Für die Wiedergabe auf einem HomePod öffnest du die Home-App, gehst zu `Einstellungen für Zuhause` und wählst `Lautsprecher und TVs` -> dann `Alle Personen im selben Netzwerk` und deaktivierst das Passwort.
 
 Wenn du Audio auf einen Mac im Netzwerk streamen möchtest, öffne die Einstellungen deines Macs, gehe zu `Allgemein`, klicke auf `AirDrop & Handoff`, aktiviere den `AirPlay-Empfänger`, erlaube `Alle Personen im selben Netzwerk` und deaktiviere ebenfalls das Passwort. ACHTUNG: Aus Sicherheitsgründen musst du die AirPlay-Verbindung bei jeder Wiedergabe auf einem Mac manuell bestätigen, indem du die Benachrichtigung auf dem Bildschirm akzeptierst.
 

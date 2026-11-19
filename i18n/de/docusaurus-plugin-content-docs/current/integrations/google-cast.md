@@ -5,7 +5,7 @@ description: "Lass Gladys Assistant auf einem Google-Cast-Lautsprecher sprechen:
 sidebar_label: Google Cast
 ---
 
-Gladys Assistant kann Sprachnachrichten auf einem [Google-Lautsprecher](https://www.amazon.com/s?k=Google%20Nest%20Mini) oder einem anderen Google-Cast-kompatiblen Gerät abspielen.
+Gladys Assistant kann Sprachnachrichten auf einem Google-Lautsprecher oder einem anderen Google-Cast-kompatiblen Gerät abspielen.
 
 ## Einen Google-Lautsprecher zu Gladys Assistant hinzufügen
 
