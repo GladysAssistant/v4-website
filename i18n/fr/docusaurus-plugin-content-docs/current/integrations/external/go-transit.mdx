@@ -1,0 +1,166 @@
+---
+title: "Intégration domotique GO Transit, gratuite et open source"
+sidebar_label: "GO Transit"
+description: "GO Transit (région de Toronto) : prochains départs, retards et alertes de service. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-go-transit.png"
+keywords:
+  - "go transit"
+  - "domotique go transit"
+  - "gladys go transit"
+  - "go transit gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-go-transit instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"GO Transit","description":"GO Transit (région de Toronto) : prochains départs, retards et alertes de service.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-go-transit","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-go-transit.png","type":"device","version":"0.1.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-19T04:55:56Z"}} />
+
+Les prochains départs de vos gares GO Transit (région de Toronto), leurs retards et leurs voies,
+et les alertes de service du réseau, depuis l’API GO officielle de Metrolinx.
+
+> Contient des informations sous licence Open Government Licence – Ontario – Metrolinx
+> ([licence](https://assets.metrolinx.com/image/upload/v1663237565/Documents/Metrolinx/Open-Government-Licence-Ontario-Metrolinx.pdf)).
+> Cette intégration est sans lien avec Metrolinx. Elle n’a jamais été testée avec une vraie clé :
+> les formats viennent de la documentation de l’API (pages d’aide et exemples), et les premiers
+> utilisateurs peuvent rencontrer un champ que les exemples ne montraient pas. En bref : jamais
+> testé avec une vraie clé.
+
+## 1. Obtenir une clé
+
+1. Remplissez le [formulaire d’inscription](https://api.openmetrolinx.com/OpenDataAPI/Help/Registration/en)
+   de l’API GO (gratuit). Metrolinx traite les demandes à la main : jusqu’à dix jours ouvrables.
+2. La clé arrive par e-mail. Elle n’expire pas, mais Metrolinx désactive à la main une clé qui
+   appelle trop. L’intégration s’impose donc ses propres limites (plus bas).
+
+## 2. Configurer
+
+- **Clé de l’API GO** : collez la clé. Gardée par Gladys dans sa base, jamais réaffichée, envoyée
+  seulement à `api.openmetrolinx.com` (dans l’adresse de chaque appel, comme l’API le demande),
+  jamais écrite dans les journaux, le statut ni les fichiers de l’intégration.
+- **Gares et arrêts** : les codes GO, séparés par des virgules, 6 au plus : `UN` pour Union
+  Station, `OA` pour Oakville… Le bouton **Chercher une gare** en bas de la page donne les codes (il
+  lit la liste des gares une fois, puis la garde une semaine ; au plus une lecture toutes les
+  30 s). Après le code, un filtre de lignes
+  facultatif (`@LW`, plusieurs joints par `+` : `@LW+LE`) et un nom (`:Oakville vers le travail`) :
+  `UN, OA@LW:Oakville vers le travail`.
+- **Suivre les alertes de service** : propose l’appareil des alertes. **Lignes des alertes** :
+  seulement les alertes de ces lignes (`LW, LE`) ; vide, toutes les alertes.
+- **Avancé** : le rafraîchissement des départs (60 s par défaut, 60 s au moins), des alertes (300 s,
+  120 s au moins), le nombre de départs par gare (1 à 5), la langue des valeurs (Metrolinx écrit les
+  alertes en anglais et en français).
+
+Ouvrez ensuite l’onglet **Découverte** et ajoutez vos gares et l’appareil des alertes. Seuls les
+appareils ajoutés sont lus : une gare laissée dans l’écran Découverte ne coûte rien.
+
+## 3. Ce que vous obtenez
+
+Pour chaque gare :
+
+- **Prochain départ**, **Départ 2**… : minutes d’attente. 999 = aucun départ ou aucune lecture
+  récente, voir le texte d’état (vide, ou `Aucune lecture récente`). Une scène qui compare les
+  minutes doit exclure 999.
+- **Ligne du …** : ligne et direction (`LW - Aldershot GO`).
+- **État du …** : `À l'heure`, `+5 min`, `2 min d'avance`, `Annulé`, ou `Horaire prévu` quand l’API
+  ne donne que l’heure de l’horaire ; puis la voie quand elle est connue (`Voie 4`).
+- **Prochains départs** : une ligne pour un tableau de bord
+  (`LW 17:23 +5 min · Voie 4 | LE 17:30 À l'heure`), à l’heure de Toronto.
+
+L’appareil des **alertes** : **Alertes en cours** (nombre, des lignes suivies) et **Dernière
+alerte** (son objet).
+
+Le widget **Départs GO** du tableau de bord montre le tableau d’une gare, décompté depuis la
+dernière lecture.
+
+Quand une gare n’a pas été lue depuis 15 minutes (ou deux fois son intervalle de rafraîchissement,
+s’il est plus long), ses comptes à rebours passent à 999, et **Prochains
+départs** comme les textes d’état indiquent `Aucune lecture récente` (les textes de ligne sont
+vidés) ; le widget n’affiche rien non plus. C’est aussi le cas après un redémarrage qui ne peut pas
+lire (pause, clé refusée). Un tableau de départs dont l’heure propre s’écarte de plus de 10 minutes
+de l’en-tête `Date` de la réponse est un vieil instantané : ni publié ni utilisé pour les scènes, et
+le statut le dit. Sans cet en-tête, le tableau est utilisé tel quel (l’horloge de l’hôte Gladys
+n’est pas prise comme référence). Les alertes ne sont pas contrôlées ainsi.
+
+### Scènes
+
+- **Départ GO en retard** : un départ d’une gare a au moins 5, 10, 15 ou 30 minutes de retard, ou
+  est annulé. Une fois par départ et par seuil (un départ qui passe de 0 à 12 minutes déclenche 5 et
+  10). Filtres : gare, événement, seuil, ligne. Variables : ligne, direction, numéro de trajet,
+  retard, minutes d’attente, heures, état.
+- **Nouvelle alerte GO** : Metrolinx a publié une alerte pour une ligne suivie, un événement par
+  ligne de l’alerte (5 au plus). La première lecture après l’installation apprend seulement les
+  alertes déjà présentes, pour ne pas toutes les recevoir d’un coup. Les alertes déjà annoncées sont
+  retenues d’un redémarrage à l’autre.
+
+## 4. Limites tenues par l’intégration
+
+- **Un appel à la fois**, et **450 appels par heure glissante** au plus, tous ensemble, comptés
+  avant chaque appel et gardés au redémarrage (6 gares chaque minute et les alertes toutes les
+  5 minutes font 372).
+- Chaque source est lue **une fois par intervalle**, redémarrages compris.
+- Après un **429**, un **5xx**, aucune réponse en **10 s** ou une réponse illisible : tous les
+  appels font une pause de 1 minute, puis 2, 4… jusqu’à 6 heures (`Retry-After` respecté), gardée
+  au redémarrage. Un succès remet l’échelle à zéro.
+- Réponses bornées : 512 Ko (2 Mo pour la liste des gares), coupées au-delà.
+- **Clé refusée** (403 alors que la clé n’a rien lu d’autre, ou 401) : les lectures s’arrêtent, et le
+  statut le dit. Retenu dans `/data` sous forme de 8 bits d’une empreinte salée, jamais la clé. Levé
+  par une nouvelle clé ou un clic réussi sur **Tester la clé**. Enregistrer à nouveau la même clé ne
+  la renvoie pas. Limite rare : après un redémarrage, une nouvelle clé dont la marque de 8 bits
+  correspond à celle refusée (1 chance sur 256) attend un clic sur **Tester la clé**.
+- Un 403 sur un type de données alors que la clé lit l’autre (la clé a perdu un droit) : seul ce
+  type attend, 2 minutes doublées jusqu’à 1 heure.
+- **Tester la clé** : une fois par minute au plus ; compte dans la limite horaire et n’est pas
+  envoyé pendant une pause (la réponse le dit).
+- Un code de gare inconnu de l’API est redemandé toutes les 30 minutes, et nommé dans le statut.
+- `/data` illisible : aucun appel tant qu’il ne l’est pas (relu toutes les 10 s) ; rien n’est écrit
+  par-dessus.
+
+## 5. Messages d’état
+
+L’écran Configuration dit quoi faire : ajouter la clé, clé refusée, pause et sa durée, plafond
+horaire atteint, codes ignorés, gares inconnues de l’API, pas d’accès aux alertes.
+
+## Vie privée
+
+Le seul service appelé est `api.openmetrolinx.com`. La position de votre maison n’est jamais lue.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par GO Transit dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Démarrer | `section` | Non | 1. Demandez à Metrolinx une clé gratuite de l’API GO (lien ci-dessous ; elle arrive par e-mail). Metrolinx traite les demandes à la main, jusqu’à dix jours ouvrables. 2. Collez-la ici et saisissez les codes de vos gares (UN pour Union Station ; le bouton « Chercher une gare » en bas donne les autres). 3. Enregistrez, puis ouvrez l’onglet « Découverte » et ajoutez vos gares et l’appareil des alertes. Contient des informations sous licence Open Government Licence – Ontario – Metrolinx. Sans lien avec Metrolinx. Jamais testé avec une vraie clé. |
+| Clé de l’API GO | `secret` | Oui | La clé d’accès envoyée par Metrolinx. Gardée par Gladys dans sa base, jamais réaffichée, envoyée seulement à api.openmetrolinx.com. Metrolinx désactive une clé qui appelle trop : l’intégration reste sous 450 appels par heure. Si Metrolinx refuse la clé, les lectures s’arrêtent jusqu’à ce que vous la changiez ou cliquiez sur « Tester la clé ». |
+| Gares et arrêts | `string` | Non | Codes de gares GO, séparés par des virgules, 6 au plus (chacune coûte un appel par rafraîchissement). Filtre de lignes facultatif après @ (plusieurs joints par +) et nom après : — ex. « UN, OA@LW:Oakville vers le travail ». |
+| Suivre les alertes de service | `boolean` | Non | Propose un appareil « GO Transit – Alertes de service » : le nombre d’alertes en cours et la dernière. |
+| Lignes des alertes | `string` | Non | Seulement les alertes de ces lignes (codes, séparés par des virgules). Vide : toutes les alertes du réseau. |
+| Avancé | `section` | Non | Les valeurs par défaut conviennent à presque tout le monde et gardent la clé bien sous les limites de Metrolinx. |
+| Rafraîchissement des départs (s) | `number` | Non | Secondes entre deux lectures de chaque gare. |
+| Rafraîchissement des alertes (s) | `number` | Non | Secondes entre deux lectures des alertes de service. |
+| Départs par gare | `number` | Non | Nombre de prochains départs affichés par appareil de gare. |
+| Langue des valeurs | `select` | Non | Langue des noms de fonctionnalités, des états et des alertes (Metrolinx les écrit dans les deux). |
+
+## Comment installer GO Transit dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : GO Transit apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-go-transit:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-go-transit](https://github.com/LM1LC3N7/gladys-go-transit).
+
+GO Transit nécessite Gladys `>=5.3.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+GO Transit est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-go-transit) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-go-transit/blob/HEAD/docs/fr.md)

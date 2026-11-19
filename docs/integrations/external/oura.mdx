@@ -19,7 +19,7 @@ https://github.com/LM1LC3N7/gladys-oura instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Oura","description":"Oura ring (official API v2), read only: sleep, readiness, activity. Not a medical device.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-oura","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-oura.png","type":"device","version":"0.1.2","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-01T15:28:28Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Oura","description":"Oura ring (official API v2), read only: sleep, readiness, activity. Not a medical device.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-oura","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-oura.png","type":"device","version":"0.1.3","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-19T09:38:21Z"}} />
 
 Reads the data of your **Oura ring** in Gladys through the **official Oura API
 v2**, read only: sleep, readiness and activity scores, sleep durations (total,
@@ -156,18 +156,35 @@ features, published without a date, trigger scenes as usual).
   read again after 6 hours.
 - **Not read this time: SpO2…**: one collection was refused (scope not
   granted, ring without that feature) or failed; the others are published.
-- A restart of the container, or an answer of Oura arriving too late, in the
-  very seconds of a renewal can lose the new renewal token (it serves once):
+- A stop of the container waits up to 8 seconds for a renewal in flight and
+  its save. A crash or a kill of the container, or an answer of Oura arriving
+  too late, in the very seconds of a renewal can lose the new renewal token (it serves once):
   the status then becomes **Session ended**; click Connect. Rare, inherent to
   single-use renewal tokens.
+- A renewal is sent only while Gladys is connected and has just accepted a
+  write of the current session; otherwise the current token stays and the
+  renewal is tried again a minute later (the logs say "Gladys cannot keep
+  the tokens"). If Gladys refuses the new token right after (the logs say
+  "tokens not saved in Gladys"), it is saved again every 10 seconds to a
+  minute and at each reconnection to Gladys, and no other renewal is sent
+  before. Only a restart of the container before one of those saves succeeds
+  loses it: **Session ended**, click Connect.
 
 ## Privacy
 
 - Read only: the integration never writes to Oura.
 - The health values stay in memory and go to Gladys only: never in the logs,
   never in a status message, never in `/data`.
-- The tokens are kept in clear in the `/data` volume of the integration
-  (readable by its container only), sent only to Oura.
+- The access and renewal tokens are kept by Gladys in its database (in the
+  configuration of the integration, never shown on the screen), sent only to
+  Oura, never in `/data`, the logs nor the status messages. `/data` keeps
+  only times, pauses and stops.
+- Version 0.1.2 and before kept the tokens in `/data`: at start they are
+  moved to Gladys, then removed from `/data` (a session Gladys already holds
+  is never replaced by them). If Gladys refuses them, they stay in `/data`
+  and still serve, and the move is tried again within seconds, at each
+  reconnection, read and start;
+  nothing to do. Only if it keeps failing (see the logs), click Connect.
 - Revoke the access at any time in your Oura account (authorized apps) or by
   deleting the application on the developer portal.
 
@@ -181,7 +198,7 @@ These are the settings Oura asks for in its configuration screen in Gladys.
 | 1. Your Oura app | `section` | No | On the Oura developer portal, sign in with your Oura account and create an application (OAuth). As redirect URI, give the return address of this Gladys: click Connect once below, the status at the top of this page then shows it (copy it exactly, https), or give an address of yours and fill in "Redirect URI" below. Save the application, then copy its Client ID and Client Secret below and save. |
 | Client ID | `string` | Yes | The Client ID of your Oura app. |
 | Client Secret | `secret` | Yes | The Client Secret of your Oura app. Kept by Gladys in its database, never shown again, sent only to Oura. |
-| 2. Authorize | `section` | No | Click Connect: the Oura page opens; sign in and allow the access asked (daily data, heart rate, SpO2: nothing else, read only). Oura sends you back to Gladys and the integration reads your data. If the redirect URI of your app is not this Gladys, write it in "Redirect URI": at the end, copy the whole address the browser shows (it holds code= and state=) and paste it into "Finish the authorization" below, within 15 minutes. The tokens are kept in clear in the /data volume of the integration (readable by its container only), sent only to Oura. |
+| 2. Authorize | `section` | No | Click Connect: the Oura page opens; sign in and allow the access asked (daily data, heart rate, SpO2: nothing else, read only). Oura sends you back to Gladys and the integration reads your data. If the redirect URI of your app is not this Gladys, write it in "Redirect URI": at the end, copy the whole address the browser shows (it holds code= and state=) and paste it into "Finish the authorization" below, within 15 minutes. The tokens are kept by Gladys in its database (never shown, never in /data), sent only to Oura. |
 | Redirect URI (optional) | `string` | No | Empty: Oura sends you back to this Gladys. Otherwise the redirect URI of your Oura app (https, or http on localhost only): finish by pasting the address the browser ended on. |
 | Oura account | `oauth2` | No | Opens the Oura authorization page (save the Client ID and Secret first). |
 | Token endpoint | `select` | No | Leave moi.ouraring.com (the live one for the apps of the developer portal). Only if Oura refuses the authorization with a correct Client ID, Secret and redirect URI (an old app), choose the other one and click Connect again: a refused code is consumed, so they are never tried one after the other. A change applies at the next Connect: the current session keeps renewing where it was issued. |
@@ -191,7 +208,7 @@ These are the settings Oura asks for in its configuration screen in Gladys.
 ## How to install Oura in Gladys
 
 1. In Gladys, open **Integrations**: Oura appears in the catalog, next to the native integrations, with a community badge.
-2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-oura:0.1.2`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-oura:0.1.3`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
 3. Open the **Configuration** screen of the integration, fill in the settings, and save.
 4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-oura](https://github.com/LM1LC3N7/gladys-oura).
 

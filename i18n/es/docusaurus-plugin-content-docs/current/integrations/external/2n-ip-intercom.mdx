@@ -1,0 +1,180 @@
+---
+title: "Integración domótica 2N IP Intercom, gratuita y de código abierto"
+sidebar_label: "2N IP Intercom"
+description: "2N IP intercoms, locally over HTTPS: doorbell, door switches, inputs, access events. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-2n-intercom.png"
+keywords:
+  - "2n ip intercom"
+  - "domótica 2n ip intercom"
+  - "gladys 2n ip intercom"
+  - "2n ip intercom gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-2n-intercom instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"2N IP Intercom","description":"2N IP intercoms, locally over HTTPS: doorbell, door switches, inputs, access events.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-2n-intercom","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-2n-intercom.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-19T03:36:48Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+External integration for Gladys Assistant (5.1.0 or later) for the 2N IP intercoms and access units
+(Verso, Force, Safety, Solo, Style, Base, Access Unit...) on your local network, through their official
+HTTP API over HTTPS, without any cloud. **Unofficial, not affiliated with 2N. Never tested with a real device**: it is written from the "2N IP HTTP API" manual (version 3.3, firmware 2.50) and tested
+against a simulated intercom. Your feedback is welcome.
+
+## What you get
+
+For each intercom:
+
+- **Doorbell** (read only): 1 while a visitor rings (the intercom starts an outgoing call), 0
+  otherwise;
+- **Switch n (state)** (read only), for each switch (1 to 4) enabled in the intercom: 0 active (lock
+  released), 1 at rest;
+- **Activate switch n**: a push button, **off by default** (see below);
+- **Input ...** (read only): the state of each digital input (door contact, exit button...);
+- **scene triggers**: "2N doorbell" (once per call), "2N switch activated" (with its number and the
+  origin as the intercom says it: `auth`, `ap`, `dtmf`, `automation`...), "2N access granted" and "2N
+  access denied" (with the name of the directory user, the direction `entry` or `exit`, and the reason
+  of a refusal).
+
+Codes typed, card numbers and user ids are never published nor kept.
+
+## Prepare the intercom
+
+1. In the web page of the intercom, **Services > HTTP API**: enable the **System**, **Switch**,
+   **I/O**, **Phone/Call** and **Logging** services, each over **HTTPS** with **Digest**
+   authentication (the setting 2N recommends).
+2. On the same tab, create an **account** (5 at most) for Gladys, with the privileges: switch
+   monitoring and control, I/O monitoring, call monitoring, and, for the access events, UID (card)
+   monitoring. A missing privilege is no error: that part is only "not allowed" in the status, the
+   rest works.
+3. Give the intercom a fixed IP address in your router.
+
+## Configure the integration
+
+- **Addresses of the intercoms**: their IP addresses separated by commas (8 at most), with `:port`
+  when the HTTPS port is not 443.
+- **Authentication**, **user**, **password**: those of the account created above (the same on every
+  intercom). The password is kept by Gladys in its database, never shown again, and sent only to the
+  intercoms listed, once their certificate is trusted; with Digest, only a proof of it travels.
+- **Reading interval** (5 to 300 s, 10 by default): how often the switches, inputs and calls are read
+  again. Events arrive at once (the event channel of the intercom).
+
+### Trust the certificate (required)
+
+The intercom shows a certificate of its own, that no authority vouches for. **Nothing is sent to an
+intercom until its certificate is trusted**: the status then shows the SHA-256 fingerprint seen. To
+trust it:
+
+- click **Trust the certificates**: the integration reads the certificate of every intercom not
+  trusted yet and shows its fingerprint (nothing else is sent); compare it with the one your browser
+  shows on the web page of the intercom (padlock, certificate, SHA-256 fingerprint); then **click
+  again within 2 minutes**: every intercom that still shows the same fingerprint is trusted, kept in
+  `/data` (if `/data` cannot be written, nothing is trusted);
+- or paste the fingerprints into the **Certificate fingerprints** field, separated by commas.
+
+If an intercom later shows **another certificate**, nothing is sent to it (no password, no command),
+the status shows the fingerprint seen, and the integration never learns it by itself: trust it again
+(two clicks) if it was replaced on purpose (new certificate, factory reset).
+
+## Activating a switch (opening a door)
+
+Anyone who can control the devices in Gladys (dashboard, scenes, app) can open the doors once **Allow
+activating the switches from Gladys** is checked: check it only if your Gladys is well protected.
+
+- An activation is a **push button**, never a switch: a "turn everything off" never opens a door.
+- Right before each activation, the integration reads the identity of the intercom again (its serial
+  number must be the one of the button's device) and the settings of the switch, then checks the option
+  one last time before sending.
+- Only **monostable** switches are activated, and only when their activation time (set in the
+  intercom) is **60 s at most**: the switch turns off by itself after it, whatever happens to Gladys.
+  There is therefore no "close" command.
+- An activation is **never sent again** by the integration, nor after a restart.
+- The answer says: "confirmed" (the switch is read active, or the intercom reports the activation by
+  the API), "accepted, not read back yet", "sent, no answer (maybe activated)", "refused by the
+  intercom" (switch locked or disabled), or "nothing sent" with the reason.
+
+An activation is refused, **with nothing sent**, when: the option is unchecked; the certificate is not
+trusted or changed; the credentials were refused; the intercom was not read yet, is unreachable or does
+not answer in time; another intercom answers at the address; the switch is missing, disabled, bistable,
+of unreadable mode or duration, or on for more than 60 s; the account lacks the switch control
+privilege; more than 4 commands are already waiting; the integration is stopping or being
+reconfigured; the 3.3 s deadline passed before sending.
+
+The "2N switch activated" trigger ignores the activation Gladys made itself (a scene opening the door on
+this trigger does not loop).
+
+## Good to know
+
+- **Credentials refused** (401 on the identity, confirmed by a second read made alone): the intercom is not asked again, even after a
+  restart, until you change the credentials, save the configuration or click **Test the connection**.
+  A refusal on another function (missing privilege) is no credentials refusal: that function is asked
+  again after 1 min, then doubling up to 1 h.
+- A wrong password is tried twice (one Digest proof, or the Basic header, per identity read) before it is
+  kept, 3 times at most if the password changes on the intercom while the integration runs; then no
+  automatic try at all. Each click on **Test the connection** costs 2 tries again (one click every 5 s at
+  most). The 2N documentation lists a `LoginBlocked` event after 3 wrong logins to the web interface; it
+  does not say whether API failures count too. If the intercom blocks the address of Gladys, wait for the
+  block to end before testing new credentials.
+- With Digest, one request at a time answers a new challenge of the intercom; the others wait for its answer,
+  0.5 s at most after it is sent (3.5 s if the connection to the intercom is slow), even when it is a
+  channel read the intercom holds open up to 20 s.
+- An activation is "confirmed" only when the state of the switch could be read right before it. Beyond
+  about 650 ms per answer of the intercom, that read is skipped to leave the activation its time: it still
+  goes, but is only "accepted".
+- The event channel is opened again after a cut; events during the cut are lost, and a channel read
+  arriving after a long silence (over 90 s) is ignored, so old events are never published. The states
+  are corrected by the next reading.
+- `/data` only keeps the trusted certificates (their fingerprint, a public value) and an 8-bit mark of
+  refused credentials, never a password.
+
+## More
+
+Code and issues: [https://github.com/LM1LC3N7/gladys-2n-intercom](https://github.com/LM1LC3N7/gladys-2n-intercom). API manual:
+[https://wiki.2n.com/hip/hapi/latest/en](https://wiki.2n.com/hip/hapi/latest/en).
+
+## Parámetros de configuración
+
+Estos son los parámetros que 2N IP Intercom te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Your 2N intercoms | `section` | No | For 2N IP intercoms and access units (Verso, Force, Safety, Solo, Style, Base, Access Unit...) on your network, through their official HTTP API over HTTPS, without any cloud: a doorbell, the state of the switches (door locks) and of the inputs, an activation button per switch (off by default), and scene triggers (doorbell, switch activated, access granted or denied). Create an HTTP API account in the web page of each intercom first (see the guide). Never tested with a real device. Unofficial, not affiliated with 2N. |
+| Addresses of the intercoms | `string` | Sí | The IP address of each intercom, separated by commas (8 at most), with ":port" if its HTTPS port is not 443. Give each intercom a fixed address in your router. |
+| Authentication of the HTTP API | `select` | No | As set for the services in the Services > HTTP API page of the intercoms. Digest (the default of the intercoms) never sends the password; Basic sends it inside the HTTPS connection; None sends nothing. |
+| User of the HTTP API account | `string` | No | The same on every intercom listed above. |
+| Password of the HTTP API account | `secret` | No | Kept by Gladys in its database, never shown again, sent only to the intercoms listed above, and only once their certificate is trusted (with Digest, only a proof of it travels). An intercom that refuses it is not asked again until you change it or click "Test the connection". |
+| Certificate fingerprints (optional) | `string` | No | The intercoms show a certificate of their own, that no authority vouches for: nothing is sent to an intercom before its certificate is trusted. Either click "Trust the certificates" twice (the first click shows what each intercom presents), or paste here the SHA-256 fingerprint of each certificate, separated by commas. |
+| Reading interval (seconds) | `number` | No | How often the switches, the inputs and the calls are read again (5 to 300). Events (doorbell, switches, inputs, access) arrive at once when the account may read them. |
+| Activating the switches (doors) | `section` | No | Anyone who can control the devices in Gladys (dashboard, scenes, the Gladys app) can open the doors once this is allowed: allow it only if your Gladys is well protected. An activation is a push button, never a switch: a "turn everything off" never opens a door. Only monostable switches are activated (they turn off by themselves after their duration, 60 s at most); it is never sent again by the integration, nor after a restart. Every activation is written in the integration logs; the password never is. |
+| Allow activating the switches from Gladys | `boolean` | No | Once checked, every Gladys user, every scene and the Gladys mobile app can activate the door switches. |
+| Language of the names | `select` | No | Used for the names of the devices and features added from now on. |
+
+## Cómo instalar 2N IP Intercom en Gladys
+
+1. En Gladys, abre **Integraciones**: 2N IP Intercom aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-2n-intercom:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-2n-intercom](https://github.com/LM1LC3N7/gladys-2n-intercom).
+
+2N IP Intercom requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+2N IP Intercom es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-2n-intercom) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-2n-intercom/blob/HEAD/docs/en.md)

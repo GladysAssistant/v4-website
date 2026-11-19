@@ -1,0 +1,283 @@
+---
+title: "exo Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "exo"
+description: "Unofficial: exo trains and buses, next departures, delays and alerts, with your free key. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-exo.png"
+keywords:
+  - "exo"
+  - "exo smart home"
+  - "gladys exo"
+  - "exo gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-exo instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"exo","description":"Unofficial: exo trains and buses, next departures, delays and alerts, with your free key.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-exo","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-exo.png","type":"device","version":"0.1.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-19T04:47:16Z"}} />
+
+:::info
+
+Die Dokumentation dieser Integration wird von ihrem Autor geschrieben und ist bisher nur auf Englisch verfügbar.
+
+:::
+
+Unofficial integration, not affiliated with exo nor the ARTM. It follows up
+to four stops of exo, the suburban trains and buses of the Montréal area,
+and gives for each one the next departure, minutes until it, its delay, the
+cancelled departures and the service alerts. Read-only: nothing is ever
+changed on exo's side.
+
+The data comes from the official **GTFS-Realtime** feeds of exo, served by
+the **Chrono developer portal** of the ARTM (Autorité régionale de transport
+métropolitain), with your own free key.
+
+> This integration was built from the public description of the feeds and
+> tested with a fake Gladys and a fake portal only: it has never been tested
+> with a real key. The first users' feedback is welcome on the forum.
+
+## 1. Get your free key
+
+1. Create an account on the
+   [Chrono developer portal](https://portail-developpeur.chrono-saeiv.com/).
+2. Subscribe to the open data of exo (GTFS-Realtime) and copy the key of the
+   subscription.
+
+## 2. Configure
+
+- **Key of the Chrono portal**: kept by Gladys in its database, never shown
+  again, sent only to the Chrono portal of the ARTM (in the
+  `Ocp-Apim-Subscription-Key` header of the portal's gateway, never in a URL).
+- **Stop 1 to 4**: the **network**, then the **stop**:
+  - bus: the number written on the stop sign (`41492`), which is also the
+    stop number of exo's open data. The same number can exist on two
+    networks: the network is always asked;
+  - train: the code of the station (`11010` for Gare Centrale, table
+    below) for every platform of the station, or the `stop_id` of one
+    platform (`MTL5D`) for one direction only.
+- **Routes** (optional): route numbers separated by commas or spaces
+  (`220, 221`); on the trains, the line number (`11`), its letters (`VH`)
+  or the route id (`1`).
+- **Read interval**: 60 seconds by default (30 to 600).
+- **Departures shown up to**: the next 90 minutes by default (15 to 240).
+- **Read the service alerts**: on by default.
+- **Language of the values**: French or English (feature names, texts, and
+  the alert text when exo gives both languages).
+
+**Test the key** sends one request to the portal (at most every 30 seconds)
+and says whether the key is accepted.
+
+## 3. The devices
+
+Each stop appears in the **Discovery** tab as soon as it is configured
+(device name `exo <network> – <station>` or `exo <network> – stop <number>`,
+with the route filter in brackets). Features, all read-only:
+
+| Feature                     | Value                                                                  |
+| --------------------------- | ---------------------------------------------------------------------- |
+| Next departure              | text, e.g. `14:08 · line 11 · in 6 min · +4 min`                       |
+| Next departure in           | minutes until the next departure that runs                             |
+| Delay of the next departure | minutes, negative when early (only when the feed gives it)             |
+| Cancelled departures        | departures of the window cancelled, or skipping the stop               |
+| Service alerts              | active alerts of the stop, its routes or its whole network (alerts on) |
+| Main service alert          | text of the most severe of them, `No alert` when none (alerts on)      |
+
+The time shown is the time the feed predicts, local time of Montréal. A
+cancelled trip is not "the next departure": the next one that runs is. A
+departure stays on the board 30 seconds after its time, then leaves it.
+
+The values are published again every minute from what was read (no request):
+**Next departure in** counts down between two reads.
+
+What is not known is not published (the last value stays; Gladys has no
+"unknown"):
+
+- no departure in the window: the text says so, **Next departure in** and
+  **Delay** are not updated (never a 0 for "none");
+- a delay the feed does not give (only a time): the text says `delay unknown`
+  and **Delay** keeps the delay of an earlier departure: read it with the text;
+- the stop absent from the feed (a mistyped number, a bus without real-time
+  tracking): the text says `No real-time prediction for this stop`, nothing
+  is counted;
+- nothing read for 10 minutes (2.5 intervals when longer): nothing is
+  published until the next good read;
+- a feed without its header or its own time: unreadable, nothing published;
+- a feed whose own time is more than 15 minutes older than the portal's
+  clock (`Date` header): not real time any more, nothing published (not even
+  what was read before), the status says so;
+- alerts not read for 20 minutes: the two alert features are not updated.
+
+Without exo's full timetable (not read: too large for a container), a stop
+time that carries only a delay and no time cannot be placed and is left out,
+and a trip cancelled without any time for the stop is not counted. A route
+alert counts for a stop when the route is in its filter, or, without a filter,
+among the routes seen at the stop since the start.
+
+## 4. How it reads the portal, and its limits
+
+- Every interval, one request per **network** of the configured stops (the
+  feed of a network covers all its stops: four stops of the same network cost
+  one request), and the alerts of the network every 5 minutes.
+- At most one request at a time, 1 s apart. A restart, a reconnection, a
+  save of the form or the test button does not make the reads come sooner
+  than the interval (a changed stop waits 20 s after the last read). When
+  /data cannot be read at start, the first read waits a whole interval.
+- **HTTP 429** or a quota answer of the portal's gateway (HTTP 403 "quota"):
+  every request waits (the wait the portal gives, otherwise 1 minute
+  doubling up to 6 hours), kept across restarts. The quota is the key's:
+  entering another key lifts the wait.
+- **5xx** on the feed of one network: that network waits (1 minute doubling
+  up to 30 minutes, or the wait the portal gives, up to 6 hours), the others
+  are read as usual; every network tried in 5xx: every request waits as for
+  a 429.
+- **HTTP 401/403 on a network feed**: the key is checked once on the alerts
+  of the trains. Refused there too: the integration stops and does not try
+  this key again by itself, even after a restart; enter another key or press
+  **Test the key** (a success lifts the stop). After a restart, a new key has
+  1 chance in 256 to look like the refused one (only 8 bits of it are kept):
+  press **Test the key** then. Accepted there: only that
+  network waits (5 minutes, doubling up to 1 hour).
+- An error on the alerts of a network other than a 429 or a quota answer
+  (401/403 included, the departures of the network having just been read
+  with the same key) does not stop the departures: those alerts wait
+  5 minutes, doubling up to 1 hour. A 429 or a quota answer there pauses
+  every request, as above (the quota is the key's).
+- Answers are bounded: 8 MB for a departures feed, 2 MB for an alerts feed,
+  15 seconds per request; an unreadable answer publishes nothing.
+
+## 5. What is kept in /data
+
+`/data/exo.json`: the time of the last round, a pause, a refusal (8 bits of a
+salted hash of the key, nothing more). No key. When the file cannot be read,
+it is not overwritten and is read again every 10 seconds; a file that does not
+parse is moved aside to `exo.json.bad` first.
+
+## 6. Train stations
+
+Code to type, name, platform `stop_id`s (exo's train GTFS of 2026-10-28; a
+newer station can be typed by its `stop_id`).
+
+| Code  | Station                     | Platforms      |
+| ----- | --------------------------- | -------------- |
+| 11010 | Centrale                    | MTL5D, MTL5B   |
+| 11150 | Lucien-L'Allier             | MTL3A, MTL3C   |
+| 11160 | Vendôme                     | MTL2A, MTL2C   |
+| 11170 | Montréal-Ouest              | MTL1A, MTL1C   |
+| 11180 | Lachine                     | LCH1D, LCH1B   |
+| 11190 | Dorval                      | DVL2D, DVL2B   |
+| 11200 | Pine Beach                  | DVL1D, DVL1B   |
+| 11210 | Valois                      | PCL3D, PCL3B   |
+| 11220 | Pointe-Claire               | PCL2D, PCL2B   |
+| 11230 | Cedar Park                  | PCL1D, PCL1B   |
+| 11240 | Beaconsfield                | BEA2D, BEA2B   |
+| 11250 | Beaurepaire                 | BEA1D, BEA1B   |
+| 11260 | Baie-d'Urfé                 | BUR1D, BUR1B   |
+| 11270 | Sainte-Anne-de-Bellevue     | SAB1D, SAB1B   |
+| 11280 | Île-Perrot                  | LIP1D, LIP1B   |
+| 11290 | Pincourt                    | TVA1D, TVA1B   |
+| 11300 | Dorion                      | VAU1D, VAU1B   |
+| 11310 | Vaudreuil                   | VAU8D, VAU8B   |
+| 11320 | Hudson                      | HUD1D, HUD1B   |
+| 11350 | Parc                        | MTL8D, MTL8B   |
+| 11355 | Chabanel                    | MTL37C, MTL37A |
+| 11360 | Bois-de-Boulogne            | MTL7D, MTL7B   |
+| 11365 | De la Concorde              | LVL24C, LVL24A |
+| 11375 | Vimont                      | LVL22C, LVL22A |
+| 11380 | Sainte-Rose                 | LVL4C, LVL4A   |
+| 11390 | Rosemère                    | ROS2C, ROS2A   |
+| 11400 | Sainte-Thérèse              | STR4D, STR4B   |
+| 11410 | Blainville                  | BLA1C, BLA1A   |
+| 11420 | Mirabel                     | MIR1C, MIR1A   |
+| 11430 | Saint-Jérôme                | SJM1C, SJM1A   |
+| 11440 | Saint-Lambert               | STL1B, STL1D   |
+| 11450 | Longueuil-Saint-Hubert      | STH3B, STH3D   |
+| 11460 | Saint-Bruno                 | STB2B, STB2D   |
+| 11470 | Saint-Basile-le-Grand       | SBA2B, SBA2D   |
+| 11480 | McMasterville               | MMS1B, MMS1D   |
+| 11490 | Mont-Saint-Hilaire          | MSH1C, MSH1A   |
+| 11495 | Du Canal                    | LCH4A, LCH4C   |
+| 11500 | LaSalle                     | LSL1A, LSL1C   |
+| 11510 | Sainte-Catherine            | SCS2A, SCS2C   |
+| 11520 | Saint-Constant              | SCS1A, SCS1C   |
+| 11530 | Delson                      | DEL1A, DEL1C   |
+| 11540 | Candiac                     | CAN1A, CAN1C   |
+| 11550 | Ahuntsic                    | MTL59C, MTL59A |
+| 11555 | Côte-de-Liesse              | MTL60C, MTL60A |
+| 11560 | Sauvé                       | MTL58C, MTL58A |
+| 11570 | Saint-Michel-Montréal-Nord  | MTL57C, MTL57A |
+| 11580 | Saint-Léonard-Montréal-Nord | MTL56C, MTL56A |
+| 11590 | Anjou                       | MTL55C, MTL55A |
+| 11600 | Rivière-des-Prairies        | MTL54C, MTL54A |
+| 11610 | Pointe-aux-Trembles         | MTL53C, MTL53A |
+| 11630 | Repentigny                  | LEG1C, LEG1A   |
+| 11640 | Terrebonne                  | LCN1C, LCN1A   |
+| 11650 | Mascouche                   | MAS1C, MAS1A   |
+
+Train lines: 11 Vaudreuil-Hudson (VH), 12 Saint-Jérôme (SJ), 13
+Mont-Saint-Hilaire (SH), 14 Candiac (CA), 15 Mascouche (MA).
+
+## Data and license
+
+Data: exo (Réseau de transport métropolitain). exo's static GTFS
+([exo's open data](https://exo.quebec/en/about/open-data)), from which the
+station and line tables come, is under the
+[Creative Commons Attribution 4.0 license (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/).
+The real-time data comes from the
+[Chrono developer portal](https://portail-developpeur.chrono-saeiv.com/) of
+the ARTM, under the terms of use of the portal, which you accept when you
+register there.
+The data is modified: the predictions are filtered by stop and route and
+summarised (next departure, delay in whole minutes, count of cancellations,
+count of alerts and the text of the main one). The station and line tables
+come from exo's train GTFS.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt exo in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Chrono developer portal key | `section` | Nein | The departures and alerts come from the official GTFS-Realtime feeds of exo, served by the Chrono developer portal of the ARTM. Create a free account there, subscribe to the exo open data and paste your key below. Read-only: nothing is ever changed on exo's side. Unofficial integration, not affiliated with exo nor the ARTM. Data: exo. Static GTFS under CC BY 4.0; real-time data under the terms of use of the Chrono portal, accepted when you register. |
+| Key of the Chrono portal | `secret` | Nein | The key of your subscription on the Chrono developer portal. Kept by Gladys in its database, never shown again, sent only to the Chrono portal of the ARTM. |
+| Stops | `section` | Nein | Up to four stops, one Gladys device each. Bus: choose the network and type the number shown on the stop sign (e.g. 41492). Train: choose Trains and type the code of the station (11010 for Gare Centrale, list in the documentation) for both directions, or the stop_id of one platform (MTL5D). Routes: optional filter, e.g. "220, 221" or train line "11". |
+| Stop 1: network | `select` | Nein |  |
+| Stop 1: stop number or station code | `string` | Nein |  |
+| Stop 1: routes (optional) | `string` | Nein |  |
+| Stop 2: network | `select` | Nein |  |
+| Stop 2: stop number or station code | `string` | Nein |  |
+| Stop 2: routes (optional) | `string` | Nein |  |
+| Stop 3: network | `select` | Nein |  |
+| Stop 3: stop number or station code | `string` | Nein |  |
+| Stop 3: routes (optional) | `string` | Nein |  |
+| Stop 4: network | `select` | Nein |  |
+| Stop 4: stop number or station code | `string` | Nein |  |
+| Stop 4: routes (optional) | `string` | Nein |  |
+| Options | `section` | Nein | The feeds are read every interval (one request per network, whatever the number of stops), the alerts every 5 minutes at most. |
+| Language of the values | `select` | Nein | Language of the feature names, of the published texts and of the alerts when exo gives both. |
+| Read interval (seconds) | `number` | Nein |  |
+| Departures shown up to (minutes ahead) | `number` | Nein |  |
+| Read the service alerts | `boolean` | Nein | Adds the number of active alerts of the stop and the text of the main one. |
+
+## So installierst du exo in Gladys
+
+1. Öffne in Gladys **Integrationen**: exo erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/lm1lc3n7/gladys-exo:0.1.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/LM1LC3N7/gladys-exo](https://github.com/LM1LC3N7/gladys-exo).
+
+exo benötigt Gladys `>=5.3.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+exo ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [LM1LC3N7](https://github.com/LM1LC3N7) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/LM1LC3N7/gladys-exo) — [Quelle dieser Dokumentation](https://github.com/LM1LC3N7/gladys-exo/blob/HEAD/docs/en.md)

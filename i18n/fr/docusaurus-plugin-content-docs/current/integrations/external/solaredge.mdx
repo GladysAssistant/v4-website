@@ -19,7 +19,7 @@ https://github.com/guim31/gladys-solaredge instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"SolarEdge","description":"Production solaire, consommation, échanges réseau et batterie depuis SolarEdge.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-solaredge","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-solaredge.jpg","type":"device","version":"2.0.0","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-11-14T20:31:11Z"}} />
+<ExternalIntegrationHeader integration={{"name":"SolarEdge","description":"Production solaire, consommation, échanges réseau et batterie depuis SolarEdge.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-solaredge","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-solaredge.jpg","type":"device","version":"2.1.0","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-11-18T14:07:10Z"}} />
 
 Cette intégration connecte votre installation photovoltaïque **SolarEdge** à
 Gladys Assistant. Elle lit l'API SolarEdge Monitoring **V2** et crée dans
@@ -201,10 +201,10 @@ C'est le chemin prévu par SolarEdge pour un particulier (guide
 2. Cliquez sur **Create Application** : un nom (« Gladys », par exemple),
    le service **Monitoring API**, puis l'accès **Site Access**.
 3. Dans la configuration OAuth de l'application :
-   - **Redirect URI** : l'adresse affichée dans Gladys sous le bouton
-     **Connecter** (onglet **Configuration** de l'intégration), en général
-     `https://my.gladysassistant.com/redirect/oauth` ;
-   - **Origin URL** : `https://my.gladysassistant.com` ;
+   - **Redirect URI** : `http://localhost:8080/oauth/callback` (l'adresse du guide SolarEdge pour les
+     particuliers ; rien n'y répond, c'est voulu, voir l'étape 2) ;
+   - **Origin URL** : laissez vide, ou `http://localhost:8080` si le champ
+     est obligatoire ;
    - portées (_scopes_) : **SITE_DATA** et **DEVICE_DATA** (sans DEVICE_DATA,
      seule la production est disponible).
 4. Copiez le **Client ID** et le **Client Secret**. Le secret n'est affiché
@@ -224,16 +224,29 @@ utilisez le formulaire de transfert de propriété de SolarEdge).
    site**, puis **enregistrez**.
 3. Appuyez sur **Connecter**. La page SolarEdge s'ouvre : connectez-vous avec
    vos identifiants mySolarEdge, choisissez le site si vous en avez plusieurs,
-   puis autorisez. Vous revenez dans Gladys et l'état passe à « connecté ».
-4. Appuyez sur **Tester la connexion** : le message confirme le nom du site et
+   puis autorisez.
+4. Le navigateur s'arrête alors sur une page qui ne s'affiche pas
+   (« connexion refusée » ou équivalent) : c'est normal. Copiez **toute**
+   l'adresse de cette page (elle commence par
+   `http://localhost:8080/oauth/callback?code=`), revenez dans Gladys,
+   collez-la dans l'action **Terminer la connexion** et lancez-la. Faites-le
+   dans les minutes qui suivent : le code ne sert qu'une fois. L'identifiant du
+   site est repris de cette adresse, et l'état passe à « connecté ».
+5. Appuyez sur **Tester la connexion** : le message confirme le nom du site et
    la liste des appareils disponibles.
-5. Les appareils apparaissent dans l'onglet **Découverte**, prêts à être
+6. Les appareils apparaissent dans l'onglet **Découverte**, prêts à être
    ajoutés.
+
+Pourquoi ce copier-coller : SolarEdge ne renvoie pas le paramètre `state` dont
+Gladys a besoin pour revenir seul à votre instance (sa page de connexion ne le
+transmet pas). Le contrôle anti-falsification est fait autrement :
+l'intégration n'accepte que l'adresse d'une connexion lancée depuis votre
+Gladys (valeur `external_id`, que SolarEdge, lui, renvoie).
 
 L'autorisation se renouvelle seule toutes les deux heures. Elle n'expire
 qu'après **14 jours sans aucun rafraîchissement** (Gladys arrêtée deux
 semaines, par exemple) : l'état de la connexion le dit alors, et il suffit
-d'appuyer de nouveau sur **Connecter**.
+d'appuyer de nouveau sur **Connecter**, puis sur **Terminer la connexion**.
 
 **Installateurs** : avec un compte installateur et une application **Fleet
 Access**, collez plutôt la **clé d'API Fleet** dans le champ prévu, sans
@@ -360,9 +373,17 @@ aboutit aussi ici.
 faux, ou l'autorisation a expiré (14 jours sans rafraîchissement) ou a été
 révoquée : vérifiez le secret, enregistrez, puis appuyez sur **Connecter**.
 
-**« Connecter » affiche une erreur de redirection chez SolarEdge** — l'adresse
-de redirection déclarée dans l'application SolarEdge doit être **exactement**
-celle affichée sous le bouton dans Gladys.
+**Après l'autorisation, une page Gladys dit « Impossible de vous rediriger »**
+— l'application SolarEdge a encore l'adresse de redirection
+`https://my.gladysassistant.com/redirect/oauth` (conseillée par la version
+2.0.0) : cette page ne fonctionne pas avec SolarEdge et efface le code.
+Remplacez-la par `http://localhost:8080/oauth/callback` dans la console développeur SolarEdge, puis refaites
+**Connecter** et **Terminer la connexion**.
+
+**« Terminer la connexion » refuse l'adresse** — collez l'adresse complète,
+juste après l'autorisation ; une adresse d'une connexion plus ancienne, ou
+lancée avant un redémarrage de l'intégration, est refusée : appuyez de nouveau
+sur **Connecter**.
 
 **Les appareils Consommation et Réseau n'apparaissent pas** — votre
 installation n'a pas de compteur (option matérielle posée par l'installateur),
@@ -390,10 +411,9 @@ L'intégration ne communique qu'avec `monitoringapi.solaredge.com`, en lecture
 seule. Le Client Secret et la clé Fleet sont stockés par Gladys comme des
 secrets, jamais renvoyés à l'interface ; les jetons d'accès sont gardés par
 l'intégration dans sa configuration, hors du formulaire. Pendant « Connecter »,
-SolarEdge renvoie votre navigateur vers la page de redirection de Gladys
-(`my.gladysassistant.com`), qui le renvoie aussitôt vers votre instance : elle
-voit passer le code d'autorisation, inutilisable sans le Client Secret. Aucune
-donnée n'est envoyée ailleurs.
+SolarEdge renvoie votre navigateur vers `localhost`, c'est-à-dire votre propre
+ordinateur : le code d'autorisation ne passe par aucun autre serveur, et il est
+inutilisable sans le Client Secret. Aucune donnée n'est envoyée ailleurs.
 
 ## Paramètres de configuration
 
@@ -401,11 +421,11 @@ Voici les paramètres demandés par SolarEdge dans son écran de configuration d
 
 | Paramètre | Type | Obligatoire | Description |
 | --- | --- | --- | --- |
-| Pour commencer | `section` | Non | SolarEdge a arrêté son API V1 (et ses clés d'API) le 3 novembre 2026. Pour lire votre installation : 1. connectez-vous sur developer.solaredge.com avec vos identifiants mySolarEdge et créez le compte développeur gratuit ; 2. créez une application, service Monitoring API, accès « Site Access », portées SITE_DATA et DEVICE_DATA, et déclarez l'adresse de redirection affichée sous le bouton « Connecter » ci-dessous ; 3. collez son Client ID et son Client Secret, ainsi que l'identifiant de votre site (application mySolarEdge, détails du site), puis enregistrez ; 4. appuyez sur « Connecter » et autorisez avec vos identifiants mySolarEdge. L'offre gratuite donne 2 000 requêtes par mois : l'intervalle de rafraîchissement s'y adapte. |
+| Pour commencer | `section` | Non | SolarEdge a arrêté son API V1 (et ses clés d'API) le 3 novembre 2026. Pour lire votre installation : 1. connectez-vous sur developer.solaredge.com avec vos identifiants mySolarEdge et créez le compte développeur gratuit ; 2. créez une application, service Monitoring API, accès « Site Access », portées SITE_DATA et DEVICE_DATA, adresse de redirection (Redirect URI) http:\/\/localhost:8080/oauth/callback ; 3. collez son Client ID et son Client Secret, ainsi que l'identifiant de votre site, puis enregistrez ; 4. appuyez sur « Connecter » et autorisez avec vos identifiants mySolarEdge ; le navigateur s'arrête ensuite sur une page qui ne s'affiche pas : copiez toute son adresse et collez-la dans « Terminer la connexion » plus bas. L'offre gratuite donne 2 000 requêtes par mois : l'intervalle de rafraîchissement s'y adapte. |
 | Client ID | `string` | Non | Client ID de votre application « Site Access », dans la console développeur SolarEdge. |
 | Client Secret | `secret` | Non | Affiché une seule fois, à la création de l'application. |
 | Identifiant du site | `string` | Non | Identifiant numérique de votre site (application mySolarEdge, détails du site ; ou barre d'adresse du portail de supervision). Obligatoire avec « Connecter » ; peut rester vide avec une clé Fleet qui ne couvre qu'un site. |
-| Accès SolarEdge | `oauth2` | Non | Enregistrez d'abord les champs ci-dessus, puis connectez-vous avec vos identifiants mySolarEdge (ceux du propriétaire du site). À refaire seulement si l'accès expire (14 jours sans aucun rafraîchissement). |
+| Accès SolarEdge | `oauth2` | Non | SolarEdge ne fonctionne pas avec l'adresse de redirection que Gladys affiche sous ce bouton : déclarez plutôt http:\/\/localhost:8080/oauth/callback dans votre application SolarEdge. Enregistrez les champs ci-dessus, connectez-vous avec vos identifiants mySolarEdge (ceux du propriétaire du site), puis terminez avec « Terminer la connexion » plus bas. À refaire seulement si l'accès expire (14 jours sans aucun rafraîchissement). |
 | Clé d'API Fleet (installateurs) | `secret` | Non | Seulement pour un compte installateur avec une application « Fleet Access », à la place de « Connecter ». Les anciennes clés d'API V1 ne fonctionnent plus. |
 | Intervalle de rafraîchissement (s) | `number` | Non | Intervalle souhaité entre deux lectures. Allongé automatiquement pour tenir dans les crédits mensuels : environ toutes les 50 min pour un onduleur seul avec l'offre gratuite, davantage avec un compteur ou une batterie (voir « Consommation de l'API »). |
 | Crédits mensuels | `number` | Non | Allocation mensuelle de votre compte développeur SolarEdge (2 000 avec l'offre gratuite, 20 000 avec Business Starter). L'intégration en dépense au plus 1/31 par jour. Baissez-la si d'autres applications partagent le compte. |
@@ -414,7 +434,7 @@ Voici les paramètres demandés par SolarEdge dans son écran de configuration d
 ## Comment installer SolarEdge dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : SolarEdge apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/guim31/gladys-solaredge:2.0.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/guim31/gladys-solaredge:2.1.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/guim31/gladys-solaredge](https://github.com/guim31/gladys-solaredge).
 
