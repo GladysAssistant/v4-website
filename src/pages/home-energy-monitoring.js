@@ -6,6 +6,7 @@ import useBaseUrl from "@docusaurus/useBaseUrl";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import JsonLd from "../components/seo/JsonLd";
+import AmazonProducts from "../components/AmazonProducts";
 import { getEnergyMonitoringPageSchema } from "../data/schemas/energyMonitoring";
 import energyContent, {
   energyFaqEn,
@@ -143,6 +144,8 @@ function EnergyContent({ content, faq, lang }) {
         </section>
 
         {/* RELATED / INTERNAL MESH */}
+        <AmazonProducts page="home-energy-monitoring" lang={lang} />
+
         <section className={styles.section} aria-labelledby="related-title">
           <h2 id="related-title" className={styles.sectionTitle}>
             {content.related.title}

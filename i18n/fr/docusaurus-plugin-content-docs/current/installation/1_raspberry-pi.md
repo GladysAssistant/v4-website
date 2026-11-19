@@ -17,9 +17,9 @@ Mais si vous avez déjà un Raspberry Pi sous la main, profitez-en pour tester G
 
 ## Matériel nécessaire
 
-- Un **Raspberry Pi 3, 4 ou 5** (modèle 64 bits)
+- Un **[Raspberry Pi 3, 4 ou 5](https://www.amazon.fr/s?k=Raspberry%20Pi%205)** (modèle 64 bits)
 - Un **SSD USB** de préférence (adaptateur USB 3.0 + SSD SATA ou NVMe). Une carte micro-SD de 16 Go minimum fonctionne aussi pour tester.
-- Une **alimentation officielle** adaptée à votre modèle (5V / 3A pour un Pi 4, 5V / 5A pour un Pi 5)
+- Une **[alimentation officielle](https://www.amazon.fr/s?k=alimentation%20officielle%20Raspberry%20Pi)** adaptée à votre modèle (5V / 3A pour un Pi 4, 5V / 5A pour un Pi 5)
 - Un **câble Ethernet** ou une connexion Wi-Fi
 - Un ordinateur (Windows, macOS ou Linux) pour flasher l'image
 

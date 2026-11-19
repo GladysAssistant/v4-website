@@ -28,7 +28,7 @@ La integración Nuki se ha actualizado con varias correcciones importantes:
 Matter sigue evolucionando rápidamente en Gladys:
 
 - **Proceso de emparejamiento más claro:** las instrucciones de emparejamiento ahora son más fáciles de leer y más accesibles para los nuevos usuarios.
-- **Nuevos clusters Boolean y Switch:** para admitir el IKEA BILRESA y el Aqara Door and Window Sensor P2. Desarrollé esta compatibilidad haciendo pruebas a través de Matterbridge, así que tus comentarios sobre los dispositivos IKEA / Aqara son muy bienvenidos 🙂
+- **Nuevos clusters Boolean y Switch:** para admitir el IKEA BILRESA y el [Aqara Door and Window Sensor P2](https://www.amazon.com/s?k=Aqara%20Door%20and%20Window%20Sensor%20P2). Desarrollé esta compatibilidad haciendo pruebas a través de Matterbridge, así que tus comentarios sobre los dispositivos IKEA / Aqara son muy bienvenidos 🙂
 - **Seguimiento de los filtros HEPA:** los purificadores de aire compatibles con Matter ahora pueden mostrar el estado de su filtro HEPA en Gladys. ¡Gracias, **@Nagromdark**!
 
 Sigo invirtiendo mucho en Matter y ahora mismo estoy preparando una gran actualización de la biblioteca `matter-js` para lograr aún más estabilidad y compatibilidad.

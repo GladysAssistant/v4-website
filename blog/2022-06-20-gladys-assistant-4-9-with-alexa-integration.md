@@ -49,7 +49,7 @@ It's super simple and it can help you build powerful scene, like calling Node-RE
 
 ## Zigbee2Mqtt: Add support for Sonoff SNZB-01
 
-We now support more clicks on the Sonoff SNZB-01 wireless switch.
+We now support more clicks on the [Sonoff SNZB-01](https://www.amazon.com/s?k=Sonoff%20SNZB-01) wireless switch.
 
 ## How to upgrade?
 

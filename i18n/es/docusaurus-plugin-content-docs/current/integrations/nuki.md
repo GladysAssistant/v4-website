@@ -7,7 +7,7 @@ sidebar_label: Nuki
 
 # Integración de tu cerradura inteligente Nuki en Gladys
 Esta integración te permite:
--   controlar las cerraduras inteligentes de la marca Nuki: cerrar, abrir
+-   controlar las [cerraduras inteligentes de la marca Nuki](https://www.amazon.com/s?k=Nuki%20Smart%20Lock): cerrar, abrir
 -   enviar cierta información a Gladys (nivel de batería, estado de la cerradura)  
 
 Ve a `Integraciones / Nuki` en Gladys  

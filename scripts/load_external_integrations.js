@@ -1,6 +1,9 @@
 const fs = require("fs");
 const path = require("path");
-const { addAffiliateTag } = require("../src/utils/affiliateLinks");
+const {
+  AMAZON_STORES,
+  amazonSearchLink,
+} = require("../src/utils/affiliateLinks");
 const INTEGRATION_PRODUCTS = require("../src/data/integrationProducts");
 
 // The full index, not index-lite.json like the catalog page: the configuration
@@ -394,30 +397,18 @@ const headerProps = (integration, locale) => ({
   pushed_at: integration.pushed_at,
 });
 
-// Amazon store of each language that has an affiliate partner id (see
-// src/utils/affiliateLinks.js). The pages of the other languages get no
-// products box.
-const AMAZON_STORES = {
-  en: "https://www.amazon.com",
-  fr: "https://www.amazon.fr",
-};
-
 // The hardware to buy for an integration (src/data/integrationProducts.js), as
 // Amazon search links of the page's language. A product is either a string,
 // used in every language, or an object with the wording of each language it
-// is sold in.
+// is sold in. Languages with no Amazon partner id get no products box.
 const productLinks = (slug, locale) => {
-  const store = AMAZON_STORES[locale];
-  if (!store) {
+  if (!AMAZON_STORES[locale]) {
     return [];
   }
   return (INTEGRATION_PRODUCTS[slug] || [])
     .map((product) => (typeof product === "string" ? product : product[locale]))
     .filter(Boolean)
-    .map((label) => ({
-      label,
-      href: addAffiliateTag(`${store}/s?k=${encodeURIComponent(label)}`),
-    }));
+    .map((label) => ({ label, href: amazonSearchLink(label, locale) }));
 };
 
 // A JavaScript literal for an MDX expression. MDX finds the end of an

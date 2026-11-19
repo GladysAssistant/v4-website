@@ -19,6 +19,7 @@ export default function AqaraWithoutHubPage() {
 
   return (
     <UseCasePage
+      productsPage="aqara-without-hub"
       content={content}
       faq={faq}
       schemaData={getAqaraWithoutHubPageSchema(lang)}

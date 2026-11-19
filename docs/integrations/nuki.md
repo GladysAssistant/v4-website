@@ -7,7 +7,7 @@ sidebar_label: Nuki
 
 # Integration of your Nuki smart lock with Gladys
 This integration adds the ability to:
--   control Nuki brand smart locks: lock, unlock
+-   control [Nuki brand smart locks](https://www.amazon.com/s?k=Nuki%20Smart%20Lock): lock, unlock
 -   send certain information to Gladys (battery level, lock status)  
 
 Go to `Integrations / Nuki` in Gladys  

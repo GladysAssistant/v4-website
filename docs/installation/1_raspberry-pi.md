@@ -17,9 +17,9 @@ But if you already have a Raspberry Pi on hand, use it to try Gladys. That's exa
 
 ## What You'll Need
 
-- A **Raspberry Pi 3, 4, or 5** (64-bit model)
+- A **[Raspberry Pi 3, 4, or 5](https://www.amazon.com/s?k=Raspberry%20Pi%205)** (64-bit model)
 - A **USB SSD** is preferred (USB 3.0 adapter + SATA or NVMe SSD). A 16 GB micro-SD card also works fine for testing.
-- An **official power supply** suited to your model (5V / 3A for Pi 4, 5V / 5A for Pi 5)
+- An **[official power supply](https://www.amazon.com/s?k=Raspberry%20Pi%20official%20power%20supply)** suited to your model (5V / 3A for Pi 4, 5V / 5A for Pi 5)
 - An **Ethernet cable** or Wi-Fi connection
 - A computer (Windows, macOS, or Linux) to flash the image
 

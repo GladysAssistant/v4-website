@@ -72,7 +72,7 @@ Le but est de pouvoir envoyer de la donnée à un service externe :
 
 ### Zigbee2mqtt: Ajout de la compatibilité avec le bouton Sonoff SNZB-01
 
-L'intégration Zigbee2mqtt supporte désormais plus de clics sur le bouton Sonoff SNZB-01.
+L'intégration Zigbee2mqtt supporte désormais plus de clics sur le bouton [Sonoff SNZB-01](https://www.amazon.fr/s?k=Sonoff%20SNZB-01).
 
 ## Comment mettre à jour ?
 

@@ -126,7 +126,7 @@ Gladys now remembers the IEEE address of each device, its hardware identifier th
 Also in Zigbee2MQTT:
 
 - devices whose name contains a "/" (like "living-room/lamp") finally send their states to Gladys;
-- the buttons of the Philips Hue Tap Dial switch (RDM002) trigger scenes. Thanks [@cicoub13](https://github.com/cicoub13)!
+- the buttons of the [Philips Hue Tap Dial switch](https://www.amazon.com/s?k=Philips%20Hue%20Tap%20Dial%20Switch) (RDM002) trigger scenes. Thanks [@cicoub13](https://github.com/cicoub13)!
 - devices added before energy monitoring can be updated to get their consumption and cost features. Thanks [@cicoub13](https://github.com/cicoub13)!
 
 ## Native integrations replaced by the community

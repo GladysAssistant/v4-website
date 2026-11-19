@@ -24,7 +24,7 @@ Als ich im Juni das [neue Raspberry-Pi-Image](/de/blog/new-raspberry-pi-image/) 
 
 Bisher bedeutete eine Installation von Gladys auf einem Mini-PC: Ubuntu Server selbst installieren (ohne den Haken bei OpenSSH zu vergessen), sich per SSH verbinden, Docker installieren, einen langen `docker run`-Befehl kopieren und dann Watchtower für die Updates einrichten. Nichts Unmögliches, aber viele Schritte, und viele sind an einem davon hängen geblieben.
 
-Der Mini-PC ist die Lösung, die ich für ein Smart Home auf lange Sicht empfehle, also hatte er eine Installation verdient, die genauso einfach ist wie auf dem Raspberry Pi.
+Der [Mini-PC](https://www.amazon.com/s?k=Beelink%20Mini%20S13) ist die Lösung, die ich für ein Smart Home auf lange Sicht empfehle, also hatte er eine Installation verdient, die genauso einfach ist wie auf dem Raspberry Pi.
 
 ## Was Gladys Assistant OS macht
 

@@ -10,7 +10,7 @@ slug: gladys-assistant-4-25
 
 Hoy hay nueva versión de Gladys, con cambios muy interesantes que mejoran el uso diario de Gladys.
 
-Antes de empezar: si buscas hardware para ejecutar Gladys, un mini-PC Beelink es una forma estupenda de iniciarte en la domótica con un equipo fiable y potente.
+Antes de empezar: si buscas hardware para ejecutar Gladys, un [mini-PC Beelink](https://www.amazon.com/s?k=Beelink%20Mini%20S13) es una forma estupenda de iniciarte en la domótica con un equipo fiable y potente.
 
 Algunos miembros de la comunidad incluso han pedido varios, por así decirlo 😂
 

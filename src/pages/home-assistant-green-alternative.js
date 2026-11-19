@@ -27,6 +27,7 @@ export default function HomeAssistantGreenAlternativePage() {
 
   return (
     <UseCasePage
+      productsPage="home-assistant-green-alternative"
       content={content}
       faq={faq}
       schemaData={getHomeAssistantGreenAlternativePageSchema(lang)}

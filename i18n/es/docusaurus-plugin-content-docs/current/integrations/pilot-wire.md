@@ -36,8 +36,8 @@ Los módulos y radiadores de "6 órdenes" añaden **Confort -1** y **Confort -2*
 
 Un módulo de hilo piloto se coloca entre tu instalación eléctrica y el radiador: recibe órdenes por Zigbee y aplica la orden correspondiente en el hilo piloto. Dos módulos aparecen con frecuencia en la comunidad de Gladys, y ambos son reconocidos por Zigbee2MQTT:
 
-- **NodOn SIN-4-FP-21**: un micromódulo que cabe en la caja de conexión detrás del radiador o en el cuadro eléctrico. Compacto, de 6 órdenes y el más utilizado.
-- **Legrand 064882**: el módulo de hilo piloto de Legrand, con el mismo principio, para el cuadro eléctrico o una caja empotrada.
+- **[NodOn SIN-4-FP-21](https://www.amazon.fr/s?k=NodOn%20SIN-4-FP-21)**: un micromódulo que cabe en la caja de conexión detrás del radiador o en el cuadro eléctrico. Compacto, de 6 órdenes y el más utilizado.
+- **[Legrand 064882](https://www.amazon.fr/s?k=Legrand%20064882)**: el módulo de hilo piloto de Legrand, con el mismo principio, para el cuadro eléctrico o una caja empotrada.
 
 Algunas cosas que debes comprobar antes de comprar:
 

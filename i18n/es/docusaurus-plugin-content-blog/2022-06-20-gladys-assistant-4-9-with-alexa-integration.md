@@ -49,7 +49,7 @@ Es súper sencillo y te ayuda a crear escenas potentes, ¡como llamar a Node-RED
 
 ## Zigbee2Mqtt: compatibilidad con el Sonoff SNZB-01
 
-Ahora admitimos más tipos de clic en el interruptor inalámbrico Sonoff SNZB-01.
+Ahora admitimos más tipos de clic en el interruptor inalámbrico [Sonoff SNZB-01](https://www.amazon.com/s?k=Sonoff%20SNZB-01).
 
 ## ¿Cómo actualizar?
 

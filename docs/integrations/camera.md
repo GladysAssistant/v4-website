@@ -50,6 +50,8 @@ We have dedicated guides, with the exact RTSP URL format, for the most common ca
 - [Imou](/docs/integrations/imou)
 - [LSC Smart Connect (Action)](/docs/integrations/lsc)
 - [Rollei IPC-88 (Aldi)](/docs/integrations/rollei)
+
+No camera yet? Pick one that documents its RTSP stream, such as a [Reolink PoE camera](https://www.amazon.com/s?k=Reolink%20PoE%20camera).
 :::
 
 ## Trying to display the stream in VLC

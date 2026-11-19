@@ -80,6 +80,7 @@ module.exports = {
   ],
   "nest-protect": ["Google Nest Protect"],
   minut: ["Minut"],
+  airgradient: [{ en: "AirGradient ONE" }],
 
   // Air purifiers, fans, heaters and thermostats
   blueair: ["Blueair Blue Pure", "Blueair HealthProtect"],
@@ -134,6 +135,15 @@ module.exports = {
   switcher: [{ en: "Switcher smart water heater" }],
   "max-cube": ["eQ-3 radiator thermostat"],
   plugwise: [{ en: "Plugwise Anna", fr: "Plugwise Anna" }],
+  aprilaire: [{ en: "Aprilaire 8840 thermostat" }],
+  midea: [
+    { en: "Midea U-Shaped window air conditioner", fr: "climatiseur mobile Midea" },
+    { en: "Midea dehumidifier", fr: "déshumidificateur Midea" },
+  ],
+  "tcl-home": [
+    { en: "TCL window air conditioner", fr: "climatiseur mobile TCL" },
+    { en: "TCL dehumidifier", fr: "déshumidificateur TCL" },
+  ],
 
   // Lighting
   aidot: [
@@ -185,6 +195,9 @@ module.exports = {
     { en: "Yeelight smart bulb", fr: "ampoule connectée Yeelight" },
     { en: "Yeelight LED strip", fr: "ruban LED Yeelight" },
   ],
+  deako: [{ en: "Deako smart switch" }],
+  "automate-pulse-hub-v2": [{ en: "Automate Pulse 2 hub" }],
+  "soma-connect": [{ en: "SOMA Smart Shades 2" }, { en: "SOMA Connect" }],
 
   // Plugs, relays and DIY modules
   "ai-on-the-edge": ["ESP32-CAM"],
@@ -295,6 +308,10 @@ module.exports = {
   tydom: [{ fr: "Delta Dore Tydom Home" }],
   "wm-bus-meters-wmbusmeters": ["RTL-SDR Blog V4", { en: "wM-Bus USB dongle", fr: "clé USB wM-Bus" }],
   "z2m-devices-monitor": ["SONOFF Zigbee 3.0 USB Dongle Plus", "SMLIGHT SLZB-06"],
+  "z-wave-js-ui": [
+    { en: "Zooz ZST39 Z-Wave stick", fr: "clé Z-Wave Aeotec Z-Stick 7" },
+    { en: "Aeotec Z-Stick 7 Plus" },
+  ],
 
   // Cameras, doorbells, locks and alarms
   "ajax-systems-sia-dc-09": ["Ajax StarterKit", "Ajax Hub 2"],
@@ -351,6 +368,12 @@ module.exports = {
   tedee: ["Tedee GO", "Tedee PRO"],
   ttlock: [{ en: "TTLock smart lock", fr: "serrure connectée TTLock" }],
   "unifi-protect": ["UniFi Protect G5 Bullet", "UniFi Protect G4 Doorbell"],
+  axis: [CAMERA("Axis")],
+  "guardian-elexa": [
+    { en: "Guardian by Elexa leak detector" },
+    { en: "Guardian by Elexa valve controller" },
+  ],
+  "somfy-protexial-protexiom": [{ fr: "alarme Somfy Protexial io" }],
 
   // Robot vacuums, mowers, pets and appliances
   anova: ["Anova Precision Cooker"],
@@ -388,6 +411,8 @@ module.exports = {
   "worx-landroid": ["Worx Landroid"],
   "xiaomi-home": [ROBOT_VACUUM("Xiaomi")],
   fyta: ["FYTA Beam"],
+  "bosch-indego": [ROBOT_MOWER("Bosch Indego")],
+  "eheim-digital": ["EHEIM thermocontrol+e", "EHEIM classicLED+e"],
 
   // Watering, pools and spas
   beatbot: ["Beatbot AquaSense"],
@@ -406,6 +431,10 @@ module.exports = {
   ],
   "flo-by-moen": [{ en: "Moen Flo Smart Water Monitor" }],
   flume: [{ en: "Flume 2 Smart Home Water Monitor" }],
+  "balboa-spa": [{ en: "Balboa BWA Wi-Fi module" }],
+  "pool-lab": ["PoolLab 2.0"],
+  rainmachine: [{ en: "RainMachine Touch HD-12" }],
+  yardian: [{ en: "Yardian Pro smart sprinkler controller" }],
 
   // Energy: solar, batteries, meters, chargers and UPSs
   "anker-solix": ["Anker SOLIX Solarbank", "Anker SOLIX Smart Meter"],
@@ -431,6 +460,8 @@ module.exports = {
   "victron-vrm": ["Victron Cerbo GX", "Victron SmartShunt"],
   wallbox: ["Wallbox Pulsar Plus", "Wallbox Pulsar Max"],
   zendure: ["Zendure SolarFlow"],
+  "ecocompteur-legrand": [{ fr: "Legrand écocompteur 412000" }],
+  "rainforest-eagle": [{ en: "Rainforest Eagle-200" }],
 
   // TVs, players and speakers
   "android-tv-fire-tv-adb": ["Fire TV Stick 4K", "Nvidia Shield TV", "Google TV Streamer"],
@@ -487,6 +518,24 @@ module.exports = {
   "yamaha-musiccast": ["Yamaha MusicCast 20", { en: "Yamaha MusicCast soundbar", fr: "barre de son Yamaha MusicCast" }],
   "yoto-player-advanced": ["Yoto Player", "Yoto Mini"],
   yoto: ["Yoto Player", "Yoto Mini"],
+  arcam: ["Arcam AVR11", "Arcam SA30"],
+  "bose-soundtouch": ["Bose SoundTouch 10"],
+  "frontier-silicon-radios": [
+    { en: "Sangean WFR-28 internet radio", fr: "radio internet Hama DIR3120" },
+  ],
+  hdfury: ["HDFury VRROOM", "HDFury Arcana 2"],
+  "jvc-projector": [{ en: "JVC D-ILA projector", fr: "vidéoprojecteur JVC D-ILA" }],
+  "nintendo-parental-controls": ["Nintendo Switch 2"],
+  "pjlink-projectors": [
+    { en: "Epson home cinema projector", fr: "vidéoprojecteur Epson" },
+    { en: "BenQ projector", fr: "vidéoprojecteur BenQ" },
+  ],
+  "playstation-network": [
+    "PlayStation 5",
+    { en: "PS5 DualSense controller", fr: "manette DualSense PS5" },
+  ],
+  russound: [{ en: "Russound MCA-88X" }],
+  "vogel-s-motionmount": ["Vogel's MotionMount TVM 7675"],
 
   // Network, NAS, servers and printers
   asuswrt: [{ en: "ASUS WiFi 7 router", fr: "routeur ASUS WiFi 7" }, "ASUS ZenWiFi"],
@@ -516,6 +565,10 @@ module.exports = {
   "ugreen-nas": ["UGREEN NASync DXP2800", "UGREEN NASync DXP4800 Plus"],
   "ubiquiti-airos": ["Ubiquiti NanoStation 5AC Loco", "Ubiquiti LiteBeam 5AC"],
   "unifi-network": ["UniFi Cloud Gateway Ultra", "UniFi U6+", "UniFi Express"],
+  "ipp-printers": [{ en: "AirPrint wireless printer", fr: "imprimante WiFi AirPrint" }],
+  "samsung-syncthru": [
+    { en: "Samsung Xpress laser printer", fr: "imprimante laser Samsung Xpress" },
+  ],
 
   // 3D printers
   "bambu-lab": ["Bambu Lab A1 mini", "Bambu Lab A1", { en: "Bambu Lab PLA filament", fr: "filament PLA Bambu Lab" }],
@@ -538,4 +591,13 @@ module.exports = {
     { fr: "Weenect XS chat" },
   ],
   "tilt-pi": [{ en: "Tilt Hydrometer" }],
+
+  // Watches, rings and scales
+  fitbit: ["Fitbit Charge 6", "Fitbit Versa 4"],
+  "garmin-connect": ["Garmin Venu 3", "Garmin Forerunner 265", "Garmin Index S2"],
+  "google-health": ["Google Pixel Watch 3", "Fitbit Charge 6"],
+  "huawei-health": ["Huawei Watch GT 5", "Huawei Band 9"],
+  oura: ["Oura Ring 4"],
+  polar: ["Polar Vantage V3", "Polar Ignite 3"],
+  withings: ["Withings Body Smart", "Withings ScanWatch 2", "Withings BPM Connect"],
 };

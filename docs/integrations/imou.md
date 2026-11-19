@@ -15,7 +15,7 @@ keywords:
 
 import JsonLd from '@site/src/components/seo/JsonLd';
 
-Imou cameras (a brand of Dahua) are an affordable, widely used choice, and most of them work with Gladys Assistant.
+[Imou cameras](https://www.amazon.com/s?k=Imou%20security%20camera) (a brand of Dahua) are an affordable, widely used choice, and most of them work with Gladys Assistant.
 
 Imou cameras expose a standard **RTSP** stream, so they connect through the generic [camera integration](/docs/integrations/camera). Gladys talks to the camera directly on your local network, which means your video feed stays at home and never transits through the Imou cloud.
 

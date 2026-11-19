@@ -21,6 +21,7 @@ export default function WorksWithPage() {
 
   return (
     <UseCasePage
+      productsPage="works-with"
       content={content}
       faq={faq}
       schemaData={getWorksWithPageSchema(lang)}

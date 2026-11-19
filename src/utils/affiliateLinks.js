@@ -35,4 +35,32 @@ const addAffiliateTag = (href) => {
   return url.toString();
 };
 
-module.exports = { AFFILIATE_PARAMS, addAffiliateTag };
+// Amazon store of each language that has a partner id. The generated product
+// boxes (landing pages, external integrations) are hidden in the other
+// languages (de, es) until a partner id is added above and the store here.
+// Hand-written Markdown links are a different matter: the German and Spanish
+// docs and blog keep the amazon.com links of the English text, tagged with
+// the amazon.com partner id.
+const AMAZON_STORES = {
+  en: "https://www.amazon.com",
+  fr: "https://www.amazon.fr",
+};
+
+// ("Aqara Motion Sensor P1", "fr") ->
+// "https://www.amazon.fr/s?k=Aqara%20Motion%20Sensor%20P1&tag=gladproj-21"
+// Search links rather than product pages: they never go out of stock and work
+// in every store. Returns null for a language with no store.
+const amazonSearchLink = (query, locale) => {
+  const store = AMAZON_STORES[locale];
+  if (!store) {
+    return null;
+  }
+  return addAffiliateTag(`${store}/s?k=${encodeURIComponent(query)}`);
+};
+
+module.exports = {
+  AFFILIATE_PARAMS,
+  AMAZON_STORES,
+  addAffiliateTag,
+  amazonSearchLink,
+};
