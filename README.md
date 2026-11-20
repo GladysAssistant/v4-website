@@ -114,6 +114,117 @@ not a build speed lever, but two of its changes matter here:
   and preview builds alike: it is required on v2, whose default is Yarn 3,
   and keeps v3 from switching Yarn under the project when its default moves.
 
+## Deploying on Cloudflare Workers
+
+Cloudflare Pages refuses a deployment of more than 20,000 files, and every
+external integration adds eight of them (an HTML page and a JavaScript chunk in
+each of the four languages): the site reaches that limit at about 1,700
+integrations. A Worker with static assets on the Workers Paid plan accepts
+100,000 files, so the site is moving from Pages to a Worker. Nothing else
+changes: `build.sh` produces the same `build` folder, and Workers apply the
+same `_redirects` and `_headers` files, with the same limits. The first rule
+of `_headers` spells out the three headers Pages adds to every response on its
+own and a Worker does not.
+
+The `Deploy` workflow (`.github/workflows/deploy.yml`) builds the site on
+GitHub and uploads it with `wrangler deploy --config wrangler.workers.jsonc`,
+on every push to master and once a day. It only ever deploys master, also
+when started by hand from another branch. Building on GitHub rather than on
+Cloudflare also lifts the 8 GB of memory and the 20-minute timeout of their
+build machines: with 3,000 integrations the build peaks around 12 GB and takes
+about 12 minutes on four cores. The workflow builds cold, without the Rspack
+cache described above, which weighs several gigabytes.
+
+One-time setup:
+
+1. Subscribe the Cloudflare account to **Workers Paid**. On the free plan a
+   Worker is limited to 20,000 files, like Pages.
+2. Create an API token from the **Edit Cloudflare Workers** template
+   (Manage account > Account API tokens > Create token), limited to this
+   account and to the gladysassistant.com zone.
+3. Store it in a GitHub environment that only master can use, not as a
+   repository secret. The token can deploy to production: a repository secret
+   reaches every workflow, including one pushed on a branch by anyone with
+   write access, while the secrets of this environment only reach the jobs
+   that run on master, whose code went through review.
+   1. Settings > Environments > New environment, named `cloudflare`. If a
+      workflow already ran, GitHub has created it on its own, without any
+      restriction: open it.
+   2. Under **Deployment branches and tags**, choose **Selected branches and
+      tags** and add `master`.
+   3. Add two environment secrets: `CLOUDFLARE_API_TOKEN` (the token) and
+      `CLOUDFLARE_ACCOUNT_ID`. Without them the workflows do nothing.
+4. Run the workflow (Actions > Deploy > Run workflow). The site is then
+   online at `gladys-website.<account>.workers.dev`, marked `noindex` by
+   `_headers`, while Cloudflare Pages keeps serving gladysassistant.com.
+   Check it there: pages in the four languages, a redirect of `_redirects`,
+   an unknown URL (404 page), and an image under `/fr/img/`. Compare the
+   response headers with production as well (`curl -sI` on both), not only
+   the status codes.
+5. Move the domain. Cloudflare refuses to create a Worker custom domain on a
+   hostname that still has the CNAME record of the Pages project, so the site
+   is unreachable between the two steps below: do them back to back, at a
+   quiet hour.
+   1. Delete the DNS record of gladysassistant.com that points to
+      `v4-website.pages.dev`, and remove the domain from the Pages project
+      (Custom domains).
+   2. Add gladysassistant.com to the Worker in the dashboard (Settings >
+      Domains & Routes > Add > Custom domain), which takes effect at once,
+      where a deployment takes several minutes.
+
+   Then uncomment `routes` in `wrangler.workers.jsonc` and merge, so that the
+   configuration file says what the dashboard does: the routes of the file
+   replace the ones set in the dashboard on every deployment.
+
+Once the domain is served by the Worker, the Pages project can be deleted,
+along with what only exists for it: the `refresh-dev-activity` workflow (the
+`Deploy` workflow runs every day by itself), the `CF_PAGES` test in
+`build.sh`, the `v4-website.pages.dev` rule of `_headers`, and the sections of
+this README about Cloudflare Pages. `DEV_ACTIVITY_GITHUB_TOKEN` is not needed
+by the workflow, which uses the automatic `GITHUB_TOKEN`.
+
+One difference with Pages: a URL without its trailing slash (`/docs`) is
+redirected to the slashed one with a 307, where Pages answers 308. The pages
+and the sitemap only use slashed URLs.
+
+### Previews of pull requests
+
+Every pull request opened from a branch of this repository gets a preview at
+`https://pr-<number>-gladys-website.<subdomain>.workers.dev`, marked `noindex`
+like the other workers.dev addresses, and a comment with the link, updated on
+every push. Two workflows share the work, so that the Cloudflare token never
+runs next to the code of a pull request:
+
+- `Node.js CI` (`.github/workflows/test.yml`) builds the pull request, as it
+  always did, and keeps the build as an artifact for a day;
+- `Preview` (`.github/workflows/preview.yml`) starts when that run ends,
+  always from master, and uploads the artifact with
+  `wrangler versions upload --preview-alias pr-<number>`. A version upload
+  does not change what production serves.
+
+Limits:
+
+- Pull requests from forks get no preview, and neither do the pull requests
+  of the `Refresh external integrations` workflow: GitHub starts no workflow
+  on a pull request opened with its automatic token.
+- A preview is served with the `wrangler.workers.jsonc` of master: a pull
+  request that changes it only shows the change once merged.
+- Every preview is a version of the Worker. Cloudflare always keeps the 100
+  most recent versions and the older ones for 30 days, and a preview link
+  stops working once its version is deleted. Production can only be rolled
+  back to one of those 100 versions, previews included.
+- The first preview needs the Worker to exist: `Deploy` must have run once.
+
+### Serving the build locally
+
+To serve the build locally exactly as the Worker does, redirects and headers
+included:
+
+```bash
+./build.sh
+npx wrangler dev --config wrangler.workers.jsonc
+```
+
 ## How to refresh the development activity page?
 
 The [/dev/](https://gladysassistant.com/dev/) page reads
