@@ -18,7 +18,7 @@ name: Preview
 # branch cannot read it.
 #
 # Pull requests from forks get no preview. A preview is served with the
-# wrangler.workers.jsonc of master, not the one of the pull request. The first
+# wrangler.jsonc of master, not the one of the pull request. The first
 # preview needs the Worker to exist: Deploy must have run once.
 
 on:
@@ -95,7 +95,7 @@ jobs:
       - uses: actions/checkout@v4
         if: steps.secrets.outputs.configured == 'true'
         with:
-          sparse-checkout: wrangler.workers.jsonc
+          sparse-checkout: wrangler.jsonc
           sparse-checkout-cone-mode: false
           persist-credentials: false
 
@@ -119,14 +119,13 @@ jobs:
           WRANGLER_OUTPUT_FILE_PATH: ${{ runner.temp }}/wrangler-output.ndjson
         run: |
           npx --yes wrangler@4.165.0 versions upload \
-            --config wrangler.workers.jsonc \
             --preview-alias "pr-$PR_NUMBER" \
             --message "Preview of pull request #$PR_NUMBER (${HEAD_SHA:0:7})"
           upload='select(.type == "version-upload")'
           alias_url=$(jq -r "$upload | .preview_alias_url // empty" "$WRANGLER_OUTPUT_FILE_PATH")
           version_url=$(jq -r "$upload | .preview_url // empty" "$WRANGLER_OUTPUT_FILE_PATH")
           if [ -z "$alias_url" ]; then
-            echo "::error::Wrangler returned no preview URL: are preview URLs enabled on the Worker (preview_urls in wrangler.workers.jsonc)?"
+            echo "::error::Wrangler returned no preview URL: are preview URLs enabled on the Worker (preview_urls in wrangler.jsonc)?"
             exit 1
           fi
           echo "alias_url=$alias_url" >> "$GITHUB_OUTPUT"

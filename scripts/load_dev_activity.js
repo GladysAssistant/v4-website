@@ -11,10 +11,9 @@
  * limit) and it is the only source for the forum feature requests, which
  * Discourse does not serve cross-origin.
  *
- * The deploy build runs without a token (see DEV_ACTIVITY_GITHUB_TOKEN below),
- * on a shared Cloudflare Pages IP, so the anonymous 60 requests/hour budget is
- * often already spent by someone else. Two things keep that from wiping the
- * page data:
+ * Without a token (see DEV_ACTIVITY_GITHUB_TOKEN below), GitHub allows 60
+ * requests per hour and per IP, a budget a shared build machine often finds
+ * already spent. Two things keep that from wiping the page data:
  *
  *   - conditional requests: each answer is stored with its ETag and re-sent as
  *     `If-None-Match`, and GitHub does not count the 304 answers against the
@@ -22,8 +21,8 @@
  *   - per section fallback: whatever cannot be downloaded keeps the values
  *     committed in the snapshot instead of failing the whole refresh.
  *
- * Run with `yarn load-dev-activity`. Refreshed daily by the
- * `refresh-dev-activity` workflow.
+ * Run with `yarn load-dev-activity`. build.sh runs it on every deployment,
+ * which the Deploy workflow makes at least once a day.
  */
 // Only useful to read a local token from .env, and this script runs during the
 // deploy build, where a missing dev dependency must not break it.
@@ -80,7 +79,7 @@ const REQUEST_TIMEOUT_MS = 20000;
 // than parking the deploy build.
 const MAX_RATE_LIMIT_WAIT_MS = 30000;
 
-// DEV_ACTIVITY_GITHUB_TOKEN is the name to set on the deploy environment:
+// DEV_ACTIVITY_GITHUB_TOKEN is the name to set in .env:
 // GITHUB_TOKEN is generic enough that half the tooling of a build reads it (and
 // GitHub Actions gives that name to its own automatic token), so a token meant
 // for this script alone deserves its own name. GITHUB_TOKEN is still accepted
