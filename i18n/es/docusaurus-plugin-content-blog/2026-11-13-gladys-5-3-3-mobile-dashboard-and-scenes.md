@@ -127,7 +127,7 @@ Recibimos muy pocas opiniones sobre lo que funciona bien, o no tan bien, en Glad
 Seguimos con [la auditoría de Zigbee2MQTT](https://community.gladysassistant.com/t/zigbee2mqtt-un-audit-pour-devenir-plus-simple-que-home-assistant/11498), después de la 5.3.2, que ya reconocía el dongle conectado y preseleccionaba su puerto y su modelo:
 
 - **Los errores de arranque se explican**, con lo que hay que hacer: un dongle que no responde (a menudo un modelo distinto del elegido, o un dongle usado por otro programa), un coordinador de red inaccesible, una configuración rechazada por Zigbee2MQTT. Antes, Gladys mostraba la última línea de error de los logs, en inglés, a menudo sin relación.
-- **Los SONOFF ZBDongle-E con un firmware antiguo arrancan solos.** Muchos se siguen vendiendo con un firmware que el driver `ember` rechaza. Gladys cambia ahora por sí sola al driver de compatibilidad `ezsp`, y la página de configuración explica cómo volver a `ember` tras actualizar el firmware.
+- **Los [SONOFF ZBDongle-E](https://www.amazon.com/s?k=Sonoff%20ZBDongle-E) con un firmware antiguo arrancan solos.** Muchos se siguen vendiendo con un firmware que el driver `ember` rechaza. Gladys cambia ahora por sí sola al driver de compatibilidad `ezsp`, y la página de configuración explica cómo volver a `ember` tras actualizar el firmware.
 - El contador trifásico **Tuya SPM02V3** comunica todas sus medidas: la fase C, la tensión de cada fase y la energía producida.
 
 ¡Gracias [@cicoub13](https://github.com/cicoub13) por todo esto!

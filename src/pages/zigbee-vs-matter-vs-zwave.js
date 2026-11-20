@@ -4,6 +4,7 @@ import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import JsonLd from "../components/seo/JsonLd";
+import AmazonProducts from "../components/AmazonProducts";
 import { getProtocolsComparisonPageSchema } from "../data/schemas/protocolsComparison";
 import protocolsContent, {
   protocolsFaqEn,
@@ -175,6 +176,8 @@ function ProtocolsContent({ content, faq, lang }) {
         </section>
 
         {/* RELATED / INTERNAL MESH */}
+        <AmazonProducts page="zigbee-vs-matter-vs-zwave" lang={lang} />
+
         <section className={styles.section} aria-labelledby="related-title">
           <h2 id="related-title" className={styles.sectionTitle}>
             {content.related.title}

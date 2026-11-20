@@ -19,6 +19,7 @@ export default function Zigbee2mqttWithoutHomeAssistantPage() {
 
   return (
     <UseCasePage
+      productsPage="zigbee2mqtt-without-home-assistant"
       content={content}
       faq={faq}
       schemaData={getZigbee2mqttWithoutHomeAssistantPageSchema(lang)}

@@ -18,6 +18,7 @@ export default function ReolinkRtspUrlPage() {
 
   return (
     <UseCasePage
+      productsPage="reolink-rtsp-url"
       content={content}
       faq={faq}
       schemaData={getReolinkRtspPageSchema(lang)}

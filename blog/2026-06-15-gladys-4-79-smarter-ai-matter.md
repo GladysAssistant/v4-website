@@ -40,7 +40,7 @@ Extended support for new device types: vacuum cleaners, NO₂ sensors (nitrogen 
 ## 📡 Zigbee2mqtt
 
 - Updated to Zigbee2mqtt 2.12.0
-- Support for the SONOFF SNZB-01M remote (4 buttons)
+- Support for the [SONOFF SNZB-01M](https://www.amazon.com/s?k=SONOFF%20SNZB-01M) remote (4 buttons)
 
 ## 🔧 Node-RED
 

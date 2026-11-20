@@ -40,7 +40,7 @@ Support étendu pour de nouveaux types d'appareils : aspirateurs, capteurs NO₂
 ## 📡 Zigbee2mqtt
 
 - Mise à jour vers Zigbee2mqtt 2.12.0
-- Support de la télécommande SONOFF SNZB-01M (4 boutons)
+- Support de la télécommande [SONOFF SNZB-01M](https://www.amazon.fr/s?k=SONOFF%20SNZB-01M) (4 boutons)
 
 ## 🔧 Node-RED
 

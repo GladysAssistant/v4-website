@@ -16,6 +16,7 @@ export default function SinopeZigbeePage() {
 
   return (
     <UseCasePage
+      productsPage="sinope-zigbee"
       content={content}
       faq={faq}
       schemaData={getSinopeZigbeePageSchema(lang)}

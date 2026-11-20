@@ -5,6 +5,7 @@ import Link from "@docusaurus/Link";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 
 import JsonLd from "./seo/JsonLd";
+import AmazonProducts from "./AmazonProducts";
 
 import styles from "../pages/comparison.module.css";
 
@@ -51,7 +52,15 @@ function LinkCard({ label, href, text }) {
   );
 }
 
-export default function UseCasePage({ content, faq, schemaData, lang }) {
+// `productsPage`, when given, is the key of the page in
+// src/data/landingProducts.js: its hardware is shown after "How it works".
+export default function UseCasePage({
+  content,
+  faq,
+  schemaData,
+  lang,
+  productsPage,
+}) {
   return (
     <HorizonPage title={content.meta.title} description={content.meta.description}>
       <JsonLd data={schemaData} />
@@ -162,6 +171,9 @@ export default function UseCasePage({ content, faq, schemaData, lang }) {
             </ul>
             <p className={styles.blockOutro}>{content.how.outro}</p>
           </section>
+
+          {/* HARDWARE TO BUY (only pages listed in landingProducts.js) */}
+          {productsPage && <AmazonProducts page={productsPage} lang={lang} />}
 
           {/* SOLUTION / GLADYS ANGLE */}
           <section className={styles.section} aria-labelledby="solution-title">

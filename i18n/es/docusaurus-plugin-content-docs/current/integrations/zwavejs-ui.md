@@ -24,7 +24,7 @@ Por qué Z-Wave JS UI con Gladys es una configuración sencilla y local, y cómo
 Gladys se conecta al mismo broker MQTT que Z-Wave JS UI y recibe mensajes MQTT cada vez que cambia el estado de un dispositivo.
 
 :::note[Elegir un stick USB Z-Wave para tu región]
-Z-Wave usa una frecuencia de radio diferente según dónde vivas, así que tu stick debe corresponder a tu país: **908,42 MHz en EE. UU. y Canadá**, 868,42 MHz en Europa. En Norteamérica, algunos sticks populares son el Zooz ZST10 700 / ZST39 y el Aeotec Z-Stick 7 (versión de EE. UU.). Asegúrate de comprar el modelo para EE. UU./Canadá y no el de la UE.
+Z-Wave usa una frecuencia de radio diferente según dónde vivas, así que tu stick debe corresponder a tu país: **908,42 MHz en EE. UU. y Canadá**, 868,42 MHz en Europa. En Norteamérica, algunos sticks populares son el [Zooz ZST10 700 / ZST39](https://www.amazon.com/s?k=Zooz%20Z-Wave%20USB%20stick%20ZST39) y el [Aeotec Z-Stick 7](https://www.amazon.com/s?k=Aeotec%20Z-Stick%207) (versión de EE. UU.). Asegúrate de comprar el modelo para EE. UU./Canadá y no el de la UE.
 :::
 
 ## Instalar Z-Wave JS UI

@@ -19,6 +19,7 @@ export default function PhilipsHueWithoutBridgePage() {
 
   return (
     <UseCasePage
+      productsPage="philips-hue-without-bridge"
       content={content}
       faq={faq}
       schemaData={getPhilipsHueWithoutBridgePageSchema(lang)}

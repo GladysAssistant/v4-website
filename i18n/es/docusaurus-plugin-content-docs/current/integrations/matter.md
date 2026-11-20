@@ -63,19 +63,19 @@ Un router Thread (o "Thread Border Router") conecta tus dispositivos Thread con 
 
 Muchos dispositivos comerciales son routers Thread:
 
-- Apple TV 4K Ethernet 128 GB
-- Apple HomePod
+- [Apple TV 4K Ethernet 128 GB](https://www.amazon.com/s?k=Apple%20TV%204K%20Ethernet%20128GB)
+- [Apple HomePod](https://www.amazon.com/s?k=Apple%20HomePod)
 - Google Home Speaker (2026)
 - Google Nest Hub Max
-- Google Nest Hub (2.ª generación)
-- Google Nest Wi-Fi Pro
-- Google TV Streamer 4K
-- Amazon Echo (4.ª generación)
-- Amazon Echo Dot Max
-- Amazon Echo Hub
-- Amazon Echo Studio
-- Amazon Echo Show 8 (3.ª generación), 10 (3.ª generación), 11, 15 (2.ª generación), 16 y 21. Los Echo Show más antiguos y el Echo Show 5 no son routers Thread
-- Los routers Amazon eero recientes (eero 6 y posteriores, eero Pro, eero Beacon)
+- [Google Nest Hub (2.ª generación)](https://www.amazon.com/s?k=Google%20Nest%20Hub%202nd%20generation)
+- [Google Nest Wi-Fi Pro](https://www.amazon.com/s?k=Google%20Nest%20Wifi%20Pro)
+- [Google TV Streamer 4K](https://www.amazon.com/s?k=Google%20TV%20Streamer%204K)
+- [Amazon Echo (4.ª generación)](https://www.amazon.com/s?k=Amazon%20Echo%204th%20generation)
+- [Amazon Echo Dot Max](https://www.amazon.com/s?k=Amazon%20Echo%20Dot%20Max)
+- [Amazon Echo Hub](https://www.amazon.com/s?k=Amazon%20Echo%20Hub)
+- [Amazon Echo Studio](https://www.amazon.com/s?k=Amazon%20Echo%20Studio)
+- [Amazon Echo Show 8](https://www.amazon.com/s?k=Amazon%20Echo%20Show%208%203rd%20generation) (3.ª generación), 10 (3.ª generación), 11, 15 (2.ª generación), 16 y 21. Los Echo Show más antiguos y el Echo Show 5 no son routers Thread
+- Los [routers Amazon eero](https://www.amazon.com/s?k=Amazon%20eero%206) recientes (eero 6 y posteriores, eero Pro, eero Beacon)
 
 También puedes montar tu propio router Thread con un dongle USB Thread y OpenThread.
 

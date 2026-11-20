@@ -40,7 +40,7 @@ Compatibilidad ampliada con nuevos tipos de dispositivos: aspiradoras, sensores 
 ## 📡 Zigbee2mqtt
 
 - Actualización a Zigbee2mqtt 2.12.0
-- Compatibilidad con el mando SONOFF SNZB-01M (4 botones)
+- Compatibilidad con el mando [SONOFF SNZB-01M](https://www.amazon.com/s?k=SONOFF%20SNZB-01M) (4 botones)
 
 ## 🔧 Node-RED
 

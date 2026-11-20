@@ -14,8 +14,8 @@ keywords:
 
 L'intégration « Thermostat » fait deux choses, disponibles depuis Gladys Assistant 5.2 :
 
-- **Gladys devient le thermostat.** Un capteur de température et un interrupteur (un relais, une prise connectée, un contact de chaudière) suffisent pour créer une zone de chauffage régulée : Gladys lit la température et allume ou éteint le chauffage pour atteindre la consigne.
-- **Gladys programme les thermostats que vous avez déjà.** Un Netatmo, une tête thermostatique Zigbee, un thermostat Matter ou MQTT régule très bien tout seul : Gladys écrit sa consigne selon un planning hebdomadaire, juste à côté du reste de votre maison.
+- **Gladys devient le thermostat.** Un [capteur de température](https://www.amazon.fr/s?k=Aqara%20capteur%20temp%C3%A9rature%20humidit%C3%A9) et un interrupteur (un relais, une prise connectée, un contact de chaudière) suffisent pour créer une zone de chauffage régulée : Gladys lit la température et allume ou éteint le chauffage pour atteindre la consigne.
+- **Gladys programme les thermostats que vous avez déjà.** Un [Netatmo](https://www.amazon.fr/s?k=thermostat%20Netatmo), une [tête thermostatique Zigbee](https://www.amazon.fr/s?k=Sonoff%20TRVZB), un thermostat Matter ou MQTT régule très bien tout seul : Gladys écrit sa consigne selon un planning hebdomadaire, juste à côté du reste de votre maison.
 
 Dans les deux cas, vous obtenez la même chose : des préréglages (Hors-gel, Absence, Éco, Nuit, Confort), des plannings hebdomadaires par maison, un widget de tableau de bord, et des fonctionnalités que les scènes, l'IA et les assistants vocaux savent lire et écrire.
 

@@ -14,7 +14,7 @@ Hola a todos:
 
 ## ✨ Novedades
 
-- 🔐 **Nueva integración: Nuki.** Ahora puedes conectar tus **cerraduras inteligentes Nuki** a Gladys y usarlas en tus escenas y paneles de control. ¡Gracias, [@ProtZ](https://community.gladysassistant.com/)!
+- 🔐 **Nueva integración: Nuki.** Ahora puedes conectar tus **[cerraduras inteligentes Nuki](https://www.amazon.com/s?k=Nuki%20smart%20lock)** a Gladys y usarlas en tus escenas y paneles de control. ¡Gracias, [@ProtZ](https://community.gladysassistant.com/)!
 - 🏠 **HomeKit.** La dependencia **HAP** se ha actualizado a la última versión estable para mejorar la compatibilidad y la fiabilidad con HomeKit. ¡Gracias, [@bertrandda](https://community.gladysassistant.com/)!
 - 💾 **Gladys Plus.** Las copias de seguridad de **DuckDB** ahora se realizan a través de una conexión temporal a la base de datos, lo que evita los picos de RAM que sufrían algunas instancias al terminar una copia de seguridad.
 

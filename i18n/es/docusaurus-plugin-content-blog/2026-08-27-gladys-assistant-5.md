@@ -150,7 +150,7 @@ Para los usuarios de Enedis: ahora es compatible el nuevo callback de consentimi
 
 - **Exporta el historial de un dispositivo en CSV**, directamente desde la lista de dispositivos.
 - **Matter**: detectores de fugas de agua, sensores de contacto y de lluvia, y **cerraduras**.
-- **Zigbee2MQTT 2.13**, compatibilidad con **coordinadores de red** (SMLIGHT SLZB-06/07 y similares), sirenas solares de exterior y el Heiman HS2WD-E.
+- **Zigbee2MQTT 2.13**, compatibilidad con **coordinadores de red** ([SMLIGHT SLZB-06/07](https://www.amazon.com/s?k=SMLIGHT%20SLZB-06) y similares), sirenas solares de exterior y el [Heiman HS2WD-E](https://www.amazon.com/s?k=Heiman%20HS2WD-E).
 - **MQTT**: topics de estado con comodines en el descubrimiento de Home Assistant.
 - **Google Home**: se exponen los sensores de temperatura y humedad.
 - **Cámaras**: desactiva una cámara sin eliminarla, un verdadero modo privado.

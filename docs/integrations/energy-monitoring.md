@@ -56,6 +56,8 @@ This is the recommended option for international users. Ideal for tracking a spe
 
 [NOUS A1Z plug with consumption measurement on Domadoo](https://www.domadoo.fr/fr/prises-connectees/6165-nous-prise-intelligente-zigbee-30-mesure-de-consommation-5907772033517.html?domid=17)
 
+If you're not in France, any Zigbee plug with energy monitoring supported by Zigbee2MQTT works the same way.
+
 ### 4. **With a custom MQTT device (international)**
 
 This option works worldwide. If you have a smart meter or devices that return consumption values in kWh, you can integrate them with Gladys Assistant using the MQTT integration.

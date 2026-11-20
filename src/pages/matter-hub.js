@@ -4,6 +4,7 @@ import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import JsonLd from "../components/seo/JsonLd";
+import AmazonProducts from "../components/AmazonProducts";
 import { getMatterHubPageSchema } from "../data/schemas/matterHub";
 import matterHubContent, {
   matterHubFaqEn,
@@ -33,7 +34,7 @@ function LinkCard({ label, href, text }) {
   );
 }
 
-function GuideContent({ content, faq }) {
+function GuideContent({ content, faq, lang }) {
   return (
     <main className={styles.main}>
       <div className={`container ${styles.container}`}>
@@ -145,6 +146,8 @@ function GuideContent({ content, faq }) {
         </section>
 
         {/* RELATED / INTERNAL MESH */}
+        <AmazonProducts page="matter-hub" lang={lang} />
+
         <section className={styles.section} aria-labelledby="related-title">
           <h2 id="related-title" className={styles.sectionTitle}>
             {content.related.title}
@@ -206,7 +209,7 @@ export default function MatterHubPage() {
   return (
     <HorizonPage title={content.meta.title} description={content.meta.description}>
       <JsonLd data={getMatterHubPageSchema(lang)} />
-      <GuideContent content={content} faq={faq} />
+      <GuideContent content={content} faq={faq} lang={lang} />
     </HorizonPage>
   );
 }

@@ -28,7 +28,7 @@ Merci [@ProtZ](https://community.gladysassistant.com/) pour ce travail de fond !
 Matter continue d'évoluer rapidement dans Gladys :
 
 - **Processus de jumelage clarifié :** les instructions d'appairage sont plus lisibles et accessibles pour les nouveaux utilisateurs.
-- **Nouveaux clusters Boolean & Switch :** afin de gérer les IKEA BILRESA et les Aqara Door and Window Sensor P2. J'ai développé cette compatibilité en testant via Matterbridge, je suis preneur de retours pour IKEA / Aqara 🙂
+- **Nouveaux clusters Boolean & Switch :** afin de gérer les IKEA BILRESA et les [Aqara Door and Window Sensor P2](https://www.amazon.fr/s?k=Aqara%20Door%20and%20Window%20Sensor%20P2). J'ai développé cette compatibilité en testant via Matterbridge, je suis preneur de retours pour IKEA / Aqara 🙂
 - **Monitoring du filtre HEPA :** les purificateurs d'air compatibles Matter peuvent désormais exposer l'état du filtre HEPA dans Gladys. Merci **@Nagromdark** !
 
 Je continue d'investir dans Matter, et je suis actuellement en train de préparer une grosse mise à jour de la librairie `matter-js` pour permettre plus de stabilité et de compatibilités.

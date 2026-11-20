@@ -126,7 +126,7 @@ Gladys guarda ahora la dirección IEEE de cada dispositivo, su identificador de 
 También en Zigbee2MQTT:
 
 - los dispositivos cuyo nombre contiene una «/» (como «salon/lampara») por fin envían sus estados a Gladys;
-- los botones del interruptor Philips Hue Tap Dial (RDM002) activan las escenas. ¡Gracias [@cicoub13](https://github.com/cicoub13)!
+- los botones del interruptor [Philips Hue Tap Dial](https://www.amazon.com/s?k=Philips%20Hue%20Tap%20Dial%20Switch) (RDM002) activan las escenas. ¡Gracias [@cicoub13](https://github.com/cicoub13)!
 - los dispositivos añadidos antes del seguimiento energético pueden actualizarse para recibir sus funciones de consumo y coste. ¡Gracias [@cicoub13](https://github.com/cicoub13)!
 
 ## Integraciones nativas sustituidas por la comunidad

@@ -91,14 +91,9 @@ Yarn's download cache is restored as well (`.cache/yarn` in the home folder),
 which is why `.yarnrc.yml` points Yarn 4's `globalFolder` there instead of its
 default `~/.yarn/berry`.
 
-Two other things keep the install step short:
-
-- `puppeteer` is not a dependency any more: it downloaded a whole Chrome at
-  every install while only `scripts/clean_integrations.js` uses it. Install it
-  locally with `yarn add --dev puppeteer` when running that script, without
-  committing the change.
-- `DEV_ACTIVITY_GITHUB_TOKEN` (see below) also spares the build the wait on
-  the anonymous GitHub rate limit, up to 30 seconds per deploy.
+`DEV_ACTIVITY_GITHUB_TOKEN` (see below) also keeps the install step short: it
+spares the build the wait on the anonymous GitHub rate limit, up to 30 seconds
+per deploy.
 
 ### Cloudflare Pages build system v3
 
@@ -290,11 +285,3 @@ The name is deliberately specific: `GITHUB_TOKEN` is read by a lot of tooling
 set for this script alone should not be handed to everything else running in
 the build. `GITHUB_TOKEN` is still accepted as a fallback, which is what the
 workflows use when they pass `secrets.GITHUB_TOKEN`.
-
-## How to add new integrations ?
-
-Don't add files into the `integrations` folder.
-
-We use an AirTable spreadsheet to crowdsource the list of integrations.
-
-Please contact us on the forum if you want write access to this spreadsheet.
