@@ -56,8 +56,10 @@ Otherwise, select the port, then the model of your dongle in the list:
 
 The model is required: it tells Zigbee2mqtt which configuration to run.
 
-:::warning
-If you own an [EmberZNet](https://www.zigbee2mqtt.io/guide/adapters/emberznet.html) based dongle (like for example the Sonoff Zigbee 3.0 ZBDongle-E), it's recommended to [update](https://www.zigbee2mqtt.io/guide/adapters/emberznet.html#firmware-flashing) the firmware dongle. Otherwise, you should choose the `(legacy ezsp)` option in the list, even if Gladys selected the model of your dongle for you.
+:::info[EmberZNet dongle with an old firmware]
+Many [EmberZNet](https://www.zigbee2mqtt.io/guide/adapters/emberznet.html) based dongles (like the Sonoff Zigbee 3.0 ZBDongle-E) are still sold with a firmware older than 7.4, which the `ember` driver of Zigbee2MQTT refuses. Since Gladys 5.3.3, you have nothing to do: Gladys detects it, switches your dongle to its `(legacy ezsp)` model and installs Zigbee2MQTT again with the `ezsp` compatibility driver. The setup summary then tells you that Gladys uses this driver.
+
+The `ezsp` driver is deprecated, so we still recommend to [update the firmware of your dongle](https://www.zigbee2mqtt.io/guide/adapters/emberznet.html#firmware-flashing). Then, choose the model without `(legacy ezsp)` in the list (or the `ember` type for a network coordinator) to go back to the `ember` driver.
 :::
 
 :::warning
@@ -91,7 +93,7 @@ Go to the `Setup` section and click on the **Enable Zigbee2mqtt** button. After 
 Gladys only shows Zigbee2MQTT in green once it has really started and answered Gladys. Until then, a message below the diagram tells you where it stands:
 
 - **Zigbee2MQTT is starting**: it is shown as "Restarting". Wait a moment, it will turn green as soon as it answers Gladys.
-- **Zigbee2MQTT fails to start**: Gladys shows the error it hit above the diagram. See [Troubleshooting common Zigbee2MQTT errors](#troubleshooting-common-zigbee2mqtt-errors).
+- **Zigbee2MQTT fails to start**: Gladys reads the Zigbee2MQTT logs and shows, above the diagram, why it does not start and what to do. See [Troubleshooting common Zigbee2MQTT errors](#troubleshooting-common-zigbee2mqtt-errors).
 - **Zigbee2MQTT is not answering**: Gladys gets no answer from it; it may be stopped, or crashing on startup. See the same section.
 
 As long as Zigbee2MQTT is not responding, the `Discover` and `Devices` pages show a "Zigbee2mqtt is not responding" banner, and device pairing is disabled. The banner goes away on its own as soon as Zigbee2MQTT is ready.
@@ -128,27 +130,49 @@ You can now use these Zigbee devices from the [Dashboard](../dashboard/devices.m
 
 ## Troubleshooting common Zigbee2MQTT errors
 
-Most Zigbee2MQTT problems come from three things: the wrong USB port, the wrong adapter type, or 2.4 GHz interference. Here are the errors you are most likely to meet, and what they actually mean.
+Most Zigbee2MQTT problems come from three things: the wrong USB port, the wrong adapter type, or 2.4 GHz interference. Here are the errors you are most likely to meet, and what they actually mean. Since Gladys 5.3.3, the `Setup` page also names the cause and tells you what to do: the messages in bold below are the ones it shows.
 
 ### Error while starting zigbee-herdsman
 
-Zigbee2MQTT could not talk to your dongle at all. Check, in this order:
+Zigbee2MQTT could not talk to your dongle at all. When the driver gives up on the coordinator, Gladys shows **Zigbee2MQTT gets no answer from your Zigbee coordinator** on the `Setup` page. In the logs, the driver writes `Failed to connect to the adapter` (Texas Instruments, `zstack`), `Failed to start EZSP layer with status=HOST_FATAL_ERROR` (Silicon Labs, `ember`), `Failure to connect` (`ezsp`) or `failed to start adapter connection to firmware` (ConBee, `deconz`). Check, in this order:
 
 1. The **USB port** selected in `Integrations / Zigbee2Mqtt / Setup` is the one your dongle is on. If you moved the dongle to another port, or rebooted with a disk plugged in, the port name may have changed.
-2. The **dongle model** selected in the settings matches your hardware. A Silicon Labs dongle configured as a Texas Instruments one (or the opposite) fails here.
-3. Nothing else is using the dongle. Only one Zigbee2MQTT instance can hold the adapter.
-4. The dongle has enough power. Unplug it, plug it back in through a **powered USB hub** or a short USB extension cable, and restart the integration.
+2. The **dongle model** selected in the settings matches your hardware: it sets the driver Zigbee2MQTT uses. A Silicon Labs dongle configured as a Texas Instruments one (or the opposite) fails here.
+3. Nothing else is using the coordinator (Home Assistant, another Zigbee2MQTT…). Only one software can hold it.
+4. The dongle has enough power. Unplug it, plug it back in through a **powered USB hub** or a short USB extension cable, and restart the integration. With a network coordinator, restart it.
 
 ### Failed to connect to the adapter (SRSP - SYS - ping after 6000ms)
 
-This one is specific to Texas Instruments (CC2652 / ZBDongle-P) coordinators: the adapter is there, but it does not answer. It is almost always a wrong port, a wrong adapter type in the settings, or a dongle that needs to be physically unplugged and replugged. If it persists, reflashing the coordinator firmware solves the remaining cases.
+This one is specific to Texas Instruments (CC2652 / ZBDongle-P) coordinators: the adapter is there, but it does not answer. Gladys shows it as **Zigbee2MQTT gets no answer from your Zigbee coordinator**. It is almost always a wrong port, a wrong adapter type in the settings, or a dongle that needs to be physically unplugged and replugged. If it persists, reflashing the coordinator firmware solves the remaining cases.
+
+### Zigbee2MQTT cannot reach your network coordinator (ECONNREFUSED, ETIMEDOUT, ENOTFOUND)
+
+With a [network coordinator](#use-a-network-coordinator), Gladys shows this message when the driver cannot open the connection to it: the logs show `connect ECONNREFUSED`, `connect ETIMEDOUT`, `connect EHOSTUNREACH` or `getaddrinfo ENOTFOUND`. Check that:
+
+1. The coordinator is powered on and connected to your network: its web interface opens in your browser.
+2. Its address and TCP port in `Integrations / Zigbee2Mqtt / Setup` are the right ones, for example `tcp://192.168.1.20:6638`.
+3. Its IP address did not change: give it a fixed IP address on your router.
+
+### Refusing to start because configuration is not valid
+
+Zigbee2MQTT refuses its configuration file (`configuration.yaml`) and waits without exiting. Gladys shows **Zigbee2MQTT refuses to start because its configuration is not valid**, followed by the refused settings. Gladys writes this file for you, so this mostly happens after a manual edit: fix the listed settings in `configuration.yaml`, in the Zigbee2MQTT data folder. On a standard installation, it is `/var/lib/gladysassistant/zigbee2mqtt/z2m`. If you mounted another host folder when starting Gladys, this command prints the right one:
+
+```bash
+sudo docker inspect -f '{{range .Mounts}}{{if eq .Destination "/app/data"}}{{.Source}}{{end}}{{end}}' gladys-z2m-zigbee2mqtt
+```
+
+Then restart Zigbee2MQTT (`sudo docker restart gladys-z2m-zigbee2mqtt`). If you never edited the file, report it on the [Gladys forum](https://community.gladysassistant.com/) with the refused settings.
 
 ### Adapter EZSP protocol version (8) is not supported by host
 
-Your EmberZNet (Silicon Labs) dongle, typically a **Sonoff ZBDongle-E**, runs a firmware older than what the current Zigbee2MQTT expects. You have two options:
+Your EmberZNet (Silicon Labs) dongle, typically a **Sonoff ZBDongle-E**, runs a firmware older than 7.4, which the `ember` driver of Zigbee2MQTT refuses. Since Gladys 5.3.3, you usually have nothing to do: Gladys detects this error, switches your dongle to its `(legacy ezsp)` model (or a network coordinator to the `ezsp` adapter type), and installs Zigbee2MQTT again. The setup summary then tells you that Gladys uses the `ezsp` compatibility driver.
 
-- [Update the dongle firmware](https://www.zigbee2mqtt.io/guide/adapters/emberznet.html#firmware-flashing), which is the recommended path, or
-- select the `(legacy ezsp)` option in the dongle model list in Gladys, which tells Zigbee2MQTT to speak the old protocol.
+Gladys still shows an error in two cases:
+
+- Your model has no `(legacy ezsp)` variant: [update the dongle firmware](https://www.zigbee2mqtt.io/guide/adapters/emberznet.html#firmware-flashing).
+- The firmware is **newer** than what Zigbee2MQTT supports: the `ezsp` driver would refuse it too, so Gladys shows the raw error. Flash a firmware version that Zigbee2MQTT supports.
+
+The `ezsp` driver is deprecated. To go back to `ember`, update the dongle firmware, then choose the model without `(legacy ezsp)` in `Integrations / Zigbee2Mqtt / Setup` (or the `ember` type for a network coordinator).
 
 ### MQTT failed to connect, exiting (connection refused: not authorized)
 
@@ -184,7 +208,7 @@ In Gladys go to `Integrations / Zigbee2Mqtt`, then `Setup`. Gladys lists your US
 
 ### Why does Zigbee2MQTT fail to start?
 
-Nearly always because Zigbee2MQTT cannot reach the coordinator: the wrong USB port is selected, the dongle model in the settings does not match your hardware, the dongle is short on power, or its firmware is too old (the `EZSP protocol version is not supported` error on Sonoff ZBDongle-E dongles). Check the port and the model in the integration settings first, then unplug and replug the dongle through a powered hub or a USB extension cable.
+Nearly always because Zigbee2MQTT cannot reach the coordinator: the wrong USB port is selected, the dongle model in the settings does not match your hardware, the dongle is short on power, or its firmware is too old (the `EZSP protocol version is not supported` error on Sonoff ZBDongle-E dongles, which Gladys handles on its own since version 5.3.3, by switching to the `ezsp` driver). Since that version, the `Setup` page also tells you the cause and what to do. Check the port and the model in the integration settings first, then unplug and replug the dongle through a powered hub or a USB extension cable.
 
 ### Why do my Zigbee devices keep disconnecting?
 
@@ -232,7 +256,7 @@ Interference on the 2.4 GHz band is the main cause, and it shows up as `MAC chan
         name: "Why does Zigbee2MQTT fail to start?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Nearly always because Zigbee2MQTT cannot reach the coordinator: the wrong USB port is selected, the dongle model in the settings does not match your hardware, the dongle is short on power, or its firmware is too old (the EZSP protocol version is not supported error on Sonoff ZBDongle-E dongles). Check the port and the model in the integration settings first, then unplug and replug the dongle through a powered hub or a USB extension cable.",
+          text: "Nearly always because Zigbee2MQTT cannot reach the coordinator: the wrong USB port is selected, the dongle model in the settings does not match your hardware, the dongle is short on power, or its firmware is too old (the EZSP protocol version is not supported error on Sonoff ZBDongle-E dongles, which Gladys handles on its own since version 5.3.3, by switching to the ezsp driver). Since that version, the Setup page also tells you the cause and what to do. Check the port and the model in the integration settings first, then unplug and replug the dongle through a powered hub or a USB extension cable.",
         },
       },
       {
