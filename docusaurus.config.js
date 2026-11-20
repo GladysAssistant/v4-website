@@ -92,7 +92,9 @@ module.exports = function createConfig() {
         }, */
         {
           to: "docs/",
-          activeBasePath: "docs",
+          // Active on every /docs page except /docs/integrations, which has
+          // its own navbar item (otherwise both links are highlighted there).
+          activeBaseRegex: "^/(fr/|de/|es/)?docs(/(?!integrations(/|$))|$)",
           label: "Getting started",
           position: "left",
         },
