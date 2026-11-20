@@ -1,0 +1,182 @@
+---
+title: "Integración domótica ESC/POS ticket printers, gratuita y de código abierto"
+sidebar_label: "ESC/POS ticket printers"
+description: "Imprima notas, listas y resúmenes desde sus escenas en una impresora de tickets ESC/POS en red. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-escpos.png"
+keywords:
+  - "esc/pos ticket printers"
+  - "domótica esc/pos ticket printers"
+  - "gladys esc/pos ticket printers"
+  - "esc/pos ticket printers gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-escpos instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"ESC/POS ticket printers","description":"Imprima notas, listas y resúmenes desde sus escenas en una impresora de tickets ESC/POS en red.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-escpos","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-escpos.png","type":"device","version":"1.0.0","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-11-20T06:27:02Z"}} />
+
+Imprima desde sus escenas en una impresora térmica de tickets de la red: el
+resumen del día, una lista de la compra, una nota para la familia. Todo se
+queda en su red local.
+
+> Desarrollada sin el hardware: sus comentarios son bienvenidos. La
+> integración se ha probado con una impresora simulada, no con una real.
+
+## Qué obtiene
+
+- Una acción de escena **Imprimir un ticket**: un texto con variables de
+  escena, opcionalmente con título (grande, doble altura o negrita), la fecha
+  y la hora, un código QR, y luego el corte del papel.
+- Un dispositivo por impresora: **Accesible**, **Papel casi agotado**, **Sin
+  papel**, un texto **Estado** (lista, papel, tapa abierta, error,
+  inaccesible) y el número de **Tickets impresos** por Gladys. La impresora
+  se comprueba una vez por minuto.
+- Un disparador de escena **Ticket no impreso**, para recibir un aviso cuando
+  una escena no ha podido imprimir.
+- Un widget del panel **Impresora de tickets**, con un botón para imprimir
+  una nota escrita en el panel.
+
+## Antes de empezar
+
+- Una impresora térmica de tickets que hable **ESC/POS** en la red (puerto
+  TCP directo **9100**): Epson TM-T20/T88, Xprinter, Munbyn, Rongta, HOIN…
+  Las Star funcionan en su modo de emulación ESC/POS. Las impresoras solo
+  USB o Bluetooth no son compatibles.
+- Una **dirección IP fija** para la impresora (una reserva DHCP en su
+  router). La mayoría imprime su dirección si mantiene pulsado el botón de
+  avance de papel al encenderla.
+- Gladys 5.2 o posterior.
+
+## Configuración
+
+1. En **Integraciones → Impresoras de tickets ESC/POS → Configuración**,
+   indique las **direcciones de las impresoras**, separadas por comas:
+   `192.168.1.50`, o `192.168.1.51:9101` para otro puerto.
+2. Elija el **ancho del papel**: 58 mm imprime 32 caracteres por línea,
+   80 mm imprime 48 (o 42 en algunos modelos: elíjalo si las líneas del
+   ticket de prueba salen cortadas).
+3. Deje activado **Cortar el papel tras cada ticket** si la impresora tiene
+   cortador.
+4. Guarde, abra la pestaña **Descubrimiento** y añada las impresoras.
+5. Haga clic en **Imprimir un ticket de prueba**: cada impresora configurada
+   imprime un título, la fecha, los acentos de los cuatro idiomas y un código
+   QR.
+
+**Preguntar a la impresora el estado del papel** usa los comandos de estado
+en tiempo real (DLE EOT). La mayoría de las impresoras responde; cuando una
+no responde, el estado indica «papel no indicado» y las funciones de papel
+quedan vacías. Desactívelo solo si una impresora imprime caracteres extraños.
+
+El **idioma de los textos de la integración** fija los nombres de los
+dispositivos, la fecha y el ticket de prueba, y los mensajes de error.
+
+## Escenas
+
+**Imprimir un ticket** (acción): elija la impresora y escriba el texto. El
+campo tiene una sola línea: escriba `\n` donde deba empezar una nueva línea,
+por ejemplo `Leche\nPan\n{{triggerEvent.data.name}}`. Opcional: un título y
+su estilo, la fecha y la hora, un código QR (un enlace o un texto, 500 bytes
+como máximo). La acción devuelve el número de tickets impresos en esta
+impresora.
+
+Si la impresora está inaccesible, sin papel o con la tapa abierta, no se
+imprime nada, la acción falla (en rojo en el registro de la escena) y se
+lanza el disparador **Ticket no impreso**, como máximo una vez por impresora
+cada 15 minutos. Sus variables dan el nombre de la impresora, el motivo y el
+mensaje de error: una escena puede entonces avisarle por otro canal.
+
+Las funciones de la impresora también sirven como disparadores y condiciones
+habituales: por ejemplo «Sin papel pasa a 1» → enviar un mensaje.
+
+## Panel
+
+El widget **Impresora de tickets** muestra los tickets impresos hoy y en
+total, y el estado de las impresoras. Con una impresora elegida en sus
+ajustes, ofrece también dos botones, cada uno se puede ocultar:
+
+- **Imprimir una nota**: se abre un formulario en el panel, escriba un
+  título y un texto, el ticket se imprime con la fecha.
+- **Ticket de prueba**.
+
+## Acentos y páginas de códigos
+
+Una impresora de tickets no tiene fuentes para cada idioma: imprime con una
+tabla de caracteres (página de códigos). La integración convierte el texto a
+la tabla elegida:
+
+- **PC858** (por defecto) sirve para Epson y la mayoría de los clones:
+  acentos franceses, alemanes, españoles y el símbolo del euro.
+- Si el ticket de prueba imprime letras incorrectas, pruebe **PC850** y
+  luego **WPC1252**.
+- **Sin acentos** imprime letras simples (é → e): funciona en todas las
+  impresoras.
+
+Los caracteres que faltan en una tabla se escriben de la forma más parecida
+(’ → ', œ → oe, € → EUR); los emojis y los demás alfabetos se imprimen como
+`?`.
+
+## Límites
+
+- Solo texto: ni imágenes ni logotipos.
+- Una única configuración para todas las impresoras (ancho, página de
+  códigos, corte).
+- Cuando la impresora indica el estado del papel, no se envía nada mientras
+  falte papel o la tapa esté abierta. Una impresora que no lo indica (o con
+  la opción de estado desactivada) guarda el ticket y lo imprime al recargarla.
+- Las impresoras no se descubren automáticamente: las impresoras ESC/POS no
+  se anuncian en la red.
+
+## Solución de problemas
+
+- **La impresora sigue «Inaccesible»**: compruebe su dirección (página de
+  prueba de la impresora), que está en la misma red y que el puerto 9100
+  está abierto (`nc -vz 192.168.1.50 9100` desde otro ordenador).
+- **No se imprime nada, sin error**: algunas impresoras solo aceptan una
+  conexión a la vez: cierre las demás aplicaciones que la usan.
+- **Acentos incorrectos**: cambie la página de códigos e imprima un ticket de
+  prueba.
+- **Líneas cortadas o demasiado cortas**: cambie el ancho del papel.
+- **El código QR se imprime como texto, o el papel no se corta**: algunos
+  clones muy baratos no tienen estos comandos; desactive el corte y deje el
+  código QR vacío.
+- Registros: en la página de la integración; `LOG_LEVEL=debug` muestra cada
+  comprobación.
+
+## Parámetros de configuración
+
+Estos son los parámetros que ESC/POS ticket printers te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Sus impresoras de tickets | `section` | No | Las impresoras térmicas de tickets en red que hablan ESC/POS por el puerto TCP directo 9100: Epson TM, Xprinter, Munbyn, Rongta, HOIN y Star en modo ESC/POS. Asigne a cada impresora una dirección IP fija en su router, indíquela a continuación, añada las impresoras en la pestaña Descubrimiento e imprima un ticket de prueba. |
+| Direcciones de las impresoras | `string` | Sí | Una o varias direcciones separadas por comas, puerto 9100 salvo indicación (host:puerto). |
+| Ancho del papel | `select` | No | Fija los caracteres por línea. La mayoría de las impresoras de 80 mm imprimen 48; algunas, 42. |
+| Página de códigos (acentos) | `select` | No | La tabla de caracteres de la impresora. PC858 sirve para la mayoría; si el ticket de prueba imprime mal los acentos, pruebe PC850 y luego WPC1252. |
+| Cortar el papel tras cada ticket | `boolean` | No | Desactívelo en una impresora sin cortador: el papel sale entonces para cortarlo a mano. |
+| Preguntar a la impresora el estado del papel | `boolean` | No | Estado en tiempo real (DLE EOT): papel, tapa. Desactívelo si una impresora imprime caracteres extraños. |
+| Idioma de los textos de la integración | `select` | No | Para los nombres de los dispositivos, la fecha y el ticket de prueba, y los mensajes de error. |
+
+## Cómo instalar ESC/POS ticket printers en Gladys
+
+1. En Gladys, abre **Integraciones**: ESC/POS ticket printers aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-escpos:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-escpos](https://github.com/guim31/gladys-escpos).
+
+ESC/POS ticket printers requiere Gladys `>=5.2.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+ESC/POS ticket printers es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-escpos) — [fuente de esta documentación](https://github.com/guim31/gladys-escpos/blob/HEAD/docs/es.md)

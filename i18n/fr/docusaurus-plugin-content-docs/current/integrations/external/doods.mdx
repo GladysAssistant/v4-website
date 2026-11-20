@@ -1,0 +1,200 @@
+---
+title: "Intégration domotique DOODS, gratuite et open source"
+sidebar_label: "DOODS"
+description: "Détection locale d’objets sur vos caméras avec DOODS : personne, voiture, chat… sans cloud Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-doods.png"
+keywords:
+  - "doods"
+  - "domotique doods"
+  - "gladys doods"
+  - "doods gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/guim31/gladys-doods instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"DOODS","description":"Détection locale d’objets sur vos caméras avec DOODS : personne, voiture, chat… sans cloud","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-doods","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-doods.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-20T06:24:38Z"}} />
+
+Apporte la **détection d'objets locale** de [DOODS](https://github.com/snowzach/doods2) (Dedicated
+Open Object Detection Service) aux images de vos caméras : Gladys sait si une personne, une voiture,
+un chat… est dans le champ, combien, et affiche l'image avec les cadres tracés par DOODS. Tout reste
+chez vous : pas de cloud, pas de compte. DOODS analyse une image à la demande ; ce n'est pas un
+enregistreur vidéo (voir Frigate ou Viseron pour cela).
+
+Testée contre un vrai serveur DOODS en Docker (snowzach/doods2, processeur, détecteurs `default`
+tflite et `tensorflow`) avec des photos libres (une personne, des voitures, un chat, une pièce vide),
+pas encore avec de vraies caméras en service : vos retours sont les bienvenus sur
+[GitHub](https://github.com/guim31/gladys-doods/issues) ou sur le forum Gladys.
+
+## Prérequis
+
+- Gladys 5.1 ou plus récent.
+- Un serveur DOODS (image Docker `snowzach/doods2`), joignable depuis Gladys sur son port (8080 par
+  défaut).
+- Pour chaque caméra, une adresse que DOODS peut lire : une **URL d'instantané JPEG** (la plupart des
+  caméras IP en ont une, ex. `http://utilisateur:motdepasse@192.168.1.30/snapshot.jpg`) ou un **flux
+  RTSP** (`rtsp://…`).
+
+Une intégration ne peut pas lire l'image d'une caméra déjà présente dans Gladys (pas d'accès prévu
+pour les intégrations externes) : donnez l'adresse de la caméra elle-même.
+
+## Installation
+
+1. Lancez DOODS, par exemple : `docker run -d --restart unless-stopped -p 8080:8080 snowzach/doods2`.
+2. Dans Gladys, **Intégrations → Installer depuis GitHub**, adresse
+   `https://github.com/guim31/gladys-doods`.
+3. Dans la configuration, renseignez **Adresse de DOODS**, puis pour chaque caméra (quatre au plus)
+   un **Nom** et une **Adresse de l'image**.
+4. Lancez l'action **Vérifier la connexion** : elle indique le détecteur et analyse chaque caméra une
+   fois.
+5. Ouvrez l'onglet **Découverte** et ajoutez les caméras : un appareil par caméra.
+
+Réglages :
+
+- **Détecteur** : `default` (tflite, rapide : environ 0,3 s par image sur un processeur) ou
+  `tensorflow` (plus précis, environ 2 s, et plus d'une minute pour sa toute première image, le temps
+  de charger le modèle), ou tout détecteur configuré dans votre DOODS.
+- **Objets recherchés** : les étiquettes du détecteur, en anglais, séparées par des virgules :
+  `person`, `car`, `truck`, `bicycle`, `motorcycle`, `cat`, `dog`, `bird`… (les 80 étiquettes COCO).
+  `*` garde toutes les étiquettes. Chaque caméra peut avoir sa propre liste dans **Objets
+  (facultatif)**.
+- **Confiance minimale** : les détections en dessous sont ignorées. Une caméra peut avoir la sienne
+  dans **Confiance en % (facultatif)**.
+- **Intervalle d'analyse** : la fréquence d'analyse de chaque caméra ajoutée, l'une après l'autre.
+  **À la demande seulement** n'analyse rien de lui-même (action de scène, bouton du widget, image
+  demandée par Gladys).
+- **Langue des noms** : noms des fonctionnalités, objets et textes des scènes.
+
+**Charge du processeur** : chaque analyse décode une image et fait tourner le modèle sur la machine
+de DOODS. Avec quatre caméras toutes les 10 secondes et le détecteur `tensorflow`, une petite machine
+est occupée en permanence ; 1 minute avec `default` est un bon point de départ.
+
+## Les appareils dans Gladys
+
+Un appareil par caméra, avec :
+
+- **Image** : la dernière image analysée, avec les cadres tracés par DOODS (réduite pour Gladys).
+- **Objet détecté** : un des objets recherchés est dans le champ (Oui/Non).
+- **Objets détectés** : ce qui est dans le champ, ex. « Personne ×2, Voiture », ou « Aucun ».
+- Un compteur par étiquette recherchée, ex. **Personne (nombre)**, **Voiture (nombre)** (pas avec
+  `*`).
+
+Le badge de l'appareil passe à « injoignable » quand l'image de la caméra ne peut pas être lue.
+
+## Widget du tableau de bord
+
+**Caméra DOODS** : l'image analysée, les objets trouvés, la meilleure confiance, le nombre de chaque
+étiquette recherchée, l'heure de l'analyse, et un bouton **Analyser maintenant** (le réglage
+**Masquer le bouton Analyser** le cache).
+
+## Scènes
+
+### Déclencheurs
+
+- **Objet détecté par DOODS** : un objet apparaît lors d'une analyse régulière (il était absent de la
+  précédente), sur une caméra ou n'importe laquelle. Filtre sur les objets. Variables : caméra, objet,
+  nombre, confiance. Un seul événement quand l'objet apparaît, pas un par analyse. Ce qui est déjà
+  dans le champ à l'ajout de l'appareil, après un redémarrage ou un changement de réglages ne compte
+  pas. Le filtre propose les objets courants : pour une autre étiquette, laissez-le vide.
+- **Image de caméra non lue** : l'image d'une caméra n'a pas pu être lue (premier échec d'affilée).
+
+Les déclencheurs viennent des seules analyses régulières : avec **À la demande seulement**, ils ne se
+déclenchent jamais.
+
+### Actions
+
+- **Analyser une caméra avec DOODS** : analyse la caméra maintenant et met à jour son image. Sorties :
+  objet détecté, objets détectés, nombre d'objets, nombre de personnes, meilleure confiance. Elle ne
+  déclenche aucun déclencheur.
+
+### Idées de scènes
+
+- Quand la porte d'entrée s'ouvre, **Analyser une caméra avec DOODS**, puis si le nombre de personnes
+  dépasse 0, l'action « Envoyer une image de caméra » du cœur vous envoie l'image avec ses cadres.
+- **Objet détecté par DOODS** (personne, caméra du jardin) quand l'alarme est active → notification.
+- Une voiture dans l'allée la nuit → allumer l'éclairage extérieur.
+
+## Dépannage
+
+- **DOODS ne répond pas** : vérifiez l'adresse et le port (8080), et que DOODS tourne
+  (`docker logs`).
+- **Pas de détecteur « … »** : le statut liste les détecteurs de votre serveur ; recopiez le nom dans
+  **Détecteur**.
+- **Image non lue** : ouvrez l'adresse de la caméra dans un navigateur depuis la machine de Gladys.
+  Une adresse HTTP doit donner une image JPEG, pas une page. L'authentification Digest n'est pas prise
+  en charge en HTTP : utilisez plutôt le flux RTSP. Un flux RTSP est lu par DOODS lui-même, qui doit
+  donc joindre la caméra.
+- **Étiquettes inconnues de ce détecteur** : une faute de frappe dans **Objets recherchés**, ou un
+  autre modèle.
+- **Rien n'est détecté** : baissez la **Confiance minimale**, ou essayez le détecteur `tensorflow`.
+- Logs détaillés : `LOG_LEVEL=debug`.
+
+## Limites
+
+- Quatre caméras au plus, et huit étiquettes comptées par caméra.
+- L'adresse de la caméra, mot de passe compris, est enregistrée dans la configuration de
+  l'intégration et y reste visible aux administrateurs de Gladys : préférez un utilisateur de caméra
+  qui ne peut que regarder.
+- Pas de vidéo : une image par analyse ; un objet qui passe entre deux analyses n'est pas vu.
+- Pas de zones de détection (`regions` de DOODS) dans cette version.
+- Les images des caméras partent vers Gladys au plus toutes les 5 secondes par caméra.
+- Sans lien avec le projet DOODS. Développée sans vraies caméras : vos retours sont les bienvenus.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par DOODS dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Votre serveur DOODS | `section` | Non | DOODS détecte les objets (personne, voiture, chat…) dans des images, sur votre propre machine. Saisissez son adresse, puis jusqu'à quatre caméras ci-dessous, et ouvrez l'onglet Découverte : un appareil par caméra. |
+| Adresse de DOODS | `string` | Oui | Sans port, 8080 est utilisé. Ajoutez https:\/\/ derrière un proxy inverse. |
+| Détecteur | `string` | Non | Nom d'un détecteur DOODS : default (rapide, tflite), tensorflow (plus précis, plus lent)… L'action Vérifier les liste. |
+| Objets recherchés | `string` | Non | Étiquettes du détecteur en anglais, séparées par des virgules (8 au plus, chacune un compteur). * = toutes. Une caméra peut avoir sa propre liste. |
+| Confiance minimale | `select` | Non | Les détections en dessous sont ignorées. Plus haut : moins de fausses alertes, plus d'oublis. |
+| Intervalle d'analyse | `select` | Non | Chaque caméra ajoutée est analysée à ce rythme, l'une après l'autre. Chaque analyse consomme du processeur sur la machine de DOODS. |
+| Langue des noms | `select` | Non | Noms des fonctionnalités, objets et textes des scènes. |
+| Caméra 1 | `section` | Non | Une URL d'instantané JPEG (http:\/\/utilisateur:motdepasse@camera/snapshot.jpg) ou un flux RTSP. Laissez l'adresse vide pour ne pas utiliser une caméra. |
+| Nom | `string` | Non |  |
+| Adresse de l'image | `string` | Non |  |
+| Objets (facultatif) | `string` | Non | Vide : la liste générale. |
+| Confiance en % (facultatif) | `string` | Non | Vide : le minimum général. |
+| Caméra 2 | `section` | Non |  |
+| Nom | `string` | Non |  |
+| Adresse de l'image | `string` | Non |  |
+| Objets (facultatif) | `string` | Non | Vide : la liste générale. |
+| Confiance en % (facultatif) | `string` | Non | Vide : le minimum général. |
+| Caméra 3 | `section` | Non |  |
+| Nom | `string` | Non |  |
+| Adresse de l'image | `string` | Non |  |
+| Objets (facultatif) | `string` | Non | Vide : la liste générale. |
+| Confiance en % (facultatif) | `string` | Non | Vide : le minimum général. |
+| Caméra 4 | `section` | Non |  |
+| Nom | `string` | Non |  |
+| Adresse de l'image | `string` | Non |  |
+| Objets (facultatif) | `string` | Non | Vide : la liste générale. |
+| Confiance en % (facultatif) | `string` | Non | Vide : le minimum général. |
+
+## Comment installer DOODS dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : DOODS apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/guim31/gladys-doods:1.0.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/guim31/gladys-doods](https://github.com/guim31/gladys-doods).
+
+DOODS nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+DOODS est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [guim31](https://github.com/guim31), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/guim31/gladys-doods) — [source de cette documentation](https://github.com/guim31/gladys-doods/blob/HEAD/docs/fr.md)
