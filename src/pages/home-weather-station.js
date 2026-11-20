@@ -4,6 +4,8 @@ import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import JsonLd from "../components/seo/JsonLd";
+import AffiliateDisclosure from "../components/AffiliateDisclosure";
+import { containsAmazonAffiliateLink } from "../utils/affiliateLinks";
 import { getHomeWeatherStationPageSchema } from "../data/schemas/homeWeatherStation";
 import homeWeatherStationContent, {
   homeWeatherStationFaqEn,
@@ -173,6 +175,7 @@ function WeatherContent({ content, faq }) {
             </Link>
           </div>
         </section>
+        {containsAmazonAffiliateLink(content) && <AffiliateDisclosure />}
       </div>
     </main>
   );

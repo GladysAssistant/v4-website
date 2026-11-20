@@ -294,9 +294,7 @@ module.exports = function createConfig() {
           ],
         },
       ],
-      // The affiliate disclosure Amazon requires on every page that carries
-      // an Amazon link (docs, blog, landing pages).
-      copyright: `Copyright © ${new Date().getFullYear()} Gladys Assistant. As an Amazon Associate, Gladys Assistant earns from qualifying purchases.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Gladys Assistant.`,
     },
     algolia: {
       // The application ID provided by Algolia
