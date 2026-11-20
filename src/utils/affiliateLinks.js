@@ -58,9 +58,33 @@ const amazonSearchLink = (query, locale) => {
   return addAffiliateTag(`${store}/s?k=${encodeURIComponent(query)}`);
 };
 
+// True when a value (a page's content object, an array, a string) holds an
+// Amazon link carrying one of our partner ids, at any depth. The React pages
+// that build their own Amazon links use it to show <AffiliateDisclosure />
+// only in the languages whose links are actually tagged.
+const AMAZON_TAGS = Object.entries(AFFILIATE_PARAMS)
+  .filter(([site]) => site.startsWith("amazon."))
+  .map(([, param]) => `${param.name}=${param.value}`);
+
+const containsAmazonAffiliateLink = (value) => {
+  if (typeof value === "string") {
+    return (
+      /amazon\./i.test(value) && AMAZON_TAGS.some((tag) => value.includes(tag))
+    );
+  }
+  if (Array.isArray(value)) {
+    return value.some(containsAmazonAffiliateLink);
+  }
+  if (value && typeof value === "object") {
+    return Object.values(value).some(containsAmazonAffiliateLink);
+  }
+  return false;
+};
+
 module.exports = {
   AFFILIATE_PARAMS,
   AMAZON_STORES,
   addAffiliateTag,
   amazonSearchLink,
+  containsAmazonAffiliateLink,
 };

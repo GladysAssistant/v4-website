@@ -5,6 +5,8 @@ import useBaseUrl from "@docusaurus/useBaseUrl";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import JsonLd from "../components/seo/JsonLd";
+import AffiliateDisclosure from "../components/AffiliateDisclosure";
+import { containsAmazonAffiliateLink } from "../utils/affiliateLinks";
 import { getBestZigbeeDonglePageSchema } from "../data/schemas/bestZigbeeDongle";
 import bestZigbeeDongleContent, {
   bestZigbeeDongleFaqEn,
@@ -190,6 +192,7 @@ function GuideContent({ content, faq }) {
             </Link>
           </div>
         </section>
+        {containsAmazonAffiliateLink(content) && <AffiliateDisclosure />}
       </div>
     </main>
   );
