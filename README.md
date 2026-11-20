@@ -172,11 +172,9 @@ One-time setup:
       Domains & Routes > Add > Custom domain), which takes effect at once,
       where a deployment takes several minutes.
 
-   Then list the domain under `routes` in `wrangler.workers.jsonc` (done for
-   gladysassistant.com), so that the configuration file says what the
-   dashboard does. From then on the file is the reference: every deployment
-   replaces the custom domains of the Worker with the ones it lists, so a
-   domain added in the dashboard only is removed by the next deployment.
+   Then uncomment `routes` in `wrangler.workers.jsonc` and merge, so that the
+   configuration file says what the dashboard does: the routes of the file
+   replace the ones set in the dashboard on every deployment.
 
 Once the domain is served by the Worker, the Pages project can be deleted,
 along with what only exists for it: the `refresh-dev-activity` workflow (the
