@@ -20,17 +20,32 @@ const isAffiliate = (url) =>
   /^https?:\/\/([a-z0-9-]+\.)*(amazon|domadoo)\./i.test(url) &&
   /[?&](tag|domid)=/.test(url);
 
+const isAmazonAffiliate = (url) =>
+  isAffiliate(url) && /^https?:\/\/([a-z0-9-]+\.)*amazon\./i.test(url);
+
+// A page whose Markdown links to Amazon ends with a small affiliate notice,
+// the one Amazon asks for next to its links. The component is registered in
+// src/theme/MDXComponents.js, so the MDX file needs no import.
+const DISCLOSURE = {
+  type: "mdxJsxFlowElement",
+  name: "AffiliateDisclosure",
+  attributes: [],
+  children: [],
+};
+
 // Definitions are referenced by links ([text][id]): those links are marked
 // once the definitions are known, see the second pass below.
-const visit = (node, sponsoredDefinitions) => {
+const visit = (node, sponsoredDefinitions, state) => {
   if (node.type === "definition" && node.url) {
     node.url = addAffiliateTag(node.url);
+    state.amazon = state.amazon || isAmazonAffiliate(node.url);
     if (isAffiliate(node.url)) {
       sponsoredDefinitions.add(String(node.identifier).toLowerCase());
     }
   }
   if (node.type === "link" && node.url) {
     node.url = addAffiliateTag(node.url);
+    state.amazon = state.amazon || isAmazonAffiliate(node.url);
     if (isAffiliate(node.url)) {
       node.data = node.data || {};
       node.data.hProperties = {
@@ -48,6 +63,7 @@ const visit = (node, sponsoredDefinitions) => {
       if (attribute.name === "href" && typeof attribute.value === "string") {
         attribute.value = addAffiliateTag(attribute.value);
         sponsored = isAffiliate(attribute.value);
+        state.amazon = state.amazon || isAmazonAffiliate(attribute.value);
       }
     });
     if (sponsored) {
@@ -67,7 +83,9 @@ const visit = (node, sponsoredDefinitions) => {
     }
   }
   if (Array.isArray(node.children)) {
-    node.children.forEach((child) => visit(child, sponsoredDefinitions));
+    node.children.forEach((child) =>
+      visit(child, sponsoredDefinitions, state),
+    );
   }
 };
 
@@ -90,9 +108,13 @@ const markReferences = (node, sponsoredDefinitions) => {
 module.exports = function remarkAffiliateLinks() {
   return (tree) => {
     const sponsoredDefinitions = new Set();
-    visit(tree, sponsoredDefinitions);
+    const state = { amazon: false };
+    visit(tree, sponsoredDefinitions, state);
     if (sponsoredDefinitions.size > 0) {
       markReferences(tree, sponsoredDefinitions);
+    }
+    if (state.amazon) {
+      tree.children.push({ ...DISCLOSURE });
     }
   };
 };
