@@ -26,7 +26,7 @@ Thanks [@cicoub13](https://community.gladysassistant.com/) for this contribution
 
 ### 💡 Zigbee2MQTT: Philips Hue Dimmer Switch v2 added
 
-Support for the **Philips Hue Dimmer Switch v2** remote has been added in Zigbee2MQTT. You can now easily use it in your Gladys scenes and automations.
+Support for the **[Philips Hue Dimmer Switch v2](https://www.amazon.com/s?k=Philips%20Hue%20Dimmer%20Switch)** remote has been added in Zigbee2MQTT. You can now easily use it in your Gladys scenes and automations.
 
 ## 🛠 Fixes
 

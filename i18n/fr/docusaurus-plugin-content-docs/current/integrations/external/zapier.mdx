@@ -1,0 +1,160 @@
+---
+title: "Intégration domotique Zapier, gratuite et open source"
+sidebar_label: "Zapier"
+description: "Non officiel : envoyez des événements de scène à vos Zaps, lancez des scènes depuis un Zap (Plus). Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-zapier.png"
+keywords:
+  - "zapier"
+  - "domotique zapier"
+  - "gladys zapier"
+  - "zapier gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/LM1LC3N7/gladys-zapier instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Zapier","description":"Non officiel : envoyez des événements de scène à vos Zaps, lancez des scènes depuis un Zap (Plus).","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-zapier","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-zapier.png","type":"provider","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-19T04:33:27Z"}} />
+
+Intégration non officielle, sans lien avec Zapier. Elle n'a encore jamais été testée avec un vrai
+compte Zapier : dites-nous comment ça se passe.
+
+## Ce qu'elle fait
+
+- **De Gladys vers Zapier** : les actions de scène **Envoyer à un Zap** et **Envoyer du JSON à un
+  Zap** postent un événement vers l'URL _Catch Hook_ d'un Zap. Le Zap s'exécute alors avec les
+  champs `event`, `value1`, `value2`, `value3` (ou les clés de votre objet JSON), `source`
+  (`gladys`) et `sent_at` (date ISO).
+- **De Zapier vers Gladys** (nécessite **Gladys Plus**) : un Zap poste vers l'URL Gladys Plus de
+  l'intégration, et vos scènes démarrent sur le déclencheur **Événement reçu de Zapier**, avec les
+  variables `event`, `value1`, `value2`, `value3` et `payload` (les autres champs, en JSON).
+
+Zapier n'est appelé que par les deux actions de scène et le bouton **Envoyer un événement de
+test** : jamais au démarrage, jamais sur une minuterie, jamais parce qu'un événement a été reçu.
+
+## Coûts : tâches Zapier et exécutions de Zap
+
+« Webhooks by Zapier » est une application premium : il faut une offre Zapier payante. **Chaque
+envoi lance le Zap et utilise une tâche Zapier par étape d'action exécutée** : un Zap à 3 étapes d'action utilise 3
+tâches. Le module compte des **exécutions de Zap** (une par Zap lancé), pas des tâches, et refuse
+un envoi au-delà de ses plafonds : divisez les tâches de votre offre par le nombre d'étapes d'action
+de vos Zaps.
+
+- **Nombre maximal d'exécutions de Zap sur 24 heures** (de 1 à 2000, 20 par défaut) ;
+- **Nombre maximal d'exécutions de Zap sur 30 jours** (de 1 à 50000, 500 par défaut) : 30 jours glissants, pas
+  votre mois de facturation Zapier ; réglez-le sous les tâches de votre offre divisées par le nombre d'étapes d'action, moins ce
+  qu'utilisent vos autres Zaps ;
+- **10 requêtes par minute** au plus, quels que soient les plafonds, répondues ou non (une requête
+  refusée par Zapier compte ici même quand son exécution est rendue) ;
+- dès le **troisième refus d'affilée d'un même Catch Hook** (réponse 4xx ou redirection), une pause
+  de **ce hook seulement**, 60 s, doublée à chaque nouveau refus, 6 h au plus : les autres hooks
+  continuent. Pendant la pause, le bouton de test peut encore essayer ce hook (une requête par
+  clic) ; un envoi accepté termine la série, et enregistrer la configuration lève la pause
+  aussitôt.
+
+Un envoi est compté, et le décompte enregistré dans `/data`, **avant** que sa requête parte (pas
+d'enregistrement, pas de requête) : le décompte survit à un redémarrage. Il n'est rendu que si
+Zapier ne l'a sûrement pas pris (réponse 4xx, 429, redirection, nom ou connexion refusés). Un envoi
+sans réponse claire (délai dépassé, connexion coupée, 5xx) reste compté et **n'est pas retenté** :
+un second essai pourrait lancer le Zap deux fois. Le module ne compte que ses propres envois ; votre
+tableau de bord Zapier montre les vraies tâches.
+
+## Régler les envois vers Zapier
+
+1. Dans Zapier, créez un Zap dont le déclencheur est **Webhooks by Zapier** → **Catch Hook**.
+2. Copiez l'URL affichée par Zapier (`https://hooks.zapier.com/hooks/catch/<compte>/<hook>/`) dans
+   **URL Catch Hook 1** de la configuration de l'intégration (jusqu'à trois Zaps : URL 2 et 3).
+   Zapier documente la réunion des hooks de plusieurs Zaps du même compte par des virgules
+   (`…/catch/123456/zbB61,kzXC4/`) : chaque Zap nommé s'exécute et compte pour une exécution.
+3. Cliquez sur **Envoyer un événement de test** : l'événement `gladys_test` (avec `test: true`)
+   arrive dans le Zap et compte pour une exécution. Construisez ensuite la suite du Zap avec ses champs.
+4. Dans une scène, ajoutez **Envoyer à un Zap** : choisissez le Catch Hook, un nom d'événement (1 à
+   64 lettres, chiffres, `_`, `-`, `.`) et jusqu'à trois valeurs (1000 caractères chacune au plus,
+   jamais coupées : une valeur plus longue fait refuser l'envoi). Sorties pour les actions
+   suivantes : `request_id` (celui de Zapier) et `zap_runs`.
+
+**L'URL Catch Hook est un secret** : quiconque l'a peut lancer le Zap. Elle est gardée par Gladys
+dans sa base, jamais réaffichée, envoyée seulement à `hooks.zapier.com`, et jamais écrite dans les
+journaux, le statut ni `/data`. Une URL qui n'est pas une URL Catch Hook de Zapier est refusée (et
+jamais réaffichée).
+
+## Régler les événements venant de Zapier (Gladys Plus)
+
+Sans Gladys Plus, seuls les envois vers Zapier marchent ; le statut de l'intégration le dit.
+
+1. Liez Gladys Plus et collez votre clé Open API dans le bloc **Webhooks Gladys Plus** de la
+   configuration de l'intégration : Gladys affiche l'URL publique du webhook **Événements de
+   Zapier**. Cette URL est un secret elle aussi.
+2. Dans un Zap, ajoutez l'action **Webhooks by Zapier** → **POST**, URL = cette URL Gladys Plus,
+   _Payload Type_ `json`, _Data_ : `event` = votre nom d'événement, et `value1`, `value2`, `value3`
+   à votre guise. Les autres clés vont dans `payload`, un objet JSON de 20 clés et 1000 caractères au plus :
+   une clé qui ne tient pas est laissée de côté, jamais coupée.
+3. Facultatif : saisissez un **secret partagé** (8 à 200 caractères, sans espace) dans la
+   configuration, et ajoutez un champ `secret` de même valeur dans le Zap : un événement qui ne le
+   porte pas est ignoré. Un secret illisible fait refuser tout événement.
+4. Dans une scène, utilisez le déclencheur **Événement reçu de Zapier**, filtré ou non sur le nom
+   de l'événement.
+
+Le module publie 60 événements par minute au plus et ignore un corps de plus de 64 Ko.
+
+## Boucles
+
+Un événement reçu n'envoie jamais rien vers Zapier. Mais une scène lancée par **Événement reçu de
+Zapier** qui envoie à un Zap qui rappelle Gladys tournerait en boucle et consommerait des tâches.
+Le module surveille les envois qu'une scène demande moins de 15 s après un événement reçu : **après 3
+d'entre eux en 5 minutes, le suivant est refusé et tous les envois s'arrêtent 30 minutes** (gardé au
+redémarrage). Corrigez la scène, puis enregistrez la configuration pour reprendre aussitôt.
+Ses limites : une scène qui attend 15 s ou plus avant d'envoyer échappe à la garde, et seuls les
+plafonds arrêtent alors la boucle ; un hook qui réunit plusieurs Zaps perd jusqu'à 3 exécutions par
+Zap avant l'arrêt.
+
+## Pauses et refus
+
+- **429** (Zapier demande de ralentir) : aucun envoi pendant son `Retry-After`, de 60 s à 6 h.
+- **5xx** : aucun envoi pendant 60 s, doublé à chaque nouvel échec, 6 h au plus.
+- **404 ou 410** (Zapier ne connaît pas ce hook : Zap supprimé ou URL changée) : les scènes
+  n'utilisent plus ce hook. Son empreinte de 8 bits est gardée dans `/data` ; coller une autre URL
+  la lève, un succès du bouton de test aussi. Une nouvelle URL saisie pendant l'arrêt de
+  l'intégration partage cette empreinte une fois sur 256 : cliquez alors sur le bouton de test.
+- **401/403** ne sont pas pris pour un refus du hook.
+- `/data` illisible : rien n'est envoyé (les exécutions comptées sont inconnues) ; relu toutes les
+  10 s, jamais écrasé.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Zapier dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Zapier, dans les deux sens | `section` | Non | Connecteur non officiel, sans lien avec Zapier. Vers Zapier : les actions de scène « Envoyer à un Zap » postent un événement vers l'URL Catch Hook d'un Zap dont le déclencheur est « Webhooks by Zapier » (une application premium : une offre Zapier payante est nécessaire). Chaque envoi lance le Zap, et Zapier facture une tâche par étape d'action exécutée. Le module compte les exécutions de Zap (une par Zap lancé) et refuse un envoi au-delà des plafonds ci-dessous : divisez les tâches de votre offre par le nombre d'étapes d'action de vos Zaps. Zapier n'est appelé que par les actions de scène et le bouton de test, jamais au démarrage ni sur une minuterie. Jamais testé avec un vrai compte Zapier pour l'instant. |
+| URL Catch Hook 1 | `secret` | Non | Gardée par Gladys dans sa base, jamais réaffichée, envoyée seulement à hooks.zapier.com. Copiez-la depuis le déclencheur « Webhooks by Zapier » → « Catch Hook » du Zap (https:\/\/hooks.zapier.com/hooks/catch/…/…/). Quiconque a cette URL peut lancer le Zap : ne la partagez jamais. |
+| URL Catch Hook 2 (facultative) | `secret` | Non | Gardée par Gladys dans sa base, jamais réaffichée, envoyée seulement à hooks.zapier.com. Copiez-la depuis le déclencheur « Webhooks by Zapier » → « Catch Hook » du Zap (https:\/\/hooks.zapier.com/hooks/catch/…/…/). Quiconque a cette URL peut lancer le Zap : ne la partagez jamais. |
+| URL Catch Hook 3 (facultative) | `secret` | Non | Gardée par Gladys dans sa base, jamais réaffichée, envoyée seulement à hooks.zapier.com. Copiez-la depuis le déclencheur « Webhooks by Zapier » → « Catch Hook » du Zap (https:\/\/hooks.zapier.com/hooks/catch/…/…/). Quiconque a cette URL peut lancer le Zap : ne la partagez jamais. |
+| Nombre maximal d'exécutions de Zap sur 24 heures | `number` | Non | Comptées par le module avant chaque envoi, gardées au redémarrage : une exécution par Zap que le hook lance (de 1 à 2000). Au-delà, un envoi est refusé. |
+| Nombre maximal d'exécutions de Zap sur 30 jours | `number` | Non | Sur 30 jours glissants, pas votre mois de facturation Zapier : réglez-le sous les tâches de votre offre divisées par le nombre d'étapes d'action de vos Zaps, moins ce qu'utilisent vos autres Zaps (de 1 à 50000). |
+| De Zapier vers Gladys (Gladys Plus) | `section` | Non | Nécessite Gladys Plus : sans lui, seuls les envois vers Zapier marchent. Liez Gladys Plus et collez votre clé Open API dans le bloc « Webhooks Gladys Plus » : Gladys affiche alors l'URL publique à utiliser dans un Zap avec l'action « Webhooks by Zapier » → « POST » (Payload Type json, data event = mon_evenement, value1, value2, value3, et secret si vous en saisissez un ci-dessous). Vos scènes utilisent ensuite le déclencheur « Événement reçu de Zapier ». Cette URL est un secret elle aussi. Un événement reçu n'envoie jamais rien vers Zapier. Une scène qui y répond aussitôt en envoyant à un Zap qui rappelle Gladys boucle : le module arrête ses envois 30 minutes après 3 allers-retours ; une scène qui attend 15 s ou plus échappe à cette garde, seuls les plafonds l'arrêtent. |
+| Secret partagé des événements reçus (facultatif) | `secret` | Non | Gardé par Gladys dans sa base, jamais réaffiché, jamais envoyé. S'il est saisi (8 à 200 caractères, sans espace), un événement reçu n'est accepté que si ses données portent « secret » avec cette valeur. |
+
+## Comment installer Zapier dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Zapier apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-zapier:0.1.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-zapier](https://github.com/LM1LC3N7/gladys-zapier).
+
+Zapier nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Zapier est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [LM1LC3N7](https://github.com/LM1LC3N7), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/LM1LC3N7/gladys-zapier) — [source de cette documentation](https://github.com/LM1LC3N7/gladys-zapier/blob/HEAD/docs/fr.md)

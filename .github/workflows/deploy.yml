@@ -1,0 +1,84 @@
+name: Deploy
+
+# Builds the website and uploads it to Cloudflare Workers (static assets), on
+# every push to master and once a day, so the /dev/ page keeps moving on days
+# where nothing else is pushed (build.sh refreshes its data).
+#
+# The build runs here rather than on Cloudflare: their build machines have
+# 8 GB of memory and a 20-minute timeout, which the site outgrows as the
+# external integrations catalog grows, and a Worker on the paid plan accepts
+# 100,000 files where Cloudflare Pages, which served the site before, stops at
+# 20,000.
+#
+# One-time setup, see "Deploying on Cloudflare Workers" in the README: store
+# CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID as secrets of the
+# "cloudflare" environment, which only master can use. Without them this
+# workflow does nothing.
+
+on:
+  push:
+    branches: [master]
+  schedule:
+    - cron: "17 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# One deployment at a time. A push arriving during a deployment waits for it,
+# and replaces any older push still waiting.
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    # "Run workflow" offers every branch, and whatever is deployed here is
+    # what the Worker serves: only master is.
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # Holds the Cloudflare token. Repository secrets would reach any workflow
+    # pushed on any branch, and the token can deploy to production.
+    environment: cloudflare
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - name: Check the Cloudflare secrets
+        id: secrets
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "CLOUDFLARE_API_TOKEN or CLOUDFLARE_ACCOUNT_ID is not set: nothing to do."
+            echo "See the comment at the top of this workflow to enable it."
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.secrets.outputs.configured == 'true'
+      - uses: actions/setup-node@v4
+        if: steps.secrets.outputs.configured == 'true'
+        with:
+          node-version-file: .node-version
+      # Corepack reads the Yarn version from package.json (packageManager)
+      - run: corepack enable
+        if: steps.secrets.outputs.configured == 'true'
+      - run: yarn install --immutable
+        if: steps.secrets.outputs.configured == 'true'
+      # CLOUDFLARE_DEPLOY tells build.sh this build is served by Cloudflare,
+      # which applies the rewrites of _redirects (see build.sh). The automatic
+      # token gives the /dev/ page snapshot 5000 GitHub requests per hour.
+      - run: ./build.sh
+        if: steps.secrets.outputs.configured == 'true'
+        env:
+          CLOUDFLARE_DEPLOY: 1
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Count the files to upload
+        if: steps.secrets.outputs.configured == 'true'
+        run: echo "$(find build -type f | wc -l) files (a Worker on the paid plan accepts 100,000)"
+      # Pinned: 100,000 files need Wrangler 4.34.0 or later, and an upgrade
+      # should be a reviewed change rather than whatever is latest that day.
+      - name: Deploy to Cloudflare Workers
+        if: steps.secrets.outputs.configured == 'true'
+        run: npx --yes wrangler@4.165.0 deploy

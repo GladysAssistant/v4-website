@@ -1,0 +1,205 @@
+---
+title: "Anova smart home integration, free and open source"
+sidebar_label: "Anova"
+description: "Anova sous vide cookers and ovens via the official API: temperature, timer, stop; start as option. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-anova.png"
+keywords:
+  - "anova"
+  - "anova smart home"
+  - "gladys anova"
+  - "anova gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-anova instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+import ExternalIntegrationProducts from "@site/src/components/ExternalIntegrationProducts";
+
+<ExternalIntegrationHeader integration={{"name":"Anova","description":"Anova sous vide cookers and ovens via the official API: temperature, timer, stop; start as option.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-anova","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-anova.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-19T01:18:24Z"}} />
+
+<ExternalIntegrationProducts name={"Anova"} products={[{"label":"Anova Precision Cooker","href":"https://www.amazon.com/s?k=Anova+Precision+Cooker&tag=gladproj-20"}]} />
+
+Shows your Anova Precision Cookers (sous vide) and Anova Precision Ovens in
+Gladys through the official **Anova Developer** API (a WebSocket of Anova's
+cloud), and lets Gladys stop them, and start a sous vide cook when you allow
+it.
+
+Never tested with a real device: written from the official documentation and
+from the library of the Anova integration of Home Assistant. Not affiliated
+with Anova. Feedback welcome on the Gladys forum.
+
+## What you need
+
+- An Anova account with your devices paired in the Anova app.
+- A **personal access token**: in the **Anova Oven** app (also for a sous vide
+  cooker: sign in with the same account), go to **More → Developer → Personal
+  Access Tokens**, give it a name and create it. It starts with `anova-`. An
+  account can have up to 10 tokens.
+- The use of the API is subject to the Anova API Terms of Use
+  ([https://developer.anovaculinary.com/terms](https://developer.anovaculinary.com/terms)): personal, non-commercial use.
+
+## Setup
+
+1. Paste the token in **Personal access token** and save. The token is kept by
+   Gladys in its database, never shown again, sent only to Anova.
+2. The status should say "Connected to Anova: N devices".
+3. Open the **Discovery** tab and add your devices.
+
+## Features of each device
+
+| Feature            | Precision Cooker                       | Precision Oven                |
+| ------------------ | -------------------------------------- | ----------------------------- |
+| Temperature        | water (°C)                             | oven, dry or wet bulb (°C)    |
+| Target temperature | read only (°C)                         | read only, while cooking (°C) |
+| Time remaining     | minutes (0 when idle)                  | minutes, while the timer runs |
+| Cook time          | minutes                                | minutes, while cooking        |
+| State              | idle, preheating, cooking, timer done… | idle or cooking               |
+| Alert              | water low or critical, leak, too hot   | water tank empty, door open   |
+| Stop cooking       | button                                 | button                        |
+
+A value Anova does not give stays unknown: it is never shown as 0. Anova
+pushes a state when something changes; when nothing came for 25 min, the
+integration opens the connection again to get fresh states (Anova closes an
+idle connection after 30 min).
+
+The oven readings come from the community description of its state messages:
+they are not in the official documentation. The A3, A4/A5 and A6/A7 cookers
+send their state in different shapes, all read; other types are read when
+they send one of these shapes.
+
+## Stopping
+
+The **Stop cooking** button of each device, and the scene action **Anova:
+stop cooking**, need no option and are never refused: not by the start option,
+nor by a pause asked by Anova (HTTP 429), nor by a refused token (one attempt
+per click, and one for a stop kept across a restart), nor by a slow or
+unreadable `/data`. Without a connection, one is opened at once; if it cannot
+open within 3.5 s, the stop is kept (also in `/data`, for 10 min) and sent as
+soon as a connection opens.
+
+A stop is sent with a ping: without the answer, a message or the pong within
+1.5 s, the connection is taken as dead (a router restarted, for instance), cut
+and opened again at once, and the stop is sent on the new one (3 dead
+connections at most per stop, then the backoff). Such a send does not count.
+
+It is sent 3 times in all at most, again while the device still reports the
+same cook 20 s after it; it is not sent again when a different cook is shown
+(one started afterwards from the app or the device). A click always leaves at
+once, whatever cook the device shows, also on the connection it opened itself
+within its 3.5 s. Only a kept stop (not sent within those 3.5 s, or read back
+from `/data` after a restart) whose cook is known checks it on a new
+connection, states that came with the opening included (2 s at most): idle, it
+is done; another cook, it is not sent; the same cook, or no state, it is sent.
+A stop already accepted by Anova is checked the same way before being sent
+again. The identity of the cook is kept in `/data`. A stop also
+cancels a start not yet sent.
+
+What a stop cannot do: reach Anova without a token, or before the token is
+read from Gladys after a restart (the token is never written to `/data`).
+
+The scene action gives a result: `confirmed` (the device reports idle),
+`accepted` (Anova answered ok), `refused` (Anova answered an error: checked
+again and sent again), `sent` (sent, no answer yet), `queued` (sent as soon as
+connected) or `skipped` (a kept stop not sent: another cook was started).
+
+## Starting a sous vide cook (off by default)
+
+Starting heats water: it needs the option **Allow starting a cook**, off by
+default. Then the scene action **Anova: start a sous vide cook** takes a
+Precision Cooker, a temperature (25 to 92 °C, rounded to 0.1 °C) and a timer
+(whole minutes, 1 to 5999). Check that the cooker is in water before.
+
+The start is refused, and nothing is sent, when:
+
+- the option is off (checked again just before the send);
+- the device is an oven (starting an oven is not supported), or not on the
+  Anova account;
+- a temperature or a timer is out of range or not a number;
+- the connection is closed, or there is no state of the cooker on the current
+  connection from the last 30 minutes;
+- the cooker is already cooking (or its state is unknown), or reports a
+  problem (water level, leak, too hot, failure);
+- the cooker is starting or updating (state unknown or busy);
+- another start of the cooker is in progress, or no state came since the last
+  start (a start without confirmation blocks the next one until a state after
+  it);
+- a stop of the cooker is in progress, or was pressed meanwhile;
+- `/data` cannot be written within 10 s (the start is written there before it
+  leaves; past 10 s, nothing is sent, so Gladys never sees a failure while the
+  water heats).
+
+Results: `started` (a state shows the cook), `accepted` (Anova answered ok, no
+state yet) or `sent` (no answer: without confirmation). A start refused by
+Anova fails the action. A cook in progress is never changed: stop it, then
+start again. Changing the target during a cook is not in this version (the
+personal access tokens only allow start, stop and the temperature unit).
+
+## Stop at the end of the timer (option, off by default)
+
+Like in the Anova app, a Precision Cooker keeps the water at temperature when
+its timer ends. With **Stop the cooker when its timer ends**, Gladys sends a
+stop once per cook when the cooker reports its timer done.
+
+## Connection, limits and privacy
+
+- One connection per integration, URL from the documentation; the token goes
+  in the query string as the documentation requires: it is never logged, never
+  shown, never written to `/data`. The User-Agent says `gladys-anova/<version>`.
+- Anova cuts the connection when its rate limit is reached: the integration
+  connects again after 5 s, 15 s, 30 s, 1, 2, 5, 10 then 30 min (half to the
+  whole of each step), and starts again from 5 s once a connection stayed up
+  3 min. After a restart, never faster than this (the time of the last attempt
+  is in `/data`).
+- HTTP 429: pause for its Retry-After (1 min to 6 h, 15 min without), kept in
+  `/data` across a restart. A stop still goes through.
+- Refused token: an HTTP 401, or (what Anova does with an invalid token) a
+  connection closed by Anova with code 1005 within 5 s of its opening, without
+  any message, twice in a row. A network drop or another close code (1006,
+  1012, 1013…) is never a refusal. Nothing is sent again by itself: save a new
+  token, or click **Test the connection** (one new try). Only 8 bits of a hash
+  of the refused token are kept in `/data`. A 403 or any other status is not a
+  refusal: the integration backs off.
+- `/data` unreadable: nothing is sent by itself (read again every 10 s);
+  **Test the connection** starts again from an empty state.
+- Messages larger than 256 KB are cut before they are read.
+
+## Test the connection
+
+Connects now if needed (at most every 30 s, not during a 429 pause) and says
+how many devices Anova lists.
+
+## Configuration settings
+
+These are the settings Anova asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Your Anova account | `section` | No | Shows your Anova Precision Cookers (sous vide) and Precision Ovens in Gladys through the official Anova Developer API, in real time: temperature, target, time remaining, state and alerts, and a Stop button. Create a personal access token in the Anova Oven app (also for a sous vide cooker): More, Developer, Personal Access Tokens. Paste it below, save, then add the devices from the Discovery tab. Starting a sous vide cook is a scene action that needs the option below, off by default; stopping needs no option. Starting an oven is not supported. Never tested with a real device. Not affiliated with Anova. |
+| Personal access token | `secret` | Yes | Starts with "anova-". Created in the Anova Oven app (More, Developer, Personal Access Tokens). Kept by Gladys in its database, never shown again, sent only to Anova. |
+| Allow starting a cook | `boolean` | No | Off by default. On: the scene action "Start a sous vide cook" may heat the water of a Precision Cooker (25 to 92 °C, 1 min to 99 h 59). Make sure the cooker is in water before. Off: that action sends nothing. Stopping never needs this option. |
+| Stop the cooker when its timer ends | `boolean` | No | Off by default: like in the Anova app, a Precision Cooker keeps the water at temperature when its timer ends. On: Gladys sends a stop once per cook when the cooker reports its timer done. |
+| Language of the feature names | `select` | No | Used for the feature names of the devices added from now on, for the state texts and for the command errors. |
+
+## How to install Anova in Gladys
+
+1. In Gladys, open **Integrations**: Anova appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-anova:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-anova](https://github.com/LM1LC3N7/gladys-anova).
+
+Anova requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Anova is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-anova) — [source of this documentation](https://github.com/LM1LC3N7/gladys-anova/blob/HEAD/docs/en.md)

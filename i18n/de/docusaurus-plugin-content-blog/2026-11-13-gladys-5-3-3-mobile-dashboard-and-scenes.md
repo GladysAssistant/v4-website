@@ -127,7 +127,7 @@ Nutze ihn gern, das hilft uns wirklich zu wissen, wo wir ansetzen sollen!
 Der [Zigbee2MQTT-Audit](https://community.gladysassistant.com/t/zigbee2mqtt-un-audit-pour-devenir-plus-simple-que-home-assistant/11498) geht weiter, nach 5.3.2, das bereits den eingesteckten Dongle erkannte und seinen Port und sein Modell vorauswählte:
 
 - **Startfehler werden erklärt**, mit dem, was zu tun ist: ein Dongle, der nicht antwortet (oft ein anderes Modell als das gewählte oder ein Dongle, den eine andere Software nutzt), ein nicht erreichbarer Netzwerk-Koordinator, eine Konfiguration, die Zigbee2MQTT ablehnt. Vorher zeigte Gladys die letzte Fehlerzeile der Logs an, auf Englisch und oft ohne Zusammenhang.
-- **SONOFF ZBDongle-E mit alter Firmware starten von selbst.** Viele werden noch mit einer Firmware verkauft, die der `ember`-Treiber ablehnt. Gladys wechselt jetzt selbstständig auf den Kompatibilitätstreiber `ezsp`, und die Einrichtungsseite erklärt, wie man nach einem Firmware-Update zu `ember` zurückkehrt.
+- **[SONOFF ZBDongle-E](https://www.amazon.com/s?k=Sonoff%20ZBDongle-E) mit alter Firmware starten von selbst.** Viele werden noch mit einer Firmware verkauft, die der `ember`-Treiber ablehnt. Gladys wechselt jetzt selbstständig auf den Kompatibilitätstreiber `ezsp`, und die Einrichtungsseite erklärt, wie man nach einem Firmware-Update zu `ember` zurückkehrt.
 - Der Drehstromzähler **Tuya SPM02V3** meldet alle seine Messwerte: Phase C, die Spannung jeder Phase und die erzeugte Energie.
 
 Danke [@cicoub13](https://github.com/cicoub13) für all das!

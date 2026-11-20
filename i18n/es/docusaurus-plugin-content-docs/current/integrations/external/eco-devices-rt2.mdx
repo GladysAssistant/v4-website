@@ -19,7 +19,7 @@ https://github.com/LM1LC3N7/gladys-ecodevices-rt2 instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Eco-Devices RT2","description":"GCE Eco-Devices RT2 on your network: counters, relays, inputs, pilot wire (X-4FP), X-THL.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-ecodevices-rt2","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ecodevices-rt2.png","type":"device","version":"0.1.4","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-15T02:54:28Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Eco-Devices RT2","description":"GCE Eco-Devices RT2 on your network: counters, relays, inputs, pilot wire (X-4FP), X-THL.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-ecodevices-rt2","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ecodevices-rt2.png","type":"device","version":"0.2.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-19T01:40:38Z"}} />
 
 :::info
 
@@ -52,7 +52,9 @@ sensors (temperature, humidity, luminosity).
    - list in "Relays Gladys may drive" the relays Gladys must drive, and
      those only (e.g. `R1`; see "Relays" below: never a pump, a ventilation,
      a door strike…);
-   - list in "Extensions" the X-4FP and X-THL wired (e.g. `FP1-FP4, THL1`);
+   - list in "Extensions" the X-4FP and X-THL wired, `TIC` for the
+     teleinformation details and the posts to bring in (e.g.
+     `FP1-FP4, THL1, TIC, P1-P2`);
    - list in "Pulse counters" those to bring in, with what they measure and
      the unit of their index in the Eco-Devices (e.g.
      `C1:water:l, C2:gas:m3`).
@@ -96,23 +98,26 @@ value.
 
 ## What you get
 
-| On the Eco-Devices RT2                | In Gladys                                                        | Code (in the name) |
-| ------------------------------------- | ---------------------------------------------------------------- | ------------------ |
-| Teleinformation index 1 to 7          | energy index (kWh)                                               | `TI1`              |
-| Current clamp 1 to 16                 | not yet (see "Units" below)                                      | `TORE3`            |
-| Pulse counter 1 to 12 (when listed)   | water or gas index (m³), or energy index (kWh)                   | `C1`               |
-| Relay 1 to 10 (2 + an X-8R)           | read only, or a switch / light when you list it                  | `R3`               |
-| Input 1 to 12                         | a binary input (read only)                                       | `D3`               |
-| Zone of an X-4FP (FP1 to FP8, listed) | pilot wire (Off, Frost protection, Eco, Comfort, Comfort -1, -2) | `FP5`              |
-| X-THL 1 and 2 (when listed)           | temperature (°C), humidity (%), luminosity (lux)                 | `THL1`             |
+| On the Eco-Devices RT2                 | In Gladys                                                        | Code (in the name) |
+| -------------------------------------- | ---------------------------------------------------------------- | ------------------ |
+| Teleinformation index 1 to 7           | energy index (kWh)                                               | `TI1`              |
+| Current clamp 1 to 16                  | not yet (see "Units" below)                                      | `TORE3`            |
+| Pulse counter 1 to 12 (when listed)    | water or gas index (m³), or energy index (kWh)                   | `C1`               |
+| Relay 1 to 10 (2 + an X-8R)            | read only, or a switch / light when you list it                  | `R3`               |
+| Input 1 to 12                          | a binary input (read only)                                       | `D3`               |
+| Zone of an X-4FP (FP1 to FP8, listed)  | pilot wire (Off, Frost protection, Eco, Comfort, Comfort -1, -2) | `FP5`              |
+| X-THL 1 and 2 (when listed)            | temperature (°C), humidity (%), luminosity (lux)                 | `THL1`             |
+| Teleinformation details (`TIC` listed) | apparent power (VA), current (A), tariff period (text)           | `TIC1`             |
+| Post 1 to 8 (when listed)              | instant power (W)                                                | `P1`               |
 
 The API answers for the 10 relays and the 12 inputs, wired or not: all of
 them are offered in Discover. Pilot-wire zone n is zone z of the X-4FP e:
 n = 4 × (e − 1) + z (two X-4FP at most).
 
 The Eco-Devices is read every 15 seconds by default (5 s at least): the
-relays, then the inputs, the zones (when listed), the X-THL (when listed) and
-the indexes, one request after the other. A value the Eco-Devices does not
+relays, then the inputs, the zones (when listed), the X-THL (when listed),
+the teleinformation details and the posts (when listed) and the indexes, one
+request after the other. A value the Eco-Devices does not
 give (absent, a text, out of range) is not published: never as 0. An index
 read 4294967295 is an entry with nothing behind it (a teleinformation input
 without a meter): never offered nor published, never a jump. A zone of an
@@ -320,9 +325,20 @@ that succeeds.
 
 ## Limits
 
-- Teleinformation, pulse counters, relays, inputs, X-4FP and X-THL only
-  (the clamp indexes wait for their unit to be confirmed): the instant power, the posts and sub-posts, the prices, the
-  virtual outputs and EnOcean are not in this version.
+- Teleinformation (index, apparent power, current, tariff period), the
+  instant power of the posts, pulse counters, relays, inputs, X-4FP and
+  X-THL only (the clamp indexes wait for their unit to be confirmed): the
+  instant power of a clamp, the sub-posts, the indexes per tariff period
+  (HC/HP, Tempo), the prices, the virtual outputs and EnOcean are not in this
+  version.
+- Teleinformation details: the ones of `Get=TI` (one teleinformation input),
+  the single-phase historic mode only (`PAPP`, `IINST`, `PTEC`): in
+  three-phase the current (`IINST1-3`) is not published, and a Linky in
+  standard mode (`SINSTS`…) gives nothing; the status says so in both cases; a tariff period we do not
+  know is not published, a value that is not a number neither (never 0).
+  Posts: only those listed (a post without clamp reads 0 too, and 0 W is a
+  value for a listed post); the unit, W, is the one of the Home Assistant
+  integration, not yet confirmed on a real RT2 (GCE does not give it): compare with the page of the RT2.
 - Three Eco-Devices at most per integration.
 - Known by its address and port (see above). One address in two slots: the
   second is not read, the status says so.
@@ -334,12 +350,12 @@ Estos son los parámetros que Eco-Devices RT2 te pide en su pantalla de configur
 
 | Parámetro | Tipo | Obligatorio | Descripción |
 | --- | --- | --- | --- |
-| Your Eco-Devices RT2 | `section` | No | Brings up to three GCE Electronics Eco-Devices RT2 into Gladys through their local JSON API: the indexes of the teleinformation and of the pulse counters (never 0; a drop or a jump held back until you accept it; clamps once their unit is confirmed), relays (read only unless you list them below), digital inputs, pilot-wire zones of the X-4FP and X-THL sensors. Pilot wire: Off and Frost protection go first, without any option (see the guide for their limits); Eco and Comfort only once allowed below. Each Eco-Devices keeps its own devices: a box at another address, or another GCE product, never gets their commands. Never tested with a real device. Not affiliated with GCE Electronics. |
+| Your Eco-Devices RT2 | `section` | No | Brings up to three GCE Electronics Eco-Devices RT2 into Gladys through their local JSON API: the indexes of the teleinformation and of the pulse counters (never 0; a drop or a jump held back until you accept it; clamps once their unit is confirmed), relays (read only unless you list them below), digital inputs, pilot-wire zones of the X-4FP, X-THL sensors, the teleinformation details and the instant power of the posts. Pilot wire: Off and Frost protection go first, without any option (see the guide for their limits); Eco and Comfort only once allowed below. Each Eco-Devices keeps its own devices: a box at another address, or another GCE product, never gets their commands. Never tested with a real device. Not affiliated with GCE Electronics. |
 | Address of the Eco-Devices RT2 | `string` | Sí | Its IP address (or name) on your network, without path nor key; give it a fixed address in your router: its devices are tied to this address. |
 | Port | `number` | No | 80 unless you changed the port of its web server. |
 | API key | `secret` | No | The key of its API (Eco-Devices menu, "apikey" by default: change it); leave empty only if you turned the protection off. The Eco-Devices wants it in the address of every request, over plain http: anyone who can watch your network can read it. Kept by Gladys in its database, never shown again, sent only to the Eco-Devices, never written in the logs. |
 | Relays Gladys may drive | `string` | No | The other relays are read only. Codes as in the device names: R1 and R2 (the Eco-Devices), R3 to R10 (an X-8R); add :light for a light, e.g. "R1, R2:light". A relay listed here obeys every "turn everything off" of Google, Alexa, the MCP and the scenes: never list a pump, a freezer, a ventilation, a heating, a door strike nor a valve. List them before creating them in Discover; a relay already created stays read only until you click "Update" on it in Discover. |
-| Extensions | `string` | No | The X-4FP and X-THL wired to the Eco-Devices (its API answers for them even when absent): pilot-wire zones FP1 to FP8 (four per X-4FP), X-THL THL1 and THL2, e.g. "FP1-FP4, THL1". |
+| Extensions | `string` | No | The X-4FP and X-THL wired to the Eco-Devices (its API answers for them even when absent): pilot-wire zones FP1 to FP8 (four per X-4FP), X-THL THL1 and THL2; also TIC for the teleinformation details (apparent power, current, tariff period) and the posts P1 to P8 (instant power), e.g. "FP1-FP4, THL1, TIC, P1-P2". |
 | Pulse counters | `string` | No | The pulse counters to bring in, what they measure and the unit of their index in the Eco-Devices: C1 to C12, water (l or m3), gas (m3 or l) or electricity (wh or kwh), e.g. "C1:water:l, C2:gas:m3". Water and gas arrive in m³, electricity in kWh. Compare the first value published with the meter; changing the unit later stops its index (see the guide). |
 | Pilot wire | `section` | No | Off and Frost protection need no option and go before everything else, during a pause or before the first read; they are refused only when the zone is not listed in Extensions or the Eco-Devices is not known yet (see the guide). Eco, Comfort, Comfort -1 and Comfort -2 drive the heating: they are off by default. Once allowed, every Gladys user, every scene and the Gladys app can choose them. |
 | Allow Eco and Comfort from Gladys | `boolean` | No |  |
@@ -361,7 +377,7 @@ Estos son los parámetros que Eco-Devices RT2 te pide en su pantalla de configur
 ## Cómo instalar Eco-Devices RT2 en Gladys
 
 1. En Gladys, abre **Integraciones**: Eco-Devices RT2 aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
-2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-ecodevices-rt2:0.1.4`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-ecodevices-rt2:0.2.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
 3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
 4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-ecodevices-rt2](https://github.com/LM1LC3N7/gladys-ecodevices-rt2).
 

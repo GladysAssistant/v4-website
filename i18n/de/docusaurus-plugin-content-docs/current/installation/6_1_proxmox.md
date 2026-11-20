@@ -79,7 +79,7 @@ Wir empfehlen außerdem, der VM per DHCP-Reservierung in deinem Router eine fest
 Wenn du einen USB-Zigbee-Koordinator nutzt, stecke ihn in den Proxmox-Server und gib ihn dann an die VM weiter:
 
 1. Wähle die VM, öffne **Hardware** und klicke auf **Add** > **USB Device**.
-2. Wähle **Use USB Vendor/Device ID** und such deinen Dongle in der Liste aus (zum Beispiel einen SONOFF-Zigbee-Dongle).
+2. Wähle **Use USB Vendor/Device ID** und such deinen Dongle in der Liste aus (zum Beispiel einen [SONOFF-Zigbee-Dongle](/de/best-zigbee-dongle/)).
 3. Klicke auf **Add** und starte die VM neu, damit sie das Gerät sieht.
 
 Wenn du den Dongle über seine Vendor/Device-ID statt über den USB-Port auswählst, findet die VM ihn auch dann wieder, wenn du ihn in einen anderen Port steckst. Das geht auch in der Shell des Proxmox-Hosts: Ermittle die ID mit `lsusb` und führe dann `qm set <VM-ID> -usb0 host=<vendor>:<device>` aus.

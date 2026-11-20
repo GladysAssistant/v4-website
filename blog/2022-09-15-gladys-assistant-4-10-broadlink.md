@@ -20,7 +20,7 @@ Today I'm releasing Gladys Assistant v4.10, a big new release with amazing new f
 
 We have a new integration 🎉
 
-Broadlink devices are small IR emitter that acts as a remote control and can be controlled over Wi-Fi.
+[Broadlink devices](https://www.amazon.com/s?k=Broadlink%20RM4%20mini) are small IR emitter that acts as a remote control and can be controlled over Wi-Fi.
 
 ![Broadlink integration Gladys](../static/img/articles/en/gladys-4-10/broadlink.jpg)
 

@@ -127,7 +127,7 @@ N'hésitez pas, ça nous aide vraiment à savoir où mettre nos efforts !
 On continue [l'audit de Zigbee2MQTT](https://community.gladysassistant.com/t/zigbee2mqtt-un-audit-pour-devenir-plus-simple-que-home-assistant/11498), après la 5.3.2 qui reconnaissait déjà le dongle branché et présélectionnait son port et son modèle :
 
 - **Les erreurs de démarrage sont expliquées**, avec l'action à faire : un dongle qui ne répond pas (souvent un autre modèle que celui choisi, ou un dongle utilisé par un autre logiciel), un coordinateur réseau injoignable, une configuration refusée par Zigbee2MQTT. Avant, Gladys affichait la dernière ligne d'erreur des logs, en anglais, souvent sans rapport.
-- **Les SONOFF ZBDongle-E avec un vieux firmware démarrent tout seuls.** Beaucoup sont encore vendus avec un firmware que le driver `ember` refuse. Gladys bascule maintenant d'elle-même sur le driver de compatibilité `ezsp`, et la page de configuration explique comment revenir à `ember` après une mise à jour du firmware.
+- **Les [SONOFF ZBDongle-E](https://www.amazon.fr/s?k=Sonoff%20ZBDongle-E) avec un vieux firmware démarrent tout seuls.** Beaucoup sont encore vendus avec un firmware que le driver `ember` refuse. Gladys bascule maintenant d'elle-même sur le driver de compatibilité `ezsp`, et la page de configuration explique comment revenir à `ember` après une mise à jour du firmware.
 - Le compteur triphasé **Tuya SPM02V3** remonte toutes ses mesures : la phase C, les tensions de chaque phase et l'énergie produite.
 
 Merci [@cicoub13](https://github.com/cicoub13) pour tout ça !

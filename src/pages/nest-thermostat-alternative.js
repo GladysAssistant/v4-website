@@ -25,6 +25,7 @@ export default function NestThermostatAlternativePage() {
 
   return (
     <UseCasePage
+      productsPage="nest-thermostat-alternative"
       content={content}
       faq={faq}
       schemaData={getNestThermostatAlternativePageSchema(lang)}

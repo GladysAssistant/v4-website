@@ -1,0 +1,118 @@
+---
+title: "Météo Suisse / MeteoSwiss smart home integration, free and open source"
+sidebar_label: "Météo Suisse / MeteoSwiss"
+description: "Swiss forecasts and official MeteoSwiss weather warnings. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/valentinhttr--gladys-meteoswiss.jpg"
+keywords:
+  - "météo suisse / meteoswiss"
+  - "météo suisse / meteoswiss smart home"
+  - "gladys météo suisse / meteoswiss"
+  - "météo suisse / meteoswiss gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/valentinhttr/gladys-meteoswiss instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Météo Suisse / MeteoSwiss","description":"Swiss forecasts and official MeteoSwiss weather warnings.","owner":"valentinhttr","owner_avatar_url":"https://avatars.githubusercontent.com/u/20521112?v=4","repo_url":"https://github.com/valentinhttr/gladys-meteoswiss","cover_url":"https://integration-store-storage.gladysassistant.com/covers/valentinhttr--gladys-meteoswiss.jpg","type":"weather","version":"1.4.0","gladys_version":">=5.2.0","stars":1,"pushed_at":"2026-11-19T10:05:57Z"}} />
+
+Requires Gladys Assistant 5.2.0 or later.
+
+Use the native Gladys **Weather** widget for the eight-day forecast. Add the temperature, precipitation and wind widgets for hourly charts.
+
+In each widget's settings:
+
+- **Location**: a Swiss town or postcode, for example `Genève`, `1201` or `1201 Genève`. Accents are optional. For cities with several postcodes, use a postcode to choose the area.
+- **House**: used when Location is empty. Leave both empty for the first located house, or enter the house name/selector to choose another one.
+
+Add multiple copies of a widget to compare locations. A custom location works even without a located house. The native Gladys weather widget continues to use its selected house.
+
+The extra **Forecast · 8 days** widget has been removed. If you added it, remove it from your dashboard and use the native **Weather** widget instead. The three chart widgets retain their settings.
+
+First loading can take a few minutes. Up to 20 locations are tracked per integration process. An unknown or ambiguous location displays guidance instead of silently falling back to your house.
+
+The heading shows only the location. The source and forecast time appear below the location in a small, muted subtitle. The website link is available in the integration configuration.
+
+## Scene triggers
+
+Add a scene trigger from **Integrations → Météo Suisse / MeteoSwiss**:
+
+| Trigger                   | Default threshold             | Example use         |
+| ------------------------- | ----------------------------- | ------------------- |
+| Precipitation expected    | At least 0.2 mm in one hour   | Suspend irrigation  |
+| Frost risk                | Temperature at or below 0 °C  | Notify about plants |
+| High temperature expected | Temperature at or above 30 °C | Close shutters      |
+| Strong gusts expected     | Gusts at or above 50 km/h     | Retract awnings     |
+
+Select a **House**, or leave the filter empty for events from all located houses. Each house needs coordinates in Gladys and must be covered by Swiss forecasts. Custom locations used only in widgets do not trigger scenes.
+
+In **each scene trigger**, choose the threshold and the **Forecast window**: 1, 3, 6, 12 or 24 hours (default: 6). Each scene has its own settings; there are no thresholds to set in the integration configuration. For example, one scene can retract awnings at 40 km/h within 3 hours, while another sends a notification at 80 km/h within 12 hours.
+
+Thresholds are selected from lists:
+
+- **Precipitation**: 0.2, 1, 2, 5 or 10 mm in one hour.
+- **Frost**: −5, −2, 0, 2 or 5 °C, to anticipate risk for sensitive plants.
+- **Heat**: 25, 28, 30, 32 or 35 °C.
+- **Gusts**: 30, 40, 50, 60, 80 or 100 km/h.
+
+Arbitrary numeric input is not offered. Units remain °C, mm and km/h even when widgets use US units. Precipitation includes rain and snow; its threshold applies to one hour, not the total over the window.
+
+Forecasts are checked at loading and every 15 minutes, even without widgets. The window includes the current hour: MeteoSwiss timestamps mark the end of each hourly interval. An event fires when any hour reaches the threshold, including the first load if a risk already exists. Another event requires a complete forecast window without that risk first. Missing data and forecasts older than six hours neither fire events nor rearm triggers.
+
+State is stored in `/data/scene-state.json` to prevent repeats after reconnecting or restarting. Without a writable volume, this protection is kept only in memory. Each house/threshold/window combination is monitored independently. A scene created or edited during an already reported risk for its combination waits for the next occurrence. Changing a house's coordinates restarts its monitoring. For installations with many houses, events are spread over several minutes to respect Gladys's rate limit. Failed sends are retried on a later check; if Gladys received an event but its response was lost, a duplicate remains possible.
+
+Following actions can use `{{triggerEvent.data.house_name}}`, `{{triggerEvent.data.location}}`, `{{triggerEvent.data.value}}`, `{{triggerEvent.data.unit}}`, `{{triggerEvent.data.threshold}}` and `{{triggerEvent.data.horizon_hours}}`. `{{triggerEvent.data.forecast_at}}` is the UTC end of the first hour reaching the threshold; `{{triggerEvent.data.house}}` is the house selector.
+
+## Official warnings
+
+Add **Integrations → MeteoSwiss → Official MeteoSwiss warning** to a scene. Select:
+
+- **House**: one house, or leave empty for all located houses.
+- **Phenomenon**: wind, thunderstorms, rain, snow, slippery roads, heat wave or frost. Leave empty for all seven.
+- **Minimum danger level**: 2 (moderate), 3 (considerable), 4 (high) or 5 (very high). A threshold of 3 also accepts levels 4 and 5.
+
+For example, **House = Home, Phenomenon = Thunderstorms, Minimum = 3** can send a notification as soon as a confirmed thunderstorm warning arrives. A separate **Wind, Minimum = 2** scene can retract awnings. The official degree is a danger category, not a wind-speed threshold; the forecast triggers above remain available for numeric thresholds.
+
+The official hazard-map feed is checked immediately at startup, then every **60 seconds**, even without widgets and independently of forecast downloads. The upstream index also has a 60-second cache: allow roughly **one to two minutes after web publication** under normal conditions, plus network/delivery time. This is polling, not the MeteoSwiss app's push channel. Longer upstream cache directives, server-requested retry delays and outages take precedence; errors retry after 1, 2, 4, then 5 minutes. No integration can deliver a warning before MeteoSwiss publishes it.
+
+An event fires on receipt of a new confirmed warning, even if its start is in the future, and again if its degree exceeds the highest already reported for that warning. Decreases, wording changes and extensions of the end time do not repeat it. Expired warnings, preliminary outlooks, lake/airfield warnings and other agencies' natural hazards (floods, avalanches, forest fires, drought) are excluded. Houses are matched locally against the simplified boundaries used by the official map, not against the nearest forecast town. Near a boundary, consult the official map; this is regional information, not a measurement at the house. House changes are checked every minute.
+
+Variables: `{{triggerEvent.data.house_name}}`, `{{triggerEvent.data.phenomenon}}` (stable code such as `thunderstorm`), `{{triggerEvent.data.level}}`, `{{triggerEvent.data.starts_at}}`, `{{triggerEvent.data.ends_at}}` (UTC), and `{{triggerEvent.data.source_url}}` for the official map. For example: “MeteoSwiss warning: \{\{triggerEvent.data.phenomenon\}\}, level \{\{triggerEvent.data.level\}\} for \{\{triggerEvent.data.house_name\}\}.”
+
+Warning state is persisted separately in `/data/warning-scene-state.json`. Reconnecting or restarting does not replay acknowledged warnings when this volume is writable. Creating a scene during an already reported warning also does not replay it. Failed sends retry; a lost acknowledgement can still cause a duplicate. A confirmed cancellation rearms the warning. Unavailable data does not clear this state. After three minutes without a successful feed check, the integration stops publishing from the old feed. Large installations are limited to 50 warning-event attempts per minute; pending work is reevaluated using current data.
+
+Official warnings are also included in native Gladys weather responses, with the original French/English description and source link. The numeric degrees 2–5 map to Gladys severities `minor`, `moderate`, `severe`, `extreme`; slippery roads have no equivalent Gladys type. The direct integration trigger above is the fastest path and works while forecasts are still loading. Native weather refreshes share Gladys's one-per-minute limit and require an available forecast. Unavailable warning data is omitted, never reported as an empty list. For descriptions beyond Gladys's size limit, the source link replaces the text.
+
+**Source: [Météo Suisse (MeteoSwiss)](https://www.meteosuisse.admin.ch).** This independent community integration is not an official service and has no affiliation with or endorsement from MeteoSwiss. Forecasts and regional warnings complement a local sensor for equipment protection. Radar is not provided.
+
+## Configuration settings
+
+These are the settings Météo Suisse / MeteoSwiss asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| MeteoSwiss | `section` | No | No API key needed. Widgets use your house by default; choose any Swiss town in their settings. First load may take a few minutes. Independent, unofficial integration. Source: MeteoSwiss. |
+
+## How to install Météo Suisse / MeteoSwiss in Gladys
+
+1. In Gladys, open **Integrations**: Météo Suisse / MeteoSwiss appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/valentinhttr/gladys-meteoswiss:1.4.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/valentinhttr/gladys-meteoswiss](https://github.com/valentinhttr/gladys-meteoswiss).
+
+Météo Suisse / MeteoSwiss requires Gladys `>=5.2.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Météo Suisse / MeteoSwiss is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [valentinhttr](https://github.com/valentinhttr), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/valentinhttr/gladys-meteoswiss) — [source of this documentation](https://github.com/valentinhttr/gladys-meteoswiss/blob/HEAD/docs/en.md)

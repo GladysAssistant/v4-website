@@ -150,7 +150,7 @@ Enedis users: the new **DataConnect 2026** consent callback is supported, and a 
 
 - **Export a device's history as CSV**, straight from the devices list.
 - **Matter**: water leak detectors, contact and rain sensors, and **door locks**.
-- **Zigbee2MQTT 2.13**, support for **network coordinators** (SMLIGHT SLZB-06/07 and friends), outdoor solar sirens, and the Heiman HS2WD-E.
+- **Zigbee2MQTT 2.13**, support for **network coordinators** ([SMLIGHT SLZB-06/07](https://www.amazon.com/s?k=SMLIGHT%20SLZB-06) and friends), outdoor solar sirens, and the [Heiman HS2WD-E](https://www.amazon.com/s?k=Heiman%20HS2WD-E).
 - **MQTT**: wildcard state topics in Home Assistant discovery.
 - **Google Home**: temperature and humidity sensors are exposed.
 - **Cameras**: disable a camera without deleting it, a real private mode.

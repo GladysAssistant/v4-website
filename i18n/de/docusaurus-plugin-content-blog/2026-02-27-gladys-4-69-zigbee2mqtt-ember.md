@@ -14,7 +14,7 @@ Eine neue Version von Gladys Assistant ist verfügbar 🥳, mit dem neuen Zigbee
 
 ## Zigbee2mqtt: der neue Treiber Ember
 
-Zigbee2mqtt bietet jetzt für bestimmte Sticks wie den Sonoff ZBDongle-E einen neuen Treiber an: **Ember**. Mit der Zigbee2mqtt-Integration in Gladys kannst du diesen Ember-Treiber jetzt für kompatible Sticks auswählen.
+Zigbee2mqtt bietet jetzt für bestimmte Sticks wie den [Sonoff ZBDongle-E](https://www.amazon.com/s?k=Sonoff%20ZBDongle-E) einen neuen Treiber an: **Ember**. Mit der Zigbee2mqtt-Integration in Gladys kannst du diesen Ember-Treiber jetzt für kompatible Sticks auswählen.
 
 Wenn du EZSP nutzt, verändert Zigbee2mqtt deine Installation nicht ohne dein Zutun, damit dein Setup nicht kaputtgeht. **Stabilität ist ein Grundwert des Projekts**, und dieses Update wurde so gestaltet, dass es deinen Alltag nicht beeinträchtigt.
 

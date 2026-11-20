@@ -35,8 +35,8 @@ Modules and radiators described as "6 orders" add **Comfort -1** and **Comfort -
 
 A pilot wire module sits between your electrical installation and the radiator: it receives commands over Zigbee and applies the matching order on the pilot wire. Two modules come up regularly in the Gladys community, both recognised by Zigbee2MQTT:
 
-- **NodOn SIN-4-FP-21**: a micromodule that fits in the connection box behind the radiator, or in the electrical panel. Compact, 6 orders, and the most widely used.
-- **Legrand 064882**: Legrand's pilot wire module, same idea, for the panel or a flush-mounting box.
+- **[NodOn SIN-4-FP-21](https://www.amazon.fr/s?k=NodOn%20SIN-4-FP-21)**: a micromodule that fits in the connection box behind the radiator, or in the electrical panel. Compact, 6 orders, and the most widely used.
+- **[Legrand 064882](https://www.amazon.fr/s?k=Legrand%20064882)**: Legrand's pilot wire module, same idea, for the panel or a flush-mounting box.
 
 A few things to check before buying:
 

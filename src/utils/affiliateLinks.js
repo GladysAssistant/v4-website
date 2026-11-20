@@ -35,4 +35,56 @@ const addAffiliateTag = (href) => {
   return url.toString();
 };
 
-module.exports = { AFFILIATE_PARAMS, addAffiliateTag };
+// Amazon store of each language that has a partner id. The generated product
+// boxes (landing pages, external integrations) are hidden in the other
+// languages (de, es) until a partner id is added above and the store here.
+// Hand-written Markdown links are a different matter: the German and Spanish
+// docs and blog keep the amazon.com links of the English text, tagged with
+// the amazon.com partner id.
+const AMAZON_STORES = {
+  en: "https://www.amazon.com",
+  fr: "https://www.amazon.fr",
+};
+
+// ("Aqara Motion Sensor P1", "fr") ->
+// "https://www.amazon.fr/s?k=Aqara%20Motion%20Sensor%20P1&tag=gladproj-21"
+// Search links rather than product pages: they never go out of stock and work
+// in every store. Returns null for a language with no store.
+const amazonSearchLink = (query, locale) => {
+  const store = AMAZON_STORES[locale];
+  if (!store) {
+    return null;
+  }
+  return addAffiliateTag(`${store}/s?k=${encodeURIComponent(query)}`);
+};
+
+// True when a value (a page's content object, an array, a string) holds an
+// Amazon link carrying one of our partner ids, at any depth. The React pages
+// that build their own Amazon links use it to show <AffiliateDisclosure />
+// only in the languages whose links are actually tagged.
+const AMAZON_TAGS = Object.entries(AFFILIATE_PARAMS)
+  .filter(([site]) => site.startsWith("amazon."))
+  .map(([, param]) => `${param.name}=${param.value}`);
+
+const containsAmazonAffiliateLink = (value) => {
+  if (typeof value === "string") {
+    return (
+      /amazon\./i.test(value) && AMAZON_TAGS.some((tag) => value.includes(tag))
+    );
+  }
+  if (Array.isArray(value)) {
+    return value.some(containsAmazonAffiliateLink);
+  }
+  if (value && typeof value === "object") {
+    return Object.values(value).some(containsAmazonAffiliateLink);
+  }
+  return false;
+};
+
+module.exports = {
+  AFFILIATE_PARAMS,
+  AMAZON_STORES,
+  addAffiliateTag,
+  amazonSearchLink,
+  containsAmazonAffiliateLink,
+};

@@ -13,6 +13,7 @@ export default function DiyHomeAlarmSystemPage() {
 
   return (
     <UseCasePage
+      productsPage="diy-home-alarm-system"
       content={content}
       faq={faq}
       schemaData={getAlarmSystemPageSchema(lang)}

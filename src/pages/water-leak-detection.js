@@ -18,6 +18,7 @@ export default function WaterLeakDetectionPage() {
 
   return (
     <UseCasePage
+      productsPage="water-leak-detection"
       content={content}
       faq={faq}
       schemaData={getWaterLeakDetectionPageSchema(lang)}

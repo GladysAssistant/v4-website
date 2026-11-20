@@ -19,6 +19,7 @@ export default function ShellyWithoutCloudPage() {
 
   return (
     <UseCasePage
+      productsPage="shelly-without-cloud"
       content={content}
       faq={faq}
       schemaData={getShellyWithoutCloudPageSchema(lang)}

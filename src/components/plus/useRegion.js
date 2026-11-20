@@ -45,7 +45,8 @@ function writeCachedRegion(region) {
  * displayed, not the billed amount.
  *
  * Detection uses Cloudflare's `/cdn-cgi/trace` endpoint, available on any domain
- * proxied through Cloudflare (which Cloudflare Pages domains are), so it needs
+ * proxied through Cloudflare (as the custom domain of the Worker serving the site
+ * is), so it needs
  * no extra serverless function. The result is cached for CACHE_TTL_MS and
  * re-checked afterwards.
  */

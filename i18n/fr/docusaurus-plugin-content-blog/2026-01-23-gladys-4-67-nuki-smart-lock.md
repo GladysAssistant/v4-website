@@ -14,7 +14,7 @@ Je suis heureux de vous présenter une nouvelle version de Gladys ! Cette versio
 
 ## ✨ Nouveautés & améliorations
 
-- 🔐 **Nouvelle intégration : Nuki.** Vous pouvez désormais connecter vos **serrures connectées Nuki** à Gladys et les intégrer dans vos scénarios et tableaux de bord. Merci [@ProtZ](https://community.gladysassistant.com/) !
+- 🔐 **Nouvelle intégration : Nuki.** Vous pouvez désormais connecter vos **[serrures connectées Nuki](https://www.amazon.fr/s?k=serrure%20connect%C3%A9e%20Nuki)** à Gladys et les intégrer dans vos scénarios et tableaux de bord. Merci [@ProtZ](https://community.gladysassistant.com/) !
 - 🏠 **HomeKit.** Mise à jour de la dépendance **HAP** vers la dernière version stable, pour une meilleure compatibilité et plus de fiabilité avec HomeKit. Merci [@bertrandda](https://community.gladysassistant.com/) !
 - 💾 **Gladys Plus.** Les sauvegardes **DuckDB** sont maintenant réalisées via une connexion temporaire à la base de données, ce qui évite les montées en RAM de vos instances une fois la sauvegarde terminée.
 

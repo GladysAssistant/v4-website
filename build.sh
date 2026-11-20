@@ -11,9 +11,8 @@ npm run load-dev-activity || echo ">> Keeping the committed dev activity snapsho
 
 # Building website, one process per locale. A single `docusaurus build` of the
 # four locales never gives back the Rspack memory of the locales it has already
-# built (about 2.5 GB each) and peaks around 12 GB on the last one: on
-# Cloudflare Pages the build then stalls until the 20-minute timeout. One
-# process per locale peaks around 5 GB. The default locale goes first because
+# built (about 2.5 GB each) and peaks around 12 GB on the last one, more than
+# most build machines have. One process per locale peaks around 5 GB. The default locale goes first because
 # its build empties ./build, where the other locales write their sub-folder.
 # A translated locale without an explicit baseUrl would be built at / and
 # empty ./build as well, so the build stops before starting in that case.
@@ -32,12 +31,13 @@ for locale in $LOCALES; do
 done
 
 # Every locale build copies static/ into its own folder, so the ~2,000 images of
-# static/img were deployed four times, and Cloudflare Pages refuses a
-# deployment of more than 20,000 files. The translated locales drop their copy:
-# the /<locale>/img/* rules at the end of ./_redirects serve those URLs from
-# /img/* with a 200 rewrite, so the URLs the pages use do not change. Only
-# Cloudflare applies that rewrite (`npm run serve` does not), so the copies are
-# removed on Cloudflare Pages builds only (CF_PAGES=1); the checks run everywhere.
+# static/img would be deployed four times, about 6,000 files for nothing. The
+# translated locales drop their copy: the /<locale>/img/* rules at the end of
+# ./_redirects serve those URLs from /img/* with a 200 rewrite, so the URLs the
+# pages use do not change. Only Cloudflare applies that rewrite (`npm run
+# serve` does not), so the copies are removed on the builds Cloudflare serves
+# only, which the workflows mark with CLOUDFLARE_DEPLOY=1. The checks run
+# everywhere.
 DEFAULT_LOCALE=${LOCALES%% *}
 for locale in $LOCALES; do
   [ "$locale" = "$DEFAULT_LOCALE" ] && continue
@@ -49,16 +49,16 @@ for locale in $LOCALES; do
     echo ">> Add \"/$locale/img/* /img/:splat 200\" at the end of ./_redirects"
     exit 1
   fi
-  if [ -n "$CF_PAGES" ]; then
+  if [ -n "$CLOUDFLARE_DEPLOY" ]; then
     rm -rf "./build/$locale/img"
   fi
 done
 
-# Writing Cloudflare Pages _redirects file, with the trailing-slash spelling of
+# Writing the Cloudflare _redirects file, with the trailing-slash spelling of
 # every rule (see the script)
 node scripts/build_redirects.js ./build/_redirects
 
-# Moving Cloudflare Pages _headers file
+# Moving the Cloudflare _headers file
 cp ./_headers ./build/_headers
 
 # Moving robots.txt

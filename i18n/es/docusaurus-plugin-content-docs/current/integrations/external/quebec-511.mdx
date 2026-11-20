@@ -1,0 +1,194 @@
+---
+title: "Integración domótica Québec 511, gratuita y de código abierto"
+sidebar_label: "Québec 511"
+description: "Unofficial. Road works and winter road conditions in Québec (MTMD open data). Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-quebec-511.png"
+keywords:
+  - "québec 511"
+  - "domótica québec 511"
+  - "gladys québec 511"
+  - "québec 511 gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-quebec-511 instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Québec 511","description":"Unofficial. Road works and winter road conditions in Québec (MTMD open data).","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-quebec-511","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-quebec-511.png","type":"device","version":"0.1.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-19T08:35:05Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+Unofficial integration. It reads two open datasets of the **Ministère des Transports et de la Mobilité durable du
+Québec** (MTMD), published on [Données Québec](https://www.donneesquebec.ca/): **road works** (with their
+restrictions) and **winter road conditions** of the provincial network. It reads them from the ministry's public WFS
+service (`ws.mapserver.transports.gouv.qc.ca`), the source of both datasets. No account, no API key.
+
+> This integration is not an official source. Before you drive, check [Québec 511](https://www.quebec511.info/)
+> itself. The data may lag behind the road, and the integration may miss road works or a change of conditions.
+
+Source: Ministère des Transports et de la Mobilité durable du Québec, datasets "Travaux routiers" and "Condition
+routière hivernale du réseau routier", Données Québec, licensed under CC BY 4.0
+(https://creativecommons.org/licenses/by/4.0/). The integration does not change the data; it filters it by zone and
+sums it up. It is not endorsed by the ministry.
+
+## What you get
+
+Up to **three watch zones**, each one a Gladys device. A zone is a circle around a point (1 to 300 km), optionally
+limited to some route numbers ("20, 40, 117").
+
+Each zone device has:
+
+| Feature                       | Type    | Meaning                                                                  |
+| ----------------------------- | ------- | ------------------------------------------------------------------------ |
+| Road works in effect          | counter | Road works whose period covers the current time, inside the zone         |
+| Major road works              | counter | Those whose restriction is "major" (_Majeure_) in the data               |
+| Segments in winter conditions | counter | Road segments inside the zone whose surface is snowy, snow packed or icy |
+| Summary                       | text    | The road works (major first, then by distance), then the winter segments |
+
+The summary is written in the language chosen in the configuration (French by default, or English): the works
+titles come in both languages from the ministry; place names stay as the ministry writes them.
+
+**In effect** means: the start of the works is past and their end is not, compared with the time of the ministry's
+server (`Date` header of its answer). The dates of the data have no time zone: they are read as Québec time
+(Eastern, daylight saving time included). Road works planned for later are not counted until they start. The data
+gives a period, not daily hours: works "during the week" or "at night" count for their whole period. A work whose
+start or end cannot be read counts as in effect; when more than half of the works have such dates (in an answer of 3 works or more), the dataset is
+refused (its format changed) and nothing is counted. Without a `Date` header, the clock of Gladys is used, when it is
+plausible. A `Date` more than a day away from the clock of Gladys (one of the two is wrong), or no `Date` with an
+implausible clock: the road works are not counted at all (never every listed work), and the status says so.
+
+**Winter conditions**: the road surface codes of the ministry's data dictionary. "Bare and dry" and "Bare and wet"
+are not winter conditions; partly snow covered, snow covered, partly snow packed, snow packed, partly ice covered and
+ice covered are. An unknown code is counted neither way. The ministry publishes this layer during the winter season;
+out of season, or where no segment is covered, the count is 0 and the summary says "No winter condition segment in the
+zone". Reduced or no visibility is written in the summary next to a segment in winter conditions (not for a bare road).
+
+**Nothing rather than 0**: an answer that is not a full list (an error page, a list cut short, a list where more
+than half of the entries cannot be read) is never published as 0. Each of the two datasets stands alone: when one
+fails, its own features keep their last value, the status says why, and the other one is still published. The
+summary follows the datasets read: it says "Road works not read" or "Winter conditions not read" for the one that
+failed. A list without the count the service always sends (`numberMatched`) is taken as cut, never as 0.
+
+## Scene trigger: "New road works in a zone"
+
+Fired when road works in effect appear in a zone for the first time and started or were updated within the last 24
+hours (server time). Filters: zone, restriction (major, minor). Variables: route number (empty when none), works title
+(French and English), location, restriction, direction and restriction type (French), major (yes/no), start and end
+(UTC, ISO 8601), distance from the zone center (km), ministry works id.
+
+It is not fired by the first read of a zone, nor after you move a zone (new center, radius or routes): that read
+only learns what is already there. It is not fired when no time can be believed (see above). At most 20 events
+per zone and per read: the others come with the next read (when still within 24 hours).
+
+## Configuration
+
+1. **Language of the summary**: French or English.
+2. **Read interval**: 15 to 120 minutes (15 by default).
+3. **Zone 1** (required), zones 2 and 3 (optional, left empty to turn them off): a name, the latitude and longitude
+   of the center (decimal degrees, inside Québec), the radius in km (20 by default), and optionally the routes to
+   keep, as numbers separated by commas ("20, 40, 117"; "A-20", "R-117", "autoroute 20" or "route 117" work too).
+   With routes set, works and segments without a route number (local streets, some bridges) are left out.
+
+A refused field is named in the status (the value you typed is not repeated there).
+
+The button **Show the last read** tells what the last read of each zone gave and when the next comes. It does not
+read the ministry service.
+
+## Pace and courtesy toward the ministry service
+
+- Two requests per round (road works, then winter conditions), whatever the number of zones: each asks only for the
+  box holding every zone. One request at a time, 5 seconds at least between the starts of two requests.
+- A round every interval, 15 minutes at least, measured from the start of the previous round.
+- No read sooner after a restart, a reconnection to Gladys, a configuration saved unchanged, a Discovery or the
+  test button (the time of the last attempt is kept in `/data`, and in memory); moving a zone reads at once, 5
+  seconds after the last request.
+- When `/data` cannot tell the last attempt (unreadable file, a date in the future, a `/data` that cannot be written
+  or does not answer within 2 seconds), the first read waits 15 minutes after the start, and the status says so; an
+  unreadable `/data` is read again every 10 seconds, and what it holds (pause, works already seen) comes back once
+  it reads; a `/data` that stops being writable later is said in the status too: a restart may then read sooner.
+- After a **429** ("too many requests"), every read pauses for 15 minutes, then 30, 60… up to 6 hours; after a
+  server error (**5xx**) or another unexpected status (400, 403, 404…), for 5 minutes, then 10, 20… up to 6 hours;
+  a `Retry-After` longer than that is honored, up to 6 hours. A refusal that arrives while the configuration is
+  being saved, or Gladys reconnects, still starts the pause. The pause is kept in `/data` across restarts; the
+  doubling starts over after a successful read.
+- User-Agent `gladys-quebec-511/<version> (+https://github.com/LM1LC3N7/gladys-quebec-511)`.
+- An answer is cut after 30 seconds or 8 MB (the whole province is about 1.3 MB).
+
+The service offers neither `ETag` nor `Last-Modified`: every round reads the data again. The datasets are updated
+continuously; reading more often than every 15 minutes would bring nothing.
+
+## Status
+
+The Configuration screen shows, for each zone, the counts of the last read and its time (Eastern time), or, for each
+dataset that failed, why and the time of its last data. Data older than 2 hours is said stale. The integration is
+shown connected when the last read of at least one dataset of one zone succeeded, less than 2 hours ago.
+
+## Privacy
+
+The coordinates of your zones stay in the Gladys configuration. The ministry service receives the box around your
+zones (their circles fit in it). The `/data` file holds the time of the last attempt, the pause, and per zone the
+ids of the road works already seen with a salted fingerprint of the zone, not its coordinates.
+
+## Limits
+
+- Québec only (the zone center must be in Québec; data near the borders is included).
+- Tested against the real ministry service on 2026-11-15 (Montréal, Québec City, Laurentides); never tested by a user
+  in Québec, nor during a snow storm (on that day every segment around Montréal was bare).
+- Road warnings (incidents, closures announced on Québec 511) are not part of these open datasets and are not read.
+- quebec511.info itself is not read (it refuses automated clients); only the open data service is.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Québec 511 te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Québec 511 road works and winter conditions | `section` | No | Road works in effect and winter road conditions on the network of the Ministère des Transports et de la Mobilité durable du Québec, read from its open data (Données Québec, CC BY 4.0): no account, no key. Up to three zones, each one a device. Check Québec 511 before you drive: this integration is not an official source. |
+| Language of the summary | `select` | No | Language of the device names and of the summary text (place names stay as the ministry writes them). |
+| Read interval (minutes) | `number` | No | From 15 to 120 minutes. Each read asks the ministry service twice (road works, then winter conditions), whatever the number of zones. |
+| Zone 1 | `section` | No | A circle around a point: the road works in effect and the winter condition segments inside it are counted. Required. |
+| Name | `string` | No | Name of the device in Gladys (60 characters at most). |
+| Latitude | `number` | Sí | Center of the zone, in Québec (decimal degrees). |
+| Longitude | `number` | Sí | Center of the zone (decimal degrees, negative: west). |
+| Radius (km) | `number` | No | From 1 to 300 km. |
+| Only these routes | `string` | No | Optional: route numbers separated by commas ("20, 40, 117"; "A-20" or "R-117" work too). Works and segments without a route number are then left out. Empty: every road of the zone. |
+| Zone 2 (optional) | `section` | No | A circle around a point: the road works in effect and the winter condition segments inside it are counted. Leave the latitude and longitude empty to turn it off. |
+| Name | `string` | No | Name of the device in Gladys (60 characters at most). |
+| Latitude | `number` | No | Center of the zone, in Québec (decimal degrees). |
+| Longitude | `number` | No | Center of the zone (decimal degrees, negative: west). |
+| Radius (km) | `number` | No | From 1 to 300 km. |
+| Only these routes | `string` | No | Optional: route numbers separated by commas ("20, 40, 117"; "A-20" or "R-117" work too). Works and segments without a route number are then left out. Empty: every road of the zone. |
+| Zone 3 (optional) | `section` | No | A circle around a point: the road works in effect and the winter condition segments inside it are counted. Leave the latitude and longitude empty to turn it off. |
+| Name | `string` | No | Name of the device in Gladys (60 characters at most). |
+| Latitude | `number` | No | Center of the zone, in Québec (decimal degrees). |
+| Longitude | `number` | No | Center of the zone (decimal degrees, negative: west). |
+| Radius (km) | `number` | No | From 1 to 300 km. |
+| Only these routes | `string` | No | Optional: route numbers separated by commas ("20, 40, 117"; "A-20" or "R-117" work too). Works and segments without a route number are then left out. Empty: every road of the zone. |
+
+## Cómo instalar Québec 511 en Gladys
+
+1. En Gladys, abre **Integraciones**: Québec 511 aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-quebec-511:0.1.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-quebec-511](https://github.com/LM1LC3N7/gladys-quebec-511).
+
+Québec 511 requiere Gladys `>=5.3.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Québec 511 es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [LM1LC3N7](https://github.com/LM1LC3N7), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/LM1LC3N7/gladys-quebec-511) — [fuente de esta documentación](https://github.com/LM1LC3N7/gladys-quebec-511/blob/HEAD/docs/en.md)

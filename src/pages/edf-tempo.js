@@ -4,6 +4,7 @@ import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import JsonLd from "../components/seo/JsonLd";
+import AmazonProducts from "../components/AmazonProducts";
 import { getEdfTempoPageSchema } from "../data/schemas/edfTempo";
 import edfTempoContent, {
   edfTempoFaqEn,
@@ -115,7 +116,7 @@ const SWATCH_CLASS = {
   red: t.legendSwatchRed,
 };
 
-function TempoPage({ content, faq }) {
+function TempoPage({ content, faq, lang }) {
   return (
     <main className={styles.main}>
       <div className={`container ${styles.container}`}>
@@ -198,6 +199,8 @@ function TempoPage({ content, faq }) {
         </section>
 
         {/* RELATED / MESH */}
+        <AmazonProducts page="edf-tempo" lang={lang} />
+
         <section className={styles.section} aria-labelledby="related-title">
           <h2 id="related-title" className={styles.sectionTitle}>
             {content.related.title}
@@ -258,7 +261,7 @@ export default function EdfTempoPage() {
   return (
     <HorizonPage title={content.meta.title} description={content.meta.description}>
       <JsonLd data={getEdfTempoPageSchema(lang)} />
-      <TempoPage content={content} faq={faq} />
+      <TempoPage content={content} faq={faq} lang={lang} />
     </HorizonPage>
   );
 }

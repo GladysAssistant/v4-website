@@ -1,0 +1,190 @@
+---
+title: "Art-Net smart home integration, free and open source"
+sidebar_label: "Art-Net"
+description: "DMX stage lighting through an Art-Net node, on the local network. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-artnet.png"
+keywords:
+  - "art-net"
+  - "art-net smart home"
+  - "gladys art-net"
+  - "art-net gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/LM1LC3N7/gladys-artnet instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+import ExternalIntegrationProducts from "@site/src/components/ExternalIntegrationProducts";
+
+<ExternalIntegrationHeader integration={{"name":"Art-Net","description":"DMX stage lighting through an Art-Net node, on the local network.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-artnet","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-artnet.png","type":"device","version":"0.1.1","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-19T11:20:02Z"}} />
+
+<ExternalIntegrationProducts name={"Art-Net"} products={[{"label":"Art-Net DMX node","href":"https://www.amazon.com/s?k=Art-Net+DMX+node&tag=gladproj-20"}]} />
+
+Drives DMX stage lighting (dimmers, RGB, RGBW and white fixtures) from Gladys
+through an **Art-Net node**: the box that turns your local network into DMX512
+lines. Everything stays on the local network (UDP port 6454), with no account
+and no cloud.
+
+> This integration has **never been tested with a real node**: only against a
+> simulated node on the same machine. Please report how it behaves with yours.
+> It is not affiliated with Artistic Licence nor with any lighting brand.
+
+Art-Net™ Designed by and Copyright Artistic Licence. Art-Net is a protocol of
+Artistic Licence Engineering Ltd.
+
+## What you need
+
+- An Art-Net node (Art-Net 3 or 4) on your network, with a **fixed IP address**
+  (set it in your router or in the node).
+- The DMX address of each fixture (set on the fixture: a display, DIP switches)
+  and the universe of the DMX line it is plugged on (set in the node).
+
+## Configuration
+
+1. **Node IP address**: the address of the node, for example `192.168.1.60`.
+   The port is 6454 unless you add another (`192.168.1.60:6455`). A broadcast
+   address (ending in `.255`, `2.255.255.255`...) is refused: Art-Net 4 sends
+   DMX to the node itself.
+2. **Fixtures**: one entry per fixture, separated by `;`:
+   `[universe/]address profile name`. Example:
+   `1 rgb Living room; 4 dimmer Bar; 2/10 cct Desk`.
+   - universe: 1 to 32767 (the Port-Address of the node), 1 when left out;
+     0 is accepted when typed (`0/4`): Art-Net 4 deprecates it, but many
+     nodes still use it;
+   - address: 1 to 512, the first DMX channel of the fixture;
+   - profile: the order of its channels:
+
+     | Profile  | Channels                           | Gladys features                       |
+     | -------- | ---------------------------------- | ------------------------------------- |
+     | `dimmer` | intensity                          | on/off, brightness                    |
+     | `rgb`    | red, green, blue                   | on/off, brightness, colour            |
+     | `rgbw`   | red, green, blue, white            | on/off, brightness, colour            |
+     | `drgb`   | intensity, red, green, blue        | on/off, brightness, colour            |
+     | `drgbw`  | intensity, red, green, blue, white | on/off, brightness, colour            |
+     | `cct`    | cold white, warm white             | on/off, brightness, white temperature |
+
+   - name: up to 40 characters (optional: `Fixture 1/4` otherwise).
+
+   An entry that cannot be read, that runs past channel 512 or that overlaps
+   an earlier fixture is skipped: the status gives its position and the
+   reason. At most 64 fixtures on 16 universes.
+
+3. **Language of the default names**: the names given to fixtures without one
+   and to the features.
+
+Save: the fixtures appear in **Discovery** (one light each). Add them.
+
+## Assumed state
+
+Art-Net sends DMX one way: a fixture **never reports its state**. Gladys shows
+the last command sent, and the badge of each fixture says the state is assumed.
+If someone changes a fixture with a lighting desk or its own buttons, Gladys
+does not know.
+
+After a restart of the integration, every fixture is assumed **off**: nothing is
+sent until the first command, and that first command sends the whole universe,
+so the other fixtures of the universe go to 0 (Gladys shows them off). The DMX
+channels of a universe that are not in the fixtures list are sent at 0.
+
+## How the frames are sent
+
+- A universe starts being sent at the first command, "off" or Blackout that
+  touches it. Its frame (the whole universe, from channel 1 to the last channel
+  used) then leaves after each change, 25 ms after the previous frame at the
+  earliest (40 frames a second at most, the DMX512 limit is 44), and again every
+  900 ms without change, as Art-Net asks, until the integration stops.
+- A frame is sent by unicast to the node address, from port 6454 when it is
+  free (else from another port, said in the status: a few nodes ignore it).
+- A command is answered once its frame left the network card. If it could not
+  leave (network error), "on", brightness, colour and temperature are undone
+  and the answer says nothing was sent.
+
+## Off and Blackout
+
+"Off" (on/off at 0, or brightness 0) sets every channel of the fixture to 0.
+**Blackout** (button in the configuration, and scene action "Art-Net
+blackout") sets every known fixture, and every universe already sent, to 0.
+
+They need no option and no configuration read: the node address and the
+fixtures are also kept in `/data`, read as soon as the integration starts, so
+they work right after a restart, before Gladys gives the configuration (before
+it is read, they wait up to 1.5 s for a `/data` read in progress). They are not
+held back by the 32-universe bound of a session. If a frame cannot leave, the
+900 ms keep-alive tries it again until it does; when it finally leaves, Gladys
+is told the fixture is off. Their only refusals:
+
+- no node address known (none configured, nothing in `/data`);
+- "off" only: a fixture not in the configuration; before the configuration is
+  read, a fixture not in `/data`, or `/data` unreadable, or `/data` still not
+  read after 1.5 s;
+- Blackout only: no fixture and no universe known (same cases);
+- the integration is stopping.
+
+If the node address in the configuration becomes invalid, "off" and Blackout
+go to the last valid one.
+
+## Buttons
+
+- **Test the node**: sends an ArtPoll and shows the name the node gives in its
+  ArtPollReply (3 s at most, once every 10 s). Some nodes answer only to port
+  6454, or not at all: this does not stop the DMX frames.
+- **Blackout (all fixtures at 0)**: see above.
+
+## Status
+
+- _Ready: N fixture(s), frames go to address:port_: the configuration is valid.
+- _Frames do not leave for ... (code)_: the network refuses the datagrams
+  (cable, address); they are tried again every second.
+- _Configuration not read_: Gladys did not give it, tried again after 5 s,
+  then up to every 5 min.
+- _Entries skipped_: the position and reason of each entry in error.
+- _Storage /data unreadable / not writable_: read again every 10 s; until then
+  "off" and Blackout need the configuration.
+
+## Limits
+
+- At most 32 universes started in one session (after several changes of the
+  configuration): beyond, "on", brightness, colour and temperature are refused
+  until the integration restarts; "off" and Blackout are not.
+- One node. Several nodes, ArtPoll discovery, ArtSync and RDM are not done.
+- 8-bit channels only (no 16-bit "fine" channels), no moving heads, no effects.
+- Nothing is read back: the state is the last command sent.
+
+## Privacy
+
+Nothing leaves your local network. `/data` keeps the node address and the
+universe, address and profile of each fixture (not their names).
+
+## Configuration settings
+
+These are the settings Art-Net asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Getting started | `section` | No | Give the IP address of your Art-Net node (the box that turns the network into DMX lines, fixed in your router) and list your fixtures. Art-Net never reports a state: Gladys shows the last command sent. Blackout (button below, or scene action) sets every fixture to 0. |
+| Node IP address | `string` | Yes | IPv4 address of the Art-Net node, with an optional port (6454 by default). Never a broadcast address: Art-Net sends DMX to the node itself. |
+| Fixtures | `string` | No | One entry per fixture, separated by ; written [universe/]address profile name. Universe 1 to 32767 (1 when left out; 0 accepted), address 1 to 512 (first DMX channel), profile: dimmer, rgb, rgbw, drgb, drgbw (d = intensity channel first) or cct (cold then warm white). |
+| Language of the default names | `select` | No |  |
+
+## How to install Art-Net in Gladys
+
+1. In Gladys, open **Integrations**: Art-Net appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/lm1lc3n7/gladys-artnet:0.1.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/LM1LC3N7/gladys-artnet](https://github.com/LM1LC3N7/gladys-artnet).
+
+Art-Net requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Art-Net is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [LM1LC3N7](https://github.com/LM1LC3N7), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/LM1LC3N7/gladys-artnet) — [source of this documentation](https://github.com/LM1LC3N7/gladys-artnet/blob/HEAD/docs/en.md)

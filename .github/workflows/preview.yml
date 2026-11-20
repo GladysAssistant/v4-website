@@ -1,0 +1,185 @@
+name: Preview
+
+# Publishes the build of every pull request at
+# https://pr-<number>-gladys-website.<subdomain>.workers.dev and posts the link
+# on the pull request, as Cloudflare Pages did.
+#
+# Two workflows, so that the Cloudflare token never meets the code of a pull
+# request:
+# - Node.js CI (test.yml) builds the pull request without access to the token,
+#   and keeps the build as an artifact;
+# - this workflow, started when that run ends, uploads the artifact as a new
+#   version of the Worker with `wrangler versions upload`, which leaves
+#   production as it is. workflow_run always runs the version of this file
+#   that is on master, and the artifact is only ever read as files to serve.
+#
+# The token can deploy to production: it lives in the "cloudflare"
+# environment, which only master can use, so that a workflow pushed on a
+# branch cannot read it.
+#
+# Pull requests from forks get no preview. A preview is served with the
+# wrangler.jsonc of master, not the one of the pull request. The first
+# preview needs the Worker to exist: Deploy must have run once.
+
+on:
+  workflow_run:
+    workflows: ["Node.js CI"]
+    types: [completed]
+
+permissions:
+  contents: read
+  # Download the build of the Node.js CI run
+  actions: read
+  # Post the link on the pull request
+  pull-requests: write
+
+# A newer commit on the same branch replaces the upload in progress.
+concurrency:
+  group: preview-${{ github.event.workflow_run.head_repository.full_name }}-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: true
+
+jobs:
+  preview:
+    if: >-
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: cloudflare
+    steps:
+      - name: Find the pull request
+        id: pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const run = context.payload.workflow_run;
+            const number = run.pull_requests[0] && run.pull_requests[0].number;
+            if (!number) {
+              core.notice("No pull request for this run: nothing to publish.");
+              return;
+            }
+            const { data: pr } = await github.rest.pulls.get({
+              ...context.repo,
+              pull_number: number,
+            });
+            if (pr.state !== "open") {
+              core.notice(`#${number} is ${pr.state}: nothing to publish.`);
+              return;
+            }
+            // An older run finishing after a newer one must not replace the
+            // newer preview.
+            if (pr.head.sha !== run.head_sha) {
+              core.notice(`#${number} has newer commits: their run publishes the preview.`);
+              return;
+            }
+            core.setOutput("number", String(number));
+            core.setOutput("sha", run.head_sha);
+
+      - name: Check the Cloudflare secrets
+        id: secrets
+        if: steps.pr.outputs.number
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "CLOUDFLARE_API_TOKEN or CLOUDFLARE_ACCOUNT_ID is not set: nothing to do."
+            echo "See the comment at the top of deploy.yml to enable it."
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # The Worker configuration of master, and nothing else.
+      - uses: actions/checkout@v4
+        if: steps.secrets.outputs.configured == 'true'
+        with:
+          sparse-checkout: wrangler.jsonc
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
+      - uses: actions/download-artifact@v4
+        if: steps.secrets.outputs.configured == 'true'
+        with:
+          name: preview-build
+          path: build
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+
+      # Same pinned Wrangler as deploy.yml.
+      - name: Upload the preview to Cloudflare Workers
+        id: upload
+        if: steps.secrets.outputs.configured == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          HEAD_SHA: ${{ steps.pr.outputs.sha }}
+          WRANGLER_OUTPUT_FILE_PATH: ${{ runner.temp }}/wrangler-output.ndjson
+        run: |
+          npx --yes wrangler@4.165.0 versions upload \
+            --preview-alias "pr-$PR_NUMBER" \
+            --message "Preview of pull request #$PR_NUMBER (${HEAD_SHA:0:7})"
+          upload='select(.type == "version-upload")'
+          alias_url=$(jq -r "$upload | .preview_alias_url // empty" "$WRANGLER_OUTPUT_FILE_PATH")
+          version_url=$(jq -r "$upload | .preview_url // empty" "$WRANGLER_OUTPUT_FILE_PATH")
+          if [ -z "$alias_url" ]; then
+            echo "::error::Wrangler returned no preview URL: are preview URLs enabled on the Worker (preview_urls in wrangler.jsonc)?"
+            exit 1
+          fi
+          echo "alias_url=$alias_url" >> "$GITHUB_OUTPUT"
+          echo "version_url=$version_url" >> "$GITHUB_OUTPUT"
+
+      # One comment per pull request, updated on every new preview.
+      - name: Post the link on the pull request
+        if: steps.upload.outputs.alias_url
+        uses: actions/github-script@v7
+        env:
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          HEAD_SHA: ${{ steps.pr.outputs.sha }}
+          ALIAS_URL: ${{ steps.upload.outputs.alias_url }}
+          VERSION_URL: ${{ steps.upload.outputs.version_url }}
+          BUILD_RUN_URL: ${{ github.event.workflow_run.html_url }}
+        with:
+          script: |
+            const marker = "<!-- workers-preview -->";
+            const issue_number = Number(process.env.PR_NUMBER);
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const rows = [
+              ["Preview", process.env.ALIAS_URL],
+              ["This commit only", process.env.VERSION_URL],
+              ["Commit", `\`${process.env.HEAD_SHA.slice(0, 7)}\``],
+            ].filter(([, value]) => value);
+            const body = [
+              marker,
+              "### Preview on Cloudflare Workers",
+              "",
+              "| | |",
+              "| --- | --- |",
+              ...rows.map(([label, value]) => `| **${label}** | ${value} |`),
+              "",
+              `The preview link always shows the latest commit of this pull request. Built by [Node.js CI](${process.env.BUILD_RUN_URL}), published by [Preview](${runUrl}).`,
+            ].join("\n");
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              ...context.repo,
+              issue_number,
+              per_page: 100,
+            });
+            const existing = comments.find(
+              (comment) =>
+                comment.user.login === "github-actions[bot]" && comment.body.includes(marker)
+            );
+            if (existing) {
+              await github.rest.issues.updateComment({
+                ...context.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                ...context.repo,
+                issue_number,
+                body,
+              });
+            }

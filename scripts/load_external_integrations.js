@@ -1,5 +1,10 @@
 const fs = require("fs");
 const path = require("path");
+const {
+  AMAZON_STORES,
+  amazonSearchLink,
+} = require("../src/utils/affiliateLinks");
+const INTEGRATION_PRODUCTS = require("../src/data/integrationProducts");
 
 // The full index, not index-lite.json like the catalog page: the configuration
 // table of each generated page needs the manifests' `config_schema`, which the
@@ -392,6 +397,20 @@ const headerProps = (integration, locale) => ({
   pushed_at: integration.pushed_at,
 });
 
+// The hardware to buy for an integration (src/data/integrationProducts.js), as
+// Amazon search links of the page's language. A product is either a string,
+// used in every language, or an object with the wording of each language it
+// is sold in. Languages with no Amazon partner id get no products box.
+const productLinks = (slug, locale) => {
+  if (!AMAZON_STORES[locale]) {
+    return [];
+  }
+  return (INTEGRATION_PRODUCTS[slug] || [])
+    .map((product) => (typeof product === "string" ? product : product[locale]))
+    .filter(Boolean)
+    .map((label) => ({ label, href: amazonSearchLink(label, locale) }));
+};
+
 // A JavaScript literal for an MDX expression. MDX finds the end of an
 // expression by balancing braces before parsing it, so the braces inside
 // strings (an author's description can contain `{{gladys_host}}`) are written
@@ -551,6 +570,7 @@ const buildPage = (integration, authorDoc, locale, docLocale, hasNativeDoc) => {
       : `${description} ${TEXTS[descriptionLocale].descriptionSuffix}`;
   const docPath = `docs/${docLocale}.md`;
   const lowerName = integration.name.toLowerCase();
+  const products = productLinks(integration.slug, locale);
 
   const frontmatter = [
     "---",
@@ -579,11 +599,24 @@ const buildPage = (integration, authorDoc, locale, docLocale, hasNativeDoc) => {
     `${repoUrl} instead. */}`,
     "",
     `import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";`,
+    ...(products.length
+      ? [
+          `import ExternalIntegrationProducts from "@site/src/components/ExternalIntegrationProducts";`,
+        ]
+      : []),
     "",
     `<ExternalIntegrationHeader integration={${jsLiteral(
       headerProps(integration, locale)
     )}} />`,
     "",
+    ...(products.length
+      ? [
+          `<ExternalIntegrationProducts name={${jsLiteral(
+            integration.name
+          )}} products={${jsLiteral(products)}} />`,
+          "",
+        ]
+      : []),
     ...(authorDoc && docLocale !== locale && texts.docInEnglish
       ? [texts.docInEnglish, ""]
       : []),
@@ -660,6 +693,13 @@ const removeStalePages = (directory, keptFiles) => {
     throw new Error(`Unable to download store index: HTTP ${response.status}`);
   }
   const index = await response.json();
+  // Read before the snapshot is overwritten: the integrations it does not
+  // list yet are the ones new to the store.
+  const knownSlugs = new Set(
+    JSON.parse(fs.readFileSync(OUTPUT_FILE, "utf8")).integrations.map(
+      (integration) => integration.slug
+    )
+  );
   const slugs = buildSlugs(index.integrations);
   const nativeSlugs = nativeDocSlugs();
 
@@ -730,4 +770,41 @@ const removeStalePages = (directory, keptFiles) => {
     removeStalePages(DOCS_DIRS[locale], written[locale])
   );
   console.log(`> Generated ${integrations.length} pages per locale`);
+
+  // Nobody is told when an integration joins the store: list the new ones
+  // that have no hardware to buy in src/data/integrationProducts.js, so the
+  // pull request of the weekly refresh asks the question.
+  const withoutProducts = integrations.filter(
+    ({ slug }) => !knownSlugs.has(slug) && !INTEGRATION_PRODUCTS[slug]
+  );
+  const unknownSlugs = Object.keys(INTEGRATION_PRODUCTS).filter(
+    (slug) => !integrations.some((integration) => integration.slug === slug)
+  );
+  const report = [
+    ...(withoutProducts.length
+      ? [
+          "New integrations without products in `src/data/integrationProducts.js` (add an entry to the ones that need hardware sold on Amazon):",
+          "",
+          ...withoutProducts.map(
+            ({ slug, name, description }) =>
+              `- \`${slug}\`: ${name}, ${oneLine(description.en)}`
+          ),
+          "",
+        ]
+      : []),
+    ...(unknownSlugs.length
+      ? [
+          "Entries of `src/data/integrationProducts.js` that match no integration of the store (renamed or removed):",
+          "",
+          ...unknownSlugs.map((slug) => `- \`${slug}\``),
+          "",
+        ]
+      : []),
+  ].join("\n");
+  if (report) {
+    console.log(`\n${report}`);
+  }
+  if (process.env.PRODUCTS_REPORT_FILE) {
+    fs.writeFileSync(process.env.PRODUCTS_REPORT_FILE, report);
+  }
 })();

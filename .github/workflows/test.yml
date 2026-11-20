@@ -1,6 +1,21 @@
 name: Node.js CI
 
-on: [push, pull_request]
+# A pull request runs one build, not two: a push to a branch with an open
+# pull request would otherwise also start a push build of the same commit.
+# Master is built after each merge, and a branch without a pull request is not
+# built until one is opened.
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+# This workflow runs the code of the pull requests. Its build of a pull request
+# is also what the Preview workflow (preview.yml) publishes, with the
+# Cloudflare token: that token lives in the "cloudflare" environment, which
+# this workflow does not use, and the token GitHub gives this workflow can
+# only read.
+permissions:
+  contents: read
 
 jobs:
   build:
@@ -19,3 +34,16 @@ jobs:
       - run: ./build.sh
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # The build Cloudflare serves (see build.sh), so that the preview of
+          # a pull request is built exactly like production.
+          CLOUDFLARE_DEPLOY: 1
+      # Published by the Preview workflow. Pull requests from forks get no
+      # preview. include-hidden-files keeps the .well-known folder.
+      - name: Keep the build for the preview
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        uses: actions/upload-artifact@v4
+        with:
+          name: preview-build
+          path: build
+          include-hidden-files: true
+          retention-days: 1

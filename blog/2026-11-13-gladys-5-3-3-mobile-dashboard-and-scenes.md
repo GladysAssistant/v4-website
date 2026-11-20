@@ -127,7 +127,7 @@ Please use it, it really helps us know where to put our efforts!
 The [Zigbee2MQTT audit](https://community.gladysassistant.com/t/zigbee2mqtt-un-audit-pour-devenir-plus-simple-que-home-assistant/11498) continues, after 5.3.2, which already recognized the plugged dongle and preselected its port and model:
 
 - **Startup errors are explained**, with the action to take: a dongle that does not answer (often a model other than the selected one, or a dongle used by other software), a network coordinator out of reach, a configuration refused by Zigbee2MQTT. Before, Gladys showed the last error line of the logs, in English, often unrelated.
-- **SONOFF ZBDongle-E with an old firmware start on their own.** Many are still sold with a firmware the `ember` driver refuses. Gladys now switches by itself to the `ezsp` compatibility driver, and the setup page explains how to go back to `ember` after a firmware update.
+- **[SONOFF ZBDongle-E](https://www.amazon.com/s?k=Sonoff%20ZBDongle-E) with an old firmware start on their own.** Many are still sold with a firmware the `ember` driver refuses. Gladys now switches by itself to the `ezsp` compatibility driver, and the setup page explains how to go back to `ember` after a firmware update.
 - The **Tuya SPM02V3** three-phase meter reports all its measures: phase C, the voltage of each phase and the produced energy.
 
 Thanks [@cicoub13](https://github.com/cicoub13) for all of this!

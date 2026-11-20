@@ -65,7 +65,7 @@ Lors de la sélection d'une propriété d'appareil dans un déclencheur de scèn
 Deux ajouts pour les utilisateurs Zigbee2mqtt :
 
 - **Clavier DEVELCO :** prise en charge des actions du keypad (désarmement, armement zones jour / nuit / toutes zones, délai de sortie, urgence).
-- **Sirènes d'alarme :** nouvelles actions `trigger_alarm` et `stop_alarm` (ex. sirène Bosch outdoor), utilisables dans vos scènes et automatisations.
+- **Sirènes d'alarme :** nouvelles actions `trigger_alarm` et `stop_alarm` (ex. [sirène Bosch outdoor](https://www.amazon.fr/s?k=Bosch%20Smart%20Home%20sir%C3%A8ne%20ext%C3%A9rieure)), utilisables dans vos scènes et automatisations.
 
 ---
 

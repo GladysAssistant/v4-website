@@ -19,6 +19,7 @@ export default function ZwaveJsUiWithoutHomeAssistantPage() {
 
   return (
     <UseCasePage
+      productsPage="z-wave-js-ui-without-home-assistant"
       content={content}
       faq={faq}
       schemaData={getZwaveJsUiWithoutHomeAssistantPageSchema(lang)}
