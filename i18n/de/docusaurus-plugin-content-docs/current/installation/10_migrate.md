@@ -75,7 +75,7 @@ Prüfe, ob der eingegebene Schlüssel wirklich der der alten Instanz ist: Gladys
 
 ## 3. Nach der Wiederherstellung prüfen
 
-- **Zigbee2mqtt**: Gladys installiert es automatisch mit seiner wiederhergestellten Konfiguration (Zigbee-Netzwerk und Geräte) neu, ohne neues Anlernen. Prüfe trotzdem unter **Integrationen > Zigbee2mqtt** den USB-Port des Sticks: Er kann auf dem neuen Rechner anders heißen. Wähle in diesem Fall den richtigen aus.
+- **Zigbee2mqtt**: Gladys installiert es automatisch mit seiner wiederhergestellten Konfiguration (Zigbee-Netzwerk und Geräte) neu, ohne neues Anlernen. Seit Gladys 5.3.4 findet es den Stick über seinen stabilen Pfad wieder, egal an welchem USB-Port er steckt. Schau trotzdem unter **Integrationen > Zigbee2mqtt** nach: Meldet das Dashboard, dass der Stick ausgesteckt ist, wähle ihn mit der Schaltfläche **Ändern** erneut aus. Richte Zigbee2mqtt nicht von Grund auf neu ein, bevor du das Backup wiederhergestellt hast: Eine neue Installation bildet ein neues Zigbee-Netzwerk, und du müsstest deine Geräte neu anlernen.
 - **Matter**: Der Controller der Matter-Integration wird automatisch aus seinem Backup wiederhergestellt.
 - **Matterbridge** (wenn du es nutzt): Installiere seine Plugins neu und kopple die Bridge erneut mit deinen Matter-Controllern.
 - **Integrationen aus dem Katalog**: Sie werden beim Start automatisch neu installiert. Gladys lädt ihre Images erneut herunter, was ein paar Minuten dauern kann.

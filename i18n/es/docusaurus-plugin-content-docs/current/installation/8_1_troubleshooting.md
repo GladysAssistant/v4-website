@@ -83,7 +83,7 @@ Docker guarda las imágenes de las versiones anteriores. Elimina las que ningún
 
 ### Mi dongle Zigbee no se detecta o Zigbee2MQTT no arranca
 
-En **Integraciones > Zigbee2MQTT > Configuración**, Gladys muestra los puertos USB con el nombre del dispositivo conectado a cada uno, y preselecciona el puerto y el modelo de los dongles más comunes. Si tu dongle no aparece en la lista, comprueba que la máquina lo ve con `ls /dev/serial/by-id/`. Si Zigbee2MQTT no se pone en verde, Gladys te indica el motivo en esa misma página. Desde Gladys 5.3.3, la página también te dice qué hacer, y un Sonoff ZBDongle-E con un firmware antiguo se cambia solo al controlador `ezsp`. Consulta los [errores habituales de Zigbee2MQTT y sus soluciones](/es/docs/integrations/zigbee2mqtt#solucionar-los-errores-habituales-de-zigbee2mqtt). Si Gladys se ejecuta en una máquina virtual, hay que pasarle el dongle (consulta la [guía de Proxmox](/es/docs/installation/proxmox)).
+En **Integraciones > Zigbee2MQTT > Configuración**, el asistente de instalación muestra el dongle que Gladys ha detectado, con su foto y su nombre, y reconoce los modelos más comunes. Si tu dongle no aparece, comprueba que la máquina lo ve con `ls /dev/serial/by-id/`. Si Zigbee2MQTT no arranca, Gladys te indica el motivo y qué hacer, en el asistente o en el panel de la misma pestaña, y un Sonoff ZBDongle-E con un firmware antiguo se cambia solo al controlador `ezsp`. Desde Gladys 5.3.4, un dongle desconectado y vuelto a conectar, en cualquier puerto, vuelve a arrancar Zigbee2MQTT solo. Consulta los [errores habituales de Zigbee2MQTT y sus soluciones](/es/docs/integrations/zigbee2mqtt#solucionar-los-errores-habituales-de-zigbee2mqtt). Si Gladys se ejecuta en una máquina virtual, hay que pasarle el dongle (consulta la [guía de Proxmox](/es/docs/installation/proxmox)).
 
 ### Un sensor ya no muestra su valor en el panel
 
@@ -185,7 +185,7 @@ Antes de publicar, revisa tus registros: si has restablecido tu contraseña hace
         name: "Mi dongle Zigbee no se detecta o Zigbee2MQTT no arranca",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "En Integraciones > Zigbee2MQTT > Configuración, Gladys muestra los puertos USB con el nombre del dispositivo conectado a cada uno, y preselecciona el puerto y el modelo de los dongles más comunes. Si tu dongle no aparece en la lista, comprueba que la máquina lo ve con ls /dev/serial/by-id/. Si Zigbee2MQTT no se pone en verde, Gladys te indica el motivo en esa misma página. Desde Gladys 5.3.3, la página también te dice qué hacer, y un Sonoff ZBDongle-E con un firmware antiguo se cambia solo al controlador ezsp. Si Gladys se ejecuta en una máquina virtual, hay que pasarle el dongle.",
+          text: "En Integraciones > Zigbee2MQTT > Configuración, el asistente de instalación muestra el dongle que Gladys ha detectado, con su foto y su nombre, y reconoce los modelos más comunes. Si tu dongle no aparece, comprueba que la máquina lo ve con ls /dev/serial/by-id/. Si Zigbee2MQTT no arranca, Gladys te indica el motivo y qué hacer, en el asistente o en el panel de la misma pestaña, y un Sonoff ZBDongle-E con un firmware antiguo se cambia solo al controlador ezsp. Desde Gladys 5.3.4, un dongle desconectado y vuelto a conectar, en cualquier puerto, vuelve a arrancar Zigbee2MQTT solo. Si Gladys se ejecuta en una máquina virtual, hay que pasarle el dongle.",
         },
       },
       {
