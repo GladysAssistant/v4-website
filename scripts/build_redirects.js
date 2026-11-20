@@ -1,4 +1,4 @@
-// Writes the Cloudflare Pages _redirects file into the build folder.
+// Writes the Cloudflare _redirects file into the build folder.
 //
 // Cloudflare matches a redirect source exactly: "/docs/integrations/tuya" does
 // not match "/docs/integrations/tuya/". The site uses trailing slashes, so the
