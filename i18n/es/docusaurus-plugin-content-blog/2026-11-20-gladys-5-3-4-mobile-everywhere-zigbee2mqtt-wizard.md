@@ -10,7 +10,7 @@ slug: gladys-5-3-4-mobile-everywhere-zigbee2mqtt-wizard
 
 Hoy llega una nueva versión de Gladys, la 5.3.4 🎉
 
-La semana pasada, la 5.3.3 rehízo el panel y las escenas para el móvil. Esta versión termina el trabajo: **el resto de Gladys pasa al diseño para móvil**, desde la página de inicio de sesión hasta el asistente de contratos de energía, pasando por todas las páginas de los dispositivos. En el ordenador, nada cambia.
+La semana pasada, la 5.3.3 rehízo el panel y las escenas para el móvil. Esta versión termina el trabajo: **el resto de Gladys pasa al diseño para móvil**, desde la página de inicio de sesión hasta el asistente de contratos de energía, pasando por todas las páginas de los dispositivos. En el ordenador, los diseños no cambian.
 
 Y trae mucho más: **Zigbee2MQTT estrena un asistente de instalación y un panel de control**, y Gladys **ahora te avisa cuando algo va mal**, en lugar de dejarte creer que todo ha funcionado.
 
@@ -53,7 +53,7 @@ El **teclado de bloqueo** de una tableta de pared tiene teclas grandes adaptadas
 
 ## Zigbee2MQTT: un asistente de instalación y un panel de control
 
-La [auditoría de Zigbee2MQTT](https://community.gladysassistant.com/t/zigbee2mqtt-un-audit-pour-devenir-plus-simple-que-home-assistant/11498) continúa, con su paso más grande hasta ahora. ¡Gracias [@cicoub13](https://github.com/cicoub13) por este enorme trabajo!
+La auditoría de Zigbee2MQTT continúa, con su paso más grande hasta ahora. ¡Gracias [@cicoub13](https://github.com/cicoub13) por este enorme trabajo!
 
 ### Un asistente para la primera instalación
 

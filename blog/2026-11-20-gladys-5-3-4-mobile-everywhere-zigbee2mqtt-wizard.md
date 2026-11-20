@@ -10,7 +10,7 @@ Hey everyone!
 
 New version of Gladys today, 5.3.4 🎉
 
-Last week, 5.3.3 rebuilt the dashboard and the scenes for the phone. This release finishes the job: **the rest of Gladys gets its phone layout**, from the sign-in page to the energy contract wizard, by way of every device page. On a computer, nothing changes.
+Last week, 5.3.3 rebuilt the dashboard and the scenes for the phone. This release finishes the job: **the rest of Gladys gets its phone layout**, from the sign-in page to the energy contract wizard, by way of every device page. On a computer, the layouts stay the same.
 
 There is a lot more in it: **Zigbee2MQTT gets a setup wizard and a dashboard**, and Gladys now **tells you when something goes wrong** instead of letting you believe everything worked.
 
@@ -53,7 +53,7 @@ The **locked keypad** of a wall tablet has big keys sized to the screen, never s
 
 ## Zigbee2MQTT: a setup wizard and a dashboard
 
-The [Zigbee2MQTT audit](https://community.gladysassistant.com/t/zigbee2mqtt-un-audit-pour-devenir-plus-simple-que-home-assistant/11498) goes on, with its biggest step so far. Thanks [@cicoub13](https://github.com/cicoub13) for this huge piece of work!
+The Zigbee2MQTT audit goes on, with its biggest step so far. Thanks [@cicoub13](https://github.com/cicoub13) for this huge piece of work!
 
 ### A wizard for the first installation
 

@@ -10,7 +10,7 @@ Salut à tous !
 
 Nouvelle version de Gladys aujourd'hui, la 5.3.4 🎉
 
-La semaine dernière, la 5.3.3 refaisait le tableau de bord et les scènes pour le téléphone. Cette version termine le chantier : **le reste de Gladys passe en version téléphone**, de la page de connexion à l'assistant de contrat d'énergie, en passant par toutes les pages des appareils. Sur ordinateur, rien ne change.
+La semaine dernière, la 5.3.3 refaisait le tableau de bord et les scènes pour le téléphone. Cette version termine le chantier : **le reste de Gladys passe en version téléphone**, de la page de connexion à l'assistant de contrat d'énergie, en passant par toutes les pages des appareils. Sur ordinateur, les mises en page ne changent pas.
 
 Et il y a beaucoup d'autres choses : **Zigbee2MQTT gagne un assistant d'installation et un tableau de bord**, et Gladys **vous prévient maintenant quand quelque chose ne va pas**, au lieu de vous laisser croire que tout a marché.
 
@@ -53,7 +53,7 @@ Le **clavier verrouillé** d'une tablette murale a de grandes touches à la tail
 
 ## Zigbee2MQTT : un assistant d'installation et un tableau de bord
 
-L'[audit de Zigbee2MQTT](https://community.gladysassistant.com/t/zigbee2mqtt-un-audit-pour-devenir-plus-simple-que-home-assistant/11498) continue, avec sa plus grosse étape jusqu'ici. Merci [@cicoub13](https://github.com/cicoub13) pour cet énorme travail !
+L'audit de Zigbee2MQTT continue, avec sa plus grosse étape jusqu'ici. Merci [@cicoub13](https://github.com/cicoub13) pour cet énorme travail !
 
 ### Un assistant pour la première installation
 

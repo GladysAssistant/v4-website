@@ -10,7 +10,7 @@ Hallo zusammen!
 
 Heute gibt es eine neue Gladys-Version, die 5.3.4 🎉
 
-Letzte Woche hat 5.3.3 das Dashboard und die Szenen für das Smartphone neu gebaut. Dieses Release bringt die Arbeit zu Ende: **der Rest von Gladys bekommt sein Smartphone-Layout**, von der Anmeldeseite bis zum Assistenten für Energieverträge, inklusive aller Geräteseiten. Am Computer ändert sich nichts.
+Letzte Woche hat 5.3.3 das Dashboard und die Szenen für das Smartphone neu gebaut. Dieses Release bringt die Arbeit zu Ende: **der Rest von Gladys bekommt sein Smartphone-Layout**, von der Anmeldeseite bis zum Assistenten für Energieverträge, inklusive aller Geräteseiten. Am Computer bleiben die Layouts, wie sie sind.
 
 Und es steckt noch viel mehr drin: **Zigbee2MQTT bekommt einen Einrichtungsassistenten und ein Dashboard**, und Gladys **sagt dir jetzt, wenn etwas schiefgeht**, statt dich glauben zu lassen, dass alles geklappt hat.
 
@@ -53,7 +53,7 @@ Das **Sperr-Tastenfeld** eines Wandtablets hat große, an den Bildschirm angepas
 
 ## Zigbee2MQTT: ein Einrichtungsassistent und ein Dashboard
 
-Das [Zigbee2MQTT-Audit](https://community.gladysassistant.com/t/zigbee2mqtt-un-audit-pour-devenir-plus-simple-que-home-assistant/11498) geht weiter, mit seinem bisher größten Schritt. Danke [@cicoub13](https://github.com/cicoub13) für diese riesige Arbeit!
+Das Zigbee2MQTT-Audit geht weiter, mit seinem bisher größten Schritt. Danke [@cicoub13](https://github.com/cicoub13) für diese riesige Arbeit!
 
 ### Ein Assistent für die erste Installation
 
