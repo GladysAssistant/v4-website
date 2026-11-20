@@ -145,17 +145,28 @@ One-time setup:
 1. Subscribe the Cloudflare account to **Workers Paid**. On the free plan a
    Worker is limited to 20,000 files, like Pages.
 2. Create an API token from the **Edit Cloudflare Workers** template
-   (Manage account > Account API tokens > Create token) and store it as the
-   `CLOUDFLARE_API_TOKEN` repository secret, with the account ID as
-   `CLOUDFLARE_ACCOUNT_ID`. Without these secrets the workflow does nothing.
-3. Run the workflow (Actions > Deploy > Run workflow). The site is then
+   (Manage account > Account API tokens > Create token), limited to this
+   account and to the gladysassistant.com zone.
+3. Store it in a GitHub environment that only master can use, not as a
+   repository secret. The token can deploy to production: a repository secret
+   reaches every workflow, including one pushed on a branch by anyone with
+   write access, while the secrets of this environment only reach the jobs
+   that run on master, whose code went through review.
+   1. Settings > Environments > New environment, named `cloudflare`. If a
+      workflow already ran, GitHub has created it on its own, without any
+      restriction: open it.
+   2. Under **Deployment branches and tags**, choose **Selected branches and
+      tags** and add `master`.
+   3. Add two environment secrets: `CLOUDFLARE_API_TOKEN` (the token) and
+      `CLOUDFLARE_ACCOUNT_ID`. Without them the workflows do nothing.
+4. Run the workflow (Actions > Deploy > Run workflow). The site is then
    online at `gladys-website.<account>.workers.dev`, marked `noindex` by
    `_headers`, while Cloudflare Pages keeps serving gladysassistant.com.
    Check it there: pages in the four languages, a redirect of `_redirects`,
    an unknown URL (404 page), and an image under `/fr/img/`. Compare the
    response headers with production as well (`curl -sI` on both), not only
    the status codes.
-4. Move the domain. Cloudflare refuses to create a Worker custom domain on a
+5. Move the domain. Cloudflare refuses to create a Worker custom domain on a
    hostname that still has the CNAME record of the Pages project, so the site
    is unreachable between the two steps below: do them back to back, at a
    quiet hour.
@@ -180,6 +191,36 @@ by the workflow, which uses the automatic `GITHUB_TOKEN`.
 One difference with Pages: a URL without its trailing slash (`/docs`) is
 redirected to the slashed one with a 307, where Pages answers 308. The pages
 and the sitemap only use slashed URLs.
+
+### Previews of pull requests
+
+Every pull request opened from a branch of this repository gets a preview at
+`https://pr-<number>-gladys-website.<subdomain>.workers.dev`, marked `noindex`
+like the other workers.dev addresses, and a comment with the link, updated on
+every push. Two workflows share the work, so that the Cloudflare token never
+runs next to the code of a pull request:
+
+- `Node.js CI` (`.github/workflows/test.yml`) builds the pull request, as it
+  always did, and keeps the build as an artifact for a day;
+- `Preview` (`.github/workflows/preview.yml`) starts when that run ends,
+  always from master, and uploads the artifact with
+  `wrangler versions upload --preview-alias pr-<number>`. A version upload
+  does not change what production serves.
+
+Limits:
+
+- Pull requests from forks get no preview, and neither do the pull requests
+  of the `Refresh external integrations` workflow: GitHub starts no workflow
+  on a pull request opened with its automatic token.
+- A preview is served with the `wrangler.workers.jsonc` of master: a pull
+  request that changes it only shows the change once merged.
+- Every preview is a version of the Worker. Cloudflare always keeps the 100
+  most recent versions and the older ones for 30 days, and a preview link
+  stops working once its version is deleted. Production can only be rolled
+  back to one of those 100 versions, previews included.
+- The first preview needs the Worker to exist: `Deploy` must have run once.
+
+### Serving the build locally
 
 To serve the build locally exactly as the Worker does, redirects and headers
 included:
