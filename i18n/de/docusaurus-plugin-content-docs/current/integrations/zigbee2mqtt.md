@@ -181,7 +181,7 @@ Wenn Gladys Zigbee2MQTT aktualisiert, lädt es zuerst das neue Image herunter, w
 
 Seit Gladys 5.3.4 speichert Gladys deinen Dongle über seinen stabilen Pfad (`/dev/serial/by-id/…`) und nicht über seinen Portnamen (`/dev/ttyUSB0`), der sich beim nächsten Neustart oder beim Einstecken eines anderen USB-Geräts ändern kann. An einem anderen USB-Port wird der Dongle wiedergefunden. Beim Start von Gladys wird eine bestehende Installation, deren Dongle Gladys erkennt, von selbst auf den stabilen Pfad umgestellt, ohne dass etwas neu angelernt werden muss.
 
-Steckst du den Dongle aus, zeigt das Dashboard **Zigbee-Stick ausgesteckt**. Stecke ihn wieder ein, an einem beliebigen Port: Zigbee2MQTT startet innerhalb von etwa zehn Sekunden von selbst wieder, ohne Neustart von Gladys. Ein Zigbee2MQTT, das du selbst gestoppt hast (im Dashboard oder mit Docker), bleibt gestoppt.
+Steckst du den Dongle aus, zeigt das Dashboard **Zigbee-Stick ausgesteckt**. Stecke ihn wieder ein, an einem beliebigen Port: Zigbee2MQTT startet innerhalb von etwa zehn Sekunden von selbst wieder, ohne Neustart von Gladys. Ein Zigbee2MQTT, das du selbst gestoppt hast (im Dashboard oder mit Docker), bleibt gestoppt: Klicke im Dashboard auf **Starten**.
 
 ## Dein Zigbee-Netzwerk behalten {/* #keep-your-zigbee-network */}
 
@@ -318,7 +318,7 @@ Fast immer, weil Zigbee2MQTT den Koordinator nicht erreicht: Der falsche USB-Por
 
 ### Was passiert, wenn ich meinen Zigbee-Dongle ausstecke?
 
-Zigbee2MQTT stoppt, und das Dashboard der Integration zeigt an, dass der Stick ausgesteckt ist. Seit Gladys 5.3.4 steckst du ihn einfach wieder ein, an einem beliebigen USB-Port: Zigbee2MQTT startet innerhalb von etwa zehn Sekunden von selbst wieder, ohne Neustart von Gladys.
+Zigbee2MQTT stoppt, und das Dashboard der Integration zeigt an, dass der Stick ausgesteckt ist. Seit Gladys 5.3.4 steckst du ihn einfach wieder ein, an einem beliebigen USB-Port: Zigbee2MQTT startet innerhalb von etwa zehn Sekunden von selbst wieder, ohne Neustart von Gladys. Hast du Zigbee2MQTT selbst gestoppt, bleibt es gestoppt: Klicke im Dashboard auf **Starten**.
 
 ### Warum verlieren meine Zigbee-Geräte immer wieder die Verbindung?
 
@@ -374,7 +374,7 @@ Hauptursache sind Störungen im 2,4-GHz-Band, die in den Logs als `MAC channel a
         name: "Was passiert, wenn ich meinen Zigbee-Dongle ausstecke?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Zigbee2MQTT stoppt, und das Dashboard der Integration zeigt an, dass der Stick ausgesteckt ist. Seit Gladys 5.3.4 steckst du ihn einfach wieder ein, an einem beliebigen USB-Port: Zigbee2MQTT startet innerhalb von etwa zehn Sekunden von selbst wieder, ohne Neustart von Gladys.",
+          text: "Zigbee2MQTT stoppt, und das Dashboard der Integration zeigt an, dass der Stick ausgesteckt ist. Seit Gladys 5.3.4 steckst du ihn einfach wieder ein, an einem beliebigen USB-Port: Zigbee2MQTT startet innerhalb von etwa zehn Sekunden von selbst wieder, ohne Neustart von Gladys. Hast du Zigbee2MQTT selbst gestoppt, bleibt es gestoppt: Klicke im Dashboard auf Starten.",
         },
       },
       {

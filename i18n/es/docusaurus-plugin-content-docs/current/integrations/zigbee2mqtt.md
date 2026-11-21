@@ -181,7 +181,7 @@ Cuando Gladys actualiza Zigbee2MQTT, primero descarga la nueva imagen mientras t
 
 Desde Gladys 5.3.4, Gladys guarda tu dongle por su ruta estable (`/dev/serial/by-id/…`), y no por el nombre de su puerto (`/dev/ttyUSB0`), que puede cambiar en el siguiente reinicio o al conectar otro dispositivo USB. Conectado en otro puerto USB, el dongle se vuelve a encontrar. Cuando arranca Gladys, una instalación existente cuyo dongle reconoce Gladys se pasa sola a la ruta estable, sin volver a emparejar nada.
 
-Si desconectas el dongle, el panel muestra **Llave Zigbee desconectada**. Vuelve a conectarlo, en cualquier puerto: Zigbee2MQTT vuelve a arrancar solo en unos diez segundos, sin reiniciar Gladys. Un Zigbee2MQTT que hayas detenido tú mismo (desde el panel o con Docker) se queda detenido.
+Si desconectas el dongle, el panel muestra **Llave Zigbee desconectada**. Vuelve a conectarlo, en cualquier puerto: Zigbee2MQTT vuelve a arrancar solo en unos diez segundos, sin reiniciar Gladys. Un Zigbee2MQTT que hayas detenido tú mismo (desde el panel o con Docker) se queda detenido: haz clic en **Arrancar** en el panel.
 
 ## Conservar tu red Zigbee {/* #keep-your-zigbee-network */}
 
@@ -318,7 +318,7 @@ Casi siempre porque Zigbee2MQTT no consigue llegar al coordinador: el puerto USB
 
 ### ¿Qué pasa si desconecto mi dongle Zigbee?
 
-Zigbee2MQTT se detiene, y el panel de la integración indica que la llave está desconectada. Desde Gladys 5.3.4, basta con volver a conectarla, en cualquier puerto USB: Zigbee2MQTT vuelve a arrancar solo en unos diez segundos, sin reiniciar Gladys.
+Zigbee2MQTT se detiene, y el panel de la integración indica que la llave está desconectada. Desde Gladys 5.3.4, basta con volver a conectarla, en cualquier puerto USB: Zigbee2MQTT vuelve a arrancar solo en unos diez segundos, sin reiniciar Gladys. Si detuviste Zigbee2MQTT tú mismo, se queda detenido: haz clic en **Arrancar** en el panel.
 
 ### ¿Por qué mis dispositivos Zigbee se desconectan continuamente?
 
@@ -374,7 +374,7 @@ La causa principal son las interferencias en la banda de 2,4 GHz, que aparecen c
         name: "¿Qué pasa si desconecto mi dongle Zigbee?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Zigbee2MQTT se detiene, y el panel de la integración indica que la llave está desconectada. Desde Gladys 5.3.4, basta con volver a conectarla, en cualquier puerto USB: Zigbee2MQTT vuelve a arrancar solo en unos diez segundos, sin reiniciar Gladys.",
+          text: "Zigbee2MQTT se detiene, y el panel de la integración indica que la llave está desconectada. Desde Gladys 5.3.4, basta con volver a conectarla, en cualquier puerto USB: Zigbee2MQTT vuelve a arrancar solo en unos diez segundos, sin reiniciar Gladys. Si detuviste Zigbee2MQTT tú mismo, se queda detenido: haz clic en Arrancar en el panel.",
         },
       },
       {

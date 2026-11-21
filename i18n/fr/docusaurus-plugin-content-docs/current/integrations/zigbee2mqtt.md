@@ -188,7 +188,7 @@ Quand Gladys met à jour Zigbee2MQTT, il télécharge d'abord la nouvelle image 
 
 Depuis Gladys 5.3.4, Gladys enregistre votre clé par son chemin stable (`/dev/serial/by-id/…`), et non par le nom de son port (`/dev/ttyUSB0`), qui peut changer au prochain redémarrage ou quand un autre appareil USB est branché. Branchée sur un autre port USB, la clé est retrouvée. Au démarrage de Gladys, une installation existante dont Gladys reconnaît la clé passe d'elle-même au chemin stable, sans rien appairer de nouveau.
 
-Si vous débranchez la clé, le tableau de bord affiche **Clé Zigbee débranchée**. Rebranchez-la, sur n'importe quel port : Zigbee2MQTT redémarre tout seul en une dizaine de secondes, sans redémarrer Gladys. Un Zigbee2MQTT que vous avez arrêté vous-même (depuis le tableau de bord, ou avec Docker) reste arrêté.
+Si vous débranchez la clé, le tableau de bord affiche **Clé Zigbee débranchée**. Rebranchez-la, sur n'importe quel port : Zigbee2MQTT redémarre tout seul en une dizaine de secondes, sans redémarrer Gladys. Un Zigbee2MQTT que vous avez arrêté vous-même (depuis le tableau de bord, ou avec Docker) reste arrêté : cliquez sur **Démarrer** sur le tableau de bord.
 
 ## Conservez votre réseau Zigbee {/* #keep-your-zigbee-network */}
 
@@ -321,7 +321,7 @@ Presque toujours parce que Zigbee2MQTT n'arrive pas à joindre le coordinateur :
 
 ### Que se passe-t-il si je débranche ma clé Zigbee ?
 
-Zigbee2MQTT s'arrête, et le tableau de bord de l'intégration indique que la clé est débranchée. Depuis Gladys 5.3.4, il suffit de la rebrancher, sur n'importe quel port USB : Zigbee2MQTT redémarre tout seul en une dizaine de secondes, sans redémarrer Gladys.
+Zigbee2MQTT s'arrête, et le tableau de bord de l'intégration indique que la clé est débranchée. Depuis Gladys 5.3.4, il suffit de la rebrancher, sur n'importe quel port USB : Zigbee2MQTT redémarre tout seul en une dizaine de secondes, sans redémarrer Gladys. Si vous avez arrêté Zigbee2MQTT vous-même, il reste arrêté : cliquez sur **Démarrer** sur le tableau de bord.
 
 ### Pourquoi mes appareils Zigbee se déconnectent-ils ?
 
@@ -369,7 +369,7 @@ Les interférences sur la bande 2,4 GHz sont la cause principale, et elles appar
         name: "Que se passe-t-il si je débranche ma clé Zigbee ?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Zigbee2MQTT s'arrête, et le tableau de bord de l'intégration indique que la clé est débranchée. Depuis Gladys 5.3.4, il suffit de la rebrancher, sur n'importe quel port USB : Zigbee2MQTT redémarre tout seul en une dizaine de secondes, sans redémarrer Gladys.",
+          text: "Zigbee2MQTT s'arrête, et le tableau de bord de l'intégration indique que la clé est débranchée. Depuis Gladys 5.3.4, il suffit de la rebrancher, sur n'importe quel port USB : Zigbee2MQTT redémarre tout seul en une dizaine de secondes, sans redémarrer Gladys. Si vous avez arrêté Zigbee2MQTT vous-même, il reste arrêté : cliquez sur Démarrer sur le tableau de bord.",
         },
       },
       {

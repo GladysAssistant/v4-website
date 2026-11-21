@@ -182,7 +182,7 @@ When Gladys updates Zigbee2MQTT, it first downloads the new image while your Zig
 
 Since Gladys 5.3.4, Gladys stores your dongle by its stable path (`/dev/serial/by-id/…`), not by its port name (`/dev/ttyUSB0`), which can change at the next reboot or when another USB device is plugged in. Plugged into another USB port, the dongle is found again. When Gladys starts, an existing installation whose dongle Gladys recognizes is moved over to the stable path on its own, without pairing anything again.
 
-If you unplug the dongle, the dashboard shows **Zigbee dongle unplugged**. Plug it back in, on any port: Zigbee2MQTT starts again on its own within about ten seconds, without restarting Gladys. A Zigbee2MQTT you stopped yourself (from the dashboard, or with Docker) is left stopped.
+If you unplug the dongle, the dashboard shows **Zigbee dongle unplugged**. Plug it back in, on any port: Zigbee2MQTT starts again on its own within about ten seconds, without restarting Gladys. A Zigbee2MQTT you stopped yourself (from the dashboard, or with Docker) is left stopped: click on **Start** on the dashboard.
 
 ## Keep your Zigbee network
 
@@ -319,7 +319,7 @@ Nearly always because Zigbee2MQTT cannot reach the coordinator: the wrong USB po
 
 ### What happens if I unplug my Zigbee dongle?
 
-Zigbee2MQTT stops, and the dashboard of the integration shows that the dongle is unplugged. Since Gladys 5.3.4, plug it back in, on any USB port: Zigbee2MQTT starts again on its own within about ten seconds, without restarting Gladys.
+Zigbee2MQTT stops, and the dashboard of the integration shows that the dongle is unplugged. Since Gladys 5.3.4, plug it back in, on any USB port: Zigbee2MQTT starts again on its own within about ten seconds, without restarting Gladys. If you stopped Zigbee2MQTT yourself, it stays stopped: click on **Start** on the dashboard.
 
 ### Why do my Zigbee devices keep disconnecting?
 
@@ -375,7 +375,7 @@ Interference on the 2.4 GHz band is the main cause, and it shows up as `MAC chan
         name: "What happens if I unplug my Zigbee dongle?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Zigbee2MQTT stops, and the dashboard of the integration shows that the dongle is unplugged. Since Gladys 5.3.4, plug it back in, on any USB port: Zigbee2MQTT starts again on its own within about ten seconds, without restarting Gladys.",
+          text: "Zigbee2MQTT stops, and the dashboard of the integration shows that the dongle is unplugged. Since Gladys 5.3.4, plug it back in, on any USB port: Zigbee2MQTT starts again on its own within about ten seconds, without restarting Gladys. If you stopped Zigbee2MQTT yourself, it stays stopped: click on Start on the dashboard.",
         },
       },
       {
