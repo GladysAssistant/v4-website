@@ -75,7 +75,7 @@ Check that the key you entered is the one of the old instance: Gladys lets you c
 
 ## 3. Checks after the restore
 
-- **Zigbee2mqtt**: Gladys reinstalls it automatically with its restored configuration (Zigbee network and devices), with no new pairing. Still, go to **Integrations > Zigbee2mqtt** and check the USB port of the dongle: it may have another name on the new machine. If so, select the right one.
+- **Zigbee2mqtt**: Gladys reinstalls it automatically with its restored configuration (Zigbee network and devices), with no new pairing. Since Gladys 5.3.4, it finds the dongle by its stable path, whatever USB port you plug it into. Still, go to **Integrations > Zigbee2mqtt**: if the dashboard says that the dongle is unplugged, choose it again with the **Change** button. Do not set up Zigbee2mqtt from scratch before restoring the backup: a new installation forms a new Zigbee network, and you would have to pair your devices again.
 - **Matter**: the controller of the Matter integration is restored automatically from its backup.
 - **Matterbridge** (if you use it): install its plugins again and pair the bridge again with your Matter controllers.
 - **Catalog integrations**: they are reinstalled automatically at startup. Gladys downloads their images again, which can take a few minutes.
