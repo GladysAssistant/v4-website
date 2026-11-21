@@ -124,7 +124,7 @@ const zigbee2mqttWithoutHomeAssistantContent = {
       points: [
         "Install Gladys (on a mini-PC, Gladys Assistant OS does it from a USB drive).",
         "Plug a USB Zigbee coordinator (Sonoff ZBDongle-E or -P…) into the machine, or connect a network coordinator like the SMLIGHT SLZB-06 to your network.",
-        "In Gladys, open Integrations → Zigbee2MQTT: the setup wizard shows the USB dongle it detected, with its photo and its name. With a network coordinator, choose Network coordinator (SLZB-06…)? and enter its address and its type.",
+        "In Gladys, open Integrations → Zigbee2MQTT: the setup wizard shows the USB dongle it detected, with its photo and its name. If Gladys did not recognize it, choose its model in the list, or click Not the right dongle? Choose manually to pick its port and its model. With a network coordinator, choose Network coordinator (SLZB-06…)? and enter its address with its TCP port (for example tcp://192.168.1.20:6638) and its type.",
         "Click Install: Gladys downloads and starts the containers in the background, and shows the progress.",
         "Permit joining, pair your devices, and add them to your dashboard.",
       ],
@@ -304,7 +304,7 @@ const zigbee2mqttWithoutHomeAssistantContent = {
       points: [
         "Installez Gladys (sur un mini-PC, Gladys Assistant OS s'en charge depuis une clé USB).",
         "Branchez une clé Zigbee USB (Sonoff ZBDongle-E ou -P…) sur la machine, ou connectez un coordinateur réseau comme le SMLIGHT SLZB-06 à votre réseau.",
-        "Dans Gladys, ouvrez Intégrations → Zigbee2MQTT : l'assistant affiche la clé USB qu'il a détectée, avec sa photo et son nom. Avec un coordinateur réseau, choisissez Coordinateur réseau (SLZB-06…) ? et entrez son adresse et son type.",
+        "Dans Gladys, ouvrez Intégrations → Zigbee2MQTT : l'assistant affiche la clé USB qu'il a détectée, avec sa photo et son nom. Si Gladys ne l'a pas reconnue, choisissez son modèle dans la liste, ou cliquez sur Pas la bonne clé ? Choisir à la main pour choisir son port et son modèle. Avec un coordinateur réseau, choisissez Coordinateur réseau (SLZB-06…) ? et entrez son adresse avec son port TCP (par exemple tcp://192.168.1.20:6638) et son type.",
         "Cliquez sur Installer : Gladys télécharge et démarre les conteneurs en arrière-plan, et affiche la progression.",
         "Autorisez l'association, appairez vos appareils et ajoutez-les à votre tableau de bord.",
       ],
@@ -484,7 +484,7 @@ const zigbee2mqttWithoutHomeAssistantContent = {
       points: [
         "Installiere Gladys (auf einem Mini-PC erledigt das Gladys Assistant OS von einem USB-Stick aus).",
         "Steck einen USB-Zigbee-Koordinator (Sonoff ZBDongle-E oder -P…) in den Rechner oder verbinde einen Netzwerk-Koordinator wie den SMLIGHT SLZB-06 mit deinem Netzwerk.",
-        "Öffne in Gladys Integrationen → Zigbee2MQTT: Der Einrichtungsassistent zeigt den erkannten USB-Stick mit Foto und Namen. Bei einem Netzwerk-Koordinator wähle Netzwerk-Koordinator (SLZB-06…)? und gib seine Adresse und seinen Typ ein.",
+        "Öffne in Gladys Integrationen → Zigbee2MQTT: Der Einrichtungsassistent zeigt den erkannten USB-Stick mit Foto und Namen. Hat Gladys ihn nicht erkannt, wähle sein Modell in der Liste oder klick auf Nicht der richtige Stick? Manuell auswählen, um Port und Modell selbst zu wählen. Bei einem Netzwerk-Koordinator wähle Netzwerk-Koordinator (SLZB-06…)? und gib seine Adresse mit TCP-Port (zum Beispiel tcp://192.168.1.20:6638) und seinen Typ ein.",
         "Klick auf Installieren: Gladys lädt und startet die Container im Hintergrund und zeigt den Fortschritt an.",
         "Kopplung erlauben, Geräte koppeln und zu deinem Dashboard hinzufügen.",
       ],
@@ -663,7 +663,7 @@ const zigbee2mqttWithoutHomeAssistantContent = {
       points: [
         "Instala Gladys (en un mini-PC, Gladys Assistant OS se encarga desde una memoria USB).",
         "Conecta un coordinador Zigbee USB (Sonoff ZBDongle-E o -P…) al equipo, o conecta a tu red un coordinador de red como el SMLIGHT SLZB-06.",
-        "En Gladys, abre Integraciones → Zigbee2MQTT: el asistente de configuración muestra la llave USB que ha detectado, con su foto y su nombre. Con un coordinador de red, elige ¿Coordinador de red (SLZB-06…)? e introduce su dirección y su tipo.",
+        "En Gladys, abre Integraciones → Zigbee2MQTT: el asistente de configuración muestra la llave USB que ha detectado, con su foto y su nombre. Si Gladys no la ha reconocido, elige su modelo en la lista, o haz clic en ¿No es la llave correcta? Elegir a mano para elegir su puerto y su modelo. Con un coordinador de red, elige ¿Coordinador de red (SLZB-06…)? e introduce su dirección con su puerto TCP (por ejemplo tcp://192.168.1.20:6638) y su tipo.",
         "Haz clic en Instalar: Gladys descarga e inicia los contenedores en segundo plano, y muestra el progreso.",
         "Permite el emparejamiento, empareja tus dispositivos y añádelos a tu panel.",
       ],
