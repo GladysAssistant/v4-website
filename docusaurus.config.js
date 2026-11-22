@@ -2,6 +2,53 @@
 // Domadoo link of the docs, blog posts and Markdown pages.
 const remarkAffiliateLinks = require("./plugins/remark-affiliate-links");
 
+// The yearly community survey, announced at the top of every page until it
+// closes. The bar is part of the build: the first daily deploy (deploy.yml)
+// after the end date is the one that removes it. Same forms and end date as
+// the notice in the Gladys app (front/src/utils/survey.js in the Gladys repo).
+const SURVEY_END = new Date("2027-01-01T00:00:00+01:00");
+// One form per language: French, and English for every other language. The
+// hidden "source" field of the form tells the answers coming from the site
+// apart.
+const SURVEY_FORMS = {
+  fr: "https://tally.so/r/bZWkq6",
+  default: "https://tally.so/r/1W9Kk1",
+};
+const SURVEY_BAR_TEXT = {
+  en: {
+    text: "📝 2026 survey: what do you think of Gladys?",
+    link: "Answer in 5 minutes",
+  },
+  fr: {
+    text: "📝 Sondage 2026 : que pensez-vous de Gladys ?",
+    link: "Répondre en 5 minutes",
+  },
+  de: {
+    text: "📝 Umfrage 2026: Was hältst du von Gladys?",
+    link: "In 5 Minuten antworten (auf Englisch)",
+  },
+  es: {
+    text: "📝 Encuesta 2026: ¿qué opinas de Gladys?",
+    link: "Responder en 5 minutos (en inglés)",
+  },
+};
+
+function surveyAnnouncementBar(locale) {
+  if (Date.now() >= SURVEY_END.getTime()) {
+    return undefined;
+  }
+  const { text, link } = SURVEY_BAR_TEXT[locale] ?? SURVEY_BAR_TEXT.en;
+  const url = `${SURVEY_FORMS[locale] ?? SURVEY_FORMS.default}?source=site`;
+  return {
+    // a visitor who closes the bar does not see it again
+    id: "survey_2026",
+    content: `${text} <a href="${url}" target="_blank" rel="noopener noreferrer">${link}</a>`,
+    backgroundColor: "#0052d4",
+    textColor: "#ffffff",
+    isCloseable: true,
+  };
+}
+
 module.exports = function createConfig() {
   const locale = process.env.DOCUSAURUS_CURRENT_LOCALE ?? "en";
 
@@ -67,6 +114,7 @@ module.exports = function createConfig() {
       disableSwitch: true,
       respectPrefersColorScheme: false,
     },
+    announcementBar: surveyAnnouncementBar(locale),
     /* announcementBar: {
       id: "black_friday_2024",
       content:
