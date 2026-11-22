@@ -53,6 +53,15 @@ const LanguageSuggestionBanner = () => {
     }
   }, [currentLocale]);
 
+  // While the suggestion is open, the announcement bar steps aside
+  // (src/css/custom.css): this banner sits right under the navbar, which the
+  // announcement bar would push down over it.
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.toggle("language-suggestion-open", Boolean(suggestedLocale));
+    return () => root.classList.remove("language-suggestion-open");
+  }, [suggestedLocale]);
+
   const handleSwitch = () => {
     localStorage.setItem("language-banner-dismissed", "true");
     // Get current path and redirect to the suggested locale

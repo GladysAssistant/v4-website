@@ -43,8 +43,9 @@ function surveyAnnouncementBar(locale) {
     // a visitor who closes the bar does not see it again
     id: "survey_2026",
     content: `${text} <a href="${url}" target="_blank" rel="noopener noreferrer">${link}</a>`,
-    backgroundColor: "#0052d4",
-    textColor: "#ffffff",
+    // the dark ground of the site, tinted in src/css/custom.css
+    backgroundColor: "#14121f",
+    textColor: "#f3f6fc",
     isCloseable: true,
   };
 }
