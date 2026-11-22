@@ -55,11 +55,17 @@ const LanguageSuggestionBanner = () => {
 
   // While the suggestion is open, the announcement bar steps aside
   // (src/css/custom.css): this banner sits right under the navbar, which the
-  // announcement bar would push down over it.
+  // announcement bar would push down over it. A data attribute and not a
+  // class: in the built site, Docusaurus rewrites the class of <html> on every
+  // page (react-helmet), which drops any class added from here.
   useEffect(() => {
     const root = document.documentElement;
-    root.classList.toggle("language-suggestion-open", Boolean(suggestedLocale));
-    return () => root.classList.remove("language-suggestion-open");
+    if (suggestedLocale) {
+      root.setAttribute("data-language-suggestion", "open");
+    } else {
+      root.removeAttribute("data-language-suggestion");
+    }
+    return () => root.removeAttribute("data-language-suggestion");
   }, [suggestedLocale]);
 
   const handleSwitch = () => {
