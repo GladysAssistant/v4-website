@@ -20,14 +20,14 @@ Three integrations have similar names, but they don't go in the same direction:
 - [Matter](/docs/integrations/matter/): Matter devices → Gladys. Gladys is the Matter controller.
 - [Matterbridge](/docs/integrations/matterbridge/): devices exposed by the open-source Matterbridge project and its plugins → Gladys.
 
-Matter Bridge and Matterbridge can't be enabled at the same time: both need port 5540.
+Matter Bridge and Matterbridge can't be enabled at the same time: both need port 5540, unless you [move the bridge to another port](#another-port).
 
 :::
 
 ## Prerequisites
 
-- **IPv6 on your local network.** Matter relies on IPv6. The integration page tells you whether an IPv6 interface was detected on the machine running Gladys.
-- **Gladys must use the host network.** The standard Gladys installation (`network_mode: host` in Docker) already does. The bridge listens on UDP port **5540**, the standard Matter port and the only one Amazon Alexa discovers. It runs alongside the [Matter](/docs/integrations/matter/) integration, which uses another port, but **not alongside the [Matterbridge](/docs/integrations/matterbridge/) integration**, which needs port 5540 too.
+- **IPv6 on your local network.** Matter relies on IPv6. The integration page tells you whether an IPv6 interface was detected on the machine running Gladys. A local IPv6 address (`fe80::...`) is enough: your Internet provider doesn't need to give you IPv6.
+- **Gladys must use the host network.** The standard Gladys installation (`network_mode: host` in Docker) already does. The bridge listens on UDP port **5540**, the standard Matter port and the only one Amazon Alexa discovers. It runs alongside the [Matter](/docs/integrations/matter/) integration, which uses another port, but **not alongside the [Matterbridge](/docs/integrations/matterbridge/) integration**, which needs port 5540 too. If another program already uses this port, you can [move the bridge to another port](#another-port).
 - **An administrator account.** The integration is only visible to Gladys administrators.
 - **A Matter controller on the same network.** The app alone isn't always enough: most ecosystems need a device that acts as their Matter controller.
   - Apple Home: an iPhone or iPad (iOS 18 or later) can add and control the bridge at home without a hub. A home hub (Apple TV or HomePod) is recommended: it is needed to control your devices away from home and to run automations.
@@ -44,11 +44,24 @@ In Gladys, go to `Integrations` and click on `Matter Bridge` (in the "Voice assi
 
 Check that the page shows `An IPv6 interface is available on this machine ✅`, then click on `Enable the Matter bridge`.
 
-If the [Matterbridge](/docs/integrations/matterbridge/) integration is enabled, this button is disabled and the page explains why: disable the Matterbridge integration first.
+If the [Matterbridge](/docs/integrations/matterbridge/) integration is enabled, this button is disabled and the page explains why: disable the Matterbridge integration first, or [move the bridge to another port](#another-port).
 
 The bridge starts after a few seconds. If it can't start, the error is shown on the page under `The Matter bridge could not start:`.
 
 The bridge starts again automatically every time Gladys restarts.
+
+### Use another port {#another-port}
+
+The bridge listens on port 5540 by default. If another Matter bridge already uses this port on the machine (a Matterbridge installed outside Gladys, Home Assistant Matter Hub...), you can move the Gladys bridge to another port with the `MATTER_BRIDGE_PORT` environment variable:
+
+- **Installed with Docker**: remove the container with `sudo docker rm -f gladys` (your data in `/var/lib/gladysassistant` is kept), then run the [install command](/docs/installation/docker/) again, adding `-e MATTER_BRIDGE_PORT=5550`.
+- **Installed with [Docker Compose](/docs/installation/docker-compose/)**: add `MATTER_BRIDGE_PORT: 5550` under `environment:` in your compose file, then start Gladys again with `sudo docker compose -f gladys-compose.yml up -d`.
+
+:::warning[Amazon Alexa]
+Amazon Alexa only discovers Matter devices on port 5540: on another port, the bridge no longer shows up in Alexa. Apple Home, Google Home, SmartThings and Home Assistant are not affected.
+:::
+
+On another port, the bridge no longer conflicts with the [Matterbridge](/docs/integrations/matterbridge/) integration: both can be enabled at the same time.
 
 ## Choose the devices to expose
 
@@ -63,15 +76,18 @@ Then, Gladys keeps the bridge up to date by itself:
 
 - A **new compatible device** is added to the bridge (in "all" mode).
 - A **renamed device** is renamed in your Matter apps, and keeps its room and automations there.
-- A **deleted device** (or a device removed from the selection) disappears from the bridge.
+- A **deleted device** disappears from the bridge.
+- A **device removed from the selection** disappears from the bridge too. If you select it again later, it comes back with the same identifiers in the bridge as before.
 
 :::note
-Matter limits names to 32 characters: longer device names are cut in your Matter apps.
+Matter limits names to 32 bytes: longer device names are cut in your Matter apps. Accented letters and emojis take more than one byte, so a name that contains some is cut a bit earlier.
 :::
 
 ## Pair Gladys with your Matter app
 
 As long as the bridge isn't paired, the `Pairing` section shows a **QR code** and an 11-digit **pairing code** (`1234-567-8901`).
+
+The bridge stays ready to pair as long as it isn't paired: Matter closes the pairing window 48 hours after the bridge starts, or after too many failed attempts, and Gladys opens it again by itself.
 
 In your Matter app, add a new Matter device and scan the QR code, or type the pairing code:
 
@@ -117,7 +133,7 @@ Matter lets you pair the same bridge with several apps (multi-admin). To add Gla
 | 💦 Humidity sensor | Humidity sensor |
 | ☀️ Light sensor | Light sensor (lux) |
 | 🧭 Pressure sensor | Pressure sensor |
-| 🌫️ CO2, PM2.5 and PM10 sensors | Air quality sensor, with an overall air quality computed from PM2.5 (or CO2 when there is no PM2.5) |
+| 🌫️ CO2, PM2.5 and PM10 sensors | Air quality sensor. The overall air quality is the worst of the PM2.5 and CO2 levels |
 | 🔋 Battery | Battery level of the device, with a low battery warning below 20% |
 
 A device with several features (for example a temperature, humidity and battery sensor) is exposed as a single bridged device. Most apps show it as one accessory, some show one tile per function (temperature, humidity, battery...).
@@ -126,6 +142,7 @@ Some limits to know:
 
 - Only features that can be controlled are exposed for lights, plugs and covers: a read-only light or plug is not exposed.
 - A device that only has a battery is not exposed.
+- The presence of a phone or a computer on your network, detected by the [Bluetooth](/docs/integrations/bluetooth/) or [Lan-Manager](/docs/integrations/lan-manager/) integrations, is not exposed: it doesn't tell whether someone is in a room.
 - Covers are controlled in height only: tilt is not supported.
 - Thermostats and air conditioners, locks, fans, buttons, sirens, energy meters, vacuums and media players are not supported yet.
 
@@ -134,14 +151,21 @@ We regularly add support for new device types based on community feedback. Feel 
 ## Disable or reset the bridge
 
 - `Disable the Matter bridge` takes the bridge offline but **keeps its pairings**: when you enable it again, your Matter apps find the same bridge and the same devices.
-- `Reset the bridge` is for when you can't pair the bridge anymore. All the pairings of Gladys are deleted: the bridge no longer answers the ecosystems it was paired with. An old "Gladys Bridge" entry may remain in your Matter apps: **remove it there**, then add the bridge again with its **new pairing code**. Your selection of exposed devices is kept.
+- `Reset the bridge` is for when you can't pair the bridge anymore. All the pairings of Gladys are deleted: the bridge no longer answers the ecosystems it was paired with. An old "Gladys Bridge" entry may remain in your Matter apps: **remove it there**, then add the bridge again with its **new pairing code**. Your selection of exposed devices is kept. This button is available even when the bridge couldn't start.
+
+If you remove Gladys from the last ecosystem it was paired with, the bridge resets itself: the page shows the QR code again, ready for a new pairing.
+
+## Pairing backup
+
+Gladys saves the pairings of the bridge in its database every night (at 4:20 AM), and a minute after an ecosystem is added or removed. They are part of the [Gladys Plus](/plus/) backups: if you [move Gladys to a new machine](/docs/installation/migrate/), the bridge comes back with its pairings, and your Matter apps find it again without a new pairing.
 
 ## Troubleshooting
 
 - **No IPv6 interface detected**: enable IPv6 on your router and on the machine running Gladys, then restart Gladys.
 - **The app can't find the bridge**: check that your phone and Gladys are on the same network (not a guest Wi-Fi), and that Gladys uses the host network.
-- **`The Matter bridge was not started: port 5540, the standard Matter port, is already used by another program`**: another Matter bridge runs on the machine (a Matterbridge installed outside Gladys, another Matter server...). Stop it or move it to another port, then disable and enable the Matter bridge again.
-- **`The Matter bridge was not started: the Matterbridge integration is enabled`**: disable the [Matterbridge](/docs/integrations/matterbridge/) integration, then disable and enable the Matter bridge again.
+- **`The Matter bridge was not started: port 5540, the standard Matter port, is already used by another program`**: another Matter bridge runs on the machine (a Matterbridge installed outside Gladys, another Matter server...). Stop it or move it to another port, or [move the Gladys bridge to another port](#another-port). Then disable and enable the Matter bridge again.
+- **`The Matter bridge was not started: the Matterbridge integration is enabled`**: disable the [Matterbridge](/docs/integrations/matterbridge/) integration, then disable and enable the Matter bridge again. You can also [move the bridge to another port](#another-port).
+- **Pairing fails after several attempts**: Matter blocks pairing for a while after too many failed attempts. Keep the integration page open and wait up to 15 minutes: Gladys opens the pairing window again by itself, then try again.
 - **A device is missing**: check that it is part of the supported devices above and, in "selection" mode, that it is selected, then click on `Save`.
 
 🛠️ Need help? Join us on the [Gladys community forum](https://community.gladysassistant.com/), we're here to support you!

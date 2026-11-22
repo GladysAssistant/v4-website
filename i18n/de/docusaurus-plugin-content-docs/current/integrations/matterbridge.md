@@ -24,7 +24,7 @@ Matterbridge bringt Geräte **in** Gladys. Für den umgekehrten Weg, also um dei
 Gladys muss einen Docker-Container installieren, um Matterbridge auszuführen. Keine Sorge, alles ist automatisiert.
 
 :::note
-Matterbridge und die [Matter-Bridge](/de/docs/integrations/matter-bridge/) von Gladys brauchen beide den Port 5540, den Standard-Matter-Port: Sie können nicht gleichzeitig laufen. Solange die Matter-Bridge aktiviert ist, ist die Schaltfläche Aktivieren von Matterbridge deaktiviert: Deaktiviere zuerst die Matter-Bridge.
+Matterbridge und die [Matter-Bridge](/de/docs/integrations/matter-bridge/) von Gladys brauchen beide den Port 5540, den Standard-Matter-Port: Sie können nicht gleichzeitig laufen. Solange die Matter-Bridge auf dem Port 5540 aktiviert ist, ist die Schaltfläche Aktivieren von Matterbridge deaktiviert: Deaktiviere zuerst die Matter-Bridge oder [lege sie auf einen anderen Port](/de/docs/integrations/matter-bridge/#another-port).
 :::
 
 Klicke auf die Schaltfläche **Aktivieren**, um den Matterbridge-Container zu starten.

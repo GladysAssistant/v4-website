@@ -13,7 +13,7 @@ keywords:
 
 Replacing the machine that runs Gladys (an old mini-PC, a Raspberry Pi, a NAS...) with a new one? With a **Gladys Plus backup**, you get your instance back as it was on the new machine: users, houses and rooms, devices, scenes, dashboards, integration settings and the whole sensor history.
 
-Zigbee2mqtt and the Matter integration are restored too: Gladys stores their configuration in its database every night, so **you don't need to pair your devices again**.
+Zigbee2mqtt and the Matter integration are restored too: Gladys stores their configuration in its database every night, so **you don't need to pair your devices again**. The same goes for the pairings of the [Matter Bridge](/docs/integrations/matter-bridge/): your Matter apps (Apple Home, Google Home, Alexa...) find it again on the new machine.
 
 There are just a few precautions to take. Here is the procedure, step by step.
 
@@ -44,7 +44,7 @@ Don't disconnect Gladys Plus on the old instance before you have written the key
 
 ### Don't pair new devices right before the move
 
-The Zigbee2mqtt configuration is saved in Gladys **every evening at 11 PM**, the Matter one **at 4 AM**. A Zigbee or Matter device paired after the last nightly save will not be in the backup: you would have to pair it again on the new machine.
+The Zigbee2mqtt configuration is saved in Gladys **every evening at 11 PM**, the Matter one **at 4 AM**, the pairings of the Matter Bridge **at 4:20 AM** (and a minute after you add it to an ecosystem). A Zigbee or Matter device paired after the last nightly save will not be in the backup: you would have to pair it again on the new machine.
 
 ### Run a manual backup
 
@@ -77,6 +77,7 @@ Check that the key you entered is the one of the old instance: Gladys lets you c
 
 - **Zigbee2mqtt**: Gladys reinstalls it automatically with its restored configuration (Zigbee network and devices), with no new pairing. Still, go to **Integrations > Zigbee2mqtt** and check the USB port of the dongle: it may have another name on the new machine. If so, select the right one.
 - **Matter**: the controller of the Matter integration is restored automatically from its backup.
+- **Matter Bridge**: the bridge is restored automatically with its pairings, and your Matter apps find it again.
 - **Matterbridge** (if you use it): install its plugins again and pair the bridge again with your Matter controllers.
 - **Catalog integrations**: they are reinstalled automatically at startup. Gladys downloads their images again, which can take a few minutes.
 - **MQTT** (if you use the broker installed by Gladys): since Gladys 5.3.1, Gladys recreates the broker automatically with your stored credentials, so your MQTT devices reconnect without any change. Check in **Integrations > MQTT** that Gladys is connected to the broker.

@@ -20,14 +20,14 @@ Tres integraciones tienen nombres parecidos, pero no van en la misma dirección:
 - [Matter](/es/docs/integrations/matter/): dispositivos Matter → Gladys. Gladys es el controlador Matter.
 - [Matterbridge](/es/docs/integrations/matterbridge/): dispositivos expuestos por el proyecto open source Matterbridge y sus plugins → Gladys.
 
-El Puente Matter y Matterbridge no pueden estar activados a la vez: ambos necesitan el puerto 5540.
+El Puente Matter y Matterbridge no pueden estar activados a la vez: ambos necesitan el puerto 5540, salvo si [mueves el puente a otro puerto](#another-port).
 
 :::
 
 ## Requisitos
 
-- **IPv6 en tu red local.** Matter se basa en IPv6. La página de la integración te indica si se ha detectado una interfaz IPv6 en la máquina donde se ejecuta Gladys.
-- **Gladys debe usar la red del host.** La instalación estándar de Gladys (`network_mode: host` en Docker) ya lo hace. El puente escucha en el puerto UDP **5540**, el puerto Matter estándar y el único que Amazon Alexa sabe descubrir. Funciona a la vez que la integración [Matter](/es/docs/integrations/matter/), que usa otro puerto, pero **no a la vez que la integración [Matterbridge](/es/docs/integrations/matterbridge/)**, que también necesita el puerto 5540.
+- **IPv6 en tu red local.** Matter se basa en IPv6. La página de la integración te indica si se ha detectado una interfaz IPv6 en la máquina donde se ejecuta Gladys. Basta con una dirección IPv6 local (`fe80::...`): tu proveedor de Internet no necesita darte IPv6.
+- **Gladys debe usar la red del host.** La instalación estándar de Gladys (`network_mode: host` en Docker) ya lo hace. El puente escucha en el puerto UDP **5540**, el puerto Matter estándar y el único que Amazon Alexa sabe descubrir. Funciona a la vez que la integración [Matter](/es/docs/integrations/matter/), que usa otro puerto, pero **no a la vez que la integración [Matterbridge](/es/docs/integrations/matterbridge/)**, que también necesita el puerto 5540. Si otro programa ya usa este puerto, puedes [mover el puente a otro puerto](#another-port).
 - **Una cuenta de administrador.** La integración solo es visible para los administradores de Gladys.
 - **Un controlador Matter en la misma red.** La aplicación sola no siempre basta: la mayoría de los ecosistemas necesitan un dispositivo que haga de controlador Matter.
   - Apple Home: un iPhone o iPad (iOS 18 o posterior) puede añadir y controlar el puente en casa sin concentrador. Se recomienda un concentrador doméstico (Apple TV o HomePod): es necesario para controlar tus dispositivos fuera de casa y para ejecutar automatizaciones.
@@ -44,11 +44,24 @@ En Gladys, ve a `Integraciones` y haz clic en `Puente Matter` (categoría «Asis
 
 Comprueba que la página muestra `Hay una interfaz IPv6 disponible en esta máquina ✅` y haz clic en `Activar el puente Matter`.
 
-Si la integración [Matterbridge](/es/docs/integrations/matterbridge/) está activada, este botón está desactivado y la página explica por qué: desactiva primero la integración Matterbridge.
+Si la integración [Matterbridge](/es/docs/integrations/matterbridge/) está activada, este botón está desactivado y la página explica por qué: desactiva primero la integración Matterbridge, o [mueve el puente a otro puerto](#another-port).
 
 El puente se inicia en unos segundos. Si no puede iniciarse, el error se muestra en la página bajo `El puente Matter no ha podido iniciarse:`.
 
 Después, el puente se vuelve a iniciar automáticamente cada vez que Gladys se reinicia.
+
+### Usar otro puerto {#another-port}
+
+Por defecto, el puente escucha en el puerto 5540. Si otro puente Matter ya usa este puerto en la máquina (un Matterbridge instalado fuera de Gladys, Home Assistant Matter Hub...), puedes mover el puente de Gladys a otro puerto con la variable de entorno `MATTER_BRIDGE_PORT`:
+
+- **Instalación con Docker**: elimina el contenedor con `sudo docker rm -f gladys` (tus datos en `/var/lib/gladysassistant` se conservan) y vuelve a ejecutar el [comando de instalación](/es/docs/installation/docker/) añadiendo `-e MATTER_BRIDGE_PORT=5550`.
+- **Instalación con [Docker Compose](/es/docs/installation/docker-compose/)**: añade `MATTER_BRIDGE_PORT: 5550` bajo `environment:` en tu archivo compose y vuelve a iniciar Gladys con `sudo docker compose -f gladys-compose.yml up -d`.
+
+:::warning[Amazon Alexa]
+Amazon Alexa solo descubre dispositivos Matter en el puerto 5540: en otro puerto, el puente ya no aparece en Alexa. Apple Home, Google Home, SmartThings y Home Assistant no se ven afectados.
+:::
+
+En otro puerto, el puente ya no entra en conflicto con la integración [Matterbridge](/es/docs/integrations/matterbridge/): ambas pueden estar activadas a la vez.
 
 ## Elegir los dispositivos expuestos
 
@@ -63,15 +76,18 @@ Después, Gladys mantiene el puente al día por sí solo:
 
 - Un **nuevo dispositivo compatible** se añade al puente (en modo «todos»).
 - Un **dispositivo renombrado** se renombra en tus aplicaciones Matter y conserva allí su habitación y sus automatizaciones.
-- Un **dispositivo eliminado** (o quitado de la selección) desaparece del puente.
+- Un **dispositivo eliminado** desaparece del puente.
+- Un **dispositivo quitado de la selección** también desaparece del puente. Si lo vuelves a seleccionar más tarde, vuelve con los mismos identificadores que antes en el puente.
 
 :::note
-Matter limita los nombres a 32 caracteres: los nombres de dispositivos más largos se recortan en tus aplicaciones Matter.
+Matter limita los nombres a 32 bytes: los nombres de dispositivos más largos se recortan en tus aplicaciones Matter. Las letras con tilde y los emojis ocupan más de un byte: un nombre que los contiene se recorta un poco antes.
 :::
 
 ## Emparejar Gladys con tu aplicación Matter
 
 Mientras el puente no esté emparejado, la sección `Emparejamiento` muestra un **código QR** y un **código de emparejamiento** de 11 cifras (`1234-567-8901`).
+
+El puente sigue listo para emparejarse mientras no esté emparejado: Matter cierra la ventana de emparejamiento 48 horas después de que el puente arranque, o tras demasiados intentos fallidos, y Gladys la vuelve a abrir por sí solo.
 
 En tu aplicación Matter, añade un nuevo dispositivo Matter y escanea el código QR, o introduce el código de emparejamiento:
 
@@ -117,7 +133,7 @@ Matter permite emparejar un mismo puente con varias aplicaciones (multi-admin). 
 | 💦 Sensor de humedad | Sensor de humedad |
 | ☀️ Sensor de luminosidad | Sensor de luminosidad (lux) |
 | 🧭 Sensor de presión | Sensor de presión |
-| 🌫️ Sensores de CO2, PM2.5 y PM10 | Sensor de calidad del aire, con una calidad global calculada a partir de las PM2.5 (o del CO2 si no hay PM2.5) |
+| 🌫️ Sensores de CO2, PM2.5 y PM10 | Sensor de calidad del aire. La calidad global es el peor de los niveles de PM2.5 y CO2 |
 | 🔋 Batería | Nivel de batería del dispositivo, con un aviso de batería baja por debajo del 20 % |
 
 Un dispositivo con varias funciones (por ejemplo un sensor de temperatura, humedad y batería) se expone como un único dispositivo del puente. La mayoría de las aplicaciones lo muestran como un solo accesorio, algunas muestran un recuadro por función (temperatura, humedad, batería...).
@@ -126,6 +142,7 @@ Algunos límites que conviene conocer:
 
 - En las luces, los enchufes y las persianas solo se exponen las funciones controlables: una luz o un enchufe de solo lectura no se expone.
 - Un dispositivo que solo tiene batería no se expone.
+- La presencia de un teléfono o de un ordenador en tu red, detectada por las integraciones [Bluetooth](/es/docs/integrations/bluetooth/) o [Lan-Manager](/es/docs/integrations/lan-manager/), no se expone: no indica si hay alguien en una habitación.
 - Las persianas se controlan solo en altura: la inclinación no está soportada.
 - Los termostatos y aires acondicionados, cerraduras, ventiladores, botones, sirenas, medidores de energía, robots aspiradores y reproductores multimedia todavía no están soportados.
 
@@ -134,14 +151,21 @@ Añadimos regularmente nuevos tipos de dispositivos según los comentarios de la
 ## Desactivar o restablecer el puente
 
 - `Desactivar el puente Matter` desconecta el puente pero **conserva sus emparejamientos**: cuando lo vuelves a activar, tus aplicaciones Matter encuentran el mismo puente y los mismos dispositivos.
-- `Restablecer el puente` sirve cuando ya no puedes emparejar el puente. Se borran todos los emparejamientos de Gladys: el puente deja de responder a los ecosistemas con los que estaba emparejado. Puede que quede una antigua entrada «Gladys Bridge» en tus aplicaciones Matter: **elimínala allí** y luego vuelve a añadir el puente con su **nuevo código de emparejamiento**. Tu selección de dispositivos expuestos se conserva.
+- `Restablecer el puente` sirve cuando ya no puedes emparejar el puente. Se borran todos los emparejamientos de Gladys: el puente deja de responder a los ecosistemas con los que estaba emparejado. Puede que quede una antigua entrada «Gladys Bridge» en tus aplicaciones Matter: **elimínala allí** y luego vuelve a añadir el puente con su **nuevo código de emparejamiento**. Tu selección de dispositivos expuestos se conserva. Este botón está disponible incluso cuando el puente no ha podido iniciarse.
+
+Si quitas Gladys del último ecosistema con el que estaba emparejado, el puente se restablece por sí solo: la página vuelve a mostrar el código QR, listo para un nuevo emparejamiento.
+
+## Copia de seguridad de los emparejamientos
+
+Gladys guarda los emparejamientos del puente en su base de datos cada noche (a las 4:20), y un minuto después de añadir o quitar un ecosistema. Por tanto, forman parte de las copias de seguridad de [Gladys Plus](/es/plus/): si [trasladas Gladys a una nueva máquina](/es/docs/installation/migrate/), el puente vuelve con sus emparejamientos y tus aplicaciones Matter lo encuentran de nuevo sin volver a emparejarlo.
 
 ## Solución de problemas
 
 - **No se detecta ninguna interfaz IPv6**: activa IPv6 en tu router y en la máquina donde se ejecuta Gladys, y luego reinicia Gladys.
 - **La aplicación no encuentra el puente**: comprueba que tu teléfono y Gladys están en la misma red (no en una Wi-Fi de invitados) y que Gladys usa la red del host.
-- **`El puente Matter no se ha iniciado: el puerto 5540, el puerto Matter estándar, ya está siendo utilizado por otro programa`**: otro puente Matter funciona en la máquina (un Matterbridge instalado fuera de Gladys, otro servidor Matter...). Detenlo o cámbiale el puerto y, a continuación, desactiva y vuelve a activar el puente Matter.
-- **`El puente Matter no se ha iniciado: la integración Matterbridge está activada`**: desactiva la integración [Matterbridge](/es/docs/integrations/matterbridge/) y, a continuación, desactiva y vuelve a activar el puente Matter.
+- **`El puente Matter no se ha iniciado: el puerto 5540, el puerto Matter estándar, ya está siendo utilizado por otro programa`**: otro puente Matter funciona en la máquina (un Matterbridge instalado fuera de Gladys, otro servidor Matter...). Detenlo o cámbiale el puerto, o [mueve el puente de Gladys a otro puerto](#another-port). A continuación, desactiva y vuelve a activar el puente Matter.
+- **`El puente Matter no se ha iniciado: la integración Matterbridge está activada`**: desactiva la integración [Matterbridge](/es/docs/integrations/matterbridge/) y, a continuación, desactiva y vuelve a activar el puente Matter. También puedes [mover el puente a otro puerto](#another-port).
+- **El emparejamiento falla tras varios intentos**: Matter bloquea el emparejamiento durante un tiempo tras demasiados intentos fallidos. Deja abierta la página de la integración y espera hasta 15 minutos: Gladys vuelve a abrir la ventana de emparejamiento por sí solo. Después, vuelve a intentarlo.
 - **Falta un dispositivo**: comprueba que forma parte de los dispositivos compatibles de arriba y, en modo selección, que está seleccionado, y luego haz clic en `Guardar`.
 
 🛠️ ¿Necesitas ayuda? Únete al [foro de la comunidad de Gladys](https://community.gladysassistant.com/), ¡estamos aquí para ayudarte!

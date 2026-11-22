@@ -20,14 +20,14 @@ Drei Integrationen haben ähnliche Namen, arbeiten aber in unterschiedliche Rich
 - [Matter](/de/docs/integrations/matter/): Matter-Geräte → Gladys. Gladys ist der Matter-Controller.
 - [Matterbridge](/de/docs/integrations/matterbridge/): Geräte, die das Open-Source-Projekt Matterbridge und seine Plugins bereitstellen → Gladys.
 
-Matter-Bridge und Matterbridge können nicht gleichzeitig aktiviert sein: Beide brauchen den Port 5540.
+Matter-Bridge und Matterbridge können nicht gleichzeitig aktiviert sein: Beide brauchen den Port 5540, es sei denn, du [legst die Bridge auf einen anderen Port](#another-port).
 
 :::
 
 ## Voraussetzungen
 
-- **IPv6 in deinem lokalen Netzwerk.** Matter basiert auf IPv6. Die Seite der Integration zeigt dir, ob auf dem Rechner, auf dem Gladys läuft, eine IPv6-Schnittstelle gefunden wurde.
-- **Gladys muss das Host-Netzwerk nutzen.** Die Standardinstallation von Gladys (`network_mode: host` in Docker) tut das bereits. Die Bridge lauscht auf dem UDP-Port **5540**, dem Standard-Matter-Port und dem einzigen, den Amazon Alexa erkennt. Sie läuft parallel zur Integration [Matter](/de/docs/integrations/matter/), die einen anderen Port nutzt, aber **nicht parallel zur Integration [Matterbridge](/de/docs/integrations/matterbridge/)**, die ebenfalls den Port 5540 braucht.
+- **IPv6 in deinem lokalen Netzwerk.** Matter basiert auf IPv6. Die Seite der Integration zeigt dir, ob auf dem Rechner, auf dem Gladys läuft, eine IPv6-Schnittstelle gefunden wurde. Eine lokale IPv6-Adresse (`fe80::...`) reicht: Dein Internetanbieter muss dir kein IPv6 bereitstellen.
+- **Gladys muss das Host-Netzwerk nutzen.** Die Standardinstallation von Gladys (`network_mode: host` in Docker) tut das bereits. Die Bridge lauscht auf dem UDP-Port **5540**, dem Standard-Matter-Port und dem einzigen, den Amazon Alexa erkennt. Sie läuft parallel zur Integration [Matter](/de/docs/integrations/matter/), die einen anderen Port nutzt, aber **nicht parallel zur Integration [Matterbridge](/de/docs/integrations/matterbridge/)**, die ebenfalls den Port 5540 braucht. Nutzt bereits ein anderes Programm diesen Port, kannst du [die Bridge auf einen anderen Port legen](#another-port).
 - **Ein Administratorkonto.** Die Integration ist nur für Gladys-Administratoren sichtbar.
 - **Ein Matter-Controller im selben Netzwerk.** Die App allein reicht nicht immer: Die meisten Ökosysteme brauchen ein Gerät, das als Matter-Controller dient.
   - Apple Home: Ein iPhone oder iPad (iOS 18 oder neuer) kann die Bridge zu Hause ohne Steuerzentrale hinzufügen und steuern. Eine Steuerzentrale (Apple TV oder HomePod) wird empfohlen: Sie ist nötig, um deine Geräte von unterwegs zu steuern und Automationen auszuführen.
@@ -44,11 +44,24 @@ Die Kopplung läuft über dein Netzwerk: Anders als manche Matter-Geräte brauch
 
 Prüfe, dass die Seite `Auf diesem Rechner ist eine IPv6-Schnittstelle verfügbar ✅` anzeigt, und klicke dann auf `Matter-Bridge aktivieren`.
 
-Ist die Integration [Matterbridge](/de/docs/integrations/matterbridge/) aktiviert, ist diese Schaltfläche deaktiviert und die Seite erklärt warum: Deaktiviere zuerst die Matterbridge-Integration.
+Ist die Integration [Matterbridge](/de/docs/integrations/matterbridge/) aktiviert, ist diese Schaltfläche deaktiviert und die Seite erklärt warum: Deaktiviere zuerst die Matterbridge-Integration oder [lege die Bridge auf einen anderen Port](#another-port).
 
 Die Bridge startet nach wenigen Sekunden. Kann sie nicht starten, wird der Fehler auf der Seite unter `Die Matter-Bridge konnte nicht gestartet werden:` angezeigt.
 
 Danach startet die Bridge bei jedem Neustart von Gladys automatisch.
+
+### Einen anderen Port verwenden {#another-port}
+
+Standardmäßig lauscht die Bridge auf dem Port 5540. Nutzt bereits eine andere Matter-Bridge diesen Port auf dem Rechner (ein außerhalb von Gladys installiertes Matterbridge, Home Assistant Matter Hub...), kannst du die Bridge von Gladys mit der Umgebungsvariable `MATTER_BRIDGE_PORT` auf einen anderen Port legen:
+
+- **Installation mit Docker**: Entferne den Container mit `sudo docker rm -f gladys` (deine Daten in `/var/lib/gladysassistant` bleiben erhalten) und führe den [Installationsbefehl](/de/docs/installation/docker/) erneut aus, ergänzt um `-e MATTER_BRIDGE_PORT=5550`.
+- **Installation mit [Docker Compose](/de/docs/installation/docker-compose/)**: Füge `MATTER_BRIDGE_PORT: 5550` unter `environment:` in deiner Compose-Datei hinzu und starte Gladys dann erneut mit `sudo docker compose -f gladys-compose.yml up -d`.
+
+:::warning[Amazon Alexa]
+Amazon Alexa findet Matter-Geräte nur auf dem Port 5540: Auf einem anderen Port erscheint die Bridge nicht mehr in Alexa. Apple Home, Google Home, SmartThings und Home Assistant sind nicht betroffen.
+:::
+
+Auf einem anderen Port gerät die Bridge nicht mehr mit der Integration [Matterbridge](/de/docs/integrations/matterbridge/) in Konflikt: Beide können gleichzeitig aktiviert sein.
 
 ## Bereitgestellte Geräte auswählen
 
@@ -63,15 +76,18 @@ Danach hält Gladys die Bridge selbst auf dem neuesten Stand:
 
 - Ein **neues kompatibles Gerät** wird zur Bridge hinzugefügt (im Modus „alle“).
 - Ein **umbenanntes Gerät** wird in deinen Matter-Apps umbenannt und behält dort seinen Raum und seine Automationen.
-- Ein **gelöschtes Gerät** (oder ein aus der Auswahl entferntes) verschwindet von der Bridge.
+- Ein **gelöschtes Gerät** verschwindet von der Bridge.
+- Ein **aus der Auswahl entferntes Gerät** verschwindet ebenfalls von der Bridge. Wählst du es später wieder aus, kommt es mit denselben Kennungen in der Bridge zurück wie zuvor.
 
 :::note
-Matter begrenzt Namen auf 32 Zeichen: Längere Gerätenamen werden in deinen Matter-Apps abgeschnitten.
+Matter begrenzt Namen auf 32 Bytes: Längere Gerätenamen werden in deinen Matter-Apps abgeschnitten. Umlaute, Buchstaben mit Akzent und Emojis belegen mehr als ein Byte: Ein Name, der welche enthält, wird also etwas früher abgeschnitten.
 :::
 
 ## Gladys mit deiner Matter-App koppeln
 
 Solange die Bridge nicht gekoppelt ist, zeigt der Abschnitt `Kopplung` einen **QR-Code** und einen 11-stelligen **Kopplungscode** (`1234-567-8901`).
+
+Die Bridge bleibt kopplungsbereit, solange sie nicht gekoppelt ist: Matter schließt das Kopplungsfenster 48 Stunden nach dem Start der Bridge oder nach zu vielen fehlgeschlagenen Versuchen, und Gladys öffnet es von selbst wieder.
 
 Füge in deiner Matter-App ein neues Matter-Gerät hinzu und scanne den QR-Code oder gib den Kopplungscode ein:
 
@@ -117,7 +133,7 @@ Mit Matter kannst du dieselbe Bridge mit mehreren Apps koppeln (Multi-Admin). So
 | 💦 Luftfeuchtigkeitssensor | Luftfeuchtigkeitssensor |
 | ☀️ Helligkeitssensor | Helligkeitssensor (Lux) |
 | 🧭 Luftdrucksensor | Luftdrucksensor |
-| 🌫️ CO2-, PM2.5- und PM10-Sensoren | Luftqualitätssensor, mit einer Gesamtluftqualität aus PM2.5 (oder CO2, wenn kein PM2.5 vorhanden ist) |
+| 🌫️ CO2-, PM2.5- und PM10-Sensoren | Luftqualitätssensor. Die Gesamtluftqualität ist der schlechtere der beiden Werte PM2.5 und CO2 |
 | 🔋 Batterie | Batteriestand des Geräts, mit einer Warnung bei schwacher Batterie unter 20 % |
 
 Ein Gerät mit mehreren Funktionen (zum Beispiel ein Temperatur-, Luftfeuchtigkeits- und Batteriesensor) wird als ein einziges Gerät der Bridge bereitgestellt. Die meisten Apps zeigen es als ein Zubehör an, manche zeigen eine Kachel pro Funktion (Temperatur, Luftfeuchtigkeit, Batterie...).
@@ -126,6 +142,7 @@ Ein paar Einschränkungen:
 
 - Bei Lichtern, Steckdosen und Rollläden werden nur steuerbare Funktionen bereitgestellt: Ein nur lesbares Licht oder eine nur lesbare Steckdose wird nicht bereitgestellt.
 - Ein Gerät, das nur eine Batterie hat, wird nicht bereitgestellt.
+- Die Anwesenheit eines Smartphones oder Computers in deinem Netzwerk, erkannt von den Integrationen [Bluetooth](/de/docs/integrations/bluetooth/) oder [Lan-Manager](/de/docs/integrations/lan-manager/), wird nicht bereitgestellt: Sie sagt nicht, ob jemand in einem Raum ist.
 - Rollläden werden nur in der Höhe gesteuert: Lamellenneigung wird nicht unterstützt.
 - Thermostate und Klimageräte, Schlösser, Ventilatoren, Taster, Sirenen, Energiezähler, Saugroboter und Mediaplayer werden noch nicht unterstützt.
 
@@ -134,14 +151,21 @@ Wir fügen regelmäßig neue Gerätetypen hinzu, basierend auf dem Feedback der 
 ## Bridge deaktivieren oder zurücksetzen
 
 - `Matter-Bridge deaktivieren` nimmt die Bridge offline, **behält aber ihre Kopplungen**: Wenn du sie wieder aktivierst, finden deine Matter-Apps dieselbe Bridge und dieselben Geräte.
-- `Bridge zurücksetzen` ist für den Fall gedacht, dass sich die Bridge nicht mehr koppeln lässt. Alle Kopplungen von Gladys werden gelöscht: Die Bridge antwortet den Ökosystemen, mit denen sie gekoppelt war, nicht mehr. Ein alter Eintrag „Gladys Bridge“ kann in deinen Matter-Apps bleiben: **Entferne ihn dort** und füge die Bridge dann mit ihrem **neuen Kopplungscode** erneut hinzu. Deine Auswahl der bereitgestellten Geräte bleibt erhalten.
+- `Bridge zurücksetzen` ist für den Fall gedacht, dass sich die Bridge nicht mehr koppeln lässt. Alle Kopplungen von Gladys werden gelöscht: Die Bridge antwortet den Ökosystemen, mit denen sie gekoppelt war, nicht mehr. Ein alter Eintrag „Gladys Bridge“ kann in deinen Matter-Apps bleiben: **Entferne ihn dort** und füge die Bridge dann mit ihrem **neuen Kopplungscode** erneut hinzu. Deine Auswahl der bereitgestellten Geräte bleibt erhalten. Diese Schaltfläche ist auch verfügbar, wenn die Bridge nicht starten konnte.
+
+Entfernst du Gladys aus dem letzten Ökosystem, mit dem es gekoppelt war, setzt sich die Bridge von selbst zurück: Die Seite zeigt wieder den QR-Code an, bereit für eine neue Kopplung.
+
+## Sicherung der Kopplungen
+
+Gladys speichert die Kopplungen der Bridge jede Nacht (um 4:20 Uhr) in seiner Datenbank, und eine Minute nachdem ein Ökosystem hinzugefügt oder entfernt wurde. Sie sind damit Teil der [Gladys Plus](/de/plus/)-Backups: Wenn du [Gladys auf einen neuen Rechner umziehst](/de/docs/installation/migrate/), kommt die Bridge mit ihren Kopplungen zurück, und deine Matter-Apps finden sie ohne neue Kopplung wieder.
 
 ## Fehlerbehebung
 
 - **Keine IPv6-Schnittstelle gefunden**: Aktiviere IPv6 auf deinem Router und auf dem Rechner, auf dem Gladys läuft, und starte Gladys neu.
 - **Die App findet die Bridge nicht**: Prüfe, dass dein Smartphone und Gladys im selben Netzwerk sind (nicht in einem Gast-WLAN) und dass Gladys das Host-Netzwerk nutzt.
-- **`Die Matter-Bridge wurde nicht gestartet: Der Port 5540, der Standard-Matter-Port, wird bereits von einem anderen Programm auf diesem Rechner verwendet`**: Auf dem Rechner läuft eine andere Matter-Bridge (ein außerhalb von Gladys installiertes Matterbridge, ein anderer Matter-Server...). Beende sie oder lege sie auf einen anderen Port, und deaktiviere und aktiviere dann die Matter-Bridge erneut.
-- **`Die Matter-Bridge wurde nicht gestartet: Die Matterbridge-Integration ist aktiviert`**: Deaktiviere die Integration [Matterbridge](/de/docs/integrations/matterbridge/), und deaktiviere und aktiviere dann die Matter-Bridge erneut.
+- **`Die Matter-Bridge wurde nicht gestartet: Der Port 5540, der Standard-Matter-Port, wird bereits von einem anderen Programm auf diesem Rechner verwendet`**: Auf dem Rechner läuft eine andere Matter-Bridge (ein außerhalb von Gladys installiertes Matterbridge, ein anderer Matter-Server...). Beende sie oder lege sie auf einen anderen Port, oder [lege die Bridge von Gladys auf einen anderen Port](#another-port). Deaktiviere und aktiviere dann die Matter-Bridge erneut.
+- **`Die Matter-Bridge wurde nicht gestartet: Die Matterbridge-Integration ist aktiviert`**: Deaktiviere die Integration [Matterbridge](/de/docs/integrations/matterbridge/), und deaktiviere und aktiviere dann die Matter-Bridge erneut. Du kannst auch [die Bridge auf einen anderen Port legen](#another-port).
+- **Die Kopplung schlägt nach mehreren Versuchen fehl**: Nach zu vielen fehlgeschlagenen Versuchen sperrt Matter die Kopplung eine Weile. Lass die Seite der Integration geöffnet und warte bis zu 15 Minuten: Gladys öffnet das Kopplungsfenster von selbst wieder. Versuche es dann erneut.
 - **Ein Gerät fehlt**: Prüfe, ob es zu den oben unterstützten Geräten gehört und im Auswahlmodus ausgewählt ist, und klicke dann auf `Speichern`.
 
 🛠️ Brauchst du Hilfe? Komm in das [Gladys-Community-Forum](https://community.gladysassistant.com/), wir helfen dir gern!

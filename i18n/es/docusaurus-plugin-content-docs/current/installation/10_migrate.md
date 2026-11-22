@@ -13,7 +13,7 @@ keywords:
 
 ¿Vas a sustituir la máquina en la que funciona Gladys (un mini-PC antiguo, una Raspberry Pi, un NAS...) por una nueva? Con una **copia de seguridad de Gladys Plus**, recuperas tu instancia tal cual en la nueva máquina: usuarios, viviendas y habitaciones, dispositivos, escenas, paneles, configuración de las integraciones y todo el historial de los sensores.
 
-Zigbee2mqtt y la integración Matter también se restauran: Gladys guarda su configuración en su base de datos cada noche, así que **no necesitas volver a emparejar tus dispositivos**.
+Zigbee2mqtt y la integración Matter también se restauran: Gladys guarda su configuración en su base de datos cada noche, así que **no necesitas volver a emparejar tus dispositivos**. Lo mismo ocurre con los emparejamientos del [Puente Matter](/es/docs/integrations/matter-bridge/): tus aplicaciones Matter (Apple Home, Google Home, Alexa...) lo vuelven a encontrar en la nueva máquina.
 
 Solo hay que tomar algunas precauciones. Este es el procedimiento, paso a paso.
 
@@ -44,7 +44,7 @@ No desconectes Gladys Plus en la instancia antigua antes de haber apuntado la cl
 
 ### No emparejes dispositivos nuevos justo antes del traslado
 
-La configuración de Zigbee2mqtt se guarda en Gladys **todas las noches a las 23:00**, la de Matter **a las 4:00**. Un dispositivo Zigbee o Matter emparejado después del último guardado nocturno no estará en la copia de seguridad: tendrías que volver a emparejarlo en la nueva máquina.
+La configuración de Zigbee2mqtt se guarda en Gladys **todas las noches a las 23:00**, la de Matter **a las 4:00**, los emparejamientos del Puente Matter **a las 4:20** (y un minuto después de añadirlo a un ecosistema). Un dispositivo Zigbee o Matter emparejado después del último guardado nocturno no estará en la copia de seguridad: tendrías que volver a emparejarlo en la nueva máquina.
 
 ### Lanza una copia de seguridad manual
 
@@ -77,6 +77,7 @@ Comprueba que la clave que has introducido es la de la instancia antigua: Gladys
 
 - **Zigbee2mqtt**: Gladys lo reinstala automáticamente con su configuración restaurada (red Zigbee y dispositivos), sin volver a emparejar. Aun así, ve a **Integraciones > Zigbee2mqtt** y comprueba el puerto USB del dongle: puede tener otro nombre en la nueva máquina. En ese caso, selecciona el correcto.
 - **Matter**: el controlador de la integración Matter se restaura automáticamente desde su copia de seguridad.
+- **Puente Matter**: el puente se restaura automáticamente con sus emparejamientos y tus aplicaciones Matter lo vuelven a encontrar.
 - **Matterbridge** (si lo usas): vuelve a instalar sus plugins y vuelve a emparejar el puente con tus controladores Matter.
 - **Integraciones del catálogo**: se reinstalan automáticamente al arrancar. Gladys vuelve a descargar sus imágenes, lo que puede tardar unos minutos.
 - **MQTT** (si usas el broker instalado por Gladys): desde Gladys 5.3.1, Gladys vuelve a crear el broker automáticamente con tus credenciales guardadas, así que tus dispositivos MQTT se reconectan sin cambiar nada. Comprueba en **Integraciones > MQTT** que Gladys está conectada al broker.
