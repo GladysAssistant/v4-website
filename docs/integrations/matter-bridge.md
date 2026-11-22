@@ -50,11 +50,11 @@ The bridge starts after a few seconds. If it can't start, the error is shown on 
 
 The bridge starts again automatically every time Gladys restarts.
 
-### Use another port {#another-port}
+### Use another port {/* #another-port */}
 
 The bridge listens on port 5540 by default. If another Matter bridge already uses this port on the machine (a Matterbridge installed outside Gladys, Home Assistant Matter Hub...), you can move the Gladys bridge to another port with the `MATTER_BRIDGE_PORT` environment variable:
 
-- **Installed with Docker**: remove the container with `sudo docker rm -f gladys` (your data in `/var/lib/gladysassistant` is kept), then run the [install command](/docs/installation/docker/) again, adding `-e MATTER_BRIDGE_PORT=5550`.
+- **Installed with Docker**: remove the container with `sudo docker rm -f gladys` (your data in `/var/lib/gladysassistant` is kept), then run the command you installed Gladys with again, with the same options and volumes (see the [install command](/docs/installation/docker/)), adding `-e MATTER_BRIDGE_PORT=5550`.
 - **Installed with [Docker Compose](/docs/installation/docker-compose/)**: add `MATTER_BRIDGE_PORT: 5550` under `environment:` in your compose file, then start Gladys again with `sudo docker compose -f gladys-compose.yml up -d`.
 
 :::warning[Amazon Alexa]
@@ -133,7 +133,7 @@ Matter lets you pair the same bridge with several apps (multi-admin). To add Gla
 | 💦 Humidity sensor | Humidity sensor |
 | ☀️ Light sensor | Light sensor (lux) |
 | 🧭 Pressure sensor | Pressure sensor |
-| 🌫️ CO2, PM2.5 and PM10 sensors | Air quality sensor. The overall air quality is the worst of the PM2.5 and CO2 levels |
+| 🌫️ CO2, PM2.5 and PM10 sensors | Air quality sensor, with an overall air quality based on PM2.5 and CO2 (the worse of the two wins) |
 | 🔋 Battery | Battery level of the device, with a low battery warning below 20% |
 
 A device with several features (for example a temperature, humidity and battery sensor) is exposed as a single bridged device. Most apps show it as one accessory, some show one tile per function (temperature, humidity, battery...).
@@ -158,6 +158,8 @@ If you remove Gladys from the last ecosystem it was paired with, the bridge rese
 ## Pairing backup
 
 Gladys saves the pairings of the bridge in its database every night (at 4:20 AM), and a minute after an ecosystem is added or removed. They are part of the [Gladys Plus](/plus/) backups: if you [move Gladys to a new machine](/docs/installation/migrate/), the bridge comes back with its pairings, and your Matter apps find it again without a new pairing.
+
+Only the pairings in the latest Gladys Plus backup are restored: after adding an ecosystem, wait a minute for Gladys to save the pairing before running a backup (**Settings > Backups** > **"Backup now"**). Otherwise, you will have to pair this ecosystem again.
 
 ## Troubleshooting
 

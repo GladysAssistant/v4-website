@@ -50,11 +50,11 @@ Le bridge démarre en quelques secondes. S'il ne peut pas démarrer, l'erreur es
 
 Le bridge redémarre ensuite automatiquement à chaque redémarrage de Gladys.
 
-### Utiliser un autre port {#another-port}
+### Utiliser un autre port {/* #another-port */}
 
 Par défaut, le bridge écoute sur le port 5540. Si un autre bridge Matter utilise déjà ce port sur la machine (un Matterbridge installé en dehors de Gladys, Home Assistant Matter Hub...), vous pouvez déplacer le bridge de Gladys sur un autre port avec la variable d'environnement `MATTER_BRIDGE_PORT` :
 
-- **Installation avec Docker** : supprimez le conteneur avec `sudo docker rm -f gladys` (vos données dans `/var/lib/gladysassistant` sont conservées), puis relancez la [commande d'installation](/fr/docs/installation/docker/) en ajoutant `-e MATTER_BRIDGE_PORT=5550`.
+- **Installation avec Docker** : supprimez le conteneur avec `sudo docker rm -f gladys` (vos données dans `/var/lib/gladysassistant` sont conservées), puis relancez la commande avec laquelle vous avez installé Gladys, avec les mêmes options et volumes (voir la [commande d'installation](/fr/docs/installation/docker/)), en ajoutant `-e MATTER_BRIDGE_PORT=5550`.
 - **Installation avec [Docker Compose](/fr/docs/installation/docker-compose/)** : ajoutez `MATTER_BRIDGE_PORT: 5550` sous `environment:` dans votre fichier compose, puis relancez Gladys avec `sudo docker compose -f gladys-compose.yml up -d`.
 
 :::warning[Amazon Alexa]
@@ -133,7 +133,7 @@ Matter permet d'appairer un même bridge avec plusieurs applications (multi-admi
 | 💦 Capteur d'humidité | Capteur d'humidité |
 | ☀️ Capteur de luminosité | Capteur de luminosité (lux) |
 | 🧭 Capteur de pression | Capteur de pression |
-| 🌫️ Capteurs de CO2, PM2.5 et PM10 | Capteur de qualité de l'air. La qualité globale est la plus mauvaise des valeurs PM2.5 et CO2 |
+| 🌫️ Capteurs de CO2, PM2.5 et PM10 | Capteur de qualité de l'air, avec une qualité globale basée sur les PM2.5 et le CO2 (la moins bonne des deux l'emporte) |
 | 🔋 Batterie | Niveau de batterie de l'appareil, avec une alerte de batterie faible sous 20 % |
 
 Un appareil avec plusieurs fonctionnalités (par exemple un capteur de température, d'humidité et de batterie) est exposé comme un seul appareil du bridge. La plupart des applications l'affichent comme un seul accessoire, certaines affichent une tuile par fonction (température, humidité, batterie...).
@@ -158,6 +158,8 @@ Si vous retirez Gladys du dernier écosystème avec lequel il était appairé, l
 ## Sauvegarde des appairages
 
 Gladys enregistre les appairages du bridge dans sa base de données chaque nuit (à 4h20), et une minute après l'ajout ou le retrait d'un écosystème. Ils font donc partie des sauvegardes [Gladys Plus](/fr/plus/) : si vous [déplacez Gladys sur une nouvelle machine](/fr/docs/installation/migrate/), le bridge revient avec ses appairages, et vos applications Matter le retrouvent sans nouvel appairage.
+
+Seuls les appairages présents dans la dernière sauvegarde Gladys Plus sont restaurés : après avoir ajouté un écosystème, attendez une minute que Gladys enregistre l'appairage avant de lancer une sauvegarde (**Paramètres > Sauvegardes** > **« Sauvegarder maintenant »**). Sinon, vous devrez appairer à nouveau cet écosystème.
 
 ## Dépannage
 

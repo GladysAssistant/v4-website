@@ -50,11 +50,11 @@ El puente se inicia en unos segundos. Si no puede iniciarse, el error se muestra
 
 Después, el puente se vuelve a iniciar automáticamente cada vez que Gladys se reinicia.
 
-### Usar otro puerto {#another-port}
+### Usar otro puerto {/* #another-port */}
 
 Por defecto, el puente escucha en el puerto 5540. Si otro puente Matter ya usa este puerto en la máquina (un Matterbridge instalado fuera de Gladys, Home Assistant Matter Hub...), puedes mover el puente de Gladys a otro puerto con la variable de entorno `MATTER_BRIDGE_PORT`:
 
-- **Instalación con Docker**: elimina el contenedor con `sudo docker rm -f gladys` (tus datos en `/var/lib/gladysassistant` se conservan) y vuelve a ejecutar el [comando de instalación](/es/docs/installation/docker/) añadiendo `-e MATTER_BRIDGE_PORT=5550`.
+- **Instalación con Docker**: elimina el contenedor con `sudo docker rm -f gladys` (tus datos en `/var/lib/gladysassistant` se conservan) y vuelve a ejecutar el comando con el que instalaste Gladys, con las mismas opciones y volúmenes (consulta el [comando de instalación](/es/docs/installation/docker/)), añadiendo `-e MATTER_BRIDGE_PORT=5550`.
 - **Instalación con [Docker Compose](/es/docs/installation/docker-compose/)**: añade `MATTER_BRIDGE_PORT: 5550` bajo `environment:` en tu archivo compose y vuelve a iniciar Gladys con `sudo docker compose -f gladys-compose.yml up -d`.
 
 :::warning[Amazon Alexa]
@@ -133,7 +133,7 @@ Matter permite emparejar un mismo puente con varias aplicaciones (multi-admin). 
 | 💦 Sensor de humedad | Sensor de humedad |
 | ☀️ Sensor de luminosidad | Sensor de luminosidad (lux) |
 | 🧭 Sensor de presión | Sensor de presión |
-| 🌫️ Sensores de CO2, PM2.5 y PM10 | Sensor de calidad del aire. La calidad global es el peor de los niveles de PM2.5 y CO2 |
+| 🌫️ Sensores de CO2, PM2.5 y PM10 | Sensor de calidad del aire, con una calidad global basada en las PM2.5 y el CO2 (prevalece la peor de las dos) |
 | 🔋 Batería | Nivel de batería del dispositivo, con un aviso de batería baja por debajo del 20 % |
 
 Un dispositivo con varias funciones (por ejemplo un sensor de temperatura, humedad y batería) se expone como un único dispositivo del puente. La mayoría de las aplicaciones lo muestran como un solo accesorio, algunas muestran un recuadro por función (temperatura, humedad, batería...).
@@ -158,6 +158,8 @@ Si quitas Gladys del último ecosistema con el que estaba emparejado, el puente 
 ## Copia de seguridad de los emparejamientos
 
 Gladys guarda los emparejamientos del puente en su base de datos cada noche (a las 4:20), y un minuto después de añadir o quitar un ecosistema. Por tanto, forman parte de las copias de seguridad de [Gladys Plus](/es/plus/): si [trasladas Gladys a una nueva máquina](/es/docs/installation/migrate/), el puente vuelve con sus emparejamientos y tus aplicaciones Matter lo encuentran de nuevo sin volver a emparejarlo.
+
+Solo se restauran los emparejamientos presentes en la última copia de seguridad de Gladys Plus: después de añadir un ecosistema, espera un minuto a que Gladys guarde el emparejamiento antes de lanzar una copia de seguridad (**Configuración > Copias de seguridad** > **«Copia de seguridad ahora»**). Si no, tendrás que volver a emparejar ese ecosistema.
 
 ## Solución de problemas
 

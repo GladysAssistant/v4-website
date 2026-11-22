@@ -50,11 +50,11 @@ Die Bridge startet nach wenigen Sekunden. Kann sie nicht starten, wird der Fehle
 
 Danach startet die Bridge bei jedem Neustart von Gladys automatisch.
 
-### Einen anderen Port verwenden {#another-port}
+### Einen anderen Port verwenden {/* #another-port */}
 
 Standardmäßig lauscht die Bridge auf dem Port 5540. Nutzt bereits eine andere Matter-Bridge diesen Port auf dem Rechner (ein außerhalb von Gladys installiertes Matterbridge, Home Assistant Matter Hub...), kannst du die Bridge von Gladys mit der Umgebungsvariable `MATTER_BRIDGE_PORT` auf einen anderen Port legen:
 
-- **Installation mit Docker**: Entferne den Container mit `sudo docker rm -f gladys` (deine Daten in `/var/lib/gladysassistant` bleiben erhalten) und führe den [Installationsbefehl](/de/docs/installation/docker/) erneut aus, ergänzt um `-e MATTER_BRIDGE_PORT=5550`.
+- **Installation mit Docker**: Entferne den Container mit `sudo docker rm -f gladys` (deine Daten in `/var/lib/gladysassistant` bleiben erhalten) und führe den Befehl, mit dem du Gladys installiert hast, mit denselben Optionen und Volumes erneut aus (siehe den [Installationsbefehl](/de/docs/installation/docker/)), ergänzt um `-e MATTER_BRIDGE_PORT=5550`.
 - **Installation mit [Docker Compose](/de/docs/installation/docker-compose/)**: Füge `MATTER_BRIDGE_PORT: 5550` unter `environment:` in deiner Compose-Datei hinzu und starte Gladys dann erneut mit `sudo docker compose -f gladys-compose.yml up -d`.
 
 :::warning[Amazon Alexa]
@@ -133,7 +133,7 @@ Mit Matter kannst du dieselbe Bridge mit mehreren Apps koppeln (Multi-Admin). So
 | 💦 Luftfeuchtigkeitssensor | Luftfeuchtigkeitssensor |
 | ☀️ Helligkeitssensor | Helligkeitssensor (Lux) |
 | 🧭 Luftdrucksensor | Luftdrucksensor |
-| 🌫️ CO2-, PM2.5- und PM10-Sensoren | Luftqualitätssensor. Die Gesamtluftqualität ist der schlechtere der beiden Werte PM2.5 und CO2 |
+| 🌫️ CO2-, PM2.5- und PM10-Sensoren | Luftqualitätssensor, mit einer Gesamtluftqualität aus PM2.5 und CO2 (der schlechtere der beiden Werte zählt) |
 | 🔋 Batterie | Batteriestand des Geräts, mit einer Warnung bei schwacher Batterie unter 20 % |
 
 Ein Gerät mit mehreren Funktionen (zum Beispiel ein Temperatur-, Luftfeuchtigkeits- und Batteriesensor) wird als ein einziges Gerät der Bridge bereitgestellt. Die meisten Apps zeigen es als ein Zubehör an, manche zeigen eine Kachel pro Funktion (Temperatur, Luftfeuchtigkeit, Batterie...).
@@ -158,6 +158,8 @@ Entfernst du Gladys aus dem letzten Ökosystem, mit dem es gekoppelt war, setzt 
 ## Sicherung der Kopplungen
 
 Gladys speichert die Kopplungen der Bridge jede Nacht (um 4:20 Uhr) in seiner Datenbank, und eine Minute nachdem ein Ökosystem hinzugefügt oder entfernt wurde. Sie sind damit Teil der [Gladys Plus](/de/plus/)-Backups: Wenn du [Gladys auf einen neuen Rechner umziehst](/de/docs/installation/migrate/), kommt die Bridge mit ihren Kopplungen zurück, und deine Matter-Apps finden sie ohne neue Kopplung wieder.
+
+Nur die Kopplungen im letzten Gladys-Plus-Backup werden wiederhergestellt: Warte nach dem Hinzufügen eines Ökosystems eine Minute, bis Gladys die Kopplung gespeichert hat, bevor du ein Backup startest (**Einstellungen > Backups** > **„Jetzt sichern“**). Sonst musst du dieses Ökosystem erneut koppeln.
 
 ## Fehlerbehebung
 
