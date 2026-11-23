@@ -1,7 +1,7 @@
 ---
 id: weather
 title: Das Wetter auf dem Dashboard anzeigen
-description: "Zeige das lokale Wetter auf deinem Dashboard in Gladys Assistant an – mit der OpenWeather-Integration und dem Standort deines Hauses."
+description: "Zeige das lokale Wetter auf deinem Dashboard in Gladys Assistant an – mit einer Wetter-Integration (OpenWeather, Météo France, Open-Meteo…) und dem Standort deines Hauses."
 sidebar_label: Wetter
 ---
 
@@ -9,8 +9,8 @@ Du kannst das Wetter für deinen Standort auf dem Dashboard anzeigen.
 
 ## Voraussetzungen
 
-- Du musst vorher den Dienst [OpenWeather](/de/docs/integrations/openweather/) konfiguriert haben, damit Gladys Assistant das Wetter anzeigen kann.
-- Du musst dein Haus in den Einstellungen konfiguriert und auf der Karte platziert haben, damit OpenWeatherMap den Breiten- und Längengrad deines Hauses kennt.
+- Du musst vorher eine Wetter-Integration aus dem [Integrationskatalog](/de/docs/integrations/) installiert und konfiguriert haben, etwa [OpenWeather](/de/docs/integrations/external/openweather/), Météo France oder Open-Meteo.
+- Du musst dein Haus in den Einstellungen konfiguriert und auf der Karte platziert haben, damit der Wetteranbieter den Breiten- und Längengrad deines Hauses kennt.
 
 ## Konfiguration
 

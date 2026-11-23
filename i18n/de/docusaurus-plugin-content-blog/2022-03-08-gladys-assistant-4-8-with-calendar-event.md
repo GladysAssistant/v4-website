@@ -24,7 +24,7 @@ Ab sofort kannst du eine Szene auslösen, wenn ein bestimmtes Ereignis im Kalend
 
 Du möchtest daran erinnert werden, wann du zur Arbeit musst? Oder zur richtigen Zeit sanft geweckt werden?
 
-Dafür brauchst du mindestens einen Kalender, der mit Gladys verbunden ist (wir unterstützen iCloud-Kalender, Google Kalender, Synology-Kalender oder jeden CalDAV-Kalender über unsere [CalDAV-Integration](/de/docs/integrations/caldav/)).
+Dafür brauchst du mindestens einen Kalender, der mit Gladys verbunden ist (wir unterstützen iCloud-Kalender, Google Kalender, Synology-Kalender oder jeden CalDAV-Kalender über unsere [CalDAV-Integration](/de/docs/integrations/external/caldav/)).
 
 Erstelle eine neue Szene und lege einen Auslöser „Kalenderereignis steht bevor“ an:
 
