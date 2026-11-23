@@ -138,6 +138,8 @@ const dynamicTariffContent = {
       intro: "More energy guides and integrations:",
       links: [
         { label: "EPEX Spot integration", href: "/docs/integrations/external/epex-spot/", text: "Quarter-hourly exchange prices, cheapest hours and dynamic contracts in Gladys." },
+        { label: "Charge your EV with solar surplus", href: "/pv-ueberschussladen/", text: "Combine solar surplus and cheap hours to charge your car." },
+        { label: "Balcony solar (Balkonkraftwerk)", href: "/balkonkraftwerk/", text: "Use more of your own solar power." },
         { label: "Reduce your electricity bill", href: "/home-energy-monitoring/", text: "Track your consumption and act on the data." },
         { label: "All guides", href: "/guides/", text: "Every guide, tool and comparison in one place." },
       ],
@@ -263,6 +265,8 @@ const dynamicTariffContent = {
       intro: "Mehr Ratgeber und Integrationen rund um Energie:",
       links: [
         { label: "EPEX-Spot-Integration", href: "/de/docs/integrations/external/epex-spot/", text: "Viertelstündliche Börsenpreise, günstigste Stunden und dynamische Verträge in Gladys." },
+        { label: "PV-Überschussladen", href: "/de/pv-ueberschussladen/", text: "Solarüberschuss und günstige Stunden kombinieren, um dein E-Auto zu laden." },
+        { label: "Balkonkraftwerk", href: "/de/balkonkraftwerk/", text: "Mehr vom eigenen Solarstrom selbst nutzen." },
         { label: "Stromrechnung senken", href: "/de/home-energy-monitoring/", text: "Behalte deinen Verbrauch im Blick und handle auf Basis der Daten." },
         { label: "Der beste Mini-PC für die Hausautomation", href: "/de/mini-pc-home-automation/", text: "Die Hardware, auf der Gladys rund um die Uhr läuft." },
         { label: "Alle Ratgeber", href: "/de/guides/", text: "Alle Ratgeber, Tools und Vergleiche an einem Ort." },

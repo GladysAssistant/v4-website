@@ -184,6 +184,20 @@ export const guidesSections = [
         { label: "Tarifas eléctricas dinámicas en Alemania", text: "Cómo funcionan los precios horarios de la bolsa y cómo desplazar tu consumo automáticamente (Alemania)." }
       ),
       card(
+        "/balkonkraftwerk/",
+        { label: "Balcony solar (Balkonkraftwerk)", text: "The German rules for plug-in solar, and how to use more of your own power (Germany)." },
+        { label: "Panneaux solaires de balcon en Allemagne", text: "Les règles allemandes du solaire plug-and-play, et comment consommer plus de sa production (Allemagne)." },
+        { label: "Balkonkraftwerk", text: "Die Regeln für Steckersolargeräte und wie du mehr von deinem eigenen Strom selbst nutzt." },
+        { label: "Placas solares de balcón en Alemania", text: "Las normas alemanas del solar enchufable y cómo aprovechar más tu propia producción (Alemania)." }
+      ),
+      card(
+        "/pv-ueberschussladen/",
+        { label: "Charge your EV with solar surplus", text: "How PV surplus charging works, and how to set it up with your wallbox (Germany)." },
+        { label: "Recharger sa voiture avec le surplus solaire", text: "Comment fonctionne la recharge sur surplus, et comment la mettre en place avec sa borne (Allemagne)." },
+        { label: "PV-Überschussladen", text: "Wie Überschussladen funktioniert und wie du es mit deiner Wallbox einrichtest." },
+        { label: "Cargar el coche con el excedente solar", text: "Cómo funciona la carga con excedente solar y cómo configurarla con tu cargador (Alemania)." }
+      ),
+      card(
         "/edf-tempo/",
         { label: "EDF Tempo colour of the day", text: "Today's and tomorrow's Tempo colour, live (France)." },
         { label: "Tempo EDF : couleur du jour", text: "La couleur Tempo du jour et de demain, en direct." },

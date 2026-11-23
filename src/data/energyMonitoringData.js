@@ -393,6 +393,16 @@ const energyContent = {
           text: "Börsenstrompreise verstehen und den Verbrauch automatisch in die günstigsten Stunden legen.",
         },
         {
+          label: "Balkonkraftwerk",
+          href: "/de/balkonkraftwerk/",
+          text: "Mehr vom eigenen Solarstrom selbst nutzen, statt ihn zu verschenken.",
+        },
+        {
+          label: "PV-Überschussladen",
+          href: "/de/pv-ueberschussladen/",
+          text: "Das E-Auto mit dem Überschuss deiner PV-Anlage laden.",
+        },
+        {
           label: "Aktuelle Strompreise in Ontario",
           href: "/de/ontario-electricity-rates/",
           text: "Der aktuelle Time-of-Use- und Ultra-Low-Overnight-Preis, live.",

@@ -450,6 +450,8 @@ module.exports = function createConfig() {
                   path === "/matter-hub/" ||
                   path === "/edf-tempo/" ||
                   path === "/dynamischer-stromtarif/" ||
+                  path === "/balkonkraftwerk/" ||
+                  path === "/pv-ueberschussladen/" ||
                   path === "/blog/"
                 ) {
                   return { ...item, priority: 0.8 };
