@@ -1,25 +1,21 @@
 ---
 id: zwavejs-ui
-title: "Z-Wave JS UI mit Gladys: lokales Z-Wave über MQTT"
-description: "Binde deine Z-Wave-Geräte über Z-Wave JS UI und MQTT in Gladys Assistant ein. Lokale Steuerung, Statusänderungen in Echtzeit und Unterstützung für US-Sticks mit 908 MHz."
-sidebar_label: Z-Wave JS UI
-keywords:
-  - z-wave js ui
-  - zwave js ui einrichten
-  - zwave js ui gerät hinzufügen
-  - zwave mqtt
-  - z-wave gladys
-  - z-wave usb stick
-  - z-wave lokal steuern
+title: "Integrierte Z-Wave JS UI-Integration (veraltet)"
+description: "Die integrierte Z-Wave JS UI-Integration von Gladys Assistant ist veraltet. Nutze die Community-Integration Z-Wave JS UI, mit einem Klick installiert, und migriere deine Geräte samt Verlauf."
+sidebar_label: "Z-Wave JS UI (veraltet)"
 ---
 
-import JsonLd from '@site/src/components/seo/JsonLd';
+:::warning[Diese integrierte Integration ist veraltet]
+
+Seit Gladys 4.86 ist diese integrierte Z-Wave JS UI-Integration **veraltet**. Nutze stattdessen die **[Community-Integration Z-Wave JS UI](/de/docs/integrations/external/z-wave-js-ui/)**: Sie wird mit einem Klick aus dem Integrationskatalog installiert, nutzt dieselbe Z-Wave JS UI- und MQTT-Konfiguration und unterstützt mehr Geräte (Thermostate, Fil-Pilote-Module, Szenentaster, Rauch-, CO- und Wassersensoren, Batteriestand…).
+
+Du nutzt bereits diese integrierte Integration? Installiere die Community-Integration, lege deine Geräte über ihren Tab **Discovery** an und klicke dann bei jedem bestehenden Gerät auf **Migrieren**, um es samt Verlauf auf das neue zu übertragen. Sind alle Geräte migriert, deaktiviere die integrierte Integration.
+
+Diese Seite bleibt für bestehende Installationen online.
+
+:::
 
 Gladys Assistant bietet eine Integration mit [Z-Wave JS UI](https://zwave-js.github.io/zwave-js-ui/#/), einer Software zur Steuerung von Z-Wave-Geräten. Sie läuft **lokal** auf deiner eigenen Hardware, sodass dein Z-Wave-Netzwerk ohne Cloud-Konto funktioniert.
-
-:::tip[Z-Wave ohne Home Assistant]
-Warum Z-Wave JS UI plus Gladys ein einfaches, lokales Setup ist und wie es sich im Vergleich schlägt: [Z-Wave JS UI ohne Home Assistant](/de/z-wave-js-ui-without-home-assistant/).
-:::
 
 Gladys verbindet sich mit demselben MQTT-Broker wie Z-Wave JS UI und empfängt MQTT-Nachrichten, sobald sich der Status eines Geräts ändert.
 
@@ -93,43 +89,3 @@ Gladys verbindet sich über Z-Wave JS UI per MQTT. Z-Wave JS UI steuert den USB-
 
 Ja. Z-Wave JS UI, der MQTT-Broker und Gladys laufen alle auf deiner eigenen Hardware, sodass deine Z-Wave-Automatisierungen ohne Internetverbindung und ohne Hersteller-Cloud weiterlaufen.
 
-<JsonLd
-  data={{
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: [
-      {
-        "@type": "Question",
-        name: "Wie füge ich ein Z-Wave-Gerät zu Gladys hinzu?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Kopple das Gerät zuerst über den eigenen Inklusionsprozess mit Z-Wave JS UI. Sobald es in deinem Z-Wave-Netzwerk ist, öffne in der Z-Wave JS UI-Integration von Gladys den Tab Erkannt, um die Geräte zu sehen, die deine Instanz bereitstellt, und füge die gewünschten mit einem einzigen Klick zu Gladys hinzu.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Welchen Z-Wave-USB-Stick sollte ich in den USA oder Kanada verwenden?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Wähle einen Stick für die nordamerikanische Frequenz 908,42 MHz, zum Beispiel den Zooz ZST10 700 oder ZST39 oder die US-Version des Aeotec Z-Stick 7. Ein europäischer Stick mit 868,42 MHz kommuniziert nicht mit US- oder kanadischen Z-Wave-Geräten, prüfe vor dem Kauf also immer die Region.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Verbindet sich Gladys direkt mit Z-Wave oder über Z-Wave JS UI?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Gladys verbindet sich über Z-Wave JS UI per MQTT. Z-Wave JS UI steuert den USB-Stick und veröffentlicht die Gerätezustände auf einem MQTT-Broker, und Gladys abonniert diesen Broker, um Zustände in Echtzeit zu lesen und Befehle zu senden.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Funktioniert Z-Wave mit Gladys lokal ohne Cloud?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Ja. Z-Wave JS UI, der MQTT-Broker und Gladys laufen alle auf deiner eigenen Hardware, sodass deine Z-Wave-Automatisierungen ohne Internetverbindung und ohne Hersteller-Cloud weiterlaufen.",
-        },
-      },
-    ],
-  }}
-/>

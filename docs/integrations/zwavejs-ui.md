@@ -1,25 +1,21 @@
 ---
 id: zwavejs-ui
-title: "Z-Wave JS UI with Gladys: local Z-Wave over MQTT"
-description: "Integrate your Z-Wave devices into Gladys Assistant with Z-Wave JS UI over MQTT. Local control, real-time state changes, and US 908 MHz stick support."
-sidebar_label: Z-Wave JS UI
-keywords:
-  - z-wave js ui
-  - zwave js ui setup
-  - zwave js ui add device
-  - zwave mqtt
-  - z-wave gladys
-  - z-wave usb stick
-  - local z-wave control
+title: "Z-Wave JS UI built-in integration (deprecated)"
+description: "The built-in Z-Wave JS UI integration of Gladys Assistant is deprecated. Use the community Z-Wave JS UI integration, installable in one click, and migrate your devices with their history."
+sidebar_label: "Z-Wave JS UI (deprecated)"
 ---
 
-import JsonLd from '@site/src/components/seo/JsonLd';
+:::warning[This built-in integration is deprecated]
+
+Since Gladys 4.86, this built-in Z-Wave JS UI integration is **deprecated**. Use the **[Z-Wave JS UI community integration](/docs/integrations/external/z-wave-js-ui/)** instead: it installs in one click from the integrations catalog, uses the same Z-Wave JS UI and MQTT setup, and supports more devices (thermostats, pilot wire modules, scene buttons, smoke, CO and leak sensors, battery levels…).
+
+Already using this built-in integration? Install the community integration, create your devices from its **Discovery** tab, then click the **Migrate** button of each existing device to move it, with its history, to the new one. Once every device is migrated, disable the built-in integration.
+
+This page stays online for existing installations.
+
+:::
 
 Gladys Assistant offers integration with [Z-Wave JS UI](https://zwave-js.github.io/zwave-js-ui/#/), a software application for controlling Z-Wave devices. It runs **locally** on your own hardware, so your Z-Wave network keeps working with no cloud account.
-
-:::tip[Z-Wave without Home Assistant]
-Why Z-Wave JS UI plus Gladys is a simple, local setup, and how it compares: [Z-Wave JS UI without Home Assistant](/z-wave-js-ui-without-home-assistant/).
-:::
 
 Gladys connects to the same MQTT broker as Z-Wave JS UI and receives MQTT messages whenever a device's status changes.
 
@@ -93,43 +89,3 @@ Gladys connects through Z-Wave JS UI over MQTT. Z-Wave JS UI drives the USB stic
 
 Yes. Z-Wave JS UI, the MQTT broker and Gladys all run on your own hardware, so your Z-Wave automations keep running with no internet connection and no manufacturer cloud.
 
-<JsonLd
-  data={{
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: [
-      {
-        "@type": "Question",
-        name: "How do I add a Z-Wave device to Gladys?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "First pair the device with Z-Wave JS UI using its own inclusion process. Once it is on your Z-Wave network, open the Discovered tab in the Gladys Z-Wave JS UI integration to see the devices your instance exposes, and add the ones you want to Gladys with a single click.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Which Z-Wave USB stick should I use in the US or Canada?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Pick a stick built for the North American 908.42 MHz frequency, such as the Zooz ZST10 700 or ZST39, or the Aeotec Z-Stick 7 US version. A European 868.42 MHz stick will not talk to US or Canadian Z-Wave devices, so always check the region before buying.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Does Gladys connect to Z-Wave directly or through Z-Wave JS UI?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Gladys connects through Z-Wave JS UI over MQTT. Z-Wave JS UI drives the USB stick and publishes device states to an MQTT broker, and Gladys subscribes to that broker to read states and send commands in real time.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Does Z-Wave with Gladys work locally without the cloud?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Yes. Z-Wave JS UI, the MQTT broker and Gladys all run on your own hardware, so your Z-Wave automations keep running with no internet connection and no manufacturer cloud.",
-        },
-      },
-    ],
-  }}
-/>

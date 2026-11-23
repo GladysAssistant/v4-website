@@ -1,15 +1,21 @@
 ---
 id: zwavejs-ui
-title: Intégrez vos appareils Z-Wave grâce à Z-Wave JS UI
-description: "Intégrez vos appareils Z-Wave dans Gladys Assistant avec Z-Wave JS UI via MQTT pour les piloter et recevoir les changements d'état en temps réel."
-sidebar_label: Z-Wave JS UI
+title: "Intégration Z-Wave JS UI intégrée (dépréciée)"
+description: "L'intégration Z-Wave JS UI intégrée à Gladys Assistant est dépréciée. Utilisez l'intégration communautaire Z-Wave JS UI, installable en un clic, et migrez vos appareils avec leur historique."
+sidebar_label: "Z-Wave JS UI (dépréciée)"
 ---
 
-Gladys Assistant propose une intégration avec [Z-Wave JS UI](https://zwave-js.github.io/zwave-js-ui/#/), un logiciel qui permet de contrôler des appareils Z-Wave.
+:::warning[Cette intégration intégrée est dépréciée]
 
-:::tip[Le Z-Wave sans Home Assistant]
-Pourquoi Z-Wave JS UI avec Gladys est une installation simple et locale, et comment elle se compare : [Z-Wave JS UI sans Home Assistant](/fr/z-wave-js-ui-without-home-assistant/).
+Depuis Gladys 4.86, cette intégration Z-Wave JS UI intégrée est **dépréciée**. Utilisez plutôt l'**[intégration communautaire Z-Wave JS UI](/fr/docs/integrations/external/z-wave-js-ui/)** : elle s'installe en un clic depuis le catalogue des intégrations, reprend la même configuration Z-Wave JS UI et MQTT, et prend en charge davantage d'appareils (thermostats, modules fil pilote, boutons de scène, détecteurs de fumée, de CO et de fuite, niveau de batterie…).
+
+Vous utilisez déjà cette intégration intégrée ? Installez l'intégration communautaire, créez vos appareils depuis son onglet **Découverte**, puis cliquez sur le bouton **Migrer** de chaque appareil existant pour le transférer, avec son historique, vers le nouveau. Une fois tous les appareils migrés, désactivez l'intégration intégrée.
+
+Cette page reste en ligne pour les installations existantes.
+
 :::
+
+Gladys Assistant propose une intégration avec [Z-Wave JS UI](https://zwave-js.github.io/zwave-js-ui/#/), un logiciel qui permet de contrôler des appareils Z-Wave.
 
 Gladys se connecte au même broker MQTT que Z-Wave JS UI et reçoit des messages MQTT à chaque changement d'état d'un appareil.
 
