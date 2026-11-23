@@ -21,7 +21,7 @@ const zigbee2mqttWithoutHomeAssistantContent = {
         "Zigbee2MQTT is the best way to run Zigbee locally. You don't need Home Assistant to use it: Gladys Assistant sets it up for you and gives you the dashboards and automations.",
       intro: [
         "Zigbee2MQTT is an open-source bridge that supports more than 5,000 Zigbee devices from nearly 600 brands through a simple USB coordinator, with no vendor hub and no cloud. On its own, it only publishes MQTT messages: you still need a platform to see your devices, build a dashboard and automate.",
-        "Many people end up installing Home Assistant for that, then spend their evenings in YAML and add-ons. Gladys Assistant is a free, open-source alternative designed to be simple: plug in your dongle, click Enable, and Gladys installs Zigbee2MQTT and its MQTT broker, then lets you pair and use your devices from its own interface.",
+        "Many people end up installing Home Assistant for that, then spend their evenings in YAML and add-ons. Gladys Assistant is a free, open-source alternative designed to be simple: plug in your dongle, follow the setup wizard, and Gladys installs Zigbee2MQTT and its MQTT broker, then lets you pair and use your devices from its own interface.",
       ],
       primaryCta: {
         label: "Zigbee2MQTT setup guide",
@@ -124,8 +124,8 @@ const zigbee2mqttWithoutHomeAssistantContent = {
       points: [
         "Install Gladys (on a mini-PC, Gladys Assistant OS does it from a USB drive).",
         "Plug a USB Zigbee coordinator (Sonoff ZBDongle-E or -P…) into the machine, or connect a network coordinator like the SMLIGHT SLZB-06 to your network.",
-        "In Gladys, open Integrations → Zigbee2MQTT and select your coordinator and its model.",
-        "Click Enable Zigbee2MQTT: Gladys starts the containers and shows their status.",
+        "In Gladys, open Integrations → Zigbee2MQTT: the setup wizard shows the USB dongle it detected, with its photo and its name. If Gladys did not recognize it, choose its model in the list, or click Not the right dongle? Choose manually to pick its port and its model. With a network coordinator, choose Network coordinator (SLZB-06…)? and enter its address with its TCP port (for example tcp://192.168.1.20:6638) and its type.",
+        "Click Install: Gladys downloads and starts the containers in the background, and shows the progress.",
         "Permit joining, pair your devices, and add them to your dashboard.",
       ],
       outro:
@@ -201,7 +201,7 @@ const zigbee2mqttWithoutHomeAssistantContent = {
         "Zigbee2MQTT est la meilleure façon de faire du Zigbee en local. Pas besoin de Home Assistant pour l'utiliser : Gladys Assistant l'installe pour vous et apporte les tableaux de bord et les automatisations.",
       intro: [
         "Zigbee2MQTT est une passerelle open source qui prend en charge plus de 5 000 appareils Zigbee de près de 600 marques via un simple coordinateur USB, sans box constructeur et sans cloud. Seul, il ne fait que publier des messages MQTT : il vous faut encore une plateforme pour voir vos appareils, créer un tableau de bord et automatiser.",
-        "Beaucoup finissent par installer Home Assistant pour ça, et passent leurs soirées dans le YAML et les modules complémentaires. Gladys Assistant est une alternative gratuite et open source pensée pour être simple : branchez votre clé, cliquez sur Activer, et Gladys installe Zigbee2MQTT et son broker MQTT, puis vous permet d'associer et d'utiliser vos appareils depuis sa propre interface.",
+        "Beaucoup finissent par installer Home Assistant pour ça, et passent leurs soirées dans le YAML et les modules complémentaires. Gladys Assistant est une alternative gratuite et open source pensée pour être simple : branchez votre clé, suivez l'assistant, et Gladys installe Zigbee2MQTT et son broker MQTT, puis vous permet d'associer et d'utiliser vos appareils depuis sa propre interface.",
       ],
       primaryCta: {
         label: "Guide d'installation Zigbee2MQTT",
@@ -304,8 +304,8 @@ const zigbee2mqttWithoutHomeAssistantContent = {
       points: [
         "Installez Gladys (sur un mini-PC, Gladys Assistant OS s'en charge depuis une clé USB).",
         "Branchez une clé Zigbee USB (Sonoff ZBDongle-E ou -P…) sur la machine, ou connectez un coordinateur réseau comme le SMLIGHT SLZB-06 à votre réseau.",
-        "Dans Gladys, ouvrez Intégrations → Zigbee2MQTT et sélectionnez votre coordinateur et son modèle.",
-        "Cliquez sur Activer Zigbee2MQTT : Gladys démarre les conteneurs et affiche leur état.",
+        "Dans Gladys, ouvrez Intégrations → Zigbee2MQTT : l'assistant affiche la clé USB qu'il a détectée, avec sa photo et son nom. Si Gladys ne l'a pas reconnue, choisissez son modèle dans la liste, ou cliquez sur Pas la bonne clé ? Choisir à la main pour choisir son port et son modèle. Avec un coordinateur réseau, choisissez Coordinateur réseau (SLZB-06…) ? et entrez son adresse avec son port TCP (par exemple tcp://192.168.1.20:6638) et son type.",
+        "Cliquez sur Installer : Gladys télécharge et démarre les conteneurs en arrière-plan, et affiche la progression.",
         "Autorisez l'association, appairez vos appareils et ajoutez-les à votre tableau de bord.",
       ],
       outro:
@@ -381,7 +381,7 @@ const zigbee2mqttWithoutHomeAssistantContent = {
         "Zigbee2MQTT ist der beste Weg, Zigbee lokal zu betreiben. Dafür brauchst du kein Home Assistant: Gladys Assistant richtet es für dich ein und liefert Dashboards und Automationen gleich mit.",
       intro: [
         "Zigbee2MQTT ist eine Open-Source-Bridge, die über einen einfachen USB-Koordinator mehr als 5.000 Zigbee-Geräte von fast 600 Marken unterstützt, ganz ohne Hersteller-Hub und ohne Cloud. Allein veröffentlicht es aber nur MQTT-Nachrichten: Du brauchst trotzdem noch eine Plattform, um deine Geräte zu sehen, ein Dashboard zu bauen und zu automatisieren.",
-        "Viele installieren dafür am Ende Home Assistant und verbringen ihre Abende mit YAML und Add-ons. Gladys Assistant ist eine kostenlose Open-Source-Alternative, die auf Einfachheit ausgelegt ist: Stick einstecken, auf Aktivieren klicken, und Gladys installiert Zigbee2MQTT samt MQTT-Broker. Danach koppelst und nutzt du deine Geräte direkt in der Gladys-Oberfläche.",
+        "Viele installieren dafür am Ende Home Assistant und verbringen ihre Abende mit YAML und Add-ons. Gladys Assistant ist eine kostenlose Open-Source-Alternative, die auf Einfachheit ausgelegt ist: Stick einstecken, dem Assistenten folgen, und Gladys installiert Zigbee2MQTT samt MQTT-Broker. Danach koppelst und nutzt du deine Geräte direkt in der Gladys-Oberfläche.",
       ],
       primaryCta: {
         label: "Zigbee2MQTT-Einrichtungsanleitung",
@@ -484,8 +484,8 @@ const zigbee2mqttWithoutHomeAssistantContent = {
       points: [
         "Installiere Gladys (auf einem Mini-PC erledigt das Gladys Assistant OS von einem USB-Stick aus).",
         "Steck einen USB-Zigbee-Koordinator (Sonoff ZBDongle-E oder -P…) in den Rechner oder verbinde einen Netzwerk-Koordinator wie den SMLIGHT SLZB-06 mit deinem Netzwerk.",
-        "Öffne in Gladys Integrationen → Zigbee2MQTT und wähle deinen Koordinator und sein Modell.",
-        "Klick auf Zigbee2MQTT aktivieren: Gladys startet die Container und zeigt ihren Status an.",
+        "Öffne in Gladys Integrationen → Zigbee2MQTT: Der Einrichtungsassistent zeigt den erkannten USB-Stick mit Foto und Namen. Hat Gladys ihn nicht erkannt, wähle sein Modell in der Liste oder klick auf Nicht der richtige Stick? Manuell auswählen, um Port und Modell selbst zu wählen. Bei einem Netzwerk-Koordinator wähle Netzwerk-Koordinator (SLZB-06…)? und gib seine Adresse mit TCP-Port (zum Beispiel tcp://192.168.1.20:6638) und seinen Typ ein.",
+        "Klick auf Installieren: Gladys lädt und startet die Container im Hintergrund und zeigt den Fortschritt an.",
         "Kopplung erlauben, Geräte koppeln und zu deinem Dashboard hinzufügen.",
       ],
       outro:
@@ -560,7 +560,7 @@ const zigbee2mqttWithoutHomeAssistantContent = {
         "Zigbee2MQTT es la mejor forma de usar Zigbee en local. No necesitas Home Assistant para aprovecharlo: Gladys Assistant lo configura por ti y te ofrece los paneles y las automatizaciones.",
       intro: [
         "Zigbee2MQTT es un puente de código abierto compatible con más de 5000 dispositivos Zigbee de casi 600 marcas a través de un simple coordinador USB, sin hub del fabricante y sin nube. Por sí solo, solo publica mensajes MQTT: sigues necesitando una plataforma para ver tus dispositivos, crear un panel y automatizar.",
-        "Muchos acaban instalando Home Assistant para eso y luego pasan las tardes entre YAML y complementos. Gladys Assistant es una alternativa gratuita y de código abierto pensada para ser sencilla: conecta tu dongle, haz clic en Activar y Gladys instala Zigbee2MQTT y su broker MQTT, y después te permite emparejar y usar tus dispositivos desde su propia interfaz.",
+        "Muchos acaban instalando Home Assistant para eso y luego pasan las tardes entre YAML y complementos. Gladys Assistant es una alternativa gratuita y de código abierto pensada para ser sencilla: conecta tu dongle, sigue el asistente y Gladys instala Zigbee2MQTT y su broker MQTT, y después te permite emparejar y usar tus dispositivos desde su propia interfaz.",
       ],
       primaryCta: {
         label: "Guía de configuración de Zigbee2MQTT",
@@ -663,8 +663,8 @@ const zigbee2mqttWithoutHomeAssistantContent = {
       points: [
         "Instala Gladys (en un mini-PC, Gladys Assistant OS se encarga desde una memoria USB).",
         "Conecta un coordinador Zigbee USB (Sonoff ZBDongle-E o -P…) al equipo, o conecta a tu red un coordinador de red como el SMLIGHT SLZB-06.",
-        "En Gladys, abre Integraciones → Zigbee2MQTT y selecciona tu coordinador y su modelo.",
-        "Haz clic en Activar Zigbee2MQTT: Gladys inicia los contenedores y muestra su estado.",
+        "En Gladys, abre Integraciones → Zigbee2MQTT: el asistente de configuración muestra la llave USB que ha detectado, con su foto y su nombre. Si Gladys no la ha reconocido, elige su modelo en la lista, o haz clic en ¿No es la llave correcta? Elegir a mano para elegir su puerto y su modelo. Con un coordinador de red, elige ¿Coordinador de red (SLZB-06…)? e introduce su dirección con su puerto TCP (por ejemplo tcp://192.168.1.20:6638) y su tipo.",
+        "Haz clic en Instalar: Gladys descarga e inicia los contenedores en segundo plano, y muestra el progreso.",
         "Permite el emparejamiento, empareja tus dispositivos y añádelos a tu panel.",
       ],
       outro:
@@ -736,7 +736,7 @@ export const zigbee2mqttWithoutHomeAssistantFaqEn = [
   {
     question: "Does Zigbee2MQTT need an MQTT broker?",
     answer:
-      "Yes, Zigbee2MQTT publishes every device state over MQTT, so it needs a broker like Mosquitto. With Gladys, you don't have to set it up: Gladys creates the broker and the Zigbee2MQTT containers with matching credentials when you enable the integration.",
+      "Yes, Zigbee2MQTT publishes every device state over MQTT, so it needs a broker like Mosquitto. With Gladys, you don't have to set it up: Gladys creates the broker and the Zigbee2MQTT containers with matching credentials when you install Zigbee2MQTT from the integration.",
   },
   {
     question: "Which Zigbee devices work with Gladys?",
@@ -769,7 +769,7 @@ export const zigbee2mqttWithoutHomeAssistantFaqFr = [
   {
     question: "Zigbee2MQTT a-t-il besoin d'un broker MQTT ?",
     answer:
-      "Oui, Zigbee2MQTT publie l'état de chaque appareil en MQTT, il lui faut donc un broker comme Mosquitto. Avec Gladys, vous n'avez rien à configurer : Gladys crée le broker et le conteneur Zigbee2MQTT avec les bons identifiants quand vous activez l'intégration.",
+      "Oui, Zigbee2MQTT publie l'état de chaque appareil en MQTT, il lui faut donc un broker comme Mosquitto. Avec Gladys, vous n'avez rien à configurer : Gladys crée le broker et le conteneur Zigbee2MQTT avec les bons identifiants quand vous installez Zigbee2MQTT depuis l'intégration.",
   },
   {
     question: "Quels appareils Zigbee fonctionnent avec Gladys ?",
@@ -802,7 +802,7 @@ export const zigbee2mqttWithoutHomeAssistantFaqDe = [
   {
     question: "Braucht Zigbee2MQTT einen MQTT-Broker?",
     answer:
-      "Ja, Zigbee2MQTT veröffentlicht jeden Gerätezustand über MQTT und braucht deshalb einen Broker wie Mosquitto. Mit Gladys musst du ihn nicht selbst einrichten: Gladys erstellt den Broker und die Zigbee2MQTT-Container mit passenden Zugangsdaten, sobald du die Integration aktivierst.",
+      "Ja, Zigbee2MQTT veröffentlicht jeden Gerätezustand über MQTT und braucht deshalb einen Broker wie Mosquitto. Mit Gladys musst du ihn nicht selbst einrichten: Gladys erstellt den Broker und die Zigbee2MQTT-Container mit passenden Zugangsdaten, sobald du Zigbee2MQTT in der Integration installierst.",
   },
   {
     question: "Welche Zigbee-Geräte funktionieren mit Gladys?",
@@ -835,7 +835,7 @@ export const zigbee2mqttWithoutHomeAssistantFaqEs = [
   {
     question: "¿Zigbee2MQTT necesita un broker MQTT?",
     answer:
-      "Sí, Zigbee2MQTT publica el estado de cada dispositivo por MQTT, así que necesita un broker como Mosquitto. Con Gladys no tienes que configurarlo: Gladys crea el broker y los contenedores de Zigbee2MQTT con credenciales coincidentes cuando activas la integración.",
+      "Sí, Zigbee2MQTT publica el estado de cada dispositivo por MQTT, así que necesita un broker como Mosquitto. Con Gladys no tienes que configurarlo: Gladys crea el broker y los contenedores de Zigbee2MQTT con credenciales coincidentes cuando instalas Zigbee2MQTT desde la integración.",
   },
   {
     question: "¿Qué dispositivos Zigbee funcionan con Gladys?",

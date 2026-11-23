@@ -75,7 +75,7 @@ Vérifiez que la clé de restauration saisie est bien celle de l'ancienne instan
 
 ## 3. Vérifications après la restauration
 
-- **Zigbee2mqtt** : Gladys le réinstalle automatiquement avec sa configuration restaurée (réseau Zigbee et appareils), sans ré-appairage. Allez quand même dans **Intégrations > Zigbee2mqtt** vérifier le port USB du dongle : il peut porter un autre nom sur la nouvelle machine. Dans ce cas, sélectionnez le bon.
+- **Zigbee2mqtt** : Gladys le réinstalle automatiquement avec sa configuration restaurée (réseau Zigbee et appareils), sans ré-appairage. Depuis Gladys 5.3.4, il retrouve le dongle par son chemin stable, quel que soit le port USB sur lequel vous le branchez. Allez quand même dans **Intégrations > Zigbee2mqtt** : si le tableau de bord indique que la clé est débranchée, choisissez-la de nouveau avec le bouton **Changer**. Ne configurez pas Zigbee2mqtt de zéro avant de restaurer la sauvegarde : une nouvelle installation forme un nouveau réseau Zigbee, et vous devriez appairer de nouveau vos appareils.
 - **Matter** : le contrôleur de l'intégration Matter est restauré automatiquement depuis sa sauvegarde.
 - **Matterbridge** (si vous l'utilisez) : réinstallez ses plugins et ré-appairez le pont avec vos contrôleurs Matter.
 - **Intégrations du catalogue** : elles sont réinstallées automatiquement au démarrage. Gladys retélécharge leurs images, ce qui peut prendre quelques minutes.
