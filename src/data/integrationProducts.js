@@ -9,7 +9,9 @@
  * - a string when the same words work in every language (a brand and a model);
  * - `{ en, fr, de }` when they need translating, or when the product is only
  *   sold in some of the stores (leave the other languages out). The German
- *   words name the European product when the English one is American.
+ *   words name the European product when the English one is American. A
+ *   product amazon.de doesn't sell has no German entry (checked in a browser
+ *   with a German delivery address).
  *
  * Search links rather than product pages: they never go out of stock, and
  * they work in every Amazon store.
@@ -52,7 +54,7 @@ module.exports = {
     { en: "Davis Vantage Vue", fr: "Davis Vantage Vue", de: "Davis Vantage Vue" },
   ],
   ecowitt: ["Ecowitt GW2000", "Ecowitt Wittboy", "Ecowitt WH51"],
-  kaiterra: ["Kaiterra Laser Egg"],
+  kaiterra: [{ en: "Kaiterra Laser Egg", fr: "Kaiterra Laser Egg" }],
   meteobridge: [{ en: "Davis Vantage Pro2", fr: "Davis Vantage Pro2", de: "Davis Vantage Pro2" }],
   "mobile-alerts": ["Mobile Alerts"],
   netatmo: [
@@ -65,8 +67,8 @@ module.exports = {
   "raspberry-shake": ["Raspberry Shake"],
   "rtl-433-433-868-mhz": ["RTL-SDR Blog V4", "Nooelec RTL-SDR"],
   "ruuvi-gateway": ["RuuviTag", "Ruuvi Gateway"],
-  sensorpush: ["SensorPush HT.w", "SensorPush G1 WiFi Gateway"],
-  "sensorpush-cloud": ["SensorPush HT.w", "SensorPush G1 WiFi Gateway"],
+  sensorpush: [{ en: "SensorPush HT.w", fr: "SensorPush HT.w" }, { en: "SensorPush G1 WiFi Gateway", fr: "SensorPush G1 WiFi Gateway" }],
+  "sensorpush-cloud": [{ en: "SensorPush HT.w", fr: "SensorPush HT.w" }, { en: "SensorPush G1 WiFi Gateway", fr: "SensorPush G1 WiFi Gateway" }],
   tempest: ["WeatherFlow Tempest"],
   "weatherflow-tempest": ["WeatherFlow Tempest"],
   weatherlink: ["Davis Vantage Vue", "Davis Vantage Pro2", "Davis WeatherLink Live"],
@@ -138,7 +140,7 @@ module.exports = {
   venstar: [{ en: "Venstar ColorTouch thermostat" }],
   switcher: [{ en: "Switcher smart water heater" }],
   "max-cube": ["eQ-3 radiator thermostat"],
-  plugwise: [{ en: "Plugwise Anna", fr: "Plugwise Anna", de: "Plugwise Anna" }],
+  plugwise: [{ en: "Plugwise Anna", fr: "Plugwise Anna" }],
   aprilaire: [{ en: "Aprilaire 8840 thermostat" }],
   midea: [
     { en: "Midea U-Shaped window air conditioner", fr: "climatiseur mobile Midea", de: "Midea mobile Klimaanlage" },
@@ -152,7 +154,7 @@ module.exports = {
   // Lighting
   aidot: [
     { en: "Linkind smart bulb", fr: "ampoule connectée Linkind", de: "Linkind smarte Glühbirne" },
-    { en: "AiDot smart bulb", fr: "ampoule connectée AiDot", de: "AiDot smarte Glühbirne" },
+    { en: "AiDot smart bulb", fr: "ampoule connectée AiDot" },
   ],
   "art-net": [{ en: "Art-Net DMX node", fr: "nœud Art-Net DMX", de: "Art-Net DMX Node" }],
   cync: [{ en: "GE Cync smart bulb" }, { en: "GE Cync smart plug" }],
@@ -166,10 +168,10 @@ module.exports = {
     { en: "WS2812B LED strip", fr: "ruban LED WS2812B", de: "WS2812B LED Strip" },
     { en: "HDMI USB capture card", fr: "carte de capture HDMI USB", de: "HDMI USB Capture Card" },
   ],
-  "ikea-dirigera-tradfri": ["IKEA DIRIGERA", "IKEA TRADFRI"],
+  "ikea-dirigera-tradfri": [{ en: "IKEA DIRIGERA", fr: "IKEA DIRIGERA" }, "IKEA TRADFRI"],
   lifx: [
-    { en: "LIFX smart bulb", fr: "ampoule LIFX", de: "LIFX smarte Glühbirne" },
-    { en: "LIFX Lightstrip", fr: "LIFX Lightstrip", de: "LIFX Lightstrip" },
+    { en: "LIFX smart bulb", fr: "ampoule LIFX" },
+    { en: "LIFX Lightstrip", fr: "LIFX Lightstrip" },
   ],
   "leviton-decora-smart-wi-fi": [{ en: "Leviton Decora Smart Wi-Fi switch" }],
   lutron: [{ en: "Lutron Caseta Smart Hub" }, { en: "Lutron Caseta dimmer" }],
@@ -208,7 +210,7 @@ module.exports = {
   blebox: ["BleBox switchBox"],
   broadlink: ["Broadlink RM4 Pro", "Broadlink RM4 Mini"],
   "chacon-dio": [{ fr: "Chacon DiO 2.0" }, { fr: "prise connectée DiO" }],
-  esphome: [ESP32, "ESP8266 D1 Mini", "Athom ESPHome smart plug"],
+  esphome: [ESP32, "ESP8266 D1 Mini", { en: "Athom ESPHome smart plug", fr: "Athom ESPHome smart plug" }],
   espresense: [ESP32],
   "espsomfy-rts": [ESP32, { en: "CC1101 433MHz module", fr: "module CC1101 433 MHz", de: "CC1101 433 MHz Modul" }],
   "homekit-controller": [
@@ -239,9 +241,9 @@ module.exports = {
   tasmota: [
     { en: "Tasmota smart plug", fr: "prise connectée Tasmota", de: "Tasmota Steckdose" },
     "Sonoff Basic R4",
-    "Athom Tasmota",
+    { en: "Athom Tasmota", fr: "Athom Tasmota" },
   ],
-  "theengs-openmqttgateway": [ESP32, "Xiaomi LYWSD03MMC"],
+  "theengs-openmqttgateway": [ESP32, { en: "Xiaomi LYWSD03MMC", fr: "Xiaomi LYWSD03MMC" }],
   "tp-link-kasa": [
     { en: "Kasa Smart Plug", fr: "prise connectée TP-Link Kasa", de: "TP-Link Kasa smarte Steckdose" },
     { en: "Kasa Smart Light Switch" },
@@ -249,7 +251,7 @@ module.exports = {
   tuya: [
     { en: "Tuya smart plug", fr: "prise connectée Tuya", de: "Tuya smarte Steckdose" },
     { en: "Smart Life smart bulb", fr: "ampoule connectée Smart Life", de: "Smart Life smarte Glühbirne" },
-    { en: "Tuya WiFi thermostat", fr: "thermostat WiFi Tuya", de: "Tuya WLAN Thermostat" },
+    { en: "Tuya WiFi thermostat", fr: "thermostat WiFi Tuya" },
   ],
   wemo: [{ en: "Wemo Smart Plug" }],
   wyze: [{ en: "Wyze Cam v4" }, { en: "Wyze Plug" }, { en: "Wyze Bulb Color" }],
@@ -279,13 +281,13 @@ module.exports = {
   "homey-pro-bridge": ["Homey Pro"],
   "hubitat-elevation": [{ en: "Hubitat Elevation C-8" }],
   insteon: [{ en: "Insteon Hub" }],
-  "klf200-io-homecontrol": ["Velux KLF 200"],
+  "klf200-io-homecontrol": [{ en: "Velux KLF 200", fr: "Velux KLF 200" }],
   knx: [{ en: "KNX IP interface", fr: "interface KNX IP", de: "KNX IP Schnittstelle" }],
   "legrand-home-control": [
     { fr: "Legrand Céliane with Netatmo" },
     { fr: "Legrand dooxie with Netatmo" },
   ],
-  "logitech-harmony-hub": ["Logitech Harmony Hub"],
+  "logitech-harmony-hub": [{ en: "Logitech Harmony Hub", fr: "Logitech Harmony Hub" }],
   meshtastic: ["Heltec V3 Meshtastic", "LILYGO T-Beam", "RAK WisBlock Meshtastic"],
   "modbus-tcp": [
     { en: "RS485 to Ethernet converter", fr: "convertisseur RS485 Ethernet", de: "RS485 Ethernet Konverter" },
@@ -298,19 +300,19 @@ module.exports = {
   ],
   overkiz: ["Somfy TaHoma switch", "Somfy Connectivity Kit"],
   "owserver-1-wire": ["DS18B20", { en: "1-Wire USB adapter", fr: "adaptateur USB 1-Wire", de: "1-Wire USB Adapter" }],
-  rflink: [{ en: "RFLink 433MHz gateway", fr: "passerelle RFLink 433 MHz", de: "RFLink 433 MHz Gateway" }],
+  rflink: [{ en: "RFLink 433MHz gateway", fr: "passerelle RFLink 433 MHz" }],
   "rfxcom-rfxtrx": ["RFXCOM RFXtrx433XL"],
   smartthings: [{ en: "Aeotec Smart Home Hub", fr: "Aeotec Smart Home Hub", de: "Aeotec Smart Home Hub" }],
   "smlight-slzb": ["SMLIGHT SLZB-06", "SMLIGHT SLZB-06M", "SMLIGHT SLZB-MR1"],
   "somfy-tahoma": ["Somfy TaHoma switch", "Somfy Connectivity Kit"],
   "somfy-mylink": [{ en: "Somfy myLink" }],
-  telldus: ["TellStick"],
+  telldus: [{ en: "TellStick", fr: "TellStick" }],
   "the-things-network": [
     { en: "LoRaWAN gateway", fr: "passerelle LoRaWAN", de: "LoRaWAN Gateway" },
     "Dragino LHT65",
   ],
   tydom: [{ fr: "Delta Dore Tydom Home" }],
-  "wm-bus-meters-wmbusmeters": ["RTL-SDR Blog V4", { en: "wM-Bus USB dongle", fr: "clé USB wM-Bus", de: "wM-Bus USB Stick" }],
+  "wm-bus-meters-wmbusmeters": ["RTL-SDR Blog V4", { en: "wM-Bus USB dongle", fr: "clé USB wM-Bus" }],
   "z2m-devices-monitor": ["SONOFF Zigbee 3.0 USB Dongle Plus", "SMLIGHT SLZB-06"],
   "z-wave-js-ui": [
     { en: "Zooz ZST39 Z-Wave stick", fr: "clé Z-Wave Aeotec Z-Stick 7", de: "Aeotec Z-Stick 7" },
@@ -342,12 +344,12 @@ module.exports = {
     { en: "Reolink PoE camera", fr: "caméra PoE Reolink", de: "Reolink PoE Kamera" },
   ],
   hikvision: [CAMERA("Hikvision")],
-  "icsee-ptz": [{ en: "iCSee PTZ camera", fr: "caméra PTZ iCSee", de: "iCSee PTZ Kamera" }],
+  "icsee-ptz": [{ en: "iCSee PTZ camera", fr: "caméra PTZ iCSee" }],
   igloohome: ["igloohome Smart Padlock", "igloohome Keybox"],
   "imou-life": [CAMERA("Imou")],
-  ismartgate: ["ismartgate"],
+  ismartgate: [{ en: "ismartgate", fr: "ismartgate" }],
   loqed: ["LOQED Touch Smart Lock"],
-  meari: [CAMERA("ieGeek")],
+  meari: [{ en: "ieGeek security camera", fr: "caméra de surveillance ieGeek" }],
   nuki: ["Nuki Smart Lock Pro", "Nuki Smart Lock Go", "Nuki Keypad 2"],
   onvif: [
     { en: "ONVIF PoE camera", fr: "caméra PoE ONVIF", de: "ONVIF PoE Kamera" },
@@ -371,7 +373,7 @@ module.exports = {
   tailwind: [{ en: "Tailwind iQ3 garage door opener" }],
   tedee: ["Tedee GO", "Tedee PRO"],
   ttlock: [{ en: "TTLock smart lock", fr: "serrure connectée TTLock", de: "TTLock smartes Türschloss" }],
-  "unifi-protect": ["UniFi Protect G5 Bullet", "UniFi Protect G4 Doorbell"],
+  "unifi-protect": ["UniFi Protect G5 Bullet", { en: "UniFi Protect G4 Doorbell", fr: "UniFi Protect G4 Doorbell" }],
   axis: [CAMERA("Axis")],
   "guardian-elexa": [
     { en: "Guardian by Elexa leak detector" },
@@ -410,7 +412,7 @@ module.exports = {
   "segway-navimow": ["Segway Navimow"],
   "shark-iq": [{ en: "Shark robot vacuum" }],
   "sure-petcare": ["SureFlap Microchip Cat Flap Connect", "SureFeed Microchip Pet Feeder Connect"],
-  tineco: ["Tineco Floor One S7", "Tineco Floor One S5"],
+  tineco: ["Tineco Floor One S7", { en: "Tineco Floor One S5", fr: "Tineco Floor One S5" }],
   valetudo: [ROBOT_VACUUM("Dreame"), ROBOT_VACUUM("Roborock")],
   "worx-landroid": ["Worx Landroid"],
   "xiaomi-home": [ROBOT_VACUUM("Xiaomi")],
@@ -482,7 +484,7 @@ module.exports = {
   ],
   "fully-kiosk-browser": ["Amazon Fire HD 10", "Lenovo Tab M11"],
   "google-cast": ["Chromecast with Google TV", "Google Nest Mini", "Google Nest Hub"],
-  "kef-wireless-speakers": ["KEF LS50 Wireless II", "KEF LSX II"],
+  "kef-wireless-speakers": [{ en: "KEF LS50 Wireless II", fr: "KEF LS50 Wireless II" }, "KEF LSX II"],
   lametric: ["LaMetric TIME", "LaMetric SKY"],
   "lg-soundbar": [{ en: "LG soundbar", fr: "barre de son LG", de: "LG Soundbar" }],
   "lg-webos": [{ en: "LG OLED TV", fr: "TV LG OLED", de: "LG OLED TV" }],
@@ -510,7 +512,7 @@ module.exports = {
   "sony-audio": [{ en: "Sony soundbar", fr: "barre de son Sony", de: "Sony Soundbar" }],
   "sony-bravia-tv": [{ en: "Sony Bravia TV", fr: "TV Sony Bravia", de: "Sony Bravia Fernseher" }],
   trmnl: ["TRMNL e-ink display"],
-  "unfolded-circle-remote": ["Unfolded Circle Remote 3"],
+  "unfolded-circle-remote": [{ en: "Unfolded Circle Remote 3", fr: "Unfolded Circle Remote 3" }],
   "vizio-smartcast": [{ en: "VIZIO smart TV" }, { en: "VIZIO soundbar" }],
   volumio: ["Raspberry Pi 5", "HiFiBerry DAC"],
   wallpanel: ["Amazon Fire HD 10", "Lenovo Tab M11"],
@@ -519,13 +521,13 @@ module.exports = {
   "yamaha-av-receivers-ynca": [
     { en: "Yamaha AV receiver", fr: "amplificateur home cinéma Yamaha", de: "Yamaha AV Receiver" },
   ],
-  "yamaha-musiccast": ["Yamaha MusicCast 20", { en: "Yamaha MusicCast soundbar", fr: "barre de son Yamaha MusicCast", de: "Yamaha MusicCast Soundbar" }],
+  "yamaha-musiccast": [{ en: "Yamaha MusicCast 20", fr: "Yamaha MusicCast 20" }, { en: "Yamaha MusicCast soundbar", fr: "barre de son Yamaha MusicCast", de: "Yamaha MusicCast Soundbar" }],
   "yoto-player-advanced": ["Yoto Player", "Yoto Mini"],
   yoto: ["Yoto Player", "Yoto Mini"],
   arcam: ["Arcam AVR11", "Arcam SA30"],
   "bose-soundtouch": ["Bose SoundTouch 10"],
   "frontier-silicon-radios": [
-    { en: "Sangean WFR-28 internet radio", fr: "radio internet Hama DIR3120", de: "Hama DIR3120 Internetradio" },
+    { en: "Sangean WFR-28 internet radio", fr: "radio internet Hama DIR3120", de: "Hama Internetradio" },
   ],
   hdfury: ["HDFury VRROOM", "HDFury Arcana 2"],
   "jvc-projector": [{ en: "JVC D-ILA projector", fr: "vidéoprojecteur JVC D-ILA", de: "JVC D-ILA Beamer" }],
@@ -557,9 +559,9 @@ module.exports = {
   opnsense: [{ en: "N100 firewall mini PC", fr: "mini PC firewall N100", de: "N100 Firewall Mini PC" }],
   pfsense: [{ en: "N100 firewall mini PC", fr: "mini PC firewall N100", de: "N100 Firewall Mini PC" }, "Netgate 1100"],
   "pi-hole": ["Raspberry Pi 5", "Raspberry Pi Zero 2 W"],
-  pikvm: ["PiKVM V4", "GL.iNet Comet KVM"],
+  pikvm: [{ en: "PiKVM V4", fr: "PiKVM V4" }, "GL.iNet Comet KVM"],
   qnap: ["QNAP TS-264", "QNAP TS-464"],
-  "qnap-qsw": ["QNAP QSW-1105-5T", "QNAP QSW-M408"],
+  "qnap-qsw": [{ en: "QNAP QSW-1105-5T", fr: "QNAP QSW-1105-5T" }, "QNAP QSW-M408"],
   starlink: ["Starlink Mini", { en: "Starlink Standard Kit", fr: "kit Starlink Standard", de: "Starlink Standard Kit" }],
   "synology-dsm": ["Synology DS224+", "Synology DS923+"],
   teltonika: ["Teltonika RUTX50", "Teltonika RUT241"],
@@ -579,7 +581,7 @@ module.exports = {
   "elegoo-3d-printers": ["Elegoo Centauri Carbon", "Elegoo Saturn 4 Ultra", "Elegoo Mars 5"],
   "moonraker-klipper": ["Creality K1", "Sovol SV08", "BIGTREETECH Pi"],
   octoprint: ["Creality Ender 3 V3", "Raspberry Pi 5"],
-  prusalink: ["Prusament PLA", { en: "Prusa MK4S", fr: "Prusa MK4S", de: "Prusa MK4S" }],
+  prusalink: [{ en: "Prusament PLA", fr: "Prusament PLA" }, { en: "Prusa MK4S", fr: "Prusa MK4S", de: "Prusa MK4S" }],
   spoolman: [{ en: "PLA filament 1.75mm", fr: "filament PLA 1,75 mm", de: "PLA Filament 1,75 mm" }],
 
   // Trackers and presence
@@ -598,7 +600,7 @@ module.exports = {
 
   // Watches, rings and scales
   fitbit: ["Fitbit Charge 6", "Fitbit Versa 4"],
-  "garmin-connect": ["Garmin Venu 3", "Garmin Forerunner 265", "Garmin Index S2"],
+  "garmin-connect": ["Garmin Venu 3", "Garmin Forerunner 265", { en: "Garmin Index S2", fr: "Garmin Index S2" }],
   "google-health": ["Google Pixel Watch 3", "Fitbit Charge 6"],
   "huawei-health": ["Huawei Watch GT 5", "Huawei Band 9"],
   oura: ["Oura Ring 4"],
