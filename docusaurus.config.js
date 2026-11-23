@@ -249,6 +249,11 @@ module.exports = function createConfig() {
               className: "footer__link-item footer__link--fr-only",
             },
             {
+              label: "Dynamic electricity tariffs (Germany)",
+              to: "dynamischer-stromtarif/",
+              className: "footer__link-item footer__link--de-only",
+            },
+            {
               label: "All guides →",
               to: "guides/",
             },
@@ -444,6 +449,7 @@ module.exports = function createConfig() {
                   path === "/best-zigbee-dongle/" ||
                   path === "/matter-hub/" ||
                   path === "/edf-tempo/" ||
+                  path === "/dynamischer-stromtarif/" ||
                   path === "/blog/"
                 ) {
                   return { ...item, priority: 0.8 };

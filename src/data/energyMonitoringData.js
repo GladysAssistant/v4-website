@@ -388,6 +388,11 @@ const energyContent = {
       intro: "Richte es ein oder sieh dir an, wie Energie in ein lokales Smart Home passt:",
       links: [
         {
+          label: "Dynamischer Stromtarif",
+          href: "/de/dynamischer-stromtarif/",
+          text: "Börsenstrompreise verstehen und den Verbrauch automatisch in die günstigsten Stunden legen.",
+        },
+        {
           label: "Aktuelle Strompreise in Ontario",
           href: "/de/ontario-electricity-rates/",
           text: "Der aktuelle Time-of-Use- und Ultra-Low-Overnight-Preis, live.",

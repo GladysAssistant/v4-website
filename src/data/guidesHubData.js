@@ -177,6 +177,13 @@ export const guidesSections = [
         { label: "Reduce tu factura de la luz", text: "Controla tu consumo y actúa a partir de los datos." }
       ),
       card(
+        "/dynamischer-stromtarif/",
+        { label: "Dynamic electricity tariffs in Germany", text: "How hourly exchange prices work, and how to shift your consumption automatically (Germany)." },
+        { label: "Tarifs d'électricité dynamiques en Allemagne", text: "Comment fonctionnent les prix horaires de la bourse, et comment décaler sa consommation automatiquement (Allemagne)." },
+        { label: "Dynamischer Stromtarif", text: "Wie Börsenstrompreise funktionieren und wie du deinen Verbrauch automatisch verschiebst." },
+        { label: "Tarifas eléctricas dinámicas en Alemania", text: "Cómo funcionan los precios horarios de la bolsa y cómo desplazar tu consumo automáticamente (Alemania)." }
+      ),
+      card(
         "/edf-tempo/",
         { label: "EDF Tempo colour of the day", text: "Today's and tomorrow's Tempo colour, live (France)." },
         { label: "Tempo EDF : couleur du jour", text: "La couleur Tempo du jour et de demain, en direct." },
