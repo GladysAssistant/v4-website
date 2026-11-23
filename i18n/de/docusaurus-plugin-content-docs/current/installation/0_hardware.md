@@ -65,7 +65,7 @@ Wähle den Rechner, auf dem Gladys laufen soll. **Unsicher? Nimm den Mini-PC**: 
 
 Unser offizieller Installer erledigt die ganze Arbeit: Du schreibst ihn auf einen USB-Stick, startest den Mini-PC davon, beantwortest ein paar Fragen, und Gladys installiert sich von selbst. Danach hält es sich automatisch auf dem neuesten Stand.
 
-- **Ein neuer Mini-PC**: klein, leise und sparsam. Ich empfehle den [Beelink Mini S13](https://www.amazon.com/s?k=Beelink+Mini+S13&tag=gladproj-21), siehe auch unseren [Mini-PC-Kaufratgeber](/de/mini-pc-home-automation/).
+- **Ein neuer Mini-PC**: klein, leise und sparsam. Ich empfehle den [Beelink Mini S13](https://www.amazon.de/s?k=Beelink+Mini+S13), siehe auch unseren [Mini-PC-Kaufratgeber](/de/mini-pc-home-automation/).
 - **Ein generalüberholter Mini-PC**: oft deutlich günstiger. Achte auf mindestens 8 GB RAM und eine SSD.
 - **Ein Computer, den du schon hast**: Ein alter PC mit Intel- oder AMD-Prozessor, der im UEFI-Modus startet, mit einer SSD mit mindestens 16 GB und einem Ethernet-Anschluss kann deine Gladys-Box werden (seine Festplatte wird gelöscht).
 

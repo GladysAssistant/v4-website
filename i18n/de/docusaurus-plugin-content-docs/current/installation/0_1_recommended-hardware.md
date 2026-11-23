@@ -25,7 +25,7 @@ Der Zigbee-Koordinator ist **das wichtigste Gerät** deiner Installation: Er ist
     <span class="product-card__badge">Empfohlen</span>
     <h4 class="product-card__title">SONOFF Zigbee 3.0 USB Dongle Plus-E</h4>
     <p class="product-card__description">USB-Koordinator mit dem besten Preis-Leistungs-Verhältnis. Basiert auf dem EFR32MG21-Chip und wird offiziell von Zigbee2MQTT unterstützt. Diesen Stick nutze ich täglich.</p>
-    <a class="product-card__cta" href="https://www.amazon.com/s?k=SONOFF+Zigbee+3.0+USB+Dongle+Plus-E&tag=gladproj-21" target="_blank" rel="noopener">Bei Amazon ansehen</a>
+    <a class="product-card__cta" href="https://www.amazon.de/s?k=SONOFF+Zigbee+3.0+USB+Dongle+Plus-E" target="_blank" rel="noopener">Bei Amazon ansehen</a>
   </div>
   <div class="product-card">
     <div class="product-card__image">
@@ -34,7 +34,7 @@ Der Zigbee-Koordinator ist **das wichtigste Gerät** deiner Installation: Er ist
     <span class="product-card__badge">Ethernet-Alternative</span>
     <h4 class="product-card__title">SMLight SLZB-06</h4>
     <p class="product-card__description">Zigbee-Koordinator mit Ethernet/PoE. Praktisch, wenn du den Stick entfernt von deinem Server platzieren möchtest (z. B. im Technikschrank), um eine bessere Abdeckung des Zigbee-Mesh zu erreichen. Seit Gladys 5 unterstützt die Zigbee2MQTT-Integration Netzwerk-Koordinatoren: Gladys installiert und verwaltet Zigbee2MQTT weiterhin für dich (<a href="/de/docs/integrations/zigbee2mqtt/#use-a-network-coordinator">Schritte zur Einrichtung</a>).</p>
-    <a class="product-card__cta" href="https://www.amazon.com/s?k=SMLight+SLZB-06&tag=gladproj-21" target="_blank" rel="noopener">Bei Amazon ansehen</a>
+    <a class="product-card__cta" href="https://www.amazon.de/s?k=SMLight+SLZB-06" target="_blank" rel="noopener">Bei Amazon ansehen</a>
   </div>
 </div>
 
@@ -50,7 +50,7 @@ Der Zigbee-Koordinator ist **das wichtigste Gerät** deiner Installation: Er ist
     <span class="product-card__badge">Empfohlen</span>
     <h4 class="product-card__title">Philips Hue White and Color Ambiance E27</h4>
     <p class="product-card__description">Die beste Zigbee-Glühbirne ihrer Klasse: hervorragende Farbwiedergabe, sehr zuverlässig und arbeitet als Zigbee-Router. Lässt sich direkt mit Zigbee2MQTT koppeln, keine Hue Bridge nötig.</p>
-    <a class="product-card__cta" href="https://www.amazon.com/s?k=Philips+Hue+White+and+Color+Ambiance+E26&tag=gladproj-21" target="_blank" rel="noopener">Bei Amazon ansehen</a>
+    <a class="product-card__cta" href="https://www.amazon.de/s?k=Philips+Hue+White+and+Color+Ambiance+E27" target="_blank" rel="noopener">Bei Amazon ansehen</a>
   </div>
   <div class="product-card">
     <div class="product-card__image">
@@ -59,7 +59,7 @@ Der Zigbee-Koordinator ist **das wichtigste Gerät** deiner Installation: Er ist
     <span class="product-card__badge">Günstige Alternative</span>
     <h4 class="product-card__title">Innr Smart Bulb E27 Color</h4>
     <p class="product-card__description">Niederländische Marke, die auf Zigbee spezialisiert ist und sehr gut von Zigbee2MQTT unterstützt wird. Tolles Preis-Leistungs-Verhältnis, arbeitet ebenfalls als Zigbee-Router. Eine solide Alternative zu Hue.</p>
-    <a class="product-card__cta" href="https://www.amazon.com/s?k=Innr+E27+Zigbee+color&tag=gladproj-21" target="_blank" rel="noopener">Bei Amazon ansehen</a>
+    <a class="product-card__cta" href="https://www.amazon.de/s?k=Innr+E27+Zigbee+color" target="_blank" rel="noopener">Bei Amazon ansehen</a>
   </div>
 </div>
 
@@ -73,7 +73,7 @@ Der Zigbee-Koordinator ist **das wichtigste Gerät** deiner Installation: Er ist
     <span class="product-card__badge">Empfohlen</span>
     <h4 class="product-card__title">Nous A1Z Zigbee Smart Plug</h4>
     <p class="product-card__description">Eine der beliebtesten Zigbee-Steckdosen in der Zigbee2MQTT-Community. Verbrauchsmessung in Echtzeit, zuverlässig und arbeitet als Zigbee-Router, um dein Mesh zu erweitern.</p>
-    <a class="product-card__cta" href="https://www.amazon.com/s?k=Nous+A1Z+Zigbee+plug&tag=gladproj-21" target="_blank" rel="noopener">Bei Amazon ansehen</a>
+    <a class="product-card__cta" href="https://www.amazon.de/s?k=Nous+A1Z+Zigbee+plug" target="_blank" rel="noopener">Bei Amazon ansehen</a>
   </div>
 </div>
 
@@ -87,7 +87,7 @@ Der Zigbee-Koordinator ist **das wichtigste Gerät** deiner Installation: Er ist
     <span class="product-card__badge">Empfohlen</span>
     <h4 class="product-card__title">Aqara Temperatur- und Feuchtigkeitssensor</h4>
     <p class="product-card__description">Sehr genau, hervorragende Batterielaufzeit (über 2 Jahre), winzige Bauform. Die Referenz unter Zigbee2MQTT, um Temperatur, Luftfeuchtigkeit und Luftdruck zu messen.</p>
-    <a class="product-card__cta" href="https://www.amazon.com/s?k=Aqara+Temperature+Humidity+Sensor&tag=gladproj-21" target="_blank" rel="noopener">Bei Amazon ansehen</a>
+    <a class="product-card__cta" href="https://www.amazon.de/s?k=Aqara+Temperature+Humidity+Sensor" target="_blank" rel="noopener">Bei Amazon ansehen</a>
   </div>
   <div class="product-card">
     <div class="product-card__image">
@@ -96,7 +96,7 @@ Der Zigbee-Koordinator ist **das wichtigste Gerät** deiner Installation: Er ist
     <span class="product-card__badge">Mit Display</span>
     <h4 class="product-card__title">SONOFF SNZB-02D</h4>
     <p class="product-card__description">Zigbee-Temperatur- und Feuchtigkeitssensor mit integriertem LCD-Display. Tolles Preis-Leistungs-Verhältnis, ideal für Wohnräume, in denen du die Werte auf einen Blick sehen möchtest. Ich nutze ihn täglich.</p>
-    <a class="product-card__cta" href="https://www.amazon.com/s?k=SONOFF+SNZB-02D&tag=gladproj-21" target="_blank" rel="noopener">Bei Amazon ansehen</a>
+    <a class="product-card__cta" href="https://www.amazon.de/s?k=SONOFF+SNZB-02D" target="_blank" rel="noopener">Bei Amazon ansehen</a>
   </div>
 </div>
 
@@ -110,7 +110,7 @@ Der Zigbee-Koordinator ist **das wichtigste Gerät** deiner Installation: Er ist
     <span class="product-card__badge">Empfohlen</span>
     <h4 class="product-card__title">Aqara Motion Sensor P1</h4>
     <p class="product-card__description">Der am besten bewertete Zigbee-PIR-Bewegungsmelder: einstellbare Empfindlichkeit, einstellbare Sperrzeit, Helligkeitsmessung und sehr lange Batterielaufzeit mit einer CR2450-Zelle.</p>
-    <a class="product-card__cta" href="https://www.amazon.com/s?k=Aqara+Motion+Sensor+P1&tag=gladproj-21" target="_blank" rel="noopener">Bei Amazon ansehen</a>
+    <a class="product-card__cta" href="https://www.amazon.de/s?k=Aqara+Motion+Sensor+P1" target="_blank" rel="noopener">Bei Amazon ansehen</a>
   </div>
 </div>
 
@@ -124,7 +124,7 @@ Der Zigbee-Koordinator ist **das wichtigste Gerät** deiner Installation: Er ist
     <span class="product-card__badge">Empfohlen</span>
     <h4 class="product-card__title">Nous E2: Zigbee-3.0-Tür- und Fenstersensor</h4>
     <p class="product-card__description">Vollständig lokaler Zigbee-3.0-Tür-/Fenstersensor. Kompakte Bauform, lange Batterielaufzeit, hervorragendes Preis-Leistungs-Verhältnis und sehr gute Unterstützung durch Zigbee2MQTT.</p>
-    <a class="product-card__cta" href="https://www.amazon.com/s?k=Nous+E2+Zigbee+door+sensor&tag=gladproj-21" target="_blank" rel="noopener">Bei Amazon ansehen</a>
+    <a class="product-card__cta" href="https://www.amazon.de/s?k=Nous+E2+Zigbee+door+sensor" target="_blank" rel="noopener">Bei Amazon ansehen</a>
   </div>
   <div class="product-card">
     <div class="product-card__image">
@@ -133,7 +133,7 @@ Der Zigbee-Koordinator ist **das wichtigste Gerät** deiner Installation: Er ist
     <span class="product-card__badge">Premium</span>
     <h4 class="product-card__title">Aqara Door and Window Sensor T1 (MCCGQ12LM)</h4>
     <p class="product-card__description">Reine Zigbee-3.0-Version (nicht die neue Matter/Thread-Version) des Aqara-Türsensors. Noch kleiner als das Originalmodell, sehr zuverlässig, hochwertige Verarbeitung.</p>
-    <a class="product-card__cta" href="https://www.amazon.com/s?k=Aqara+Door+Window+Sensor+T1+MCCGQ12LM&tag=gladproj-21" target="_blank" rel="noopener">Bei Amazon ansehen</a>
+    <a class="product-card__cta" href="https://www.amazon.de/s?k=Aqara+Door+Window+Sensor+T1+MCCGQ12LM" target="_blank" rel="noopener">Bei Amazon ansehen</a>
   </div>
 </div>
 
@@ -147,7 +147,7 @@ Der Zigbee-Koordinator ist **das wichtigste Gerät** deiner Installation: Er ist
     <span class="product-card__badge">Empfohlen</span>
     <h4 class="product-card__title">Aqara Wireless Mini Switch</h4>
     <p class="product-card__description">Winziger Funktaster, der einfachen Klick, Doppelklick und langes Drücken erkennt. Drei Aktionen mit einer einzigen Taste – perfekt für eigene Automatisierungen.</p>
-    <a class="product-card__cta" href="https://www.amazon.com/s?k=Aqara+Wireless+Mini+Switch+WXKG11LM&tag=gladproj-21" target="_blank" rel="noopener">Bei Amazon ansehen</a>
+    <a class="product-card__cta" href="https://www.amazon.de/s?k=Aqara+Wireless+Mini+Switch+WXKG11LM" target="_blank" rel="noopener">Bei Amazon ansehen</a>
   </div>
   <div class="product-card">
     <div class="product-card__image">
@@ -156,7 +156,7 @@ Der Zigbee-Koordinator ist **das wichtigste Gerät** deiner Installation: Er ist
     <span class="product-card__badge">Alternative</span>
     <h4 class="product-card__title">SONOFF SNZB-01P</h4>
     <p class="product-card__description">Günstiger Zigbee-Taster mit magnetischer Halterung. Erkennt einfachen Klick, Doppelklick und langes Drücken. Ideal, um einen Schalter zu ersetzen oder Szenen per Knopfdruck auszulösen.</p>
-    <a class="product-card__cta" href="https://www.amazon.com/s?k=SONOFF+SNZB-01P&tag=gladproj-21" target="_blank" rel="noopener">Bei Amazon ansehen</a>
+    <a class="product-card__cta" href="https://www.amazon.de/s?k=SONOFF+SNZB-01P" target="_blank" rel="noopener">Bei Amazon ansehen</a>
   </div>
 </div>
 
@@ -170,7 +170,7 @@ Der Zigbee-Koordinator ist **das wichtigste Gerät** deiner Installation: Er ist
     <span class="product-card__badge">Empfohlen</span>
     <h4 class="product-card__title">Sunricher Zigbee-3.0-Rollladenmodul</h4>
     <p class="product-card__description">Zuverlässiges Unterputzmodul, das jeden vorhandenen Rollladen smart macht. Sehr gut von Zigbee2MQTT unterstützt, mit Endlagenerkennung und automatischer Kalibrierung.</p>
-    <a class="product-card__cta" href="https://www.amazon.com/s?k=Sunricher+Zigbee+roller+shutter&tag=gladproj-21" target="_blank" rel="noopener">Bei Amazon ansehen</a>
+    <a class="product-card__cta" href="https://www.amazon.de/s?k=Sunricher+Zigbee+roller+shutter" target="_blank" rel="noopener">Bei Amazon ansehen</a>
   </div>
   <div class="product-card">
     <div class="product-card__image">
@@ -179,7 +179,7 @@ Der Zigbee-Koordinator ist **das wichtigste Gerät** deiner Installation: Er ist
     <span class="product-card__badge">Alternative</span>
     <h4 class="product-card__title">SONOFF MINI-ZBRBS: Zigbee-Rollladenmodul</h4>
     <p class="product-card__description">Kompaktes Zigbee-3.0-Unterputzmodul für Rollläden von SONOFF. Eine tolle Alternative zum Sunricher, von einer Marke, die sehr gut von Zigbee2MQTT unterstützt wird.</p>
-    <a class="product-card__cta" href="https://www.amazon.com/s?k=SONOFF+MINI-ZBRBS+roller+shutter&tag=gladproj-21" target="_blank" rel="noopener">Bei Amazon ansehen</a>
+    <a class="product-card__cta" href="https://www.amazon.de/s?k=SONOFF+MINI-ZBRBS+roller+shutter" target="_blank" rel="noopener">Bei Amazon ansehen</a>
   </div>
 </div>
 
@@ -193,7 +193,7 @@ Der Zigbee-Koordinator ist **das wichtigste Gerät** deiner Installation: Er ist
     <span class="product-card__badge">Empfohlen</span>
     <h4 class="product-card__title">SONOFF ZBMINI-L2</h4>
     <p class="product-card__description">Unterputz-Schaltmodul, das <strong>ohne Neutralleiter</strong> funktioniert. Die perfekte Lösung, um ältere Elektroinstallationen nachzurüsten.</p>
-    <a class="product-card__cta" href="https://www.amazon.com/s?k=SONOFF+ZBMINI-L2&tag=gladproj-21" target="_blank" rel="noopener">Bei Amazon ansehen</a>
+    <a class="product-card__cta" href="https://www.amazon.de/s?k=SONOFF+ZBMINI-L2" target="_blank" rel="noopener">Bei Amazon ansehen</a>
   </div>
 </div>
 
@@ -209,7 +209,7 @@ Diese Schalter **ersetzen deine vorhandenen Wandschalter** und ermöglichen es d
     <span class="product-card__badge">Ohne Neutralleiter</span>
     <h4 class="product-card__title">Aqara Smart Wall Switch H1 EU (ohne Neutralleiter)</h4>
     <p class="product-card__description">Hochwertiger Zigbee-3.0-Wandschalter im europäischen Format, der sich <strong>ohne Neutralleiter</strong> installieren lässt. Erhältlich als Einfach- (WS-EUK01) oder Doppelwippe (WS-EUK02). Hochwertige Oberfläche, sehr zuverlässig, hervorragende Unterstützung durch Zigbee2MQTT.</p>
-    <a class="product-card__cta" href="https://www.amazon.com/s?k=Aqara+H1+EU+WS-EUK01+no+neutral&tag=gladproj-21" target="_blank" rel="noopener">Bei Amazon ansehen</a>
+    <a class="product-card__cta" href="https://www.amazon.de/s?k=Aqara+H1+EU+WS-EUK01+no+neutral" target="_blank" rel="noopener">Bei Amazon ansehen</a>
   </div>
   <div class="product-card">
     <div class="product-card__image">
@@ -218,7 +218,7 @@ Diese Schalter **ersetzen deine vorhandenen Wandschalter** und ermöglichen es d
     <span class="product-card__badge">Mit Neutralleiter</span>
     <h4 class="product-card__title">Aqara Light Switch H2 EU (mit Neutralleiter)</h4>
     <p class="product-card__description">Generation 2024, <strong>Dual-Protokoll Zigbee 3.0 + Thread/Matter</strong>: Nutze ihn heute per Zigbee mit Zigbee2MQTT und wechsle später per einfachem OTA-Firmware-Update zu Matter/Thread, ohne die Hardware tauschen zu müssen. Erhältlich als Einfach- (WS-K07D, 1 Kanal) oder Doppelwippe (WS-K08D, 2 Kanäle). Empfehlenswert, wenn am Schalter ein Neutralleiter vorhanden ist.</p>
-    <a class="product-card__cta" href="https://www.amazon.com/s?k=Aqara+Light+Switch+H2+EU+WS-K07D&tag=gladproj-21" target="_blank" rel="noopener">Bei Amazon ansehen</a>
+    <a class="product-card__cta" href="https://www.amazon.de/s?k=Aqara+Light+Switch+H2+EU+WS-K07D" target="_blank" rel="noopener">Bei Amazon ansehen</a>
   </div>
 </div>
 
@@ -232,7 +232,7 @@ Diese Schalter **ersetzen deine vorhandenen Wandschalter** und ermöglichen es d
     <span class="product-card__badge">Empfohlen</span>
     <h4 class="product-card__title">SONOFF SNZB-05P: Zigbee-Wassermelder (IP67)</h4>
     <p class="product-card__description">Zigbee-Wassermelder nach IP67 mit verlängerbarer externer Sonde. Perfekt für unter die Spüle, hinter die Waschmaschine oder neben den Warmwasserspeicher.</p>
-    <a class="product-card__cta" href="https://www.amazon.com/s?k=SONOFF+SNZB-05P&tag=gladproj-21" target="_blank" rel="noopener">Bei Amazon ansehen</a>
+    <a class="product-card__cta" href="https://www.amazon.de/s?k=SONOFF+SNZB-05P" target="_blank" rel="noopener">Bei Amazon ansehen</a>
   </div>
 </div>
 
@@ -246,7 +246,7 @@ Diese Schalter **ersetzen deine vorhandenen Wandschalter** und ermöglichen es d
     <span class="product-card__badge">Empfohlen</span>
     <h4 class="product-card__title">Frient: Intelligent Smoke Alarm Zigbee 3.0 (SMSZB-120)</h4>
     <p class="product-card__description">Nach EN 14604 zertifizierter Zigbee-Rauchmelder in Profiqualität. In der Zigbee2MQTT-Community sehr gut bewertet, Langzeitbatterie inklusive.</p>
-    <a class="product-card__cta" href="https://www.amazon.com/s?k=Frient+Smoke+Alarm+SMSZB-120&tag=gladproj-21" target="_blank" rel="noopener">Bei Amazon ansehen</a>
+    <a class="product-card__cta" href="https://www.amazon.de/s?k=Frient+Smoke+Alarm+SMSZB-120" target="_blank" rel="noopener">Bei Amazon ansehen</a>
   </div>
 </div>
 
@@ -260,7 +260,7 @@ Diese Schalter **ersetzen deine vorhandenen Wandschalter** und ermöglichen es d
     <span class="product-card__badge">Empfohlen</span>
     <h4 class="product-card__title">Aqara Vibration Sensor</h4>
     <p class="product-card__description">Erkennt Vibrationen, Neigung und freien Fall. Ideal, um Klopfen an einer Tür (Sicherheit) oder Glasbruch zu erkennen oder um zu wissen, wann deine Waschmaschine fertig ist.</p>
-    <a class="product-card__cta" href="https://www.amazon.com/s?k=Aqara+Vibration+Sensor+DJT11LM&tag=gladproj-21" target="_blank" rel="noopener">Bei Amazon ansehen</a>
+    <a class="product-card__cta" href="https://www.amazon.de/s?k=Aqara+Vibration+Sensor+DJT11LM" target="_blank" rel="noopener">Bei Amazon ansehen</a>
   </div>
 </div>
 
@@ -276,7 +276,7 @@ Kameras nutzen **kein** Zigbee (dafür ist die Bandbreite zu gering). Für Kamer
     <span class="product-card__badge">Empfohlen</span>
     <h4 class="product-card__title">Reolink (PoE oder WLAN)</h4>
     <p class="product-card__description">Hervorragende Bildqualität, native RTSP-Unterstützung, vollständig lokal ohne Cloud-Zwang. Die Referenz für selbst gehostete Installationen mit Gladys.</p>
-    <a class="product-card__cta" href="https://www.amazon.com/s?k=Reolink+PoE+camera&tag=gladproj-21" target="_blank" rel="noopener">Bei Amazon ansehen</a>
+    <a class="product-card__cta" href="https://www.amazon.de/s?k=Reolink+PoE+camera" target="_blank" rel="noopener">Bei Amazon ansehen</a>
   </div>
   <div class="product-card">
     <div class="product-card__image">
@@ -285,7 +285,7 @@ Kameras nutzen **kein** Zigbee (dafür ist die Bandbreite zu gering). Für Kamer
     <span class="product-card__badge">Günstig</span>
     <h4 class="product-card__title">TP-Link Tapo C200 / C210</h4>
     <p class="product-card__description">Günstige WLAN-Innenkamera mit RTSP-Unterstützung. Eine gute Einstiegsoption, um loszulegen, ohne viel Geld auszugeben.</p>
-    <a class="product-card__cta" href="https://www.amazon.com/s?k=TP-Link+Tapo+C200&tag=gladproj-21" target="_blank" rel="noopener">Bei Amazon ansehen</a>
+    <a class="product-card__cta" href="https://www.amazon.de/s?k=TP-Link+Tapo+C200" target="_blank" rel="noopener">Bei Amazon ansehen</a>
   </div>
 </div>
 

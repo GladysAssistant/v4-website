@@ -32,7 +32,7 @@ Die Liste der kompatiblen Geräte findest du [hier](https://www.zigbee2mqtt.io/s
 
 Bevor du loslegst, stelle sicher, dass du einen Zigbee-Koordinator hast: entweder einen USB-Dongle, der im Rechner mit Gladys steckt, oder einen Netzwerk-Koordinator (siehe [Einen Netzwerk-Koordinator verwenden](#use-a-network-coordinator) weiter unten).
 
-Ein einfacher und günstiger USB-Dongle, den wir mit Gladys getestet haben, ist der [Sonoff Zigbee 3.0 USB Dongle](https://amzn.to/3JZwzJy).
+Ein einfacher und günstiger USB-Dongle, den wir mit Gladys getestet haben, ist der [Sonoff Zigbee 3.0 USB Dongle](https://www.amazon.de/s?k=Sonoff%20Zigbee%203.0%20USB%20Dongle%20Plus).
 
 Die vollständige Liste der kompatiblen Adapter findest du in der [Liste der von Zigbee2mqtt unterstützten Adapter](https://www.zigbee2mqtt.io/guide/adapters/).
 

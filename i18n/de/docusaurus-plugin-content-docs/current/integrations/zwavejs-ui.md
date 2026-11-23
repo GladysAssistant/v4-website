@@ -57,7 +57,7 @@ Du kannst sie dann mit einem einzigen Klick zu Gladys hinzufügen!
 
 ## Unterstützte Funktionen
 
-- **Tür-/Fenstersensoren**: Erkennen den Status offen/geschlossen, zum Beispiel der [Fibaro Door Opening Sensor](https://www.amazon.com/Fibaro-FGDW-002-1-Window-Temperature-Sensor/dp/B074FCG1PF?crid=AMCFKK427FRN&keywords=Fibaro+door+sensor+2&qid=1704977401&sprefix=fibaro+door+sensor+2%2Caps%2C164&sr=8-1&linkCode=ll1&tag=gladproj-20&linkId=3e61bb12444e6d8265e7440bd0174456&language=en_US&ref_=as_li_ss_tl).
+- **Tür-/Fenstersensoren**: Erkennen den Status offen/geschlossen, zum Beispiel der [Fibaro Door Opening Sensor](https://www.amazon.de/s?k=Fibaro%20Door%20Window%20Sensor%202).
 - **Binäre Schalter**: Steuern Lampen oder Steckdosen (an/aus). Unterstützte Geräte sind unter anderem:
   - [Fibaro Wall Plug](https://www.fibaro.com/en/products/wall-plug/)
   - [Fibaro Switches](https://www.fibaro.com/en/products/switches/)

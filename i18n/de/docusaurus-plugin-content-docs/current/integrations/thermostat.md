@@ -14,8 +14,8 @@ keywords:
 
 Die Integration „Thermostat“ kann zwei Dinge, verfügbar seit Gladys Assistant 5.2:
 
-- **Gladys wird zum Thermostat.** Ein [Temperatursensor](https://www.amazon.com/s?k=Aqara%20temperature%20humidity%20sensor) und ein Schalter (ein Relais, eine smarte Steckdose, ein Heizkesselkontakt) reichen für eine geregelte Heizzone: Gladys liest die Temperatur und schaltet die Heizung ein und aus, um den Sollwert zu erreichen.
-- **Gladys programmiert die Thermostate, die du schon hast.** Ein [Netatmo](https://www.amazon.com/s?k=Netatmo%20Smart%20Thermostat), ein [Zigbee-Heizkörperthermostat](https://www.amazon.com/s?k=Sonoff%20TRVZB), ein Matter- oder MQTT-Thermostat regelt sich sehr gut selbst: Gladys schreibt seinen Sollwert nach einem Wochenplan, direkt neben dem Rest deines Zuhauses.
+- **Gladys wird zum Thermostat.** Ein [Temperatursensor](https://www.amazon.de/s?k=Aqara%20temperature%20humidity%20sensor) und ein Schalter (ein Relais, eine smarte Steckdose, ein Heizkesselkontakt) reichen für eine geregelte Heizzone: Gladys liest die Temperatur und schaltet die Heizung ein und aus, um den Sollwert zu erreichen.
+- **Gladys programmiert die Thermostate, die du schon hast.** Ein [Netatmo](https://www.amazon.de/s?k=Netatmo%20Smart%20Thermostat), ein [Zigbee-Heizkörperthermostat](https://www.amazon.de/s?k=Sonoff%20TRVZB), ein Matter- oder MQTT-Thermostat regelt sich sehr gut selbst: Gladys schreibt seinen Sollwert nach einem Wochenplan, direkt neben dem Rest deines Zuhauses.
 
 In beiden Fällen bekommst du dasselbe: Voreinstellungen (Frostschutz, Abwesend, Eco, Nacht, Komfort), Wochenpläne pro Haus, ein Dashboard-Widget und Gerätefunktionen, die Szenen, die KI und die Sprachassistenten lesen und schreiben können.
 
