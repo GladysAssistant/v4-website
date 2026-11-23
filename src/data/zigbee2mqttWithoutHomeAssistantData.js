@@ -758,6 +758,12 @@ export const zigbee2mqttWithoutHomeAssistantFaqEn = [
     answer:
       "If you want local Zigbee with a simple interface, yes: Gladys uses the same Zigbee2MQTT, without YAML or add-ons. Home Assistant has a broader ecosystem and more integrations; Gladys focuses on simplicity and stability.",
   },
+  {
+    question: "I already use Zigbee2MQTT in Home Assistant: do I have to pair my devices again?",
+    answer:
+      "No. Gladys can connect to the Zigbee2MQTT add-on of Home Assistant through MQTT, to try it without changing anything. When you are ready, you move the Zigbee2MQTT data folder and your dongle to the Gladys machine: Gladys takes over the network as it is, with your devices. Only the devices paired with ZHA have to be paired again. The step-by-step guide is in the documentation.",
+    link: { label: "Migrate from Home Assistant →", href: "/docs/installation/migrate-from-home-assistant/" },
+  },
 ];
 
 export const zigbee2mqttWithoutHomeAssistantFaqFr = [
@@ -790,6 +796,12 @@ export const zigbee2mqttWithoutHomeAssistantFaqFr = [
     question: "Gladys est-elle une bonne alternative à Home Assistant pour le Zigbee ?",
     answer:
       "Si vous voulez du Zigbee local avec une interface simple, oui : Gladys utilise le même Zigbee2MQTT, sans YAML ni modules. Home Assistant a un écosystème plus large et plus d'intégrations ; Gladys mise sur la simplicité et la stabilité.",
+  },
+  {
+    question: "J'utilise déjà Zigbee2MQTT dans Home Assistant : dois-je ré-appairer mes appareils ?",
+    answer:
+      "Non. Gladys peut se connecter au module Zigbee2MQTT de Home Assistant via MQTT, pour l'essayer sans rien changer. Quand vous êtes prêt, vous déplacez le dossier de données de Zigbee2MQTT et votre clé sur la machine Gladys : Gladys reprend le réseau tel quel, avec vos appareils. Seuls les appareils appairés avec ZHA sont à ré-appairer. La procédure pas à pas est dans la documentation.",
+    link: { label: "Migrer depuis Home Assistant →", href: "/fr/docs/installation/migrate-from-home-assistant/" },
   },
 ];
 
@@ -824,6 +836,12 @@ export const zigbee2mqttWithoutHomeAssistantFaqDe = [
     answer:
       "Wenn du lokales Zigbee mit einer einfachen Oberfläche willst, ja: Gladys nutzt dasselbe Zigbee2MQTT, ohne YAML und ohne Add-ons. Home Assistant hat ein breiteres Ökosystem und mehr Integrationen; Gladys setzt auf Einfachheit und Stabilität.",
   },
+  {
+    question: "Ich nutze Zigbee2MQTT schon in Home Assistant: Muss ich meine Geräte neu anlernen?",
+    answer:
+      "Nein. Gladys kann sich über MQTT mit dem Zigbee2MQTT-Add-on von Home Assistant verbinden, damit du es ausprobieren kannst, ohne etwas zu ändern. Wenn du bereit bist, ziehst du den Datenordner von Zigbee2MQTT und deinen Stick auf den Gladys-Rechner um: Gladys übernimmt das Netzwerk so, wie es ist, mit deinen Geräten. Nur mit ZHA angelernte Geräte musst du neu anlernen. Die Schritt-für-Schritt-Anleitung steht in der Dokumentation.",
+    link: { label: "Von Home Assistant umziehen →", href: "/de/docs/installation/migrate-from-home-assistant/" },
+  },
 ];
 
 export const zigbee2mqttWithoutHomeAssistantFaqEs = [
@@ -856,6 +874,12 @@ export const zigbee2mqttWithoutHomeAssistantFaqEs = [
     question: "¿Es Gladys una buena alternativa a Home Assistant para Zigbee?",
     answer:
       "Si quieres Zigbee en local con una interfaz sencilla, sí: Gladys usa el mismo Zigbee2MQTT, sin YAML ni complementos. Home Assistant tiene un ecosistema más amplio y más integraciones; Gladys apuesta por la sencillez y la estabilidad.",
+  },
+  {
+    question: "Ya uso Zigbee2MQTT en Home Assistant: ¿tengo que volver a emparejar mis dispositivos?",
+    answer:
+      "No. Gladys puede conectarse por MQTT al complemento Zigbee2MQTT de Home Assistant, para probarlo sin cambiar nada. Cuando estés listo, trasladas la carpeta de datos de Zigbee2MQTT y tu dongle a la máquina de Gladys: Gladys retoma la red tal cual, con tus dispositivos. Solo los dispositivos emparejados con ZHA tienen que volver a emparejarse. El procedimiento paso a paso está en la documentación.",
+    link: { label: "Migrar desde Home Assistant →", href: "/es/docs/installation/migrate-from-home-assistant/" },
   },
 ];
 

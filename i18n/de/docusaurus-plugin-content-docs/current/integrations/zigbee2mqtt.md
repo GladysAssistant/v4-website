@@ -23,7 +23,7 @@ import JsonLd from '@site/src/components/seo/JsonLd';
 Mit Zigbee2MQTT betreibst du deinen eigenen **lokalen Zigbee-Hub** mit Gladys: Du steckst einen USB-Zigbee-Dongle in den Rechner, auf dem Gladys läuft, und steuerst jedes Zigbee-Gerät direkt von zu Hause aus, ohne Cloud-Konto und ohne Hersteller-Bridge. Diese Anleitung zeigt dir, wie du alles einrichtest, deinen Dongle koppelst und Geräte hinzufügst.
 
 :::tip[Du kommst von Home Assistant?]
-Gladys installiert und verwaltet Zigbee2MQTT und den zugehörigen MQTT-Broker für dich: Siehe [Zigbee2MQTT ohne Home Assistant](/de/zigbee2mqtt-without-home-assistant/). Du suchst noch einen Dongle? Lies unseren [Kaufratgeber für Zigbee-Dongles](/de/best-zigbee-dongle/).
+Gladys installiert und verwaltet Zigbee2MQTT und den zugehörigen MQTT-Broker für dich: Siehe [Zigbee2MQTT ohne Home Assistant](/de/zigbee2mqtt-without-home-assistant/). Deine Geräte laufen schon über das Zigbee2MQTT-Add-on? [Zieh sie von Home Assistant um](/de/docs/installation/migrate-from-home-assistant), ohne sie neu anzulernen. Du suchst noch einen Dongle? Lies unseren [Kaufratgeber für Zigbee-Dongles](/de/best-zigbee-dongle/).
 :::
 
 Kurz gesagt verbinden wir deine Zigbee-Geräte direkt mit Gladys, ganz ohne Drittanbieter-Bridges (nur mit einem USB-Zigbee-Dongle und dem Projekt [Zigbee2Mqtt](https://www.zigbee2mqtt.io/)).
@@ -128,6 +128,8 @@ Zigbee2MQTT läuft schon woanders (Home Assistant, ein anderer Rechner…)? Glad
 Klicke dann auf **Verbinden**. Das Netzwerk ist bereit, sobald Zigbee2MQTT auf dem Broker antwortet, nicht schon, wenn Gladys mit dem Broker verbunden ist. Antwortet es nicht, prüfe, ob Zigbee2MQTT läuft und ob sein Basis-Topic (`mqtt.base_topic`) `zigbee2mqtt` ist. Gladys braucht Zigbee2MQTT 1.21 oder neuer.
 
 Im Dashboard trennt **Trennen** nur Gladys: Dein Zigbee2MQTT läuft weiter. Das Zurücksetzen der Integration vergisst nur die Verbindung: Dein Zigbee2MQTT, seine Konfiguration und seine Geräte bleiben unberührt.
+
+Dein Zigbee2MQTT läuft auf Home Assistant, und Gladys soll es stattdessen verwalten? Siehe [Von Home Assistant umziehen](/de/docs/installation/migrate-from-home-assistant#option-b-move-zigbee2mqtt-into-gladys): Du ziehst seinen Ordner und deinen Stick um, ohne deine Geräte neu anzulernen.
 
 ## Das Zigbee2MQTT-Dashboard {/* #the-zigbee2mqtt-dashboard */}
 

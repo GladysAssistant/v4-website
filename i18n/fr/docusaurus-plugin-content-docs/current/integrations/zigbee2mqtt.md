@@ -18,7 +18,7 @@ import JsonLd from '@site/src/components/seo/JsonLd';
 Dans ce tutoriel, nous allons vous expliquer comment intégrer vos appareils Zigbee dans Gladys via un coordinateur Zigbee : une clé USB Zigbee, ou un coordinateur réseau.
 
 :::tip[Vous venez de Home Assistant ?]
-Gladys installe et gère Zigbee2MQTT et son broker MQTT pour vous : voir [Zigbee2MQTT sans Home Assistant](/fr/zigbee2mqtt-without-home-assistant/). Vous hésitez encore sur la clé ? Lisez le [guide d'achat des clés Zigbee](/fr/best-zigbee-dongle/).
+Gladys installe et gère Zigbee2MQTT et son broker MQTT pour vous : voir [Zigbee2MQTT sans Home Assistant](/fr/zigbee2mqtt-without-home-assistant/). Vos appareils tournent déjà sur le module Zigbee2MQTT ? [Migrez-les depuis Home Assistant](/fr/docs/installation/migrate-from-home-assistant) sans les ré-appairer. Vous hésitez encore sur la clé ? Lisez le [guide d'achat des clés Zigbee](/fr/best-zigbee-dongle/).
 :::
 
 Vous pourrez ainsi connecter tout type d'appareils Zigbee en direct, et vous affranchir des bridges Zigbee souvent fournis par les constructeurs (Bridge Philips Hue, Hub Xiaomi).
@@ -135,6 +135,8 @@ Zigbee2MQTT tourne déjà ailleurs (Home Assistant, une autre machine…) ? Glad
 Cliquez ensuite sur **Se connecter**. Le réseau est prêt une fois que Zigbee2MQTT répond sur le broker, pas dès que Gladys est connecté au broker. S'il ne répond pas, vérifiez que Zigbee2MQTT tourne et que son topic de base (`mqtt.base_topic`) est `zigbee2mqtt`. Gladys a besoin de Zigbee2MQTT 1.21 ou plus récent.
 
 Sur le tableau de bord, **Déconnecter** ne fait que déconnecter Gladys : votre Zigbee2MQTT continue de tourner. Réinitialiser l'intégration ne fait qu'oublier la connexion : votre Zigbee2MQTT, sa configuration et ses appareils ne sont pas touchés.
+
+Votre Zigbee2MQTT tourne sur Home Assistant, et vous voulez que Gladys le gère à la place ? Voir [Migrer depuis Home Assistant](/fr/docs/installation/migrate-from-home-assistant#option-b-move-zigbee2mqtt-into-gladys) : vous déplacez son dossier et votre clé, sans ré-appairer vos appareils.
 
 ## Le tableau de bord Zigbee2MQTT {/* #the-zigbee2mqtt-dashboard */}
 

@@ -213,7 +213,15 @@ export default function UseCasePage({
             {faq.map((item, i) => (
               <div key={i} className={styles.faqItem}>
                 <h3 className={styles.faqQuestion}>{item.question}</h3>
-                <p className={styles.faqAnswer}>{item.answer}</p>
+                <p className={styles.faqAnswer}>
+                  {item.answer}
+                  {item.link ? (
+                    <>
+                      {" "}
+                      <Link to={item.link.href}>{item.link.label}</Link>
+                    </>
+                  ) : null}
+                </p>
               </div>
             ))}
           </section>

@@ -70,6 +70,7 @@ module.exports = {
           className: "fr-only",
         },
         "installation/migrate",
+        "installation/migrate-from-home-assistant",
         "installation/phone",
         "installation/windows",
         "installation/logs",
