@@ -7,7 +7,7 @@ sidebar_label: Bluetooth
 
 Die Bluetooth-Integration ist nützlich für die Anwesenheitserkennung.
 
-Es gibt Bluetooth-Schlüsselanhänger wie den [NUT-Schlüsselanhänger](https://www.amazon.de/s?k=Nut%20Bluetooth%20Schl%C3%BCsselfinder), die ihre Anwesenheit dauerhaft per Bluetooth aussenden.
+Es gibt Bluetooth-Schlüsselanhänger, die ihre Anwesenheit dauerhaft per Bluetooth aussenden.
 
 Mit einem solchen Anhänger kann Gladys erkennen, ob du zu Hause bist (oder nicht), indem es einfach nach Bluetooth-Geräten in der Nähe sucht.
 

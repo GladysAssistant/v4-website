@@ -150,7 +150,7 @@ Für Enedis-Nutzer: Der neue Einwilligungs-Callback **DataConnect 2026** wird un
 
 - **Den Verlauf eines Geräts als CSV exportieren**, direkt aus der Geräteliste.
 - **Matter**: Wassermelder, Kontakt- und Regensensoren sowie **Türschlösser**.
-- **Zigbee2MQTT 2.13**, Unterstützung für **Netzwerk-Koordinatoren** ([SMLIGHT SLZB-06/07](https://www.amazon.de/s?k=SMLIGHT%20SLZB-06) und Co.), solarbetriebene Außensirenen und der [Heiman HS2WD-E](https://www.amazon.de/s?k=Heiman%20HS2WD-E).
+- **Zigbee2MQTT 2.13**, Unterstützung für **Netzwerk-Koordinatoren** ([SMLIGHT SLZB-06/07](https://www.amazon.de/s?k=SMLIGHT%20SLZB-06) und Co.), solarbetriebene Außensirenen und der Heiman HS2WD-E.
 - **MQTT**: Wildcard-State-Topics bei der Home Assistant Discovery.
 - **Google Home**: Temperatur- und Feuchtigkeitssensoren werden bereitgestellt.
 - **Kameras**: eine Kamera deaktivieren, ohne sie zu löschen, ein echter Privatmodus.

@@ -55,7 +55,7 @@ const AQARA_DOOR = {
 const AQARA_MOTION = {
   en: "Aqara Motion Sensor P1",
   fr: "Détecteur de mouvement Aqara P1",
-  de: "Aqara Bewegungsmelder P1",
+  de: "Aqara Zigbee Bewegungsmelder P1",
 };
 const AQARA_CLIMATE = {
   en: "Aqara Temperature and Humidity Sensor",
@@ -73,10 +73,17 @@ const SINOPE_VALVE = { en: "Sinopé Sedna valve" };
 const NODON_PILOT_WIRE = { fr: "NodOn SIN-4-FP-21" };
 const NODON_RELAY = { fr: "NodOn SIN-4-1-20" };
 const REOLINK_POE = "Reolink RLC-520A";
+// "Shelly Pro 3EM" alone lands on other Shelly meters on amazon.de.
+const SHELLY_PRO_3EM = {
+  en: "Shelly Pro 3EM",
+  fr: "Shelly Pro 3EM",
+  de: "Shelly Pro 3EM Energiemessgerät",
+};
+// The Heiman siren isn't sold on amazon.de: the German store gets the SONOFF one.
 const ZIGBEE_SIREN = {
   en: "Heiman HS2WD-E",
   fr: "Sirène Heiman HS2WD-E",
-  de: "Heiman HS2WD-E Sirene",
+  de: "SONOFF SNZB-09P Zigbee Sirene",
 };
 
 module.exports = {
@@ -109,11 +116,11 @@ module.exports = {
   "zigbee-vs-matter-vs-zwave": [ZIGBEE_DONGLE, ZWAVE_STICK, "Eve Energy"],
   "matter-hub": [
     "Apple TV 4K",
-    "Apple HomePod mini",
+    // Neither the HomePod mini nor the Nest Hub is sold on amazon.de.
+    { en: "Apple HomePod mini", fr: "Apple HomePod mini" },
     {
       en: "Google Nest Hub (2nd gen)",
       fr: "Google Nest Hub (2e génération)",
-      de: "Google Nest Hub (2. Generation)",
     },
     {
       en: "Amazon Echo (4th gen)",
@@ -158,7 +165,7 @@ module.exports = {
     {
       en: "Philips Hue White and Color Ambiance A19",
       fr: "Philips Hue White and Color Ambiance E27",
-      de: "Philips Hue White and Color Ambiance E27",
+      de: "Philips Hue White & Color Ambiance E27",
     },
     "Philips Hue White Ambiance GU10",
     "Philips Hue Lightstrip Plus",
@@ -169,7 +176,7 @@ module.exports = {
   "ikea-smart-home": [ZIGBEE_DONGLE],
   "shelly-without-cloud": [
     "Shelly 1PM Gen3",
-    "Shelly Pro 3EM",
+    SHELLY_PRO_3EM,
     "Shelly PM Mini Gen3",
     "Shelly Plug S Gen3",
   ],
@@ -220,7 +227,7 @@ module.exports = {
   ],
   "nest-thermostat-alternative": [
     SINOPE_THERMOSTAT,
-    { fr: "Eve Thermo", de: "Eve Thermo" },
+    { fr: "Eve Thermo", de: "Eve Thermo Heizkörperthermostat" },
     {
       en: "Sonoff TRVZB",
       fr: "Tête thermostatique Sonoff TRVZB",
@@ -228,7 +235,7 @@ module.exports = {
     },
     AQARA_CLIMATE,
   ],
-  "home-energy-monitoring": ["Shelly Pro 3EM", "Shelly EM", ENERGY_PLUG],
+  "home-energy-monitoring": [SHELLY_PRO_3EM, "Shelly EM", ENERGY_PLUG],
 
   // Electricity rates
   "heures-creuses": [NODON_RELAY, ENERGY_PLUG_FR, NODON_PILOT_WIRE],

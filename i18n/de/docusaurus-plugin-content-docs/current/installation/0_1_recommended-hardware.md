@@ -50,7 +50,7 @@ Der Zigbee-Koordinator ist **das wichtigste Gerät** deiner Installation: Er ist
     <span class="product-card__badge">Empfohlen</span>
     <h4 class="product-card__title">Philips Hue White and Color Ambiance E27</h4>
     <p class="product-card__description">Die beste Zigbee-Glühbirne ihrer Klasse: hervorragende Farbwiedergabe, sehr zuverlässig und arbeitet als Zigbee-Router. Lässt sich direkt mit Zigbee2MQTT koppeln, keine Hue Bridge nötig.</p>
-    <a class="product-card__cta" href="https://www.amazon.de/s?k=Philips+Hue+White+and+Color+Ambiance+E27" target="_blank" rel="noopener">Bei Amazon ansehen</a>
+    <a class="product-card__cta" href="https://www.amazon.de/s?k=Philips+Hue+White+%26+Color+Ambiance+E27" target="_blank" rel="noopener">Bei Amazon ansehen</a>
   </div>
   <div class="product-card">
     <div class="product-card__image">
@@ -110,7 +110,7 @@ Der Zigbee-Koordinator ist **das wichtigste Gerät** deiner Installation: Er ist
     <span class="product-card__badge">Empfohlen</span>
     <h4 class="product-card__title">Aqara Motion Sensor P1</h4>
     <p class="product-card__description">Der am besten bewertete Zigbee-PIR-Bewegungsmelder: einstellbare Empfindlichkeit, einstellbare Sperrzeit, Helligkeitsmessung und sehr lange Batterielaufzeit mit einer CR2450-Zelle.</p>
-    <a class="product-card__cta" href="https://www.amazon.de/s?k=Aqara+Motion+Sensor+P1" target="_blank" rel="noopener">Bei Amazon ansehen</a>
+    <a class="product-card__cta" href="https://www.amazon.de/s?k=Aqara+Zigbee+Bewegungsmelder+P1" target="_blank" rel="noopener">Bei Amazon ansehen</a>
   </div>
 </div>
 
@@ -232,7 +232,7 @@ Diese Schalter **ersetzen deine vorhandenen Wandschalter** und ermöglichen es d
     <span class="product-card__badge">Empfohlen</span>
     <h4 class="product-card__title">SONOFF SNZB-05P: Zigbee-Wassermelder (IP67)</h4>
     <p class="product-card__description">Zigbee-Wassermelder nach IP67 mit verlängerbarer externer Sonde. Perfekt für unter die Spüle, hinter die Waschmaschine oder neben den Warmwasserspeicher.</p>
-    <a class="product-card__cta" href="https://www.amazon.de/s?k=SONOFF+SNZB-05P" target="_blank" rel="noopener">Bei Amazon ansehen</a>
+    <a class="product-card__cta" href="https://www.amazon.de/s?k=SONOFF+SNZB-05P+Wassermelder" target="_blank" rel="noopener">Bei Amazon ansehen</a>
   </div>
 </div>
 

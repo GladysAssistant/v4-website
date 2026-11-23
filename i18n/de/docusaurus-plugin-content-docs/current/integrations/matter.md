@@ -64,10 +64,10 @@ Ein Thread-Router (oder „Thread Border Router“) verbindet deine Thread-Gerä
 Viele handelsübliche Geräte sind Thread-Router:
 
 - [Apple TV 4K Ethernet 128 GB](https://www.amazon.de/s?k=Apple%20TV%204K%20Ethernet%20128GB)
-- [Apple HomePod](https://www.amazon.de/s?k=Apple%20HomePod)
+- Apple HomePod
 - Google Home Speaker (2026)
 - Google Nest Hub Max
-- [Google Nest Hub (2. Generation)](https://www.amazon.de/s?k=Google%20Nest%20Hub%202nd%20generation)
+- Google Nest Hub (2. Generation)
 - [Google Nest Wi-Fi Pro](https://www.amazon.de/s?k=Google%20Nest%20Wifi%20Pro)
 - [Google TV Streamer 4K](https://www.amazon.de/s?k=Google%20TV%20Streamer%204K)
 - [Amazon Echo (4. Generation)](https://www.amazon.de/s?k=Amazon%20Echo%204th%20generation)

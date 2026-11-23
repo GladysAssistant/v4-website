@@ -405,7 +405,7 @@ const bestZigbeeDongleContent = {
           image: "/img/external/zigbee-dongles/sonoff-zbdongle-p.jpeg",
           imageAlt: "Sonoff ZBDongle-P Zigbee-USB-Stick",
           text: "Die Version mit Texas-Instruments-Chip CC2652P, seit Jahren bewährt in der Zigbee2MQTT-Community. Grundsolide, gut dokumentiert und preiswert.",
-          href: amazonDE("Sonoff Zigbee 3.0 USB Dongle Plus ZBDongle-P CC2652P"),
+          href: amazonDE("Sonoff ZBDongle-P"),
           linkLabel: "Bei Amazon ansehen →",
         },
         {

@@ -135,7 +135,7 @@ Fang mit einem Raum an, schau, was dir gefällt, und erweitere dann Raum für Ra
 | ZigBee-Steckdose mit Echtzeit-Verbrauchsmessung    | [NOUS A1Z bei Amazon](https://www.amazon.de/s?k=NOUS%20A1Z%20Zigbee%20Steckdose)                                               |
 | IKEA-TRÅDFRI-E27-Glühbirne (Deckenleuchte)         | [IKEA US](https://www.ikea.com/us/en/p/tradfri-led-bulb-e26-1100-lumen-smart-wireless-dimmable-white-spectrum-globe-50545678/) |
 | IKEA-STYRBAR-Fernbedienung (Helligkeit)            | [IKEA US](https://www.ikea.com/us/en/p/styrbar-remote-control-smart-white-80488370/)                                           |
-| Zigbee-Bewegungsmelder                             | [Aqara Bewegungsmelder P1 bei Amazon](https://www.amazon.de/s?k=Aqara%20Bewegungsmelder%20P1)                                  |
+| Zigbee-Bewegungsmelder                             | [Aqara Bewegungsmelder P1 bei Amazon](https://www.amazon.de/s?k=Aqara%20Zigbee%20Bewegungsmelder%20P1)                          |
 
 </details>
 
