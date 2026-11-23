@@ -9,9 +9,9 @@
 const bestSmartHomeHubContent = {
   en: {
     meta: {
-      title: "Best Smart Home Hub in 2026: Honest Comparison",
+      title: "Best Smart Home Hub 2026: 8 Hubs Compared",
       description:
-        "SmartThings, Hubitat, Homey Pro, Home Assistant Green, Aqara M3, Apple and Google hubs, or a mini-PC running Gladys: prices, protocols, local control and subscriptions, compared honestly.",
+        "Hubitat, Homey Pro, SmartThings, Home Assistant Green, Aqara, Echo, Apple TV or a mini-PC: which works offline, which needs a subscription, and what it costs.",
     },
     hero: {
       title: "The best smart home hub in 2026",

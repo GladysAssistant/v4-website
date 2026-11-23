@@ -126,9 +126,9 @@ const alternativeContent = {
 
   fr: {
     meta: {
-      title: "La meilleure alternative à Google Home, respectueuse de la vie privée : Gladys Assistant",
+      title: "Alternative à Google Home : privée et locale",
       description:
-        "Vous cherchez une alternative à Google Home respectueuse de la vie privée ? Gladys Assistant est une plateforme domotique locale, open source et auto-hébergée : vos données restent chez vous, sans enregistrements dans le cloud, sans publicité, sans revente. Gratuite et auto-hébergée.",
+        "Gardez vos données chez vous : Gladys est une alternative à Google Home gratuite, open source et auto-hébergée. Sans cloud obligatoire, sans publicité.",
     },
     hero: {
       title: "Vous cherchez une alternative à Google Home respectueuse de votre vie privée ?",
