@@ -19,7 +19,7 @@ https://github.com/LM1LC3N7/gladys-ecodevices-rt2 instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Eco-Devices RT2","description":"GCE Eco-Devices RT2 on your network: counters, relays, inputs, pilot wire (X-4FP), X-THL.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-ecodevices-rt2","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ecodevices-rt2.png","type":"device","version":"0.2.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-19T01:40:38Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Eco-Devices RT2","description":"GCE Eco-Devices RT2 on your network: counters, relays, inputs, pilot wire (X-4FP), X-THL.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-ecodevices-rt2","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ecodevices-rt2.png","type":"device","version":"0.3.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-20T18:15:17Z"}} />
 
 :::info
 
@@ -29,8 +29,9 @@ La documentación de esta integración la escribe su autor y, por ahora, solo es
 
 Brings **up to three GCE Electronics Eco-Devices RT2** into Gladys through
 their local JSON API: the indexes of the teleinformation and of the pulse
-counters (water, gas, electricity; current clamps once their unit is
-confirmed), their relays,
+counters (water, gas, electricity) and of the power counters of the current
+clamps (consumption, production, injection or drawn: your word), their
+relays,
 their inputs, the pilot-wire zones of their X-4FP extensions and their X-THL
 sensors (temperature, humidity, luminosity).
 
@@ -57,7 +58,11 @@ sensors (temperature, humidity, luminosity).
      `FP1-FP4, THL1, TIC, P1-P2`);
    - list in "Pulse counters" those to bring in, with what they measure and
      the unit of their index in the Eco-Devices (e.g.
-     `C1:water:l, C2:gas:m3`).
+     `C1:water:l, C2:gas:m3`; the French words `eau`, `gaz`, `électricité`
+     work too);
+   - list in "Power counters" those to bring in, with the mode you gave them
+     in the "Compteurs de puissance" page of the RT2 (e.g.
+     `T1, T2:production, T3:injection, T4:drawn`; no mode: consumption).
 
    Then save.
 
@@ -101,7 +106,7 @@ value.
 | On the Eco-Devices RT2                 | In Gladys                                                        | Code (in the name) |
 | -------------------------------------- | ---------------------------------------------------------------- | ------------------ |
 | Teleinformation index 1 to 7           | energy index (kWh)                                               | `TI1`              |
-| Current clamp 1 to 16                  | not yet (see "Units" below)                                      | `TORE3`            |
+| Power counter 1 to 20 (when listed)    | energy, production, injection or drawn index (kWh)               | `TORE3`            |
 | Pulse counter 1 to 12 (when listed)    | water or gas index (m³), or energy index (kWh)                   | `C1`               |
 | Relay 1 to 10 (2 + an X-8R)            | read only, or a switch / light when you list it                  | `R3`               |
 | Input 1 to 12                          | a binary input (read only)                                       | `D3`               |
@@ -168,16 +173,38 @@ a guard.
 **Units.** The teleinformation indexes are read in Wh and published in kWh:
 confirmed on a real RT2, whose TI1 matched, within 143 Wh, the index an
 Eco-Devices 3 (Wh) read on the same meter. Its own page may show kWh: same
-value, divided by 1000. A clamp index (`Index_TORE<n>`) is the energy
-counted on that clamp, but its unit (Wh or kWh) is given by no source and
-cannot be compared with the page of the Eco-Devices (which shows only the
-instant power of a clamp); a factor of 1000 corrected later would be a jump
-counted once as consumption: the clamps are therefore **neither offered nor
-published** until it is; the status says how many were read. Only clamps 1
-to 16 are read: the RT2 of the tester also answers `Index_TORE17` and
-beyond, what is left there of an X400 CT extension once wired (frozen
-values), never offered. With an X400 CT wired today they would be real
-clamps: to be looked at again once the unit of a clamp is confirmed. A pulse counter
+value, divided by 1000.
+
+**Power counters (clamps).** Since firmware 3.0 of the RT2 (June 2022) a
+current clamp is not read as such: the RT2 has 20 "power counters"
+(`Index_TORE1` to `Index_TORE20` in the API, "Compteur puissance 1" to "20"
+on its page), and you bind each one to one of the 16 clamp inputs (4 on the
+RT2, 12 on an X-400 CT) with a **mode** (consumption, production, drawn,
+injected, or differential) and a counting unit (kWh by default, or kVAh).
+The API gives neither the mode nor the unit: list each counter with its mode
+in "Power counters" (`T1, T2:production`), and keep kWh as the counting unit
+in the RT2 (Gladys has no kVAh: a counter in kVAh would be published as
+kWh). A counter in consumption becomes an energy index, in production a
+production index, in injection an injection index (`grid-sensor`,
+`output-index`), in drawn mode a drawn index (`input-index`); a
+**differential** counter is not supported (what it counts, and whether it
+can go down, is not known): do not list it. A counter given twice with two
+modes (`T3, T3:injection`) is refused in whole, the status says so
+("TORE3 ×2"). The index is read in Wh (GCE
+documentation: "index en Wh"; the values seen on three real RT2 are
+thousands of kWh) and published in kWh; not compared with the page of a real
+RT2 yet: **compare the first value published with the "Compteurs de
+puissance" page** and tell us. A counter counting but not listed is named in
+the status; a listed counter without a value (0 or "--": not bound to a
+clamp yet, or erased) is not published, is not counted among the indexes
+read and is named in the status; a counter whose mode you change gets a new
+feature, which starts from the first value read (if you then go back to the
+old mode, its old feature starts again from its last value in Gladys: what
+accumulated meanwhile may pass as a jump covered by the time); a counter
+erased in the RT2 is a drop, held until your two clicks. An RT2 on
+firmware 2 (answering `Index_TORE_Cons1`…) has no power counter: nothing is
+read from its `Index_TORE`, not even `Index_TORE5` to `16`, and the status
+says so. A pulse counter
 is read in the unit you give: compare the first value published with the
 meter. A counter whose **type** you change gets a new feature, which starts
 from the first value read. If you change its **unit** after its index was
@@ -327,7 +354,7 @@ that succeeds.
 
 - Teleinformation (index, apparent power, current, tariff period), the
   instant power of the posts, pulse counters, relays, inputs, X-4FP and
-  X-THL only (the clamp indexes wait for their unit to be confirmed): the
+  X-THL, power counters of the clamps only: the
   instant power of a clamp, the sub-posts, the indexes per tariff period
   (HC/HP, Tempo), the prices, the virtual outputs and EnOcean are not in this
   version.
@@ -350,13 +377,14 @@ Estos son los parámetros que Eco-Devices RT2 te pide en su pantalla de configur
 
 | Parámetro | Tipo | Obligatorio | Descripción |
 | --- | --- | --- | --- |
-| Your Eco-Devices RT2 | `section` | No | Brings up to three GCE Electronics Eco-Devices RT2 into Gladys through their local JSON API: the indexes of the teleinformation and of the pulse counters (never 0; a drop or a jump held back until you accept it; clamps once their unit is confirmed), relays (read only unless you list them below), digital inputs, pilot-wire zones of the X-4FP, X-THL sensors, the teleinformation details and the instant power of the posts. Pilot wire: Off and Frost protection go first, without any option (see the guide for their limits); Eco and Comfort only once allowed below. Each Eco-Devices keeps its own devices: a box at another address, or another GCE product, never gets their commands. Never tested with a real device. Not affiliated with GCE Electronics. |
+| Your Eco-Devices RT2 | `section` | No | Brings up to three GCE Electronics Eco-Devices RT2 into Gladys through their local JSON API: the indexes of the teleinformation and of the pulse counters (never 0; a drop or a jump held back until you accept it; the power counters of the current clamps you list, with their mode), relays (read only unless you list them below), digital inputs, pilot-wire zones of the X-4FP, X-THL sensors, the teleinformation details and the instant power of the posts. Pilot wire: Off and Frost protection go first, without any option (see the guide for their limits); Eco and Comfort only once allowed below. Each Eco-Devices keeps its own devices: a box at another address, or another GCE product, never gets their commands. Never tested with a real device. Not affiliated with GCE Electronics. |
 | Address of the Eco-Devices RT2 | `string` | Sí | Its IP address (or name) on your network, without path nor key; give it a fixed address in your router: its devices are tied to this address. |
 | Port | `number` | No | 80 unless you changed the port of its web server. |
 | API key | `secret` | No | The key of its API (Eco-Devices menu, "apikey" by default: change it); leave empty only if you turned the protection off. The Eco-Devices wants it in the address of every request, over plain http: anyone who can watch your network can read it. Kept by Gladys in its database, never shown again, sent only to the Eco-Devices, never written in the logs. |
 | Relays Gladys may drive | `string` | No | The other relays are read only. Codes as in the device names: R1 and R2 (the Eco-Devices), R3 to R10 (an X-8R); add :light for a light, e.g. "R1, R2:light". A relay listed here obeys every "turn everything off" of Google, Alexa, the MCP and the scenes: never list a pump, a freezer, a ventilation, a heating, a door strike nor a valve. List them before creating them in Discover; a relay already created stays read only until you click "Update" on it in Discover. |
 | Extensions | `string` | No | The X-4FP and X-THL wired to the Eco-Devices (its API answers for them even when absent): pilot-wire zones FP1 to FP8 (four per X-4FP), X-THL THL1 and THL2; also TIC for the teleinformation details (apparent power, current, tariff period) and the posts P1 to P8 (instant power), e.g. "FP1-FP4, THL1, TIC, P1-P2". |
-| Pulse counters | `string` | No | The pulse counters to bring in, what they measure and the unit of their index in the Eco-Devices: C1 to C12, water (l or m3), gas (m3 or l) or electricity (wh or kwh), e.g. "C1:water:l, C2:gas:m3". Water and gas arrive in m³, electricity in kWh. Compare the first value published with the meter; changing the unit later stops its index (see the guide). |
+| Pulse counters | `string` | No | The pulse counters to bring in, what they measure and the unit of their index in the Eco-Devices: C1 to C12, water (l or m3), gas (m3 or l) or electricity (wh or kwh), e.g. "C1:water:l, C2:gas:m3" (French words work too: "C1:eau:l, C2:gaz:m3, C3:électricité:wh"). Water and gas arrive in m³, electricity in kWh. Compare the first value published with the meter; changing the unit later stops its index (see the guide). |
+| Power counters (current clamps) | `string` | No | The power counters of the Eco-Devices (page "Compteurs de puissance": each one counts a current clamp, in kWh) to bring in, with their mode as you set it there: T1 to T20; consumption (the default), production, injection or drawn, e.g. "T1, T2:production, T3:injection". They arrive in kWh. Keep kWh as the counting unit in the Eco-Devices (not kVAh). Compare the first value published with the page of the Eco-Devices. |
 | Pilot wire | `section` | No | Off and Frost protection need no option and go before everything else, during a pause or before the first read; they are refused only when the zone is not listed in Extensions or the Eco-Devices is not known yet (see the guide). Eco, Comfort, Comfort -1 and Comfort -2 drive the heating: they are off by default. Once allowed, every Gladys user, every scene and the Gladys app can choose them. |
 | Allow Eco and Comfort from Gladys | `boolean` | No |  |
 | Read every (seconds) | `number` | No | How often the Eco-Devices is read: 15 s by default, 5 s at least. |
@@ -367,17 +395,19 @@ Estos son los parámetros que Eco-Devices RT2 te pide en su pantalla de configur
 | Relays of Eco-Devices #2 Gladys may drive | `string` | No | Same rules as for the first one (R1 to R10, :light for a light). A relay listed here obeys every "turn everything off": never list a pump, a freezer, a ventilation, a heating, a door strike nor a valve. |
 | Extensions of Eco-Devices #2 | `string` | No | Same rules as for the first one, e.g. "FP1-FP4, THL1". |
 | Pulse counters of Eco-Devices #2 | `string` | No | Same rules as for the first one, e.g. "C1:water:l, C2:gas:m3". |
+| Power counters of Eco-Devices #2 | `string` | No | Same rules as for the first one, e.g. "T1, T2:production". |
 | Eco-Devices RT2 #3 (optional) | `section` | No | A third Eco-Devices RT2 of the house, with its own devices: fill in its address (and its API key); leave empty otherwise. Never move an Eco-Devices from one slot to another: its devices stay with their slot. The poll interval, the heating option and the language above are shared. |
 | Address of Eco-Devices #3 | `string` | No | Its IP address (or name), with :port only if its web server is not on 80; give it a fixed address in your router. |
 | API key of Eco-Devices #3 | `secret` | No | As for the first one: kept by Gladys in its database, never shown again, sent only to this Eco-Devices, never written in the logs. |
 | Relays of Eco-Devices #3 Gladys may drive | `string` | No | Same rules as for the first one (R1 to R10, :light for a light). A relay listed here obeys every "turn everything off": never list a pump, a freezer, a ventilation, a heating, a door strike nor a valve. |
 | Extensions of Eco-Devices #3 | `string` | No | Same rules as for the first one, e.g. "FP1-FP4, THL1". |
 | Pulse counters of Eco-Devices #3 | `string` | No | Same rules as for the first one, e.g. "C1:water:l, C2:gas:m3". |
+| Power counters of Eco-Devices #3 | `string` | No | Same rules as for the first one, e.g. "T1, T2:production". |
 
 ## Cómo instalar Eco-Devices RT2 en Gladys
 
 1. En Gladys, abre **Integraciones**: Eco-Devices RT2 aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
-2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-ecodevices-rt2:0.2.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/lm1lc3n7/gladys-ecodevices-rt2:0.3.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
 3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
 4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/LM1LC3N7/gladys-ecodevices-rt2](https://github.com/LM1LC3N7/gladys-ecodevices-rt2).
 

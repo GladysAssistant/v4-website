@@ -1,0 +1,226 @@
+---
+title: "OPC UA Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "OPC UA"
+description: "Variablen eines OPC-UA-Servers lesen und schreiben: SPS (Siemens, Beckhoff, WAGO), Gateways. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-opcua.png"
+keywords:
+  - "opc ua"
+  - "opc ua smart home"
+  - "gladys opc ua"
+  - "opc ua gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-opcua instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"OPC UA","description":"Variablen eines OPC-UA-Servers lesen und schreiben: SPS (Siemens, Beckhoff, WAGO), Gateways.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-opcua","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-opcua.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-21T06:38:17Z"}} />
+
+Lies und schreibe die Variablen eines OPC-UA-Servers aus Gladys: SPS (Siemens
+S7-1200/1500, Beckhoff TwinCAT, WAGO, B&R, Schneider), Gateways (Kepware,
+Softing, Unified Automation) oder jeden OPC-UA-Server in deinem Netzwerk.
+
+> Ohne die Hardware entwickelt: Rückmeldungen sind willkommen. Die Integration
+> wurde mit dem Microsoft-Simulator OPC PLC getestet, nicht mit einer echten
+> SPS.
+
+## Was du bekommst
+
+- Ein Gladys-Gerät für den Server, eine Funktion pro deklarierter Variable:
+  Zahlen (mit Einheit), Ein/Aus-Werte und Texte.
+- Werte per **Abonnement** aktualisiert: Der Server meldet jede Änderung,
+  nichts wird abgefragt.
+- Schreiben, standardmäßig aus: ein Schalter oder Sollwert im Dashboard, eine
+  Schaltfläche der Konfiguration und eine Szenen-Aktion schreiben die
+  Variablen, die du erlaubt hast.
+- Drei Szenen-Auslöser (Server weg, Server zurück, Variable in schlechtem
+  Zustand) und ein Dashboard-Widget **OPC-UA-Server**.
+
+## Voraussetzungen
+
+- Gladys 5.1 oder neuer.
+- Ein OPC-UA-Server, den Gladys per TCP (`opc.tcp://`) erreicht, mit fester
+  IP-Adresse. Bei einer Siemens S7-1500 aktivierst du den OPC-UA-Server der CPU
+  im TIA Portal und erlaubst den Zugriff auf die gewünschten Datenbausteine.
+
+## Konfiguration
+
+### Server
+
+1. Gib die **Serveradresse** ein: `opc.tcp://`, die IP-Adresse und den Port,
+   zum Beispiel `opc.tcp://192.168.1.50:4840` (Standard 4840, 4852 bei
+   Beckhoff, 49320 bei Kepware).
+2. Wähle den **Sicherheitsmodus** sowie **Benutzername** und **Passwort**, wenn
+   der Server keinen anonymen Zugang erlaubt.
+3. Speichere und klicke dann auf **Server durchsuchen**, um seine Variablen
+   aufzulisten.
+
+Gladys erkennt den Server an der hier eingegebenen Adresse und dem Port: Eine
+Änderung erzeugt ein neues Gerät.
+
+### Sicherheit und Zertifikat
+
+- **Keine**: weder Signatur noch Verschlüsselung. In Ordnung in einem
+  isolierten Maschinennetz.
+- **Signieren** oder **Signieren und Verschlüsseln**, mit der
+  **Sicherheitsrichtlinie**, die der Server akzeptiert (Basic256Sha256 ist am
+  häufigsten). Gladys erstellt bei der ersten Verbindung ein eigenes
+  Zertifikat (`Gladys Assistant OPC UA`, in den Daten der Integration). Die
+  meisten Server lehnen ein unbekanntes Zertifikat ab: Vertraue ihm im Server
+  (TIA Portal: Zertifikatsverwaltung, Kepware: OPC UA Configuration Manager,
+  TwinCAT: Ordner `rejected` nach `trusted` verschieben) und warte eine
+  Minute, Gladys versucht es von selbst erneut.
+- Das Serverzertifikat wird bei der ersten Verbindung akzeptiert und behalten.
+- Im Modus Keine kann ein Passwort im Klartext durchs Netz gehen: Nimm
+  Signieren und Verschlüsseln, wenn der Server eines verlangt.
+
+### Variablen
+
+Das Feld **Variablen** enthält Einträge, getrennt durch Semikolons:
+
+```
+Name: NodeId [Art] [write] [Optionen]
+```
+
+```
+Vorlauf: ns=3;s="Boiler"."FlowTemp" temperature; Pumpe: ns=3;s="Boiler"."Pump" switch; Modus: ns=2;s=Plant.Mode write
+```
+
+- **NodeId**: kopiert aus **Server durchsuchen**: `ns=3;s=Text` (Zeichenkette),
+  `ns=2;i=1002` (Zahl), `g=` (GUID), `b=` (opak). Das Semikolon in einer NodeId
+  wird verstanden. Eine NodeId endet beim ersten Leerzeichen, außer zwischen
+  Anführungszeichen (Siemens-Namen wie `ns=3;s="DB1"."Temp"` funktionieren
+  unverändert). NodeIds mit `nsu=` werden nicht unterstützt.
+- **Name**: optional; ohne ihn nimmt die Variable ihren Namen auf dem Server.
+- **Art** (optional): `temperature`, `humidity`, `pressure`, `power`,
+  `energy`, `production`, `solar_power`, `grid_power`, `voltage`, `current`,
+  `battery`, `volume`, `duration`, `value`, `binary`, `switch`, `setpoint`,
+  `text`. Ohne Art: Ein Boolean ist ein Ein/Aus-Wert, eine Zahl ein einfacher
+  Wert, eine Zeichenkette oder ein Datum ein Text. `energy` und `production`
+  werden in kWh veröffentlicht, damit Gladys Verbrauch und Kosten berechnet.
+- **write**: Die Variable darf aus Gladys geschrieben werden (siehe unten).
+  `switch` und `setpoint` beinhalten es.
+- **Optionen**: `scale=0.1` und `offset=-40` (Wert = Rohwert × scale +
+  offset), `unit=kWh`, `min=` und `max=` (Anzeigegrenzen), `precision=1`
+  (Nachkommastellen).
+
+Bis zu 100 Variablen. Arrays und Strukturen werden nicht unterstützt.
+**Konfiguration prüfen** listet die falschen oder auf dem Server fehlenden
+Einträge auf.
+
+### Schreiben
+
+Schreiben bleibt aus, bis du **Schreiben erlauben** aktivierst. Dann:
+
+- bekommt eine als `switch` (Boolean) oder `setpoint` (Temperatur)
+  deklarierte Variable ein Bedienelement im Dashboard. Für Gladys sind das
+  Ein/Aus-Eingänge und Warmwasser-Sollwerte, nie Schalter oder Thermostate:
+  Sprachassistenten steuern sie nicht;
+- kann jede als `write` deklarierte Variable über die Schaltfläche **Wert
+  schreiben** und die Szenen-Aktion **OPC-UA-Variable schreiben** geschrieben
+  werden, per Name oder NodeId: Zahlen (scale und offset umgekehrt, Bereich
+  des Ganzzahltyps geprüft), 0/1 oder true/false, Texte für eine
+  String-Variable.
+
+Der Server muss das Schreiben ebenfalls erlauben. Eine falsche Variable zu
+schreiben kann eine Anlage stoppen oder beschädigen: Deklariere nur als
+`write`, was Gladys ändern muss.
+
+## Aktionen
+
+- **Server durchsuchen**: listet bis zu 60 Variablen (NodeId, Typ, Zugriff) ab
+  dem Ordner Objects auf, oder ab der NodeId eines als Startknoten angegebenen
+  Ordners.
+- **Konfiguration prüfen**: ob der Server verbunden ist, mit welcher
+  Sicherheit, und die Fehler Eintrag für Eintrag.
+- **Wert schreiben**: schreibt einen Wert in eine deklarierte Variable.
+
+## Szenen
+
+- **Der OPC-UA-Server ist weg** (Auslöser), mit dem Fehler als Variable.
+- **Der OPC-UA-Server ist zurück** (Auslöser).
+- **Eine OPC-UA-Variable wird schlecht** (Auslöser): Der Server meldet einen
+  schlechten Status (Sensorfehler, Eingang verloren), mit Name der Variable und
+  Status.
+- **OPC-UA-Variable schreiben** (Aktion).
+
+Die Werte selbst sind Funktionen: Nutze für Schwellwerte die üblichen
+Gerätewert-Auslöser und -Bedingungen von Gladys.
+
+## Dashboard
+
+Das Widget **OPC-UA-Server** zeigt die ersten sechs Werte und den Zustand der
+Verbindung: verbunden oder nicht, Sicherheit, Variablen in gutem Zustand,
+Uhrzeit des letzten Werts.
+
+## Grenzen
+
+- Ein Server pro Integration.
+- Gladys nimmt 300 Werte pro Minute an: Die Werte werden in jedem
+  Abtastintervall gesendet, bei vielen Variablen seltener (100 Variablen: alle
+  25 s). Nur Änderungen werden gesendet, und ein unveränderter Wert alle
+  6 Stunden.
+- Der Container hat keinen Broadcast: keine automatische Suche nach Servern,
+  gib die Adresse ein.
+
+## Fehlerbehebung
+
+- **Der Server antwortet nicht**: Prüfe Adresse und Port und ob die SPS
+  Verbindungen vom Gladys-Rechner annimmt (Firewall).
+- **Der Server lehnt das Gladys-Zertifikat ab**: Vertraue ihm im Server, siehe
+  oben.
+- **Der Server lehnt Benutzername oder Passwort ab**: Prüfe sie oder die
+  Einstellung für anonymen Zugang im Server.
+- **Kein Endpunkt mit diesem Sicherheitsmodus**: Wähle Modus und Richtlinie,
+  die der Server anbietet.
+- Ausführliche Protokolle: Setze `LOG_LEVEL=debug` für die Integration.
+
+## Danksagung
+
+Gebaut auf [node-opcua](https://github.com/node-opcua/node-opcua) (MIT) von
+Etienne Rossignon und Mitwirkenden. OPC UA ist ein Standard der OPC
+Foundation. Diese Integration ist weder mit der OPC Foundation noch mit einem
+SPS-Hersteller verbunden.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt OPC UA in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Erste Schritte | `section` | Nein | Gib die Adresse des OPC-UA-Servers ein, speichere und nutze dann „Server durchsuchen“, um die NodeIds seiner Variablen zu finden. Deklariere die gewünschten Variablen, speichere erneut und füge den Server im Tab „Entdecken“ hinzu: Jede Variable wird eine Funktion, per Abonnement aktualisiert. |
+| Sprache der Meldungen | `select` | Nein | Wird für die an Szenen übergebenen Texte verwendet. |
+| Server | `section` | Nein | Gib der SPS oder dem Gateway eine feste IP-Adresse: Gladys erkennt den Server an Adresse und Port. |
+| Serveradresse | `string` | Nein | opc.tcp:\/\/, die IP-Adresse und der Port (Standard 4840, 4852 bei Beckhoff, 49320 bei Kepware). |
+| Sicherheitsmodus | `select` | Nein | Mit Signieren oder Signieren und Verschlüsseln muss der Server dem Gladys-Zertifikat einmal vertrauen: siehe Dokumentation. |
+| Sicherheitsrichtlinie | `select` | Nein | Wird im Modus Keine ignoriert. |
+| Benutzername | `string` | Nein | Leer: anonymer Zugang. |
+| Passwort | `secret` | Nein |  |
+| Variablen | `section` | Nein | Bis zu 100 Variablen. Eine falsche Variable zu schreiben kann eine Anlage stoppen oder beschädigen: Deklariere nur als „write“, was Gladys ändern muss. |
+| Variablen | `string` | Nein | Einträge durch Semikolons getrennt: Name: NodeId, dann Art, write und Optionen. Arten: temperature, humidity, pressure, power, energy, production, solar_power, grid_power, voltage, current, battery, volume, duration, value, binary, switch, setpoint, text (Standard: nach Typ). Optionen: scale= offset= unit= min= max= precision=. |
+| Abtastintervall | `select` | Nein | Wie oft der Server die Variablen auf Änderungen prüft. Gladys nimmt 300 Werte pro Minute an: Bei vielen Variablen werden sie seltener gesendet. |
+| Schreiben erlauben | `boolean` | Nein | Standardmäßig aus. Wenn aktiv, können nur die als „write“ (oder switch, setpoint) deklarierten Variablen aus Gladys geändert werden, und nur wenn der Server es erlaubt. |
+
+## So installierst du OPC UA in Gladys
+
+1. Öffne in Gladys **Integrationen**: OPC UA erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-opcua:1.0.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-opcua](https://github.com/guim31/gladys-opcua).
+
+OPC UA benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+OPC UA ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-opcua) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-opcua/blob/HEAD/docs/de.md)

@@ -1,0 +1,203 @@
+---
+title: "Outline smart home integration, free and open source"
+sidebar_label: "Outline"
+description: "Your Outline wiki in Gladys: counters, changed documents, search, journal lines from scenes. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-outline.png"
+keywords:
+  - "outline"
+  - "outline smart home"
+  - "gladys outline"
+  - "outline gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-outline instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Outline","description":"Your Outline wiki in Gladys: counters, changed documents, search, journal lines from scenes.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-outline","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-outline.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-23T06:32:44Z"}} />
+
+Connect Gladys to [Outline](https://www.getoutline.com), the team wiki: follow
+its counters and the document changed last, react when a document is created
+or updated, search it from your scenes, write documents, and keep a journal
+(the boiler, the alarm, the garden…) that Gladys fills in line by line. A
+self-hosted Outline stays on your local network: Gladys talks directly to it.
+Outline Cloud works the same way, with its address.
+
+Tested against a real Outline 1.13.0 (the official Docker image). Feedback
+welcome on the Gladys forum.
+
+## Prerequisites
+
+- Gladys Assistant 5.1 or later.
+- Outline reachable from the Gladys machine (self-hosted), or an Outline Cloud
+  workspace.
+- An API key: in Outline, open **Settings → API & Apps** (or **Preferences →
+  API keys**), then create a key. Leave its scopes empty for full access. A
+  key limited to reading works for the device, the widget, the trigger and the
+  search, not for the actions that write. Copy the key (it starts with
+  `ol_api_`): it is shown once. The integration sees what the owner of the key
+  sees.
+
+## Configuration
+
+1. Open the **Configuration** tab of the integration.
+2. In **Outline address**, enter the address you open Outline at, for example
+   `192.168.1.50:3000`, `https://wiki.example.org` or
+   `https://<team>.getoutline.com`.
+3. Paste the **API key**.
+4. **Read Outline every**: 5, 15 (default), 30 or 60 minutes. Changed documents
+   are announced at the next read.
+5. **Language of names and messages** sets the feature names (fixed when a
+   device is added) and the texts of the integration. French by default.
+6. Save, then use **Test the connection**: it shows the number of documents and
+   collections.
+7. In the **Discovery** tab, add the **Outline** device.
+
+## Devices
+
+**Outline** (one device):
+
+| Feature                 | Value                                         |
+| ----------------------- | --------------------------------------------- |
+| Reachable               | 1 when Outline answers, 0 otherwise           |
+| Documents               | published documents the key may read          |
+| Collections             | collections the key may read                  |
+| Latest changed document | title of the document saved most lately       |
+| Latest change by        | who saved it                                  |
+| Latest change at        | when (date and time, in the Gladys time zone) |
+
+The counters keep their history. The device keeps its identity when the
+address of Outline changes.
+
+## Dashboard widget
+
+**Outline**: two tiles (documents, collections) and the eight documents
+changed last, with their collection, their author and the time of the change.
+In the widget settings, **Collection** keeps the documents of one collection
+(its name, case aside); the tile then counts them. **Hide the counters** keeps
+the list only. When Outline is reached over https, each document opens in
+Outline.
+
+## Scene triggers
+
+- **Outline document created or updated**: a document is published or saved
+  in Outline. Filters: **Collection** (its name exactly as in Outline, e.g.
+  `Home`) and **Change** (created, updated, or empty: both). Empty filters
+  match every document.
+
+Variables: **Document title**, **Collection**, **Change** (`created` or
+`updated`), **Document address**, **Updated by** and **Document id**.
+
+The first read after the installation is silent: the documents already there
+are not announced. The documents written by this integration are never
+announced. At most ten documents are announced per read, the oldest first; the
+next ones wait for the next read. When the 25 documents read have all changed
+since the last read (an import), ten are announced and the rest is counted as
+seen.
+
+## Scene actions
+
+- **Create an Outline document**: **Collection** (its name), **Title**, and
+  optionally **Text** (Markdown). The document is published at once.
+- **Add a line to an Outline document**: **Document** (its exact title, case
+  aside, or its address in Outline) and **Line**. The line is added at the end
+  of the document, as a new paragraph, starting with the date and time unless
+  **Start with the date and time** is off. When no document has that title and
+  a **Collection** is given, the document is created there at its first line;
+  without a collection it is an error.
+- **Search Outline**: **Words to search for**, and optionally a **Collection**.
+  It returns the best match — **Document title**, **Document address**,
+  **Excerpt**, **Collection**, **Document id** — and **Matching documents**,
+  for the next actions of the scene (a message, a spoken answer). No match is
+  an error, shown in red.
+
+The first two return **Document id**, **Document title** and **Document
+address**; the second one also **Document created**.
+
+## Scene examples
+
+- **Boiler log**: when the boiler pressure drops below 1 bar → **Add a line to
+  an Outline document**, document "Boiler journal", collection `Home`, line
+  "Pressure below 1 bar".
+- **Know what changed**: trigger **Outline document created or updated**,
+  collection `Procedures` → send a message "\{\{triggerEvent.data.updated_by\}\}
+  updated \{\{triggerEvent.data.title\}\}".
+- **Ask the wiki**: when you send "wifi" to Gladys → **Search Outline** for
+  "wifi" → send the excerpt and the address of the document found.
+- **Holiday report**: when the alarm is turned off after a holiday → **Create
+  an Outline document** in `Reports`, titled "Holidays 2026".
+
+## Troubleshooting
+
+- **"Outline did not accept the API key"**: the key was revoked, has expired
+  or was mistyped. Create a new one in **Settings → API & Apps**.
+- **"The API key may not do this"**: the scopes of the key do not allow
+  writing, or its owner may not edit that collection. Use a key without scopes,
+  or give its owner the rights.
+- **"Outline limits the requests of this key"**: Outline answered 429. The
+  integration tries again at the next read; space out the scenes that write.
+- **"Outline answers at another address"**: Outline redirects to another
+  address (a login page, another domain). Enter the address shown in your
+  browser. A plain move from http to https is followed on its own.
+- **"Outline does not answer"**: check the address and the port from the Gladys
+  machine. The container uses a bridge network: `localhost` is the container
+  itself, enter the IP address of the server instead.
+- **"This address does not answer like Outline"**: a proxy login page answers
+  instead of Outline. Enter the address of the home of Outline.
+- The version shows `?` on the device: Outline Cloud does not give it. Nothing
+  else is affected.
+- To see more in the logs of the integration, set `LOG_LEVEL=debug`.
+
+## Limits
+
+- One Outline workspace, seen with the permissions of its API key. Drafts are
+  neither counted nor announced.
+- The trigger fires at the next read (15 minutes by default), not instantly:
+  the integration does not receive Outline webhooks, which need an address
+  reachable from Outline. Documents deleted, archived or moved are not
+  announced; a document saved several times between two reads is announced
+  once.
+- A read is two requests (the 25 documents changed last with the number of
+  documents, and the collections), plus the version once. Outline limits each
+  address to 1000 requests a minute, 100 a minute for listing, searching and
+  updating documents, and 25 a minute for creating them.
+- The trigger and the actions name collections by their name: renaming a
+  collection in Outline needs the scenes to follow.
+- The integration never deletes, archives nor moves anything in Outline.
+- Not affiliated with Outline or General Outline, Inc.
+
+## Configuration settings
+
+These are the settings Outline asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Connect Outline | `section` | No | Enter the address of your Outline and an API key: in Outline, open Settings → API & Apps (or Preferences → API keys), then create a key. Leave its scopes empty for full access; a read-only key works without the scene actions that write. Outline Cloud works too. |
+| Outline address | `string` | Yes | The address you open Outline at (for Outline Cloud: https:\/\/\<team>.getoutline.com). |
+| API key | `secret` | Yes | Starts with ol_api_. Shown once, when the key is created. |
+| Read Outline every | `select` | No | Changed documents are announced at the next read. |
+| Language of names and messages | `select` | No | Feature names are set when a device is added to Gladys. |
+
+## How to install Outline in Gladys
+
+1. In Gladys, open **Integrations**: Outline appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-outline:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-outline](https://github.com/guim31/gladys-outline).
+
+Outline requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Outline is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-outline) — [source of this documentation](https://github.com/guim31/gladys-outline/blob/HEAD/docs/en.md)

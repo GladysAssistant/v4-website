@@ -1,0 +1,133 @@
+---
+title: "Intégration domotique ThingSpeak, gratuite et open source"
+sidebar_label: "ThingSpeak"
+description: "Vos canaux ThingSpeak en capteurs Gladys, et des entrées écrites depuis vos scènes. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-thingspeak.png"
+keywords:
+  - "thingspeak"
+  - "domotique thingspeak"
+  - "gladys thingspeak"
+  - "thingspeak gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/guim31/gladys-thingspeak instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"ThingSpeak","description":"Vos canaux ThingSpeak en capteurs Gladys, et des entrées écrites depuis vos scènes.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-thingspeak","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-thingspeak.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-23T06:38:27Z"}} />
+
+Cette intégration amène vos canaux [ThingSpeak](https://thingspeak.mathworks.com) dans Gladys : chaque canal devient un appareil, chaque champ nommé un capteur, avec la date de la dernière entrée. Vos scènes peuvent aussi écrire des entrées sur un canal, comme l'intégration ThingSpeak de Home Assistant.
+
+Testée contre la vraie API ThingSpeak (canaux publics 9, 12397 et 276330, canal privé lu sans sa clé, coupure réseau). L'écriture d'entrées n'a été testée que contre un faux serveur local : retours bienvenus sur [GitHub](https://github.com/guim31/gladys-thingspeak/issues).
+
+## Ce qu'il vous faut
+
+- Gladys 5.1 ou plus récent, avec un accès à Internet.
+- Le numéro de chaque canal à suivre (**Channel ID** sur la page du canal). Un canal public ne demande rien d'autre.
+- Pour un canal privé, sa **Read API Key** (page du canal, onglet **API Keys**).
+- Pour écrire depuis les scènes, la **Write API Key** du canal.
+
+## Pour commencer
+
+### 1. Nommez vos champs avec leur unité
+
+ThingSpeak n'a pas d'unité. Gladys la lit à la fin du nom du champ, entre parenthèses ou crochets, ou après une espace : `Température (°C)`, `Pression [hPa]`, `Humidité %`, `Puissance (W)`. Unités comprises : °C, °F, %, hPa, mbar, Pa, kPa, bar, psi, lux, V, W, kW, A, kWh, ppm, m/s, km/h, mm/h, dB. Un champ en % dont le nom parle d'humidité devient un capteur d'humidité, un champ en ppm dont le nom parle de CO2 un capteur de CO2. Tout autre champ devient un capteur générique, sans unité.
+
+### 2. Configurez l'intégration
+
+- **Numéros des canaux** : les numéros séparés par des virgules, ex. `9, 12397` (20 au plus). L'adresse d'un canal fonctionne aussi.
+- **Clés d'API de lecture (canaux privés)** : vide pour les canaux publics. Une clé pour tous les canaux, ou des paires `canal:CLÉ` séparées par des virgules, ex. `1234567:ABCD1234EFGH5678`.
+- **Clé d'API d'écriture (facultative)** : la clé utilisée par l'action de scène quand elle n'a pas la sienne.
+- **Intervalle de rafraîchissement** : de 1 à 15 minutes, 2 par défaut. Une requête par canal et par rafraîchissement.
+- **Canal muet après** : un canal sans nouvelle entrée depuis ce délai est considéré comme muet (voir Scènes). **Jamais** désactive la règle.
+- **Langue des messages** : langue des noms de fonctionnalités, des variables de scène et des erreurs.
+
+**Tester la connexion** lit tous les canaux tout de suite et indique combien de canaux et de champs ont été lus, ou pourquoi un canal ne peut pas l'être.
+
+### 3. Ajoutez les appareils
+
+Ouvrez l'onglet **Découverte** de l'intégration et ajoutez les canaux voulus. Un champ créé plus tard apparaît après **Mettre à jour** dans le même onglet.
+
+## Les appareils
+
+- Un appareil par canal, nommé comme le canal. Une fonctionnalité par champ nommé, plus **Dernière entrée** (date et heure de la dernière entrée, dans le fuseau de Gladys).
+- Un champ garde la valeur la plus récente trouvée dans les 100 dernières entrées. Un champ écrit plus rarement reçoit sa dernière valeur, demandée une fois et envoyée une fois avec sa propre date, jamais comme une valeur fraîche. Parmi les 100 dernières entrées, une valeur plus ancienne que le délai de silence n'est pas envoyée.
+- Seuls les changements sont envoyés à Gladys, et une valeur inchangée de nouveau toutes les 6 heures tant que le canal reçoit des entrées. Les valeurs d'un canal muet ne sont plus envoyées : Gladys les montre comme anciennes plutôt que fraîches.
+- La latitude, la longitude et l'altitude du canal sont ignorées.
+
+## Tableau de bord
+
+Le widget **Canaux ThingSpeak** :
+
+- sans appareil choisi, une ligne par canal avec le temps écoulé depuis sa dernière entrée, en orange s'il est muet, en rouge s'il est illisible ;
+- avec un appareil choisi, ses six premiers champs en tuiles en direct, puis la ligne de la dernière entrée. **Masquer la ligne de dernière entrée** retire cette ligne.
+
+## Scènes
+
+### Déclencheurs
+
+**Canal ThingSpeak muet ou revenu** : un canal n'a reçu aucune entrée pendant le délai réglé (un capteur n'écrit plus), ou en reçoit de nouveau. Filtres : l'appareil, le changement (muet, de nouveau à jour). Variables : le canal, son numéro, l'état et les minutes depuis la dernière entrée.
+
+### Actions
+
+**Publier sur ThingSpeak** : écrit une entrée, avec des valeurs dans **Champ 1** à **Champ 8** et le **Statut**. Les champs vides ne sont pas envoyés. Une valeur peut venir d'une action précédente, par exemple une température lue sur un autre appareil. La clé d'écriture désigne le canal : laissez le champ de clé vide pour utiliser celle de la configuration. Une virgule décimale (`21,5`) est envoyée avec un point. L'action renvoie le numéro de l'entrée.
+
+L'offre gratuite accepte une entrée toutes les 15 secondes par canal : l'intégration attend quand deux entrées se suivent de trop près, au lieu de voir la seconde refusée. Une quatrième entrée en attente sur la même clé est refusée : elle dépasserait le délai de l'action.
+
+### Idées de scènes
+
+- Toutes les 10 minutes, publier la température d'un capteur de Gladys sur un canal public pour en faire un graphique sur ThingSpeak.
+- Recevoir un message quand le canal de votre station météo est muet depuis une heure.
+
+## Dépannage
+
+- **canal privé : clé d’API de lecture absente ou fausse** : ajoutez la Read API Key de ce canal.
+- **aucun canal ne porte ce numéro** : vérifiez le Channel ID.
+- **ThingSpeak refuse trop de requêtes** : choisissez un intervalle de rafraîchissement plus long.
+- **ThingSpeak a refusé l’entrée** : clé d'écriture fausse, ou entrées trop fréquentes pour votre offre.
+- Logs : `LOG_LEVEL=debug` montre chaque lecture. Les clés d'API n'y apparaissent jamais.
+
+## Limites
+
+- Offre gratuite de ThingSpeak : une entrée toutes les 15 secondes par canal, 3 millions de messages par an. Les lectures ne sont pas limitées en nombre, mais restent raisonnables : une minute est l'intervalle le plus court proposé.
+- 8 champs par canal, 20 canaux au plus.
+- Un champ contenant du texte ne donne pas de valeur.
+- Sans lien avec MathWorks. ThingSpeak est une marque de The MathWorks, Inc.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par ThingSpeak dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Vos canaux ThingSpeak | `section` | Non | Chaque canal devient un appareil, chaque champ nommé un capteur : ajoutez-les depuis l'onglet Découverte. Terminez un nom de champ par son unité, ex. Température (°C), pour que Gladys l'affiche. |
+| Numéros des canaux | `string` | Oui | Séparés par des virgules (Channel ID sur la page du canal). 20 au plus. |
+| Clés d'API de lecture (canaux privés) | `secret` | Non | Vide pour les canaux publics. Une clé pour tous, ou des paires canal:CLÉ séparées par des virgules (onglet API Keys). |
+| Clé d'API d'écriture (facultative) | `secret` | Non | Utilisée par l'action de scène quand elle n'a pas sa propre clé. Sinon, laissez vide. |
+| Intervalle de rafraîchissement | `select` | Non | Une requête par canal et par rafraîchissement. Un appareil écrit au mieux toutes les 15 secondes en offre gratuite. |
+| Canal muet après | `select` | Non | Un canal sans nouvelle entrée depuis ce délai est considéré comme muet : ses dernières valeurs ne sont plus envoyées à Gladys, et le déclencheur de scène se lance. |
+| Langue des messages | `select` | Non | Langue des noms de fonctionnalités, des variables de scène et des erreurs (Gladys ne transmet pas la vôtre à une intégration). |
+
+## Comment installer ThingSpeak dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : ThingSpeak apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/guim31/gladys-thingspeak:1.0.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/guim31/gladys-thingspeak](https://github.com/guim31/gladys-thingspeak).
+
+ThingSpeak nécessite Gladys `>=5.1.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+ThingSpeak est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [guim31](https://github.com/guim31), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/guim31/gladys-thingspeak) — [source de cette documentation](https://github.com/guim31/gladys-thingspeak/blob/HEAD/docs/fr.md)

@@ -1,0 +1,230 @@
+---
+title: "Integración domótica Podman, gratuita y de código abierto"
+sidebar_label: "Podman"
+description: "Sus contenedores Podman en Gladys: estado, salud, reinicios, e iniciarlos o detenerlos. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-podman.png"
+keywords:
+  - "podman"
+  - "domótica podman"
+  - "gladys podman"
+  - "podman gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-podman instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Podman","description":"Sus contenedores Podman en Gladys: estado, salud, reinicios, e iniciarlos o detenerlos.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-podman","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-podman.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-20T06:45:09Z"}} />
+
+Esta integración lleva a Gladys los **contenedores de una máquina Podman**:
+un dispositivo por cada contenedor elegido, con su estado (en marcha o no), su
+salud cuando tiene un healthcheck y sus reinicios, más un dispositivo para la
+propia máquina. Un dispositivo contenedor es un interruptor: apagado, detiene
+el contenedor; encendido, lo inicia. Las escenas pueden reaccionar cuando un
+contenedor se detiene sin que Gladys lo pida o pasa a mala salud, e iniciar,
+detener o reiniciar un contenedor; un widget del panel lista los
+contenedores, los problemas primero.
+
+Habla con la **API REST de Podman** en su red local; nada pasa por la nube.
+
+Probada con un Podman 6.2 real (imagen `quay.io/podman/stable`, como root): la
+lista, el interruptor, las acciones, un contenedor detenido a espaldas de
+Gladys, un healthcheck fallido, un contenedor en un pod, un contenedor
+desconocido y un servicio de API detenido. Desarrollada sin una instancia
+real de Gladys: sus comentarios son bienvenidos en
+[las issues](https://github.com/guim31/gladys-podman/issues).
+
+## Lo que necesita
+
+- Gladys Assistant 5.1.0 o posterior.
+- Una máquina Linux con Podman 4.0 o posterior, accesible desde la máquina de
+  Gladys.
+- Un terminal en esa máquina, una vez, para iniciar el servicio de API de
+  Podman.
+
+## Puesta en marcha
+
+### 1. Iniciar el servicio de API de Podman
+
+Gladys ejecuta la integración en un entorno aislado: no puede alcanzar el
+socket Unix de Podman, solo un puerto TCP. En la máquina Podman, con la cuenta
+propietaria de los contenedores (su usuario para contenedores rootless, root
+para los demás), cree `~/.config/systemd/user/podman-gladys.service`
+(rootless) o `/etc/systemd/system/podman-gladys.service` (root), sustituyendo
+`192.168.1.20` por la dirección de la máquina:
+
+```ini
+[Unit]
+Description=Podman API service for Gladys
+After=network-online.target
+
+[Service]
+ExecStart=/usr/bin/podman system service --time=0 tcp:192.168.1.20:8888
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
+```
+
+Después `systemctl --user enable --now podman-gladys` (rootless, más
+`loginctl enable-linger` para que funcione sin sesión abierta) o
+`sudo systemctl enable --now podman-gladys`. Para probar primero, ejecute
+simplemente `podman system service --time=0 tcp:192.168.1.20:8888` en un
+terminal.
+
+### 2. Proteger el puerto
+
+**Este servicio no tiene contraseña**: quien alcance el puerto controla Podman
+— inicia cualquier contenedor, monta cualquier carpeta — y, para un servicio
+root, toda la máquina. No lo exponga nunca a Internet y ábralo solo a la
+máquina de Gladys (aquí `192.168.1.10`):
+
+```sh
+## firewalld (Fedora, RHEL, CentOS)
+sudo firewall-cmd --permanent --add-rich-rule='rule family="ipv4" source address="192.168.1.10" port port="8888" protocol="tcp" accept'
+sudo firewall-cmd --reload
+## ufw (Debian, Ubuntu)
+sudo ufw allow from 192.168.1.10 to any port 8888 proto tcp
+```
+
+Con nftables u otro cortafuegos, la misma regla: puerto 8888, solo Gladys.
+Prefiera un servicio rootless: solo ve los contenedores de su usuario.
+
+### 3. Configurar la integración
+
+En Gladys, **Integraciones → Podman → Configuración**:
+
+- **Dirección de la API de Podman**: `192.168.1.20:8888` (la IP o el nombre de
+  la máquina; puerto 8888 si se omite, se aceptan `tcp://…` y `http://…`);
+- **Nombre de la máquina** (opcional): se muestra en el nombre del
+  dispositivo, el widget y los mensajes;
+- **Intervalo de actualización**: 30 segundos por defecto;
+- **Idioma de los nombres**: el idioma de los nombres de las funciones y de
+  los mensajes de las acciones.
+
+**Probar la conexión** lee Podman y dice lo que ha encontrado.
+
+### 4. Añadir los dispositivos
+
+En la pestaña **Descubrir**, añada la máquina y los contenedores que quiere
+seguir. Un contenedor se identifica por su **nombre**: recreado con el mismo
+nombre (nueva imagen, Quadlet, podman-compose, actualización automática),
+conserva su dispositivo y su historial.
+
+## Los dispositivos
+
+### La máquina
+
+- **Accesible**: 1 mientras Podman responde;
+- **Versión de Podman**;
+- **Contenedores en marcha**, **Contenedores** (en total), **Contenedores con mala salud**.
+
+### Contenedores
+
+- **En marcha**: un interruptor; apagado detiene el contenedor (Podman envía
+  SIGTERM y espera 10 segundos antes de SIGKILL), encendido lo inicia;
+- **En buen estado**: para un contenedor con healthcheck, 1 en buen estado,
+  0 con mala salud (sin valor durante el arranque ni detenido);
+- **Reinicios**: los reinicios por la política de reinicio.
+
+Un contenedor eliminado de la máquina aparece como inaccesible.
+
+## Panel
+
+El widget **Contenedores Podman** muestra los contenedores en marcha sobre el
+total, los que tienen mala salud y la lista de los contenedores: los añadidos
+(todos si no hay ninguno), los problemas primero. Elija un contenedor en sus
+ajustes para tener los botones **Iniciar** o **Detener** y **Reiniciar**;
+**Actualizar** vuelve a leer Podman. La lista y cada botón pueden ocultarse.
+
+## Escenas
+
+### Disparadores
+
+- **Contenedor detenido inesperadamente**: un contenedor en marcha se ha
+  detenido (fallo, memoria agotada, `podman stop` a mano) o su política de
+  reinicio lo ha relanzado, sin que Gladys lo pida. Una parada pedida por
+  Gladys (interruptor, acción, widget, escena) no dispara nada. Variables:
+  contenedor, estado, código de salida, reinicios.
+- **Contenedor con mala salud**: el healthcheck de un contenedor falla
+  (Podman lo marca unhealthy tras sus intentos); se anuncia de nuevo tras
+  recuperarse o reiniciarse.
+- **Podman inaccesible**: el servicio de API ya no responde (dos lecturas
+  seguidas, con 15 segundos de intervalo); se anuncia una vez por avería.
+
+Los dos primeros pueden limitarse a un dispositivo contenedor.
+
+### Acciones
+
+- **Iniciar un contenedor**, **Detener un contenedor**, **Reiniciar un contenedor**: el contenedor se elige entre los dispositivos contenedores;
+  las salidas son su nombre y si está en marcha después. Las tres son también
+  botones de la pantalla de configuración, junto a **Probar la conexión**.
+
+### Ideas de escenas
+
+- Avisarme con el código de salida cuando el contenedor de la base de datos se
+  detenga inesperadamente.
+- Reiniciar el contenedor del servidor multimedia cada noche a las 4.
+- Iniciar el contenedor del servidor de juegos cuando llego a casa el viernes
+  por la noche, detenerlo a medianoche.
+
+## Solución de problemas
+
+- **El servicio no responde**: compruebe que está en marcha
+  (`systemctl --user status podman-gladys`), que escucha en la dirección de la
+  máquina y no en `127.0.0.1`, y la regla del cortafuegos.
+- **No hay ninguna API de Podman en esta dirección**: la dirección lleva a otra
+  cosa — un motor Docker no es compatible, use su propia integración.
+- **Un servicio rootless no lista ningún contenedor**: solo ve los
+  contenedores del usuario que lo ejecuta; inícielo con ese usuario.
+- **Sin salud**: Podman ejecuta los healthchecks mediante temporizadores de
+  systemd; un contenedor sin healthcheck, o una máquina sin systemd, no tiene.
+- **Registros**: ajuste `LOG_LEVEL=debug` en la integración para ver cada
+  lectura.
+
+## Límites
+
+- Una máquina Podman por integración.
+- Los pods no son dispositivos: sus contenedores sí, uno por uno.
+- Sin cifras de procesador ni memoria: dependen de los cgroups de cada
+  máquina.
+- El servicio de API de Podman no tiene autenticación: proteja su puerto
+  (arriba).
+- Sin relación con el proyecto Podman ni con Red Hat.
+
+## Parámetros de configuración
+
+Estos son los parámetros que Podman te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Su máquina Podman | `section` | No | Inicie el servicio de API de Podman en la máquina (podman system service tcp:…, vea la guía de instalación) e introduzca abajo su dirección. Este servicio no tiene contraseña: abra su puerto solo a Gladys. |
+| Dirección de la API de Podman | `string` | No | La IP o el nombre de la máquina y el puerto del servicio (8888 por defecto). |
+| Opciones | `section` | No | Solo los dispositivos añadidos a Gladys reciben valores; los disparadores de escena funcionan para todos los contenedores. |
+| Nombre de la máquina (opcional) | `string` | No | Se muestra en el nombre del dispositivo, el widget y los mensajes. |
+| Intervalo de actualización | `select` | No | Frecuencia de lectura de Podman. |
+| Idioma de los nombres | `select` | No | Idioma de los nombres de las funciones (fijados al añadir un dispositivo) y de los mensajes de las acciones. |
+
+## Cómo instalar Podman en Gladys
+
+1. En Gladys, abre **Integraciones**: Podman aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-podman:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-podman](https://github.com/guim31/gladys-podman).
+
+Podman requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+Podman es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-podman) — [fuente de esta documentación](https://github.com/guim31/gladys-podman/blob/HEAD/docs/es.md)

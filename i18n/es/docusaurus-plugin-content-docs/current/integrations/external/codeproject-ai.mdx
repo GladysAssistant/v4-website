@@ -1,0 +1,236 @@
+---
+title: "Integración domótica CodeProject.AI, gratuita y de código abierto"
+sidebar_label: "CodeProject.AI"
+description: "Detección local de objetos y rostros en sus cámaras con CodeProject.AI Server, sin nube. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-codeproject-ai.png"
+keywords:
+  - "codeproject.ai"
+  - "domótica codeproject.ai"
+  - "gladys codeproject.ai"
+  - "codeproject.ai gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-codeproject-ai instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"CodeProject.AI","description":"Detección local de objetos y rostros en sus cámaras con CodeProject.AI Server, sin nube.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-codeproject-ai","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-codeproject-ai.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-21T06:22:24Z"}} />
+
+Lleva la **detección de objetos y el reconocimiento de rostros locales** de
+[CodeProject.AI Server](https://www.codeproject.com/ai) a las imágenes de sus cámaras: Gladys sabe si
+hay una persona, un coche, un perro… a la vista, cuántos, quién es cuando usted registró su rostro, y
+muestra la imagen con los recuadros dibujados. Todo se queda en casa: sin nube, sin cuenta.
+CodeProject.AI analiza una imagen a la vez; no es un grabador de vídeo (para eso, vea Frigate o
+Viseron).
+
+Probada con un CodeProject.AI Server real en Docker (`codeproject/ai-server` 2.9.7, CPU, módulos
+Object Detection YOLOv5 6.2 y Face Processing) con fotos libres (una calle con peatones y coches, un
+coche, un retrato), aún no con cámaras reales en servicio: sus comentarios son bienvenidos en
+[GitHub](https://github.com/guim31/gladys-codeproject-ai/issues) o en el foro de Gladys.
+
+## Requisitos
+
+- Gladys 5.1 o posterior.
+- Un CodeProject.AI Server (imagen Docker `codeproject/ai-server`, o el instalador de Windows /
+  Linux), accesible desde Gladys en su puerto (32168 por defecto), con un módulo de **detección de
+  objetos** iniciado (Object Detection YOLOv5 6.2 viene instalado). Para los rostros, el módulo **Face
+  Processing**.
+- Para cada cámara, la dirección de una **instantánea JPEG** (la mayoría de las cámaras IP tienen
+  una, p. ej. `http://usuario:contraseña@192.168.1.30/snapshot.jpg`; Frigate, go2rtc, Shinobi, Blue
+  Iris… ofrecen una por cámara). Los flujos RTSP no se leen: la integración necesitaría ffmpeg.
+
+Una integración no puede leer la imagen de una cámara que ya está en Gladys (las integraciones
+externas no tienen ese acceso): indique la dirección de instantánea de la propia cámara.
+
+## Instalación
+
+1. Inicie CodeProject.AI, por ejemplo:
+   `docker run -d --restart unless-stopped -p 32168:32168 codeproject/ai-server`.
+2. En Gladys, **Integraciones → Instalar desde GitHub**, dirección
+   `https://github.com/guim31/gladys-codeproject-ai`.
+3. En la configuración, rellene **Dirección de CodeProject.AI** y, para cada cámara (cuatro como
+   máximo), un **Nombre** y una **Dirección de la imagen**.
+4. Ejecute la acción **Comprobar la conexión**: enumera los módulos en marcha y analiza cada cámara
+   una vez.
+5. Abra la pestaña **Descubrir** y añada los dispositivos: uno por cámara y uno para el servidor.
+
+Ajustes:
+
+- **Objetos buscados**: etiquetas de objetos en inglés, separadas por comas: `person`, `car`, `truck`,
+  `bicycle`, `motorcycle`, `cat`, `dog`, `bird`… (las 80 etiquetas COCO de los modelos por defecto).
+  `*` conserva todas las etiquetas. Cada cámara puede tener su propia lista en **Objetos
+  (opcional)**.
+- **Confianza mínima**: las detecciones por debajo se ignoran. Una cámara puede tener la suya en
+  **Confianza en % (opcional)**.
+- **Intervalo de análisis**: con qué frecuencia se analiza cada cámara añadida, una tras otra. **Solo
+  bajo demanda** no analiza nada por sí mismo (acción de escena, botón del widget, imagen pedida por
+  Gladys).
+- **Reconocimiento de rostros**: con una persona a la vista, pregunta también al módulo Face
+  Processing quién es. Añade una función **Rostro reconocido** a cada cámara (vuelva a abrir la
+  pestaña Descubrir y actualice los dispositivos).
+- **Idioma de los nombres**: nombres de las funciones, objetos y textos de las escenas.
+
+**Carga de CPU**: cada análisis envía una imagen y ejecuta el modelo en la máquina de CodeProject.AI
+(unos 0,7 s en CPU para YOLOv5 6.2, más 0,5 s para los rostros cuando hay una persona a la vista). Con
+cuatro cámaras cada 10 segundos, una máquina pequeña está ocupada todo el tiempo; 1 minuto es un buen
+comienzo. Nada sale de su red.
+
+## Registrar rostros
+
+El reconocimiento solo conoce los rostros registrados en su servidor. Con la acción **Registrar un
+rostro**: colóquese solo frente a una cámara añadida, lo bastante cerca, elija la cámara, escriba el
+nombre y ejecute. El rostro de la imagen actual se guarda con ese nombre en el servidor
+CodeProject.AI (no en Gladys). Registre a una persona varias veces (distinta luz, distintos ángulos)
+para un reconocimiento más fiable. **Comprobar la conexión** enumera los nombres registrados;
+**Eliminar un rostro** olvida todas las imágenes de un nombre.
+
+## Los dispositivos en Gladys
+
+Un dispositivo por cámara, con:
+
+- **Imagen**: la última imagen analizada, con los recuadros dibujados (rojo: persona, ámbar: otros
+  objetos, verde: rostro reconocido, azul: rostro desconocido), reducida para Gladys.
+- **Objeto detectado**: uno de los objetos buscados está a la vista (Sí/No).
+- **Objetos detectados**: lo que está a la vista, p. ej. «Persona ×2, Coche», o «Ninguno».
+- **Rostro reconocido** (reconocimiento activado): los nombres reconocidos, «Desconocido» para un
+  extraño, o «Ninguno».
+- Un contador por etiqueta buscada, p. ej. **Persona (número)**, **Coche (número)** (no con `*`).
+
+La insignia del dispositivo pasa a «inaccesible» cuando no se puede leer la imagen de la cámara.
+
+Y un dispositivo para el servidor, **Servidor CodeProject.AI**:
+
+- **Módulos activos**: los módulos en marcha, p. ej. «Face Processing, Object Detection (YOLOv5
+  6.2)».
+- **Duración de la detección**: la duración media de las detecciones, en milisegundos, durante el
+  último minuto.
+
+Su insignia pasa a «inaccesible» cuando el servidor no responde. La fecha de cada valor en Gladys
+indica su último cambio: la hora de la última detección.
+
+## Widget del panel
+
+**Cámara CodeProject.AI**: la imagen analizada, los objetos hallados, la mejor confianza, los rostros
+(reconocimiento activado), el número de cada etiqueta buscada, la hora del análisis y un botón
+**Analizar ahora** (el ajuste **Ocultar el botón Analizar** lo oculta).
+
+## Escenas
+
+### Disparadores
+
+- **Objeto detectado por CodeProject.AI**: un objeto aparece en un análisis regular (estaba ausente
+  del anterior), en una cámara o en cualquiera. Filtro por objetos. Variables: cámara, objeto,
+  número, confianza. Un evento cuando aparece el objeto, no uno por análisis. Lo que ya está a la
+  vista al añadir el dispositivo, tras un reinicio o un cambio de ajustes no cuenta. El filtro
+  enumera los objetos comunes: para otra etiqueta, déjelo vacío.
+- **Rostro visto por CodeProject.AI**: un rostro aparece en un análisis regular (reconocimiento
+  activado). Filtro: conocido (registrado) o desconocido. Variables: cámara, nombre («Desconocido»
+  para un extraño), confianza. Un evento por persona que aparece.
+- **Imagen de cámara no leída**: no se pudo leer la imagen de una cámara (el primer fallo seguido).
+
+Los disparadores solo vienen de los análisis regulares: con **Solo bajo demanda**, nunca se
+activan.
+
+### Acciones
+
+- **Analizar una cámara con CodeProject.AI**: analiza la cámara ahora y actualiza su imagen. Salidas:
+  objeto detectado, objetos detectados, número de objetos, número de personas, mejor confianza,
+  rostros vistos, rostro conocido. No activa ningún disparador.
+
+### Ideas de escenas
+
+- Cuando se abre la puerta de entrada, **Analizar una cámara con CodeProject.AI**, y si el número de
+  personas es mayor que 0, la acción del núcleo «Enviar una imagen de cámara» le envía la imagen con
+  sus recuadros.
+- **Rostro visto por CodeProject.AI** (desconocido, cámara de la entrada) con la alarma activada →
+  notificación.
+- **Rostro visto por CodeProject.AI** (conocido) en la puerta → mensaje «Bienvenido a casa,
+  \{nombre\}».
+- Un coche en la entrada de noche → encender la luz exterior.
+
+## Solución de problemas
+
+- **CodeProject.AI no responde**: compruebe la dirección y el puerto (32168), y que el servidor esté
+  en marcha (su panel se abre en `http://<servidor>:32168`).
+- **Ningún módulo de detección de objetos**: abra el panel de CodeProject.AI, pestaña Install
+  Modules, e inicie (o instale) un Object Detection (YOLOv5 6.2, YOLOv8, Coral…).
+- **Sin módulo de rostros**: instale e inicie Face Processing en el mismo panel.
+- **Imagen no leída**: abra la dirección de la cámara en un navegador desde la máquina de Gladys.
+  Debe dar una imagen JPEG, no una página. La autenticación Digest no es compatible: use una
+  dirección con autenticación Basic, o la URL de instantánea de Frigate o go2rtc.
+- **No se detecta nada**: baje la **Confianza mínima**, o pruebe un modelo más grande en el panel de
+  CodeProject.AI.
+- **Un rostro registrado no se reconoce**: regístrelo de nuevo desde la cámara que lo ve, con su luz
+  habitual.
+- Registros detallados: `LOG_LEVEL=debug`.
+
+## Límites
+
+- Cuatro cámaras como máximo, y ocho etiquetas contadas por cámara.
+- La dirección de la cámara, contraseña incluida, se guarda en la configuración de la integración y
+  es visible allí para los administradores de Gladys: prefiera un usuario de cámara que solo pueda
+  ver.
+- Sin vídeo: una imagen por análisis; un objeto que pasa entre dos análisis se pierde.
+- Sin flujos RTSP, sin lectura de matrículas, sin modelos personalizados en esta versión.
+- Los rostros se guardan en el servidor CodeProject.AI (**Eliminar un rostro** olvida uno); Gladys no
+  guarda ninguna foto de rostro.
+- Las imágenes de las cámaras van a Gladys como mucho cada 5 segundos por cámara.
+- Sin relación con CodeProject. Desarrollada sin cámaras reales: sus comentarios son bienvenidos.
+
+## Parámetros de configuración
+
+Estos son los parámetros que CodeProject.AI te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Su servidor CodeProject.AI | `section` | No | CodeProject.AI Server detecta objetos (persona, coche, perro…) y reconoce rostros en imágenes, en su propia máquina. Introduzca su dirección y hasta cuatro cámaras más abajo, y abra la pestaña Descubrir: un dispositivo por cámara y uno para el servidor. |
+| Dirección de CodeProject.AI | `string` | Sí | Sin puerto, se usa el 32168. Añada https:\/\/ detrás de un proxy inverso. |
+| Objetos buscados | `string` | No | Etiquetas de objetos en inglés (COCO: person, car, dog…), separadas por comas (hasta 8, cada una un contador). * = todas. Una cámara puede tener su propia lista. |
+| Confianza mínima | `select` | No | Las detecciones por debajo se ignoran. Más alta: menos falsas alarmas, más omisiones. |
+| Intervalo de análisis | `select` | No | Cada cámara añadida se analiza con esta frecuencia, una tras otra. Cada análisis consume CPU en la máquina de CodeProject.AI. |
+| Reconocimiento de rostros | `select` | No | Con una persona a la vista, pregunta también al módulo Face Processing quién es (rostros registrados con la acción Registrar un rostro). Añade una función Rostro reconocido. |
+| Idioma de los nombres | `select` | No | Nombres de las funciones, objetos y textos de las escenas. |
+| Cámara 1 | `section` | No | La dirección de una instantánea JPEG de la cámara: http:\/\/usuario:contraseña@camara/snapshot.jpg (Frigate, go2rtc, Shinobi, Blue Iris y la mayoría de las cámaras ofrecen una). Deje la dirección vacía para no usar una cámara. |
+| Nombre | `string` | No |  |
+| Dirección de la imagen | `string` | No |  |
+| Objetos (opcional) | `string` | No | Vacío: la lista general. |
+| Confianza en % (opcional) | `string` | No | Vacío: el mínimo general. |
+| Cámara 2 | `section` | No |  |
+| Nombre | `string` | No |  |
+| Dirección de la imagen | `string` | No |  |
+| Objetos (opcional) | `string` | No | Vacío: la lista general. |
+| Confianza en % (opcional) | `string` | No | Vacío: el mínimo general. |
+| Cámara 3 | `section` | No |  |
+| Nombre | `string` | No |  |
+| Dirección de la imagen | `string` | No |  |
+| Objetos (opcional) | `string` | No | Vacío: la lista general. |
+| Confianza en % (opcional) | `string` | No | Vacío: el mínimo general. |
+| Cámara 4 | `section` | No |  |
+| Nombre | `string` | No |  |
+| Dirección de la imagen | `string` | No |  |
+| Objetos (opcional) | `string` | No | Vacío: la lista general. |
+| Confianza en % (opcional) | `string` | No | Vacío: el mínimo general. |
+
+## Cómo instalar CodeProject.AI en Gladys
+
+1. En Gladys, abre **Integraciones**: CodeProject.AI aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-codeproject-ai:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-codeproject-ai](https://github.com/guim31/gladys-codeproject-ai).
+
+CodeProject.AI requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+CodeProject.AI es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-codeproject-ai) — [fuente de esta documentación](https://github.com/guim31/gladys-codeproject-ai/blob/HEAD/docs/es.md)

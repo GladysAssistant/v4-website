@@ -1,0 +1,234 @@
+---
+title: "Incus Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Incus"
+description: "Deine Incus- und LXD-Container und VMs in Gladys: Zustand, CPU, Speicher, Start, Stopp. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-incus.png"
+keywords:
+  - "incus"
+  - "incus smart home"
+  - "gladys incus"
+  - "incus gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-incus instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Incus","description":"Deine Incus- und LXD-Container und VMs in Gladys: Zustand, CPU, Speicher, Start, Stopp.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-incus","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-incus.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-21T06:31:51Z"}} />
+
+Diese Integration bringt die **Container und virtuellen Maschinen eines Incus-Servers** (oder LXD, gleiche API) zu Gladys: ein Gerät pro gewählter
+Instanz, mit ihrem Zustand, ihrer CPU- und Speichernutzung und ihrer
+IP-Adresse, dazu ein Gerät für den Server selbst. Ein Instanz-Gerät ist ein
+Schalter: Schalte es aus, um die Instanz zu stoppen, ein, um sie zu starten.
+Szenen können reagieren, wenn eine Instanz stoppt, ohne dass Gladys es
+verlangt hat, und eine Instanz starten, stoppen oder neu starten; ein
+Dashboard-Widget listet die Instanzen, Probleme zuerst.
+
+Die Integration spricht mit der **REST-API von Incus** über HTTPS in deinem lokalen Netz,
+mit einem eigenen Client-Zertifikat; nichts geht über die Cloud.
+
+Ohne echten Incus-Server entwickelt: Rückmeldungen sind willkommen unter
+[den Issues](https://github.com/guim31/gladys-incus/issues). Die Integration
+wurde mit Antworten nach dem Vorbild der Incus-API und gegen einen lokalen
+TLS-Server getestet, der Client-Zertifikate wie Incus prüft, nicht gegen ein
+echtes Incus oder LXD und nicht gegen eine echte Gladys-Instanz.
+
+Nicht zu verwechseln mit Proxmox VE: Dessen LXC-Container und VMs verwaltet
+Proxmox, über eine andere API (siehe die Proxmox-Integration im Store).
+
+## Was du brauchst
+
+- Gladys Assistant 5.1.0 oder neuer.
+- Einen Incus-Server (6.0 oder neuer) oder LXD-Server (5.21 oder neuer), von
+  der Gladys-Maschine aus erreichbar.
+- Einmal eine Shell auf diesem Server, um die API im Netzwerk zu öffnen und
+  ein Vertrauens-Token zu erstellen.
+
+## Erste Schritte
+
+### 1. Die API im Netzwerk öffnen
+
+Standardmäßig lauscht Incus nur auf seinem lokalen Unix-Socket. Auf dem
+Server:
+
+```sh
+incus config set core.https_address :8443
+```
+
+Die API wird dann per HTTPS auf Port 8443 bereitgestellt. Öffne diesen Port
+nur für die Gladys-Maschine; stelle ihn nie ins Internet.
+
+### 2. Ein Vertrauens-Token erstellen
+
+Incus antwortet nur Clients, deren Zertifikat es vertraut. Die Integration
+erstellt beim ersten Start ihr eigenes Zertifikat (in ihrem Volume `/data`
+gespeichert); ein Token lässt Incus ihm vertrauen:
+
+```sh
+incus config trust add gladys
+```
+
+Kopiere die ausgegebene Zeile. Um Gladys von manchen Instanzen fernzuhalten,
+schränke das Zertifikat auf einige Projekte ein:
+`incus config trust add gladys --restricted --projects default`.
+Mit LXD beginnen dieselben Befehle mit `lxc` statt `incus`.
+
+### 3. Die Integration konfigurieren
+
+In Gladys, **Integrationen → Incus → Konfiguration**:
+
+- **Adresse des Incus-Servers**: `192.168.1.30` (Port 8443, wenn weggelassen,
+  `https://…` akzeptiert). Leer: die erste Adresse im Token;
+- **Vertrauens-Token**: die oben kopierte Zeile. Es wird einmal benutzt:
+  Danach vertraut Incus dem Zertifikat von Gladys, und das Token ist
+  verbraucht;
+- **Name des Servers** (optional): wird im Gerätenamen, im Widget und in den
+  Nachrichten angezeigt;
+- **Aktualisierungsintervall**: standardmäßig 30 Sekunden;
+- **Sprache der Namen**: die Sprache der Funktionsnamen und der
+  Aktionsmeldungen.
+
+**Verbindung testen** liest Incus und sagt, was gefunden wurde.
+
+Das Token enthält auch den Fingerabdruck des Server-Zertifikats: Gladys prüft
+ihn bei jeder Verbindung, bevor irgendetwas gesendet wird. Ohne Token wird
+das erste gesehene Zertifikat behalten. Wechselt der Server sein Zertifikat
+(eine Neuinstallation), weigert sich Gladys, mit ihm zu sprechen; prüfe den
+Grund, dann nutze **Dem Server-Zertifikat erneut vertrauen**.
+
+Ohne Token kannst du dem Zertifikat auch von Hand vertrauen: Kopiere
+`client.crt` aus dem Volume `/data` der Integration auf der Gladys-Maschine,
+dann `incus config trust add-certificate client.crt` auf dem Server.
+
+### 4. Die Geräte hinzufügen
+
+Füge im Tab **Entdecken** den Server und die zu verfolgenden Instanzen
+hinzu. Eine Instanz wird über ihren **Namen** und ihr Projekt erkannt
+(`projekt/name` außerhalb des Standardprojekts): Unter demselben Namen neu
+aufgebaut, behält sie ihr Gerät und ihren Verlauf.
+
+## Die Geräte
+
+### Der Server
+
+- **Erreichbar**: 1, solange Incus antwortet;
+- **Version**: `Incus 6.18` oder `LXD 5.21.3`;
+- **Laufende Instanzen**, **Instanzen** (insgesamt).
+
+### Instanzen
+
+- **Läuft**: ein Schalter; aus bittet die Instanz, sauber herunterzufahren
+  (höchstens 30 Sekunden), ein startet sie (oder setzt sie fort, wenn
+  pausiert);
+- **Prozessor**: die CPU-Last seit dem vorigen Lesen, in % der Threads, die
+  die Instanz nutzen darf (was Incus zuteilt: `limits.cpu` und ihr CPU-Kontingent; eine vCPU für eine
+  VM ohne Limit, alle Threads des Servers für einen Container);
+- **Arbeitsspeicher**: der belegte Speicher, in MB;
+- **IP-Adresse**: die erste globale IPv4-Adresse (sonst IPv6). Eine VM
+  meldet sie nur mit laufendem Agenten (`incus-agent`).
+
+Eine gestoppte Instanz nutzt 0 % und 0 MB. Eine vom Server gelöschte Instanz
+erscheint als nicht erreichbar.
+
+## Dashboard
+
+Das Widget **Incus-Instanzen** zeigt die laufenden Instanzen von allen, die
+fehlerhaften, und die Liste der Instanzen: die hinzugefügten (alle, wenn
+keine hinzugefügt ist), Probleme zuerst, mit ihrer IP-Adresse. Wähle in den
+Einstellungen eine Instanz, um die Schaltflächen **Starten** oder **Stoppen**
+und **Neu starten** zu bekommen; **Aktualisieren** liest Incus neu. Die Liste
+und jede Schaltfläche lassen sich ausblenden.
+
+## Szenen
+
+### Auslöser
+
+- **Instanz unerwartet gestoppt**: ein laufender Container oder eine VM wurde
+  gestoppt oder ist fehlerhaft, ohne dass Gladys es verlangt hat (Absturz,
+  Herunterfahren von innen, Speicher, `incus stop` von Hand). Ein von Gladys
+  verlangter Stopp (Schalter, Aktion, Widget, Szene) löst nichts aus; eine
+  Pause auch nicht. Variablen: Instanz, Projekt, Zustand. Kann auf ein
+  Instanz-Gerät beschränkt werden.
+- **Incus nicht erreichbar**: Der Server antwortet nicht mehr (zwei
+  Lesevorgänge in Folge, im Abstand von 15 Sekunden); einmal pro Ausfall
+  gemeldet.
+
+### Aktionen
+
+- **Instanz starten**, **Instanz stoppen**, **Instanz neu starten**: Die
+  Instanz wird unter den Instanz-Geräten gewählt; die Ausgaben sind ihr Name
+  und ob sie danach läuft. Alle drei sind auch Schaltflächen des
+  Konfigurationsbildschirms, neben **Verbindung testen** und **Dem Server-Zertifikat erneut vertrauen**.
+
+### Ideen für Szenen
+
+- Benachrichtige mich, wenn der Datenbank-Container unerwartet stoppt.
+- Starte die VM des Spieleservers, wenn ich am Freitagabend heimkomme, und
+  stoppe sie um Mitternacht.
+- Starte den Container des Medienservers jede Nacht um 4 Uhr neu.
+
+## Fehlerbehebung
+
+- **Der Server antwortet nicht**: Prüfe `core.https_address`
+  (`incus config get core.https_address`), den Port und die Firewall.
+- **Gladys ist noch nicht autorisiert**: Füge ein Token in der Konfiguration
+  ein (oben).
+- **Vertrauens-Token abgelehnt**: Es ist abgelaufen oder wurde schon benutzt;
+  erstelle ein neues.
+- **Das Server-Zertifikat hat sich geändert**: Nach einer Neuinstallation
+  nutze **Dem Server-Zertifikat erneut vertrauen**; sonst prüfe, dass nichts
+  die Verbindung abfängt.
+- **Incus hat abgelehnt: Das Zertifikat von Gladys ist eingeschränkt**: Das
+  Zertifikat ist auf Projekte beschränkt, die diese Instanz nicht enthalten.
+- **Eine VM hat keine IP-Adresse**: Starte ihren Agenten (`incus-agent`).
+- **Protokolle**: Setze `LOG_LEVEL=debug` für die Integration, um jeden
+  Lesevorgang zu sehen.
+
+## Grenzen
+
+- Ein Incus-Server pro Integration; bei einem Cluster werden die Mitglieder
+  über den angegebenen Server gelesen.
+- Keine Snapshots, Migrationen, Konsolen oder Images: nur Zustand, CPU,
+  Speicher, Adresse, Starten, Stoppen und Neustarten.
+- Ein Stopp ist immer ein sauberes Herunterfahren (höchstens 30 Sekunden):
+  Ein eingefrorener Gast wird nicht erzwungen.
+- Nicht verbunden mit dem Projekt Linux Containers, Incus oder Canonical
+  (LXD).
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Incus in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Dein Incus-Server | `section` | Nein | Lass Incus im Netzwerk lauschen (incus config set core.https_address :8443), erstelle ein Token mit incus config trust add gladys und fülle dann die Felder unten aus. LXD funktioniert genauso (lxc). |
+| Adresse des Incus-Servers | `string` | Nein | Die IP oder der Name des Servers und der Port seiner API (standardmäßig 8443). Leer: die erste Adresse des Tokens. |
+| Vertrauens-Token | `secret` | Nein | Die Zeile, die incus config trust add gladys (oder lxc config trust add) ausgibt. Wird einmal benutzt: Danach vertraut Incus dem Zertifikat von Gladys. |
+| Optionen | `section` | Nein | Nur die zu Gladys hinzugefügten Geräte erhalten Werte; der Szenen-Auslöser funktioniert für alle Instanzen. |
+| Name des Servers (optional) | `string` | Nein | Wird im Gerätenamen, im Widget und in den Nachrichten angezeigt. |
+| Aktualisierungsintervall | `select` | Nein | Wie oft Incus gelesen wird (die CPU-Last wird zwischen zwei Lesevorgängen gemessen). |
+| Sprache der Namen | `select` | Nein | Sprache der Funktionsnamen (beim Hinzufügen eines Geräts festgelegt) und der Aktionsmeldungen. |
+
+## So installierst du Incus in Gladys
+
+1. Öffne in Gladys **Integrationen**: Incus erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-incus:1.0.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-incus](https://github.com/guim31/gladys-incus).
+
+Incus benötigt Gladys `>=5.1.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Incus ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-incus) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-incus/blob/HEAD/docs/de.md)

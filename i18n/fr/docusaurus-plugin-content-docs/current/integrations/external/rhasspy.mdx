@@ -1,0 +1,175 @@
+---
+title: "Intégration domotique Rhasspy, gratuite et open source"
+sidebar_label: "Rhasspy"
+description: "Les intentions vocales de Rhasspy 2.5 lancent vos scènes Gladys, et Gladys fait parler Rhasspy. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-rhasspy.png"
+keywords:
+  - "rhasspy"
+  - "domotique rhasspy"
+  - "gladys rhasspy"
+  - "rhasspy gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/guim31/gladys-rhasspy instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Rhasspy","description":"Les intentions vocales de Rhasspy 2.5 lancent vos scènes Gladys, et Gladys fait parler Rhasspy.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-rhasspy","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-rhasspy.png","type":"device","version":"1.0.0","gladys_version":">=5.2.0","stars":0,"pushed_at":"2026-11-20T06:48:09Z"}} />
+
+Utilisez [Rhasspy 2.5](https://rhasspy.readthedocs.io/), l'assistant vocal hors ligne, avec Gladys :
+les intentions que Rhasspy reconnaît lancent vos scènes, et Gladys fait parler Rhasspy. Tout reste
+sur votre réseau.
+
+Testée contre un vrai Rhasspy 2.5.11 sous Docker, avec des phrases envoyées à son
+`/api/text-to-intent` (sans micro) : vos retours avec de vrais satellites sont les bienvenus.
+
+## Ce que vous obtenez
+
+- Deux déclencheurs de scène : **intention reconnue** (filtre par intention, site et valeurs des
+  slots) et **phrase non reconnue**.
+- Une action de scène : **dire un texte**, prononcé par Rhasspy sur le site choisi.
+- Un appareil par site Rhasspy (`default`, un satellite…) : dernière intention, dernière phrase,
+  ses slots et sa confiance, avec leur historique.
+- Un appareil serveur (facultatif) : Rhasspy joignable, version, langue du profil.
+- Un widget de tableau de bord, **intentions** : les dernières phrases entendues et un bouton pour
+  faire parler Rhasspy.
+
+Pour Rhasspy 3 ou la voix de Home Assistant (protocole Wyoming, Piper), utilisez plutôt
+l'intégration **gladys-wyoming** : elle fait parler Gladys avec Piper, elle ne lit pas les
+intentions.
+
+## Prérequis
+
+- Rhasspy **2.5** avec MQTT. Dans Rhasspy, **Settings → MQTT** : choisissez **External** et
+  indiquez votre broker (Mosquitto…), ou gardez **Internal** et exposez son broker, port **12183**.
+- Gladys 5.2 ou plus récent.
+- La reconnaissance d'intentions configurée dans Rhasspy (Fsticuffs, Fuzzywuzzy…), et la synthèse
+  vocale (eSpeak, Larynx, MaryTTS…) pour l'action de parole. **Intent Handling** peut rester
+  désactivé dans Rhasspy : l'intégration lit les intentions sur MQTT.
+
+## Configuration
+
+| Champ                               | Description                                                                          |
+| ----------------------------------- | ------------------------------------------------------------------------------------ |
+| Broker MQTT                         | `mqtt://hôte:1883`, `mqtts://…`, ou le broker interne de Rhasspy `mqtt://hôte:12183` |
+| Utilisateur, mot de passe MQTT      | Si le broker les demande                                                             |
+| Accepter un certificat auto-signé   | Pour `mqtts://` avec votre propre certificat                                         |
+| Adresse web de Rhasspy (facultatif) | `http://hôte:12101` : ajoute l'appareil serveur                                      |
+| Site par défaut                     | Le site qui parle quand une scène n'en précise pas (`default` dans Rhasspy)          |
+| Sites écoutés (facultatif)          | siteIds séparés par des virgules ; vide : tous les sites                             |
+| Langue des noms                     | Noms des appareils et textes de l'intégration                                        |
+
+L'intégration s'abonne à `hermes/intent/#`, `hermes/nlu/intentNotRecognized` et
+`hermes/tts/sayFinished`, et publie `hermes/tts/say`. Avec une ACL sur le broker, autorisez ces
+topics.
+
+## Appareils
+
+Dans **Intégrations → Rhasspy → Découverte**, ajoutez les appareils voulus :
+
+- **Rhasspy &lt;site&gt;** : un par site entendu (et le site par défaut). Dernière intention (ou
+  « (non reconnue) »), dernière phrase telle qu'elle a été dite, slots (`name=salon, state=on`) et
+  confiance en %. Un site apparaît dès que Rhasspy y a entendu quelque chose.
+- **Serveur Rhasspy** : seulement avec l'adresse web. Vérifié chaque minute.
+
+Une phrase dite deux fois est enregistrée deux fois. Les dernières intentions sont gardées dans le
+volume de données de l'intégration : elles survivent à un redémarrage.
+
+## Scènes
+
+**Intention reconnue** : chaque filtre est facultatif, un filtre vide accepte tout.
+
+- _Intention_ : le nom exact, comme dans le `sentences.ini` de Rhasspy (`ChangeLightState`).
+- _Site_ : le siteId (`default`, `cuisine`…).
+- _Valeur du slot 1, 2, 3_ : les slots sont **triés par nom**. Avec
+  `(allume){state:on} la lumière du (salon | cuisine){name}`, le slot 1 est `name`, le slot 2 est
+  `state` : filtrez sur `salon` et `on` pour « allume la lumière du salon ».
+
+Les actions de la scène lisent l'intention, le site, la phrase, la confiance, tous les slots, et le
+nom et la valeur des slots 1 à 3 (`{{triggerEvent.data.slot_1_value}}`).
+
+**Phrase non reconnue** : Rhasspy a entendu une phrase qui ne correspond à aucune intention ; la
+scène lit la phrase et le site. Pratique pour répondre « Désolé, je n'ai pas compris » avec l'action
+de parole.
+
+**Dire un texte** : Rhasspy prononce le texte avec sa propre synthèse vocale, sur le site indiqué
+(ou le site par défaut). L'action réussit quand Rhasspy confirme la lecture
+(`hermes/tts/sayFinished`) ; elle échoue après 30 secondes sans confirmation, par exemple pour un
+site inconnu.
+
+## Tableau de bord
+
+Le widget **intentions** liste les huit dernières phrases entendues, les plus récentes en tête :
+intention, phrase, heure et site ; ouvrez une ligne pour voir ses slots et sa confiance. Le bouton
+**Faire parler** ouvre un formulaire (texte, site). Réglages : un seul site, masquer les phrases
+non reconnues, masquer le bouton.
+
+## Actions
+
+**Vérifier la connexion** indique si le broker MQTT accepte l'intégration, et si l'adresse web de
+Rhasspy répond (version et langue du profil).
+
+## Limites
+
+- Rhasspy 2.5 seulement (Hermes sur MQTT). Rhasspy 3 et la voix de Home Assistant utilisent
+  Wyoming : voir gladys-wyoming.
+- Pas d'Intent Handling « Remote HTTP » : le conteneur de l'intégration n'est pas joignable depuis
+  votre réseau ; MQTT est la seule entrée.
+- L'intégration ne termine ni ne prolonge les sessions de dialogue de Rhasspy : Rhasspy termine une
+  session de lui-même après l'intention.
+- Les filtres de scène comparent des valeurs exactes : un seuil de confiance n'est pas un filtre.
+
+## Dépannage
+
+- **Rien ne se passe** : vérifiez que Rhasspy et l'intégration utilisent le même broker. Dans
+  Rhasspy, la page **Log** montre les intentions publiées ; `mosquitto_sub -v -t 'hermes/intent/#'`
+  les montre sur le broker.
+- **« Le broker MQTT refuse la connexion »** : utilisateur ou mot de passe, ou une ACL.
+- **L'action de parole échoue** : le siteId doit être servi par Rhasspy (Settings → siteId, ou
+  « Satellite siteIds » sur le serveur), et la synthèse vocale activée.
+- Journaux : **Intégrations → Rhasspy → Journaux** ; `LOG_LEVEL=debug` pour tous les messages.
+
+## Support
+
+Questions et retours sur le [forum Gladys](https://community.gladysassistant.com/), bugs sur
+[GitHub](https://github.com/guim31/gladys-rhasspy/issues). Sans lien avec le projet Rhasspy.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par Rhasspy dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Connecter Rhasspy | `section` | Non | Rhasspy 2.5 communique par MQTT (protocole Hermes). Dans Rhasspy, Settings → MQTT : choisissez External et indiquez le même broker qu'ici, ou utilisez son broker interne (port 12183). Intent Handling peut rester désactivé. |
+| Broker MQTT | `string` | Oui | Le broker sur lequel Rhasspy publie ses intentions. |
+| Utilisateur MQTT | `string` | Non |  |
+| Mot de passe MQTT | `secret` | Non |  |
+| Accepter un certificat auto-signé (mqtts:\/\/) | `boolean` | Non |  |
+| Adresse web de Rhasspy (facultatif) | `string` | Non | Ajoute un appareil serveur : joignable, version, langue du profil. Inutile pour les intentions et la parole. |
+| Site par défaut | `string` | Non | Le siteId qui parle quand une scène n'en précise pas (Rhasspy : Settings → siteId). |
+| Sites écoutés (facultatif) | `string` | Non | siteIds séparés par des virgules. Vide : tous les sites. |
+| Langue des noms | `select` | Non | Noms des appareils et textes envoyés par l'intégration. |
+
+## Comment installer Rhasspy dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : Rhasspy apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/guim31/gladys-rhasspy:1.0.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/guim31/gladys-rhasspy](https://github.com/guim31/gladys-rhasspy).
+
+Rhasspy nécessite Gladys `>=5.2.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+Rhasspy est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [guim31](https://github.com/guim31), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/guim31/gladys-rhasspy) — [source de cette documentation](https://github.com/guim31/gladys-rhasspy/blob/HEAD/docs/fr.md)

@@ -1,0 +1,181 @@
+---
+title: "NetBox smart home integration, free and open source"
+sidebar_label: "NetBox"
+description: "NetBox in Gladys: devices by status, IP addresses, prefix utilization, changes. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-netbox.png"
+keywords:
+  - "netbox"
+  - "netbox smart home"
+  - "gladys netbox"
+  - "netbox gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-netbox instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"NetBox","description":"NetBox in Gladys: devices by status, IP addresses, prefix utilization, changes.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-netbox","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-netbox.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-23T06:30:43Z"}} />
+
+Follow your [NetBox](https://netboxlabs.com/oss/netbox/) network inventory in
+Gladys: the devices by status, the IP addresses and virtual machines, the
+utilization of the prefixes you choose, the last changes. A scene can also
+write a journal entry on a NetBox device. Everything stays on your local
+network: Gladys talks directly to your NetBox server.
+
+Tested against a real NetBox 4.7.5 server (the official `netbox-docker`
+image). Feedback welcome on the Gladys forum.
+
+## Prerequisites
+
+- Gladys Assistant 5.1 or later.
+- A NetBox server, version 3.7 to 4.x, reachable from the Gladys machine.
+- An API token: in NetBox, open your profile menu (top right), **API Tokens**,
+  then **Add a Token**. NetBox 4.5 and later create v2 tokens (`nbt_…`), shown
+  only once: copy it at once. Older versions create v1 tokens (40
+  characters). Both work. A read-only token is enough, except for the scene
+  action that writes journal entries.
+
+## Configuration
+
+1. Open the **Configuration** tab of the integration.
+2. In **NetBox address**, enter the address you open in your browser, with its
+   port, for example `http://192.168.1.20:8000` or `https://netbox.example.org`.
+3. Paste the **API token**.
+4. **Prefixes to follow**: prefixes in CIDR notation (`192.168.1.0/24`) or
+   NetBox prefix numbers (the number in the address of the prefix page),
+   separated by commas, 20 at most. A CIDR present in several VRFs gives one
+   device per VRF. Leave empty to follow no prefix.
+5. **Utilization alert threshold (%)**: the trigger "Prefix almost full" fires
+   when a followed prefix reaches it (90 by default).
+6. **Read NetBox every**: 5, 15 (default), 30 or 60 minutes.
+7. **Language of the feature names** sets the feature names (fixed when a
+   device is added) and the texts of the integration. French by default.
+8. Save, then use **Test the connection**: it shows the NetBox version, the
+   number of devices, the followed prefixes, and the ones not found.
+9. In the **Discovery** tab, add the **NetBox** device and the prefixes.
+
+## Devices
+
+**NetBox** (one device for your server):
+
+| Feature          | Value                                                 |
+| ---------------- | ----------------------------------------------------- |
+| NetBox reachable | 1 when the last read worked, 0 otherwise              |
+| NetBox version   | for example `4.7.5`                                   |
+| Active devices   | devices with the status "Active"                      |
+| Offline devices  | devices with the status "Offline"                     |
+| Failed devices   | devices with the status "Failed"                      |
+| IP addresses     | all the IP addresses                                  |
+| Virtual machines | all the virtual machines                              |
+| Last change      | action, object and user of the last change of the log |
+
+**Prefix …** (one device per followed prefix):
+
+| Feature        | Value                                               |
+| -------------- | --------------------------------------------------- |
+| Utilization    | percentage, computed like the NetBox prefix page    |
+| Free addresses | usable addresses not used (capped at 4 294 967 296) |
+
+The utilization follows NetBox: a prefix counts its IP addresses and the IP
+ranges marked as utilized; a container counts its child prefixes; a prefix
+marked as utilized is at 100 %. An IPv4 prefix shorter than /31 loses its
+network and broadcast addresses, unless it is a pool.
+
+## Dashboard widget
+
+**NetBox**: four tiles (active devices, devices offline or failed, IP
+addresses, virtual machines) and one list, chosen in the settings of the
+widget: the followed prefixes, the fullest first, with their utilization (red
+from the threshold, orange 10 points below), the last changes of the log, or
+no list. Read only.
+
+## Scene triggers
+
+- **Prefix almost full**: a followed prefix reaches the utilization threshold.
+  Announced again once it went below. Filter: the prefix (empty: any).
+  Variables: prefix, VRF, utilization, free addresses, threshold.
+- **Device created or deleted**: a device is created or deleted in NetBox,
+  seen in the change log at the next read. Filter: the change (created,
+  deleted, empty: both). Variables: change, device, device number, user, time
+  of the change. The first read after the installation is silent: past
+  changes are not announced. Ten devices at most per read (a bulk import does
+  not flood the scenes). A prefix already above the threshold when it is first
+  followed is announced at the first read.
+
+What was announced is saved in the data volume of the integration, so a
+restart announces nothing twice. A new NetBox address starts a new baseline.
+
+## Scene action
+
+**Add a NetBox journal entry**: writes a journal entry on a NetBox device,
+given by its name (case-insensitive) or its number. Kind: info (default),
+success, warning or danger. The text accepts scene variables, for example
+"UPS on battery: \{\{…\}\}". Outputs: the number of the entry and the name of the
+device. It needs a token allowed to write (in NetBox 4, the "Write enabled"
+box of the token, and the permission to add journal entries). A failure (no
+such device, several devices with that name, token not allowed) is shown in
+red.
+
+## Limits
+
+- NetBox is read on a timer, not in real time: a change shows at the next read.
+- A read costs about ten small requests, plus two or three per followed
+  prefix. NetBox sets no quota, but keep the interval reasonable on a busy
+  server.
+- The utilization adds the IP addresses and the utilized ranges; NetBox 4.7
+  counts an address that is in both only once. A difference is possible only
+  when an IP address is declared inside a range marked as utilized.
+- Tested on NetBox 4.7.5. NetBox 3.7 to 4.6 use the same API (the change log
+  is read at `/api/extras/object-changes/` before 4.1): not tested on a real
+  server, feedback welcome.
+
+## Troubleshooting
+
+- **Token refused**: the token is wrong, expired, or a v2 token was pasted
+  without its `nbt_` prefix. Create a new one.
+- **This token may not read the devices or the IP addresses**: give the user
+  of the token the permission to view devices, IP addresses and prefixes.
+- **NetBox does not answer**: check the address and the port from the Gladys
+  machine, and that NetBox is running.
+- **A prefix is missing**: "Test the connection" lists the prefixes not found;
+  check the CIDR or use the number of the prefix.
+- Logs: the **Logs** tab of the integration. Set `LOG_LEVEL=debug` for every
+  read.
+
+## Configuration settings
+
+These are the settings NetBox asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Connect NetBox | `section` | No | Enter the address of your NetBox server and an API token: in NetBox, open your profile menu, API Tokens, then Add a Token. A read-only token is enough, except for the scene action that adds journal entries, which needs a token with write access. NetBox 3.7 to 4.x. |
+| NetBox address | `string` | Yes | The address you open NetBox at, with its port if any. |
+| API token | `secret` | Yes | A v1 token (40 characters) or a v2 token (nbt_…) of NetBox 4.5+. |
+| Prefixes to follow | `string` | No | Prefixes in CIDR notation or NetBox prefix numbers, separated by commas: each becomes a device with its utilization and free addresses (20 at most). |
+| Utilization alert threshold (%) | `number` | No | The trigger "Prefix almost full" fires when a followed prefix reaches it. |
+| Read NetBox every | `select` | No |  |
+| Language of the feature names | `select` | No | Feature names are fixed when a device is added to Gladys; this language also writes the texts of the integration. |
+
+## How to install NetBox in Gladys
+
+1. In Gladys, open **Integrations**: NetBox appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-netbox:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-netbox](https://github.com/guim31/gladys-netbox).
+
+NetBox requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+NetBox is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-netbox) — [source of this documentation](https://github.com/guim31/gladys-netbox/blob/HEAD/docs/en.md)

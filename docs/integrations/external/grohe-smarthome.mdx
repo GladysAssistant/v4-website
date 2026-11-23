@@ -1,0 +1,190 @@
+---
+title: "GROHE Smarthome smart home integration, free and open source"
+sidebar_label: "GROHE Smarthome"
+description: "Watch for water leaks and control GROHE Sense, Sense Guard and Blue from Gladys. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-grohesmarthome.png"
+keywords:
+  - "grohe smarthome"
+  - "grohe smarthome smart home"
+  - "gladys grohe smarthome"
+  - "grohe smarthome gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/prohand/gladys-grohesmarthome instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"GROHE Smarthome","description":"Watch for water leaks and control GROHE Sense, Sense Guard and Blue from Gladys.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-grohesmarthome","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-grohesmarthome.png","type":"device","version":"1.0.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-22T09:23:44Z"}} />
+
+This integration brings your GROHE Smarthome appliances into Gladys: water leak
+detection, water shut-off, pressure and consumption, and the GROHE Blue tap.
+
+## Supported appliances
+
+| Appliance                      | What Gladys shows                                                                     |
+| ------------------------------ | ------------------------------------------------------------------------------------- |
+| GROHE Sense                    | Water leak, temperature, humidity, battery                                            |
+| GROHE Sense Guard              | Water valve (open / close), water leak, flow, pressure, water temperature, used today |
+| GROHE Blue Home / Professional | Filter remaining, CO2 remaining                                                       |
+
+## Before you start
+
+- Your appliances are set up in the **GROHE Sense** app (also called GROHE ONDUS) and
+  work there.
+- You know the e-mail and password of that app account.
+- Gladys has Internet access: GROHE appliances only talk to the GROHE cloud. There is
+  nothing to set up on your local network.
+
+## Setup
+
+1. In Gladys, open **Integrations**, find **GROHE Smarthome** and install it.
+2. In the **Configuration** screen, enter your **GROHE e-mail** and **GROHE password**,
+   then save.
+3. Click **Test the connection**: the message lists the appliances found.
+4. Open the **Discover** tab and add the appliances you want.
+
+The values show up at the next read of the GROHE cloud (every 5 minutes by default).
+
+### Settings
+
+| Setting              | Default | What it does                                                                                  |
+| -------------------- | ------- | --------------------------------------------------------------------------------------------- |
+| GROHE e-mail         | —       | The e-mail of the GROHE Sense app.                                                            |
+| GROHE password       | —       | Its password. Stored as a secret, only sent to GROHE.                                         |
+| Refresh interval (s) | 300     | How often the GROHE cloud is read (60 to 3600). One read covers every appliance.              |
+| Detailed logs        | off     | Writes every read in the logs to understand a problem. Passwords and tokens are never logged. |
+
+Below 300 seconds GROHE may slow your account down: keep the default unless you need
+faster values.
+
+## The devices
+
+### GROHE Sense
+
+- **Water leak**: 1 when the GROHE app has an unread flood alert for this sensor. It
+  goes back to 0 once you read the alert in the GROHE app.
+- **Temperature**, **Humidity**, **Battery**.
+
+The Sense runs on batteries and only sends its values a few times a day: its values are
+not live. A flood alert is sent at once.
+
+### GROHE Sense Guard
+
+- **Water valve**: a switch. On = open (water flows), off = closed (water shut off).
+  You can turn it on and off from Gladys.
+- **Water leak**: unread alert for water detected, pipe break or micro-leak.
+- **Water flow** (m³/h), **Water pressure** (bar), **Water temperature** (°C, measured
+  in the pipe: it does not count in the room temperature), **Water used today** (litres).
+
+### GROHE Blue Home / Professional
+
+- **Filter remaining** and **CO2 remaining**, in percent.
+- Tapping water is a scene action (see below).
+
+## Scenes
+
+### Triggers
+
+| Trigger                            | When                                                                           | Filters            |
+| ---------------------------------- | ------------------------------------------------------------------------------ | ------------------ |
+| **A GROHE water leak is detected** | New alert: flooding, water detected, pipe break or micro-leak                  | Appliance          |
+| **A GROHE notification arrives**   | Any new notification of the GROHE app (frost, low battery, unusual use, leak…) | Appliance, level   |
+| **A GROHE valve opens or closes**  | A Sense Guard valve moved by itself (leak protection) or from the GROHE app    | Sense Guard, state |
+
+Orders given by Gladys never fire **A GROHE valve opens or closes**.
+
+The notifications already in the GROHE app when the integration starts are not
+replayed: only the new ones fire the triggers.
+
+The triggers give these variables to the next actions of the scene:
+
+- `device_name`: the name of the appliance;
+- `code`: the GROHE code of the notification (for example `30:0` for flooding);
+- `message_en`, `message_fr`, `message_de`, `message_es`: the text of the notification,
+  in each language;
+- `level` (notification trigger): `info`, `warning` or `alarm`;
+- `state` (valve trigger): `open` or `closed`.
+
+### Actions
+
+| Action                          | Fields                                                         | Result       |
+| ------------------------------- | -------------------------------------------------------------- | ------------ |
+| **Open or close a GROHE valve** | Sense Guard, open or close                                     | `valve_open` |
+| **Measure the water now**       | Sense Guard                                                    | `requested`  |
+| **Tap water from a GROHE Blue** | GROHE Blue, still / medium / sparkling, amount (50 to 2000 ml) | `amount_ml`  |
+
+### Example: shut off the water on a leak
+
+1. Trigger: **A GROHE water leak is detected** (any appliance).
+2. Action: **Open or close a GROHE valve** → your Sense Guard → **Close**.
+3. Action: send a message, for example "Leak: \{\{triggerEvent.data.message_en\}\}
+   (\{\{triggerEvent.data.device_name\}\})".
+
+## Dashboard widget
+
+Add the **GROHE water** widget to a dashboard. It shows:
+
+- whether the GROHE cloud answers, and when it was last read;
+- the leaks in progress (in red) and the state of each valve;
+- two live tiles: water pressure and water used today (or the temperature and humidity
+  of a Sense when you have no Sense Guard);
+- the last GROHE notifications (5 by default, 0 to 8 in the widget settings);
+- buttons: **Close the water** / **Open the water**, **Refresh**, **Documentation**.
+
+## Troubleshooting
+
+| Problem                                 | What to do                                                                         |
+| --------------------------------------- | ---------------------------------------------------------------------------------- |
+| "GROHE refused the login"               | Check the e-mail and password: sign in to the GROHE Sense app with them.           |
+| "The GROHE cloud cannot be reached"     | Check the Internet access of Gladys.                                               |
+| "Connected, but no appliance was found" | The appliances must be set up in the GROHE Sense app, on the same account.         |
+| "The GROHE cloud asks to slow down"     | Raise the refresh interval (300 seconds or more).                                  |
+| A Sense value does not change           | Normal: the Sense only sends its values a few times a day.                         |
+| Water leak stays at 1                   | Read the alert in the GROHE app: the leak feature goes back to 0 at the next read. |
+| Something else                          | Turn **Detailed logs** on, reproduce, and look at the logs of the integration.     |
+
+## Privacy and security
+
+- The e-mail and password are only sent to the GROHE cloud, over HTTPS.
+- The GROHE tokens stay in memory; nothing is written to disk.
+- Passwords and tokens never appear in the logs.
+- See [SECURITY.md](https://github.com/prohand/gladys-grohesmarthome/blob/HEAD/./SECURITY.md) to report a vulnerability.
+
+This project is not affiliated with GROHE. GROHE publishes no official API: the
+integration uses the one of the GROHE Sense app, which GROHE can change at any time.
+
+## Configuration settings
+
+These are the settings GROHE Smarthome asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Getting started | `section` | No | Sign in with the account of the GROHE Sense app (GROHE ONDUS): the integration reads your Sense, Sense Guard and Blue from the GROHE cloud. An Internet access is needed. Once the connection works, add your appliances from the Discover tab. |
+| GROHE e-mail | `string` | Yes | The e-mail address you sign in to the GROHE Sense app with. |
+| GROHE password | `secret` | Yes | The password of that account. It stays in Gladys and is only sent to GROHE. |
+| Refresh interval (s) | `number` | No | How often the GROHE cloud is read, in seconds (60 to 3600). One read covers every appliance. Below 300, GROHE may slow the account down. |
+| Detailed logs | `boolean` | No | Write every read of the GROHE cloud in the logs, to understand a problem. Passwords and tokens are never written. |
+
+## How to install GROHE Smarthome in Gladys
+
+1. In Gladys, open **Integrations**: GROHE Smarthome appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-grohesmarthome:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-grohesmarthome](https://github.com/prohand/gladys-grohesmarthome).
+
+GROHE Smarthome requires Gladys `>=5.3.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+GROHE Smarthome is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [prohand](https://github.com/prohand), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/prohand/gladys-grohesmarthome) — [source of this documentation](https://github.com/prohand/gladys-grohesmarthome/blob/HEAD/docs/en.md)

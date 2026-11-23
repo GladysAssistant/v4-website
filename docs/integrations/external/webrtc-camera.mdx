@@ -1,0 +1,150 @@
+---
+title: "WebRTC Camera smart home integration, free and open source"
+sidebar_label: "WebRTC Camera"
+description: "Your go2rtc cameras in Gladys: snapshots, status, WebRTC live view and scenes. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-webrtccamera.png"
+keywords:
+  - "webrtc camera"
+  - "webrtc camera smart home"
+  - "gladys webrtc camera"
+  - "webrtc camera gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/prohand/gladys-webrtccamera instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"WebRTC Camera","description":"Your go2rtc cameras in Gladys: snapshots, status, WebRTC live view and scenes.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-webrtccamera","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-webrtccamera.png","type":"device","version":"1.0.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-20T14:45:29Z"}} />
+
+Bring the cameras of your **go2rtc** server into Gladys: images on the dashboard, camera status,
+WebRTC live view, scene triggers and actions.
+
+[go2rtc](https://github.com/AlexxIT/go2rtc) is the camera server that reads almost any camera
+(RTSP, ONVIF, Tapo, Reolink, HomeKit, Ring…) and serves it over WebRTC. It runs on its own, and
+it is also included in **Frigate** and in the **Home Assistant** add-on: you may already have one.
+
+## Requirements
+
+- Gladys 5.3 or newer.
+- A go2rtc server reachable from Gladys on your network (API on port **1984** by default).
+- Your cameras declared in go2rtc (`streams:` section of `go2rtc.yaml`).
+
+## Configuration
+
+| Field                     | What to put                                                                                                    |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| go2rtc address            | The go2rtc API, e.g. `http://192.168.1.20:1984`.                                                               |
+| User name / Password      | Only if the go2rtc API is protected (`api.username` / `api.password`).                                         |
+| Cameras                   | Stream names to add, separated by commas. Empty: all the streams.                                              |
+| Image refresh (s)         | Seconds between two images of each camera (default 60). It also detects a camera that stops answering. 0: off. |
+| Image width (px)          | Width of the images (default 640). Gladys accepts 150 KB max: a heavy image is asked again, narrower.          |
+| Live view address (https) | Optional: go2rtc behind an https reverse proxy, as your browser sees it. Adds a WebRTC live view button.       |
+| Detailed logs             | Logs every image and every error. Turn it off afterwards.                                                      |
+
+Then:
+
+1. Click **Test the connection**: the answer gives the go2rtc version and the cameras found.
+2. Open the **Discover** tab and add the cameras to Gladys.
+3. Optional: **Test an image** checks one camera (size, time).
+
+Each go2rtc stream becomes a camera in Gladys. The device id comes from the stream name:
+**renaming a stream in go2rtc creates a new camera** in Gladys.
+
+## Camera status
+
+- A camera is **offline** after two failed images in a row, or at once if go2rtc itself does
+  not answer. Its badge then shows "unreachable".
+- The integration status (Configuration screen) shows whether go2rtc answers, and why not
+  (wrong address, wrong password…).
+- With "Image refresh" at 0, the status is only updated when an image is asked.
+
+## Scenes
+
+**Triggers**
+
+- **A camera stops answering** — filter: camera. Variables: camera name, reason (code:
+  `http_error`, `timeout`, `server_unreachable`, `auth`, …).
+- **A camera answers again** — filter: camera. Variables: camera name, time offline (s).
+
+They fire once, at the change. A camera already down when Gladys starts is shown offline, but
+fires nothing.
+
+**Actions**
+
+- **Take a camera image** — takes a fresh image now. Put it just before the Gladys action
+  "Send a camera image" to send an up-to-date image. Outputs: image taken (yes/no), size (KB).
+- **Read the go2rtc cameras again** — adds the new streams. Outputs: number of cameras, cameras
+  not offline.
+
+Example: _A camera stops answering_ → _Send a message_ "Camera \{\{device_name\}\} is offline
+(\{\{reason\}\})".
+
+## Dashboard widgets
+
+- **Cameras**: all the cameras with their last image, their state and a live view link; the
+  go2rtc status; a button to refresh all the images.
+- **Camera**: one camera in large (chosen in the widget settings), its state, a **New image**
+  button and a **Live view** button.
+
+The live view opens the go2rtc WebRTC player (`stream.html?mode=webrtc`). Gladys only opens
+https links: fill in the **Live view address** with an https address of go2rtc (reverse proxy).
+Without it, the live view buttons are hidden.
+
+## Troubleshooting
+
+| Message                                  | What to do                                                             |
+| ---------------------------------------- | ---------------------------------------------------------------------- |
+| go2rtc cannot be reached                 | Check the address and port, and that Gladys can reach that machine.    |
+| go2rtc refused the user name or password | Check the fields against `api.username` / `api.password` of go2rtc.    |
+| this address is not a go2rtc API         | The address points at another service: use the go2rtc API port (1984). |
+| go2rtc could not read the camera         | go2rtc cannot open the stream: check it in the go2rtc web page.        |
+| the image stays over 150 KB              | Lower the **Image width**.                                             |
+
+Images need go2rtc to decode the video: for H.264/H.265 cameras, go2rtc uses **FFmpeg** (included
+in its Docker image and in Frigate).
+
+## Privacy
+
+- The integration only talks to your go2rtc server. No cloud.
+- The camera URLs listed by go2rtc (often with passwords) are never sent to Gladys nor logged.
+- Images stay in memory (the last one per camera).
+
+## Configuration settings
+
+These are the settings WebRTC Camera asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Getting started | `section` | No | This integration reads your cameras through go2rtc, the WebRTC camera server (standalone, or the one inside Frigate or the Home Assistant add-on). Give the address of its API, port 1984 by default: every go2rtc stream becomes a camera in Gladys. |
+| go2rtc address | `string` | Yes | Address of the go2rtc API on your network, as Gladys reaches it. |
+| User name | `string` | No | Only if the go2rtc API is protected (api.username in go2rtc.yaml). |
+| Password | `secret` | No | Only if the go2rtc API is protected (api.password in go2rtc.yaml). |
+| Cameras | `string` | No | Names of the go2rtc streams to add to Gladys, separated by commas. Leave empty to add them all. |
+| Image refresh (s) | `number` | No | Seconds between two images of every camera, sent to Gladys. It is also how a camera that stops answering is detected. 0: images only when Gladys asks for one. |
+| Image width (px) | `number` | No | Width of the images sent to Gladys. Gladys accepts 150 KB at most: a too heavy image is retried narrower. |
+| Live view address (https) | `string` | No | Optional. The https address of go2rtc as your browser reaches it (reverse proxy). It adds a WebRTC live view button to the widgets. Leave empty if go2rtc is not published in https. |
+| Detailed logs (debug) | `boolean` | No | Log every image taken and every error. Turn it off once the problem is found: it is verbose. Passwords are never logged. |
+
+## How to install WebRTC Camera in Gladys
+
+1. In Gladys, open **Integrations**: WebRTC Camera appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-webrtccamera:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-webrtccamera](https://github.com/prohand/gladys-webrtccamera).
+
+WebRTC Camera requires Gladys `>=5.3.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+WebRTC Camera is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [prohand](https://github.com/prohand), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/prohand/gladys-webrtccamera) — [source of this documentation](https://github.com/prohand/gladys-webrtccamera/blob/HEAD/docs/en.md)
