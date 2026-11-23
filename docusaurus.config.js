@@ -1,4 +1,4 @@
-// Adds the affiliate partner id to every Amazon (amazon.fr, amazon.com) and
+// Adds the affiliate partner id to every Amazon (amazon.fr, amazon.com, amazon.de) and
 // Domadoo link of the docs, blog posts and Markdown pages.
 const remarkAffiliateLinks = require("./plugins/remark-affiliate-links");
 

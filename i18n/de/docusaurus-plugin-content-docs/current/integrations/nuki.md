@@ -7,7 +7,7 @@ sidebar_label: Nuki
 
 # Integration deines smarten Nuki-Schlosses in Gladys
 Mit dieser Integration kannst du:
--   [smarte Schlösser der Marke Nuki](https://www.amazon.com/s?k=Nuki%20Smart%20Lock) steuern: verriegeln, entriegeln
+-   [smarte Schlösser der Marke Nuki](https://www.amazon.de/s?k=Nuki%20Smart%20Lock) steuern: verriegeln, entriegeln
 -   bestimmte Informationen an Gladys übermitteln (Batteriestand, Schlossstatus)  
 
 Öffne in Gladys `Integrationen / Nuki`  

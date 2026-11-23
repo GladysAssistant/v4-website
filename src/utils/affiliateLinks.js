@@ -9,12 +9,13 @@
 const AFFILIATE_PARAMS = {
   "amazon.fr": { name: "tag", value: "gladproj-21" },
   "amazon.com": { name: "tag", value: "gladproj-20" },
+  "amazon.de": { name: "tag", value: "gladproj0e-21" },
   "domadoo.fr": { name: "domid", value: "17" },
 };
 
 // "https://www.amazon.fr/dp/B0BR59FD6C" -> "https://www.amazon.fr/dp/B0BR59FD6C?tag=gladproj-21"
-// Links to any other site (amazon.de and amazon.es have no partner id yet) are
-// returned unchanged. A partner id that doesn't match the site (a French tag
+// Links to any other site (amazon.es has no partner id yet) are returned
+// unchanged. A partner id that doesn't match the site (a French tag
 // on amazon.com earns nothing) is replaced.
 const addAffiliateTag = (href) => {
   if (typeof href !== "string" || !/amazon\.|domadoo\./i.test(href)) {
@@ -37,13 +38,14 @@ const addAffiliateTag = (href) => {
 
 // Amazon store of each language that has a partner id. The generated product
 // boxes (landing pages, external integrations) are hidden in the other
-// languages (de, es) until a partner id is added above and the store here.
-// Hand-written Markdown links are a different matter: the German and Spanish
-// docs and blog keep the amazon.com links of the English text, tagged with
-// the amazon.com partner id.
+// languages (es) until a partner id is added above and the store here.
+// Hand-written Markdown links are a different matter: the German docs and blog
+// link to amazon.de, the Spanish ones keep the amazon.com links of the English
+// text, tagged with the amazon.com partner id.
 const AMAZON_STORES = {
   en: "https://www.amazon.com",
   fr: "https://www.amazon.fr",
+  de: "https://www.amazon.de",
 };
 
 // ("Aqara Motion Sensor P1", "fr") ->

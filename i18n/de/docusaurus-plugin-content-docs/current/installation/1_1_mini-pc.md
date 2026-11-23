@@ -20,7 +20,7 @@ import JsonLd from '@site/src/components/seo/JsonLd';
 Keine Kommandozeile, kein Docker, das du von Hand einrichten musst: Gladys Assistant OS kümmert sich um alles und hält Gladys anschließend selbstständig auf dem neuesten Stand.
 
 :::tip[Welchen Mini-PC soll ich kaufen?]
-Modelle, technische Daten, Stromverbrauch und Budget: [Der beste Mini-PC für die Hausautomation](/de/mini-pc-home-automation/). Ich betreibe Gladys seit Jahren auf einem Beelink-Mini-PC und empfehle den [Beelink Mini S13](https://www.amazon.com/s?k=Beelink+Mini+S13&tag=gladproj-21).
+Modelle, technische Daten, Stromverbrauch und Budget: [Der beste Mini-PC für die Hausautomation](/de/mini-pc-home-automation/). Ich betreibe Gladys seit Jahren auf einem Beelink-Mini-PC und empfehle den [Beelink Mini S13](https://www.amazon.de/s?k=Beelink+Mini+S13).
 :::
 
 ## Was Gladys Assistant OS für dich erledigt

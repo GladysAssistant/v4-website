@@ -7,13 +7,16 @@
 // its integration, plus OpenWeather for forecast data with no hardware).
 
 // Amazon affiliate links (Gladys is an Amazon Associate).
-// Tags: gladproj-20 on amazon.com (EN), gladproj-21 on amazon.fr (FR).
+// Tags: gladproj-20 on amazon.com (EN), gladproj-21 on amazon.fr (FR),
+// gladproj0e-21 on amazon.de (DE).
 // Affiliate-tagged search links keyed to the exact product name, so every link
 // is valid, lands on the right marketplace and carries the affiliate tag.
 const amazonUS = (query) =>
   `https://www.amazon.com/s?k=${encodeURIComponent(query)}&tag=gladproj-20`;
 const amazonFR = (query) =>
   `https://www.amazon.fr/s?k=${encodeURIComponent(query)}&tag=gladproj-21`;
+const amazonDE = (query) =>
+  `https://www.amazon.de/s?k=${encodeURIComponent(query)}&tag=gladproj0e-21`;
 
 const homeWeatherStationContent = {
   en: {
@@ -320,8 +323,6 @@ const homeWeatherStationContent = {
     },
   },
 
-  // German: no amazon.de affiliate tag is configured yet, so the product links
-  // reuse the English (amazon.com) affiliate search links.
   de: {
     meta: {
       title: "Wetterstation fürs Smart Home (Zigbee, Matter, Netatmo)",
@@ -365,7 +366,7 @@ const homeWeatherStationContent = {
           name: "Aqara Temperatur- und Feuchtigkeitssensor",
           tag: "Bester Innensensor, Zigbee",
           text: "Ein winziger, günstiger Zigbee-Sensor, der Temperatur, Luftfeuchtigkeit und Luftdruck meldet. Eines der Geräte, die wir für Gladys ohnehin empfehlen. Wird über Zigbee2MQTT gekoppelt.",
-          buyHref: amazonUS("Aqara Temperature and Humidity Sensor"),
+          buyHref: amazonDE("Aqara Temperatur- und Feuchtigkeitssensor"),
           buyLabel: "Bei Amazon ansehen →",
           docHref: "/de/docs/integrations/zigbee2mqtt/",
           docLabel: "Zigbee-Geräte koppeln",
@@ -374,21 +375,21 @@ const homeWeatherStationContent = {
           name: "SONOFF SNZB-02D",
           tag: "Innen mit Display, Zigbee",
           text: "Ein Zigbee-Temperatur- und Feuchtigkeitssensor mit E-Ink-Display, sodass du die Werte auch direkt an der Wand ablesen kannst. Zuverlässig und günstig, wird über Zigbee2MQTT gekoppelt.",
-          buyHref: amazonUS("SONOFF SNZB-02D Zigbee temperature humidity sensor"),
+          buyHref: amazonDE("SONOFF SNZB-02D Zigbee Temperatur Feuchtigkeitssensor"),
           buyLabel: "Bei Amazon ansehen →",
         },
         {
           name: "OWON THS-317-ET",
           tag: "Außenfühler, Zigbee",
           text: "Ein Zigbee-Temperatursensor mit wasserdichtem externem Fühler, ideal, um die Außentemperatur oder die Temperatur in Kühl- und Gefrierschrank zu messen. Im Zigbee-Katalog von Gladys gelistet.",
-          buyHref: amazonUS("OWON THS-317-ET Zigbee temperature sensor"),
+          buyHref: amazonDE("OWON THS-317-ET Zigbee Temperatursensor"),
           buyLabel: "Bei Amazon ansehen →",
         },
         {
           name: "Eve Weather",
           tag: "Matter over Thread",
           text: "Ein wetterfester Außensensor, der Temperatur, Luftfeuchtigkeit und Luftdruck misst. Er spricht Thread und Matter, sodass Gladys ihn über die Matter-Integration lokal auslesen kann.",
-          buyHref: amazonUS("Eve Weather Matter Thread"),
+          buyHref: amazonDE("Eve Weather Matter Thread"),
           buyLabel: "Bei Amazon ansehen →",
           docHref: "/de/docs/integrations/matter/",
           docLabel: "So funktioniert Matter",
@@ -406,7 +407,7 @@ const homeWeatherStationContent = {
           name: "Netatmo Wetterstation",
           tag: "Komplettstation, Wind und Regen",
           text: "Eine vollständige vernetzte Wetterstation: Innen- und Außenmodul, optional mit Wind- und Regenmesser. Sie läuft über die Netatmo-Cloud, und Gladys liest ihre Werte über die Netatmo-Integration aus. Die realistische Wahl, wenn du heute Wind und Regen messen willst.",
-          buyHref: amazonUS("Netatmo Weather Station"),
+          buyHref: amazonDE("Netatmo Wetterstation"),
           buyLabel: "Bei Amazon ansehen →",
           docHref: "/de/docs/integrations/external/netatmo/",
           docLabel: "Netatmo-Integration",
@@ -474,7 +475,7 @@ const homeWeatherStationContent = {
     },
   },
   // Spanish: no amazon.es affiliate tag is configured yet, so the product links
-  // reuse the English (amazon.com) affiliate search links, like the German ones.
+  // reuse the English (amazon.com) affiliate search links.
   es: {
     meta: {
       title: "La mejor estación meteorológica para un hogar inteligente (Zigbee, Matter, Netatmo)",

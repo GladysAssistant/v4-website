@@ -49,7 +49,7 @@ Das ist super einfach und hilft dir, leistungsstarke Szenen zu bauen, zum Beispi
 
 ## Zigbee2Mqtt: Unterstützung für Sonoff SNZB-01
 
-Wir unterstützen jetzt mehr Klickarten am kabellosen Schalter [Sonoff SNZB-01](https://www.amazon.com/s?k=Sonoff%20SNZB-01).
+Wir unterstützen jetzt mehr Klickarten am kabellosen Schalter [Sonoff SNZB-01](https://www.amazon.de/s?k=Sonoff%20SNZB-01).
 
 ## Wie aktualisiere ich?
 

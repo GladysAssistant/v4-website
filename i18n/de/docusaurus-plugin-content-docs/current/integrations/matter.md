@@ -63,19 +63,19 @@ Ein Thread-Router (oder „Thread Border Router“) verbindet deine Thread-Gerä
 
 Viele handelsübliche Geräte sind Thread-Router:
 
-- [Apple TV 4K Ethernet 128 GB](https://www.amazon.com/s?k=Apple%20TV%204K%20Ethernet%20128GB)
-- [Apple HomePod](https://www.amazon.com/s?k=Apple%20HomePod)
+- [Apple TV 4K Ethernet 128 GB](https://www.amazon.de/s?k=Apple%20TV%204K%20Ethernet%20128GB)
+- Apple HomePod
 - Google Home Speaker (2026)
 - Google Nest Hub Max
-- [Google Nest Hub (2. Generation)](https://www.amazon.com/s?k=Google%20Nest%20Hub%202nd%20generation)
-- [Google Nest Wi-Fi Pro](https://www.amazon.com/s?k=Google%20Nest%20Wifi%20Pro)
-- [Google TV Streamer 4K](https://www.amazon.com/s?k=Google%20TV%20Streamer%204K)
-- [Amazon Echo (4. Generation)](https://www.amazon.com/s?k=Amazon%20Echo%204th%20generation)
-- [Amazon Echo Dot Max](https://www.amazon.com/s?k=Amazon%20Echo%20Dot%20Max)
-- [Amazon Echo Hub](https://www.amazon.com/s?k=Amazon%20Echo%20Hub)
-- [Amazon Echo Studio](https://www.amazon.com/s?k=Amazon%20Echo%20Studio)
-- [Amazon Echo Show 8](https://www.amazon.com/s?k=Amazon%20Echo%20Show%208%203rd%20generation) (3. Generation), 10 (3. Generation), 11, 15 (2. Generation), 16 und 21. Ältere Echo-Show-Modelle und der Echo Show 5 sind keine Thread-Router
-- Neuere [Amazon-eero-Router](https://www.amazon.com/s?k=Amazon%20eero%206) (eero 6 und neuer, eero Pro, eero Beacon)
+- Google Nest Hub (2. Generation)
+- [Google Nest Wi-Fi Pro](https://www.amazon.de/s?k=Google%20Nest%20Wifi%20Pro)
+- [Google TV Streamer 4K](https://www.amazon.de/s?k=Google%20TV%20Streamer%204K)
+- [Amazon Echo (4. Generation)](https://www.amazon.de/s?k=Amazon%20Echo%204th%20generation)
+- [Amazon Echo Dot Max](https://www.amazon.de/s?k=Amazon%20Echo%20Dot%20Max)
+- [Amazon Echo Hub](https://www.amazon.de/s?k=Amazon%20Echo%20Hub)
+- [Amazon Echo Studio](https://www.amazon.de/s?k=Amazon%20Echo%20Studio)
+- [Amazon Echo Show 8](https://www.amazon.de/s?k=Amazon%20Echo%20Show%208%203rd%20generation) (3. Generation), 10 (3. Generation), 11, 15 (2. Generation), 16 und 21. Ältere Echo-Show-Modelle und der Echo Show 5 sind keine Thread-Router
+- Neuere [Amazon-eero-Router](https://www.amazon.de/s?k=Amazon%20eero%206) (eero 6 und neuer, eero Pro, eero Beacon)
 
 Du kannst auch deinen eigenen Thread-Router mit einem USB-Thread-Dongle und OpenThread aufsetzen.
 
