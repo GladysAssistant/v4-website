@@ -1,0 +1,142 @@
+---
+title: "Blue Riiot smart home integration, free and open source"
+sidebar_label: "Blue Riiot"
+description: "Blue Connect pool analysers: temperature, pH, redox, salt, advice, scenes, widget. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-blue-riiot.jpg"
+keywords:
+  - "blue riiot"
+  - "blue riiot smart home"
+  - "gladys blue riiot"
+  - "blue riiot gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/William-De71/gladys-blue-riiot instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Blue Riiot","description":"Blue Connect pool analysers: temperature, pH, redox, salt, advice, scenes, widget.","owner":"William-De71","owner_avatar_url":"https://avatars.githubusercontent.com/u/11477113?v=4","repo_url":"https://github.com/William-De71/gladys-blue-riiot","cover_url":"https://integration-store-storage.gladysassistant.com/covers/William-De71--gladys-blue-riiot.jpg","type":"device","version":"0.1.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-22T21:33:52Z"}} />
+
+## Overview
+
+This integration brings the **Blue Connect** pool analysers of your Blue Riiot account into Gladys:
+
+- a device per Blue Connect: water temperature, pH, redox (ORP), salinity on the models that measure it, the water quality against the ideal ranges of Blue Riiot, the advice of the app, and the battery;
+- scene triggers (new measure, value out of its ideal range, value back in range, new advice, battery low, no measure for 48 hours) and two scene actions (read a Blue Connect; ask the Blue Extender for its newest measure);
+- a "Pool water" dashboard widget.
+
+Blue Riiot has no local API and no public one: the Blue Connect sends its measures to the Blue Riiot cloud, and the integration reads them through the **cloud interface of the Blue Connect app**, with the e-mail and password of your account (cloud transport). That interface is not documented by Blue Riiot and may change without notice. Your password only goes to the Blue Riiot login, at `api.riiotlabs.com`.
+
+![Pool water widget, a balanced pool and a salt pool whose pH rose (generated illustration, not a screenshot)](https://raw.githubusercontent.com/William-De71/gladys-blue-riiot/main/docs/assets/widgets.en.png)
+
+## Requirements
+
+- Gladys Assistant 5.3.0 or later.
+- A Blue Connect (Go, Plus, Gold…) already working in the Blue Connect app.
+- The e-mail and password of that account, the ones you type in the app.
+
+## Configuration
+
+1. Integrations → Blue Riiot → Configuration.
+2. Enter the e-mail and password, then save.
+
+| Field                  | Description                                                                                      |
+| ---------------------- | ------------------------------------------------------------------------------------------------ |
+| E-mail                 | The e-mail of the Blue Connect account.                                                          |
+| Password               | Stored as a secret, never shown again and never logged; only sent to the Blue Riiot login.       |
+| Reading interval (min) | 10 to 120 minutes, 30 by default. A Blue Connect measures every 20 minutes to a few hours.       |
+| Language of the texts  | Feature names, advice of the app and scene summaries. Automatic: the language of your dashboard. |
+
+**Test the account** logs in and tells how many pools and Blue Connect devices the account has.
+
+If Blue Riiot refuses the e-mail or the password, the readings **pause** so that the account is not locked by repeated tries. Correct the password and save (or click **Test the account**): they start again.
+
+## Usage
+
+### Devices
+
+Devices → Blue Riiot → **Discover**, then add your Blue Connect ("Blue Connect Go Garden", after the model and the name of the pool in the app). Its values appear at once.
+
+| Feature           | Gladys type                                                                  |
+| ----------------- | ---------------------------------------------------------------------------- |
+| Water temperature | Temperature sensor, °C                                                       |
+| pH                | pH sensor                                                                    |
+| Redox (ORP)       | ORP sensor, mV                                                               |
+| Salinity          | Level sensor, ppm (3.2 g/L = 3200 ppm), only on the models that measure salt |
+| Water quality     | Text: Good, To watch or Out of range: the worst of pH, redox and salinity    |
+| Blue Riiot advice | Text: the advice of the Blue Connect app                                     |
+| Battery low       | Battery low                                                                  |
+
+The ideal ranges are the ones Blue Riiot sends with each measure (for instance pH 7.2 to 7.6). The test strips entered in the app are not device values: the scene action gives them as they are. Nothing can be controlled from Gladys.
+
+### Scenes
+
+Triggers:
+
+- **Blue Riiot: new measure**: each new measure, with its values and the water quality as variables.
+- **Blue Riiot: value out of range**: a measure (temperature, pH, redox, salinity) leaves its ideal range, or goes from "out of range" to "far out of it" (critical). Filter on the measure and the level.
+- **Blue Riiot: value back in range**: a measure comes back into its ideal range.
+- **Blue Riiot: new advice**: the app gives another advice; its code, title and message as variables.
+- **Blue Riiot: battery low**: the battery of the Blue Connect turns low.
+- **Blue Riiot: measures stopped**: no measure for 48 hours (battery, Sigfox coverage, Blue Extender). Fired once.
+
+Actions:
+
+- **Blue Riiot: read a Blue Connect**: temperature, pH, redox, salinity, conductivity, the last test strip (free chlorine, alkalinity), water quality, battery, advice and a ready-made sentence.
+- **Blue Riiot: fetch from the Extender**: asks the cloud to take over the newest measure the Blue Extender keeps, like the Wi-Fi refresh of the app. It does not start a measure; the values arrive with the next reading. At most once every 10 minutes per Blue Connect.
+
+Examples:
+
+- When the pH goes out of range → send a message with `{{triggerEvent.data.summary}}`.
+- When the redox is critical → switch the salt chlorinator plug on for two hours.
+- Every evening at 8 pm → read the Blue Connect, then send its summary.
+
+### Widget
+
+Dashboard → Edit → add **Pool water**. Choose the Blue Connect, the chart (temperature, pH, redox, salinity or none) and its period. The tiles are green, orange or red after the ideal ranges of Blue Riiot. The chart shows the history Gladys keeps: it appears once the device is added.
+
+## Troubleshooting
+
+- **"Blue Riiot refused the e-mail or password"**: check them in the Blue Connect app, correct them and save. The readings are paused until then.
+- **No device in Discover**: no Blue Connect is paired with a pool of the account, or the cloud has not been read yet: use "Test the account".
+- **"No measure yet"**: the Blue Connect has not sent a measure to the cloud yet.
+- **Values late or missing**: a Blue Connect Go without a Blue Extender only sends its measures when a phone with the app is nearby. With an Extender, the scene action "fetch from the Extender" brings its newest measure.
+- **"Blue Riiot sent an unexpected answer"**: the interface of the app may have changed; open an issue.
+- **"The Blue Riiot cloud does not answer" or "Blue Riiot limits the requests"**: the integration tries again at the next reading.
+- **Logs**: add the environment variable `DEBUG=gladys-integration-sdk`, then open an issue on [GitHub](https://github.com/William-De71/gladys-blue-riiot/issues) with the Gladys and integration versions and the logs (the password never appears in them).
+
+## Configuration settings
+
+These are the settings Blue Riiot asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Blue Connect account | `section` | No | The e-mail and password you use in the Blue Connect app. Blue Riiot has no public API: the integration reads your pools through the cloud interface of the app, read-only, and it may change without notice. Your password stays in Gladys and only goes to Blue Riiot. |
+| E-mail | `string` | Yes |  |
+| Password | `secret` | Yes |  |
+| Options | `section` | No | A Blue Connect measures every 20 minutes to a few hours, depending on the model and how it reaches the cloud. Each reading costs about five requests for one pool and one Blue Connect. |
+| Reading interval (min) | `number` | No | 10 to 120 minutes, 30 by default. |
+| Language of the texts | `select` | No | Feature names, advice of the app and scene summaries. Automatic: the language of your dashboard, once the Blue Riiot widget has been displayed. |
+
+## How to install Blue Riiot in Gladys
+
+1. In Gladys, open **Integrations**: Blue Riiot appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/william-de71/gladys-blue-riiot:0.1.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/William-De71/gladys-blue-riiot](https://github.com/William-De71/gladys-blue-riiot).
+
+Blue Riiot requires Gladys `>=5.3.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Blue Riiot is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [William-De71](https://github.com/William-De71), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/William-De71/gladys-blue-riiot) — [source of this documentation](https://github.com/William-De71/gladys-blue-riiot/blob/HEAD/docs/en.md)

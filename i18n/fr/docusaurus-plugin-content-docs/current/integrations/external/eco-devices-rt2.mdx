@@ -19,13 +19,13 @@ https://github.com/LM1LC3N7/gladys-ecodevices-rt2 instead. */}
 
 import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
 
-<ExternalIntegrationHeader integration={{"name":"Eco-Devices RT2","description":"GCE Eco-Devices RT2 sur votre réseau : compteurs, relais, entrées, fil pilote (X-4FP), X-THL.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-ecodevices-rt2","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ecodevices-rt2.png","type":"device","version":"0.2.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-19T01:40:38Z"}} />
+<ExternalIntegrationHeader integration={{"name":"Eco-Devices RT2","description":"GCE Eco-Devices RT2 sur votre réseau : compteurs, relais, entrées, fil pilote (X-4FP), X-THL.","owner":"LM1LC3N7","owner_avatar_url":"https://avatars.githubusercontent.com/u/14235706?v=4","repo_url":"https://github.com/LM1LC3N7/gladys-ecodevices-rt2","cover_url":"https://integration-store-storage.gladysassistant.com/covers/LM1LC3N7--gladys-ecodevices-rt2.png","type":"device","version":"0.3.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-20T18:15:17Z"}} />
 
 Amène dans Gladys **jusqu’à trois Eco-Devices RT2 de GCE Electronics** par
 leur API JSON locale : les index de la téléinformation et des compteurs
-d’impulsions (eau, gaz, électricité ; pinces ampèremétriques une fois leur
-unité confirmée), leurs
-relais, leurs entrées, les zones de fil pilote de leurs extensions X-4FP et
+d’impulsions (eau, gaz, électricité) et des compteurs de puissance des pinces
+ampèremétriques (consommation, production, injection ou soutirage, à votre
+mot), leurs relais, leurs entrées, les zones de fil pilote de leurs extensions X-4FP et
 leurs capteurs X-THL (température, humidité, luminosité).
 
 > Jamais testé avec un vrai appareil : écrit d’après la documentation de
@@ -53,7 +53,12 @@ leurs capteurs X-THL (température, humidité, luminosité).
      `FP1-FP4, THL1, TIC, P1-P2`) ;
    - listez dans « Compteurs d’impulsions » ceux à amener, avec ce qu’ils
      mesurent et l’unité de leur index dans l’Eco-Devices (par ex.
-     `C1:water:l, C2:gas:m3`).
+     `C1:eau:l, C2:gaz:m3, C3:électricité:wh` ; les mots anglais `water`,
+     `gas`, `electricity` marchent aussi) ;
+   - listez dans « Compteurs de puissance » ceux à amener, avec le mode que
+     vous leur avez donné dans la page « Compteurs de puissance » du RT2
+     (par ex. `T1, T2:production, T3:injection, T4:soutirage` ; sans mode,
+     consommation).
 
    Puis enregistrez.
 
@@ -100,7 +105,7 @@ valeur.
 | Sur l’Eco-Devices RT2                      | Dans Gladys                                                        | Code (dans le nom) |
 | ------------------------------------------ | ------------------------------------------------------------------ | ------------------ |
 | Index de téléinformation 1 à 7             | index d’énergie (kWh)                                              | `TI1`              |
-| Pince ampèremétrique 1 à 16                | pas encore (voir « Unités » plus bas)                              | `TORE3`            |
+| Compteur de puissance 1 à 20 (si listé)    | index d’énergie, de production, d’injection ou de soutirage (kWh)  | `TORE3`            |
 | Compteur d’impulsions 1 à 12 (si listé)    | index d’eau ou de gaz (m³), ou d’énergie (kWh)                     | `C1`               |
 | Relais 1 à 10 (2 + un X-8R)                | lecture seule, ou interrupteur / lumière si vous le listez         | `R3`               |
 | Entrée 1 à 12                              | une entrée binaire (lecture seule)                                 | `D3`               |
@@ -173,17 +178,40 @@ par une garde.
 **Unités.** Les index de téléinformation sont lus en Wh et publiés en kWh :
 confirmé sur un vrai RT2, dont le TI1 valait, à 143 Wh près, l’index qu’un
 Eco-Devices 3 (en Wh) lisait sur le même compteur. Sa propre page peut
-afficher des kWh : même valeur, divisée par 1000. Un index de pince
-(`Index_TORE<n>`) est l’énergie comptée sur cette pince, mais son unité (Wh
-ou kWh) n’est donnée par aucune source et ne se compare pas à la page de
-l’Eco-Devices (qui n’affiche que la puissance instantanée d’une pince) ; une
-erreur d’un facteur 1000, corrigée plus tard, serait un saut compté une fois
-comme consommation : les pinces ne sont donc **ni proposées ni publiées**
-tant qu’elle ne l’est pas ; l’état dit combien ont été lues. Seules les
-pinces 1 à 16 sont lues : le RT2 du testeur répond aussi `Index_TORE17` et
-au-delà, reliquat chez lui d’une extension X400 CT autrefois câblée (valeurs
-figées), jamais proposé. Avec une X400 CT câblée aujourd’hui, ce seraient de
-vraies pinces : à revoir quand l’unité d’une pince sera confirmée. Un compteur d’impulsions est lu dans l’unité que vous
+afficher des kWh : même valeur, divisée par 1000.
+
+**Compteurs de puissance (pinces).** Depuis le firmware 3.0 du RT2 (juin
+2022), une pince ampèremétrique ne se lit pas directement : le RT2 a 20
+« compteurs de puissance » (`Index_TORE1` à `Index_TORE20` dans l’API,
+« Compteur puissance 1 » à « 20 » dans sa page), et vous reliez chacun à l’une
+des 16 entrées de pince (4 sur le RT2, 12 sur une X-400 CT) avec un **mode**
+(consommation, production, soutiré, injecté, ou différentiel) et une unité de
+comptage (kWh par défaut, ou kVAh). L’API ne donne ni le mode ni l’unité :
+listez donc chaque compteur avec son mode dans « Compteurs de puissance »
+(`T1, T2:production`), et gardez kWh comme unité de comptage dans le RT2
+(Gladys n’a pas de kVAh : un compteur en kVAh serait publié comme des kWh).
+Un compteur en consommation devient un index d’énergie, en production un
+index de production, en injection un index d’injection (`grid-sensor`,
+`output-index`), en soutirage un index de soutirage (`input-index`) ; un
+compteur **différentiel** n’est pas pris en charge (on ne sait pas ce qu’il
+compte ni s’il peut baisser) : ne le listez pas. Un compteur donné deux fois
+avec deux modes (`T3, T3:injection`) est refusé en entier, l’état le dit
+(« TORE3 ×2 »). L’index est lu en
+Wh (documentation GCE : « index en Wh » ; les valeurs vues sur trois vrais
+RT2 sont des milliers de kWh) et publié en kWh ; aucune comparaison avec la
+page d’un vrai RT2 encore : **comparez la première valeur publiée à la page
+« Compteurs de puissance »** et dites-nous. Un compteur qui compte mais n’est
+pas listé est nommé dans l’état ; un compteur listé sans valeur (0 ou « -- » :
+pas encore relié à une pince, ou effacé) n’est pas publié, ne compte pas
+dans les index lus et est nommé dans l’état ; un compteur dont vous changez
+le mode reçoit une nouvelle fonctionnalité, qui repart de la première valeur
+lue (si vous revenez ensuite à l’ancien mode, son ancienne fonctionnalité
+repart de sa dernière valeur dans Gladys : un écart accumulé entre-temps
+peut passer comme un saut couvert par le temps) ; un compteur effacé dans le
+RT2 est une baisse, retenue jusqu’à vos deux clics. Un RT2 en firmware 2
+(qui répond `Index_TORE_Cons1`…) n’a pas de compteur de puissance : rien n’est
+lu dans ses `Index_TORE`, pas même `Index_TORE5` à `16`, et l’état le dit.
+Un compteur d’impulsions est lu dans l’unité que vous
 indiquez : comparez la première valeur publiée au compteur. Un compteur dont
 vous changez le **type** reçoit une nouvelle fonctionnalité, qui repart de la
 première valeur lue. Si vous changez son **unité** après la publication de
@@ -343,8 +371,8 @@ y remet pas. Ils reviennent à la première lecture réussie.
 
 - Téléinformation (index, puissance apparente, intensité, période
   tarifaire), puissance instantanée des postes, compteurs d’impulsions,
-  relais, entrées, X-4FP et X-THL seulement (les index de pince attendent la
-  confirmation de leur unité) : la puissance instantanée d’une pince, les
+  compteurs de puissance des pinces, relais, entrées, X-4FP et X-THL
+  seulement : la puissance instantanée d’une pince, les
   sous-postes, les index par période (HC/HP, Tempo), les prix, les sorties
   virtuelles et EnOcean ne sont pas dans cette version.
 - Détail de la téléinformation : celui de `Get=TI` (une entrée de
@@ -369,13 +397,14 @@ Voici les paramètres demandés par Eco-Devices RT2 dans son écran de configura
 
 | Paramètre | Type | Obligatoire | Description |
 | --- | --- | --- | --- |
-| Votre Eco-Devices RT2 | `section` | Non | Amène dans Gladys jusqu’à trois Eco-Devices RT2 de GCE Electronics par leur API JSON locale : les index de la téléinformation et des compteurs d’impulsions (jamais 0 ; une baisse ou un saut retenu jusqu’à ce que vous l’acceptiez ; pinces une fois leur unité confirmée), relais (en lecture seule sauf ceux listés ci-dessous), entrées, zones de fil pilote des X-4FP, capteurs X-THL, détail de la téléinformation et puissance instantanée des postes. Fil pilote : Arrêt et Hors-gel passent en premier, sans option (limites dans le guide) ; Éco et Confort seulement une fois autorisés ci-dessous. Chaque Eco-Devices garde ses propres appareils : un boîtier à une autre adresse, ou un autre produit GCE, ne reçoit jamais leurs commandes. Jamais testé avec un vrai appareil. Sans lien avec GCE Electronics. |
+| Votre Eco-Devices RT2 | `section` | Non | Amène dans Gladys jusqu’à trois Eco-Devices RT2 de GCE Electronics par leur API JSON locale : les index de la téléinformation et des compteurs d’impulsions (jamais 0 ; une baisse ou un saut retenu jusqu’à ce que vous l’acceptiez ; compteurs de puissance des pinces que vous listez, avec leur mode), relais (en lecture seule sauf ceux listés ci-dessous), entrées, zones de fil pilote des X-4FP, capteurs X-THL, détail de la téléinformation et puissance instantanée des postes. Fil pilote : Arrêt et Hors-gel passent en premier, sans option (limites dans le guide) ; Éco et Confort seulement une fois autorisés ci-dessous. Chaque Eco-Devices garde ses propres appareils : un boîtier à une autre adresse, ou un autre produit GCE, ne reçoit jamais leurs commandes. Jamais testé avec un vrai appareil. Sans lien avec GCE Electronics. |
 | Adresse de l’Eco-Devices RT2 | `string` | Oui | Son adresse IP (ou son nom) sur votre réseau, sans chemin ni clé ; donnez-lui une adresse fixe dans votre box : ses appareils sont liés à cette adresse. |
 | Port | `number` | Non | 80 sauf si vous avez changé le port de son serveur web. |
 | Clé d’API | `secret` | Non | La clé de son API (menu de l’Eco-Devices, « apikey » par défaut : changez-la) ; laissez vide seulement si vous avez désactivé la protection. L’Eco-Devices la veut dans l’adresse de chaque requête, en http simple : qui peut écouter votre réseau peut la lire. Gardée par Gladys dans sa base, jamais réaffichée, envoyée seulement à l’Eco-Devices, jamais écrite dans les journaux. |
 | Relais pilotables par Gladys | `string` | Non | Les autres relais sont en lecture seule. Codes comme dans les noms des appareils : R1 et R2 (l’Eco-Devices), R3 à R10 (un X-8R) ; ajoutez :light pour une lumière, par ex. « R1, R2:light ». Un relais listé ici obéit à tout « éteins tout » de Google, Alexa, du MCP et des scènes : n’y mettez jamais une pompe, un congélateur, une VMC, un chauffage, une gâche ni une vanne. Listez-les avant de les créer dans Découverte ; un relais déjà créé reste en lecture seule jusqu’à ce que vous cliquiez « Mettre à jour » sur lui dans Découverte. |
 | Extensions | `string` | Non | Les X-4FP et X-THL branchés à l’Eco-Devices (son API répond pour eux même absents) : zones de fil pilote FP1 à FP8 (quatre par X-4FP), X-THL THL1 et THL2 ; aussi TIC pour le détail de la téléinformation (puissance apparente, intensité, période tarifaire) et les postes P1 à P8 (puissance instantanée), par ex. « FP1-FP4, THL1, TIC, P1-P2 ». |
-| Compteurs d’impulsions | `string` | Non | Les compteurs d’impulsions à amener, ce qu’ils mesurent et l’unité de leur index dans l’Eco-Devices : C1 à C12, water (eau, l ou m3), gas (gaz, m3 ou l) ou electricity (électricité, wh ou kwh), par ex. « C1:water:l, C2:gas:m3 ». L’eau et le gaz arrivent en m³, l’électricité en kWh. Comparez la première valeur publiée au compteur ; changer l’unité ensuite arrête son index (voir le guide). |
+| Compteurs d’impulsions | `string` | Non | Les compteurs d’impulsions à amener, ce qu’ils mesurent et l’unité de leur index dans l’Eco-Devices : C1 à C12, eau (l ou m3), gaz (m3 ou l) ou électricité (wh ou kwh), par ex. « C1:eau:l, C2:gaz:m3, C3:électricité:wh » (les mots anglais water, gas, electricity marchent aussi). L’eau et le gaz arrivent en m³, l’électricité en kWh. Comparez la première valeur publiée au compteur ; changer l’unité ensuite arrête son index (voir le guide). |
+| Compteurs de puissance (pinces ampèremétriques) | `string` | Non | Les compteurs de puissance de l’Eco-Devices (page « Compteurs de puissance » : chacun compte une pince ampèremétrique, en kWh) à amener, avec leur mode tel que vous l’y avez réglé : T1 à T20 ; consommation (par défaut), production, injection ou soutirage, par ex. « T1, T2:production, T3:injection ». Ils arrivent en kWh. Gardez kWh comme unité de comptage dans l’Eco-Devices (pas kVAh). Comparez la première valeur publiée à la page de l’Eco-Devices. |
 | Fil pilote | `section` | Non | Arrêt et Hors-gel n’ont besoin d’aucune option et passent avant tout le reste, pendant une pause ou avant la première lecture ; ils ne sont refusés que si la zone n’est pas listée dans Extensions ou si l’Eco-Devices n’est pas encore connu (voir le guide). Éco, Confort, Confort -1 et Confort -2 pilotent le chauffage : ils sont désactivés par défaut. Une fois autorisés, tout utilisateur de Gladys, toute scène et l’application Gladys peuvent les choisir. |
 | Autoriser Éco et Confort depuis Gladys | `boolean` | Non |  |
 | Lecture toutes les (secondes) | `number` | Non | Fréquence de lecture de l’Eco-Devices : 15 s par défaut, 5 s au moins. |
@@ -386,17 +415,19 @@ Voici les paramètres demandés par Eco-Devices RT2 dans son écran de configura
 | Relais de l’Eco-Devices n°2 pilotables par Gladys | `string` | Non | Mêmes règles que pour le premier (R1 à R10, :light pour une lumière). Un relais listé ici obéit à tout « éteins tout » : n’y mettez jamais une pompe, un congélateur, une VMC, un chauffage, une gâche ni une vanne. |
 | Extensions de l’Eco-Devices n°2 | `string` | Non | Mêmes règles que pour le premier, par ex. « FP1-FP4, THL1 ». |
 | Compteurs d’impulsions de l’Eco-Devices n°2 | `string` | Non | Mêmes règles que pour le premier, par ex. « C1:water:l, C2:gas:m3 ». |
+| Compteurs de puissance de l’Eco-Devices n°2 | `string` | Non | Mêmes règles que pour le premier, par ex. « T1, T2:production ». |
 | Eco-Devices RT2 n°3 (facultatif) | `section` | Non | Un troisième Eco-Devices RT2 de la maison, avec ses propres appareils : renseignez son adresse (et sa clé d’API) ; laissez vide sinon. Ne déplacez jamais un Eco-Devices d’un emplacement à un autre : ses appareils restent avec leur emplacement. L’intervalle de lecture, l’option de chauffage et la langue ci-dessus sont communs. |
 | Adresse de l’Eco-Devices n°3 | `string` | Non | Son adresse IP (ou son nom), avec :port seulement si son serveur web n’est pas sur le 80 ; donnez-lui une adresse fixe dans votre box. |
 | Clé d’API de l’Eco-Devices n°3 | `secret` | Non | Comme pour le premier : gardée par Gladys dans sa base, jamais réaffichée, envoyée seulement à cet Eco-Devices, jamais écrite dans les journaux. |
 | Relais de l’Eco-Devices n°3 pilotables par Gladys | `string` | Non | Mêmes règles que pour le premier (R1 à R10, :light pour une lumière). Un relais listé ici obéit à tout « éteins tout » : n’y mettez jamais une pompe, un congélateur, une VMC, un chauffage, une gâche ni une vanne. |
 | Extensions de l’Eco-Devices n°3 | `string` | Non | Mêmes règles que pour le premier, par ex. « FP1-FP4, THL1 ». |
 | Compteurs d’impulsions de l’Eco-Devices n°3 | `string` | Non | Mêmes règles que pour le premier, par ex. « C1:water:l, C2:gas:m3 ». |
+| Compteurs de puissance de l’Eco-Devices n°3 | `string` | Non | Mêmes règles que pour le premier, par ex. « T1, T2:production ». |
 
 ## Comment installer Eco-Devices RT2 dans Gladys
 
 1. Dans Gladys, ouvrez **Intégrations** : Eco-Devices RT2 apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
-2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-ecodevices-rt2:0.2.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/lm1lc3n7/gladys-ecodevices-rt2:0.3.0`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
 3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
 4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/LM1LC3N7/gladys-ecodevices-rt2](https://github.com/LM1LC3N7/gladys-ecodevices-rt2).
 

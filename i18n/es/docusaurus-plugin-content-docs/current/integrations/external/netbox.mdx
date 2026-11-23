@@ -1,0 +1,190 @@
+---
+title: "Integración domótica NetBox, gratuita y de código abierto"
+sidebar_label: "NetBox"
+description: "NetBox en Gladys: dispositivos por estado, direcciones IP, ocupación de prefijos, cambios. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-netbox.png"
+keywords:
+  - "netbox"
+  - "domótica netbox"
+  - "gladys netbox"
+  - "netbox gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-netbox instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"NetBox","description":"NetBox en Gladys: dispositivos por estado, direcciones IP, ocupación de prefijos, cambios.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-netbox","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-netbox.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-23T06:30:43Z"}} />
+
+Siga su inventario de red [NetBox](https://netboxlabs.com/oss/netbox/) en
+Gladys: los dispositivos por estado, las direcciones IP y las máquinas
+virtuales, la ocupación de los prefijos que elija, los últimos cambios. Una
+escena también puede escribir una entrada de diario en un dispositivo de
+NetBox. Todo se queda en su red local: Gladys habla directamente con su
+servidor NetBox.
+
+Probado con un servidor NetBox 4.7.5 real (la imagen oficial
+`netbox-docker`). Sus comentarios son bienvenidos en el foro de Gladys.
+
+## Requisitos previos
+
+- Gladys Assistant 5.1 o posterior.
+- Un servidor NetBox, versión 3.7 a 4.x, accesible desde la máquina de Gladys.
+- Un token de API: en NetBox, abra el menú de su perfil (arriba a la derecha),
+  **API Tokens** y luego **Add a Token**. NetBox 4.5 y posteriores crean
+  tokens v2 (`nbt_…`), que se muestran una sola vez: cópielo enseguida. Las
+  versiones anteriores crean tokens v1 (40 caracteres). Ambos funcionan. Basta
+  un token de solo lectura, salvo para la acción de escena que escribe
+  entradas de diario.
+
+## Configuración
+
+1. Abra la pestaña **Configuración** de la integración.
+2. En **Dirección de NetBox**, introduzca la dirección que abre en su
+   navegador, con su puerto, por ejemplo `http://192.168.1.20:8000` o
+   `https://netbox.example.org`.
+3. Pegue el **token de API**.
+4. **Prefijos a seguir**: prefijos en notación CIDR (`192.168.1.0/24`) o
+   números de prefijo de NetBox (el número en la dirección de la página del
+   prefijo), separados por comas, 20 como máximo. Un CIDR presente en varias
+   VRF da un dispositivo por VRF. Déjelo vacío para no seguir ningún prefijo.
+5. **Umbral de alerta de ocupación (%)**: el disparador «Prefijo casi lleno»
+   se activa cuando un prefijo seguido lo alcanza (90 por defecto).
+6. **Leer NetBox cada**: 5, 15 (por defecto), 30 o 60 minutos.
+7. **Idioma de los nombres de las funciones** fija los nombres de las
+   funciones (al añadir un dispositivo) y los textos de la integración.
+   Francés por defecto.
+8. Guarde y luego use **Probar la conexión**: muestra la versión de NetBox, el
+   número de dispositivos, los prefijos seguidos y los no encontrados.
+9. En la pestaña **Descubrimiento**, añada el dispositivo **NetBox** y los
+   prefijos.
+
+## Dispositivos
+
+**NetBox** (un dispositivo para su servidor):
+
+| Función                   | Valor                                                   |
+| ------------------------- | ------------------------------------------------------- |
+| NetBox accesible          | 1 cuando la última lectura funcionó, 0 si no            |
+| Versión de NetBox         | por ejemplo `4.7.5`                                     |
+| Dispositivos activos      | dispositivos con el estado «Active»                     |
+| Dispositivos sin conexión | dispositivos con el estado «Offline»                    |
+| Dispositivos averiados    | dispositivos con el estado «Failed»                     |
+| Direcciones IP            | todas las direcciones IP                                |
+| Máquinas virtuales        | todas las máquinas virtuales                            |
+| Último cambio             | acción, objeto y usuario del último cambio del registro |
+
+**Prefijo …** (un dispositivo por prefijo seguido):
+
+| Función            | Valor                                                      |
+| ------------------ | ---------------------------------------------------------- |
+| Ocupación          | porcentaje, calculado como la página del prefijo en NetBox |
+| Direcciones libres | direcciones utilizables no usadas (límite 4 294 967 296)   |
+
+La ocupación sigue a NetBox: un prefijo cuenta sus direcciones IP y los
+rangos de IP marcados como utilizados; un contenedor cuenta sus prefijos
+hijos; un prefijo marcado como utilizado está al 100 %. Un prefijo IPv4 más
+corto que /31 pierde sus direcciones de red y de difusión, salvo si es un
+pool.
+
+## Widget del panel
+
+**NetBox**: cuatro mosaicos (dispositivos activos, dispositivos sin conexión o
+averiados, direcciones IP, máquinas virtuales) y una lista, elegida en los
+ajustes del widget: los prefijos seguidos, del más lleno al menos lleno, con
+su ocupación (rojo a partir del umbral, naranja 10 puntos por debajo), los
+últimos cambios del registro, o ninguna lista. Solo lectura.
+
+## Disparadores de escena
+
+- **Prefijo casi lleno**: un prefijo seguido alcanza el umbral de ocupación.
+  De nuevo tras bajar de él. Filtro: el prefijo (vacío: todos). Variables:
+  prefijo, VRF, ocupación, direcciones libres, umbral.
+- **Dispositivo creado o eliminado**: se crea o elimina un dispositivo en
+  NetBox, visto en el registro de cambios en la siguiente lectura. Filtro: el
+  cambio (creación, eliminación, vacío: ambos). Variables: cambio,
+  dispositivo, número del dispositivo, usuario, hora del cambio. La primera
+  lectura tras la instalación es silenciosa: los cambios pasados no se
+  anuncian. Diez dispositivos como máximo por lectura (una importación masiva
+  no inunda las escenas). Un prefijo que ya supera el umbral cuando empieza a
+  seguirse se anuncia en la primera lectura.
+
+Lo anunciado se guarda en el volumen de datos de la integración: un reinicio
+no anuncia nada dos veces. Una nueva dirección de NetBox parte de una nueva
+base.
+
+## Acción de escena
+
+**Añadir una entrada al diario de NetBox**: escribe una entrada de diario en
+un dispositivo de NetBox, indicado por su nombre (sin distinguir mayúsculas)
+o su número. Tipo: info (por defecto), éxito, advertencia o peligro. El texto
+acepta variables de escena, por ejemplo «SAI en batería: \{\{…\}\}». Resultados:
+el número de la entrada y el nombre del dispositivo. Necesita un token con
+permiso de escritura (en NetBox 4, la casilla «Write enabled» del token y el
+permiso de añadir entradas de diario). Un fallo (dispositivo no encontrado,
+varios dispositivos con ese nombre, token sin permiso) se muestra en rojo.
+
+## Límites
+
+- NetBox se lee a intervalos, no en tiempo real: un cambio aparece en la
+  siguiente lectura.
+- Una lectura cuesta unas diez peticiones pequeñas, más dos o tres por prefijo
+  seguido. NetBox no impone cuota, pero mantenga un intervalo razonable en un
+  servidor cargado.
+- La ocupación suma las direcciones IP y los rangos utilizados; NetBox 4.7
+  cuenta una sola vez una dirección presente en ambos. Solo hay diferencia si
+  una dirección IP está declarada dentro de un rango marcado como utilizado.
+- Probado con NetBox 4.7.5. NetBox 3.7 a 4.6 usan la misma API (el registro de
+  cambios se lee en `/api/extras/object-changes/` antes de la 4.1): no
+  probado con un servidor real, sus comentarios son bienvenidos.
+
+## Solución de problemas
+
+- **Token rechazado**: el token es incorrecto, ha caducado, o se pegó un token
+  v2 sin su prefijo `nbt_`. Cree uno nuevo.
+- **Este token no puede leer los dispositivos ni las direcciones IP**: dé al
+  usuario del token el permiso de ver dispositivos, direcciones IP y prefijos.
+- **NetBox no responde**: compruebe la dirección y el puerto desde la máquina
+  de Gladys, y que NetBox esté en marcha.
+- **Falta un prefijo**: «Probar la conexión» lista los prefijos no
+  encontrados; compruebe el CIDR o use el número del prefijo.
+- Registros: la pestaña **Registros** de la integración. Configure
+  `LOG_LEVEL=debug` para ver cada lectura.
+
+## Parámetros de configuración
+
+Estos son los parámetros que NetBox te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Conectar NetBox | `section` | No | Introduzca la dirección de su servidor NetBox y un token de API: en NetBox, abra el menú de su perfil, API Tokens y luego Add a Token. Basta un token de solo lectura, salvo para la acción de escena que añade entradas al diario, que necesita un token con permiso de escritura. NetBox 3.7 a 4.x. |
+| Dirección de NetBox | `string` | Sí | La dirección con la que abre NetBox, con su puerto si lo hay. |
+| Token de API | `secret` | Sí | Un token v1 (40 caracteres) o un token v2 (nbt_…) de NetBox 4.5+. |
+| Prefijos a seguir | `string` | No | Prefijos en notación CIDR o números de prefijo de NetBox, separados por comas: cada uno se convierte en un dispositivo con su ocupación y sus direcciones libres (20 como máximo). |
+| Umbral de alerta de ocupación (%) | `number` | No | El disparador «Prefijo casi lleno» se activa cuando un prefijo seguido lo alcanza. |
+| Leer NetBox cada | `select` | No |  |
+| Idioma de los nombres de las funciones | `select` | No | Los nombres de las funciones se fijan al añadir un dispositivo a Gladys; este idioma escribe también los textos de la integración. |
+
+## Cómo instalar NetBox en Gladys
+
+1. En Gladys, abre **Integraciones**: NetBox aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-netbox:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-netbox](https://github.com/guim31/gladys-netbox).
+
+NetBox requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+NetBox es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-netbox) — [fuente de esta documentación](https://github.com/guim31/gladys-netbox/blob/HEAD/docs/es.md)

@@ -1,0 +1,222 @@
+---
+title: "openHASP smart home integration, free and open source"
+sidebar_label: "openHASP"
+description: "Control openHASP touch screens over MQTT: pages, backlight, buttons and texts. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/placeholder.png"
+keywords:
+  - "openhasp"
+  - "openhasp smart home"
+  - "gladys openhasp"
+  - "openhasp gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/prohand/gladys-openhasp instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"openHASP","description":"Control openHASP touch screens over MQTT: pages, backlight, buttons and texts.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-openhasp","cover_url":"https://integration-store-storage.gladysassistant.com/covers/placeholder.png","type":"device","version":"0.0.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-22T09:19:48Z"}} />
+
+This integration connects Gladys to your **openHASP** touch screens ("plates"):
+Lanbon L8, WT32-SC01, Sunton and every other ESP32 screen running the
+[openHASP](https://www.openhasp.com) firmware.
+
+- Each plate becomes a Gladys device: backlight, brightness, page shown,
+  screen awake, WiFi signal.
+- The buttons, switches, sliders and labels of your pages can become Gladys
+  devices too.
+- Scenes can react to a touch, a page change or a plate going offline, and
+  can show a page, write a text, wake a screen or send any openHASP command.
+- A dashboard widget lists your plates.
+
+Requires **Gladys 5.3 or later**.
+
+## What you need
+
+- One or more plates flashed with openHASP **0.6 or later**.
+- An **MQTT broker** reachable by the plates and by Gladys. The broker of the
+  Gladys MQTT integration works (Mosquitto, port 1883); any other one too.
+
+Everything stays on your local network: no account, no cloud.
+
+## 1. Connect your plates to the broker
+
+On each plate, open its web page (`http://<plate IP>`), then
+**Configuration → MQTT Settings**:
+
+| openHASP setting | What to type                                     |
+| ---------------- | ------------------------------------------------ |
+| Plate Name       | a short unique name, e.g. `plate01` or `kitchen` |
+| Group Name       | keep `plates`                                    |
+| Broker           | the IP address of your broker                    |
+| Port             | `1883` (usually)                                 |
+| Username         | the broker user, if it needs one                 |
+| Password         | its password                                     |
+
+Save and restart the plate. The **Plate Name** is how Gladys knows the plate:
+renaming it later creates a new device.
+
+## 2. Configure the integration
+
+In Gladys, open **Integrations → openHASP → Configuration**:
+
+| Field               | What to type                                                           |
+| ------------------- | ---------------------------------------------------------------------- |
+| MQTT broker address | `mqtt://192.168.1.10:1883` (`mqtts://` for TLS, `ws://` for WebSocket) |
+| MQTT username       | the broker user, empty for an anonymous broker                         |
+| MQTT password       | its password                                                           |
+| Topic prefix        | keep `hasp`, unless you changed it in the openHASP firmware            |
+| Screen objects      | the objects to control, see below (can stay empty)                     |
+
+Save, then click **Test the connection**: it reconnects to the broker and
+lists the plates that answered.
+
+The connection status at the top of the page tells you when the broker cannot
+be reached (wrong address, wrong password…).
+
+## 3. Add the plates
+
+Open the **Discovery** tab: every plate seen on the broker is listed as
+`openHASP <plate name>`. Click **Add**. A plate that does not show up: click
+**Search for plates** in the Configuration tab, and check its MQTT settings.
+
+Each plate gives you these features:
+
+| Feature      | What it does                                                  |
+| ------------ | ------------------------------------------------------------- |
+| Backlight    | turns the screen backlight on or off                          |
+| Brightness   | backlight level, 0-100 % (0 turns it off)                     |
+| Page         | the page shown; choose another one to switch the screen to it |
+| Screen awake | on = in use; off = idle. Turn it on to wake the screen        |
+| WiFi signal  | 0 to 5 bars                                                   |
+
+**Identify a plate** (Configuration tab) makes the chosen screen blink three
+times, to find which one is which.
+
+## 4. Control the objects of your pages
+
+An openHASP object is named by its page and id: `p1b2` is object `2` of page
+`1`. You can see the ids in your `pages.jsonl` file.
+
+List the objects to control in **Screen objects**, separated by commas:
+
+```
+plate01.p1b2:switch:Living room light, plate01.p1b3:button:Good night, plate01.p2b1:text:Message
+```
+
+Each entry is `<plate name>.<object>:<type>:<name in Gladys>`. The types:
+
+| Type     | openHASP objects                                | In Gladys                                                            |
+| -------- | ----------------------------------------------- | -------------------------------------------------------------------- |
+| `button` | `btn` (normal button)                           | a button: click, long press, long press released (read only)         |
+| `switch` | `btn` with `toggle: true`, `switch`, `checkbox` | on/off, both ways: a touch updates Gladys, Gladys updates the screen |
+| `slider` | `slider`, `arc` (range 0-100)                   | a level 0-100, both ways                                             |
+| `text`   | `label`, the text of a `btn`                    | a text Gladys writes on the screen                                   |
+
+Easier: the **Add an object** button (Configuration tab) asks for the plate,
+the object, the type and the name, and writes the entry for you. Not sure of
+an id? Touch the object on the screen, then click **List the objects
+touched**: it lists the ids the plates reported and that are not declared yet.
+
+Then add the new devices from the **Discovery** tab.
+
+> A slider only reports its value when it is released: dragging it does not
+> flood Gladys with values.
+
+## Scenes
+
+### Triggers
+
+| Trigger (key)                                     | When                                     | Filters                               | Variables                  |
+| ------------------------------------------------- | ---------------------------------------- | ------------------------------------- | -------------------------- |
+| openHASP object touched (`object_event`)          | an object is pressed or released         | plate, object (`p1b2`), kind of touch | object, event, value, text |
+| openHASP plate online or offline (`plate_status`) | a plate connects to or leaves the broker | plate, status                         | status                     |
+| openHASP page changed (`page_changed`)            | a plate shows another page               | plate, page                           | page                       |
+
+The kinds of touch: **Pressed** (`down`), **Short press released** (`up`),
+**Long press** (`long`), **Long press released** (`release`). Any object of
+any page fires `object_event`, declared in Screen objects or not: no need to
+declare a button only used in scenes.
+
+Example: a "Good night" button at `p1b3` → trigger _openHASP object touched_,
+plate `openHASP plate01`, object `p1b3`, touch _Short press released_ → turn
+off the lights.
+
+### Actions
+
+Every action answers a **sent** variable: `false` when the plate is offline
+or the broker cannot be reached (the scene goes on; use a condition on it if
+needed).
+
+| Action (key)                                    | What it does                                                     |
+| ----------------------------------------------- | ---------------------------------------------------------------- |
+| Show an openHASP page (`show_page`)             | switches the plate to page 1-12                                  |
+| Write on an openHASP object (`set_object_text`) | changes the text of a label or a button; scene variables work    |
+| Set an openHASP backlight (`set_backlight`)     | on or off, with an optional brightness 1-255                     |
+| Wake an openHASP screen (`wake_screen`)         | like a touch: resets the idle timer (handy with a motion sensor) |
+| Send an openHASP command (`send_command`)       | any openHASP command, e.g. `p1b2.bg_color=red` or `moodlight on` |
+
+Example: show the outdoor temperature on a label → action _Write on an
+openHASP object_, object `p1b5`, text `{{device.temperature}} °C` (pick the
+variable in the editor).
+
+## Dashboard widget
+
+The **openHASP plates** widget shows how many plates are online, one line per
+plate (online with its page, offline) and two buttons: **Wake screens** and
+**Find plates**.
+
+## Troubleshooting
+
+- **"Not connected to the MQTT broker"**: check the address and the port, and
+  the user and password if the broker asks for them. With the broker of the
+  Gladys MQTT integration, use the IP address of the Gladys machine, not
+  `localhost`.
+- **No plate in the Discovery tab**: the plate and Gladys must use the same
+  broker and the same topic prefix. A tool like MQTT Explorer shows the
+  `hasp/<plate>/LWT` topic of every connected plate.
+- **An object does not react**: check its id (`p1b2`), its type, and that its
+  device was added from the Discovery tab.
+- **Logs**: Integrations → openHASP → Supervision. Passwords are never logged.
+
+## Privacy and security
+
+The integration only talks to your MQTT broker, on your network. The MQTT
+password is stored as a secret field of Gladys. Report a security problem
+privately: see the `SECURITY.md` file of the repository.
+
+## Configuration settings
+
+These are the settings openHASP asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Getting started | `section` | No | openHASP plates talk MQTT. Point your plates and this integration at the same MQTT broker (the one of the Gladys MQTT integration works). Each plate that comes online shows up in the Discovery tab. To control the buttons, sliders and labels of your pages, list them in Screen objects below, or use the Add an object button. |
+| MQTT broker address | `string` | Yes | The broker your plates use: mqtt:\/\/host:1883, mqtts:\/\/host:8883 or ws:\/\/host:9001. |
+| MQTT username | `string` | No | Leave empty if the broker accepts anonymous clients. |
+| MQTT password | `secret` | No |  |
+| Topic prefix | `string` | No | The first level of the openHASP topics. Keep hasp unless you changed it in the firmware. |
+| Screen objects | `string` | No | Objects to control from Gladys, separated by commas: plate.object:type:name. Types: button, switch, slider, text. Example: plate01.p1b2:switch:Living room light, plate01.p1b3:button:Good night |
+
+## How to install openHASP in Gladys
+
+1. In Gladys, open **Integrations**: openHASP appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-openhasp:0.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-openhasp](https://github.com/prohand/gladys-openhasp).
+
+openHASP requires Gladys `>=5.3.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+openHASP is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [prohand](https://github.com/prohand), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/prohand/gladys-openhasp) — [source of this documentation](https://github.com/prohand/gladys-openhasp/blob/HEAD/docs/en.md)

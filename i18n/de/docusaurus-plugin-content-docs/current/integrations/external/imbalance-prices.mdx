@@ -1,0 +1,171 @@
+---
+title: "Imbalance prices Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "Imbalance prices"
+description: "Ausgleichsenergiepreise je Viertelstunde in Echtzeit von Elia (Belgien) und TenneT (Niederlande). Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-imbalance-prices.png"
+keywords:
+  - "imbalance prices"
+  - "imbalance prices smart home"
+  - "gladys imbalance prices"
+  - "imbalance prices gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/guim31/gladys-imbalance-prices instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Imbalance prices","description":"Ausgleichsenergiepreise je Viertelstunde in Echtzeit von Elia (Belgien) und TenneT (Niederlande).","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-imbalance-prices","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-imbalance-prices.png","type":"device","version":"1.0.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-20T06:32:34Z"}} />
+
+## Was die Integration macht
+
+Der Ausgleichsenergiepreis rechnet für jede Viertelstunde die Abweichung
+zwischen dem Plan des Stromnetzes und dem, was wirklich passiert ist, ab.
+Manche dynamischen Verträge in Belgien und den Niederlanden geben ihn an ihre
+Kunden weiter („Imbalance“-Verträge, danach gesteuerte Heimspeicher). Diese
+Integration bringt ihn nahezu in Echtzeit in Gladys:
+
+- **Belgien**, über Elia Open Data: der Preis der laufenden Viertelstunde,
+  minütlich geschätzt, und der endgültige Wert jeder abgeschlossenen;
+- **Niederlande**, über die TenneT-API: ein indikativer Preis, jede Minute aus
+  der von TenneT aktivierten Regelenergie berechnet.
+
+Die Integration deckt nur den Ausgleichsenergiepreis ab. Für Day-Ahead-Preise (EPEX,
+ENTSO-E) oder den Tarif eines Anbieters nutze die passenden Integrationen.
+
+## Voraussetzungen
+
+- Gladys 5.3.0 oder neuer.
+- Internetzugang von Gladys aus (opendata.elia.be, api.tennet.eu).
+- Nur für die Niederlande: ein kostenloser TenneT-API-Schlüssel. Registriere
+  dich auf [developer.tennet.eu](https://developer.tennet.eu/register/) und
+  erstelle dann einen Schlüssel in deinem Konto. Belgien braucht kein Konto.
+
+## Installation
+
+1. Öffne in Gladys **Integrationen → Von GitHub installieren**.
+2. Gib `https://github.com/guim31/gladys-imbalance-prices` ein und installiere.
+
+## Konfiguration
+
+- **Belgien (Elia)**: standardmäßig aktiviert.
+- **TenneT-API-Schlüssel (Niederlande)**: leer lassen, um die Niederlande
+  nicht zu verfolgen.
+- **Sprache der Namen**: Sprache der Funktionsnamen und der Richtung des
+  Ungleichgewichts, festgelegt beim Hinzufügen eines Geräts (standardmäßig
+  Französisch).
+
+Öffne dann den Tab **Entdecken** und füge die Geräte hinzu: eines pro Zone.
+Die Aktion **Preise jetzt abrufen** fragt beide Quellen ab und zeigt den Preis
+der laufenden Viertelstunde: praktisch, um einen TenneT-Schlüssel zu prüfen.
+
+## Geräte
+
+Jede Zone ist ein Gerät mit diesen Funktionen:
+
+| Funktion                           | Bedeutung                                                    |
+| ---------------------------------- | ------------------------------------------------------------ |
+| Viertelstundenpreis (€/MWh)        | Preis der laufenden Viertelstunde, jede Minute aktualisiert  |
+| Viertelstundenpreis (€/kWh)        | derselbe, durch 1.000 geteilt                                |
+| Preis vorige Viertelstunde (€/MWh) | Preis der gerade abgeschlossenen Viertelstunde               |
+| Systemungleichgewicht (MW)         | positiv: Überschuss in der Zone; negativ: es fehlt Strom     |
+| Richtung des Ungleichgewichts      | Überschuss, Defizit oder Ausgeglichen                        |
+| Aktuelle Viertelstunde             | Beginn der laufenden Viertelstunde, Brüsseler Zeit („14:15“) |
+
+Gladys hat weder eine Einheit €/MWh noch MW: Die Funktionsnamen tragen sie.
+Ein negativer Preis bedeutet, dass Verbrauch in dieser Viertelstunde vergütet
+wird.
+
+## Szenen
+
+Zwei Auslöser in der Kategorie **Integrationen** des Szenen-Editors:
+
+- **Der Ausgleichsenergiepreis wird negativ**: Der geschätzte Preis der
+  laufenden Viertelstunde fällt unter 0 €/MWh.
+- **Der Ausgleichsenergiepreis übersteigt eine Schwelle**: Er steigt über 100,
+  150, 200, 300, 500 oder 1.000 €/MWh.
+
+Beide lassen sich auf eine Zone beschränken (leer: beide Zonen). Jeder löst
+aus, wenn der Preis die Grenze überschreitet, höchstens einmal pro
+Viertelstunde und nicht erneut, solange der Preis auf derselben Seite bleibt.
+Die folgenden Aktionen können `{{triggerEvent.data.price}}` (€/MWh),
+`price_kwh`, `zone` und `quarter_hour` lesen. Um ein Gerät zu stoppen, wenn der
+Preis wieder steigt, nutze den Auslöser des Geräts („Viertelstundenpreis
+(€/MWh) ≥ 0“).
+
+## Dashboard
+
+Das Widget **Ausgleichspreise** zeigt pro Zone den Preis der laufenden und der
+vorigen Viertelstunde, das Systemungleichgewicht und die Tageskurve (in den
+Widget-Einstellungen ausblendbar).
+
+## Datenquellen und Grenzen
+
+- **Elia**: Datensätze `ods161` (pro Minute) und `ods162` (pro Viertelstunde)
+  von [Elia Open Data](https://opendata.elia.be), einmal pro Minute gelesen,
+  dazu einmal pro Viertelstunde für die abgeschlossenen. Der laufende Wert ist
+  eine Schätzung über die vergangenen Minuten; der Wert von Minute 14 ist der
+  veröffentlichte. Elia kennzeichnet diese Daten als „nicht validiert“: Der
+  abgerechnete Preis kann sich noch ändern.
+- **TenneT**: „Balance Delta High Res“ (`/latest`), einmal pro Minute gelesen
+  (Fair Use: höchstens 10 pro Minute). Der Preis wird wie der
+  Regelzustand von TenneT berechnet: nur Aufwärtsregelung → höchster
+  Aufwärtspreis, nur Abwärtsregelung → niedrigster Abwärtspreis, beide → Preis
+  der Nettorichtung, keine → Mittelpreis. Er ist indikativ: Der später von
+  TenneT veröffentlichte abgerechnete Preis kann abweichen. Die Tageskurve
+  beginnt erst mit dem Start der Integration.
+- **Ohne TenneT-Schlüssel entwickelt: Feedback willkommen.** Der
+  niederländische Teil folgt der API-Beschreibung von TenneT; er konnte nicht
+  gegen die echte API getestet werden.
+- Die Uhrzeiten folgen der Uhr von Brüssel und Amsterdam, unabhängig von der
+  Zeitzone von Gladys.
+
+## Fehlerbehebung
+
+- Die Integration wird als fehlerhaft angezeigt: Die Meldung nennt die Quelle
+  (Elia nicht erreichbar, TenneT-Schlüssel abgelehnt, TenneT nicht
+  erreichbar). Die letzten Werte bleiben auf den Geräten.
+- Kein Wert auf einem Gerät: Es muss über den Tab **Entdecken** hinzugefügt
+  werden; die ersten Werte kommen innerhalb einer Minute.
+- Protokolle: die Seite der Integration in Gladys; `LOG_LEVEL=debug` zeigt
+  jede Abfrage.
+
+## Danksagung
+
+Daten: [Elia Open Data](https://opendata.elia.be) (Elia Transmission Belgium)
+und die [TenneT-API](https://developer.tennet.eu) (TenneT TSO B.V.). Diese
+Integration ist nicht mit Elia oder TenneT verbunden.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt Imbalance prices in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Ausgleichsenergiepreise | `section` | Nein | Der Ausgleichsenergiepreis rechnet je Viertelstunde die Abweichung zwischen Plan und Wirklichkeit im Netz ab. Manche dynamischen Verträge geben ihn weiter. Belgien: Elia Open Data, ohne Konto. Niederlande: die TenneT-API, mit einem kostenlosen persönlichen Schlüssel. Füge die Geräte über den Tab „Entdecken“ hinzu. Nicht mit Elia oder TenneT verbunden. |
+| Belgien (Elia) | `boolean` | Nein | Den belgischen Ausgleichsenergiepreis verfolgen. Kein Konto nötig. |
+| TenneT-API-Schlüssel (Niederlande) | `secret` | Nein | Kostenlos auf developer.tennet.eu nach der Registrierung. Leer: Die Niederlande werden nicht verfolgt. |
+| Sprache der Namen | `select` | Nein | Wird beim Hinzufügen eines Geräts zu Gladys verwendet: Die Namen ändern sich danach nicht mehr. |
+
+## So installierst du Imbalance prices in Gladys
+
+1. Öffne in Gladys **Integrationen**: Imbalance prices erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/guim31/gladys-imbalance-prices:1.0.0`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/guim31/gladys-imbalance-prices](https://github.com/guim31/gladys-imbalance-prices).
+
+Imbalance prices benötigt Gladys `>=5.3.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+Imbalance prices ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [guim31](https://github.com/guim31) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/guim31/gladys-imbalance-prices) — [Quelle dieser Dokumentation](https://github.com/guim31/gladys-imbalance-prices/blob/HEAD/docs/de.md)

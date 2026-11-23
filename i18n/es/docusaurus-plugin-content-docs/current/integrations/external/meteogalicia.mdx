@@ -1,0 +1,235 @@
+---
+title: "Integración domótica MeteoGalicia, gratuita y de código abierto"
+sidebar_label: "MeteoGalicia"
+description: "Tiempo de Galicia de MeteoGalicia: estación más cercana, previsión municipal y niveles de aviso. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-meteogalicia.png"
+keywords:
+  - "meteogalicia"
+  - "domótica meteogalicia"
+  - "gladys meteogalicia"
+  - "meteogalicia gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/guim31/gladys-meteogalicia instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"MeteoGalicia","description":"Tiempo de Galicia de MeteoGalicia: estación más cercana, previsión municipal y niveles de aviso.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-meteogalicia","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-meteogalicia.png","type":"device","version":"1.0.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-23T06:29:25Z"}} />
+
+El tiempo oficial de **Galicia** en Gladys, de **MeteoGalicia**, el servicio meteorológico de la
+**Xunta de Galicia**: los datos de la **estación meteorológica automática** más cercana cada
+10 minutos, la **previsión diaria** de un municipio (concello) y sus **niveles de aviso** para hoy,
+mañana y pasado mañana.
+
+Datos abiertos: sin cuenta ni clave de API. Esta integración no tiene relación con MeteoGalicia ni
+con la Xunta de Galicia.
+
+## Presentación
+
+- **Dos dispositivos**: la estación más cercana (temperatura, humedad, presión, viento, rachas,
+  lluvia: lo que mide la estación) y un municipio (previsión de hoy y mañana, índice UV, niveles de
+  aviso).
+- **Un disparador de escena**, «Nivel de aviso de MeteoGalicia elevado», en cuanto MeteoGalicia
+  sube el nivel de aviso del municipio para hoy, mañana o pasado mañana.
+- **Un widget** del panel con los datos, las mínimas y máximas de los próximos días, los niveles de
+  aviso y la previsión de hoy y mañana.
+- **Solo lectura**: MeteoGalicia es una fuente de datos, no se controla nada.
+
+## Requisitos
+
+- Gladys **5.3.0** o posterior.
+- Un lugar en **Galicia**: uno de sus 313 municipios, a menos de 40 km de una estación de
+  MeteoGalicia.
+- Su casa de Gladys situada en el mapa (**Ajustes → Casas**), o coordenadas, una estación o un
+  municipio indicados en la configuración.
+- Gladys debe acceder a Internet (`servizos.meteogalicia.gal`).
+
+## Configuración
+
+Instale la integración desde **Integraciones → Instalar desde GitHub** (o desde la tienda) y abra
+su configuración. Todos los campos son opcionales: por defecto, la integración toma la posición de
+su primera casa situada, la estación más cercana, el municipio de esa estación, y se actualiza cada
+10 minutos.
+
+| Campo                              | Uso                                                                                                                                  |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Casa                               | La casa cuya posición se usa. Vacío: la primera casa con posición.                                                                   |
+| Latitud, Longitud                  | Otro lugar que una casa, por ejemplo `43,37` y `-8,40` (el punto también vale). Las dos, o ninguna.                                  |
+| Estación meteorológica             | El identificador de una estación de MeteoGalicia, por ejemplo `10157` (A Coruña). Vacío: la más cercana.                             |
+| Municipio                          | Código INE (`15030`) o nombre (`A Coruña`) del municipio de la previsión y los avisos. Vacío: el de la estación.                     |
+| Intervalo de actualización         | 10, 15, 30 o 60 minutos. Las estaciones publican cada 10 minutos.                                                                    |
+| Idioma de los nombres de funciones | Idioma de los nombres de funciones (fijado al crear los dispositivos) y de los textos de los eventos de escena. Francés por defecto. |
+
+La posición de la casa se lee mediante el permiso `location` de Gladys, mostrado al instalar. **Nunca
+sale de Gladys**: la integración descarga la lista de estaciones y elige ella misma la más cercana;
+MeteoGalicia solo recibe identificadores públicos (una estación, un municipio). Tampoco se escribe
+nunca en los registros.
+
+El municipio por defecto es el **de la estación más cercana**: MeteoGalicia no publica la posición
+de los municipios. Si vive cerca de un límite municipal, indique su municipio.
+
+Abra después la pestaña **Descubrimiento** de la integración y añada los dos dispositivos a Gladys.
+
+## Dispositivos
+
+### Estación
+
+El nombre es «MeteoGalicia» seguido del nombre de la estación. Valores de la última medida de
+10 minutos:
+
+| Función                 | Unidad | Nota                                                       |
+| ----------------------- | ------ | ---------------------------------------------------------- |
+| Temperatura             | °C     | Temperatura del aire, a 1,5 m                              |
+| Punto de rocío          | °C     |                                                            |
+| Humedad                 | %      |                                                            |
+| Presión (nivel del mar) | hPa    | Presión reducida al nivel del mar, como en las previsiones |
+| Velocidad del viento    | km/h   | Media de los 10 minutos, a 10 m (o 2 m)                    |
+| Rachas de viento        | km/h   | Racha más fuerte de los 10 minutos                         |
+| Dirección del viento    | °      | De dónde viene el viento: 0 = norte, 90 = este             |
+| Intensidad de lluvia    | mm/h   | Lluvia de los últimos 10 minutos, como tasa horaria (× 6)  |
+
+Una estación solo recibe las funciones de lo que mide (alrededor de un tercio de las estaciones no
+tiene ni viento ni presión): una función añadida se conserva, aunque la estación deje de enviarla.
+Solo se publican los valores que MeteoGalicia marca como válidos. Una estación sin datos desde hace
+más de 3 horas ya no se publica como actual.
+
+### Municipio
+
+El nombre es «MeteoGalicia» seguido del nombre del municipio. Su previsión diaria y el nivel de
+aviso más alto anunciado para él:
+
+| Función               | Unidad | Nota                                                              |
+| --------------------- | ------ | ----------------------------------------------------------------- |
+| Tiempo hoy            | texto  | Cielo más representativo del día, por ejemplo «Chubascos débiles» |
+| Mínima hoy            | °C     | Días de Galicia (Europe/Madrid)                                   |
+| Máxima hoy            | °C     |                                                                   |
+| Índice UV hoy         | índice | Índice UV máximo previsto                                         |
+| Tiempo mañana         | texto  |                                                                   |
+| Mínima mañana         | °C     |                                                                   |
+| Máxima mañana         | °C     |                                                                   |
+| Nivel de aviso hoy    | 0 a 3  | Nivel más alto del día: 0 ninguno, 1 amarillo, 2 naranja, 3 rojo  |
+| Nivel de aviso mañana | 0 a 3  |                                                                   |
+| Avisos meteorológicos | texto  | Los días con aviso, por ejemplo «Hoy: Amarillo · Mañana: Naranja» |
+
+Los niveles son los más altos de todo el día para el municipio, sea cual sea el fenómeno (viento,
+lluvia, costero, nieve, calor…), tal como MeteoGalicia los publica por municipio.
+
+## Widget
+
+**Tiempo MeteoGalicia** muestra, en el idioma y las unidades del panel:
+
+- el nombre del municipio (el que tiene en Gladys), y luego la temperatura, la humedad, el viento y
+  las rachas de la estación;
+- las mínimas y máximas de los próximos días (hasta 4);
+- el nivel de aviso de cada día que lo tenga, o una línea verde «Ninguno»;
+- el tiempo de hoy y mañana, con mínima, máxima y probabilidad de lluvia;
+- la fuente y la hora de la medida.
+
+El ajuste **Bloques a ocultar** oculta los datos de la estación, el gráfico, los niveles de aviso o
+la previsión de hoy y mañana.
+
+## Disparador de escena
+
+**Nivel de aviso de MeteoGalicia elevado** se activa cuando el nivel de aviso más alto del
+municipio sube para un día (hoy, mañana o pasado mañana): de ninguno a amarillo, de amarillo a
+naranja… Una vez por día y por nivel, en cuanto se anuncia (un nivel que baja y vuelve a subir el mismo día no lo activa de nuevo). Un reinicio no lo vuelve a activar, ni
+el día siguiente cuando «mañana» pasa a ser «hoy». El primer arranque (y el primero tras un cambio de
+municipio) solo toma nota de los niveles ya anunciados.
+
+Filtros (vacío = todos): **Niveles** (amarillo, naranja, rojo) y **Días** (hoy, mañana, pasado
+mañana).
+
+Información transmitida a las acciones de la escena: nivel, nivel (1 a 3), clave del nivel, día,
+clave del día, fecha, subido desde un aviso más bajo, municipio. Por ejemplo, un mensaje:
+`MeteoGalicia: aviso \{\{triggerEvent.data.level_label\}\} \{\{triggerEvent.data.day_label\}\} en
+\{\{triggerEvent.data.concello\}\}`.
+
+## Acciones de configuración
+
+- **Listar las estaciones cercanas**: las 8 estaciones más cercanas al lugar, con identificador,
+  municipio, altitud y distancia. Copie un identificador en «Estación meteorológica» para elegir
+  otra (una estación del valle suele convenir más que una más cercana en una cumbre).
+- **Comprobar la conexión**: lee todas las fuentes al momento e indica qué ha respondido: la
+  temperatura de la estación y su hora, el municipio de la previsión, el nivel de aviso de hoy. Se
+  muestra en rojo si una fuente ha fallado.
+
+## Ejemplos de escenas
+
+- **Temporal a la vista**: disparador «Nivel de aviso de MeteoGalicia elevado», niveles «Naranja» y
+  «Rojo» → cerrar las persianas, recoger el toldo, enviar un mensaje con el día.
+- **Sol fuerte**: cada día a las 10:00, si «Índice UV hoy» es mayor o igual que 6 → recordar poner
+  crema solar a los niños.
+- **Helada mañana**: cada noche a las 20:00, si «Mínima mañana» es inferior a 1 °C → avisar para
+  proteger las plantas y el parabrisas.
+
+## Solución de problemas
+
+- **«Ningún lugar»**: ninguna casa tiene posición. Sitúe su casa en el mapa en **Ajustes → Casas**,
+  o indique coordenadas, una estación o un municipio.
+- **«Fuera de Galicia»**: el lugar está a más de 40 km de cualquier estación de MeteoGalicia.
+  Indique una estación o un municipio para usar la integración de todos modos.
+- **«No está entre los 313»**: el municipio indicado es desconocido. Escriba su código INE de
+  5 cifras (por ejemplo `15078` para Santiago de Compostela) o su nombre.
+- **«MeteoGalicia no responde»**: Gladys no accede a `servizos.meteogalicia.gal`; los valores se
+  actualizarán cuando vuelva. Los registros indican qué fuente falla, una vez, y cuándo vuelve a
+  funcionar.
+- **Falta una función en la estación**: la estación no la mide. Elija otra estación con **Listar las
+  estaciones cercanas**.
+- **Más detalles**: ponga la variable `LOG_LEVEL` del contenedor en `debug`.
+
+## Límites
+
+- **Datos**: datos abiertos de MeteoGalicia (Xunta de Galicia), reutilizados con mención de la
+  fuente («Fuente: MeteoGalicia – Xunta de Galicia», mostrada por el widget).
+- **Peticiones**: unas 13 por hora al ritmo por defecto (estación y niveles de aviso en cada
+  actualización, previsión una vez por hora, listas de estaciones y municipios una vez al día). Las
+  estaciones publican cada 10 minutos: un ritmo más rápido no leería nada nuevo.
+- Los avisos son el **nivel más alto por día y municipio**: este servicio no publica el fenómeno
+  (viento, lluvia, costa…) ni las horas exactas.
+- La previsión es diaria (hoy y los 2 o 3 días siguientes), sin previsión horaria. La radiación solar
+  y las temperaturas del suelo no se publican como funciones (no hay unidad correspondiente en
+  Gladys).
+- Una estación y un municipio por instalación.
+- Los nombres de las funciones se fijan al crear los dispositivos: cambiar el idioma después no los
+  renombra.
+- Desarrollada sin especificación oficial de cada servicio: MeteoGalicia puede cambiarlos sin
+  previo aviso. Sus comentarios son bienvenidos.
+
+## Parámetros de configuración
+
+Estos son los parámetros que MeteoGalicia te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| MeteoGalicia | `section` | No | Datos abiertos de MeteoGalicia, el servicio meteorológico de la Xunta de Galicia: sin cuenta ni clave. Por defecto, la integración usa la posición de su primera casa de Gladys: la estación automática más cercana, y la previsión y los niveles de aviso del municipio de esa estación. Sin relación con MeteoGalicia ni con la Xunta de Galicia. |
+| Casa | `select` | No | La casa cuya posición se usa. Vacío: la primera casa con posición. |
+| Latitud (opcional) | `string` | No | Para otro lugar que una casa. Tiene prioridad sobre la casa. |
+| Longitud (opcional) | `string` | No |  |
+| Estación meteorológica (opcional) | `string` | No | Identificador de una estación automática de MeteoGalicia. Vacío: la más cercana. La acción de abajo las lista. |
+| Municipio (opcional) | `string` | No | Código INE o nombre de un municipio gallego, para la previsión y los avisos. Vacío: el de la estación. |
+| Intervalo de actualización | `select` | No | Las estaciones publican cada 10 minutos. |
+| Idioma de los nombres de funciones | `select` | No | Se usa al crear los dispositivos y para los textos de los eventos de escena. |
+
+## Cómo instalar MeteoGalicia en Gladys
+
+1. En Gladys, abre **Integraciones**: MeteoGalicia aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/guim31/gladys-meteogalicia:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/guim31/gladys-meteogalicia](https://github.com/guim31/gladys-meteogalicia).
+
+MeteoGalicia requiere Gladys `>=5.3.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+MeteoGalicia es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [guim31](https://github.com/guim31), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/guim31/gladys-meteogalicia) — [fuente de esta documentación](https://github.com/guim31/gladys-meteogalicia/blob/HEAD/docs/es.md)

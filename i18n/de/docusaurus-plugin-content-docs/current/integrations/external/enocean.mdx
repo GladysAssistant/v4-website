@@ -1,0 +1,245 @@
+---
+title: "EnOcean Smart-Home-Integration, kostenlos und Open Source"
+sidebar_label: "EnOcean"
+description: "EnOcean-Sensoren, Schalter und Aktoren über ein USB-300-Gateway, freigegeben per ser2net. Kostenlos, Open Source, mit einem Klick installiert."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-enocean.png"
+keywords:
+  - "enocean"
+  - "enocean smart home"
+  - "gladys enocean"
+  - "enocean gladys assistant"
+  - "externe Integration"
+  - "Open-Source-Hausautomation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/de.md in
+https://github.com/prohand/gladys-enocean instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"EnOcean","description":"EnOcean-Sensoren, Schalter und Aktoren über ein USB-300-Gateway, freigegeben per ser2net.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-enocean","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-enocean.png","type":"device","version":"1.0.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-20T09:25:44Z"}} />
+
+Diese Integration verbindet Gladys mit EnOcean-Geräten — batterielose
+Schalter, Temperatur-, Feuchte-, CO2-, Präsenz- und Helligkeitssensoren,
+Tür- und Fensterkontakte, Fenstergriffe, Relais und Dimmer — über ein
+**ESP3-Gateway**: den EnOcean-USB-300-Stick, ein TCM-310-Modul oder ein darauf
+aufbauendes Gateway.
+
+## 1. Was du brauchst
+
+- Gladys **5.3 oder neuer**.
+- Ein ESP3-Gateway (USB 300, USB 310, TCM-310-Platine...) mit der Frequenz
+  deines Landes: 868 MHz in Europa, 902 MHz in Nordamerika.
+- Einen Rechner in deinem Netzwerk, an den du es ansteckst: den Gladys-Host
+  selbst oder einen Raspberry Pi näher an den Geräten.
+- **ser2net** auf diesem Rechner.
+
+Warum ser2net? Die Integration läuft in einem abgeschotteten Container, der
+keine USB-Geräte sieht. ser2net gibt die serielle Schnittstelle des Sticks als
+TCP-Port frei, und die Integration verbindet sich damit. So kannst du den
+Stick auch dort platzieren, wo der Empfang am besten ist, weit weg vom
+Gladys-Server.
+
+## 2. Den Stick mit ser2net freigeben
+
+Installiere es (`apt install ser2net` unter Debian, Ubuntu und Raspberry Pi
+OS) und suche den stabilen Namen des Sticks:
+
+```bash
+ls -l /dev/serial/by-id/
+```
+
+ser2net 4 (`/etc/ser2net.yaml`):
+
+```yaml
+connection: &enocean
+  accepter: tcp,9999
+  enable: on
+  options:
+    kickolduser: true
+  connector: serialdev,/dev/serial/by-id/usb-EnOcean_GmbH_EnOcean_USB_300_DC_XXXXXXXX-if00-port0,57600n81,local
+```
+
+ser2net 3 (`/etc/ser2net.conf`):
+
+```text
+9999:raw:0:/dev/serial/by-id/usb-EnOcean_GmbH_EnOcean_USB_300_DC_XXXXXXXX-if00-port0:57600 8DATABITS NONE 1STOPBIT
+```
+
+Danach `systemctl restart ser2net`. Wichtig:
+
+- **57600 Baud, 8N1, Raw-Modus** (kein Telnet): ESP3 ist binär.
+- **`kickolduser: true`**: Der Port nimmt nur einen Client an. Wenn sich die
+  Integration neu verbindet (Update, Neustart von Gladys), muss die alte
+  Sitzung weichen.
+- **Der Port hat kein Passwort.** Öffne ihn nur für den Gladys-Host: binde ihn
+  an eine Adresse (`accepter: tcp,192.168.1.50,9999`) und/oder filtere ihn mit
+  deiner Firewall.
+
+## 3. Die Integration einrichten
+
+Unter **Integrationen → EnOcean → Konfiguration**:
+
+| Feld                     | Was eintragen                                                                    |
+| ------------------------ | -------------------------------------------------------------------------------- |
+| Gateway-Host             | IP-Adresse des Rechners mit ser2net. **Nicht 127.0.0.1** (eigener Container).    |
+| TCP-Port des Gateways    | Der Port von ser2net (oben 9999).                                                |
+| Geräte                   | Deine Geräte, siehe unten.                                                       |
+| Unbekannte Geräte melden | Löst „unbekanntes Gerät empfangen“ aus. Ausschalten, wenn Nachbarn alles fluten. |
+| Detaillierte Protokolle  | Protokolliert jedes empfangene Telegramm. Nur zur Fehlersuche.                   |
+
+Speichere und drücke dann **Verbindung testen**: Es zeigt das Modul, seine
+**Basis-ID** und wie viele Telegramme empfangen wurden.
+
+## 4. Deine Geräte angeben
+
+EnOcean hat keine Erkennung: Ein Sensor sagt „ich bin 0194E3B2“, nie was er
+misst. Jedes Gerät wird einmal angegeben, als JSON-Liste im Feld **Geräte**:
+
+```json
+[
+  { "id": "0194E3B2", "eep": "A5-02-05", "name": "Wohnzimmer" },
+  { "id": "FEF1A2B3", "eep": "F6-02-01", "name": "Schalter Eingang" },
+  { "id": "01A1B2C3", "eep": "F6-10-00", "name": "Küchenfenster" },
+  { "eep": "A5-38-08", "channel": 1, "name": "Dimmer Küche", "dimmable": true },
+  { "eep": "F6-02-01", "channel": 2, "rocker": "a", "name": "Relais Garten" },
+  { "id": "05123456", "eep": "D2-01-12", "channel": 3, "name": "Steckdose" }
+]
+```
+
+| Schlüssel  | Bedeutung                                                                                   |
+| ---------- | ------------------------------------------------------------------------------------------- |
+| `id`       | Die EnOcean-ID des Geräts, 8 Hex-Ziffern (aufgedruckt). Nötig für alles, was es sendet.     |
+| `eep`      | Sein Profil (EEP), siehe Tabelle unten. Steht in seiner Anleitung.                          |
+| `name`     | Der in Gladys angezeigte Name.                                                              |
+| `channel`  | Nur Aktoren: der Gateway-Kanal (0-127), von dem Gladys sendet. Einer pro Aktor oder Gruppe. |
+| `dimmable` | `true` für einen Dimmer (A5-38-08, D2-01): fügt die Helligkeit hinzu.                       |
+| `rocker`   | Relais mit virtueller Wippe: `a` (Standard) oder `b`, die gelernte Seite.                   |
+| `io`       | D2-01 mit mehreren Ausgängen: die Nummer des Ausgangs (0 = der erste).                      |
+
+Du musst die IDs nicht selbst ablesen: Öffne den **Lernmodus**, drücke die
+Taste des Geräts und dann **Empfangene Geräte**. Es zeigt die einzufügenden
+Zeilen, mit dem Profil, wenn das Gerät es sendet.
+
+Nach dem Speichern erscheinen die Geräte unter **Erkennung**: Füge sie dort zu
+Gladys hinzu.
+
+**IDs sind endgültig.** Gladys ordnet Verlauf, Szenen und Dashboards der `id`
+(Sensoren, D2-01) oder dem `channel` (andere Aktoren) zu. Wer sie ändert,
+erzeugt ein neues Gerät.
+
+## 5. Unterstützte Profile
+
+| EEP                       | Gerät                                         | In Gladys                                  |
+| ------------------------- | --------------------------------------------- | ------------------------------------------ |
+| A5-02-01 bis 1B, 20, 30   | Temperatursensoren                            | Temperatur                                 |
+| A5-04-01, A5-04-02        | Temperatur- und Feuchtesensoren               | Temperatur, Feuchte                        |
+| A5-06-01, A5-06-02        | Helligkeitssensoren                           | Helligkeit (lx)                            |
+| A5-07-01, 02, 03          | Präsenzmelder (03: mit Helligkeit)            | Bewegung (+ Helligkeit)                    |
+| A5-09-04                  | CO2-Sensoren                                  | CO2, Temperatur, Feuchte                   |
+| D5-00-01                  | Tür- und Fensterkontakte                      | Öffnungssensor (1 = geschlossen)           |
+| F6-10-00                  | Fenstergriffe (Hoppe...)                      | Öffnungssensor + Auslöser „Griff gedreht“  |
+| F6-02-01, F6-02-02 + `id` | Wippschalter (PTM 215, Eltako FT55...)        | 4 Tasten (Klick / langer Klick) + Auslöser |
+| F6-02-01 + `channel`      | Relais, die eine Wippe lernen (Eltako FSR...) | Ein/Aus-Schalter                           |
+| A5-38-08 + `channel`      | Eltako-Relais und -Dimmer (Zentralbefehl)     | Ein/Aus (+ Helligkeit)                     |
+| D2-01-00 bis 14           | Elektronische Schalter und Dimmer (NodOn...)  | Ein/Aus (+ Helligkeit)                     |
+
+Die Tasten eines Wippschalters folgen dem EEP: `ao` / `ai` für oben / unten
+an Wippe A, `bo` / `bi` für Wippe B. Ein Druck unter einer Sekunde ist ein
+Klick, ein längerer ein langer Klick.
+
+## 6. Einen Aktor anlernen
+
+Aktoren werden über einen **Kanal** des Gateways gesteuert: Gladys sendet von
+der Basis-ID des Gateways + Kanal. Der Aktor muss diesen Sender einmal lernen.
+
+- **Relais, das eine Wippe lernt (F6-02-01 + channel)** und
+  **Eltako-Zentralbefehl (A5-38-08)**: Stelle den Aktor auf Lernen (LRN),
+  drücke dann in Gladys **Aktor anlernen** und wähle ihn aus. Stelle ihn
+  wieder auf Betrieb. Trage die `id` des Aktors in seinen Eintrag ein, damit
+  Gladys seinen Bestätigungen folgt (Eltako sendet sie).
+- **D2-01 (NodOn...)**: Sie koppeln sich von ihrer Seite. Drücke in Gladys
+  **Lernmodus öffnen** (oder die Schaltfläche des Widgets) und dann die
+  Kopplungstaste des Geräts: Gladys beantwortet seine Anfrage von Kanal 0 oder
+  von dem Kanal, der für seine `id` schon angegeben ist. Gib es mit seiner
+  `id` und diesem Kanal an (`0`, wenn es noch nicht angegeben war).
+
+Die Basis-ID ist im Stick fest eingebrannt. Behalte den Stick: Mit einem
+anderen müssen die Aktoren den neuen Sender neu lernen.
+
+## 7. Szenen
+
+Auslöser:
+
+- **Ein EnOcean-Schalter wird gedrückt**: Filter auf Schalter, Taste und Druck
+  (kurz, lang). Variablen: `device_name`, `button`, `press`, `duration_ms`.
+- **Ein Fenstergriff wird gedreht**: Filter auf Griff und Stellung
+  (geschlossen, offen, gekippt). Variablen: `device_name`, `position`.
+- **Ein unbekanntes EnOcean-Gerät wird empfangen**: höchstens einmal pro
+  Stunde und Gerät. Variablen: `sender_id`, `eep`, `rorg`, `dbm`, `teach_in`.
+- **Das EnOcean-Gateway ist getrennt**: Die TCP-Verbindung ist abgebrochen
+  (die Integration versucht es selbst weiter). Variablen: `address`, `reason`.
+
+Aktionen:
+
+- **Virtuellen EnOcean-Schalter drücken**: sendet einen Wippendruck von einem
+  Kanal, wie ein echter Schalter. Jeder Aktor, der ihn gelernt hat, reagiert —
+  praktisch für Gruppen. Ausgabe: `sent`.
+- **EnOcean-Lerntelegramm senden**: das Lerntelegramm eines angegebenen
+  Aktors. Ausgabe: `sent`.
+
+## 8. Dashboard-Widget
+
+Das Widget **EnOcean-Funk** zeigt den Gateway-Status, seine Basis-ID und sein
+Modul, den Lernmodus und die zuletzt empfangenen Geräte (mit Signal), die
+unbekannten markiert. Seine Schaltfläche öffnet den Lernmodus für 60 Sekunden.
+
+## 9. Fehlersuche
+
+- **„Gateway nicht erreichbar“**: Prüfe vom Gladys-Host aus, ob der Port
+  antwortet (`nc -vz 192.168.1.50 9999`), ob ser2net läuft und ob kein anderes
+  Programm (eine andere Smart-Home-Zentrale) den Port belegt.
+- **Verbunden, aber nichts empfangen**: falsche Baudrate (57600), Telnet- statt
+  Raw-Modus oder ein Stick mit falscher Frequenz.
+- **Ein Gerät wird empfangen, aber in Gladys ändert sich nichts**: falsches
+  `eep` im Eintrag, oder das Gerät wurde nicht unter Erkennung hinzugefügt.
+  Schalte die detaillierten Protokolle ein: Jedes Telegramm steht dort mit
+  Absender und Bytes.
+- **Ein Aktor reagiert nicht**: Er hat den Kanal nicht gelernt (erneut
+  anlernen), oder **Verbindung testen** meldet eine unbekannte Basis-ID.
+- **Funkreichweite**: Beton und Metall blockieren 868 MHz. Versetze den Stick
+  (ein USB-Verlängerungskabel hilft) oder füge einen EnOcean-Repeater hinzu.
+
+## Konfigurationseinstellungen
+
+Diese Einstellungen fragt EnOcean in seinem Konfigurationsbildschirm in Gladys ab.
+
+| Einstellung | Typ | Pflichtfeld | Beschreibung |
+| --- | --- | --- | --- |
+| Erste Schritte | `section` | Nein | Die Integration läuft in einem Container ohne Zugriff auf USB-Geräte: Stecke deinen EnOcean USB 300 (oder ein anderes ESP3-Gateway) an einen Rechner in deinem Netzwerk und gib ihn mit ser2net als rohen TCP-Port mit 57600 Baud frei. Trage dann unten seine Adresse ein und gib deine Geräte an. |
+| Gateway-Host | `string` | Ja | IP-Adresse oder Name des Rechners, auf dem ser2net läuft. Nicht 127.0.0.1: Die Integration läuft in ihrem eigenen Container. |
+| TCP-Port des Gateways | `number` | Ja | Der Port, auf dem ser2net für das EnOcean-Modul lauscht (Raw-Modus, kein Telnet). |
+| Geräte | `string` | Nein | Deine EnOcean-Geräte als JSON-Liste: ein Eintrag pro Gerät mit seiner ID (8 Hex-Ziffern), seinem Profil (EEP, z. B. A5-02-05) und einem Namen. Aktoren erhalten zusätzlich einen Kanal (0-127). Die Schaltfläche „Empfangene Geräte“ schreibt die Zeilen für dich. Siehe die Dokumentation. |
+| Unbekannte Geräte melden | `boolean` | Nein | Löst den Szenenauslöser „Ein unbekanntes EnOcean-Gerät wird empfangen“ aus, höchstens einmal pro Stunde und Gerät. Schalte es aus, wenn die Sensoren deiner Nachbarn den ganzen Tag empfangen werden. |
+| Detaillierte Protokolle (Debug) | `boolean` | Nein | Protokolliert jedes empfangene Telegramm mit Absender, Bytes und Signal. Schalte es ein, um herauszufinden, warum ein Gerät nicht erscheint, und danach wieder aus. |
+
+## So installierst du EnOcean in Gladys
+
+1. Öffne in Gladys **Integrationen**: EnOcean erscheint im Katalog neben den nativen Integrationen, mit einem Community-Badge.
+2. Klicke auf **Installieren**. Gladys lädt das Docker-Image (`ghcr.io/prohand/gladys-enocean:1.0.1`) herunter, startet es in einer vom Kern isolierten Sandbox und erzeugt die Oberfläche der Integration (Geräte, Erkennung und Konfiguration).
+3. Öffne den Bildschirm **Konfiguration** der Integration, fülle die Einstellungen aus und speichere.
+4. Du kannst sie auch direkt über die URL ihres Repositorys installieren: [https://github.com/prohand/gladys-enocean](https://github.com/prohand/gladys-enocean).
+
+EnOcean benötigt Gladys `>=5.3.0`. Der Katalog in Gladys wird stündlich aktualisiert, eine neue Version ist also spätestens eine Stunde nach ihrer Veröffentlichung verfügbar.
+
+Du nutzt Gladys noch nicht? Es ist kostenlos und Open Source: [folge der Installationsanleitung](/de/docs/), um loszulegen.
+
+## Über externe Integrationen
+
+EnOcean ist eine **externe Integration**: eine Community-Integration, die als Docker-Container verpackt und auf GitHub veröffentlicht wird. Gladys installiert sie mit einem Klick und führt sie in einer vom Kern isolierten Sandbox aus. Sie wird von [prohand](https://github.com/prohand) veröffentlicht und gepflegt, nicht vom Gladys-Kernteam.
+
+- [Alle Integrationen durchsuchen](/de/docs/integrations/), native und aus der Community
+- [Deine eigene externe Integration bauen und veröffentlichen](/de/docs/dev/external-integrations/)
+- [Quellcode auf GitHub](https://github.com/prohand/gladys-enocean) — [Quelle dieser Dokumentation](https://github.com/prohand/gladys-enocean/blob/HEAD/docs/de.md)

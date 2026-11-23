@@ -1,0 +1,153 @@
+---
+title: "Integración domótica LOA - Car Lease Mileage, gratuita y de código abierto"
+sidebar_label: "LOA - Car Lease Mileage"
+description: "Track the mileage of a leased car (LOA/LLD): allowance, projection, extra-kilometre cost. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/Nagromdark--gladys-suivi-loa-lld.png"
+keywords:
+  - "loa - car lease mileage"
+  - "domótica loa - car lease mileage"
+  - "gladys loa - car lease mileage"
+  - "loa - car lease mileage gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/Nagromdark/gladys-suivi-loa-lld instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"LOA - Car Lease Mileage","description":"Track the mileage of a leased car (LOA/LLD): allowance, projection, extra-kilometre cost.","owner":"Nagromdark","owner_avatar_url":"https://avatars.githubusercontent.com/u/214889285?v=4","repo_url":"https://github.com/Nagromdark/gladys-suivi-loa-lld","cover_url":"https://integration-store-storage.gladysassistant.com/covers/Nagromdark--gladys-suivi-loa-lld.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-22T17:26:53Z"}} />
+
+:::info
+
+La documentación de esta integración la escribe su autor y, por ahora, solo está disponible en inglés.
+
+:::
+
+Your car is leased (LOA or LLD in France) with a mileage allowance: this
+integration tells you at any time whether you drive too much, what the
+odometer will read at the end of the contract at your current pace, and what
+the extra kilometres would cost when you return the car.
+
+## What you get
+
+A **"\<vehicle name> (LOA)"** device in the **Discovery** tab, with these
+values:
+
+| Value                              | Meaning                                                                   |
+| ---------------------------------- | ------------------------------------------------------------------------- |
+| Compteur kilométrique              | the last reading you entered                                              |
+| Compteur prévu à date              | what the odometer should read today if the allowance were spread evenly   |
+| Écart avec le prévu                | reading − expected at the reading date; **positive = you drive too much** |
+| Km restants au forfait             | allowance − distance driven; negative once the allowance is exceeded      |
+| Budget km par mois                 | what you can still drive each month to end exactly within the allowance   |
+| Compteur projeté en fin de contrat | the final odometer if you keep your current pace                          |
+| Dépassement projeté                | the kilometres over the allowance in that projection                      |
+| Surcoût projeté                    | projected extra kilometres × price per extra kilometre                    |
+| Jours restants                     | days until the end of the contract                                        |
+
+The feature names are in French (LOA is a French contract); rename them in
+Gladys if you like. Every value keeps its history, so you can chart it on a
+dashboard.
+
+The projection only appears after one week of contract: before that, a
+single long trip would distort it completely.
+
+## Configuration
+
+1. Open the **Configuration** tab of the integration and copy your contract:
+   - **Contract start**: the delivery date, as `YYYY-MM-DD` (e.g.
+     `2025-03-15`);
+   - **Duration** in months (36 for 3 years);
+   - **Mileage allowance** for the **whole** contract (60,000 km for 3 years
+     at 20,000 km/year);
+   - **Odometer at delivery** (often a few kilometres);
+   - **Price per extra km**, from the contract terms.
+2. Save, then add the device from the **Discovery** tab.
+3. Record a first odometer reading (see below).
+
+While something is missing, the Configuration screen says what to fix.
+
+## Recording the odometer
+
+Three ways:
+
+- **Configuration screen**: the **Record the odometer** button. The summary
+  shows under the button.
+- **Dashboard**: add the **Car lease** widget; its **New reading** button
+  opens a small form, pre-filled with the last reading. Its chart draws the
+  allowance over the whole contract and your own pace, extended to the
+  projected final odometer: when your line runs above the allowance line, you
+  are driving too much.
+- **Scene**: the **Record the leased car odometer** action. Handy when your
+  car is connected and another Gladys integration already reads its
+  odometer: a daily scene can pass that value on. In the **Odometer (km)**
+  field, type `{{` and pick the car's odometer value from the list.
+
+A reading a week or a month is enough: the projection uses the average pace
+since the delivery. A reading lower than the previous one is accepted (fixing
+a typo).
+
+## Scene examples
+
+- **Overage alert**: "device value" trigger on **Surcoût projeté** above 0 →
+  send a message.
+- **Return reminder**: trigger on **Jours restants** below 90 → "book the
+  return inspection".
+- **Reading reminder**: scheduled trigger every Sunday → "read the car
+  odometer".
+
+## The computation
+
+```
+expected(date)    = odometer at delivery + allowance × (days elapsed / contract days)
+delta             = reading − expected(reading date)
+pace              = distance driven / days elapsed at the reading date
+projected         = odometer at delivery + pace × contract days
+projected cost    = max(0, projected distance − allowance) × price per extra km
+budget per month  = km left / months left (all of it during the last month)
+```
+
+The contract ends on the start date plus the duration in months (a contract
+started on 31 January ends on the last day of the target month).
+
+## Troubleshooting
+
+Read the integration logs from the Gladys UI (or `docker logs` on the host),
+with `LOG_LEVEL=debug` for the full detail.
+
+## Parámetros de configuración
+
+Estos son los parámetros que LOA - Car Lease Mileage te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Your lease contract | `section` | No | Copy the figures from your lease contract. Then enter the odometer from time to time (button below, dashboard widget or a scene): Gladys compares it with the allowance and projects the end of the contract. |
+| Vehicle name | `string` | No |  |
+| Contract start (delivery date) | `string` | Sí | Format YYYY-MM-DD. |
+| Duration (months) | `number` | Sí |  |
+| Mileage allowance (km) | `number` | Sí | For the whole contract, not per year. |
+| Odometer at delivery (km) | `number` | No |  |
+| Price per extra km (€) | `number` | Sí | Written in the contract, usually between 0.05 and 0.20 €. |
+
+## Cómo instalar LOA - Car Lease Mileage en Gladys
+
+1. En Gladys, abre **Integraciones**: LOA - Car Lease Mileage aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/nagromdark/gladys-suivi-loa-lld:1.0.0`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/Nagromdark/gladys-suivi-loa-lld](https://github.com/Nagromdark/gladys-suivi-loa-lld).
+
+LOA - Car Lease Mileage requiere Gladys `>=5.1.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+LOA - Car Lease Mileage es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [Nagromdark](https://github.com/Nagromdark), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/Nagromdark/gladys-suivi-loa-lld) — [fuente de esta documentación](https://github.com/Nagromdark/gladys-suivi-loa-lld/blob/HEAD/docs/en.md)

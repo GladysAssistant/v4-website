@@ -1,0 +1,250 @@
+---
+title: "Intégration domotique EnOcean, gratuite et open source"
+sidebar_label: "EnOcean"
+description: "Capteurs, interrupteurs et actionneurs EnOcean via une passerelle USB 300 partagée par ser2net. Gratuite, open source, installable en un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-enocean.png"
+keywords:
+  - "enocean"
+  - "domotique enocean"
+  - "gladys enocean"
+  - "enocean gladys assistant"
+  - "intégration externe"
+  - "domotique open source"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/fr.md in
+https://github.com/prohand/gladys-enocean instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"EnOcean","description":"Capteurs, interrupteurs et actionneurs EnOcean via une passerelle USB 300 partagée par ser2net.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-enocean","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-enocean.png","type":"device","version":"1.0.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-20T09:25:44Z"}} />
+
+Cette intégration relie Gladys aux appareils EnOcean — interrupteurs sans
+pile, capteurs de température, d'humidité, de CO2, de présence et de
+luminosité, contacts de porte, poignées de fenêtre, relais et variateurs — via
+une **passerelle ESP3** : la clé EnOcean USB 300, un module TCM 310, ou toute
+passerelle construite dessus.
+
+## 1. Ce qu'il faut
+
+- Gladys **5.3 ou plus récent**.
+- Une passerelle ESP3 (USB 300, USB 310, carte TCM 310...) à la fréquence de
+  votre pays : 868 MHz en Europe, 902 MHz en Amérique du Nord.
+- Une machine de votre réseau où la brancher : la machine Gladys elle-même, ou
+  un Raspberry Pi plus proche des appareils.
+- **ser2net** sur cette machine.
+
+Pourquoi ser2net ? L'intégration tourne dans un conteneur isolé qui ne voit
+pas les périphériques USB. ser2net partage le port série de la clé en port
+TCP, et l'intégration s'y connecte. Cela permet aussi de placer la clé là où la
+réception est la meilleure, loin du serveur Gladys.
+
+## 2. Partager la clé avec ser2net
+
+Installez-le (`apt install ser2net` sur Debian, Ubuntu et Raspberry Pi OS),
+puis trouvez le nom stable de la clé :
+
+```bash
+ls -l /dev/serial/by-id/
+```
+
+ser2net 4 (`/etc/ser2net.yaml`) :
+
+```yaml
+connection: &enocean
+  accepter: tcp,9999
+  enable: on
+  options:
+    kickolduser: true
+  connector: serialdev,/dev/serial/by-id/usb-EnOcean_GmbH_EnOcean_USB_300_DC_XXXXXXXX-if00-port0,57600n81,local
+```
+
+ser2net 3 (`/etc/ser2net.conf`) :
+
+```text
+9999:raw:0:/dev/serial/by-id/usb-EnOcean_GmbH_EnOcean_USB_300_DC_XXXXXXXX-if00-port0:57600 8DATABITS NONE 1STOPBIT
+```
+
+Puis `systemctl restart ser2net`. À retenir :
+
+- **57600 bauds, 8N1, mode raw** (pas telnet) : ESP3 est binaire.
+- **`kickolduser: true`** : le port n'accepte qu'un client. Quand
+  l'intégration se reconnecte (mise à jour, redémarrage de Gladys), l'ancienne
+  session doit laisser la place.
+- **Le port n'a pas de mot de passe.** Ouvrez-le à la seule machine Gladys :
+  liez-le à une adresse (`accepter: tcp,192.168.1.50,9999`) et/ou filtrez-le
+  avec votre pare-feu.
+
+## 3. Configurer l'intégration
+
+Dans **Intégrations → EnOcean → Configuration** :
+
+| Champ                           | Quoi mettre                                                                              |
+| ------------------------------- | ---------------------------------------------------------------------------------------- |
+| Hôte de la passerelle           | Adresse IP de la machine qui fait tourner ser2net. **Pas 127.0.0.1** (conteneur à part). |
+| Port TCP de la passerelle       | Le port de ser2net (9999 ci-dessus).                                                     |
+| Appareils                       | Vos appareils, voir ci-dessous.                                                          |
+| Signaler les appareils inconnus | Déclenche « appareil inconnu entendu ». Désactivez si les voisins inondent.              |
+| Journaux détaillés (debug)      | Journalise chaque télégramme entendu. Pour le dépannage seulement.                       |
+
+Enregistrez, puis appuyez sur **Tester la connexion** : il affiche le module,
+son **base id** et le nombre de télégrammes entendus.
+
+## 4. Déclarer vos appareils
+
+EnOcean n'a pas de découverte : un capteur dit « je suis 0194E3B2 », jamais ce
+qu'il mesure. Chaque appareil se déclare une fois, en liste JSON dans le champ
+**Appareils** :
+
+```json
+[
+  { "id": "0194E3B2", "eep": "A5-02-05", "name": "Salon" },
+  { "id": "FEF1A2B3", "eep": "F6-02-01", "name": "Interrupteur entrée" },
+  { "id": "01A1B2C3", "eep": "F6-10-00", "name": "Fenêtre cuisine" },
+  { "eep": "A5-38-08", "channel": 1, "name": "Variateur cuisine", "dimmable": true },
+  { "eep": "F6-02-01", "channel": 2, "rocker": "a", "name": "Relais jardin" },
+  { "id": "05123456", "eep": "D2-01-12", "channel": 3, "name": "Prise" }
+]
+```
+
+| Clé        | Sens                                                                                                  |
+| ---------- | ----------------------------------------------------------------------------------------------------- |
+| `id`       | L'id EnOcean de l'appareil, 8 chiffres hexadécimaux (imprimé dessus). Nécessaire pour ce qu'il émet.  |
+| `eep`      | Son profil (EEP), voir le tableau ci-dessous. Indiqué dans sa notice.                                 |
+| `name`     | Le nom affiché dans Gladys.                                                                           |
+| `channel`  | Actionneurs seulement : le canal de la passerelle (0-127) d'où Gladys émet. Un par actionneur/groupe. |
+| `dimmable` | `true` pour un variateur (A5-38-08, D2-01) : ajoute la luminosité.                                    |
+| `rocker`   | Relais à bascule virtuelle : `a` (par défaut) ou `b`, le côté appris par le relais.                   |
+| `io`       | D2-01 à plusieurs sorties : le numéro de la sortie (0 = la première).                                 |
+
+Inutile de lire les id vous-même : ouvrez le **mode apprentissage**, appuyez
+sur le bouton de l'appareil, puis sur **Appareils entendus**. Il affiche les
+lignes à coller, avec le profil quand l'appareil l'envoie.
+
+Après l'enregistrement, les appareils apparaissent dans **Découverte** :
+ajoutez-les à Gladys depuis là.
+
+**Les id sont définitifs.** Gladys range l'historique, les scènes et les
+tableaux de bord sous l'`id` (capteurs, D2-01) ou le `channel` (autres
+actionneurs). Les changer crée un nouvel appareil.
+
+## 5. Profils pris en charge
+
+| EEP                       | Appareil                                          | Dans Gladys                                   |
+| ------------------------- | ------------------------------------------------- | --------------------------------------------- |
+| A5-02-01 à 1B, 20, 30     | Capteurs de température                           | Température                                   |
+| A5-04-01, A5-04-02        | Capteurs de température et d'humidité             | Température, humidité                         |
+| A5-06-01, A5-06-02        | Capteurs de luminosité                            | Luminosité (lx)                               |
+| A5-07-01, 02, 03          | Détecteurs de présence (03 : avec luminosité)     | Mouvement (+ luminosité)                      |
+| A5-09-04                  | Capteurs de CO2                                   | CO2, température, humidité                    |
+| D5-00-01                  | Contacts de porte et de fenêtre                   | Capteur d'ouverture (1 = fermé)               |
+| F6-10-00                  | Poignées de fenêtre (Hoppe...)                    | Capteur d'ouverture + déclencheur « poignée » |
+| F6-02-01, F6-02-02 + `id` | Interrupteurs à bascule (PTM 215, Eltako FT55...) | 4 boutons (clic / clic long) + déclencheur    |
+| F6-02-01 + `channel`      | Relais qui apprennent une bascule (Eltako FSR...) | Interrupteur marche/arrêt                     |
+| A5-38-08 + `channel`      | Relais et variateurs Eltako (commande centrale)   | Marche/arrêt (+ luminosité)                   |
+| D2-01-00 à 14             | Interrupteurs et variateurs électroniques (NodOn) | Marche/arrêt (+ luminosité)                   |
+
+Les boutons d'un interrupteur suivent l'EEP : `ao` / `ai` pour le haut / bas
+de la bascule A, `bo` / `bi` pour la bascule B. Un appui de moins d'une seconde
+est un clic, plus long un clic long.
+
+## 6. Appairer un actionneur
+
+Les actionneurs sont pilotés depuis un **canal** de la passerelle : Gladys
+émet depuis le base id de la passerelle + le canal. L'actionneur doit
+apprendre cet émetteur une fois.
+
+- **Relais qui apprend une bascule (F6-02-01 + channel)** et **commande
+  centrale Eltako (A5-38-08)** : placez l'actionneur en position apprentissage
+  (LRN), puis dans Gladys appuyez sur **Appairer un actionneur** et
+  choisissez-le. Remettez-le en position de fonctionnement. Ajoutez l'`id` de
+  l'actionneur à son entrée pour que Gladys suive ses confirmations (Eltako
+  les envoie).
+- **D2-01 (NodOn...)** : ils s'appairent de leur côté. Appuyez sur **Ouvrir
+  le mode apprentissage** dans Gladys (ou le bouton du widget), puis sur le
+  bouton d'appairage de l'appareil : Gladys répond à sa demande depuis le canal
+  0, ou depuis le canal déjà déclaré pour son `id`. Déclarez-le avec son `id`
+  et ce canal (`0` s'il n'était pas encore déclaré).
+
+Le base id est gravé dans la clé. Gardez la clé : avec une autre, les
+actionneurs doivent réapprendre le nouvel émetteur.
+
+## 7. Scènes
+
+Déclencheurs :
+
+- **Un interrupteur EnOcean est actionné** : filtre sur l'interrupteur, le
+  bouton et l'appui (court, long). Variables : `device_name`, `button`,
+  `press`, `duration_ms`.
+- **Une poignée de fenêtre est tournée** : filtre sur la poignée et la
+  position (fermée, ouverte, oscillo-battant). Variables : `device_name`,
+  `position`.
+- **Un appareil EnOcean inconnu est entendu** : une fois par heure et par
+  appareil au plus. Variables : `sender_id`, `eep`, `rorg`, `dbm`, `teach_in`.
+- **La passerelle EnOcean est perdue** : la connexion TCP est tombée
+  (l'intégration réessaie toute seule). Variables : `address`, `reason`.
+
+Actions :
+
+- **Appuyer sur un interrupteur EnOcean virtuel** : émet un appui de bascule
+  depuis un canal, comme un vrai interrupteur. Tout actionneur qui l'a appris
+  réagit — pratique pour les groupes. Sortie : `sent`.
+- **Envoyer un apprentissage EnOcean** : le télégramme d'apprentissage d'un
+  actionneur déclaré. Sortie : `sent`.
+
+## 8. Widget du tableau de bord
+
+Le widget **Radio EnOcean** affiche l'état de la passerelle, son base id et
+son module, le mode apprentissage et les derniers appareils entendus (avec
+leur signal), les inconnus signalés. Son bouton ouvre le mode apprentissage
+pour 60 secondes.
+
+## 9. Dépannage
+
+- **« Passerelle injoignable »** : vérifiez depuis la machine Gladys que le
+  port répond (`nc -vz 192.168.1.50 9999`), que ser2net tourne, et qu'aucun
+  autre programme (une autre box domotique) ne tient le port.
+- **Connectée mais rien n'est entendu** : mauvaise vitesse (57600), mode
+  telnet au lieu de raw, ou clé de la mauvaise fréquence.
+- **Un appareil est entendu mais rien ne bouge dans Gladys** : mauvais `eep`
+  dans son entrée, ou l'appareil n'a pas été ajouté depuis Découverte. Activez
+  les journaux détaillés : chaque télégramme y figure avec son émetteur et ses
+  octets.
+- **Un actionneur ne réagit pas** : il n'a pas appris le canal (refaites
+  l'appairage), ou **Tester la connexion** indique un base id inconnu.
+- **Portée radio** : le béton et le métal bloquent le 868 MHz. Déplacez la clé
+  (une rallonge USB aide) ou ajoutez un répéteur EnOcean.
+
+## Paramètres de configuration
+
+Voici les paramètres demandés par EnOcean dans son écran de configuration dans Gladys.
+
+| Paramètre | Type | Obligatoire | Description |
+| --- | --- | --- | --- |
+| Pour commencer | `section` | Non | L'intégration tourne dans un conteneur qui ne voit pas les périphériques USB : branchez votre clé EnOcean USB 300 (ou toute passerelle ESP3) sur une machine de votre réseau et partagez-la avec ser2net en port TCP brut à 57600 bauds. Renseignez ensuite son adresse ci-dessous et déclarez vos appareils. |
+| Hôte de la passerelle | `string` | Oui | Adresse IP ou nom de la machine qui fait tourner ser2net. Pas 127.0.0.1 : l'intégration tourne dans son propre conteneur. |
+| Port TCP de la passerelle | `number` | Oui | Le port sur lequel ser2net écoute pour le module EnOcean (mode raw, pas telnet). |
+| Appareils | `string` | Non | Vos appareils EnOcean en liste JSON : une entrée par appareil avec son id (8 chiffres hexadécimaux), son profil (EEP, par ex. A5-02-05) et un nom. Les actionneurs reçoivent aussi un canal (0-127). Le bouton « Appareils entendus » écrit les lignes pour vous. Voir la documentation. |
+| Signaler les appareils inconnus | `boolean` | Non | Déclenche le déclencheur de scène « Un appareil EnOcean inconnu est entendu », au plus une fois par heure et par appareil. Désactivez-le si les capteurs de vos voisins sont entendus toute la journée. |
+| Journaux détaillés (debug) | `boolean` | Non | Journalise chaque télégramme entendu, avec son émetteur, ses octets et son signal. Activez-le pour comprendre pourquoi un appareil ne remonte pas, puis désactivez-le. |
+
+## Comment installer EnOcean dans Gladys
+
+1. Dans Gladys, ouvrez **Intégrations** : EnOcean apparaît dans le catalogue, aux côtés des intégrations natives, avec un badge communautaire.
+2. Cliquez sur **Installer**. Gladys télécharge l'image Docker (`ghcr.io/prohand/gladys-enocean:1.0.1`), la démarre dans un bac à sable isolé du cœur, et génère l'interface de l'intégration (appareils, découverte et configuration).
+3. Ouvrez l'écran **Configuration** de l'intégration, remplissez les paramètres, puis enregistrez.
+4. Vous pouvez aussi l'installer directement depuis l'URL de son dépôt : [https://github.com/prohand/gladys-enocean](https://github.com/prohand/gladys-enocean).
+
+EnOcean nécessite Gladys `>=5.3.0`. Le catalogue dans Gladys se rafraîchit toutes les heures : une nouvelle version est donc disponible au plus tard une heure après sa sortie.
+
+Vous n'utilisez pas encore Gladys ? C'est gratuit et open source : [suivez le guide d'installation](/fr/docs/) pour démarrer.
+
+## À propos des intégrations externes
+
+EnOcean est une **intégration externe** : une intégration communautaire empaquetée dans un conteneur Docker et publiée sur GitHub, que Gladys installe en un clic et exécute dans un bac à sable isolé de son cœur. Elle est publiée et maintenue par [prohand](https://github.com/prohand), et non par l'équipe cœur de Gladys.
+
+- [Parcourir toutes les intégrations](/fr/docs/integrations/), natives et communautaires
+- [Créer et publier votre propre intégration externe](/fr/docs/dev/external-integrations/)
+- [Code source sur GitHub](https://github.com/prohand/gladys-enocean) — [source de cette documentation](https://github.com/prohand/gladys-enocean/blob/HEAD/docs/fr.md)
