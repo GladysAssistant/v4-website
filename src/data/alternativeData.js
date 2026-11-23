@@ -121,6 +121,10 @@ const alternativeContent = {
       ],
       outro:
         "Among these, Gladys stands out for its simplicity and true product experience: a clean interface, no configuration files, and a focus on open standards.",
+      link: {
+        label: "The 6 open-source home automation platforms compared →",
+        href: "/open-source-home-automation/",
+      },
     },
     faqTitle: "Frequently asked questions",
     cta: {
@@ -249,6 +253,10 @@ const alternativeContent = {
       ],
       outro:
         "Parmi elles, Gladys se distingue par sa simplicité et sa vraie expérience produit : une interface épurée, aucun fichier de configuration, et un focus sur les standards ouverts.",
+      link: {
+        label: "Les 6 plateformes domotiques open source comparées →",
+        href: "/fr/open-source-home-automation/",
+      },
     },
     faqTitle: "Questions fréquentes",
     cta: {
@@ -376,6 +384,10 @@ const alternativeContent = {
       ],
       outro:
         "Unter diesen Optionen sticht Gladys durch seine Einfachheit und ein echtes Produkterlebnis hervor: eine aufgeräumte Oberfläche, keine Konfigurationsdateien und ein klarer Fokus auf offene Standards.",
+      link: {
+        label: "Die 6 Open-Source-Smart-Home-Plattformen im Vergleich →",
+        href: "/de/open-source-home-automation/",
+      },
     },
     faqTitle: "Häufig gestellte Fragen",
     cta: {
@@ -503,6 +515,10 @@ const alternativeContent = {
       ],
       outro:
         "Entre todas ellas, Gladys destaca por su sencillez y por ofrecer una verdadera experiencia de producto: una interfaz limpia, sin archivos de configuración y con el foco puesto en los estándares abiertos.",
+      link: {
+        label: "Las 6 plataformas de domótica de código abierto, comparadas →",
+        href: "/es/open-source-home-automation/",
+      },
     },
     faqTitle: "Preguntas frecuentes",
     cta: {

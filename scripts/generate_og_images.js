@@ -5,13 +5,19 @@
 // Usage, after a build (the titles are read from the built pages):
 //   yarn build
 //   npm install --no-save playwright   # not a project dependency
-//   node scripts/generate_og_images.js
+//   node scripts/generate_og_images.js              # every page
+//   node scripts/generate_og_images.js slug-a slug-b # only these pages
 //
 // Pages come from the /guides/ hub (src/data/guidesHubData.js) plus /guides/
 // itself. Images land in static/img/og/<slug>-<locale>.jpg and the list of
 // generated slugs in src/data/ogImages.json, which HorizonPage and the
-// structured data read. Re-run it when you add a landing page or change a
-// title.
+// structured data read. Every page gets an English and a French image. A page
+// also gets a German image when the German build exists and the page has its
+// own German content (its German H1 differs from the English one); those
+// slugs are listed in src/data/ogImagesDe.json (see src/data/ogImageLocale.js).
+// With slugs on the command line, only those pages are generated and both
+// lists are updated instead of rewritten. Re-run it when you add a landing
+// page or change a title.
 
 const fs = require("fs");
 const path = require("path");
@@ -20,12 +26,18 @@ const ROOT = path.join(__dirname, "..");
 const BUILD_DIR = path.join(ROOT, "build");
 const OUTPUT_DIR = path.join(ROOT, "static/img/og");
 const MANIFEST = path.join(ROOT, "src/data/ogImages.json");
+const MANIFEST_DE = path.join(ROOT, "src/data/ogImagesDe.json");
 const LOCALES = ["en", "fr"];
 
 const TAGLINE = {
   en: "Open source · Self-hosted · No cloud required",
   fr: "Open source · Auto-hébergé · Sans cloud obligatoire",
+  de: "Open Source · Selbst gehostet · Keine Cloud nötig",
 };
+
+const readManifest = (file) => (fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf8")) : []);
+const writeManifest = (file, slugs) =>
+  fs.writeFileSync(file, `${JSON.stringify([...new Set(slugs)].sort(), null, 2)}\n`);
 
 const slugsFromHub = () => {
   const hub = fs.readFileSync(path.join(ROOT, "src/data/guidesHubData.js"), "utf8");
@@ -66,6 +78,9 @@ const shorten = (text, max = 150) => {
 const escapeHtml = (s) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
+// Never break a line at the hyphen of a compound word ("E-Auto").
+const keepHyphenated = (s) => s.replace(/\S*\w-\w\S*/g, (word) => `<span class="nowrap">${word}</span>`);
+
 const template = ({ title, subtitle }, locale, fontUrl, logoUrl) => `<!doctype html>
 <html><head><meta charset="utf-8"><style>
 @font-face { font-family: Inter; src: url("${fontUrl}") format("woff2"); font-weight: 100 900; }
@@ -86,13 +101,14 @@ body {
   margin-top: auto; font-size: ${title.length > 60 ? 54 : 64}px; font-weight: 800;
   line-height: 1.08; letter-spacing: -0.02em; max-width: 1000px;
 }
+.nowrap { white-space: nowrap; }
 .subtitle { margin-top: 24px; font-size: 28px; line-height: 1.35; color: rgba(255,255,255,0.72); max-width: 980px; }
 .tagline { margin-top: auto; padding-top: 28px; font-size: 24px; color: rgba(255,255,255,0.55);
   display: flex; justify-content: space-between; }
 .accent { background: linear-gradient(90deg, #8fb4ff, #c9a6ff 55%, #f2b8a2); -webkit-background-clip: text; color: transparent; }
 </style></head><body>
 <div class="brand"><img src="${logoUrl}" alt=""><span>Gladys Assistant</span></div>
-<div class="title">${escapeHtml(title)}</div>
+<div class="title">${keepHyphenated(escapeHtml(title))}</div>
 ${subtitle ? `<div class="subtitle">${escapeHtml(subtitle)}</div>` : ""}
 <div class="tagline"><span>${TAGLINE[locale]}</span><span class="accent">gladysassistant.com</span></div>
 </body></html>`;
@@ -116,12 +132,27 @@ ${subtitle ? `<div class="subtitle">${escapeHtml(subtitle)}</div>` : ""}
     process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {}
   );
   const page = await browser.newPage({ viewport: { width: 1200, height: 630 } });
+  const only = process.argv.slice(2);
+  const hubSlugs = slugsFromHub();
+  const unknown = only.filter((slug) => !hubSlugs.includes(slug));
+  if (unknown.length > 0) {
+    console.error(`Not in the /guides/ hub: ${unknown.join(", ")}`);
+    process.exit(1);
+  }
+  const hasGermanBuild = fs.existsSync(path.join(BUILD_DIR, "de"));
+  if (!hasGermanBuild) console.warn("> no German build: German images are left as they are");
   const generated = [];
-  for (const slug of slugsFromHub()) {
+  const generatedDe = [];
+  for (const slug of only.length > 0 ? only : hubSlugs) {
     const pages = LOCALES.map((locale) => [locale, readPage(slug, locale)]);
     if (pages.some(([, p]) => !p)) {
       console.warn(`> skipped ${slug}: page or H1 not found in the build`);
       continue;
+    }
+    const german = hasGermanBuild ? readPage(slug, "de") : null;
+    if (german && german.title !== pages[0][1].title) {
+      pages.push(["de", german]);
+      generatedDe.push(slug);
     }
     for (const [locale, data] of pages) {
       const htmlFile = path.join(OUTPUT_DIR, `.tmp-${slug}-${locale}.html`);
@@ -139,6 +170,13 @@ ${subtitle ? `<div class="subtitle">${escapeHtml(subtitle)}</div>` : ""}
     console.log(`> ${slug}`);
   }
   await browser.close();
-  fs.writeFileSync(MANIFEST, `${JSON.stringify(generated.sort(), null, 2)}\n`);
-  console.log(`> Generated ${generated.length} pages x ${LOCALES.length} locales`);
+  if (only.length > 0) {
+    writeManifest(MANIFEST, [...readManifest(MANIFEST), ...generated]);
+    const keptDe = readManifest(MANIFEST_DE).filter((slug) => !only.includes(slug) || !hasGermanBuild);
+    writeManifest(MANIFEST_DE, [...keptDe, ...generatedDe]);
+  } else {
+    writeManifest(MANIFEST, generated);
+    if (hasGermanBuild) writeManifest(MANIFEST_DE, generatedDe);
+  }
+  console.log(`> Generated ${generated.length} pages (English and French), ${generatedDe.length} with a German image`);
 })();

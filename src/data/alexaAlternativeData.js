@@ -9,9 +9,9 @@
 const alternativeContent = {
   en: {
     meta: {
-      title: "Private, Open-Source Alexa Alternative (Self-Hosted)",
+      title: "Alexa Alternative: Private, Local and Free",
       description:
-        "Replace Alexa with a private, self-hosted smart home: automations run on your own hardware, a voice assistant and AI that aren't run by Amazon, no ads, no data resale. Free and open-source.",
+        "Since March 2025, every Alexa request goes to Amazon's cloud. Gladys is a free, open-source alternative that runs at home: local automations, no ads, no data resale.",
     },
     hero: {
       title: "Looking for a privacy-friendly Alexa alternative?",
@@ -126,9 +126,9 @@ const alternativeContent = {
 
   fr: {
     meta: {
-      title: "La meilleure alternative à Alexa, respectueuse de la vie privée : Gladys Assistant",
+      title: "Alternative à Alexa : privée, locale et gratuite",
       description:
-        "Vous cherchez une alternative à Alexa respectueuse de la vie privée ? Gladys Assistant est une plateforme domotique locale, open source et auto-hébergée : vos données restent chez vous, sans enregistrements dans le cloud, sans publicité, sans revente. Gratuite et auto-hébergée.",
+        "Depuis mars 2025, toutes les requêtes Alexa passent par le cloud d'Amazon. Gladys, gratuite et open source, tourne chez vous : sans publicité ni revente de données.",
     },
     hero: {
       title: "Vous cherchez une alternative à Alexa respectueuse de votre vie privée ?",

@@ -7,6 +7,8 @@ sidebar_label: OpenWeather
 
 Mit dieser Integration kannst du die Wettervorhersage in Gladys Assistant anzeigen.
 
+Du willst Messwerte aus deinem eigenen Garten statt einer Vorhersage? Dann wirf einen Blick in unseren Ratgeber [Wetterstation fürs Smart Home](/de/home-weather-station/).
+
 :::info[Seit Gladys 4.85 kann das Wetter auch aus einer externen Integration kommen]
 
 Wetteranbieter lassen sich jetzt als [externe Integrationen](/de/docs/integrations/?origin=community) umsetzen. Diese decken jeden Anbieter ab (Météo France, Open-Meteo, AccuWeather…) und unterstützen Wetterwarnungen, Bilder des Anbieters und die Szenen-Auslöser für Wetterwarnungen. Wird eine solche Integration installiert, hat sie automatisch Vorrang vor diesem eingebauten OpenWeather-Dienst, weshalb er im Katalog nun als veraltet markiert ist.

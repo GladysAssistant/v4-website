@@ -1,4 +1,5 @@
 import ogImages from "./ogImages.json";
+import { ogImageLocale } from "./ogImageLocale";
 
 // Shared JSON-LD builders. Page-specific schemas live in ./schemas/, one file
 // per page, so a page only bundles its own content: importing every page's
@@ -556,7 +557,7 @@ export function getOgImageUrl(pageUrl, lang) {
     .replace(/^\/(fr|de|es)\//, "/")
     .replace(/^\/|\/$/g, "");
   return ogImages.includes(slug)
-    ? `${SITE_URL}/img/og/${slug}-${lang === "fr" ? "fr" : "en"}.jpg`
+    ? `${SITE_URL}/img/og/${slug}-${ogImageLocale(slug, lang)}.jpg`
     : undefined;
 }
 

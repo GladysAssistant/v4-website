@@ -155,6 +155,11 @@ const homeAssistantGreenAlternativeContent = {
           text: "Which mini-PC to buy, and what you actually need.",
         },
         {
+          label: "Open-source home automation",
+          href: "/open-source-home-automation/",
+          text: "Gladys, Home Assistant, openHAB, Domoticz, Jeedom and Node-RED compared.",
+        },
+        {
           label: "Best smart home hub",
           href: "/best-smart-home-hub/",
           text: "Every hub compared: price, protocols, local control.",
@@ -337,6 +342,11 @@ const homeAssistantGreenAlternativeContent = {
           text: "Quel mini-PC acheter, et ce dont vous avez vraiment besoin.",
         },
         {
+          label: "La domotique open source",
+          href: "/fr/open-source-home-automation/",
+          text: "Gladys, Home Assistant, openHAB, Domoticz, Jeedom et Node-RED comparés.",
+        },
+        {
           label: "Quelle box domotique choisir",
           href: "/best-smart-home-hub/",
           text: "Toutes les box comparées : prix, protocoles, contrôle local.",
@@ -374,9 +384,9 @@ const homeAssistantGreenAlternativeContent = {
 
   de: {
     meta: {
-      title: "Home Assistant Green & Yellow Alternative (2026)",
+      title: "Home Assistant Green Nachfolger & Alternative (2026)",
       description:
-        "Alternative zum Home Assistant Green oder Ersatz für den eingestellten Yellow? Gladys auf Mini-PC oder Raspberry Pi: mehr Leistung, einfacher, kostenlos.",
+        "Nachfolger für den Home Assistant Green oder den eingestellten Yellow gesucht? Gladys auf Mini-PC oder Raspberry Pi: mehr Leistung, einfacher, kostenlos.",
     },
     screenshotCaption:
       "Gladys Assistant auf einem kleinen Mini-PC: dieselbe Smart-Home-Box im Dauerbetrieb, nur mit mehr Reserven.",
@@ -517,6 +527,11 @@ const homeAssistantGreenAlternativeContent = {
           label: "Der beste Mini-PC für Hausautomation",
           href: "/de/mini-pc-home-automation/",
           text: "Welcher Mini-PC sich lohnt und was du wirklich brauchst.",
+        },
+        {
+          label: "Open-Source-Hausautomation",
+          href: "/de/open-source-home-automation/",
+          text: "Gladys, Home Assistant, openHAB, Domoticz, Jeedom und Node-RED im Vergleich.",
         },
         {
           label: "Die beste Smart-Home-Zentrale",
@@ -698,6 +713,11 @@ const homeAssistantGreenAlternativeContent = {
           label: "El mejor mini-PC para domótica",
           href: "/es/mini-pc-home-automation/",
           text: "Qué mini-PC comprar y qué necesitas realmente.",
+        },
+        {
+          label: "Domótica de código abierto",
+          href: "/es/open-source-home-automation/",
+          text: "Gladys, Home Assistant, openHAB, Domoticz, Jeedom y Node-RED, comparados.",
         },
         {
           label: "El mejor hub domótico",
