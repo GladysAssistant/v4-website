@@ -7,7 +7,7 @@ sidebar_label: Un évènement du calendrier arrive
 
 Ce déclencheur vous permet de déclencher une scène lors qu'un évènement arrive ou se termine dans votre calendrier.
 
-Vous devez avoir connecté votre calendrier à Gladys via l'intégration [Caldav](/fr/docs/integrations/caldav/).
+Vous devez avoir connecté votre calendrier à Gladys via l'intégration [Caldav](/fr/docs/integrations/external/caldav/).
 
 ![Un évènement arrive dans le calendrier](../../../../../static/img/docs/fr/scenes/calendar-event-is-coming/calendar-event-is-coming.jpg)
 

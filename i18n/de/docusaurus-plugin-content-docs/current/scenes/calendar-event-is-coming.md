@@ -5,7 +5,7 @@ description: "Löse eine Szene in Gladys Assistant aus, wenn ein Kalenderereigni
 sidebar_label: Kalenderereignis steht bevor
 ---
 
-Dieser Auslöser ist sehr mächtig. Er nutzt die Kalender-Integration (zum Beispiel [CalDAV](/de/docs/integrations/caldav)) und ermöglicht es dir, eine Szene auszulösen, wenn ein Kalenderereignis bevorsteht oder endet.
+Dieser Auslöser ist sehr mächtig. Er nutzt die Kalender-Integration (zum Beispiel [CalDAV](/de/docs/integrations/external/caldav/)) und ermöglicht es dir, eine Szene auszulösen, wenn ein Kalenderereignis bevorsteht oder endet.
 
 Stell dir vor, du möchtest eine Szene starten, wenn du ins Fitnessstudio musst.
 

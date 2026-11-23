@@ -1,0 +1,282 @@
+---
+title: "Siemens S7 smart home integration, free and open source"
+sidebar_label: "Siemens S7"
+description: "Read and write the variables of a Siemens S7 PLC (S7-300 to S7-1500, LOGO!) on the local network. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-siemens-s7.png"
+keywords:
+  - "siemens s7"
+  - "siemens s7 smart home"
+  - "gladys siemens s7"
+  - "siemens s7 gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-siemens-s7 instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Siemens S7","description":"Read and write the variables of a Siemens S7 PLC (S7-300 to S7-1500, LOGO!) on the local network.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-siemens-s7","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-siemens-s7.png","type":"device","version":"1.0.0","gladys_version":">=5.1.0","stars":0,"pushed_at":"2026-11-21T06:40:11Z"}} />
+
+Read and write the variables of a Siemens PLC from Gladys, on your local
+network: S7-300, S7-400, S7-1200, S7-1500, ET 200SP CPUs and LOGO! 0BA7 / 0BA8.
+The integration speaks the S7 protocol (S7comm over ISO-on-TCP, port 102),
+the one Siemens HMIs and engineering tools use.
+
+> **Developed without the hardware: feedback welcome.** It was tested against
+> the Snap7 S7 server, not against a real PLC. Tell us on the Gladys forum how
+> it behaves with yours.
+
+## What you get
+
+- One Gladys device for the PLC, one feature per variable you declare: a
+  temperature, a counter, a bit of a DB, an input, an output, a LOGO! V memory
+  word.
+- Values read at the pace you choose (1 second to 1 minute), all variables at
+  once in as few requests as the PLC allows; only the changes are sent to Gladys.
+- On demand, writing a value to the variables you declare writable: a switch or
+  a setpoint on the dashboard, an action, a scene.
+- Scene triggers when the PLC is lost or back, or when an address becomes
+  unreadable, and a dashboard widget with the health of the link.
+
+## Requirements
+
+- Gladys 5.1 or later.
+- The PLC on the same network as Gladys, port 102 reachable, with a **fixed IP
+  address**.
+- For an S7-1200 or S7-1500: PUT/GET access allowed (see below).
+- For a LOGO!: a server connection set in LOGO!Soft Comfort (see below).
+
+## Configuration
+
+Install the integration (**Integrations → Install from GitHub**, address
+`https://github.com/guim31/gladys-siemens-s7`), open its **Configuration**
+tab, fill the fields, save, then add the PLC from the **Discovery** tab.
+
+### PLC
+
+- **PLC IP address**: the address of the CPU (or of its Ethernet module).
+- **TCP port**: 102, always, unless a gateway forwards another port.
+- **PLC type**: sets how the CPU is reached. S7-1200, S7-1500 and ET 200SP:
+  rack 0, slot 1. S7-300: rack 0, slot 2. LOGO!: the TSAPs below. **Other**:
+  the **Rack** and **Slot** fields (an S7-400 CPU is often in slot 3; check the
+  hardware configuration of your project).
+
+Gladys identifies the PLC by its address and port: changing the address
+creates a new device.
+
+### S7-1200 and S7-1500: PUT/GET
+
+These CPUs refuse outside reads until you allow them, in TIA Portal:
+
+1. CPU properties → **Protection & Security** → **Connection mechanisms**:
+   tick **Permit access with PUT/GET communication from remote partner**.
+2. For every DB you want to read: block properties → **Attributes**, untick
+   **Optimized block access**, then compile. An optimized DB has no fixed
+   addresses: its variables cannot be read by address.
+3. Download the project to the CPU.
+
+Without step 1, the Configuration screen says that the CPU refuses the reads.
+
+### LOGO!
+
+In LOGO!Soft Comfort, **Tools → Ethernet Connections**, add a **Server
+connection** (S7 connection), tick **Accept all connection requests**, and
+note the two TSAPs:
+
+- **Local TSAP** of the LOGO! (usually `02.00`): the field **LOGO! local TSAP
+  (server side)**.
+- **Remote TSAP** (usually `01.00`): the field **LOGO! remote TSAP (client
+  side)**.
+
+Download the program to the LOGO!. Its variable memory (VM) is DB1 for the S7
+protocol: `VW10` is the word at VM address 10. Map the values you want to see
+(analog inputs, flags, counters) to VM in **Tools → Parameter VM Mapping**
+(LOGO! 8).
+
+### Variables
+
+The **Variables** field holds the variables to read, separated by semicolons:
+
+```
+Name: address kind write option=value
+```
+
+Only the address is required. Examples:
+
+```
+Boiler: DB1,REAL0 temperature; Pump: Q0.1 switch; Setpoint: DB1,REAL4 setpoint min=5 max=30; Level: VW10 scale=0.1 unit=%
+```
+
+- **Name**: the name of the feature in Gladys (40 characters at most). Without
+  `Name:`, the variable is named after its address.
+- **Kind**: what the value is, which sets its icon and unit in Gladys:
+  `temperature`, `humidity`, `pressure`, `power`, `energy` (an index, in kWh in
+  Gladys), `production`, `solar_power`, `grid_power`, `voltage`, `current`,
+  `battery`, `volume`, `duration`, `value` (a plain number, the default),
+  `binary` (an on/off state, the default for a bit), `switch` (an on/off you can
+  change), `setpoint` (a temperature you can change).
+- **write**: the variable may be written from Gladys (see Writing).
+- **Options**: `scale=` and `offset=` (value shown = raw × scale + offset, so
+  `scale=0.1` turns 215 into 21.5), `unit=` (°C, %, W, kWh, Wh, V, A, bar, L,
+  m3, s, min, h...), `min=` and `max=` (the range shown, and the limits of a
+  write), `precision=` (decimals kept).
+
+Up to 100 variables. **Check the configuration** lists the mistakes entry by
+entry.
+
+### Addresses
+
+| Address                                         | Type                               | Range                      |
+| ----------------------------------------------- | ---------------------------------- | -------------------------- |
+| `DB1,X0.1` or `DB1.DBX0.1`                      | bit                                | 0 / 1                      |
+| `DB1,BYTE2` or `DB1.DBB2`                       | BYTE                               | 0 to 255                   |
+| `DB1,WORD4` or `DB1.DBW4`                       | WORD (unsigned)                    | 0 to 65535                 |
+| `DB1,INT6`                                      | INT (signed)                       | -32768 to 32767            |
+| `DB1,DWORD8` or `DB1.DBD8`                      | DWORD                              | 0 to 4294967295            |
+| `DB1,DINT8`                                     | DINT                               | -2147483648 to 2147483647  |
+| `DB1,REAL12`                                    | REAL                               | 32-bit floating point      |
+| `DB1,LREAL16`                                   | LREAL                              | 64-bit (S7-1200/1500 only) |
+| `M0.1`, `I0.0` (`E0.0`), `Q0.1` (`A0.1`)        | bit                                | 0 / 1                      |
+| `MB10`, `MW10`, `MI10`, `MD10`, `MDI10`, `MR10` | BYTE, WORD, INT, DWORD, DINT, REAL |                            |
+| `V10.0`, `VB10`, `VW10`, `VI10`, `VD10`, `VR10` | LOGO! VM (DB1)                     |                            |
+
+The address sets the type: `DB1.DBD8` is a DWORD, read as an integer. For a
+REAL, write `DB1,REAL8` (or `MR8`, `VR8`). A WORD is unsigned: for a negative
+value stored as INT, write `DB1,INT6` or `MI10`.
+
+### Writing
+
+Writing is **off** until you turn on **Allow writing**. Even then, only the
+variables declared `write` (or of kind `switch` or `setpoint`) can be changed:
+
+- a `switch` shows an on/off toggle on the dashboard, a `setpoint` a setpoint
+  control; other writable variables are written by the **Write a value** action
+  or the scene action;
+- a bit is written alone: the other bits of its byte stay as they are;
+- the value is checked against `min`/`max` (by default, the range of the kind:
+  ±1,000,000 for `value`, 0 to 100 for `setpoint`) and the range of the type
+  before being sent; a number like `1,000` is refused as ambiguous; then read back, so the dashboard shows what the PLC really holds.
+
+**Writing a wrong variable can stop or damage an installation.** Declare
+writable only what Gladys must change, and keep safety functions in the PLC
+program. On purpose, nothing is exposed as a switch or a thermostat to voice
+assistants.
+
+## Actions
+
+On the Configuration screen:
+
+- **Check the configuration**: whether the PLC answers, how many variables
+  it reads, and the mistakes entry by entry.
+- **Read an address**: reads any address once, declared or not, to find the
+  right one before declaring it.
+- **Write a value**: writes to a declared writable variable, by name or address.
+
+## Scenes
+
+- Triggers (Gladys 5.1 or later): **The PLC is lost** (with the reason),
+  **The PLC is back**, **A PLC variable becomes unreadable** (a DB deleted or
+  shortened by a new PLC program, with the name of the variable). The values
+  themselves trigger scenes as any Gladys device does.
+- Action: **Write a PLC variable**, with a variable (name or address) and a
+  value.
+
+## Dashboard
+
+The **Siemens PLC** widget shows the first six values of the PLC and the health
+of the link: connected or not, how many variables are readable, the time of the
+last reading and how long it took. Each block can be hidden in the widget
+settings.
+
+## Siemens S7, Modbus or OPC UA?
+
+- **This integration** reads the memory of the PLC by address, with nothing to
+  program on the PLC side (except PUT/GET on S7-1200/1500). The simplest way
+  for a LOGO!, an S7-300/400 or an S7-1200.
+- **[Modbus](https://github.com/guim31/gladys-modbus)**: a LOGO! 8 (from FS4)
+  and some S7-1200 programs also speak Modbus TCP. Choose it when the PLC is
+  already set up as a Modbus server.
+- **[OPC UA](https://github.com/guim31/gladys-opcua)**: an S7-1500 (and an
+  S7-1200 from firmware 4.4) has an OPC UA server, with named variables,
+  optimized DBs and security. Choose it when you can turn that server on.
+
+## Limits
+
+- One PLC per installation of the integration.
+- Numbers and bits only: no STRING, DATE_AND_TIME, arrays, timers or counters
+  (`T`, `C`).
+- Optimized DBs of S7-1200/1500 cannot be read by address (see PUT/GET).
+- S7-1200/1500 with a protection level that forbids PUT/GET, and S7-200 (PPI)
+  are not supported.
+- No secure connection: the S7 protocol has none; keep the PLC on a trusted
+  network.
+- Gladys accepts 300 values a minute: with many variables, the values are
+  sent less often than they are read.
+
+## Troubleshooting
+
+- **The PLC does not answer on port 102**: check the address, that Gladys and
+  the PLC are on the same network, and that no firewall blocks port 102.
+- **The PLC refuses the connection**: wrong PLC type, rack/slot or TSAP. For a
+  LOGO!, check the server connection in LOGO!Soft Comfort and that the program
+  was downloaded.
+- **The CPU refuses the reads**: allow PUT/GET (see above).
+- **Address out of range**: the DB is shorter than the address, it is
+  optimized, or the program does not have it.
+- The logs of the integration (Gladys → Integrations → Siemens S7) say more
+  with the environment variable `LOG_LEVEL=debug`.
+
+## Credits
+
+The S7 client of this integration is written from the public descriptions of
+the protocol: [Snap7](https://snap7.sourceforge.net/) by Davide Nardella,
+[nodes7](https://github.com/plcpeople/nodeS7) (MIT) by plcpeople, and the
+s7comm dissector of Wireshark. It was tested against the Snap7 server through
+[python-snap7](https://github.com/gijzelaerr/python-snap7) (MIT).
+
+Siemens, SIMATIC, S7 and LOGO! are trademarks of Siemens AG. This integration is
+not affiliated with Siemens.
+
+## Configuration settings
+
+These are the settings Siemens S7 asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Getting started | `section` | No | Enter the IP address of the PLC and its type, declare the variables to read (DB1,REAL0, M0.1, VW10...), save, and add the PLC from the Discovery tab: each variable becomes a feature. S7-1200/1500: allow PUT/GET access first. |
+| Language of the messages | `select` | No | Used for the texts given to the scenes and the action messages. |
+| PLC | `section` | No | Give the PLC a fixed IP address: Gladys identifies it by its address and port. |
+| PLC IP address | `string` | No |  |
+| TCP port | `number` | No | 102 for every S7 PLC; change it only behind a gateway. |
+| PLC type | `select` | No | Sets how the CPU is reached (rack and slot, or TSAP for a LOGO!). |
+| Rack | `number` | No | Used with the type Other only. |
+| Slot | `number` | No | Used with the type Other only. S7-400: usually 3. |
+| LOGO! remote TSAP (client side) | `string` | No | LOGO! only: the "Remote TSAP" of the server connection in LOGO!Soft Comfort. |
+| LOGO! local TSAP (server side) | `string` | No | LOGO! only: the "Local TSAP" of the server connection in LOGO!Soft Comfort. |
+| Variables | `section` | No | Up to 100 variables. Writing a wrong variable can stop or damage an installation: declare "write" only what Gladys must change. |
+| Variables | `string` | No | Entries separated by semicolons: name: address, then kind, write and options. Addresses: DB1,REAL0 DB1,INT2 DB1,X4.0 M0.1 MW10 MD12 I0.0 Q0.1 VW10. Kinds: temperature, humidity, pressure, power, energy, production, solar_power, grid_power, voltage, current, battery, volume, duration, value, binary, switch, setpoint. Options: scale= offset= unit= min= max= precision=. |
+| Reading interval | `select` | No | How often the PLC is read. Gladys accepts 300 values a minute: with many variables, the values are sent less often. |
+| Allow writing | `boolean` | No | Off by default. When on, only the variables declared "write" (or switch, setpoint) can be changed from Gladys. |
+
+## How to install Siemens S7 in Gladys
+
+1. In Gladys, open **Integrations**: Siemens S7 appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-siemens-s7:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-siemens-s7](https://github.com/guim31/gladys-siemens-s7).
+
+Siemens S7 requires Gladys `>=5.1.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Siemens S7 is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-siemens-s7) — [source of this documentation](https://github.com/guim31/gladys-siemens-s7/blob/HEAD/docs/en.md)

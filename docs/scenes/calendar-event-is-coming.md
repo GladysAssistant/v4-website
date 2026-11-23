@@ -5,7 +5,7 @@ description: "Trigger a Gladys Assistant scene when a calendar event is coming o
 sidebar_label: Calendar event is coming
 ---
 
-This trigger is very powerful. It uses the calendar integration (Like [Caldav](/docs/integrations/caldav)), and lets you trigger a scene based on a calendar event coming up or ending.
+This trigger is very powerful. It uses the calendar integration (Like [Caldav](/docs/integrations/external/caldav/)), and lets you trigger a scene based on a calendar event coming up or ending.
 
 Let's imagine you want to start a scene when you need to go to the gym.
 

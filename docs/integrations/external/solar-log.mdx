@@ -1,0 +1,153 @@
+---
+title: "Solar-Log smart home integration, free and open source"
+sidebar_label: "Solar-Log"
+description: "Follow the production, consumption and surplus of your solar plant with a Solar-Log. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-solarlog.png"
+keywords:
+  - "solar-log"
+  - "solar-log smart home"
+  - "gladys solar-log"
+  - "solar-log gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/prohand/gladys-solarlog instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Solar-Log","description":"Follow the production, consumption and surplus of your solar plant with a Solar-Log.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-solarlog","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-solarlog.png","type":"device","version":"0.0.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-20T09:26:52Z"}} />
+
+Follow your solar plant in Gladys with a **Solar-Log** data logger (Solar-Log 200, 250, 300,
+500, 1000, 1200, 1900, 2000, Solar-Log Base…): production, consumption, surplus, yields,
+inverters and battery. The integration reads the Solar-Log **on your local network** through its
+open JSON interface: no cloud account, no data leaves your home.
+
+## What you get
+
+- A **Solar-Log** device: production power, DC power, AC and DC voltages, total yield (kWh
+  meter), and — when a consumption meter is wired to the Solar-Log — consumption power, total
+  consumption, surplus (production minus consumption) and self-consumption rate.
+- One device **per inverter** with its live power (optional).
+- A **battery** device (level, charge and discharge power) when the Solar-Log manages one.
+- **Scene triggers**: production started / stopped, solar surplus available / ended, Solar-Log
+  unreachable / reachable again.
+- **Scene actions**: read the solar values, check the solar surplus, get the yield of a period.
+- Two **dashboard widgets**: "Solar production" and "Solar yields".
+
+The total yield is published as a meter index: Gladys energy monitoring computes the production
+of any day, month or year from it.
+
+## Before you start
+
+1. Give the Solar-Log a **fixed IP address** in your router (DHCP reservation).
+2. Open the Solar-Log web page in a browser (its IP address).
+3. Go to **Configuration > System > Access control** and turn on **Open JSON interface**. Save.
+   Without it, the Solar-Log answers nothing to the integration.
+4. Optional: if the "user" access level is protected by a password, note it. It is needed only
+   for the per-inverter and battery data.
+
+## Configuration
+
+In Gladys, open **Integrations > Solar-Log > Configuration**:
+
+| Field                   | What to enter                                                              |
+| ----------------------- | -------------------------------------------------------------------------- |
+| Solar-Log address       | IP address or host name, e.g. `192.168.1.20` (`http://` is added for you). |
+| User password           | Only if the "user" access level has a password. Stored as a secret.        |
+| Refresh interval (s)    | How often the Solar-Log is read. 60 s by default, 30 s minimum.            |
+| Production threshold    | Production (W) that fires "Solar production started". 50 W by default.     |
+| Surplus threshold       | Surplus (W) that fires "Solar surplus available". 1000 W by default.       |
+| Surplus margin          | "Surplus ended" fires at threshold minus this margin. 200 W by default.    |
+| One device per inverter | Also create one device per inverter. On by default.                        |
+
+Then click **Test the connection**: the answer shows the production right now and the yield of
+the day. Open the **Discovery** tab and add the devices you want. **Search for inverters again**
+re-reads the inverters and the battery after a change on the Solar-Log.
+
+## Scene triggers
+
+| Trigger                   | When                                                         | Variables                                    |
+| ------------------------- | ------------------------------------------------------------ | -------------------------------------------- |
+| Solar production started  | Production goes above the production threshold (morning).    | `production_w`                               |
+| Solar production stopped  | Production falls below half of the threshold (evening).      | `yield_today_kwh`                            |
+| Solar surplus available   | Production minus consumption reaches the surplus threshold.  | `surplus_w`, `production_w`, `consumption_w` |
+| Solar surplus ended       | The surplus falls below the threshold minus the margin.      | `surplus_w`, `production_w`, `consumption_w` |
+| Solar-Log unreachable     | Three reads in a row failed. Filter on the reason if needed. | `reason`                                     |
+| Solar-Log reachable again | The Solar-Log answers again.                                 |                                              |
+
+Each trigger fires **once per change**, never at every read, and not when the integration
+restarts. The surplus triggers need a consumption meter on the Solar-Log.
+
+## Scene actions
+
+- **Read the solar values**: reads the Solar-Log now. Outputs: `reachable`, `production_w`,
+  `consumption_w`, `surplus_w`, `yield_today_kwh`, `self_consumption_percent`.
+- **Check the solar surplus**: is the surplus at least the minimum you set? Outputs: `available`
+  (never true when the Solar-Log does not answer), `surplus_w`.
+- **Get the solar yield**: production and consumption in kWh for today, yesterday, this month,
+  this year or since installation.
+
+Example: "When the solar surplus is available, between 10:00 and 16:00, turn on the water
+heater plug; when the surplus ends, turn it off."
+
+## Dashboard widgets
+
+- **Solar production**: live production, consumption and surplus, the share of the peak power,
+  a 24-hour chart, the yield of the day, the link state and a **Refresh** button.
+- **Solar yields**: production and consumption today, yesterday, this month, this year and in
+  total, plus the current self-consumption.
+
+## Troubleshooting
+
+- **"The open JSON interface is disabled"**: turn it on (see "Before you start").
+- **"The Solar-Log does not answer"**: check the address, that Gladys and the Solar-Log are on
+  the same network, and that no firewall blocks port 80.
+- **"The Solar-Log refused the password"**: check the password of the "user" access level. The
+  plant summary still works without it; only the inverters and the battery need it.
+- **Values at 0 right after a Solar-Log restart**: the integration ignores them on purpose until
+  the Solar-Log has finished starting.
+- **No inverter device**: the per-inverter data may require the password; click **Search for
+  inverters again** after entering it.
+
+## Privacy
+
+Everything stays on your network: the integration only talks to your Solar-Log. The password is
+stored as a Gladys secret and never written in the logs.
+
+## Configuration settings
+
+These are the settings Solar-Log asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Getting started | `section` | No | The integration reads your Solar-Log on your local network, through its open JSON interface. In the Solar-Log web page, open Configuration > System > Access control and turn on "Open JSON interface", then enter its address below. No cloud account is needed. |
+| Solar-Log address | `string` | Yes | IP address or host name of the Solar-Log on your network. Give it a fixed address in your router. |
+| User password (optional) | `secret` | No | Only if the "user" access level of the Solar-Log is protected by a password. It unlocks the per-inverter and battery data. |
+| Refresh interval (s) | `number` | No | How often the Solar-Log is read, in seconds (30 minimum). |
+| Production threshold (W) | `number` | No | Production above which the "Production started" trigger fires. "Production stopped" fires below half of it. |
+| Surplus threshold (W) | `number` | No | Surplus (production minus consumption) from which the "Surplus available" trigger fires. Needs a consumption meter on the Solar-Log. |
+| Surplus margin (W) | `number` | No | "Surplus ended" fires only when the surplus drops this far below the threshold, so a passing cloud does not start and stop your appliances. |
+| One device per inverter | `boolean` | No | Also create a device with the live power of each inverter connected to the Solar-Log. |
+
+## How to install Solar-Log in Gladys
+
+1. In Gladys, open **Integrations**: Solar-Log appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-solarlog:0.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-solarlog](https://github.com/prohand/gladys-solarlog).
+
+Solar-Log requires Gladys `>=5.3.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Solar-Log is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [prohand](https://github.com/prohand), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/prohand/gladys-solarlog) — [source of this documentation](https://github.com/prohand/gladys-solarlog/blob/HEAD/docs/en.md)

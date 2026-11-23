@@ -77,9 +77,9 @@ Today, hundreds of home automation devices are already available in Gladys Assis
 To date, Gladys Assistant supports peripherals:
 
 - Z-Wave
-- Xiaomi ([doc](/docs/integrations/xiaomi/))
+- Xiaomi
 - Philips Hue ([doc](/docs/integrations/external/philips-hue/))
-- Sonoff (Tasmota) ([doc](/docs/integrations/tasmota/))
+- Sonoff (Tasmota) ([doc](/docs/integrations/external/tasmota/))
 - RTSP, HTTP and USB cameras ([doc](/docs/integrations/camera/))
 - The MQTT protocol ([doc](/docs/integrations/mqtt/))
 

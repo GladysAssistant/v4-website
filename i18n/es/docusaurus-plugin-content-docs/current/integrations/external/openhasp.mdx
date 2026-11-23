@@ -1,0 +1,229 @@
+---
+title: "Integración domótica openHASP, gratuita y de código abierto"
+sidebar_label: "openHASP"
+description: "Controle sus pantallas táctiles openHASP por MQTT: páginas, retroiluminación, botones. Gratuita, de código abierto, se instala con un clic."
+image: "https://integration-store-storage.gladysassistant.com/covers/placeholder.png"
+keywords:
+  - "openhasp"
+  - "domótica openhasp"
+  - "gladys openhasp"
+  - "openhasp gladys assistant"
+  - "integración externa"
+  - "domótica de código abierto"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/es.md in
+https://github.com/prohand/gladys-openhasp instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"openHASP","description":"Controle sus pantallas táctiles openHASP por MQTT: páginas, retroiluminación, botones.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-openhasp","cover_url":"https://integration-store-storage.gladysassistant.com/covers/placeholder.png","type":"device","version":"0.0.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-22T09:19:48Z"}} />
+
+Esta integración conecta Gladys con sus pantallas táctiles **openHASP**
+(«plates»): Lanbon L8, WT32-SC01, Sunton y cualquier otra pantalla ESP32 con el
+firmware [openHASP](https://www.openhasp.com).
+
+- Cada pantalla se convierte en un dispositivo Gladys: retroiluminación,
+  brillo, página mostrada, pantalla activa, señal WiFi.
+- Los botones, interruptores, deslizadores y textos de sus páginas también
+  pueden convertirse en dispositivos Gladys.
+- Las escenas pueden reaccionar a un toque, a un cambio de página o a una
+  pantalla que se desconecta, y pueden mostrar una página, escribir un texto,
+  despertar una pantalla o enviar cualquier comando openHASP.
+- Un widget del panel lista sus pantallas.
+
+Requiere **Gladys 5.3 o posterior**.
+
+## Lo que necesita
+
+- Una o varias pantallas con openHASP **0.6 o posterior**.
+- Un **broker MQTT** accesible por las pantallas y por Gladys. Sirve el broker
+  de la integración MQTT de Gladys (Mosquitto, puerto 1883) o cualquier otro.
+
+Todo se queda en su red local: sin cuenta, sin nube.
+
+## 1. Conecte sus pantallas al broker
+
+En cada pantalla, abra su página web (`http://<IP de la pantalla>`) y luego
+**Configuration → MQTT Settings**:
+
+| Ajuste openHASP | Qué escribir                                         |
+| --------------- | ---------------------------------------------------- |
+| Plate Name      | un nombre corto y único, p. ej. `plate01` o `cocina` |
+| Group Name      | deje `plates`                                        |
+| Broker          | la dirección IP de su broker                         |
+| Port            | `1883` (normalmente)                                 |
+| Username        | el usuario del broker, si lo pide                    |
+| Password        | su contraseña                                        |
+
+Guarde y reinicie la pantalla. El **Plate Name** es lo que identifica la
+pantalla en Gladys: cambiarlo más tarde crea un dispositivo nuevo.
+
+## 2. Configure la integración
+
+En Gladys, abra **Integraciones → openHASP → Configuración**:
+
+| Campo                     | Qué escribir                                                             |
+| ------------------------- | ------------------------------------------------------------------------ |
+| Dirección del broker MQTT | `mqtt://192.168.1.10:1883` (`mqtts://` para TLS, `ws://` para WebSocket) |
+| Usuario MQTT              | el usuario del broker, vacío para un broker anónimo                      |
+| Contraseña MQTT           | su contraseña                                                            |
+| Prefijo de los topics     | deje `hasp`, salvo que lo haya cambiado en el firmware openHASP          |
+| Objetos de pantalla       | los objetos que controlar, ver más abajo (puede quedar vacío)            |
+
+Guarde y haga clic en **Probar la conexión**: la integración se vuelve a
+conectar al broker y lista las pantallas que han respondido.
+
+El estado de la conexión, arriba de la página, avisa cuando no se puede llegar
+al broker (dirección o contraseña incorrecta…).
+
+## 3. Añada las pantallas
+
+Abra la pestaña **Descubrimiento**: cada pantalla vista en el broker aparece
+como `openHASP <nombre de la pantalla>`. Haga clic en **Añadir**. ¿Falta una
+pantalla? Haga clic en **Buscar pantallas** en la pestaña Configuración y
+revise sus ajustes MQTT.
+
+Cada pantalla tiene estas funciones:
+
+| Función                        | Qué hace                                                             |
+| ------------------------------ | -------------------------------------------------------------------- |
+| Retroiluminación (Backlight)   | enciende o apaga la retroiluminación                                 |
+| Brillo (Brightness)            | nivel de la retroiluminación, 0-100 % (0 la apaga)                   |
+| Página (Page)                  | la página mostrada; elija otra para cambiar a ella                   |
+| Pantalla activa (Screen awake) | encendida = en uso; apagada = en reposo. Enciéndala para despertarla |
+| Señal WiFi (WiFi signal)       | de 0 a 5 barras                                                      |
+
+**Identificar una pantalla** (pestaña Configuración) hace parpadear tres veces
+la pantalla elegida, para saber cuál es cuál.
+
+## 4. Controle los objetos de sus páginas
+
+Un objeto openHASP se nombra por su página y su id: `p1b2` es el objeto `2` de
+la página `1`. Los ids están en su archivo `pages.jsonl`.
+
+Indique los objetos que controlar en **Objetos de pantalla**, separados por
+comas:
+
+```
+plate01.p1b2:switch:Luz del salón, plate01.p1b3:button:Buenas noches, plate01.p2b1:text:Mensaje
+```
+
+Cada entrada es `<nombre de la pantalla>.<objeto>:<tipo>:<nombre en Gladys>`.
+Los tipos:
+
+| Tipo     | Objetos openHASP                               | En Gladys                                                                    |
+| -------- | ---------------------------------------------- | ---------------------------------------------------------------------------- |
+| `button` | `btn` (botón normal)                           | un botón: clic, pulsación larga, pulsación larga soltada (solo lectura)      |
+| `switch` | `btn` con `toggle: true`, `switch`, `checkbox` | encendido/apagado en ambos sentidos: la pantalla actualiza Gladys y al revés |
+| `slider` | `slider`, `arc` (rango 0-100)                  | un nivel 0-100, en ambos sentidos                                            |
+| `text`   | `label`, el texto de un `btn`                  | un texto que Gladys escribe en la pantalla                                   |
+
+Más fácil: el botón **Añadir un objeto** (pestaña Configuración) pide la
+pantalla, el objeto, el tipo y el nombre, y escribe la entrada por usted. ¿No
+está seguro de un id? Toque el objeto en la pantalla y haga clic en **Listar
+los objetos tocados**: muestra los ids que las pantallas han enviado y que aún
+no están declarados.
+
+Después añada los nuevos dispositivos desde la pestaña **Descubrimiento**.
+
+> Un deslizador solo envía su valor al soltarlo: arrastrarlo no inunda Gladys
+> de valores.
+
+## Escenas
+
+### Disparadores
+
+| Disparador (clave)                                         | Cuándo                                      | Filtros                                  | Variables                  |
+| ---------------------------------------------------------- | ------------------------------------------- | ---------------------------------------- | -------------------------- |
+| Objeto openHASP tocado (`object_event`)                    | se pulsa o se suelta un objeto              | pantalla, objeto (`p1b2`), tipo de toque | object, event, value, text |
+| Pantalla openHASP en línea o sin conexión (`plate_status`) | una pantalla se conecta al broker o lo deja | pantalla, estado                         | status                     |
+| Página openHASP cambiada (`page_changed`)                  | una pantalla muestra otra página            | pantalla, página                         | page                       |
+
+Los tipos de toque: **Pulsado** (`down`), **Pulsación corta soltada** (`up`),
+**Pulsación larga** (`long`), **Pulsación larga soltada** (`release`).
+Cualquier objeto de cualquier página dispara `object_event`, esté declarado en
+Objetos de pantalla o no: no hace falta declarar un botón que solo sirve para
+escenas.
+
+Ejemplo: un botón «Buenas noches» en `p1b3` → disparador _Objeto openHASP
+tocado_, pantalla `openHASP plate01`, objeto `p1b3`, toque _Pulsación corta
+soltada_ → apagar las luces.
+
+### Acciones
+
+Cada acción devuelve una variable **sent** (enviado): `false` cuando la
+pantalla está desconectada o el broker no responde (la escena continúa; añada
+una condición sobre ella si hace falta).
+
+| Acción (clave)                                         | Qué hace                                                                      |
+| ------------------------------------------------------ | ----------------------------------------------------------------------------- |
+| Mostrar una página openHASP (`show_page`)              | cambia la pantalla a la página 1-12                                           |
+| Escribir en un objeto openHASP (`set_object_text`)     | cambia el texto de una etiqueta o un botón; las variables de escena funcionan |
+| Ajustar la retroiluminación openHASP (`set_backlight`) | encendida o apagada, con un brillo opcional 1-255                             |
+| Despertar una pantalla openHASP (`wake_screen`)        | como un toque: reinicia el reposo (útil con un detector de movimiento)        |
+| Enviar un comando openHASP (`send_command`)            | cualquier comando openHASP, p. ej. `p1b2.bg_color=red` o `moodlight on`       |
+
+Ejemplo: mostrar la temperatura exterior en una etiqueta → acción _Escribir en
+un objeto openHASP_, objeto `p1b5`, texto `{{device.temperature}} °C` (elija
+la variable en el editor).
+
+## Widget del panel
+
+El widget **Pantallas openHASP** muestra cuántas pantallas están en línea, una
+línea por pantalla (en línea con su página, sin conexión) y dos botones:
+**Despertar** y **Buscar**.
+
+## Solución de problemas
+
+- **«Sin conexión con el broker MQTT»**: revise la dirección y el puerto, y el
+  usuario y la contraseña si el broker los pide. Con el broker de la
+  integración MQTT de Gladys, use la dirección IP de la máquina Gladys, no
+  `localhost`.
+- **Ninguna pantalla en la pestaña Descubrimiento**: la pantalla y Gladys deben
+  usar el mismo broker y el mismo prefijo de topics. Una herramienta como MQTT
+  Explorer muestra el topic `hasp/<pantalla>/LWT` de cada pantalla conectada.
+- **Un objeto no reacciona**: revise su id (`p1b2`), su tipo y que su
+  dispositivo se haya añadido desde la pestaña Descubrimiento.
+- **Registros**: Integraciones → openHASP → Supervisión. Las contraseñas nunca
+  se escriben en los registros.
+
+## Privacidad y seguridad
+
+La integración solo habla con su broker MQTT, en su red. La contraseña MQTT se
+guarda en un campo secreto de Gladys. Informe de un problema de seguridad en
+privado: vea el archivo `SECURITY.md` del repositorio.
+
+## Parámetros de configuración
+
+Estos son los parámetros que openHASP te pide en su pantalla de configuración en Gladys.
+
+| Parámetro | Tipo | Obligatorio | Descripción |
+| --- | --- | --- | --- |
+| Primeros pasos | `section` | No | Las pantallas openHASP hablan MQTT. Conecte sus pantallas y esta integración al mismo broker MQTT (sirve el de la integración MQTT de Gladys). Cada pantalla en línea aparece en la pestaña Descubrimiento. Para controlar los botones, deslizadores y textos de sus páginas, indíquelos en Objetos de pantalla más abajo, o use el botón Añadir un objeto. |
+| Dirección del broker MQTT | `string` | Sí | El broker que usan sus pantallas: mqtt:\/\/host:1883, mqtts:\/\/host:8883 o ws:\/\/host:9001. |
+| Usuario MQTT | `string` | No | Déjelo vacío si el broker acepta clientes anónimos. |
+| Contraseña MQTT | `secret` | No |  |
+| Prefijo de los topics | `string` | No | El primer nivel de los topics openHASP. Deje hasp salvo que lo haya cambiado en el firmware. |
+| Objetos de pantalla | `string` | No | Objetos que controla Gladys, separados por comas: pantalla.objeto:tipo:nombre. Tipos: button, switch, slider, text. Ejemplo: plate01.p1b2:switch:Luz del salón, plate01.p1b3:button:Buenas noches |
+
+## Cómo instalar openHASP en Gladys
+
+1. En Gladys, abre **Integraciones**: openHASP aparece en el catálogo junto a las integraciones nativas, con una insignia de comunidad.
+2. Haz clic en **Instalar**. Gladys descarga la imagen Docker (`ghcr.io/prohand/gladys-openhasp:0.0.1`), la ejecuta en un entorno aislado del núcleo y genera la interfaz de la integración (dispositivos, descubrimiento y configuración).
+3. Abre la pantalla de **Configuración** de la integración, rellena los parámetros y guarda.
+4. También puedes instalarla directamente desde la URL de su repositorio: [https://github.com/prohand/gladys-openhasp](https://github.com/prohand/gladys-openhasp).
+
+openHASP requiere Gladys `>=5.3.0`. El catálogo de Gladys se actualiza cada hora, así que una nueva versión está disponible como máximo una hora después de publicarse.
+
+¿Todavía no usas Gladys? Es gratuito y de código abierto: [sigue la guía de instalación](/es/docs/) para empezar.
+
+## Sobre las integraciones externas
+
+openHASP es una **integración externa**: una integración comunitaria empaquetada como contenedor Docker y publicada en GitHub. Gladys la instala con un clic y la ejecuta en un entorno aislado del núcleo. La publica y mantiene [prohand](https://github.com/prohand), no el equipo principal de Gladys.
+
+- [Explorar todas las integraciones](/es/docs/integrations/), nativas y de la comunidad
+- [Crear y publicar tu propia integración externa](/es/docs/dev/external-integrations/)
+- [Código fuente en GitHub](https://github.com/prohand/gladys-openhasp) — [fuente de esta documentación](https://github.com/prohand/gladys-openhasp/blob/HEAD/docs/es.md)

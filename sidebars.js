@@ -3,16 +3,14 @@ const nativeIntegrations = require("./src/data/nativeIntegrations");
 const integrationCategories = require("./src/data/integrationCategories");
 
 // Pages of built-in integrations that are not an entry of the catalog: brand
-// guides of the camera integration, a heating guide, and deprecated
-// integrations whose documentation stays online.
+// guides of the camera integration and a heating guide. Deprecated built-in
+// integrations have no page: their URL redirects to the community integration
+// that supersedes them (see _redirects).
 const otherNativeDocs = [
   { doc: "imou", name: "Imou", category: "security" },
   { doc: "lsc", name: "LSC", category: "security" },
   { doc: "rollei", name: "Rollei", category: "security" },
   { doc: "pilot-wire", name: "Pilot wire", category: "climate" },
-  { doc: "sonos", name: "Sonos", category: "multimedia" },
-  { doc: "zwavejs-ui", name: "Z-Wave JS UI", category: "protocols" },
-  { doc: "openweather", name: "OpenWeather", category: "environment" },
 ];
 
 // The integration pages, built-in and community mixed, grouped by the

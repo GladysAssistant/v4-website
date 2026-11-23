@@ -1,0 +1,181 @@
+---
+title: "Google Wifi / OnHub smart home integration, free and open source"
+sidebar_label: "Google Wifi / OnHub"
+description: "Follow your Google Wifi, Nest Wifi or OnHub router: internet, devices, speed test, pause. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-googlewifionhub.png"
+keywords:
+  - "google wifi / onhub"
+  - "google wifi / onhub smart home"
+  - "gladys google wifi / onhub"
+  - "google wifi / onhub gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/prohand/gladys-googlewifionhub instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Google Wifi / OnHub","description":"Follow your Google Wifi, Nest Wifi or OnHub router: internet, devices, speed test, pause.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-googlewifionhub","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-googlewifionhub.png","type":"device","version":"1.0.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-22T09:21:43Z"}} />
+
+This integration connects Gladys Assistant to a **Google Wifi**, **Nest Wifi** (router) or
+**OnHub** (TP-Link or ASUS) Wi-Fi system. It tells Gladys whether the internet is up, which
+devices are on the Wi-Fi, how fast the connection is, and lets a scene pause a device's internet
+or restart the Wi-Fi.
+
+Requires **Gladys 5.3 or later**.
+
+## Two ways to reach the Wi-Fi
+
+| Channel          | What you need                                | What you get                                                                                                  |
+| ---------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| **Local**        | The IP address of the router                 | Internet state, WAN cable, uptime, firmware, available update, public address                                 |
+| **Google cloud** | A Google refresh token (see below), optional | Connected devices (presence), live throughput, speed test, number of devices, Wi-Fi points, pause and restart |
+
+Both can be used together; most people start with the local channel only, it needs no account.
+
+The Configuration screen shows the standard **Prefer the local connection** switch. When it is on
+(default), the internet state comes from the router itself; off, it comes from the Google cloud.
+Each device shows a badge with the channel it really uses: _local_, _cloud_, or _unreachable_.
+When the router does not answer on the LAN but the cloud does, the router badge turns to _cloud_
+with an orange dot.
+
+## Set up the local channel
+
+1. Find the address of the **main** Wi-Fi point (the one plugged into your internet box). On a
+   Google Wifi network left at its factory settings, it is `192.168.86.1`. In the Google Home app:
+   **Wi-Fi → Settings → Advanced networking → LAN**.
+2. Enter it in **Router address (local)** and save.
+3. Click **Test the connection**: the answer shows the model, the firmware and the internet state.
+
+The integration reads `http://<address>/api/v1/status`, the status page the router serves on the
+local network without any password. It only reads: nothing can be changed through it.
+
+Gladys must be able to reach that address: when Gladys is on another subnet, allow it in your
+firewall.
+
+## Set up the Google cloud channel (optional)
+
+The cloud channel uses the API of the Google Home app. **Google does not document it**: it works
+today, it may change one day. It needs a **refresh token** of the Google account that manages the
+Wi-Fi.
+
+1. Get a refresh token for the Google Wifi app. Community tools do the Google sign-in for you and
+   show the token, which starts with `1//`. Search for "Google Wifi refresh token" or "OnHub auth
+   tool": use one you trust, it sees your Google sign-in.
+2. Paste the token in **Google refresh token** and save.
+3. Click **Test the connection**: the answer lists the Wi-Fi systems and the number of connected
+   devices.
+
+The token is stored in Gladys in a secret field, never shown back, never written to the logs and
+only sent to Google. To revoke it, remove the Google Wifi / Google Home access in your Google
+account security settings (Third-party connections), then paste a new one.
+
+## Devices
+
+Open **Discovery** in the integration page and add the devices you want.
+
+| Device                                       | Channel | Features                                                                                                           |
+| -------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------ |
+| **Google Wifi router**                       | local   | Internet (on/off), WAN cable connected, uptime (days), update available, firmware (text), public address (text)    |
+| **Wi-Fi _name_** (the network)               | cloud   | Internet, live download and upload (Mb/s), last speed test download and upload (Mb/s), number of connected devices |
+| **Wi-Fi point _room_**                       | cloud   | Online, light ring brightness (0-100 %, can be changed)                                                            |
+| **Connected devices** (phone, computer, TV…) | cloud   | Connected (presence), internet access (switch: off pauses its internet), live download and upload                  |
+
+Google remembers every device that ever joined the Wi-Fi: Discovery only lists the ones connected
+right now, plus the ones you already added. Turn off **Show the connected devices in Discovery** to
+hide them.
+
+The values are refreshed every **Refresh interval** (60 s by default). Only the values that change
+are sent to Gladys.
+
+## Scenes
+
+### Triggers
+
+| Trigger                 | When                                             | Variables                        |
+| ----------------------- | ------------------------------------------------ | -------------------------------- |
+| Internet lost           | The router reports the internet is down          | `source` (local / cloud)         |
+| Internet restored       | The internet is back                             | `source`, `offline_minutes`      |
+| Device joined the Wi-Fi | A device connects (filter: one device, or any)   | `name`, `ip`                     |
+| Device left the Wi-Fi   | A device disconnects (filter: one device or any) | `name`, `ip`                     |
+| Wi-Fi point offline     | A point stops answering                          | `name`                           |
+| Router update available | The router announces a new firmware              | `current_version`, `new_version` |
+
+Each trigger fires once per change, never again while nothing changes. A router that simply stops
+answering is not taken for an internet outage.
+
+### Actions
+
+| Action                    | What it does                                           | Outputs                                 |
+| ------------------------- | ------------------------------------------------------ | --------------------------------------- |
+| Pause a device's internet | Pauses (or resumes) the internet of one device (cloud) | `paused`                                |
+| Run a speed test          | Measures the internet speed, about a minute (cloud)    | `download_mbps`, `upload_mbps`          |
+| Restart the Wi-Fi         | Restarts one point, or every point (cloud)             | `restarted`                             |
+| Check the internet        | Reads the router now                                   | `online`, `source`, `connected_clients` |
+
+Example: "every school day at 21:00, pause the internet of the children's tablet; at 7:00, resume
+it".
+
+## Dashboard widgets
+
+- **Wi-Fi status**: internet, firmware, update, uptime, connected devices, Wi-Fi points, last
+  speed test, live throughput (once the network device is added) and a **Run a speed test** button.
+- **Wi-Fi devices**: the devices on the Wi-Fi right now, busiest first, with a badge when one is
+  paused or on the guest network.
+
+## Configuration screen buttons
+
+- **Test the connection**: reads both channels now and says what answered.
+- **Run a speed test** (cloud).
+- **Restart the Wi-Fi** (cloud): tick the confirmation box first. Every point restarts: no network
+  for a few minutes, Gladys included if it uses the Wi-Fi.
+
+## Troubleshooting
+
+- **"Router unreachable on the local network"**: check the address, and that Gladys can reach it
+  (`curl http://192.168.86.1/api/v1/status` from the Gladys machine). Use the main point, not an
+  extension.
+- **"Google refused the refresh token"**: the token was revoked or mistyped: generate a new one.
+- **Throughput or speed test stay empty**: some systems do not report them; the rest still works.
+- **A device has a strange name**: rename it in the Google Home app, or in Gladys.
+
+## Privacy
+
+The local channel never leaves your network. The cloud channel only talks to Google, with your own
+token. The integration stores nothing outside the Gladys configuration.
+
+## Configuration settings
+
+These are the settings Google Wifi / OnHub asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Getting started | `section` | No | Two ways to reach your Wi-Fi, usable together. Local: the router's own status page on your network, no account needed (internet state, firmware, uptime). Google cloud: with a Google refresh token, the connected devices, live throughput, speed test, internet pause and restart. |
+| Router address (local) | `string` | No | IP address of the main Wi-Fi point, the one plugged into your box. 192.168.86.1 on a Google Wifi network left at its factory settings. Leave empty to disable the local channel. |
+| Google cloud (optional) | `section` | No | The cloud channel uses the unofficial Google API of the Google Home app. It needs a refresh token of the Google account that manages the Wi-Fi: the documentation explains how to get one. The token stays in Gladys and is only sent to Google. |
+| Google refresh token | `secret` | No | Leave empty to use the local channel only. |
+| Show the connected devices in Discovery | `boolean` | No | Cloud only. Each phone, computer or TV on the Wi-Fi can then be added to Gladys: presence, throughput and internet pause. |
+| Refresh interval (s) | `number` | No | How often the router is read, in seconds (30 to 3600). |
+
+## How to install Google Wifi / OnHub in Gladys
+
+1. In Gladys, open **Integrations**: Google Wifi / OnHub appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-googlewifionhub:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-googlewifionhub](https://github.com/prohand/gladys-googlewifionhub).
+
+Google Wifi / OnHub requires Gladys `>=5.3.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Google Wifi / OnHub is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [prohand](https://github.com/prohand), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/prohand/gladys-googlewifionhub) — [source of this documentation](https://github.com/prohand/gladys-googlewifionhub/blob/HEAD/docs/en.md)

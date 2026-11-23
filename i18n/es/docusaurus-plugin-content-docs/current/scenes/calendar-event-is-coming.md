@@ -5,7 +5,7 @@ description: "Activa una escena de Gladys Assistant cuando se acerca o termina u
 sidebar_label: Se acerca un evento del calendario
 ---
 
-Este desencadenante es muy potente. Utiliza la integración de calendario (como [CalDAV](/es/docs/integrations/caldav)) y te permite activar una escena cuando un evento del calendario está a punto de empezar o de terminar.
+Este desencadenante es muy potente. Utiliza la integración de calendario (como [CalDAV](/es/docs/integrations/external/caldav/)) y te permite activar una escena cuando un evento del calendario está a punto de empezar o de terminar.
 
 Imagina que quieres iniciar una escena cuando tienes que ir al gimnasio.
 

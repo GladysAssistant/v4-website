@@ -7,7 +7,7 @@ sidebar_label: Kalenderereignis läuft
 
 Stell dir vor, du möchtest eine Szene erstellen, die nur ausgeführt wird, wenn du gerade im Urlaub, im Fitnessstudio oder in einem Telefonat bist.
 
-Du kannst die Kalender-Integration (zum Beispiel [CalDAV](/de/docs/integrations/caldav)) nutzen, um in einer Szene eine Bedingung hinzuzufügen, die prüft, ob gerade ein Ereignis in deinem Kalender stattfindet.
+Du kannst die Kalender-Integration (zum Beispiel [CalDAV](/de/docs/integrations/external/caldav/)) nutzen, um in einer Szene eine Bedingung hinzuzufügen, die prüft, ob gerade ein Ereignis in deinem Kalender stattfindet.
 
 Das sieht so aus:
 

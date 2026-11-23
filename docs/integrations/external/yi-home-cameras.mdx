@@ -1,0 +1,200 @@
+---
+title: "Yi Home Cameras smart home integration, free and open source"
+sidebar_label: "Yi Home Cameras"
+description: "Yi Home cameras with the yi-hack firmware: snapshots, motion, privacy mode and PTZ, local. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-yihomecamera.png"
+keywords:
+  - "yi home cameras"
+  - "yi home cameras smart home"
+  - "gladys yi home cameras"
+  - "yi home cameras gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/prohand/gladys-yihomecamera instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"Yi Home Cameras","description":"Yi Home cameras with the yi-hack firmware: snapshots, motion, privacy mode and PTZ, local.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-yihomecamera","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-yihomecamera.png","type":"device","version":"1.0.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-22T09:25:07Z"}} />
+
+Use your Yi Home cameras in Gladys: live image, motion detection, privacy mode,
+night vision, pan/tilt, in scenes and on the dashboard. Everything stays on your
+local network: no Yi account, no cloud.
+
+## Before you start: the yi-hack firmware
+
+The original Yi Home firmware has **no local access**: everything goes through
+the Yi cloud and its app, which nobody else can use. This integration works with
+cameras running the free **yi-hack** firmware, which adds a small web server to
+the camera:
+
+| Your camera                                                      | Firmware                                                                   |
+| ---------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Recent models (Yi 1080p Home/Dome/Outdoor 2020+, Kami…)          | [yi-hack-Allwinner-v2](https://github.com/roleoroleo/yi-hack-Allwinner-v2) |
+| Allwinner models (2019–2020)                                     | [yi-hack-Allwinner](https://github.com/roleoroleo/yi-hack-Allwinner)       |
+| MStar models (Yi Home 1080p 2018–2019, Yi Dome 1080p…)           | [yi-hack-MStar](https://github.com/roleoroleo/yi-hack-MStar)               |
+| Older HiSilicon models (Yi Home 720p/1080p, Yi Dome, Yi Outdoor) | [yi-hack-v5](https://github.com/alienatedsec/yi-hack-v5)                   |
+
+Each project explains how to find your model and flash it (a microSD card is
+enough, nothing to open). Then, for each camera:
+
+1. Give it a **fixed IP address** (a DHCP reservation in your router).
+2. Open its web interface (`http://<camera address>`) and check that it works.
+3. Recommended: in **Configuration → System**, set a user name and a password
+   for the web interface.
+4. For motion detection without MQTT: in **Camera settings**, turn on **Save
+   video on motion**.
+
+## Configuration
+
+In Gladys: **Integrations → Yi Home Cameras → Configuration**.
+
+| Field                | What to put                                                                                                                           |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| Camera addresses     | The IP address of each camera, separated by commas: `192.168.1.20, 192.168.1.21`. Add `:port` if the web interface is not on port 80. |
+| User name / Password | Those of the yi-hack web interface, if you set some. The same for every camera.                                                       |
+| Refresh interval     | How often the state of the cameras is read (30 s by default).                                                                         |
+| Snapshot interval    | How often a new image is sent to Gladys (60 s by default, 10 s minimum). `0` sends none: the dashboard asks for one when it opens.    |
+| Image resolution     | Low (640×360, light) or High (1080p). A high image too heavy for Gladys is automatically sent in low.                                 |
+| MQTT broker          | Optional, for real-time events (see below). Example: `mqtt://192.168.1.10:1883`.                                                      |
+| MQTT user / password | Those of your broker, if needed.                                                                                                      |
+| Motion duration      | How long the motion sensor stays on after a detection when the camera does not say when it ends (60 s by default).                    |
+
+Save, then click **Test the connection**: the answer lists every camera found,
+its model, its firmware, its presets, and how its motion is detected.
+
+Then open the **Discovery** tab and add the cameras.
+
+## What each camera gives in Gladys
+
+| Feature           | Description                                                                                       |
+| ----------------- | ------------------------------------------------------------------------------------------------- |
+| Image             | The last snapshot; the dashboard asks for a fresh one when you open it.                           |
+| Camera on         | Turns the camera on or off (yi-hack privacy mode). Off, Gladys stops showing its image.           |
+| Motion            | 1 when a motion is detected, back to 0 at the end.                                                |
+| Status LED        | The LED on the front of the camera.                                                               |
+| Night vision (IR) | The infrared lights.                                                                              |
+| Wi-Fi signal      | Wi-Fi quality in % (absent on a wired camera).                                                    |
+| Move / Preset     | **PTZ models only**: turn left, right, up, down, and go to a position saved in the web interface. |
+
+## Motion detection: two ways
+
+**Without MQTT (default).** The integration looks at the camera's recordings
+every 10 seconds: a new clip means a motion. It needs **Save video on motion**
+turned on in the camera settings, and can be up to a minute late (the camera
+saves its clips by the minute).
+
+**With MQTT (recommended).** Motion arrives in about a second, and with it what
+the camera's AI recognized (person, vehicle, animal — on models that have it),
+loud sounds and baby crying.
+
+1. You need an MQTT broker (for example the one of Gladys, or Mosquitto).
+2. In the yi-hack web interface, page **MQTT**: enter the broker, turn MQTT on,
+   and give **each camera its own MQTT prefix** (`garage`, `garden`…). With the
+   same prefix, two cameras cannot be told apart.
+3. In the integration configuration, enter the same broker.
+4. Click **Test the connection**: each camera says `motion: MQTT, real time`.
+
+The topics and messages are read from each camera: if you renamed them in
+yi-hack, there is nothing to change here.
+
+## Scenes
+
+**Triggers**
+
+- **A camera detects motion** — filter by camera and by detection (motion,
+  person, vehicle, animal). Variables: camera name, detection.
+- **A camera hears a sound** — loud sound or baby crying (MQTT). Variables:
+  camera name, sound.
+- **A camera stops answering** / **A camera answers again** — unplugged, out of
+  Wi-Fi range… A reboot asked from Gladys does not fire them.
+
+**Actions**
+
+- **Take a snapshot** — sends a fresh image to Gladys (handy right before a
+  notification). Output: image taken.
+- **Turn a camera to a preset** — PTZ models, preset 0 to 7. Output: camera
+  moved.
+- **Set the motion sensitivity** — low, medium, high. Output: applied.
+- **Reboot a camera**. Output: reboot sent.
+
+The **Camera on**, **Status LED** and **Night vision** features can also be
+changed by the standard "Control a device" action.
+
+## Dashboard
+
+- **Yi camera** widget: pick a camera in its settings. It shows the last image,
+  the connection, on/off, the last motion, the Wi-Fi signal, the free space on
+  the SD card, and buttons: snapshot, turn on/off, go to a preset (PTZ), reboot.
+- **Yi cameras** widget: every camera at a glance (online, off, motion) and a
+  refresh button.
+
+The standard Gladys camera widget also works with these cameras.
+
+## Configuration screen buttons
+
+- **Test the connection** — reads every camera again and says what was found.
+- **Identify a camera** — its LED blinks three times: handy when several
+  cameras look the same.
+- **Reboot a camera**.
+
+## Troubleshooting
+
+| Message                                    | What to do                                                                        |
+| ------------------------------------------ | --------------------------------------------------------------------------------- |
+| unreachable / no answer in time            | Check the address, that the camera is powered and on the same network as Gladys.  |
+| wrong user name or password                | Type the user name and password of the yi-hack web interface again.               |
+| not a camera with the yi-hack firmware     | The address answers, but it is not yi-hack: wrong address, or stock firmware.     |
+| motion: not detected                       | Turn on **Save video on motion** on the camera, or set up MQTT.                   |
+| MQTT prefix already used by another camera | Give each camera its own prefix in the yi-hack MQTT page.                         |
+| MQTT broker: not connected                 | Check the broker address, its user name and password, and that port 1883 is open. |
+
+For more details, look at the logs of the integration in **Settings → System →
+Integrations**.
+
+## Privacy
+
+The integration never contacts the Yi cloud nor any Internet service. Images
+stay between the cameras and Gladys. Passwords are never written to the logs.
+
+## Configuration settings
+
+These are the settings Yi Home Cameras asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Getting started | `section` | No | The stock Yi Home firmware has no local access: everything goes through the Yi cloud. This integration talks to cameras flashed with the free yi-hack firmware (MStar, Allwinner, Allwinner-v2 or v5, depending on the model), directly on your network, with no Yi account. Flash the camera, give it a fixed IP address, then type that address below. |
+| Camera addresses | `string` | Yes | The IP address of each camera, separated by commas. Add :port when the yi-hack web interface does not listen on port 80. |
+| User name | `string` | No | Only if you protected the yi-hack web interface (Configuration > System > HTTP authentication). The same one for every camera. |
+| Password | `secret` | No | Password of the yi-hack web interface, if any. |
+| Refresh interval (s) | `number` | No | How often the state of the cameras is read (on/off, LED, night vision, Wi-Fi), in seconds. |
+| Snapshot interval (s) | `number` | No | How often a new image of each camera is sent to Gladys, in seconds (10 minimum). 0 sends none: the dashboard then asks for a fresh image when it is opened. |
+| Image resolution | `select` | No | Low (640×360) is light and always accepted by Gladys. High (1080p) is sharper; an image too heavy for Gladys falls back to low. |
+| Motion detection | `section` | No | Without MQTT, a motion is noticed when the camera records a new clip: turn on "Save video on motion" in the camera settings, and expect up to a minute of delay. With MQTT, motion, people, vehicles, animals, sounds and baby crying arrive in real time: set the same broker in the yi-hack MQTT page and below, with a different MQTT prefix for each camera. |
+| MQTT broker | `string` | No | Address of the MQTT broker the cameras publish to. Leave empty to deduce the motion from the recordings. |
+| MQTT user name | `string` | No |  |
+| MQTT password | `secret` | No |  |
+| Motion duration (s) | `number` | No | How long the motion sensor stays on after a detection, when the camera does not say the motion stopped. |
+
+## How to install Yi Home Cameras in Gladys
+
+1. In Gladys, open **Integrations**: Yi Home Cameras appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-yihomecamera:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-yihomecamera](https://github.com/prohand/gladys-yihomecamera).
+
+Yi Home Cameras requires Gladys `>=5.3.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+Yi Home Cameras is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [prohand](https://github.com/prohand), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/prohand/gladys-yihomecamera) — [source of this documentation](https://github.com/prohand/gladys-yihomecamera/blob/HEAD/docs/en.md)

@@ -1,0 +1,190 @@
+---
+title: "NESO Demand Flexibility smart home integration, free and open source"
+sidebar_label: "NESO Demand Flexibility"
+description: "Demand Flexibility Service events of the British grid (NESO): next event, alerts, widget. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-demand-flexibility.png"
+keywords:
+  - "neso demand flexibility"
+  - "neso demand flexibility smart home"
+  - "gladys neso demand flexibility"
+  - "neso demand flexibility gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-demand-flexibility instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"NESO Demand Flexibility","description":"Demand Flexibility Service events of the British grid (NESO): next event, alerts, widget.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-demand-flexibility","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-demand-flexibility.png","type":"device","version":"1.0.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-23T06:21:36Z"}} />
+
+The events of the **Demand Flexibility Service** (DFS) of NESO, Great Britain's
+National Energy System Operator: half-hours when households and businesses
+signed up through their supplier (Octopus "Saving Sessions" and others) are
+paid to change their consumption. The data comes from the open
+[NESO Data Portal](https://www.neso.energy/data-portal/demand-flexibility).
+This integration is not affiliated with NESO, nor with any supplier.
+
+## Overview
+
+NESO publishes two kinds of events, each followed as one device:
+
+- **turn-down** ("reduce"): use less electricity during the event — the usual
+  ones, behind the saving sessions;
+- **turn-up** ("increase"): use more, when the grid has too much power (rarer).
+
+Events are announced the same day, usually between 10 am and 1 pm, for the
+afternoon and evening (for example 16:00–20:00). Each device shows whether an
+event is in progress, the next one and the number announced. A dashboard
+widget, three scene triggers and a scene action make it easy to shift the
+washing machine, the car charge or the heating.
+
+Whether **your** household is paid depends on your supplier and on joining the
+event with it: the integration only says what NESO asked for.
+
+## Requirements
+
+- Gladys Assistant 5.3.0 or later.
+- Gladys must reach `api.neso.energy` on the internet. No account, no key: the
+  data is open, under the NESO Open Data Licence.
+- The service covers Great Britain (England, Scotland, Wales).
+
+## Configuration
+
+1. Install the integration (**Integrations → Install from GitHub**, then
+   `https://github.com/guim31/gladys-demand-flexibility`).
+2. In its **Configuration** tab:
+   - **Language of the names**: language of the device and feature names
+     (fixed when a device is added) and of the texts sent to scenes;
+   - **Events to use less (turn-down)**: on by default;
+   - **Events to use more (turn-up)**: off by default.
+3. Save, then add the devices from the **Discovery** tab.
+
+### Test the connection button
+
+Reads the NESO Data Portal at once and shows how many events are announced and
+the next one, or the error in red.
+
+## Devices
+
+### Demand Flexibility (one per kind of event)
+
+| Feature                  | Value                                                    |
+| ------------------------ | -------------------------------------------------------- |
+| Event in progress        | 1 during an event, 0 otherwise                           |
+| Upcoming events          | events announced and not started yet                     |
+| Next event start         | day and time, for example `Sat 21/11 16:00`, or "none"   |
+| Next event end           | time, for example `20:00`                                |
+| Guaranteed price (£/MWh) | the guaranteed acceptance price set by NESO, 0 when none |
+
+"Next event" is the event in progress, or else the next one. NESO rarely sets a
+guaranteed price; what your supplier pays you is not published.
+
+## Widget
+
+**Next DFS event** shows, for the kind chosen in its settings (the first one by
+default): the event in progress and when it ends, or the next event and when it
+starts, the guaranteed price if any, the other upcoming events and the last
+event over. Two settings hide the upcoming events and the last event.
+
+## Scenes
+
+### New event announced (trigger)
+
+Fires when NESO publishes an event not seen before. Filter: the kind of event.
+Variables: `day`, `start_time`, `end_time`, `duration_minutes`,
+`minutes_until`, `price`. The events already published when the integration
+starts for the first time do not fire it.
+
+### Event starts soon (trigger)
+
+Fires once per event and per warning chosen: 5, 15, 30 minutes, 1 or 2 hours
+before it starts. An event announced late fires the warnings already passed
+at once. Filters: the kind of event, the warnings. Variables: `start_time`,
+`end_time`, `duration_minutes`, `minutes_until`, `price`.
+
+### Event ended (trigger)
+
+Fires once at the end of each event (within two hours). Filter: the kind of
+event. Variables: `start_time`, `end_time`, `duration_minutes`.
+
+### Get the next event (action)
+
+Returns the event in progress or the next one for the following actions:
+`day`, `start_time`, `end_time`, `minutes_until`, `duration_minutes`,
+`in_progress` (1 or 0) and `price`. It fails, in red, when no event is
+announced.
+
+## Scene examples
+
+- **New event announced** → send yourself "Saving session today:" followed by
+  `start_time` and `end_time`, picked in the variable list.
+- **Event starts soon** (30 minutes) → switch the water heater off and lower
+  the heating set point; **Event ended** → put them back.
+- **Event starts soon** on turn-up events → start the electric car charge.
+
+## Limits
+
+- The integration reads the portal every 10 minutes (one small query), only
+  when a device is added or the widget is displayed. NESO asks for no more than
+  1 request per second to its API and 2 per minute to its datastore: far
+  above this use.
+- NESO also publishes rare test events (about one hour, a few a year): they
+  are shown and fire the triggers like the others.
+- NESO publishes the events as planned; it can cancel or change one, which the
+  next reading shows.
+- If the portal is unreachable, the devices keep the last events read (an event
+  still starts and ends on time), and the Configuration screen says it.
+- Times are shown in the time zone of Gladys.
+- Developed and tested against the live NESO Data Portal, not yet on a
+  household taking part in the service: feedback welcome.
+
+## Troubleshooting
+
+- **No device in Discovery**: no kind of event is followed; tick one in the
+  configuration.
+- **"The NESO Data Portal cannot be reached"**: check the internet access of
+  Gladys, then use **Test the connection**.
+- **No event for days**: NESO only calls events when the grid needs them; the
+  widget shows the last one.
+- Logs: the integration logs its start, new events and failures. For more
+  detail, set the `LOG_LEVEL=debug` environment variable.
+
+## Credits
+
+Data: NESO Data Portal, "Demand Flexibility Service" dataset, NESO Open Data
+Licence — "Supported by National Energy System Operator open data". This
+integration is not affiliated with NESO.
+
+## Configuration settings
+
+These are the settings NESO Demand Flexibility asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Open data from NESO | `section` | No | The events of NESO's Demand Flexibility Service (behind the suppliers' saving sessions), read from the NESO Data Portal: no account, no key. Not affiliated with NESO. |
+| Language of the names | `select` | No | Language of the device and feature names (fixed when a device is added) and of the texts sent to scenes. |
+| Events to use less (turn-down) | `boolean` | No | The usual events: paid to reduce consumption, as in the suppliers' saving sessions. One device. |
+| Events to use more (turn-up) | `boolean` | No | Rarer: paid to increase consumption when the grid has too much power. One device. |
+
+## How to install NESO Demand Flexibility in Gladys
+
+1. In Gladys, open **Integrations**: NESO Demand Flexibility appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-demand-flexibility:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-demand-flexibility](https://github.com/guim31/gladys-demand-flexibility).
+
+NESO Demand Flexibility requires Gladys `>=5.3.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+NESO Demand Flexibility is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-demand-flexibility) — [source of this documentation](https://github.com/guim31/gladys-demand-flexibility/blob/HEAD/docs/en.md)

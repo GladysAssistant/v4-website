@@ -1,0 +1,232 @@
+---
+title: "aWATTar smart home integration, free and open source"
+sidebar_label: "aWATTar"
+description: "aWATTar HOURLY dynamic electricity prices (Germany, Austria): today, tomorrow, cheapest hours. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-awattar.png"
+keywords:
+  - "awattar"
+  - "awattar smart home"
+  - "gladys awattar"
+  - "awattar gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/guim31/gladys-awattar instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"aWATTar","description":"aWATTar HOURLY dynamic electricity prices (Germany, Austria): today, tomorrow, cheapest hours.","owner":"guim31","owner_avatar_url":"https://avatars.githubusercontent.com/u/33096540?v=4","repo_url":"https://github.com/guim31/gladys-awattar","cover_url":"https://integration-store-storage.gladysassistant.com/covers/guim31--gladys-awattar.png","type":"device","version":"1.0.0","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-21T06:19:17Z"}} />
+
+The hourly prices of the [aWATTar HOURLY](https://www.awattar.at/tariffs/hourly)
+dynamic electricity tariff, in Germany and Austria, in Gladys: the price of the current
+hour, the cheapest hours of the day, a price chart for today and tomorrow, and scene
+triggers to run your appliances when electricity is cheapest.
+
+This integration is not affiliated with aWATTar or tado°. It reads the public market
+data of aWATTar, tested against the live API, but it was developed without an aWATTar
+contract: feedback welcome.
+
+## Overview
+
+aWATTar publishes, without account or key, the **hourly EPEX Spot day-ahead prices**
+of Germany (DE-LU zone) and Austria (AT zone). The integration turns them into the
+**aWATTar HOURLY price** of your country: not just the raw market price, but the
+market price plus the aWATTar components (see _Price formula_), with or without VAT.
+The raw market price of the current hour stays available on its own feature.
+
+Tomorrow's prices are published around 14:00. Every time is shown in Central European
+Time (Berlin and Vienna), and a day runs from midnight to midnight in that time,
+whatever the timezone of your Gladys.
+
+aWATTar Germany is now **tado° Energy**: the API and the tariff stay the same.
+
+## Requirements
+
+- Gladys Assistant 5.3.0 or later.
+- Internet access from Gladys to `api.awattar.de` or `api.awattar.at`.
+- Nothing else: no account, no API key, no hardware.
+
+## Installation
+
+1. In Gladys, open **Integrations → Install from GitHub** and enter
+   `https://github.com/guim31/gladys-awattar`.
+2. Open the integration, pick your country, check the tariff fields, save.
+3. Open the **Discovery** tab and add the **aWATTar Deutschland** or **aWATTar
+   Österreich** device.
+4. On a dashboard, add the **Electricity prices** widget.
+
+## Configuration
+
+| Field                         | Default       | What it does                                                             |
+| ----------------------------- | ------------- | ------------------------------------------------------------------------ |
+| Country                       | Germany       | Market and tariff: Germany or Austria. Another country is another device |
+| Include VAT                   | Yes           | Prices with the VAT rate below                                           |
+| Surcharge (ct/kWh, net)       | Country value | Added to every hour before VAT. Empty: 1.5 in Austria, 0 in Germany      |
+| Markup (% of market price)    | 0             | A percentage of the market price, always added as a cost. Empty: 0       |
+| VAT rate (%)                  | Country value | Empty: 19 in Germany, 20 in Austria                                      |
+| Language of the feature names | French        | Used when the device is added: the names do not change afterwards        |
+
+Decimals accept a dot or a comma (`1,5`). An unreadable value falls back to the value of
+the country. To see your **full price per kWh**, add your grid fees, levies and taxes
+per kWh (net) to the surcharge.
+
+The **Refresh the prices now** button reads aWATTar at once and shows what it
+publishes for today and tomorrow: use it to check the connection.
+
+## Price formula
+
+For every hour:
+
+`price = (market + |market| × markup % + surcharge) × (1 + VAT %)`
+
+- **Austria**: aWATTar publishes EPEX Spot AT + 1.5 ct/kWh, plus 20 % VAT on the
+  whole. aWATTar's own examples: 5.00 ct gives 7.80 ct, 0.00 ct gives 1.80 ct,
+  −5.00 ct gives −4.20 ct. These are the defaults.
+- **Germany**: tado° Energy publishes the EPEX Spot DE-LU price "plus further
+  procurement costs, taxes, levies and grid fees", regional and not given as one
+  figure. The default surcharge is 0: enter the per-kWh costs of your contract.
+- Not included by default: grid fees, levies, the fixed monthly fee (Austria 5.75 €,
+  Germany 4.58 € plus metering).
+
+## The aWATTar device
+
+One device per country, read-only, refreshed by the integration itself every minute
+(the prices are read from aWATTar once an hour).
+
+| Feature                       | Type    | Value                                                               |
+| ----------------------------- | ------- | ------------------------------------------------------------------- |
+| Current price (€/kWh)         | Price   | aWATTar HOURLY price of the current hour                            |
+| Next hour price (€/kWh)       | Price   | Price of the next hour (after 23:00, once tomorrow is known)        |
+| Average price today (€/kWh)   | Price   | Average of the hours of the day                                     |
+| Lowest price today (€/kWh)    | Price   | Cheapest hour of the day                                            |
+| Highest price today (€/kWh)   | Price   | Most expensive hour of the day                                      |
+| Cheapest hour today           | Text    | Start of the cheapest hour, `HH:MM`                                 |
+| Most expensive hour today     | Text    | Start of the most expensive hour, `HH:MM`                           |
+| Hour rank (1 = cheapest)      | Counter | Rank of the current hour in the day, 1 to 24 (23 or 25 on DST days) |
+| Market price now (€/kWh, net) | Price   | EPEX Spot price of the current hour, without anything added         |
+
+Gladys has no €/kWh unit: the prices show in euros, the name says per what. When a
+feature is the only one of its kind on the device, the dashboard shows the generic
+label of the kind ("Counter (integer)") instead of its name.
+
+## Dashboard widget
+
+**Electricity prices** shows the price shown (with or without VAT), three tiles (now,
+next hour, today's average), the chart of today and tomorrow with the cheapest and
+the most expensive hour of each day marked and a line at the current time, then the
+cheapest hour of today and tomorrow, tomorrow's average and the market price of the
+current hour. Until tomorrow's prices are published, it says that they are not
+published yet.
+
+## Scene triggers
+
+Three triggers, in the scene editor under **aWATTar**. They compare the prices of the
+configuration (aWATTar HOURLY price, with or without VAT).
+
+### Cheapest hours of the day begin
+
+Fires once a day, at the start of the cheapest run of consecutive hours of the day.
+Pick the length of the run: 1 to 6 or 8 hours (1 hour is the cheapest hour of the
+day). Variables: average price of the run, start and end time.
+
+### One of the cheapest hours begins
+
+Fires at the start of each of the N cheapest hours of the day, consecutive or not.
+Pick N: 1 to 6, 8, 10 or 12. Variables: price of the hour, its rank, start and end
+time.
+
+### The price drops below a threshold
+
+Fires at the start of an hour whose price is below the threshold when the hour before
+was not: once per cheap run. Pick the threshold: 0 ct/kWh (negative prices) to 40
+ct/kWh by steps of 5. Variables: price of the hour, start time, and the end of the
+cheap run as far as the known prices tell. Unlike a condition on the **Current
+price** feature, it says how long the run lasts, and it works without the device.
+
+All triggers fire when the hour begins, at most 10 minutes late (Gladys or the
+integration restarting): an hour that began longer ago fires nothing.
+
+## Scene examples
+
+- **Dishwasher in the cheapest 3 hours**: trigger _Cheapest hours of the day begin_,
+  3 hours → turn on the dishwasher plug.
+- **Hot water boiler on the 4 cheapest hours**: trigger _One of the cheapest hours
+  begins_, 4 → turn on the boiler; a second scene on _Hour rank_ greater than 4 →
+  turn it off.
+- **Negative price**: trigger _The price drops below a threshold_, 0 ct/kWh → turn on
+  the boiler and send "Electricity is free until \{end_time\}".
+
+## Refresh and API usage
+
+aWATTar asks for fair use of its free API: 100 requests a day at most. The
+integration stays well below:
+
+- one request an hour, for today and tomorrow together;
+- from 13:00, again every 15 minutes until tomorrow's prices are published, then
+  hourly again (about 60 requests a day at worst);
+- after a failure, retries after 5, 10, 20, 40 then 60 minutes; the last known prices
+  stay in use meanwhile (prices are known a day ahead).
+
+The states are published only when they change, plus a reminder every 6 hours.
+
+## Troubleshooting
+
+- **"aWATTar cannot be reached"** in the Configuration screen: Gladys has no internet
+  access, or aWATTar is down. The last known prices stay in use; press **Refresh the
+  prices now** to try again.
+- **"publishes no price for today yet"**: aWATTar answered with no price for the day,
+  a publication incident. The integration tries again every 15 minutes.
+- **No value on the device**: add the device from the Discovery tab first; its values
+  arrive at once.
+- **Changed the country**: add the new device from the Discovery tab; the old one gets
+  no more values and can be deleted.
+- **Debug logs**: set `LOG_LEVEL=debug` on the container to see every refresh.
+
+## Limitations
+
+- Developed without an aWATTar contract: the formula follows what aWATTar publishes,
+  not an invoice. Compare it with your bill and adjust the fields.
+- Hourly prices, as the HOURLY tariff bills them. Should aWATTar publish quarter hours,
+  they are averaged back to the hour.
+- No login: no consumption, no costs, no personal prices.
+- The triggers look at the current day only: a cheapest run never spans midnight.
+- Read-only: nothing is controlled by the integration itself.
+- The feature names are set when the device is added; changing the language later
+  does not rename them.
+
+## Configuration settings
+
+These are the settings aWATTar asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| aWATTar HOURLY prices | `section` | No | aWATTar publishes the hourly EPEX Spot day-ahead prices of Germany and Austria, readable without an account. Tomorrow's prices arrive around 14:00. Add the aWATTar device from the Discovery tab, and the price widget from the dashboard. Developed without an aWATTar contract: feedback welcome. Not affiliated with aWATTar or tado°. |
+| Country | `select` | No | The market and the tariff: Germany (EPEX Spot DE-LU, aWATTar now tado° Energy) or Austria (EPEX Spot AT). Another country is another device. |
+| Include VAT | `boolean` | No | Prices with the VAT of the country (Germany 19 %, Austria 20 %), negative prices included. |
+| Surcharge (ct/kWh, net) | `string` | No | Added to the market price of every hour, before VAT. Empty: aWATTar's procurement component (Austria 1.5, Germany 0). Add your grid fees and taxes per kWh to see the full price. |
+| Markup (% of the market price) | `string` | No | A percentage of the market price added every hour (always a cost, negative prices too). Empty: 0, the current aWATTar HOURLY tariffs have none. |
+| VAT rate (%) | `string` | No | Empty: 19 in Germany, 20 in Austria. |
+| Language of the feature names | `select` | No | Used when the device is added to Gladys: the names do not change afterwards. |
+
+## How to install aWATTar in Gladys
+
+1. In Gladys, open **Integrations**: aWATTar appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/guim31/gladys-awattar:1.0.0`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/guim31/gladys-awattar](https://github.com/guim31/gladys-awattar).
+
+aWATTar requires Gladys `>=5.3.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+aWATTar is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [guim31](https://github.com/guim31), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/guim31/gladys-awattar) — [source of this documentation](https://github.com/guim31/gladys-awattar/blob/HEAD/docs/en.md)

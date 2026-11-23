@@ -77,9 +77,9 @@ Heute sind in Gladys Assistant 4 bereits Hunderte Geräte für die Hausautomatio
 Aktuell unterstützt Gladys Assistant folgende Geräte:
 
 - Z-Wave
-- Xiaomi ([Doku](/de/docs/integrations/xiaomi/))
+- Xiaomi
 - Philips Hue ([Doku](/de/docs/integrations/external/philips-hue/))
-- Sonoff (Tasmota) ([Doku](/de/docs/integrations/tasmota/))
+- Sonoff (Tasmota) ([Doku](/de/docs/integrations/external/tasmota/))
 - RTSP-, HTTP- und USB-Kameras ([Doku](/de/docs/integrations/camera/))
 - Das MQTT-Protokoll ([Doku](/de/docs/integrations/mqtt/))
 

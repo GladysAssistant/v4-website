@@ -9,7 +9,7 @@ Cette condition vous permet de continuer ou stopper une scène uniquement si un 
 
 Imaginons que vous vouliez mettre une condition sur une scène pour qu'elle ne se déclenche que lorsque que vous êtes en vacances, ou au contraire quand vous êtes au travail.
 
-Vous pouvez connecter votre calendrier dans Gladys (via l'intégration [Caldav](/fr/docs/integrations/caldav/)).
+Vous pouvez connecter votre calendrier dans Gladys (via l'intégration [Caldav](/fr/docs/integrations/external/caldav/)).
 
 Ensuite, vous pouvez créer la condition suivante :
 

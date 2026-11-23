@@ -7,7 +7,7 @@ sidebar_label: Calendar event is running
 
 Let's imagine you want to create a scene that runs only if you are currently on holidays, at the gym or in a call?
 
-You can use the calendar integration (Like [Caldav](/docs/integrations/caldav)) to add a condition in a scene on the presence of an event in your calendar.
+You can use the calendar integration (Like [Caldav](/docs/integrations/external/caldav/)) to add a condition in a scene on the presence of an event in your calendar.
 
 It looks like this :
 

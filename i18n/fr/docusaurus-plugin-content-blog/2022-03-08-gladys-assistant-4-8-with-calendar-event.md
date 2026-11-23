@@ -29,7 +29,7 @@ Que vous vouliez être réveillé pile pour le travail, en fonction d'évènemen
 
 C'est maintenant possible grâce au déclencheur de scène "Un évènement dans le calendrier arrive".
 
-Déjà, il faut avoir connecté son calendrier à Gladys ( Un calendrier iCloud, Google Agenda, Synology, ou n'importe quel calendrier Caldav grâce à notre [intégration Caldav](/fr/docs/integrations/caldav/) )
+Déjà, il faut avoir connecté son calendrier à Gladys ( Un calendrier iCloud, Google Agenda, Synology, ou n'importe quel calendrier Caldav grâce à notre [intégration Caldav](/fr/docs/integrations/external/caldav/) )
 
 Ensuite, vous allez dans les scènes et vous créer un déclencheur "un évènement dans le calendrier arrive" :
 

@@ -1,0 +1,242 @@
+---
+title: "EnOcean smart home integration, free and open source"
+sidebar_label: "EnOcean"
+description: "EnOcean sensors, switches and actuators through a USB 300 gateway shared by ser2net. Free, open source, installable in one click."
+image: "https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-enocean.png"
+keywords:
+  - "enocean"
+  - "enocean smart home"
+  - "gladys enocean"
+  - "enocean gladys assistant"
+  - "external integration"
+  - "open source home automation"
+custom_edit_url: null
+---
+
+{/* GENERATED FILE: built by `yarn load-external-integrations` from the
+integration store. Do not edit by hand, edit docs/en.md in
+https://github.com/prohand/gladys-enocean instead. */}
+
+import ExternalIntegrationHeader from "@site/src/components/ExternalIntegrationHeader";
+
+<ExternalIntegrationHeader integration={{"name":"EnOcean","description":"EnOcean sensors, switches and actuators through a USB 300 gateway shared by ser2net.","owner":"prohand","owner_avatar_url":"https://avatars.githubusercontent.com/u/20227162?v=4","repo_url":"https://github.com/prohand/gladys-enocean","cover_url":"https://integration-store-storage.gladysassistant.com/covers/prohand--gladys-enocean.png","type":"device","version":"1.0.1","gladys_version":">=5.3.0","stars":0,"pushed_at":"2026-11-20T09:25:44Z"}} />
+
+This integration connects Gladys to EnOcean devices — battery-free switches,
+temperature, humidity, CO2, occupancy and light sensors, door contacts, window
+handles, relays and dimmers — through an **ESP3 gateway**: the EnOcean USB 300
+stick, a TCM 310 module, or any gateway built on them.
+
+## 1. What you need
+
+- Gladys **5.3 or later**.
+- An ESP3 gateway (USB 300, USB 310, TCM 310 board...), for your country's
+  frequency: 868 MHz in Europe, 902 MHz in North America.
+- A machine on your network to plug it into: the Gladys host itself, or a
+  Raspberry Pi closer to the devices.
+- **ser2net** on that machine.
+
+Why ser2net? The integration runs in a sandboxed container that cannot see
+USB devices. ser2net shares the serial port of the stick as a TCP port, and the
+integration connects to it. It also lets you put the stick where reception is
+best, away from the Gladys server.
+
+## 2. Share the stick with ser2net
+
+Install it (`apt install ser2net` on Debian, Ubuntu and Raspberry Pi OS), then
+find the stable name of the stick:
+
+```bash
+ls -l /dev/serial/by-id/
+```
+
+ser2net 4 (`/etc/ser2net.yaml`):
+
+```yaml
+connection: &enocean
+  accepter: tcp,9999
+  enable: on
+  options:
+    kickolduser: true
+  connector: serialdev,/dev/serial/by-id/usb-EnOcean_GmbH_EnOcean_USB_300_DC_XXXXXXXX-if00-port0,57600n81,local
+```
+
+ser2net 3 (`/etc/ser2net.conf`):
+
+```text
+9999:raw:0:/dev/serial/by-id/usb-EnOcean_GmbH_EnOcean_USB_300_DC_XXXXXXXX-if00-port0:57600 8DATABITS NONE 1STOPBIT
+```
+
+Then `systemctl restart ser2net`. Keep in mind:
+
+- **57600 bauds, 8N1, raw mode** (no telnet): ESP3 is binary.
+- **`kickolduser: true`**: the port takes one client. When the integration
+  reconnects (update, Gladys restart), the old session must give way.
+- **The port has no password.** Open it to the Gladys host only: bind it to
+  one address (`accepter: tcp,192.168.1.50,9999`) and/or filter it with your
+  firewall.
+
+## 3. Configure the integration
+
+In **Integrations → EnOcean → Configuration**:
+
+| Field                  | What to fill in                                                                  |
+| ---------------------- | -------------------------------------------------------------------------------- |
+| Gateway host           | IP address of the machine running ser2net. **Not 127.0.0.1** (own container).    |
+| Gateway TCP port       | The port of ser2net (9999 above).                                                |
+| Devices                | Your devices, see below.                                                         |
+| Report unknown devices | Fires the "unknown device heard" scene trigger. Turn it off if neighbours flood. |
+| Detailed logs (debug)  | Logs every telegram heard. For troubleshooting only.                             |
+
+Save, then press **Test the connection**: it shows the module, its **base id**
+and how many telegrams were heard.
+
+## 4. Declare your devices
+
+EnOcean has no discovery: a sensor says "I am 0194E3B2", never what it
+measures. Each device is declared once, as a JSON list in the **Devices**
+field:
+
+```json
+[
+  { "id": "0194E3B2", "eep": "A5-02-05", "name": "Living room" },
+  { "id": "FEF1A2B3", "eep": "F6-02-01", "name": "Entrance switch" },
+  { "id": "01A1B2C3", "eep": "F6-10-00", "name": "Kitchen window" },
+  { "eep": "A5-38-08", "channel": 1, "name": "Kitchen dimmer", "dimmable": true },
+  { "eep": "F6-02-01", "channel": 2, "rocker": "a", "name": "Garden relay" },
+  { "id": "05123456", "eep": "D2-01-12", "channel": 3, "name": "Plug" }
+]
+```
+
+| Key        | Meaning                                                                                     |
+| ---------- | ------------------------------------------------------------------------------------------- |
+| `id`       | The EnOcean id of the device, 8 hex digits (printed on it). Needed for everything it sends. |
+| `eep`      | Its profile (EEP), see the table below. Printed in its manual.                              |
+| `name`     | The name shown in Gladys.                                                                   |
+| `channel`  | Actuators only: the gateway channel (0-127) Gladys sends from. One per actuator or group.   |
+| `dimmable` | `true` for a dimmer (A5-38-08, D2-01): adds a brightness feature.                           |
+| `rocker`   | Virtual rocker relays: `a` (default) or `b`, the side the relay learned.                    |
+| `io`       | D2-01 with several outputs: the output number (0 = first).                                  |
+
+You do not have to read the ids yourself: open the **learn mode**, press the
+button of the device, then press **Devices heard**. It prints the lines to
+paste, with the profile when the device sends it.
+
+After saving, the devices appear in **Discovery**: add them to Gladys there.
+
+**Ids are forever.** Gladys keys the history, the scenes and the dashboards on
+the `id` (sensors, D2-01) or on the `channel` (other actuators). Changing them
+creates a new device.
+
+## 5. Supported profiles
+
+| EEP                       | Device                                       | In Gladys                                      |
+| ------------------------- | -------------------------------------------- | ---------------------------------------------- |
+| A5-02-01 to 1B, 20, 30    | Temperature sensors                          | Temperature                                    |
+| A5-04-01, A5-04-02        | Temperature and humidity sensors             | Temperature, humidity                          |
+| A5-06-01, A5-06-02        | Light sensors                                | Illuminance (lx)                               |
+| A5-07-01, 02, 03          | Occupancy sensors (03: with light)           | Motion (+ illuminance)                         |
+| A5-09-04                  | CO2 sensors                                  | CO2, temperature, humidity                     |
+| D5-00-01                  | Door and window contacts                     | Opening sensor (1 = closed)                    |
+| F6-10-00                  | Window handles (Hoppe...)                    | Opening sensor + "handle turned" scene trigger |
+| F6-02-01, F6-02-02 + `id` | Rocker switches (PTM 215, Eltako FT55...)    | 4 buttons (click / long click) + scene trigger |
+| F6-02-01 + `channel`      | Relays that learned a rocker (Eltako FSR...) | On/off switch                                  |
+| A5-38-08 + `channel`      | Eltako central command relays and dimmers    | On/off (+ brightness)                          |
+| D2-01-00 to 14            | Electronic switches and dimmers (NodOn...)   | On/off (+ brightness)                          |
+
+The buttons of a rocker switch are named after the EEP: `ao` / `ai` for the
+upper / lower side of rocker A, `bo` / `bi` for rocker B. A press under one
+second is a click, a longer one a long click.
+
+## 6. Pair an actuator
+
+Actuators are driven from a **channel** of the gateway: Gladys sends from the
+gateway base id + the channel. The actuator must learn that sender once.
+
+- **Relay that learns a rocker (F6-02-01 + channel)** and **Eltako central
+  command (A5-38-08)**: turn the actuator to its learn position (LRN), then in
+  Gladys press **Pair an actuator** and pick it. Turn it back to its operating
+  position. Add the actuator `id` to the entry if you want Gladys to follow
+  its confirmations (Eltako sends them).
+- **D2-01 (NodOn...)**: they pair from their own side. Press **Open the learn
+  mode** in Gladys (or the button of the widget), then the pairing button of
+  the device: Gladys answers its request from channel 0, or from the channel
+  already declared for its `id`. Declare it with its `id` and that channel
+  (`0` when it was not declared yet).
+
+The base id is burned into the stick. Keep the stick: with another one, the
+actuators must learn the new sender again.
+
+## 7. Scenes
+
+Triggers:
+
+- **An EnOcean switch is pressed**: filter on the switch, the button and the
+  press (short, long). Variables: `device_name`, `button`, `press`,
+  `duration_ms`.
+- **A window handle is turned**: filter on the handle and the position
+  (closed, open, tilted). Variables: `device_name`, `position`.
+- **An unknown EnOcean device is heard**: once an hour per device at most.
+  Variables: `sender_id`, `eep`, `rorg`, `dbm`, `teach_in`.
+- **The EnOcean gateway is lost**: the TCP connection dropped (the integration
+  keeps retrying). Variables: `address`, `reason`.
+
+Actions:
+
+- **Press a virtual EnOcean switch**: sends a rocker press from a channel,
+  like a real switch. Every actuator that learned it reacts — handy for
+  groups. Output: `sent`.
+- **Send an EnOcean teach-in**: the teach-in telegram of a declared actuator.
+  Output: `sent`.
+
+## 8. Dashboard widget
+
+The **EnOcean radio** widget shows the gateway state, its base id and module,
+the learn mode, and the last devices heard (with their signal), the unknown
+ones flagged. Its button opens the learn mode for 60 seconds.
+
+## 9. Troubleshooting
+
+- **"Gateway unreachable"**: check from the Gladys host that the port answers
+  (`nc -vz 192.168.1.50 9999`), that ser2net runs, and that no other program
+  (another home automation box) holds the port.
+- **Connected but nothing heard**: wrong baud rate (57600), telnet mode
+  instead of raw, or a stick of the wrong frequency.
+- **A device is heard but nothing changes in Gladys**: wrong `eep` in its
+  entry, or the device was not added from Discovery. Turn on the detailed logs:
+  each telegram is logged with its sender and its bytes.
+- **An actuator does not react**: it did not learn the channel (pair it
+  again), or **Test the connection** says the base id is unknown.
+- **Radio range**: concrete and metal walls block 868 MHz. Move the stick (a
+  USB extension cable helps) or add an EnOcean repeater.
+
+## Configuration settings
+
+These are the settings EnOcean asks for in its configuration screen in Gladys.
+
+| Setting | Type | Required | Description |
+| --- | --- | --- | --- |
+| Getting started | `section` | No | The integration runs in a container that cannot see USB devices: plug your EnOcean USB 300 (or any ESP3 gateway) into a machine of your network and share it with ser2net as a raw TCP port at 57600 bauds. Then fill in its address below and declare your devices. |
+| Gateway host | `string` | Yes | IP address or name of the machine running ser2net. Not 127.0.0.1: the integration runs in its own container. |
+| Gateway TCP port | `number` | Yes | The port ser2net listens on for the EnOcean module (raw mode, no telnet). |
+| Devices | `string` | No | Your EnOcean devices as a JSON list: one entry per device with its id (8 hex digits), its profile (EEP, e.g. A5-02-05) and a name. Actuators also get a channel (0-127). The "Devices heard" button writes the lines for you. See the documentation. |
+| Report unknown devices | `boolean` | No | Fire the "An unknown EnOcean device is heard" scene trigger, at most once an hour per device. Turn it off if your neighbours' sensors are heard all day. |
+| Detailed logs (debug) | `boolean` | No | Log every telegram heard, with its sender, its bytes and its signal. Turn it on to find out why a device does not show up, and off again once you know. |
+
+## How to install EnOcean in Gladys
+
+1. In Gladys, open **Integrations**: EnOcean appears in the catalog, next to the native integrations, with a community badge.
+2. Click **Install**. Gladys pulls the Docker image (`ghcr.io/prohand/gladys-enocean:1.0.1`), starts it in a sandbox isolated from the core, and generates the integration's interface (devices, discovery and configuration).
+3. Open the **Configuration** screen of the integration, fill in the settings, and save.
+4. You can also install it directly from its repository URL: [https://github.com/prohand/gladys-enocean](https://github.com/prohand/gladys-enocean).
+
+EnOcean requires Gladys `>=5.3.0`. The catalog inside Gladys refreshes every hour, so a new version becomes available at most one hour after its release.
+
+Not running Gladys yet? It is free and open source: [follow the installation guide](/docs/) to get started.
+
+## About external integrations
+
+EnOcean is an **external integration**: a community integration packaged as a Docker container and published on GitHub, that Gladys installs in one click and runs in a sandbox isolated from its core. It is published and maintained by [prohand](https://github.com/prohand), not by the Gladys core team.
+
+- [Browse all integrations](/docs/integrations/), native and community
+- [Build and publish your own external integration](/docs/dev/external-integrations/)
+- [Source code on GitHub](https://github.com/prohand/gladys-enocean) — [source of this documentation](https://github.com/prohand/gladys-enocean/blob/HEAD/docs/en.md)

@@ -1,7 +1,7 @@
 ---
 id: weather
 title: Afficher la météo sur le tableau de bord
-description: "Affichez la météo locale sur votre tableau de bord Gladys Assistant grâce à l'intégration OpenWeather et à la position de votre maison."
+description: "Affichez la météo locale sur votre tableau de bord Gladys Assistant grâce à une intégration météo (OpenWeather, Météo France, Open-Meteo…) et à la position de votre maison."
 sidebar_label: Météo
 ---
 
@@ -9,8 +9,8 @@ Vous pouvez afficher la météo liée à votre localisation sur le tableau de bo
 
 ## Pré-requis
 
-- Vous devez au préalable avoir configuré le service [OpenWeather](/fr/docs/integrations/openweather/) pour afficher la météo dans Gladys Assistant.
-- Vous devez avoir configuré votre maison dans les paramètres, et avoir placé votre maison sur la carte, afin qu'OpenWeatherMap connaisse la latitude et la longitude de votre maison.
+- Vous devez au préalable avoir installé et configuré une intégration météo depuis le [catalogue des intégrations](/fr/docs/integrations/), comme [OpenWeather](/fr/docs/integrations/external/openweather/), Météo France ou Open-Meteo.
+- Vous devez avoir configuré votre maison dans les paramètres, et avoir placé votre maison sur la carte, afin que le fournisseur météo connaisse la latitude et la longitude de votre maison.
 
 ## Configuration
 

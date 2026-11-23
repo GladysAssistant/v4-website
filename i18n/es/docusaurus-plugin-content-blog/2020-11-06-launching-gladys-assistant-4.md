@@ -77,9 +77,9 @@ Hoy, ya hay cientos de dispositivos domóticos disponibles en Gladys Assistant 4
 A día de hoy, Gladys Assistant es compatible con estos dispositivos:
 
 - Z-Wave
-- Xiaomi ([doc](/es/docs/integrations/xiaomi/))
+- Xiaomi
 - Philips Hue ([doc](/es/docs/integrations/external/philips-hue/))
-- Sonoff (Tasmota) ([doc](/es/docs/integrations/tasmota/))
+- Sonoff (Tasmota) ([doc](/es/docs/integrations/external/tasmota/))
 - Cámaras RTSP, HTTP y USB ([doc](/es/docs/integrations/camera/))
 - El protocolo MQTT ([doc](/es/docs/integrations/mqtt/))
 
