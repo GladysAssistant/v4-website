@@ -5,13 +5,19 @@
 // Usage, after a build (the titles are read from the built pages):
 //   yarn build
 //   npm install --no-save playwright   # not a project dependency
-//   node scripts/generate_og_images.js
+//   node scripts/generate_og_images.js              # every page
+//   node scripts/generate_og_images.js slug-a slug-b # only these pages
 //
 // Pages come from the /guides/ hub (src/data/guidesHubData.js) plus /guides/
 // itself. Images land in static/img/og/<slug>-<locale>.jpg and the list of
 // generated slugs in src/data/ogImages.json, which HorizonPage and the
-// structured data read. Re-run it when you add a landing page or change a
-// title.
+// structured data read. Every page gets an English and a French image. A page
+// also gets a German image when the German build exists and the page has its
+// own German content (its German H1 differs from the English one); those
+// slugs are listed in src/data/ogImagesDe.json (see src/data/ogImageLocale.js).
+// With slugs on the command line, only those pages are generated and both
+// lists are updated instead of rewritten. Re-run it when you add a landing
+// page or change a title.
 
 const fs = require("fs");
 const path = require("path");
@@ -20,12 +26,18 @@ const ROOT = path.join(__dirname, "..");
 const BUILD_DIR = path.join(ROOT, "build");
 const OUTPUT_DIR = path.join(ROOT, "static/img/og");
 const MANIFEST = path.join(ROOT, "src/data/ogImages.json");
+const MANIFEST_DE = path.join(ROOT, "src/data/ogImagesDe.json");
 const LOCALES = ["en", "fr"];
 
 const TAGLINE = {
   en: "Open source · Self-hosted · No cloud required",
   fr: "Open source · Auto-hébergé · Sans cloud obligatoire",
+  de: "Open Source · Selbst gehostet · Keine Cloud nötig",
 };
+
+const readManifest = (file) => (fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf8")) : []);
+const writeManifest = (file, slugs) =>
+  fs.writeFileSync(file, `${JSON.stringify([...new Set(slugs)].sort(), null, 2)}\n`);
 
 const slugsFromHub = () => {
   const hub = fs.readFileSync(path.join(ROOT, "src/data/guidesHubData.js"), "utf8");
@@ -116,12 +128,27 @@ ${subtitle ? `<div class="subtitle">${escapeHtml(subtitle)}</div>` : ""}
     process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {}
   );
   const page = await browser.newPage({ viewport: { width: 1200, height: 630 } });
+  const only = process.argv.slice(2);
+  const hubSlugs = slugsFromHub();
+  const unknown = only.filter((slug) => !hubSlugs.includes(slug));
+  if (unknown.length > 0) {
+    console.error(`Not in the /guides/ hub: ${unknown.join(", ")}`);
+    process.exit(1);
+  }
+  const hasGermanBuild = fs.existsSync(path.join(BUILD_DIR, "de"));
+  if (!hasGermanBuild) console.warn("> no German build: German images are left as they are");
   const generated = [];
-  for (const slug of slugsFromHub()) {
+  const generatedDe = [];
+  for (const slug of only.length > 0 ? only : hubSlugs) {
     const pages = LOCALES.map((locale) => [locale, readPage(slug, locale)]);
     if (pages.some(([, p]) => !p)) {
       console.warn(`> skipped ${slug}: page or H1 not found in the build`);
       continue;
+    }
+    const german = hasGermanBuild ? readPage(slug, "de") : null;
+    if (german && german.title !== pages[0][1].title) {
+      pages.push(["de", german]);
+      generatedDe.push(slug);
     }
     for (const [locale, data] of pages) {
       const htmlFile = path.join(OUTPUT_DIR, `.tmp-${slug}-${locale}.html`);
@@ -139,6 +166,13 @@ ${subtitle ? `<div class="subtitle">${escapeHtml(subtitle)}</div>` : ""}
     console.log(`> ${slug}`);
   }
   await browser.close();
-  fs.writeFileSync(MANIFEST, `${JSON.stringify(generated.sort(), null, 2)}\n`);
-  console.log(`> Generated ${generated.length} pages x ${LOCALES.length} locales`);
+  if (only.length > 0) {
+    writeManifest(MANIFEST, [...readManifest(MANIFEST), ...generated]);
+    const keptDe = readManifest(MANIFEST_DE).filter((slug) => !only.includes(slug) || !hasGermanBuild);
+    writeManifest(MANIFEST_DE, [...keptDe, ...generatedDe]);
+  } else {
+    writeManifest(MANIFEST, generated);
+    if (hasGermanBuild) writeManifest(MANIFEST_DE, generatedDe);
+  }
+  console.log(`> Generated ${generated.length} pages (English and French), ${generatedDe.length} with a German image`);
 })();
