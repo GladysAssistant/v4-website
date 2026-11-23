@@ -125,17 +125,17 @@ Wenn du Geräte kaufst, empfehle ich **Zigbee**: Ein USB-Zigbee-Stick (rund 30 �
 :::
 
 <details>
-<summary>Beispiel: ein Wohnzimmer für rund 150 $ ausstatten</summary>
+<summary>Beispiel: ein Wohnzimmer ausstatten</summary>
 
 Fang mit einem Raum an, schau, was dir gefällt, und erweitere dann Raum für Raum.
 
-| Gerät                                                        | Preis  | Link                                                                                                                           |
-| ------------------------------------------------------------ | ------ | ------------------------------------------------------------------------------------------------------------------------------ |
-| Zigbee-Temperatur-/Feuchtigkeitssensor mit Display           | $19,99 | [Amazon US](https://amzn.to/4i3oRP1)                                                                                           |
-| ZigBee-Steckdosen im 4er-Pack mit Echtzeit-Verbrauchsmessung | $16,99 | [Amazon US](https://amzn.to/3CRoBne)                                                                                           |
-| IKEA-TRÅDFRI-E27-Glühbirne (Deckenleuchte)                   | $13,99 | [IKEA US](https://www.ikea.com/us/en/p/tradfri-led-bulb-e26-1100-lumen-smart-wireless-dimmable-white-spectrum-globe-50545678/) |
-| IKEA-STYRBAR-Fernbedienung (Helligkeit)                      | $13,99 | [IKEA US](https://www.ikea.com/us/en/p/styrbar-remote-control-smart-white-80488370/)                                           |
-| Zigbee-Bewegungsmelder im 4er-Pack                           | $75,99 | [Amazon US](https://amzn.to/4k2hb0X)                                                                                           |
+| Gerät                                              | Link                                                                                                                           |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Zigbee-Temperatur-/Feuchtigkeitssensor mit Display | [SONOFF SNZB-02D bei Amazon](https://www.amazon.de/s?k=SONOFF%20SNZB-02D)                                                      |
+| ZigBee-Steckdose mit Echtzeit-Verbrauchsmessung    | [NOUS A1Z bei Amazon](https://www.amazon.de/s?k=NOUS%20A1Z%20Zigbee%20Steckdose)                                               |
+| IKEA-TRÅDFRI-E27-Glühbirne (Deckenleuchte)         | [IKEA US](https://www.ikea.com/us/en/p/tradfri-led-bulb-e26-1100-lumen-smart-wireless-dimmable-white-spectrum-globe-50545678/) |
+| IKEA-STYRBAR-Fernbedienung (Helligkeit)            | [IKEA US](https://www.ikea.com/us/en/p/styrbar-remote-control-smart-white-80488370/)                                           |
+| Zigbee-Bewegungsmelder                             | [Aqara Bewegungsmelder P1 bei Amazon](https://www.amazon.de/s?k=Aqara%20Bewegungsmelder%20P1)                                  |
 
 </details>
 
