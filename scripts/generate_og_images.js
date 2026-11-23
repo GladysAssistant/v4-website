@@ -78,6 +78,9 @@ const shorten = (text, max = 150) => {
 const escapeHtml = (s) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
+// Never break a line at the hyphen of a compound word ("E-Auto").
+const keepHyphenated = (s) => s.replace(/\S*\w-\w\S*/g, (word) => `<span class="nowrap">${word}</span>`);
+
 const template = ({ title, subtitle }, locale, fontUrl, logoUrl) => `<!doctype html>
 <html><head><meta charset="utf-8"><style>
 @font-face { font-family: Inter; src: url("${fontUrl}") format("woff2"); font-weight: 100 900; }
@@ -98,13 +101,14 @@ body {
   margin-top: auto; font-size: ${title.length > 60 ? 54 : 64}px; font-weight: 800;
   line-height: 1.08; letter-spacing: -0.02em; max-width: 1000px;
 }
+.nowrap { white-space: nowrap; }
 .subtitle { margin-top: 24px; font-size: 28px; line-height: 1.35; color: rgba(255,255,255,0.72); max-width: 980px; }
 .tagline { margin-top: auto; padding-top: 28px; font-size: 24px; color: rgba(255,255,255,0.55);
   display: flex; justify-content: space-between; }
 .accent { background: linear-gradient(90deg, #8fb4ff, #c9a6ff 55%, #f2b8a2); -webkit-background-clip: text; color: transparent; }
 </style></head><body>
 <div class="brand"><img src="${logoUrl}" alt=""><span>Gladys Assistant</span></div>
-<div class="title">${escapeHtml(title)}</div>
+<div class="title">${keepHyphenated(escapeHtml(title))}</div>
 ${subtitle ? `<div class="subtitle">${escapeHtml(subtitle)}</div>` : ""}
 <div class="tagline"><span>${TAGLINE[locale]}</span><span class="accent">gladysassistant.com</span></div>
 </body></html>`;
