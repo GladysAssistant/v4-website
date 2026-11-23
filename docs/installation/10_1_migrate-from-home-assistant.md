@@ -176,7 +176,7 @@ Gladys talks to Z-Wave through [Z-Wave JS UI](/docs/integrations/zwavejs-ui), ov
 
 **To move the stick:**
 
-1. **Write down the security keys** of your network: in the **Configuration** tab of the Z-Wave JS add-on (S0 legacy key and S2 keys), or in **Settings > Z-Wave** of Z-Wave JS UI. Without them, the devices paired securely (locks, alarms…) no longer answer.
+1. **Write down the security keys** of your network: in the **Configuration** tab of the Z-Wave JS add-on (the S0, S2 and Long Range keys), or in **Settings > Z-Wave** of Z-Wave JS UI. Without them, the devices paired securely (locks, alarms…) no longer answer.
 2. **Stop the add-on** in Home Assistant and turn off its **Start on boot** option.
 3. **Install Z-Wave JS UI** on the Gladys machine, with Docker (see the [Z-Wave JS UI documentation](https://zwave-js.github.io/zwave-js-ui/#/getting-started/docker)), next to an MQTT broker: the one the [MQTT integration](/docs/integrations/mqtt) of Gladys installs works. Plug the stick in.
 4. In Z-Wave JS UI, enter **the same security keys** in **Settings > Z-Wave**, then the MQTT and Gateway settings of the [Z-Wave JS UI guide](/docs/integrations/zwavejs-ui#configuring-z-wave-js-ui).
@@ -188,7 +188,7 @@ Gladys identifies Z-Wave devices by their node number, which the stick keeps: de
 
 Matter devices can be controlled by several controllers at once (multi-admin). So you don't have to remove them from Home Assistant to add them to Gladys:
 
-1. In Home Assistant, open the device and click on **Share device**: Home Assistant opens a pairing window and gives you a pairing code.
+1. In Home Assistant, open the device and click on **Share device**, then on **Share device** again: Home Assistant shows a QR code and a sharing code. The code expires after a few minutes: enter it in Gladys right away.
 2. In Gladys, go to **Integrations > Matter**, **Add Device** tab, enter this code, then add the device from the **Devices** tab (see the [Matter guide](/docs/integrations/matter#configuration-in-gladys-assistant)).
 
 Gladys becomes a controller of the device, next to Home Assistant: the device keeps working with Gladys once Home Assistant is turned off.

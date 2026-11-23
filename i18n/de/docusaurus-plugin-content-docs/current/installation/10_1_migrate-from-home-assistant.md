@@ -87,7 +87,7 @@ Dein ganzes Zigbee-Netzwerk steckt im Datenordner von Zigbee2MQTT und auf dem Ko
 
 #### 1. Zigbee2MQTT in Home Assistant stoppen {/* #1-stop-zigbee2mqtt-in-home-assistant */}
 
-Stoppe in Home Assistant das **Zigbee2MQTT**-Add-on und schalte seinen automatischen Start (Option *Start on boot*) aus, damit es gestoppt bleibt. **Zwei Zigbee2MQTT dürfen nie im selben Netzwerk laufen.**
+Stoppe in Home Assistant das **Zigbee2MQTT**-Add-on und schalte seine Option **Beim Systemstart starten** aus, damit es gestoppt bleibt. **Zwei Zigbee2MQTT dürfen nie im selben Netzwerk laufen.**
 
 #### 2. Den Zigbee2MQTT-Ordner holen {/* #2-get-the-zigbee2mqtt-folder */}
 
@@ -176,8 +176,8 @@ Gladys spricht Z-Wave über [Z-Wave JS UI](/de/docs/integrations/zwavejs-ui), pe
 
 **Um den Stick umzuziehen:**
 
-1. **Notiere die Sicherheitsschlüssel** deines Netzwerks: im Tab **Konfiguration** des Z-Wave-JS-Add-ons (S0-Legacy-Schlüssel und S2-Schlüssel) oder unter **Settings > Z-Wave** in Z-Wave JS UI. Ohne sie antworten sicher angelernte Geräte (Schlösser, Alarmanlagen…) nicht mehr.
-2. **Stoppe das Add-on** in Home Assistant und schalte seinen automatischen Start (Option *Start on boot*) aus.
+1. **Notiere die Sicherheitsschlüssel** deines Netzwerks: im Tab **Konfiguration** des Z-Wave-JS-Add-ons (die S0-, S2- und Long-Range-Schlüssel) oder unter **Settings > Z-Wave** in Z-Wave JS UI. Ohne sie antworten sicher angelernte Geräte (Schlösser, Alarmanlagen…) nicht mehr.
+2. **Stoppe das Add-on** in Home Assistant und schalte seine Option **Beim Systemstart starten** aus.
 3. **Installiere Z-Wave JS UI** auf dem Gladys-Rechner mit Docker (siehe die [Dokumentation von Z-Wave JS UI](https://zwave-js.github.io/zwave-js-ui/#/getting-started/docker)), neben einem MQTT-Broker: Der, den die [MQTT-Integration](/de/docs/integrations/mqtt) von Gladys installiert, passt. Stecke den Stick ein.
 4. Gib in Z-Wave JS UI unter **Settings > Z-Wave** **dieselben Sicherheitsschlüssel** ein, dann die MQTT- und Gateway-Einstellungen aus der [Z-Wave-JS-UI-Anleitung](/de/docs/integrations/zwavejs-ui#z-wave-js-ui-konfigurieren).
 5. Verbinde in Gladys die [Z-Wave-JS-UI-Integration](/de/docs/integrations/zwavejs-ui#gladys-mit-z-wave-js-ui-verbinden) mit dem Broker und füge deine Geräte im Tab **Z-Wave JS UI Entdeckung** hinzu.
@@ -188,7 +188,7 @@ Gladys erkennt Z-Wave-Geräte an ihrer Node-Nummer, die der Stick behält: Gerä
 
 Ein Matter-Gerät kann von mehreren Controllern gleichzeitig gesteuert werden (Multi-Admin). Du musst es also nicht aus Home Assistant entfernen, um es zu Gladys hinzuzufügen:
 
-1. Öffne das Gerät in Home Assistant und klicke auf **Gerät teilen**: Home Assistant öffnet ein Kopplungsfenster und gibt dir einen Kopplungscode.
+1. Öffne das Gerät in Home Assistant und klicke auf **Gerät teilen**, dann noch einmal auf **Gerät teilen**: Home Assistant zeigt einen QR-Code und einen Freigabecode. Der Code läuft nach ein paar Minuten ab: Gib ihn sofort in Gladys ein.
 2. Gehe in Gladys zu **Integrationen > Matter**, Tab **Gerät hinzufügen**, gib diesen Code ein und füge das Gerät dann im Tab **Geräte** hinzu (siehe die [Matter-Anleitung](/de/docs/integrations/matter#einrichtung-in-gladys-assistant)).
 
 Gladys wird ein Controller des Geräts, neben Home Assistant: Das Gerät funktioniert mit Gladys weiter, wenn Home Assistant ausgeschaltet ist.

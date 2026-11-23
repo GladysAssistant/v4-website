@@ -87,7 +87,7 @@ Tout votre réseau Zigbee tient dans le dossier de données de Zigbee2MQTT et su
 
 #### 1. Arrêtez Zigbee2MQTT dans Home Assistant {/* #1-stop-zigbee2mqtt-in-home-assistant */}
 
-Dans Home Assistant, arrêtez le module **Zigbee2MQTT** et désactivez son démarrage automatique (option *Start on boot*), pour qu'il reste arrêté. **Deux Zigbee2MQTT ne doivent jamais tourner sur le même réseau.**
+Dans Home Assistant, arrêtez le module **Zigbee2MQTT** et désactivez son option **Lancer au démarrage**, pour qu'il reste arrêté. **Deux Zigbee2MQTT ne doivent jamais tourner sur le même réseau.**
 
 #### 2. Récupérez le dossier de Zigbee2MQTT {/* #2-get-the-zigbee2mqtt-folder */}
 
@@ -176,8 +176,8 @@ Gladys parle au Z-Wave via [Z-Wave JS UI](/fr/docs/integrations/zwavejs-ui), en 
 
 **Pour déplacer la clé :**
 
-1. **Notez les clés de sécurité** de votre réseau : dans l'onglet **Configuration** du module Z-Wave JS (clé S0 legacy et clés S2), ou dans **Settings > Z-Wave** de Z-Wave JS UI. Sans elles, les appareils appairés de façon sécurisée (serrures, alarmes…) ne répondent plus.
-2. **Arrêtez le module** dans Home Assistant et désactivez son démarrage automatique (option *Start on boot*).
+1. **Notez les clés de sécurité** de votre réseau : dans l'onglet **Configuration** du module Z-Wave JS (les clés S0, S2 et Long Range), ou dans **Settings > Z-Wave** de Z-Wave JS UI. Sans elles, les appareils appairés de façon sécurisée (serrures, alarmes…) ne répondent plus.
+2. **Arrêtez le module** dans Home Assistant et désactivez son option **Lancer au démarrage**.
 3. **Installez Z-Wave JS UI** sur la machine Gladys, avec Docker (voir la [documentation de Z-Wave JS UI](https://zwave-js.github.io/zwave-js-ui/#/getting-started/docker)), à côté d'un broker MQTT : celui qu'installe l'[intégration MQTT](/fr/docs/integrations/mqtt) de Gladys convient. Branchez la clé.
 4. Dans Z-Wave JS UI, entrez **les mêmes clés de sécurité** dans **Settings > Z-Wave**, puis les réglages MQTT et Gateway du [guide Z-Wave JS UI](/fr/docs/integrations/zwavejs-ui#configurer-z-wave-js-ui).
 5. Dans Gladys, connectez l'[intégration Z-Wave JS UI](/fr/docs/integrations/zwavejs-ui#connecter-gladys-à-z-wave-js-ui) au broker, puis ajoutez vos appareils depuis l'onglet **Découverte Z-Wave JS UI**.
@@ -188,7 +188,7 @@ Gladys identifie les appareils Z-Wave par leur numéro de nœud, que la clé con
 
 Un appareil Matter peut être piloté par plusieurs contrôleurs à la fois (multi-admin). Pas besoin, donc, de le retirer de Home Assistant pour l'ajouter dans Gladys :
 
-1. Dans Home Assistant, ouvrez l'appareil et cliquez sur **Partager l'appareil** : Home Assistant ouvre une fenêtre d'appairage et vous donne un code d'appairage.
+1. Dans Home Assistant, ouvrez l'appareil et cliquez sur **Partager l'appareil**, puis de nouveau sur **Partager l'appareil** : Home Assistant affiche un QR code et un code de partage. Le code expire au bout de quelques minutes : entrez-le tout de suite dans Gladys.
 2. Dans Gladys, allez dans **Intégrations > Matter**, onglet **Ajouter un appareil**, entrez ce code, puis ajoutez l'appareil depuis l'onglet **Appareils** (voir le [guide Matter](/fr/docs/integrations/matter#configuration-dans-gladys-assistant)).
 
 Gladys devient un contrôleur de l'appareil, à côté de Home Assistant : l'appareil continue de fonctionner avec Gladys une fois Home Assistant éteint.

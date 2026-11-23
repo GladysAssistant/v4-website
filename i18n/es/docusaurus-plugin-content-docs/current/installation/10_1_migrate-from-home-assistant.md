@@ -56,7 +56,7 @@ Puedes hacer las dos seguidas: empieza por la opción A y pasa a la opción B cu
 
 ### Opción A: conectar Gladys al Zigbee2MQTT de Home Assistant {/* #option-a-connect-gladys-to-the-zigbee2mqtt-of-home-assistant */}
 
-1. **Crea un usuario MQTT para Gladys.** El complemento Mosquitto broker de Home Assistant acepta los usuarios de Home Assistant: crea un usuario dedicado a Gladys en **Ajustes > Personas > Usuarios**. También puedes añadir uno en `logins`, en la configuración del complemento Mosquitto.
+1. **Crea un usuario MQTT para Gladys.** El complemento Mosquitto broker de Home Assistant acepta los usuarios de Home Assistant: crea un usuario dedicado a Gladys en **Configuración > Personas > Usuarios**. También puedes añadir uno en `logins`, en la configuración del complemento Mosquitto.
 2. En Gladys, ve a **Integraciones > Zigbee2MQTT**, pestaña `Configuración`. En el paso 1 del asistente, haz clic en **Ya tengo un Zigbee2MQTT**.
 3. Introduce:
    - la **Dirección del broker MQTT**: `mqtt://IP_DE_HOME_ASSISTANT:1883`;
@@ -87,7 +87,7 @@ Toda tu red Zigbee está en la carpeta de datos de Zigbee2MQTT y en el coordinad
 
 #### 1. Detén Zigbee2MQTT en Home Assistant {/* #1-stop-zigbee2mqtt-in-home-assistant */}
 
-En Home Assistant, detén el complemento **Zigbee2MQTT** y desactiva su arranque automático (opción *Start on boot*), para que siga detenido. **Nunca deben funcionar dos Zigbee2MQTT en la misma red.**
+En Home Assistant, detén el complemento **Zigbee2MQTT** y desactiva su opción **Iniciar en el arranque**, para que siga detenido. **Nunca deben funcionar dos Zigbee2MQTT en la misma red.**
 
 #### 2. Recupera la carpeta de Zigbee2MQTT {/* #2-get-the-zigbee2mqtt-folder */}
 
@@ -176,8 +176,8 @@ Gladys habla con Z-Wave a través de [Z-Wave JS UI](/es/docs/integrations/zwavej
 
 **Para trasladar el dongle:**
 
-1. **Apunta las claves de seguridad** de tu red: en la pestaña **Configuración** del complemento Z-Wave JS (clave S0 legacy y claves S2), o en **Settings > Z-Wave** de Z-Wave JS UI. Sin ellas, los dispositivos emparejados de forma segura (cerraduras, alarmas…) dejan de responder.
-2. **Detén el complemento** en Home Assistant y desactiva su arranque automático (opción *Start on boot*).
+1. **Apunta las claves de seguridad** de tu red: en la pestaña **Configuración** del complemento Z-Wave JS (las claves S0, S2 y Long Range), o en **Settings > Z-Wave** de Z-Wave JS UI. Sin ellas, los dispositivos emparejados de forma segura (cerraduras, alarmas…) dejan de responder.
+2. **Detén el complemento** en Home Assistant y desactiva su opción **Iniciar en el arranque**.
 3. **Instala Z-Wave JS UI** en la máquina de Gladys, con Docker (consulta la [documentación de Z-Wave JS UI](https://zwave-js.github.io/zwave-js-ui/#/getting-started/docker)), junto a un broker MQTT: el que instala la [integración MQTT](/es/docs/integrations/mqtt) de Gladys sirve. Conecta el dongle.
 4. En Z-Wave JS UI, introduce **las mismas claves de seguridad** en **Settings > Z-Wave**, y después los ajustes MQTT y Gateway de la [guía de Z-Wave JS UI](/es/docs/integrations/zwavejs-ui#configurar-z-wave-js-ui).
 5. En Gladys, conecta la [integración Z-Wave JS UI](/es/docs/integrations/zwavejs-ui#conectar-gladys-a-z-wave-js-ui) al broker y añade tus dispositivos desde la pestaña **Descubrimiento de Z-Wave JS UI**.
@@ -188,7 +188,7 @@ Gladys identifica los dispositivos Z-Wave por su número de nodo, que el dongle 
 
 Un dispositivo Matter puede estar controlado por varios controladores a la vez (multiadministrador). Así que no tienes que quitarlo de Home Assistant para añadirlo a Gladys:
 
-1. En Home Assistant, abre el dispositivo y haz clic en **Compartir dispositivo**: Home Assistant abre una ventana de emparejamiento y te da un código de emparejamiento.
+1. En Home Assistant, abre el dispositivo y haz clic en **Compartir dispositivo**, y después otra vez en **Compartir dispositivo**: Home Assistant muestra un código QR y un código para compartir. El código caduca a los pocos minutos: introdúcelo enseguida en Gladys.
 2. En Gladys, ve a **Integraciones > Matter**, pestaña **Añadir dispositivo**, introduce ese código y después añade el dispositivo desde la pestaña **Dispositivos** (consulta la [guía de Matter](/es/docs/integrations/matter#configuración-en-gladys-assistant)).
 
 Gladys pasa a ser un controlador del dispositivo, junto a Home Assistant: el dispositivo sigue funcionando con Gladys cuando Home Assistant está apagado.
