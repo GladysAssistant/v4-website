@@ -23,7 +23,7 @@ import JsonLd from '@site/src/components/seo/JsonLd';
 Zigbee2MQTT te permite tener tu propio **hub Zigbee local** con Gladys: conectas un dongle USB Zigbee a la máquina en la que funciona Gladys y controlas todos tus dispositivos Zigbee directamente desde casa, sin cuenta en la nube y sin el puente del fabricante. Este tutorial te muestra cómo configurarlo, emparejar tu dongle y añadir dispositivos.
 
 :::tip[¿Vienes de Home Assistant?]
-Gladys instala y gestiona por ti Zigbee2MQTT y su broker MQTT: consulta [Zigbee2MQTT sin Home Assistant](/es/zigbee2mqtt-without-home-assistant/). ¿Todavía estás eligiendo un dongle? Lee nuestra [guía de compra de dongles Zigbee](/es/best-zigbee-dongle/).
+Gladys instala y gestiona por ti Zigbee2MQTT y su broker MQTT: consulta [Zigbee2MQTT sin Home Assistant](/es/zigbee2mqtt-without-home-assistant/). ¿Tus dispositivos ya funcionan con el complemento Zigbee2MQTT? [Migra desde Home Assistant](/es/docs/installation/migrate-from-home-assistant) sin volver a emparejarlos. ¿Todavía estás eligiendo un dongle? Lee nuestra [guía de compra de dongles Zigbee](/es/best-zigbee-dongle/).
 :::
 
 En resumen, vamos a conectar tus dispositivos Zigbee directamente a Gladys, sin necesidad de puentes de terceros (solo con un dongle USB Zigbee y el proyecto [Zigbee2Mqtt](https://www.zigbee2mqtt.io/)).
@@ -128,6 +128,8 @@ En el paso 1 del asistente, haz clic en **¿Coordinador de red (SLZB-06…)?** y
 Después, haz clic en **Conectar**. La red está lista cuando Zigbee2MQTT responde en el broker, no en cuanto Gladys se conecta al broker. Si no responde, comprueba que Zigbee2MQTT está en marcha y que su topic base (`mqtt.base_topic`) es `zigbee2mqtt`. Gladys necesita Zigbee2MQTT 1.21 o posterior.
 
 En el panel, **Desconectar** solo desconecta Gladys: tu Zigbee2MQTT sigue funcionando. Restablecer la integración solo olvida la conexión: tu Zigbee2MQTT, su configuración y sus dispositivos no se tocan.
+
+¿Tu Zigbee2MQTT funciona en Home Assistant y quieres que Gladys lo gestione? Consulta [Migrar desde Home Assistant](/es/docs/installation/migrate-from-home-assistant#option-b-move-zigbee2mqtt-into-gladys): trasladas su carpeta y tu dongle, sin volver a emparejar tus dispositivos.
 
 ## El panel de Zigbee2MQTT {/* #the-zigbee2mqtt-dashboard */}
 

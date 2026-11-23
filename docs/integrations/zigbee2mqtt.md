@@ -24,7 +24,7 @@ import JsonLd from '@site/src/components/seo/JsonLd';
 Zigbee2MQTT lets you run your own **local Zigbee hub** with Gladys: you plug a USB Zigbee dongle into the machine running Gladys, and you control every Zigbee device directly from your home, with no cloud account and no vendor bridge. This tutorial shows you how to set it up, pair your dongle, and add devices.
 
 :::tip[Coming from Home Assistant?]
-Gladys installs and manages Zigbee2MQTT and its MQTT broker for you: see [Zigbee2MQTT without Home Assistant](/zigbee2mqtt-without-home-assistant/). Still choosing a dongle? Read the [Zigbee dongle buyer's guide](/best-zigbee-dongle/).
+Gladys installs and manages Zigbee2MQTT and its MQTT broker for you: see [Zigbee2MQTT without Home Assistant](/zigbee2mqtt-without-home-assistant/). Your devices already run on the Zigbee2MQTT add-on? [Migrate them from Home Assistant](/docs/installation/migrate-from-home-assistant) without pairing them again. Still choosing a dongle? Read the [Zigbee dongle buyer's guide](/best-zigbee-dongle/).
 :::
 
 In short, we'll connect your Zigbee devices directly to Gladys, without needing any third-party bridges (just by using a USB Zigbee dongle and the [Zigbee2Mqtt](https://www.zigbee2mqtt.io/) project).
@@ -129,6 +129,8 @@ Zigbee2MQTT already runs elsewhere (Home Assistant, another machine…)? Gladys 
 Then click on **Connect**. The network is ready once Zigbee2MQTT answers on the broker, not as soon as Gladys is connected to the broker. If it does not answer, check that Zigbee2MQTT is running and that its base topic (`mqtt.base_topic`) is `zigbee2mqtt`. Gladys needs Zigbee2MQTT 1.21 or later.
 
 On the dashboard, **Disconnect** only disconnects Gladys: your Zigbee2MQTT keeps running. Resetting the integration only forgets the connection: your Zigbee2MQTT, its configuration and its devices are not touched.
+
+Your Zigbee2MQTT runs on Home Assistant, and you want Gladys to run it instead? See [Migrate from Home Assistant](/docs/installation/migrate-from-home-assistant#option-b-move-zigbee2mqtt-into-gladys): you move its folder and your dongle, without pairing your devices again.
 
 ## The Zigbee2MQTT dashboard
 
