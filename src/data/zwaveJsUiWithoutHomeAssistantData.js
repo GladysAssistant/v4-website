@@ -65,7 +65,7 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         },
         {
           feature: "Adding devices",
-          gladys: "One click from the Discovery tab",
+          gladys: "One click from the Discover tab",
           other: "Automatic entity discovery",
         },
         {
@@ -89,12 +89,12 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         {
           icon: "🚪",
           title: "Sensors",
-          text: "Door and window contacts, temperature, luminosity, alarm and binary sensors, with history.",
+          text: "Door and window contacts, motion, temperature, luminosity, smoke, CO and leak sensors, with history and battery levels.",
         },
         {
           icon: "💡",
           title: "Switches and dimmers",
-          text: "Plugs, in-wall switches and dimmers, such as Fibaro and Qubino modules.",
+          text: "Plugs, in-wall switches, dimmers and scene buttons, such as Fibaro and Qubino modules.",
         },
         {
           icon: "🪟",
@@ -103,8 +103,8 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         },
         {
           icon: "⚡",
-          title: "Energy metering",
-          text: "Track the power and consumption of metering plugs and modules.",
+          title: "Heating and energy",
+          text: "Thermostats, pilot wire modules, and the power and consumption of metering plugs and modules.",
         },
         {
           icon: "🎬",
@@ -126,7 +126,7 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         "Run Z-Wave JS UI in Docker and include your devices.",
         "In Z-Wave JS UI, enable the MQTT gateway with the settings from the Gladys guide (named topics, entire value object).",
         "Install Gladys, then install the Z-Wave JS UI integration from the catalog in one click and enter your MQTT broker.",
-        "Open the Discovery tab and add your devices in one click.",
+        "Open the Discover tab and add your devices in one click.",
       ],
       outro:
         "Need an MQTT broker? Gladys's MQTT integration can start one for you in Docker.",
@@ -258,12 +258,12 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         {
           icon: "🚪",
           title: "Capteurs",
-          text: "Ouverture de portes et fenêtres, température, luminosité, alarmes et capteurs binaires, avec historique.",
+          text: "Ouverture de portes et fenêtres, mouvement, température, luminosité, fumée, CO et fuites d'eau, avec historique et niveau de batterie.",
         },
         {
           icon: "💡",
           title: "Interrupteurs et variateurs",
-          text: "Prises, modules encastrés et variateurs, comme les modules Fibaro et Qubino.",
+          text: "Prises, modules encastrés, variateurs et boutons de scène, comme les modules Fibaro et Qubino.",
         },
         {
           icon: "🪟",
@@ -272,8 +272,8 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         },
         {
           icon: "⚡",
-          title: "Mesure d'énergie",
-          text: "Suivez la puissance et la consommation des prises et modules avec mesure.",
+          title: "Chauffage et énergie",
+          text: "Thermostats, modules fil pilote, et la puissance et la consommation des prises et modules avec mesure.",
         },
         {
           icon: "🎬",
@@ -403,7 +403,7 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         },
         {
           feature: "Geräte hinzufügen",
-          gladys: "Ein Klick im Tab „Discovery“",
+          gladys: "Ein Klick im Tab „Entdecken“",
           other: "Automatische Erkennung von Entitäten",
         },
         {
@@ -427,12 +427,12 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         {
           icon: "🚪",
           title: "Sensoren",
-          text: "Tür- und Fensterkontakte, Temperatur, Helligkeit, Alarm- und Binärsensoren, mit Verlauf.",
+          text: "Tür- und Fensterkontakte, Bewegung, Temperatur, Helligkeit, Rauch, CO und Wasserlecks, mit Verlauf und Batteriestand.",
         },
         {
           icon: "💡",
           title: "Schalter und Dimmer",
-          text: "Steckdosen, Unterputzschalter und Dimmer, etwa Module von Fibaro und Qubino.",
+          text: "Steckdosen, Unterputzschalter, Dimmer und Szenentaster, etwa Module von Fibaro und Qubino.",
         },
         {
           icon: "🪟",
@@ -441,8 +441,8 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         },
         {
           icon: "⚡",
-          title: "Energiemessung",
-          text: "Leistung und Verbrauch von Messsteckdosen und -modulen im Blick behalten.",
+          title: "Heizung und Energie",
+          text: "Thermostate, Fil-Pilote-Module sowie Leistung und Verbrauch von Messsteckdosen und -modulen.",
         },
         {
           icon: "🎬",
@@ -464,7 +464,7 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         "Starte Z-Wave JS UI in Docker und binde deine Geräte ein.",
         "Aktiviere in Z-Wave JS UI das MQTT-Gateway mit den Einstellungen aus der Gladys-Anleitung (benannte Topics, vollständiges Value-Objekt).",
         "Installiere Gladys, installiere dann die Integration Z-Wave JS UI mit einem Klick aus dem Katalog und trage deinen MQTT-Broker ein.",
-        "Öffne den Tab „Discovery“ und füge deine Geräte mit einem Klick hinzu.",
+        "Öffne den Tab „Entdecken“ und füge deine Geräte mit einem Klick hinzu.",
       ],
       outro:
         "Du brauchst einen MQTT-Broker? Die MQTT-Integration von Gladys kann dir einen in Docker starten.",
@@ -571,7 +571,7 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         },
         {
           feature: "Añadir dispositivos",
-          gladys: "Un clic desde la pestaña Discovery",
+          gladys: "Un clic desde la pestaña Descubrir",
           other: "Descubrimiento automático de entidades",
         },
         {
@@ -595,12 +595,12 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         {
           icon: "🚪",
           title: "Sensores",
-          text: "Sensores de apertura de puertas y ventanas, temperatura, luminosidad, alarma y sensores binarios, con historial.",
+          text: "Sensores de apertura de puertas y ventanas, movimiento, temperatura, luminosidad, humo, CO y fugas de agua, con historial y nivel de batería.",
         },
         {
           icon: "💡",
           title: "Interruptores y reguladores",
-          text: "Enchufes, interruptores empotrados y reguladores de intensidad, como los módulos Fibaro y Qubino.",
+          text: "Enchufes, interruptores empotrados, reguladores de intensidad y botones de escena, como los módulos Fibaro y Qubino.",
         },
         {
           icon: "🪟",
@@ -609,8 +609,8 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         },
         {
           icon: "⚡",
-          title: "Medición de energía",
-          text: "Sigue la potencia y el consumo de los enchufes y módulos con medición.",
+          title: "Calefacción y energía",
+          text: "Termostatos, módulos de hilo piloto, y la potencia y el consumo de los enchufes y módulos con medición.",
         },
         {
           icon: "🎬",
@@ -632,7 +632,7 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         "Ejecuta Z-Wave JS UI en Docker e incluye tus dispositivos.",
         "En Z-Wave JS UI, activa la pasarela MQTT con los ajustes de la guía de Gladys (topics con nombre, objeto de valor completo).",
         "Instala Gladys, después instala con un clic la integración Z-Wave JS UI desde el catálogo e introduce los datos de tu broker MQTT.",
-        "Abre la pestaña Discovery y añade tus dispositivos con un clic.",
+        "Abre la pestaña Descubrir y añade tus dispositivos con un clic.",
       ],
       outro:
         "¿Necesitas un broker MQTT? La integración MQTT de Gladys puede iniciar uno por ti en Docker.",

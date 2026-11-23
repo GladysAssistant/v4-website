@@ -9,7 +9,7 @@ sidebar_label: "Z-Wave JS UI (veraltet)"
 
 Seit Gladys 4.86 ist diese integrierte Z-Wave JS UI-Integration **veraltet**. Nutze stattdessen die **[Community-Integration Z-Wave JS UI](/de/docs/integrations/external/z-wave-js-ui/)**: Sie wird mit einem Klick aus dem Integrationskatalog installiert, nutzt dieselbe Z-Wave JS UI- und MQTT-Konfiguration und unterstützt mehr Geräte (Thermostate, Fil-Pilote-Module, Szenentaster, Rauch-, CO- und Wassersensoren, Batteriestand…).
 
-Du nutzt bereits diese integrierte Integration? Installiere die Community-Integration, lege deine Geräte über ihren Tab **Discovery** an und klicke dann bei jedem bestehenden Gerät auf **Migrieren**, um es samt Verlauf auf das neue zu übertragen. Sind alle Geräte migriert, deaktiviere die integrierte Integration.
+Du nutzt bereits diese integrierte Integration? Installiere die Community-Integration, lege deine Geräte über ihren Tab **Entdecken** an und klicke dann bei jedem bestehenden Gerät auf **Migrieren**, um es samt Verlauf auf das neue zu übertragen. Sind alle Geräte migriert, deaktiviere die integrierte Integration.
 
 Diese Seite bleibt für bestehende Installationen online.
 

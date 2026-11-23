@@ -9,7 +9,7 @@ sidebar_label: "Z-Wave JS UI (deprecated)"
 
 Since Gladys 4.86, this built-in Z-Wave JS UI integration is **deprecated**. Use the **[Z-Wave JS UI community integration](/docs/integrations/external/z-wave-js-ui/)** instead: it installs in one click from the integrations catalog, uses the same Z-Wave JS UI and MQTT setup, and supports more devices (thermostats, pilot wire modules, scene buttons, smoke, CO and leak sensors, battery levels…).
 
-Already using this built-in integration? Install the community integration, create your devices from its **Discovery** tab, then click the **Migrate** button of each existing device to move it, with its history, to the new one. Once every device is migrated, disable the built-in integration.
+Already using this built-in integration? Install the community integration, create your devices from its **Discover** tab, then click the **Migrate** button of each existing device to move it, with its history, to the new one. Once every device is migrated, disable the built-in integration.
 
 This page stays online for existing installations.
 
