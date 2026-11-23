@@ -1,7 +1,7 @@
 ---
 id: weather
 title: Display weather on the dashboard
-description: "Display the local weather on your Gladys Assistant dashboard using the OpenWeather integration and your home's location."
+description: "Display the local weather on your Gladys Assistant dashboard using a weather integration (OpenWeather, Météo France, Open-Meteo…) and your home's location."
 sidebar_label: Weather
 ---
 
@@ -9,8 +9,8 @@ You can display the weather related to your location on the dashboard.
 
 ## Prerequisites
 
-- You must have previously configured the [OpenWeather](/docs/integrations/openweather/) service to display the weather in Gladys Assistant.
-- You must have configured your home in the settings, and have placed your home on the map, so that OpenWeatherMap knows the latitude and longitude of your home.
+- You must have installed and configured a weather integration from the [integrations catalog](/docs/integrations/), such as [OpenWeather](/docs/integrations/external/openweather/), Météo France or Open-Meteo.
+- You must have configured your home in the settings, and have placed your home on the map, so that the weather provider knows the latitude and longitude of your home.
 
 ## Configuration
 

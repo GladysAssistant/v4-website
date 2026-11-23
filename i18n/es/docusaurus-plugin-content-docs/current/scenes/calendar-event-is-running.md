@@ -7,7 +7,7 @@ sidebar_label: Evento del calendario en curso
 
 Imagina que quieres crear una escena que solo se ejecute si estás de vacaciones, en el gimnasio o en una llamada.
 
-Puedes usar la integración de calendario (por ejemplo, [CalDAV](/es/docs/integrations/caldav)) para añadir a una escena una condición basada en la presencia de un evento en tu calendario.
+Puedes usar la integración de calendario (por ejemplo, [CalDAV](/es/docs/integrations/external/caldav/)) para añadir a una escena una condición basada en la presencia de un evento en tu calendario.
 
 Así es como se ve:
 

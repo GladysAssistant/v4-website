@@ -2,8 +2,10 @@
 // Z-Wave is much more common in North America than in Europe, and most Z-Wave
 // users meet Z-Wave JS UI through Home Assistant. Targets "zwave js ui without
 // home assistant", "zwave js ui standalone", "z-wave without home assistant".
-// Claims must match docs/integrations/zwavejs-ui.md: Z-Wave JS UI drives the
-// stick and publishes to an MQTT broker; Gladys subscribes to that broker.
+// Claims must match docs/integrations/external/z-wave-js-ui.mdx, the community
+// integration that replaces the deprecated built-in one (docs/integrations/
+// zwavejs-ui.md): Z-Wave JS UI drives the stick and publishes to an MQTT
+// broker; the integration subscribes to that broker.
 
 const zwaveJsUiWithoutHomeAssistantContent = {
   en: {
@@ -24,7 +26,7 @@ const zwaveJsUiWithoutHomeAssistantContent = {
       ],
       primaryCta: {
         label: "Z-Wave JS UI setup guide",
-        href: "/docs/integrations/zwavejs-ui/",
+        href: "/docs/integrations/external/z-wave-js-ui/",
       },
       secondaryCta: {
         label: "Get started with Gladys →",
@@ -63,7 +65,7 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         },
         {
           feature: "Adding devices",
-          gladys: "One click from the Discovered tab",
+          gladys: "One click from the Discover tab",
           other: "Automatic entity discovery",
         },
         {
@@ -78,7 +80,7 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         },
       ],
       outro:
-        "Home Assistant exposes more Z-Wave device types today. Gladys covers the essentials (sensors, switches, dimmers, shutters, energy metering) and is simpler to live with.",
+        "Home Assistant exposes more Z-Wave device types today. Gladys covers the essentials (sensors, switches, dimmers, shutters, thermostats, buttons, energy metering) and is simpler to live with.",
     },
     features: {
       title: "What you get with Z-Wave JS UI in Gladys",
@@ -87,12 +89,12 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         {
           icon: "🚪",
           title: "Sensors",
-          text: "Door and window contacts, temperature, luminosity, alarm and binary sensors, with history.",
+          text: "Door and window contacts, motion, temperature, luminosity, smoke, CO and leak sensors, with history and battery levels.",
         },
         {
           icon: "💡",
           title: "Switches and dimmers",
-          text: "Plugs, in-wall switches and dimmers, such as Fibaro and Qubino modules.",
+          text: "Plugs, in-wall switches, dimmers and scene buttons, such as Fibaro and Qubino modules.",
         },
         {
           icon: "🪟",
@@ -101,8 +103,8 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         },
         {
           icon: "⚡",
-          title: "Energy metering",
-          text: "Track the power and consumption of metering plugs and modules.",
+          title: "Heating and energy",
+          text: "Thermostats, pilot wire modules, and the power and consumption of metering plugs and modules.",
         },
         {
           icon: "🎬",
@@ -123,8 +125,8 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         "Plug in a Z-Wave USB stick for your region: 908.42 MHz in the US and Canada (Zooz ZST10 700 / ZST39, Aeotec Z-Stick 7 US), 868.42 MHz in Europe.",
         "Run Z-Wave JS UI in Docker and include your devices.",
         "In Z-Wave JS UI, enable the MQTT gateway with the settings from the Gladys guide (named topics, entire value object).",
-        "Install Gladys, open the Z-Wave JS UI integration and enter your MQTT broker.",
-        "Open the Discovered tab and add your devices in one click.",
+        "Install Gladys, then install the Z-Wave JS UI integration from the catalog in one click and enter your MQTT broker.",
+        "Open the Discover tab and add your devices in one click.",
       ],
       outro:
         "Need an MQTT broker? Gladys's MQTT integration can start one for you in Docker.",
@@ -171,7 +173,7 @@ const zwaveJsUiWithoutHomeAssistantContent = {
       title: "Give your Z-Wave network a simple home",
       text: "Gladys is free, open source and installs on a mini-PC from a USB drive. Connect Z-Wave JS UI over MQTT and start automating.",
       primary: { label: "Get started", href: "/docs/" },
-      secondary: { label: "Z-Wave JS UI guide", href: "/docs/integrations/zwavejs-ui/" },
+      secondary: { label: "Z-Wave JS UI guide", href: "/docs/integrations/external/z-wave-js-ui/" },
     },
   },
 
@@ -193,7 +195,7 @@ const zwaveJsUiWithoutHomeAssistantContent = {
       ],
       primaryCta: {
         label: "Guide Z-Wave JS UI",
-        href: "/docs/integrations/zwavejs-ui/",
+        href: "/docs/integrations/external/z-wave-js-ui/",
       },
       secondaryCta: {
         label: "Commencer avec Gladys →",
@@ -247,7 +249,7 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         },
       ],
       outro:
-        "Home Assistant gère aujourd'hui plus de types d'appareils Z-Wave. Gladys couvre l'essentiel (capteurs, interrupteurs, variateurs, volets, mesure d'énergie) et est plus simple à vivre au quotidien.",
+        "Home Assistant gère aujourd'hui plus de types d'appareils Z-Wave. Gladys couvre l'essentiel (capteurs, interrupteurs, variateurs, volets, thermostats, boutons, mesure d'énergie) et est plus simple à vivre au quotidien.",
     },
     features: {
       title: "Ce que vous obtenez avec Z-Wave JS UI dans Gladys",
@@ -256,12 +258,12 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         {
           icon: "🚪",
           title: "Capteurs",
-          text: "Ouverture de portes et fenêtres, température, luminosité, alarmes et capteurs binaires, avec historique.",
+          text: "Ouverture de portes et fenêtres, mouvement, température, luminosité, fumée, CO et fuites d'eau, avec historique et niveau de batterie.",
         },
         {
           icon: "💡",
           title: "Interrupteurs et variateurs",
-          text: "Prises, modules encastrés et variateurs, comme les modules Fibaro et Qubino.",
+          text: "Prises, modules encastrés, variateurs et boutons de scène, comme les modules Fibaro et Qubino.",
         },
         {
           icon: "🪟",
@@ -270,8 +272,8 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         },
         {
           icon: "⚡",
-          title: "Mesure d'énergie",
-          text: "Suivez la puissance et la consommation des prises et modules avec mesure.",
+          title: "Chauffage et énergie",
+          text: "Thermostats, modules fil pilote, et la puissance et la consommation des prises et modules avec mesure.",
         },
         {
           icon: "🎬",
@@ -292,7 +294,7 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         "Branchez une clé USB Z-Wave adaptée à votre région : 868,42 MHz en Europe, 908,42 MHz aux États-Unis et au Canada.",
         "Lancez Z-Wave JS UI dans Docker et incluez vos appareils.",
         "Dans Z-Wave JS UI, activez la passerelle MQTT avec les réglages du guide Gladys (topics nommés, objet de valeur complet).",
-        "Installez Gladys, ouvrez l'intégration Z-Wave JS UI et renseignez votre broker MQTT.",
+        "Installez Gladys, puis installez en un clic l'intégration Z-Wave JS UI depuis le catalogue et renseignez votre broker MQTT.",
         "Ouvrez l'onglet Découverte et ajoutez vos appareils en un clic.",
       ],
       outro:
@@ -340,7 +342,7 @@ const zwaveJsUiWithoutHomeAssistantContent = {
       title: "Offrez à votre réseau Z-Wave une maison simple",
       text: "Gladys est gratuite, open source et s'installe sur un mini-PC depuis une clé USB. Connectez Z-Wave JS UI via MQTT et commencez à automatiser.",
       primary: { label: "Commencer", href: "/docs/" },
-      secondary: { label: "Guide Z-Wave JS UI", href: "/docs/integrations/zwavejs-ui/" },
+      secondary: { label: "Guide Z-Wave JS UI", href: "/docs/integrations/external/z-wave-js-ui/" },
     },
   },
 
@@ -362,7 +364,7 @@ const zwaveJsUiWithoutHomeAssistantContent = {
       ],
       primaryCta: {
         label: "Z-Wave JS UI-Anleitung",
-        href: "/docs/integrations/zwavejs-ui/",
+        href: "/docs/integrations/external/z-wave-js-ui/",
       },
       secondaryCta: {
         label: "Mit Gladys loslegen →",
@@ -401,7 +403,7 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         },
         {
           feature: "Geräte hinzufügen",
-          gladys: "Ein Klick im Tab „Erkannt“",
+          gladys: "Ein Klick im Tab „Entdecken“",
           other: "Automatische Erkennung von Entitäten",
         },
         {
@@ -416,7 +418,7 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         },
       ],
       outro:
-        "Home Assistant unterstützt heute mehr Z-Wave-Gerätetypen. Gladys deckt das Wesentliche ab (Sensoren, Schalter, Dimmer, Rollläden, Energiemessung) und ist im Alltag einfacher.",
+        "Home Assistant unterstützt heute mehr Z-Wave-Gerätetypen. Gladys deckt das Wesentliche ab (Sensoren, Schalter, Dimmer, Rollläden, Thermostate, Taster, Energiemessung) und ist im Alltag einfacher.",
     },
     features: {
       title: "Was du mit Z-Wave JS UI in Gladys bekommst",
@@ -425,12 +427,12 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         {
           icon: "🚪",
           title: "Sensoren",
-          text: "Tür- und Fensterkontakte, Temperatur, Helligkeit, Alarm- und Binärsensoren, mit Verlauf.",
+          text: "Tür- und Fensterkontakte, Bewegung, Temperatur, Helligkeit, Rauch, CO und Wasserlecks, mit Verlauf und Batteriestand.",
         },
         {
           icon: "💡",
           title: "Schalter und Dimmer",
-          text: "Steckdosen, Unterputzschalter und Dimmer, etwa Module von Fibaro und Qubino.",
+          text: "Steckdosen, Unterputzschalter, Dimmer und Szenentaster, etwa Module von Fibaro und Qubino.",
         },
         {
           icon: "🪟",
@@ -439,8 +441,8 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         },
         {
           icon: "⚡",
-          title: "Energiemessung",
-          text: "Leistung und Verbrauch von Messsteckdosen und -modulen im Blick behalten.",
+          title: "Heizung und Energie",
+          text: "Thermostate, Fil-Pilote-Module sowie Leistung und Verbrauch von Messsteckdosen und -modulen.",
         },
         {
           icon: "🎬",
@@ -461,8 +463,8 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         "Steck einen Z-Wave-USB-Stick für deine Region ein: 868,42 MHz in Europa, 908,42 MHz in den USA und Kanada.",
         "Starte Z-Wave JS UI in Docker und binde deine Geräte ein.",
         "Aktiviere in Z-Wave JS UI das MQTT-Gateway mit den Einstellungen aus der Gladys-Anleitung (benannte Topics, vollständiges Value-Objekt).",
-        "Installiere Gladys, öffne die Integration Z-Wave JS UI und trage deinen MQTT-Broker ein.",
-        "Öffne den Tab „Erkannt“ und füge deine Geräte mit einem Klick hinzu.",
+        "Installiere Gladys, installiere dann die Integration Z-Wave JS UI mit einem Klick aus dem Katalog und trage deinen MQTT-Broker ein.",
+        "Öffne den Tab „Entdecken“ und füge deine Geräte mit einem Klick hinzu.",
       ],
       outro:
         "Du brauchst einen MQTT-Broker? Die MQTT-Integration von Gladys kann dir einen in Docker starten.",
@@ -509,7 +511,7 @@ const zwaveJsUiWithoutHomeAssistantContent = {
       title: "Gib deinem Z-Wave-Netz ein einfaches Zuhause",
       text: "Gladys ist kostenlos, Open Source und lässt sich von einem USB-Stick auf einem Mini-PC installieren. Verbinde Z-Wave JS UI per MQTT und leg mit dem Automatisieren los.",
       primary: { label: "Jetzt starten", href: "/docs/" },
-      secondary: { label: "Z-Wave JS UI-Anleitung", href: "/docs/integrations/zwavejs-ui/" },
+      secondary: { label: "Z-Wave JS UI-Anleitung", href: "/docs/integrations/external/z-wave-js-ui/" },
     },
   },
   es: {
@@ -530,7 +532,7 @@ const zwaveJsUiWithoutHomeAssistantContent = {
       ],
       primaryCta: {
         label: "Guía de configuración de Z-Wave JS UI",
-        href: "/docs/integrations/zwavejs-ui/",
+        href: "/docs/integrations/external/z-wave-js-ui/",
       },
       secondaryCta: {
         label: "Empezar con Gladys →",
@@ -569,7 +571,7 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         },
         {
           feature: "Añadir dispositivos",
-          gladys: "Un clic desde la pestaña Descubiertos",
+          gladys: "Un clic desde la pestaña Descubrir",
           other: "Descubrimiento automático de entidades",
         },
         {
@@ -584,7 +586,7 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         },
       ],
       outro:
-        "Hoy en día, Home Assistant admite más tipos de dispositivos Z-Wave. Gladys cubre lo esencial (sensores, interruptores, reguladores, persianas, medición de energía) y es más sencillo en el día a día.",
+        "Hoy en día, Home Assistant admite más tipos de dispositivos Z-Wave. Gladys cubre lo esencial (sensores, interruptores, reguladores, persianas, termostatos, botones, medición de energía) y es más sencillo en el día a día.",
     },
     features: {
       title: "Lo que obtienes con Z-Wave JS UI en Gladys",
@@ -593,12 +595,12 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         {
           icon: "🚪",
           title: "Sensores",
-          text: "Sensores de apertura de puertas y ventanas, temperatura, luminosidad, alarma y sensores binarios, con historial.",
+          text: "Sensores de apertura de puertas y ventanas, movimiento, temperatura, luminosidad, humo, CO y fugas de agua, con historial y nivel de batería.",
         },
         {
           icon: "💡",
           title: "Interruptores y reguladores",
-          text: "Enchufes, interruptores empotrados y reguladores de intensidad, como los módulos Fibaro y Qubino.",
+          text: "Enchufes, interruptores empotrados, reguladores de intensidad y botones de escena, como los módulos Fibaro y Qubino.",
         },
         {
           icon: "🪟",
@@ -607,8 +609,8 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         },
         {
           icon: "⚡",
-          title: "Medición de energía",
-          text: "Sigue la potencia y el consumo de los enchufes y módulos con medición.",
+          title: "Calefacción y energía",
+          text: "Termostatos, módulos de hilo piloto, y la potencia y el consumo de los enchufes y módulos con medición.",
         },
         {
           icon: "🎬",
@@ -629,8 +631,8 @@ const zwaveJsUiWithoutHomeAssistantContent = {
         "Conecta un stick USB Z-Wave para tu región: 868,42 MHz en Europa, 908,42 MHz en Estados Unidos y Canadá. En Latinoamérica, la frecuencia depende del país: compruébala antes de comprar.",
         "Ejecuta Z-Wave JS UI en Docker e incluye tus dispositivos.",
         "En Z-Wave JS UI, activa la pasarela MQTT con los ajustes de la guía de Gladys (topics con nombre, objeto de valor completo).",
-        "Instala Gladys, abre la integración Z-Wave JS UI e introduce los datos de tu broker MQTT.",
-        "Abre la pestaña Descubiertos y añade tus dispositivos con un clic.",
+        "Instala Gladys, después instala con un clic la integración Z-Wave JS UI desde el catálogo e introduce los datos de tu broker MQTT.",
+        "Abre la pestaña Descubrir y añade tus dispositivos con un clic.",
       ],
       outro:
         "¿Necesitas un broker MQTT? La integración MQTT de Gladys puede iniciar uno por ti en Docker.",
@@ -677,7 +679,7 @@ const zwaveJsUiWithoutHomeAssistantContent = {
       title: "Dale a tu red Z-Wave un hogar sencillo",
       text: "Gladys es gratis, de código abierto y se instala en un mini-PC desde una memoria USB. Conecta Z-Wave JS UI por MQTT y empieza a automatizar.",
       primary: { label: "Empezar", href: "/docs/" },
-      secondary: { label: "Guía de Z-Wave JS UI", href: "/docs/integrations/zwavejs-ui/" },
+      secondary: { label: "Guía de Z-Wave JS UI", href: "/docs/integrations/external/z-wave-js-ui/" },
     },
   },
 };
@@ -701,7 +703,7 @@ export const zwaveJsUiWithoutHomeAssistantFaqEn = [
   {
     question: "Which Z-Wave devices does Gladys support?",
     answer:
-      "Door and window sensors, binary switches and plugs, dimmers, roller shutters, temperature, luminosity and alarm sensors, and energy metering. If a device isn't supported yet, the forum is the place to ask.",
+      "Door and window sensors, binary switches and plugs, dimmers, roller shutters, thermostats, pilot wire modules, scene buttons, temperature, luminosity, motion, smoke, CO and leak sensors, battery levels and energy metering. If a device isn't supported yet, the forum is the place to ask.",
   },
   {
     question: "Does Z-Wave with Gladys work without the internet?",
@@ -729,7 +731,7 @@ export const zwaveJsUiWithoutHomeAssistantFaqFr = [
   {
     question: "Quels appareils Z-Wave Gladys prend-elle en charge ?",
     answer:
-      "Capteurs d'ouverture, interrupteurs et prises, variateurs, volets roulants, capteurs de température, de luminosité et d'alarme, et mesure d'énergie. Si un appareil n'est pas encore pris en charge, demandez sur le forum.",
+      "Capteurs d'ouverture, interrupteurs et prises, variateurs, volets roulants, thermostats, modules fil pilote, boutons de scène, capteurs de température, de luminosité, de mouvement, de fumée, de CO et de fuite, niveau de batterie et mesure d'énergie. Si un appareil n'est pas encore pris en charge, demandez sur le forum.",
   },
   {
     question: "Le Z-Wave avec Gladys fonctionne-t-il sans internet ?",
@@ -757,7 +759,7 @@ export const zwaveJsUiWithoutHomeAssistantFaqDe = [
   {
     question: "Welche Z-Wave-Geräte unterstützt Gladys?",
     answer:
-      "Tür- und Fenstersensoren, Schalter und Steckdosen, Dimmer, Rollläden, Temperatur-, Helligkeits- und Alarmsensoren sowie Energiemessung. Wenn ein Gerät noch nicht unterstützt wird, frag am besten im Forum nach.",
+      "Tür- und Fenstersensoren, Schalter und Steckdosen, Dimmer, Rollläden, Thermostate, Fil-Pilote-Module, Szenentaster, Temperatur-, Helligkeits-, Bewegungs-, Rauch-, CO- und Wassersensoren, Batteriestand sowie Energiemessung. Wenn ein Gerät noch nicht unterstützt wird, frag am besten im Forum nach.",
   },
   {
     question: "Funktioniert Z-Wave mit Gladys ohne Internet?",
@@ -785,7 +787,7 @@ export const zwaveJsUiWithoutHomeAssistantFaqEs = [
   {
     question: "¿Qué dispositivos Z-Wave admite Gladys?",
     answer:
-      "Sensores de puertas y ventanas, interruptores y enchufes, reguladores de intensidad, persianas enrollables, sensores de temperatura, luminosidad y alarma, y medición de energía. Si un dispositivo todavía no es compatible, el foro es el lugar para preguntar.",
+      "Sensores de puertas y ventanas, interruptores y enchufes, reguladores de intensidad, persianas enrollables, termostatos, módulos de hilo piloto, botones de escena, sensores de temperatura, luminosidad, movimiento, humo, CO y fugas, nivel de batería y medición de energía. Si un dispositivo todavía no es compatible, el foro es el lugar para preguntar.",
   },
   {
     question: "¿Z-Wave con Gladys funciona sin internet?",

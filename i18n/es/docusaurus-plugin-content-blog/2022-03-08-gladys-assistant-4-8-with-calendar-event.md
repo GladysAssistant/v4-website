@@ -24,7 +24,7 @@ Ahora puedes activar una escena cuando se acerca un evento concreto del calendar
 
 ¿Quieres recibir un recordatorio cuando tengas que ir al trabajo? ¿O que te despierten suavemente a la hora adecuada?
 
-Necesitas tener al menos un calendario conectado a Gladys (compatibles: calendarios de iCloud, Google Calendar, calendarios de Synology o cualquier calendario CalDAV mediante nuestra [integración CalDAV](/es/docs/integrations/caldav/)).
+Necesitas tener al menos un calendario conectado a Gladys (compatibles: calendarios de iCloud, Google Calendar, calendarios de Synology o cualquier calendario CalDAV mediante nuestra [integración CalDAV](/es/docs/integrations/external/caldav/)).
 
 Crea una nueva escena y añade un disparador "Se acerca un evento del calendario":
 

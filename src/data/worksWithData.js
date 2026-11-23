@@ -130,7 +130,7 @@ const worksWithContent = {
           icon: "🔊",
           title: "Sonos",
           text: "Control your Sonos speakers from the dashboard music widget and from your scenes, locally.",
-          href: "/docs/integrations/sonos/",
+          href: "/docs/integrations/external/sonos/",
         },
         {
           icon: "🧺",
@@ -364,7 +364,7 @@ const worksWithContent = {
           icon: "🔊",
           title: "Sonos",
           text: "Pilotez vos enceintes Sonos depuis le widget musique du tableau de bord et depuis vos scènes, en local.",
-          href: "/docs/integrations/sonos/",
+          href: "/docs/integrations/external/sonos/",
         },
         {
           icon: "🧺",
@@ -598,7 +598,7 @@ const worksWithContent = {
           icon: "🔊",
           title: "Sonos",
           text: "Steuere deine Sonos-Lautsprecher lokal über das Musik-Widget im Dashboard und aus deinen Szenen.",
-          href: "/docs/integrations/sonos/",
+          href: "/docs/integrations/external/sonos/",
         },
         {
           icon: "🧺",
@@ -832,7 +832,7 @@ const worksWithContent = {
           icon: "🔊",
           title: "Sonos",
           text: "Controla tus altavoces Sonos desde el widget de música del panel y desde tus escenas, en local.",
-          href: "/docs/integrations/sonos/",
+          href: "/docs/integrations/external/sonos/",
         },
         {
           icon: "🧺",

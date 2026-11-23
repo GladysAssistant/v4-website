@@ -2,9 +2,10 @@
 // (/docs/integrations/), next to the community ones of the store.
 //
 // Source: the entries of front/src/config/integrations/*.json in
-// GladysAssistant/Gladys (5.2.1) that are not marked `deprecated`, with their
-// categories and transports. CallMeBot is left out: its documentation already
-// redirects to the community integration that supersedes it (see _redirects).
+// GladysAssistant/Gladys (5.3.4) that are not marked `deprecated`, with their
+// categories and transports. A deprecated integration has no page on the site:
+// its documentation is deleted and its URL redirects to the community
+// integration that supersedes it (see _redirects).
 // The list is static: update it when an integration is added to the core or
 // deprecated there. Covers come from front/src/assets/integrations/cover.
 //
@@ -75,34 +76,6 @@ const nativeIntegrations = [
     },
   },
   {
-    key: "tasmota",
-    doc: "tasmota",
-    cover: "tasmota.jpg",
-    categories: ["lighting", "energy"],
-    transports: ["local"],
-    name: { en: "Tasmota" },
-    description: {
-      en: "Control your Tasmota plugs, switches and lights over HTTP or MQTT.",
-      fr: "Pilotez vos prises, interrupteurs et lampes sous Tasmota, en HTTP ou en MQTT.",
-      de: "Steuere deine Tasmota-Steckdosen, -Schalter und -Lampen per HTTP oder MQTT.",
-      es: "Controla tus enchufes, interruptores y luces con Tasmota por HTTP o MQTT.",
-    },
-  },
-  {
-    key: "xiaomi",
-    doc: "xiaomi",
-    cover: "xiaomi.jpg",
-    categories: ["protocols"],
-    transports: ["local"],
-    name: { en: "Xiaomi Home" },
-    description: {
-      en: "Xiaomi sensors and devices through the official Xiaomi gateway.",
-      fr: "Les capteurs et appareils Xiaomi via la passerelle officielle Xiaomi.",
-      de: "Xiaomi-Sensoren und -Geräte über das offizielle Xiaomi-Gateway.",
-      es: "Sensores y dispositivos Xiaomi a través de la pasarela oficial de Xiaomi.",
-    },
-  },
-  {
     key: "bluetooth",
     doc: "bluetooth",
     cover: "bluetooth.jpg",
@@ -122,20 +95,6 @@ const nativeIntegrations = [
     },
   },
   {
-    key: "eWeLink",
-    doc: "sonoff",
-    cover: "ewelink.jpg",
-    categories: ["lighting"],
-    transports: ["cloud"],
-    name: { en: "eWeLink" },
-    description: {
-      en: "Your Sonoff and eWeLink devices, through the eWeLink cloud.",
-      fr: "Vos appareils Sonoff et eWeLink, via le cloud eWeLink.",
-      de: "Deine Sonoff- und eWeLink-Geräte über die eWeLink-Cloud.",
-      es: "Tus dispositivos Sonoff y eWeLink, a través de la nube eWeLink.",
-    },
-  },
-  {
     key: "owntracks",
     doc: "owntracks",
     cover: "owntracks.jpg",
@@ -148,34 +107,6 @@ const nativeIntegrations = [
       fr: "Envoyez la position de votre téléphone à Gladys et déclenchez des scènes en partant ou en rentrant.",
       de: "Sende den Standort deines Handys an Gladys und löse beim Gehen oder Heimkommen Szenen aus.",
       es: "Envía la ubicación de tu móvil a Gladys y lanza escenas al salir o al volver a casa.",
-    },
-  },
-  {
-    key: "broadlink",
-    doc: "broadlink",
-    cover: "broadlink.jpg",
-    categories: ["protocols", "multimedia"],
-    transports: ["local"],
-    name: { en: "Broadlink" },
-    description: {
-      en: "Replace your infrared remotes with virtual ones, driven by a Broadlink hub.",
-      fr: "Remplacez vos télécommandes infrarouges par des télécommandes virtuelles, via Broadlink.",
-      de: "Ersetze deine Infrarot-Fernbedienungen durch virtuelle, gesteuert über Broadlink.",
-      es: "Sustituye tus mandos infrarrojos por mandos virtuales, controlados con Broadlink.",
-    },
-  },
-  {
-    key: "nuki",
-    doc: "nuki",
-    cover: "nuki.jpg",
-    categories: ["security"],
-    transports: ["local", "cloud"],
-    name: { en: "Nuki" },
-    description: {
-      en: "Lock and unlock your Nuki smart locks, locally or through the cloud.",
-      fr: "Verrouillez et déverrouillez vos serrures Nuki, en local ou via le cloud.",
-      de: "Sperre und entsperre deine Nuki-Schlösser, lokal oder über die Cloud.",
-      es: "Bloquea y desbloquea tus cerraduras Nuki, en local o a través de la nube.",
     },
   },
   {
@@ -241,20 +172,6 @@ const nativeIntegrations = [
     },
   },
   {
-    key: "nodeRed",
-    doc: "node-red",
-    cover: "node-red.jpg",
-    categories: ["protocols"],
-    transports: ["local"],
-    name: { en: "Node-RED" },
-    description: {
-      en: "Build advanced flows in Node-RED and wire them to your Gladys devices.",
-      fr: "Créez des flux avancés dans Node-RED et branchez-les sur vos appareils Gladys.",
-      de: "Baue fortgeschrittene Flows in Node-RED und verbinde sie mit deinen Gladys-Geräten.",
-      es: "Crea flujos avanzados en Node-RED y conéctalos a tus dispositivos de Gladys.",
-    },
-  },
-  {
     key: "matterbridge",
     doc: "matterbridge",
     cover: "matterbridge.jpg",
@@ -269,20 +186,6 @@ const nativeIntegrations = [
     },
   },
   {
-    key: "google-cast",
-    doc: "google-cast",
-    cover: "google-cast.jpg",
-    categories: ["multimedia"],
-    transports: ["local"],
-    name: { en: "Google Cast" },
-    description: {
-      en: "Make Gladys speak and play sounds on your Google Cast speakers.",
-      fr: "Faites parler Gladys et jouez des sons sur vos enceintes Google Cast.",
-      de: "Lass Gladys auf deinen Google-Cast-Lautsprechern sprechen und Töne abspielen.",
-      es: "Haz que Gladys hable y reproduzca sonidos en tus altavoces Google Cast.",
-    },
-  },
-  {
     key: "airplay",
     doc: "airplay",
     cover: "airplay.jpg",
@@ -294,20 +197,6 @@ const nativeIntegrations = [
       fr: "Faites parler Gladys et jouez des sons sur vos enceintes AirPlay et HomePod.",
       de: "Lass Gladys auf deinen AirPlay-Lautsprechern und HomePods sprechen und Töne abspielen.",
       es: "Haz que Gladys hable y reproduzca sonidos en tus altavoces AirPlay y HomePod.",
-    },
-  },
-  {
-    key: "nextcloudTalk",
-    doc: "nextcloud-talk",
-    cover: "nextcloud-talk.jpg",
-    categories: ["notifications"],
-    transports: ["local"],
-    name: { en: "Nextcloud Talk" },
-    description: {
-      en: "Chat with Gladys and get your notifications in Nextcloud Talk.",
-      fr: "Discutez avec Gladys et recevez vos notifications dans Nextcloud Talk.",
-      de: "Chatte mit Gladys und erhalte deine Benachrichtigungen in Nextcloud Talk.",
-      es: "Chatea con Gladys y recibe tus notificaciones en Nextcloud Talk.",
     },
   },
   {
@@ -387,20 +276,6 @@ const nativeIntegrations = [
       fr: "Connectez Claude, Mistral ou n'importe quel agent IA à votre maison grâce au protocole MCP.",
       de: "Verbinde Claude, Mistral oder jeden KI-Agenten über das Model Context Protocol mit deinem Zuhause.",
       es: "Conecta Claude, Mistral o cualquier agente de IA a tu casa con el Model Context Protocol.",
-    },
-  },
-  {
-    key: "caldav",
-    doc: "caldav",
-    cover: "caldav.jpg",
-    categories: ["services"],
-    transports: ["local", "cloud"],
-    name: { en: "CalDAV" },
-    description: {
-      en: "Sync your calendars and use their events in your scenes.",
-      fr: "Synchronisez vos calendriers et utilisez leurs événements dans vos scènes.",
-      de: "Synchronisiere deine Kalender und nutze ihre Termine in deinen Szenen.",
-      es: "Sincroniza tus calendarios y usa sus eventos en tus escenas.",
     },
   },
 ];

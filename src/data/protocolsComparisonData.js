@@ -218,7 +218,7 @@ const protocolsContent = {
         },
         {
           label: "Z-Wave with Gladys",
-          href: "/docs/integrations/zwavejs-ui/",
+          href: "/docs/integrations/external/z-wave-js-ui/",
           text: "Bring your Z-Wave network into Gladys through Z-Wave JS.",
         },
         {
@@ -445,7 +445,7 @@ const protocolsContent = {
         },
         {
           label: "Le Z-Wave avec Gladys",
-          href: "/docs/integrations/zwavejs-ui/",
+          href: "/docs/integrations/external/z-wave-js-ui/",
           text: "Intégrez votre réseau Z-Wave dans Gladys via Z-Wave JS.",
         },
         {
@@ -672,7 +672,7 @@ const protocolsContent = {
         },
         {
           label: "Z-Wave mit Gladys",
-          href: "/de/docs/integrations/zwavejs-ui/",
+          href: "/de/docs/integrations/external/z-wave-js-ui/",
           text: "Hol dein Z-Wave-Netz über Z-Wave JS in Gladys.",
         },
         {
@@ -898,7 +898,7 @@ const protocolsContent = {
         },
         {
           label: "Z-Wave con Gladys",
-          href: "/es/docs/integrations/zwavejs-ui/",
+          href: "/es/docs/integrations/external/z-wave-js-ui/",
           text: "Integra tu red Z-Wave en Gladys a través de Z-Wave JS.",
         },
         {

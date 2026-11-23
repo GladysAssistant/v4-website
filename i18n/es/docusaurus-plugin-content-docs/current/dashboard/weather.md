@@ -1,7 +1,7 @@
 ---
 id: weather
 title: Mostrar el tiempo en el panel de control
-description: "Muestra el tiempo local en el panel de control de Gladys Assistant con la integración OpenWeather y la ubicación de tu casa."
+description: "Muestra el tiempo local en el panel de control de Gladys Assistant con una integración meteorológica (OpenWeather, Météo France, Open-Meteo…) y la ubicación de tu casa."
 sidebar_label: Tiempo
 ---
 
@@ -9,8 +9,8 @@ Puedes mostrar el tiempo de tu ubicación en el panel de control.
 
 ## Requisitos previos
 
-- Debes haber configurado previamente el servicio [OpenWeather](/es/docs/integrations/openweather/) para que Gladys Assistant pueda mostrar el tiempo.
-- Debes haber configurado tu casa en los ajustes y haberla situado en el mapa, para que OpenWeatherMap conozca la latitud y la longitud de tu casa.
+- Debes haber instalado y configurado previamente una integración meteorológica desde el [catálogo de integraciones](/es/docs/integrations/), como [OpenWeather](/es/docs/integrations/external/openweather/), Météo France u Open-Meteo.
+- Debes haber configurado tu casa en los ajustes y haberla situado en el mapa, para que el proveedor meteorológico conozca la latitud y la longitud de tu casa.
 
 ## Configuración
 
