@@ -6,7 +6,7 @@ import styles from "./AmazonProducts.module.css";
 // "The hardware for this guide" box of a landing page: the products listed for
 // the page in src/data/landingProducts.js, as Amazon search links carrying the
 // partner id of the page's language. Renders nothing in a language with no
-// Amazon partner id (de, es) or when the page has no product in it.
+// Amazon partner id (es) or when the page has no product in it.
 const STRINGS = {
   en: {
     title: "The hardware for this guide",
@@ -19,6 +19,12 @@ const STRINGS = {
     link: (product) => `${product} sur Amazon`,
     disclosure:
       "Liens affiliés : en tant que Partenaire Amazon, Gladys Assistant réalise un bénéfice sur les achats remplissant les conditions requises, sans surcoût pour vous. Cela aide à financer le projet open source.",
+  },
+  de: {
+    title: "Die Hardware für diesen Ratgeber",
+    link: (product) => `${product} bei Amazon`,
+    disclosure:
+      "Affiliate-Links: Als Amazon-Partner verdient Gladys Assistant an qualifizierten Verkäufen, ohne Mehrkosten für dich. Das hilft, das Open-Source-Projekt zu finanzieren.",
   },
 };
 

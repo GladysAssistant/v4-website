@@ -20,9 +20,9 @@ Im Moment unterstützen wir nur 2 Gerätetypen: Steckdosen & Lampen.
 
 Zum Beispiel:
 
-Tuya-Steckdosen wie diese [Steckdose mit Energiemessung für 12 $](https://amzn.to/44EvMHp) sind kompatibel.
+Tuya-Steckdosen wie diese [WLAN-Steckdose mit Energiemessung](https://www.amazon.de/s?k=Tuya%20WLAN%20Steckdose%20Energiemessung) sind kompatibel.
 
-Tuya-kompatible Lampen wie das [4er-Pack Glühbirnen von Dalattin für 20,99 $](https://amzn.to/3JSinnc) sind kompatibel!
+Tuya-kompatible Lampen wie diese [WLAN-Glühbirnen E27](https://www.amazon.de/s?k=Tuya%20WLAN%20Gl%C3%BChbirne%20E27) sind kompatibel!
 
 Um diese Geräte einzurichten, kannst du dem Tutorial [in der Gladys-Dokumentation](/de/docs/integrations/external/tuya/) folgen.
 

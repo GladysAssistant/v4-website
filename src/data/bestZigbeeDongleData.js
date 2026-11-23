@@ -7,7 +7,8 @@
 // out to the integration doc for the how-to.
 
 // Amazon affiliate links (Gladys is an Amazon Associate).
-// Tags: gladproj-20 on amazon.com (EN), gladproj-21 on amazon.fr (FR).
+// Tags: gladproj-20 on amazon.com (EN), gladproj-21 on amazon.fr (FR),
+// gladproj0e-21 on amazon.de (DE).
 // We use the exact product link where we have a verified ASIN (the Sonoff
 // ZBDongle-E on amazon.fr), and affiliate-tagged search links keyed to the
 // precise product name otherwise, so every link is valid, lands on the right
@@ -16,10 +17,8 @@ const amazonUS = (query) =>
   `https://www.amazon.com/s?k=${encodeURIComponent(query)}&tag=gladproj-20`;
 const amazonFR = (query) =>
   `https://www.amazon.fr/s?k=${encodeURIComponent(query)}&tag=gladproj-21`;
-// German locale: plain amazon.de search links (no amazon.de affiliate tag
-// configured yet; add `&tag=...` here once one exists).
 const amazonDE = (query) =>
-  `https://www.amazon.de/s?k=${encodeURIComponent(query)}`;
+  `https://www.amazon.de/s?k=${encodeURIComponent(query)}&tag=gladproj0e-21`;
 // Spanish locale: plain amazon.es search links (no amazon.es affiliate tag
 // configured yet; add `&tag=...` here once one exists).
 const amazonES = (query) =>
@@ -406,7 +405,7 @@ const bestZigbeeDongleContent = {
           image: "/img/external/zigbee-dongles/sonoff-zbdongle-p.jpeg",
           imageAlt: "Sonoff ZBDongle-P Zigbee-USB-Stick",
           text: "Die Version mit Texas-Instruments-Chip CC2652P, seit Jahren bewährt in der Zigbee2MQTT-Community. Grundsolide, gut dokumentiert und preiswert.",
-          href: amazonDE("Sonoff Zigbee 3.0 USB Dongle Plus ZBDongle-P CC2652P"),
+          href: amazonDE("Sonoff ZBDongle-P"),
           linkLabel: "Bei Amazon ansehen →",
         },
         {

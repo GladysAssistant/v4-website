@@ -52,7 +52,7 @@ Für die gängigsten Kameramarken haben wir eigene Anleitungen mit dem genauen R
 - [LSC Smart Connect (Action)](/de/docs/integrations/lsc)
 - [Rollei IPC-88 (Aldi)](/de/docs/integrations/rollei)
 
-Noch keine Kamera? Nimm ein Modell, das seinen RTSP-Stream dokumentiert, zum Beispiel eine [Reolink-PoE-Kamera](https://www.amazon.com/s?k=Reolink%20PoE%20camera).
+Noch keine Kamera? Nimm ein Modell, das seinen RTSP-Stream dokumentiert, zum Beispiel eine [Reolink-PoE-Kamera](https://www.amazon.de/s?k=Reolink%20PoE%20camera).
 :::
 
 ## Den Stream in VLC testen

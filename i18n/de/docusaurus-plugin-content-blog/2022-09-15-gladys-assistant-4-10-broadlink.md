@@ -20,7 +20,7 @@ Heute veröffentliche ich Gladys Assistant v4.10, ein großes Release mit tollen
 
 Wir haben eine neue Integration 🎉
 
-[Broadlink-Geräte](https://www.amazon.com/s?k=Broadlink%20RM4%20mini) sind kleine IR-Sender, die als Fernbedienung fungieren und sich über WLAN steuern lassen.
+[Broadlink-Geräte](https://www.amazon.de/s?k=Broadlink%20RM4%20mini) sind kleine IR-Sender, die als Fernbedienung fungieren und sich über WLAN steuern lassen.
 
 ![Broadlink-Integration in Gladys](../../../static/img/articles/en/gladys-4-10/broadlink.jpg)
 

@@ -40,7 +40,7 @@ Erweiterte Unterstützung für neue Gerätetypen: Staubsauger, NO₂-Sensoren (S
 ## 📡 Zigbee2mqtt
 
 - Update auf Zigbee2mqtt 2.12.0
-- Unterstützung für die Fernbedienung [SONOFF SNZB-01M](https://www.amazon.com/s?k=SONOFF%20SNZB-01M) (4 Tasten)
+- Unterstützung für die Fernbedienung SONOFF SNZB-01M (4 Tasten)
 
 ## 🔧 Node-RED
 

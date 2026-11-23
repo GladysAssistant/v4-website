@@ -14,6 +14,6 @@ Heute möchte ich eine wirklich nützliche Automatisierung mit dir teilen, die i
 
 [![So machst du jede Waschmaschine smart](../../../static/img/articles/make-any-washing-machine-smart/youtube.jpg)](https://youtu.be/gn-bBBs39G0)
 
-Die Idee ist einfach: Indem Gladys den Stromverbrauch der Steckdose misst, weiß es genau, wann ein Waschgang beginnt und wann er endet, und kann dir dann eine Benachrichtigung schicken, damit du deine Wäsche nie wieder in der Maschine vergisst. Kein spezielles Gerät nötig, nur eine [Zigbee-Steckdose mit Energiemessung](https://www.amazon.com/s?k=THIRDREALITY%20Zigbee%20smart%20plug%20energy%20monitoring) und eine Gladys-Szene.
+Die Idee ist einfach: Indem Gladys den Stromverbrauch der Steckdose misst, weiß es genau, wann ein Waschgang beginnt und wann er endet, und kann dir dann eine Benachrichtigung schicken, damit du deine Wäsche nie wieder in der Maschine vergisst. Kein spezielles Gerät nötig, nur eine [Zigbee-Steckdose mit Energiemessung](https://www.amazon.de/s?k=THIRDREALITY%20Zigbee%20smart%20plug%20energy%20monitoring) und eine Gladys-Szene.
 
 Im Video oben zeige ich dir die komplette Einrichtung. Wenn du Fragen hast, schreib sie gerne in die Kommentare auf YouTube 🙏

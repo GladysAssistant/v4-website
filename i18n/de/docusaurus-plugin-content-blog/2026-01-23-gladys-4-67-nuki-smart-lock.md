@@ -14,7 +14,7 @@ ich freue mich, euch eine neue Version von Gladys Assistant vorzustellen! Dieses
 
 ## ✨ Was ist neu
 
-- 🔐 **Neue Integration: Nuki.** Du kannst jetzt deine **[Nuki-Smart-Locks](https://www.amazon.com/s?k=Nuki%20smart%20lock)** mit Gladys verbinden und sie in deinen Szenen und Dashboards nutzen. Danke [@ProtZ](https://community.gladysassistant.com/)!
+- 🔐 **Neue Integration: Nuki.** Du kannst jetzt deine **[Nuki-Smart-Locks](https://www.amazon.de/s?k=Nuki%20smart%20lock)** mit Gladys verbinden und sie in deinen Szenen und Dashboards nutzen. Danke [@ProtZ](https://community.gladysassistant.com/)!
 - 🏠 **HomeKit.** Die Abhängigkeit **HAP** wurde auf die neueste stabile Version aktualisiert, für eine bessere Kompatibilität und Zuverlässigkeit mit HomeKit. Danke [@bertrandda](https://community.gladysassistant.com/)!
 - 💾 **Gladys Plus.** **DuckDB**-Backups laufen jetzt über eine temporäre Datenbankverbindung. Das verhindert die RAM-Spitzen, die bei manchen Instanzen nach Abschluss eines Backups auftraten.
 
