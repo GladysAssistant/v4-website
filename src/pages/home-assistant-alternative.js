@@ -131,6 +131,11 @@ function AlternativeContent({ content, faq, lang }) {
             ))}
           </div>
           <p className={styles.blockOutro}>{content.others.outro}</p>
+          {content.others.link && (
+            <p className={styles.compareLink}>
+              <Link to={content.others.link.href}>{content.others.link.label}</Link>
+            </p>
+          )}
         </section>
 
         {/* FAQ */}

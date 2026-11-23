@@ -123,6 +123,16 @@ const matterHubContent = {
           text: "For your Zigbee devices, the coordinator to plug into your server.",
         },
         {
+          label: "Home weather station",
+          href: "/home-weather-station/",
+          text: "Matter and Zigbee weather sensors that work locally.",
+        },
+        {
+          label: "Best mini-PC for home automation",
+          href: "/mini-pc-home-automation/",
+          text: "The hardware to run Gladys as your Matter controller, 24/7.",
+        },
+        {
           label: "IKEA smart home",
           href: "/ikea-smart-home/",
           text: "Use IKEA devices locally, over Zigbee2MQTT or through Matter.",
@@ -275,6 +285,16 @@ const matterHubContent = {
           text: "Pour vos appareils Zigbee, le coordinateur à brancher sur votre serveur.",
         },
         {
+          label: "Station météo connectée",
+          href: "/fr/home-weather-station/",
+          text: "Des capteurs météo Matter et Zigbee qui fonctionnent en local.",
+        },
+        {
+          label: "Quel mini-PC pour la domotique",
+          href: "/fr/mini-pc-home-automation/",
+          text: "Le matériel pour faire tourner Gladys comme contrôleur Matter, 24 h/24.",
+        },
+        {
           label: "Maison connectée IKEA",
           href: "/fr/ikea-smart-home/",
           text: "Utiliser vos appareils IKEA en local, via Zigbee2MQTT ou via Matter.",
@@ -415,6 +435,16 @@ const matterHubContent = {
           text: "Für deine Zigbee-Geräte: der passende Koordinator für deinen Server.",
         },
         {
+          label: "Wetterstation fürs Smart Home",
+          href: "/de/home-weather-station/",
+          text: "Matter- und Zigbee-Wettersensoren, die lokal funktionieren.",
+        },
+        {
+          label: "Der beste Mini-PC für die Hausautomation",
+          href: "/de/mini-pc-home-automation/",
+          text: "Die Hardware, auf der Gladys rund um die Uhr als Matter-Controller läuft.",
+        },
+        {
           label: "IKEA Smart Home",
           href: "/de/ikea-smart-home/",
           text: "IKEA-Geräte lokal nutzen, über Zigbee2MQTT oder über Matter.",
@@ -550,6 +580,16 @@ const matterHubContent = {
           label: "El mejor dongle Zigbee",
           href: "/es/best-zigbee-dongle/",
           text: "Para tus dispositivos Zigbee, el coordinador que conectar a tu servidor.",
+        },
+        {
+          label: "Estación meteorológica para casa",
+          href: "/es/home-weather-station/",
+          text: "Sensores meteorológicos Matter y Zigbee que funcionan en local.",
+        },
+        {
+          label: "El mejor mini-PC para domótica",
+          href: "/es/mini-pc-home-automation/",
+          text: "El hardware para ejecutar Gladys como controlador Matter, 24/7.",
         },
         {
           label: "Hogar inteligente con IKEA",
