@@ -13,7 +13,7 @@ keywords:
 
 Du ersetzt den Rechner, auf dem Gladys läuft (einen alten Mini-PC, einen Raspberry Pi, ein NAS...), durch einen neuen? Mit einem **Gladys-Plus-Backup** bekommst du deine Instanz auf dem neuen Rechner genau so zurück, wie sie war: Benutzer, Zuhause und Räume, Geräte, Szenen, Dashboards, Einstellungen der Integrationen und den gesamten Sensorverlauf.
 
-Auch Zigbee2mqtt und die Matter-Integration werden wiederhergestellt: Gladys speichert ihre Konfiguration jede Nacht in seiner Datenbank, du musst deine Geräte also **nicht neu anlernen**.
+Auch Zigbee2mqtt und die Matter-Integration werden wiederhergestellt: Gladys speichert ihre Konfiguration jede Nacht in seiner Datenbank, du musst deine Geräte also **nicht neu anlernen**. Das gilt auch für die Kopplungen der [Matter-Bridge](/de/docs/integrations/matter-bridge/): Deine Matter-Apps (Apple Home, Google Home, Alexa...) finden sie auf dem neuen Rechner wieder.
 
 Du musst nur ein paar Vorsichtsmaßnahmen beachten. Hier ist die Anleitung, Schritt für Schritt.
 
@@ -44,7 +44,7 @@ Trenne Gladys Plus auf der alten Instanz nicht, bevor du den Schlüssel notiert 
 
 ### Lerne kurz vor dem Umzug keine neuen Geräte an
 
-Die Konfiguration von Zigbee2mqtt wird **jeden Abend um 23 Uhr** in Gladys gespeichert, die von Matter **um 4 Uhr morgens**. Ein Zigbee- oder Matter-Gerät, das nach der letzten nächtlichen Sicherung angelernt wurde, ist nicht im Backup: Du müsstest es auf dem neuen Rechner neu anlernen.
+Die Konfiguration von Zigbee2mqtt wird **jeden Abend um 23 Uhr** in Gladys gespeichert, die von Matter **um 4 Uhr morgens**, die Kopplungen der Matter-Bridge **um 4:20 Uhr** (und eine Minute, nachdem du sie zu einem Ökosystem hinzugefügt hast). Ein Zigbee- oder Matter-Gerät, das nach der letzten nächtlichen Sicherung angelernt wurde, ist nicht im Backup: Du müsstest es auf dem neuen Rechner neu anlernen.
 
 ### Starte ein manuelles Backup
 
@@ -77,6 +77,7 @@ Prüfe, ob der eingegebene Schlüssel wirklich der der alten Instanz ist: Gladys
 
 - **Zigbee2mqtt**: Gladys installiert es automatisch mit seiner wiederhergestellten Konfiguration (Zigbee-Netzwerk und Geräte) neu, ohne neues Anlernen. Seit Gladys 5.3.4 findet es den Stick über seinen stabilen Pfad wieder, egal an welchem USB-Port er steckt. Schau trotzdem unter **Integrationen > Zigbee2mqtt** nach: Meldet das Dashboard, dass der Stick ausgesteckt ist, wähle ihn mit der Schaltfläche **Ändern** erneut aus. Richte Zigbee2mqtt nicht von Grund auf neu ein, bevor du das Backup wiederhergestellt hast: Eine neue Installation bildet ein neues Zigbee-Netzwerk, und du müsstest deine Geräte neu anlernen.
 - **Matter**: Der Controller der Matter-Integration wird automatisch aus seinem Backup wiederhergestellt.
+- **Matter-Bridge**: Die Bridge wird automatisch mit ihren Kopplungen wiederhergestellt, und deine Matter-Apps finden sie wieder.
 - **Matterbridge** (wenn du es nutzt): Installiere seine Plugins neu und kopple die Bridge erneut mit deinen Matter-Controllern.
 - **Integrationen aus dem Katalog**: Sie werden beim Start automatisch neu installiert. Gladys lädt ihre Images erneut herunter, was ein paar Minuten dauern kann.
 - **MQTT** (wenn du den von Gladys installierten Broker nutzt): Seit Gladys 5.3.1 erstellt Gladys den Broker automatisch mit deinen gespeicherten Zugangsdaten neu, deine MQTT-Geräte verbinden sich also ohne Änderung wieder. Prüfe unter **Integrationen > MQTT**, dass Gladys mit dem Broker verbunden ist.
