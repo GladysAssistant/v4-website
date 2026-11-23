@@ -25,7 +25,7 @@ Pas besoin de tout basculer en une soirée : Gladys peut tourner à côté de Ho
 | --- | --- | --- |
 | Module Zigbee2MQTT | [Intégration Zigbee2MQTT](#zigbee2mqtt) : Gladys s'y connecte, puis le reprend | Non |
 | ZHA | [Intégration Zigbee2MQTT](#devices-paired-with-zha) | Oui |
-| Z-Wave JS ou Z-Wave JS UI | [Intégration Z-Wave JS UI](#z-wave), avec la même clé | Non |
+| Z-Wave JS ou Z-Wave JS UI | [Intégration Z-Wave JS UI](#z-wave) (communautaire), avec la même clé | Non |
 | Matter | [Intégration Matter](#matter), avec un code partagé par Home Assistant | Non |
 | Appareils MQTT (ESPHome, OpenMQTTGateway, DIY…) | [Intégration MQTT](#mqtt-devices-and-other-integrations), découverte Home Assistant | Non |
 | Tasmota, ESPHome, Shelly, Philips Hue, Netatmo, Tuya… | [Leur intégration dans Gladys](#mqtt-devices-and-other-integrations) | Non, dans la plupart des cas |
@@ -163,19 +163,19 @@ Si tous vos appareils Zigbee sont sous ZHA, arrêtez ZHA dans Home Assistant (ou
 
 ## Z-Wave {/* #z-wave */}
 
-Gladys parle au Z-Wave via [Z-Wave JS UI](/fr/docs/integrations/zwavejs-ui), en MQTT. Votre réseau Z-Wave (les appareils et leurs numéros de nœud) est enregistré **sur la clé Z-Wave elle-même** : branchée sur un autre Z-Wave JS UI, la clé emporte ses appareils avec elle.
+Gladys parle au Z-Wave via l'[intégration communautaire Z-Wave JS UI](/fr/docs/integrations/external/z-wave-js-ui/), à installer depuis le catalogue des intégrations. Z-Wave JS UI continue de piloter la clé, et l'intégration le lit en MQTT. Votre réseau Z-Wave (les appareils et leurs numéros de nœud) est enregistré **sur la clé Z-Wave elle-même** : branchée sur un autre Z-Wave JS UI, la clé emporte ses appareils avec elle.
 
-**Pour tester Gladys d'abord :** si Home Assistant utilise le module **Z-Wave JS UI**, activez sa passerelle MQTT, connectée au Mosquitto de Home Assistant, avec les réglages donnés dans le [guide Z-Wave JS UI](/fr/docs/integrations/zwavejs-ui#configurer-z-wave-js-ui), puis connectez Gladys à ce broker. Le module officiel **Z-Wave JS** n'a pas de passerelle MQTT : Gladys ne peut pas s'y connecter.
+**Pour tester Gladys d'abord :** si Home Assistant utilise le module **Z-Wave JS UI**, activez sa passerelle MQTT, connectée au Mosquitto de Home Assistant, avec les réglages MQTT et Gateway qu'attend l'intégration (voir [Configurer Z-Wave JS UI](/fr/docs/integrations/external/z-wave-js-ui/#configurer-z-wave-js-ui)). Installez ensuite l'intégration Z-Wave JS UI dans Gladys et entrez ce broker dans son onglet **Configuration**. Le module officiel **Z-Wave JS** n'a pas de passerelle MQTT : Gladys ne peut pas s'y connecter.
 
 **Pour déplacer la clé :**
 
 1. **Notez les clés de sécurité** de votre réseau : dans l'onglet **Configuration** du module Z-Wave JS (les clés S0, S2 et Long Range), ou dans **Settings > Z-Wave** de Z-Wave JS UI. Sans elles, les appareils appairés de façon sécurisée (serrures, alarmes…) ne répondent plus.
 2. **Arrêtez le module** dans Home Assistant et désactivez son option **Lancer au démarrage**.
 3. **Installez Z-Wave JS UI** sur la machine Gladys, avec Docker (voir la [documentation de Z-Wave JS UI](https://zwave-js.github.io/zwave-js-ui/#/getting-started/docker)), à côté d'un broker MQTT : celui qu'installe l'[intégration MQTT](/fr/docs/integrations/mqtt) de Gladys convient. Branchez la clé.
-4. Dans Z-Wave JS UI, entrez **les mêmes clés de sécurité** dans **Settings > Z-Wave**, puis les réglages MQTT et Gateway du [guide Z-Wave JS UI](/fr/docs/integrations/zwavejs-ui#configurer-z-wave-js-ui).
-5. Dans Gladys, connectez l'[intégration Z-Wave JS UI](/fr/docs/integrations/zwavejs-ui#connecter-gladys-à-z-wave-js-ui) au broker, puis ajoutez vos appareils depuis l'onglet **Découverte Z-Wave JS UI**.
+4. Dans Z-Wave JS UI, entrez **les mêmes clés de sécurité** dans **Settings > Z-Wave**, puis les [réglages MQTT et Gateway](/fr/docs/integrations/external/z-wave-js-ui/#configurer-z-wave-js-ui) qu'attend l'intégration : **Name** `zwave-js-ui`, **Prefix** `zwave`, **Topic type** `Named topics`, **Payload type** `Entire Z-Wave value Object`…
+5. Dans Gladys, installez l'[intégration Z-Wave JS UI](/fr/docs/integrations/external/z-wave-js-ui/) depuis le catalogue des intégrations, entrez le broker dans son onglet **Configuration**, puis ajoutez vos appareils depuis l'onglet **Découverte**.
 
-Gladys identifie les appareils Z-Wave par leur numéro de nœud, que la clé conserve : les appareils ajoutés dans Gladys avant le déplacement continuent de fonctionner. Les noms donnés dans Home Assistant ne suivent pas : renommez les appareils dans Gladys.
+L'intégration identifie les appareils Z-Wave par leur numéro de nœud, que la clé conserve : les appareils ajoutés dans Gladys avant le déplacement continuent de fonctionner. Les noms donnés dans Home Assistant ne suivent pas : renommez les appareils dans Gladys.
 
 ## Matter {/* #matter */}
 
@@ -196,7 +196,7 @@ Un appareil Matter over Thread a besoin d'un **routeur de bordure Thread** sur v
 
 N'ajoutez pas vos appareils Zigbee depuis cet onglet : Zigbee2MQTT peut aussi publier des messages de découverte Home Assistant, mais utilisez pour eux l'intégration Zigbee2MQTT, qui les gère entièrement.
 
-**Appareils qui ont leur intégration.** Beaucoup de marques ont leur intégration dans Gladys, native ou communautaire : [Tasmota](/fr/docs/integrations/tasmota), [ESPHome](/fr/docs/integrations/external/esphome), [Shelly](/fr/docs/integrations/external/shelly), [Philips Hue](/fr/docs/integrations/external/philips-hue), [Netatmo](/fr/docs/integrations/external/netatmo), [Tuya](/fr/docs/integrations/external/tuya), caméras… Cherchez la vôtre dans le [catalogue des intégrations](/fr/docs/integrations/), et ajoutez vos appareils depuis celle-ci : ils restent appairés à leur pont, leur cloud ou votre Wi-Fi, il n'y a donc rien à ré-appairer.
+**Appareils qui ont leur intégration.** Beaucoup de marques ont leur intégration dans le catalogue de Gladys : [Tasmota](/fr/docs/integrations/external/tasmota), [ESPHome](/fr/docs/integrations/external/esphome), [Shelly](/fr/docs/integrations/external/shelly), [Philips Hue](/fr/docs/integrations/external/philips-hue), [Netatmo](/fr/docs/integrations/external/netatmo), [Tuya](/fr/docs/integrations/external/tuya), caméras… Cherchez la vôtre dans le [catalogue des intégrations](/fr/docs/integrations/), et ajoutez vos appareils depuis celle-ci : ils restent appairés à leur pont, leur cloud ou votre Wi-Fi, il n'y a donc rien à ré-appairer.
 
 ## Automatisations, tableaux de bord et historique {/* #automations-dashboards-and-history */}
 
@@ -205,7 +205,7 @@ Tout cela reste dans Home Assistant :
 - **Automatisations et scripts** : recréez-les sous forme de [scènes](/fr/docs/scenes/intro). Activez-les dans Gladys seulement une fois désactivées dans Home Assistant, sinon elles s'exécutent deux fois.
 - **Tableaux de bord** : recréez-les dans Gladys avec les [tableaux de bord](/fr/docs/dashboard/intro).
 - **Historique** : l'historique de vos capteurs n'est pas transféré. Gladys commence à l'enregistrer quand vous ajoutez un appareil.
-- **Node-RED** : si vous utilisez le module Node-RED, vous pouvez exporter vos flows et les importer dans l'[intégration Node-RED](/fr/docs/integrations/node-red) de Gladys. Les nœuds Home Assistant ne fonctionnent plus : remplacez-les par des nœuds MQTT.
+- **Node-RED** : si vous utilisez le module Node-RED, vous pouvez exporter vos flows et les importer dans le Node-RED que l'[intégration communautaire Node-RED](/fr/docs/integrations/external/node-red/) fait tourner à côté de Gladys. Les nœuds Home Assistant ne fonctionnent plus : remplacez-les par des nœuds MQTT.
 
 ## Éteindre Home Assistant {/* #turn-home-assistant-off */}
 
