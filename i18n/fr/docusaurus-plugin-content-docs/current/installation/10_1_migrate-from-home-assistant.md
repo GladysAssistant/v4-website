@@ -59,7 +59,7 @@ Vous pouvez enchaîner les deux : commencez par l'option A, puis passez à l'opt
 1. **Créez un utilisateur MQTT pour Gladys.** Le module Mosquitto broker de Home Assistant accepte les utilisateurs de Home Assistant : créez un utilisateur dédié à Gladys dans **Paramètres > Personnes > Utilisateurs**. Vous pouvez aussi en ajouter un dans `logins`, dans la configuration du module Mosquitto.
 2. Dans Gladys, allez dans **Intégrations > Zigbee2MQTT**, onglet `Configuration`. À l'étape 1 de l'assistant, cliquez sur **J'ai déjà un Zigbee2MQTT**.
 3. Entrez :
-   - l'**Adresse du broker MQTT** : `mqtt://IP_DE_HOME_ASSISTANT:1883` ;
+   - l'**Adresse du broker MQTT** : `mqtt://IP_DE_HOME_ASSISTANT:1883` (le module Mosquitto ouvre le port 1883 par défaut) ;
    - l'**Utilisateur** et le **Mot de passe** que vous venez de créer ;
    - l'**Adresse de l'interface Zigbee2MQTT** (facultative). Sur Home Assistant, l'interface de Zigbee2MQTT ne s'ouvre en général que depuis la barre latérale de Home Assistant : laissez ce champ vide, sauf si vous avez ouvert son port dans les réglages réseau du module.
 4. Cliquez sur **Se connecter**. Vos appareils apparaissent dans l'onglet `Découverte Zigbee` : [ajoutez-les dans Gladys](/fr/docs/integrations/zigbee2mqtt#add-devices).
@@ -82,6 +82,7 @@ Tout votre réseau Zigbee tient dans le dossier de données de Zigbee2MQTT et su
 - Vous avez un accès SSH à la machine Gladys.
 - Vous gardez **la même clé Zigbee** que sous Home Assistant : les paramètres du réseau sont enregistrés dessus.
 - Zigbee2MQTT n'est pas encore configuré dans Gladys. S'il l'est (vous avez utilisé l'option A, ou vous l'avez installé pour essayer), cliquez d'abord sur **Réinitialiser l'intégration** dans les **Réglages avancés** de l'onglet `Configuration`. Faites-le **avant** de copier les fichiers : la réinitialisation supprime le dossier Zigbee2MQTT de Gladys. Les appareils déjà ajoutés dans Gladys sont conservés.
+- Si cette Gladys fait déjà tourner son propre réseau Zigbee, avec des appareils que vous utilisez, ces appareils ne font pas partie du réseau de Home Assistant : il faudra les ré-appairer dessus après la migration. Gardez une copie de `/var/lib/gladysassistant/zigbee2mqtt/z2m` avant la réinitialisation, au cas où vous voudriez revenir en arrière.
 
 :::
 
@@ -91,33 +92,25 @@ Dans Home Assistant, arrêtez le module **Zigbee2MQTT** et désactivez son optio
 
 #### 2. Récupérez le dossier de Zigbee2MQTT {/* #2-get-the-zigbee2mqtt-folder */}
 
-Avec le module **Samba share** ou **Terminal & SSH**, récupérez le dossier de Zigbee2MQTT. C'est le dossier `zigbee2mqtt` de la configuration de Home Assistant : `config/zigbee2mqtt` sur le partage Samba, `/homeassistant/zigbee2mqtt` (ou `/config/zigbee2mqtt`, selon la version du module) dans le terminal. Les fichiers qui comptent :
+Avec le module **Samba share** ou **Terminal & SSH**, récupérez le dossier de Zigbee2MQTT. C'est le dossier `zigbee2mqtt` de la configuration de Home Assistant : `config/zigbee2mqtt` sur le partage Samba, `/homeassistant/zigbee2mqtt` (ou `/config/zigbee2mqtt`, selon la version du module) dans le terminal. Si vous avez changé l'option `data_path` du module, le dossier se trouve à ce chemin.
 
-- `configuration.yaml`, et `devices.yaml` et `groups.yaml` s'ils existent ;
-- `database.db` ;
-- `coordinator_backup.json` ;
-- `state.json` (facultatif : les derniers états connus).
+Prenez **tout le dossier**, pas seulement quelques fichiers. En plus de `configuration.yaml`, `database.db` et `coordinator_backup.json`, il peut contenir `devices.yaml` et `groups.yaml` (les noms de vos appareils), `secret.yaml` (la clé réseau, quand la configuration la lit avec `!secret`), `state.json` (les derniers états connus) ou un dossier `external_converters`. Seul le dossier `log` est inutile.
 
 Gardez une copie de ce dossier tel quel : c'est votre retour en arrière.
 
-#### 3. Copiez les fichiers sur la machine Gladys {/* #3-copy-the-files-to-the-gladys-machine */}
+#### 3. Copiez le dossier sur la machine Gladys {/* #3-copy-the-folder-to-the-gladys-machine */}
 
-Copiez ces fichiers dans le dossier Zigbee2MQTT de Gladys : `/var/lib/gladysassistant/zigbee2mqtt/z2m/` sur une installation standard. Créez le dossier s'il n'existe pas encore :
+Son contenu va dans le dossier Zigbee2MQTT de Gladys : `/var/lib/gladysassistant/zigbee2mqtt/z2m/` sur une installation standard. Par exemple, depuis votre ordinateur, envoyez le dossier dans votre dossier personnel sur la machine Gladys avec `scp` :
+
+```bash
+scp -r zigbee2mqtt UTILISATEUR@IP_DE_GLADYS:~
+```
+
+Puis, sur la machine Gladys, copiez son contenu dans le dossier Zigbee2MQTT de Gladys, créé s'il n'existe pas encore :
 
 ```bash
 sudo mkdir -p /var/lib/gladysassistant/zigbee2mqtt/z2m
-```
-
-Par exemple, depuis votre ordinateur, envoyez les fichiers dans votre dossier personnel sur la machine Gladys avec `scp` :
-
-```bash
-scp configuration.yaml database.db coordinator_backup.json state.json UTILISATEUR@IP_DE_GLADYS:~
-```
-
-Puis, sur la machine Gladys, déplacez-les dans le dossier (ajoutez `devices.yaml` et `groups.yaml` si vous en avez) :
-
-```bash
-sudo mv ~/configuration.yaml ~/database.db ~/coordinator_backup.json ~/state.json /var/lib/gladysassistant/zigbee2mqtt/z2m/
+sudo cp -r ~/zigbee2mqtt/. /var/lib/gladysassistant/zigbee2mqtt/z2m/
 ```
 
 Si vous avez installé Gladys avec Docker dans un autre dossier que `/var/lib/gladysassistant`, utilisez votre dossier à la place.
@@ -140,7 +133,7 @@ mqtt:
 
 #### 5. Installez Zigbee2MQTT depuis Gladys {/* #5-install-zigbee2mqtt-from-gladys */}
 
-Branchez la clé Zigbee sur la machine Gladys. Si Gladys tourne dans une machine virtuelle, passez-lui la clé (voir le [guide Proxmox](/fr/docs/installation/proxmox)).
+Branchez la clé Zigbee sur la machine Gladys. Si Gladys tourne dans une machine virtuelle, passez-lui la clé (voir le [guide Proxmox](/fr/docs/installation/proxmox)). Avec un coordinateur réseau (SLZB-06…), il n'y a rien à brancher : dans l'assistant, cliquez sur **Coordinateur réseau (SLZB-06…) ?** et entrez son adresse (voir [Utiliser un coordinateur réseau](/fr/docs/integrations/zigbee2mqtt#utiliser-un-coordinateur-réseau)).
 
 Dans Gladys, allez dans **Intégrations > Zigbee2MQTT**, onglet `Configuration`, et suivez l'[assistant d'installation](/fr/docs/integrations/zigbee2mqtt#install-zigbee2mqtt-with-the-setup-wizard) : Gladys reconnaît les clés les plus courantes (ConBee II, SONOFF ZBDongle-P et ZBDongle-E…) ; sinon, choisissez son modèle dans la liste. Cliquez sur **Installer**.
 
@@ -194,12 +187,12 @@ Un appareil Matter peut être piloté par plusieurs contrôleurs à la fois (mul
 Gladys devient un contrôleur de l'appareil, à côté de Home Assistant : l'appareil continue de fonctionner avec Gladys une fois Home Assistant éteint.
 
 :::warning[Appareils Thread]
-Un appareil Matter over Thread a besoin d'un **routeur de bordure Thread** sur votre réseau, et Gladys n'en est pas un. Si le vôtre est celui de Home Assistant (le module OpenThread Border Router, avec une clé Home Assistant Connect ZBT-1 ou ZBT-2, par exemple), vos appareils Thread ne répondent plus quand vous éteignez Home Assistant. Avant cela, lisez [Si votre appareil utilise uniquement Thread](/fr/docs/integrations/matter#si-votre-appareil-utilise-thread-uniquement), et demandez sur le forum en cas de doute.
+Un appareil Matter over Thread a besoin d'un **routeur de bordure Thread** sur votre réseau, et Gladys n'en est pas un. Si le vôtre est celui de Home Assistant (le module OpenThread Border Router, avec une clé Home Assistant Connect ZBT-1 ou ZBT-2, par exemple), vos appareils Thread ne répondent plus quand vous éteignez Home Assistant. Un autre routeur de bordure (Apple TV, HomePod, Nest Hub…) ne prend le relais que s'il est sur le **même réseau Thread**, et il en forme souvent un à lui. Avant d'éteindre Home Assistant, arrêtez le module OpenThread Border Router et vérifiez que vos appareils Thread répondent toujours dans Gladys. Lisez [Si votre appareil utilise uniquement Thread](/fr/docs/integrations/matter#si-votre-appareil-utilise-thread-uniquement), et demandez sur le forum en cas de doute.
 :::
 
 ## Appareils MQTT et autres intégrations {/* #mqtt-devices-and-other-integrations */}
 
-**Appareils MQTT.** Depuis Gladys 4.86, l'[intégration MQTT](/fr/docs/integrations/mqtt) comprend le protocole de **découverte Home Assistant** : les appareils qui publient leur configuration sur le topic `homeassistant/` du broker (ESPHome en MQTT, OpenMQTTGateway, montages DIY…) apparaissent d'eux-mêmes dans son onglet **Découverte**. Vous pouvez d'abord connecter l'intégration MQTT au Mosquitto de Home Assistant, puis faire pointer vos appareils vers le broker de Gladys avant d'éteindre Home Assistant.
+**Appareils MQTT.** Depuis Gladys 4.86, l'[intégration MQTT](/fr/docs/integrations/mqtt) comprend le protocole de **découverte Home Assistant** : les appareils qui publient leur configuration sur le topic `homeassistant/` du broker (ESPHome en MQTT, OpenMQTTGateway, montages DIY…) apparaissent d'eux-mêmes dans son onglet **Découverte**. Vous pouvez d'abord connecter l'intégration MQTT au Mosquitto de Home Assistant. Avant d'éteindre Home Assistant, faites pointer vos appareils vers le broker MQTT installé par Gladys, connectez l'intégration MQTT à ce broker, puis redémarrez les appareils : ils republient leurs messages de découverte en se reconnectant.
 
 N'ajoutez pas vos appareils Zigbee depuis cet onglet : Zigbee2MQTT peut aussi publier des messages de découverte Home Assistant, mais utilisez pour eux l'intégration Zigbee2MQTT, qui les gère entièrement.
 
@@ -220,7 +213,7 @@ Avant d'éteindre Home Assistant pour de bon, vérifiez que :
 
 - chaque radio (clé Zigbee, clé Z-Wave) est branchée sur la machine Gladys, et son module est arrêté dans Home Assistant ;
 - plus aucun appareil n'utilise le broker Mosquitto de Home Assistant (Tasmota, Shelly, ESPHome…) : faites-les pointer vers le broker de Gladys ;
-- vos appareils Thread ont un routeur de bordure autre que Home Assistant (voir [Matter](#matter)) ;
+- vos appareils Thread répondent toujours dans Gladys avec le module OpenThread Border Router de Home Assistant arrêté (voir [Matter](#matter)) ;
 - vos scènes tournent dans Gladys.
 
 Gardez une sauvegarde de Home Assistant pendant quelques semaines : c'est votre plan B.

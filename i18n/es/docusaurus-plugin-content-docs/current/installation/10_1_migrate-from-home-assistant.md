@@ -59,7 +59,7 @@ Puedes hacer las dos seguidas: empieza por la opción A y pasa a la opción B cu
 1. **Crea un usuario MQTT para Gladys.** El complemento Mosquitto broker de Home Assistant acepta los usuarios de Home Assistant: crea un usuario dedicado a Gladys en **Configuración > Personas > Usuarios**. También puedes añadir uno en `logins`, en la configuración del complemento Mosquitto.
 2. En Gladys, ve a **Integraciones > Zigbee2MQTT**, pestaña `Configuración`. En el paso 1 del asistente, haz clic en **Ya tengo un Zigbee2MQTT**.
 3. Introduce:
-   - la **Dirección del broker MQTT**: `mqtt://IP_DE_HOME_ASSISTANT:1883`;
+   - la **Dirección del broker MQTT**: `mqtt://IP_DE_HOME_ASSISTANT:1883` (el complemento Mosquitto abre el puerto 1883 por defecto);
    - el **Usuario** y la **Contraseña** que acabas de crear;
    - la **Dirección de la interfaz de Zigbee2MQTT** (opcional). En Home Assistant, la interfaz de Zigbee2MQTT suele abrirse solo desde la barra lateral de Home Assistant: deja este campo vacío, salvo que hayas abierto su puerto en los ajustes de red del complemento.
 4. Haz clic en **Conectar**. Tus dispositivos aparecen en la pestaña `Descubrir`: [añádelos a Gladys](/es/docs/integrations/zigbee2mqtt#add-devices).
@@ -82,6 +82,7 @@ Toda tu red Zigbee está en la carpeta de datos de Zigbee2MQTT y en el coordinad
 - Tienes acceso SSH a la máquina de Gladys.
 - Conservas **el mismo dongle Zigbee** que en Home Assistant: los ajustes de la red están guardados en él.
 - Zigbee2MQTT aún no está configurado en Gladys. Si lo está (usaste la opción A, o lo instalaste para probar), haz clic primero en **Restablecer la integración** en los **Ajustes avanzados** de la pestaña `Configuración`. Hazlo **antes** de copiar los archivos: el restablecimiento borra la carpeta Zigbee2MQTT de Gladys. Los dispositivos que ya añadiste en Gladys se conservan.
+- Si esta Gladys ya tiene su propia red Zigbee, con dispositivos que usas, esos dispositivos no forman parte de la red de Home Assistant: tendrás que volver a emparejarlos en ella después del traslado. Guarda una copia de `/var/lib/gladysassistant/zigbee2mqtt/z2m` antes del restablecimiento, por si quieres volver atrás.
 
 :::
 
@@ -91,33 +92,25 @@ En Home Assistant, detén el complemento **Zigbee2MQTT** y desactiva su opción 
 
 #### 2. Recupera la carpeta de Zigbee2MQTT {/* #2-get-the-zigbee2mqtt-folder */}
 
-Con el complemento **Samba share** o **Terminal & SSH**, recupera la carpeta de Zigbee2MQTT. Es la carpeta `zigbee2mqtt` de la configuración de Home Assistant: `config/zigbee2mqtt` en el recurso compartido Samba, `/homeassistant/zigbee2mqtt` (o `/config/zigbee2mqtt`, según la versión del complemento) en el terminal. Los archivos que importan:
+Con el complemento **Samba share** o **Terminal & SSH**, recupera la carpeta de Zigbee2MQTT. Es la carpeta `zigbee2mqtt` de la configuración de Home Assistant: `config/zigbee2mqtt` en el recurso compartido Samba, `/homeassistant/zigbee2mqtt` (o `/config/zigbee2mqtt`, según la versión del complemento) en el terminal. Si cambiaste la opción `data_path` del complemento, la carpeta está en esa ruta.
 
-- `configuration.yaml`, y `devices.yaml` y `groups.yaml` si existen;
-- `database.db`;
-- `coordinator_backup.json`;
-- `state.json` (opcional: los últimos estados conocidos).
+Llévate **la carpeta entera**, no solo algunos archivos. Además de `configuration.yaml`, `database.db` y `coordinator_backup.json`, puede contener `devices.yaml` y `groups.yaml` (los nombres de tus dispositivos), `secret.yaml` (la clave de red, cuando la configuración la lee con `!secret`), `state.json` (los últimos estados conocidos) o una carpeta `external_converters`. Solo la carpeta `log` no hace falta.
 
 Guarda una copia de esta carpeta tal cual: es tu vuelta atrás.
 
-#### 3. Copia los archivos a la máquina de Gladys {/* #3-copy-the-files-to-the-gladys-machine */}
+#### 3. Copia la carpeta a la máquina de Gladys {/* #3-copy-the-folder-to-the-gladys-machine */}
 
-Copia estos archivos en la carpeta Zigbee2MQTT de Gladys: `/var/lib/gladysassistant/zigbee2mqtt/z2m/` en una instalación estándar. Crea la carpeta si aún no existe:
+Su contenido va a la carpeta Zigbee2MQTT de Gladys: `/var/lib/gladysassistant/zigbee2mqtt/z2m/` en una instalación estándar. Por ejemplo, desde tu ordenador, envía la carpeta a tu carpeta personal en la máquina de Gladys con `scp`:
+
+```bash
+scp -r zigbee2mqtt USUARIO@IP_DE_GLADYS:~
+```
+
+Después, en la máquina de Gladys, copia su contenido en la carpeta Zigbee2MQTT de Gladys, que se crea si aún no existe:
 
 ```bash
 sudo mkdir -p /var/lib/gladysassistant/zigbee2mqtt/z2m
-```
-
-Por ejemplo, desde tu ordenador, envía los archivos a tu carpeta personal en la máquina de Gladys con `scp`:
-
-```bash
-scp configuration.yaml database.db coordinator_backup.json state.json USUARIO@IP_DE_GLADYS:~
-```
-
-Después, en la máquina de Gladys, muévelos a la carpeta (añade `devices.yaml` y `groups.yaml` si los tienes):
-
-```bash
-sudo mv ~/configuration.yaml ~/database.db ~/coordinator_backup.json ~/state.json /var/lib/gladysassistant/zigbee2mqtt/z2m/
+sudo cp -r ~/zigbee2mqtt/. /var/lib/gladysassistant/zigbee2mqtt/z2m/
 ```
 
 Si instalaste Gladys con Docker en otra carpeta distinta de `/var/lib/gladysassistant`, usa tu carpeta.
@@ -140,7 +133,7 @@ mqtt:
 
 #### 5. Instala Zigbee2MQTT desde Gladys {/* #5-install-zigbee2mqtt-from-gladys */}
 
-Conecta el dongle Zigbee a la máquina de Gladys. Si Gladys funciona en una máquina virtual, pásale el dongle (consulta la [guía de Proxmox](/es/docs/installation/proxmox)).
+Conecta el dongle Zigbee a la máquina de Gladys. Si Gladys funciona en una máquina virtual, pásale el dongle (consulta la [guía de Proxmox](/es/docs/installation/proxmox)). Con un coordinador de red (SLZB-06…), no hay nada que conectar: en el asistente, haz clic en **¿Coordinador de red (SLZB-06…)?** e introduce su dirección (consulta [Usar un coordinador de red](/es/docs/integrations/zigbee2mqtt#use-a-network-coordinator)).
 
 En Gladys, ve a **Integraciones > Zigbee2MQTT**, pestaña `Configuración`, y sigue el [asistente de configuración](/es/docs/integrations/zigbee2mqtt#install-zigbee2mqtt-with-the-setup-wizard): Gladys reconoce los dongles más habituales (ConBee II, SONOFF ZBDongle-P y ZBDongle-E…); si no, elige su modelo en la lista. Haz clic en **Instalar**.
 
@@ -194,12 +187,12 @@ Un dispositivo Matter puede estar controlado por varios controladores a la vez (
 Gladys pasa a ser un controlador del dispositivo, junto a Home Assistant: el dispositivo sigue funcionando con Gladys cuando Home Assistant está apagado.
 
 :::warning[Dispositivos Thread]
-Un dispositivo Matter over Thread necesita un **router de borde Thread** en tu red, y Gladys no lo es. Si el tuyo es el de Home Assistant (el complemento OpenThread Border Router, con un dongle Home Assistant Connect ZBT-1 o ZBT-2, por ejemplo), tus dispositivos Thread dejan de responder cuando apagas Home Assistant. Antes, lee [Si tu dispositivo solo usa Thread](/es/docs/integrations/matter#si-tu-dispositivo-solo-usa-thread) y pregunta en el foro si tienes dudas.
+Un dispositivo Matter over Thread necesita un **router de borde Thread** en tu red, y Gladys no lo es. Si el tuyo es el de Home Assistant (el complemento OpenThread Border Router, con un dongle Home Assistant Connect ZBT-1 o ZBT-2, por ejemplo), tus dispositivos Thread dejan de responder cuando apagas Home Assistant. Otro router de borde (Apple TV, HomePod, Nest Hub…) solo toma el relevo si está en la **misma red Thread**, y a menudo forma la suya propia. Antes de apagar Home Assistant, detén el complemento OpenThread Border Router y comprueba que tus dispositivos Thread siguen respondiendo en Gladys. Lee [Si tu dispositivo solo usa Thread](/es/docs/integrations/matter#si-tu-dispositivo-solo-usa-thread) y pregunta en el foro si tienes dudas.
 :::
 
 ## Dispositivos MQTT y otras integraciones {/* #mqtt-devices-and-other-integrations */}
 
-**Dispositivos MQTT.** Desde Gladys 4.86, la [integración MQTT](/es/docs/integrations/mqtt) entiende el protocolo **Home Assistant Discovery**: los dispositivos que publican su configuración en el topic `homeassistant/` del broker (ESPHome con MQTT, OpenMQTTGateway, montajes DIY…) aparecen solos en su pestaña **Descubrimiento**. Puedes conectar primero la integración MQTT al Mosquitto de Home Assistant y después apuntar tus dispositivos al broker de Gladys antes de apagar Home Assistant.
+**Dispositivos MQTT.** Desde Gladys 4.86, la [integración MQTT](/es/docs/integrations/mqtt) entiende el protocolo **Home Assistant Discovery**: los dispositivos que publican su configuración en el topic `homeassistant/` del broker (ESPHome con MQTT, OpenMQTTGateway, montajes DIY…) aparecen solos en su pestaña **Descubrimiento**. Puedes conectar primero la integración MQTT al Mosquitto de Home Assistant. Antes de apagar Home Assistant, apunta tus dispositivos al broker MQTT instalado por Gladys, conecta la integración MQTT a ese broker y reinicia los dispositivos: vuelven a publicar sus mensajes de descubrimiento al reconectarse.
 
 No añadas tus dispositivos Zigbee desde ahí: Zigbee2MQTT también puede publicar mensajes de descubrimiento de Home Assistant, pero usa para ellos la integración Zigbee2MQTT, que los gestiona por completo.
 
@@ -220,7 +213,7 @@ Antes de apagar Home Assistant definitivamente, comprueba que:
 
 - cada radio (dongle Zigbee, dongle Z-Wave) está conectada a la máquina de Gladys, y su complemento está detenido en Home Assistant;
 - ningún dispositivo usa ya el broker Mosquitto de Home Assistant (Tasmota, Shelly, ESPHome…): apúntalos al broker de Gladys;
-- tus dispositivos Thread tienen un router de borde distinto de Home Assistant (consulta [Matter](#matter));
+- tus dispositivos Thread siguen respondiendo en Gladys con el complemento OpenThread Border Router de Home Assistant detenido (consulta [Matter](#matter));
 - tus escenas funcionan en Gladys.
 
 Guarda una copia de seguridad de Home Assistant durante unas semanas: es tu plan B.

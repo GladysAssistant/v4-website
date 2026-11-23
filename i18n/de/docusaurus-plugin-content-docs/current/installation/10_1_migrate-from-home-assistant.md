@@ -59,7 +59,7 @@ Du kannst beides nacheinander machen: Starte mit Option A und wechsle zu Option 
 1. **Lege einen MQTT-Benutzer für Gladys an.** Das Mosquitto-broker-Add-on von Home Assistant akzeptiert die Benutzer von Home Assistant: Lege unter **Einstellungen > Personen > Benutzer** einen eigenen Benutzer für Gladys an. Du kannst auch einen unter `logins` in der Konfiguration des Mosquitto-Add-ons hinzufügen.
 2. Gehe in Gladys zu **Integrationen > Zigbee2MQTT**, Tab `Einrichtung`. Klicke in Schritt 1 des Assistenten auf **Ich habe bereits ein Zigbee2MQTT**.
 3. Gib Folgendes ein:
-   - die **Adresse des MQTT-Brokers**: `mqtt://IP_VON_HOME_ASSISTANT:1883`;
+   - die **Adresse des MQTT-Brokers**: `mqtt://IP_VON_HOME_ASSISTANT:1883` (das Mosquitto-Add-on öffnet Port 1883 standardmäßig);
    - den **Benutzer** und das **Passwort**, die du gerade angelegt hast;
    - die **Adresse der Zigbee2MQTT-Oberfläche** (optional). Unter Home Assistant öffnet sich die Oberfläche von Zigbee2MQTT meist nur über die Seitenleiste von Home Assistant: Lass dieses Feld leer, außer du hast ihren Port in den Netzwerkeinstellungen des Add-ons freigegeben.
 4. Klicke auf **Verbinden**. Deine Geräte erscheinen im Tab `Geräte in der Nähe`: [Füge sie zu Gladys hinzu](/de/docs/integrations/zigbee2mqtt#add-devices).
@@ -82,6 +82,7 @@ Dein ganzes Zigbee-Netzwerk steckt im Datenordner von Zigbee2MQTT und auf dem Ko
 - Du hast SSH-Zugriff auf den Gladys-Rechner.
 - Du behältst **denselben Zigbee-Stick** wie unter Home Assistant: Die Netzwerkeinstellungen sind darauf gespeichert.
 - Zigbee2MQTT ist in Gladys noch nicht eingerichtet. Falls doch (du hast Option A genutzt oder es zum Ausprobieren installiert), klicke zuerst in den **Erweiterten Einstellungen** des Tabs `Einrichtung` auf **Integration zurücksetzen**. Mach das **bevor** du die Dateien kopierst: Das Zurücksetzen löscht den Zigbee2MQTT-Ordner von Gladys. Die Geräte, die du schon zu Gladys hinzugefügt hast, bleiben erhalten.
+- Betreibt dieses Gladys schon ein eigenes Zigbee-Netzwerk mit Geräten, die du nutzt, gehören diese Geräte nicht zum Netzwerk von Home Assistant: Du musst sie nach dem Umzug darauf neu anlernen. Bewahre vor dem Zurücksetzen eine Kopie von `/var/lib/gladysassistant/zigbee2mqtt/z2m` auf, falls du zurückwillst.
 
 :::
 
@@ -91,33 +92,25 @@ Stoppe in Home Assistant das **Zigbee2MQTT**-Add-on und schalte seine Option **B
 
 #### 2. Den Zigbee2MQTT-Ordner holen {/* #2-get-the-zigbee2mqtt-folder */}
 
-Hol dir mit dem Add-on **Samba share** oder **Terminal & SSH** den Ordner von Zigbee2MQTT. Es ist der Ordner `zigbee2mqtt` der Home-Assistant-Konfiguration: `config/zigbee2mqtt` auf der Samba-Freigabe, `/homeassistant/zigbee2mqtt` (oder `/config/zigbee2mqtt`, je nach Version des Add-ons) im Terminal. Die wichtigen Dateien:
+Hol dir mit dem Add-on **Samba share** oder **Terminal & SSH** den Ordner von Zigbee2MQTT. Es ist der Ordner `zigbee2mqtt` der Home-Assistant-Konfiguration: `config/zigbee2mqtt` auf der Samba-Freigabe, `/homeassistant/zigbee2mqtt` (oder `/config/zigbee2mqtt`, je nach Version des Add-ons) im Terminal. Hast du die Option `data_path` des Add-ons geändert, liegt der Ordner unter diesem Pfad.
 
-- `configuration.yaml`, sowie `devices.yaml` und `groups.yaml`, falls vorhanden;
-- `database.db`;
-- `coordinator_backup.json`;
-- `state.json` (optional: die letzten bekannten Zustände).
+Nimm **den ganzen Ordner**, nicht nur einzelne Dateien. Neben `configuration.yaml`, `database.db` und `coordinator_backup.json` kann er `devices.yaml` und `groups.yaml` (die Namen deiner Geräte), `secret.yaml` (den Netzwerkschlüssel, wenn die Konfiguration ihn mit `!secret` liest), `state.json` (die letzten bekannten Zustände) oder einen Ordner `external_converters` enthalten. Nur der Ordner `log` wird nicht gebraucht.
 
 Bewahre eine unveränderte Kopie dieses Ordners auf: Sie ist dein Weg zurück.
 
-#### 3. Die Dateien auf den Gladys-Rechner kopieren {/* #3-copy-the-files-to-the-gladys-machine */}
+#### 3. Den Ordner auf den Gladys-Rechner kopieren {/* #3-copy-the-folder-to-the-gladys-machine */}
 
-Kopiere diese Dateien in den Zigbee2MQTT-Ordner von Gladys: `/var/lib/gladysassistant/zigbee2mqtt/z2m/` bei einer Standardinstallation. Lege den Ordner an, falls er noch nicht existiert:
+Sein Inhalt kommt in den Zigbee2MQTT-Ordner von Gladys: `/var/lib/gladysassistant/zigbee2mqtt/z2m/` bei einer Standardinstallation. Schicke den Ordner zum Beispiel von deinem Computer aus mit `scp` in dein Home-Verzeichnis auf dem Gladys-Rechner:
+
+```bash
+scp -r zigbee2mqtt BENUTZER@IP_VON_GLADYS:~
+```
+
+Kopiere seinen Inhalt dann auf dem Gladys-Rechner in den Zigbee2MQTT-Ordner von Gladys, der angelegt wird, falls er noch nicht existiert:
 
 ```bash
 sudo mkdir -p /var/lib/gladysassistant/zigbee2mqtt/z2m
-```
-
-Schicke die Dateien zum Beispiel von deinem Computer aus mit `scp` in dein Home-Verzeichnis auf dem Gladys-Rechner:
-
-```bash
-scp configuration.yaml database.db coordinator_backup.json state.json BENUTZER@IP_VON_GLADYS:~
-```
-
-Verschiebe sie dann auf dem Gladys-Rechner in den Ordner (füge `devices.yaml` und `groups.yaml` hinzu, falls du sie hast):
-
-```bash
-sudo mv ~/configuration.yaml ~/database.db ~/coordinator_backup.json ~/state.json /var/lib/gladysassistant/zigbee2mqtt/z2m/
+sudo cp -r ~/zigbee2mqtt/. /var/lib/gladysassistant/zigbee2mqtt/z2m/
 ```
 
 Wenn du Gladys mit Docker in einem anderen Ordner als `/var/lib/gladysassistant` installiert hast, nimm stattdessen deinen Ordner.
@@ -140,7 +133,7 @@ mqtt:
 
 #### 5. Zigbee2MQTT aus Gladys installieren {/* #5-install-zigbee2mqtt-from-gladys */}
 
-Stecke den Zigbee-Stick an den Gladys-Rechner. Läuft Gladys in einer virtuellen Maschine, reiche den Stick an sie durch (siehe die [Proxmox-Anleitung](/de/docs/installation/proxmox)).
+Stecke den Zigbee-Stick an den Gladys-Rechner. Läuft Gladys in einer virtuellen Maschine, reiche den Stick an sie durch (siehe die [Proxmox-Anleitung](/de/docs/installation/proxmox)). Mit einem Netzwerk-Koordinator (SLZB-06…) gibt es nichts einzustecken: Klicke im Assistenten auf **Netzwerk-Koordinator (SLZB-06…)?** und gib seine Adresse ein (siehe [Einen Netzwerk-Koordinator verwenden](/de/docs/integrations/zigbee2mqtt#use-a-network-coordinator)).
 
 Gehe in Gladys zu **Integrationen > Zigbee2MQTT**, Tab `Einrichtung`, und folge dem [Einrichtungsassistenten](/de/docs/integrations/zigbee2mqtt#install-zigbee2mqtt-with-the-setup-wizard): Gladys erkennt die gängigsten Sticks (ConBee II, SONOFF ZBDongle-P und ZBDongle-E…); sonst wähle sein Modell in der Liste. Klicke auf **Installieren**.
 
@@ -194,12 +187,12 @@ Ein Matter-Gerät kann von mehreren Controllern gleichzeitig gesteuert werden (M
 Gladys wird ein Controller des Geräts, neben Home Assistant: Das Gerät funktioniert mit Gladys weiter, wenn Home Assistant ausgeschaltet ist.
 
 :::warning[Thread-Geräte]
-Ein Matter-over-Thread-Gerät braucht einen **Thread-Border-Router** in deinem Netzwerk, und Gladys ist keiner. Ist deiner der von Home Assistant (das Add-on OpenThread Border Router, zum Beispiel mit einem Home Assistant Connect ZBT-1 oder ZBT-2), antworten deine Thread-Geräte nicht mehr, sobald du Home Assistant ausschaltest. Lies vorher [Wenn dein Gerät nur Thread nutzt](/de/docs/integrations/matter#wenn-dein-gerät-nur-thread-nutzt) und frag im Zweifel im Forum.
+Ein Matter-over-Thread-Gerät braucht einen **Thread-Border-Router** in deinem Netzwerk, und Gladys ist keiner. Ist deiner der von Home Assistant (das Add-on OpenThread Border Router, zum Beispiel mit einem Home Assistant Connect ZBT-1 oder ZBT-2), antworten deine Thread-Geräte nicht mehr, sobald du Home Assistant ausschaltest. Ein anderer Border-Router (Apple TV, HomePod, Nest Hub…) übernimmt nur, wenn er im **selben Thread-Netzwerk** ist, und er bildet oft ein eigenes. Stoppe vor dem Ausschalten von Home Assistant das Add-on OpenThread Border Router und prüfe, ob deine Thread-Geräte in Gladys weiter antworten. Lies [Wenn dein Gerät nur Thread nutzt](/de/docs/integrations/matter#wenn-dein-gerät-nur-thread-nutzt) und frag im Zweifel im Forum.
 :::
 
 ## MQTT-Geräte und andere Integrationen {/* #mqtt-devices-and-other-integrations */}
 
-**MQTT-Geräte.** Seit Gladys 4.86 versteht die [MQTT-Integration](/de/docs/integrations/mqtt) das Protokoll **Home Assistant Discovery**: Geräte, die ihre Konfiguration auf dem Topic `homeassistant/` des Brokers veröffentlichen (ESPHome mit MQTT, OpenMQTTGateway, Eigenbauten…), erscheinen von selbst in ihrem Tab **Erkennung**. Du kannst die MQTT-Integration zuerst mit dem Mosquitto von Home Assistant verbinden und deine Geräte dann auf den Broker von Gladys umstellen, bevor du Home Assistant ausschaltest.
+**MQTT-Geräte.** Seit Gladys 4.86 versteht die [MQTT-Integration](/de/docs/integrations/mqtt) das Protokoll **Home Assistant Discovery**: Geräte, die ihre Konfiguration auf dem Topic `homeassistant/` des Brokers veröffentlichen (ESPHome mit MQTT, OpenMQTTGateway, Eigenbauten…), erscheinen von selbst in ihrem Tab **Erkennung**. Du kannst die MQTT-Integration zuerst mit dem Mosquitto von Home Assistant verbinden. Bevor du Home Assistant ausschaltest, stelle deine Geräte auf den von Gladys installierten MQTT-Broker um, verbinde die MQTT-Integration mit diesem Broker und starte die Geräte dann neu: Beim erneuten Verbinden veröffentlichen sie ihre Discovery-Nachrichten wieder.
 
 Füge deine Zigbee-Geräte nicht dort hinzu: Zigbee2MQTT kann zwar auch Home-Assistant-Discovery-Nachrichten veröffentlichen, nutze für sie aber die Zigbee2MQTT-Integration, die sie vollständig unterstützt.
 
@@ -220,7 +213,7 @@ Bevor du Home Assistant endgültig ausschaltest, prüfe, dass:
 
 - jedes Funkmodul (Zigbee-Stick, Z-Wave-Stick) am Gladys-Rechner steckt und sein Add-on in Home Assistant gestoppt ist;
 - kein Gerät mehr den Mosquitto-Broker von Home Assistant nutzt (Tasmota, Shelly, ESPHome…): Stelle sie auf den Broker von Gladys um;
-- deine Thread-Geräte einen anderen Border-Router als Home Assistant haben (siehe [Matter](#matter));
+- deine Thread-Geräte in Gladys weiter antworten, wenn das Add-on OpenThread Border Router von Home Assistant gestoppt ist (siehe [Matter](#matter));
 - deine Szenen in Gladys laufen.
 
 Bewahre ein paar Wochen lang ein Backup von Home Assistant auf: Es ist dein Plan B.

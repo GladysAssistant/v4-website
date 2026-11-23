@@ -557,7 +557,8 @@ export const alternativeFaqEn = [
   {
     question: "Can I migrate from Home Assistant to Gladys?",
     answer:
-      "You don't have to migrate everything at once. Using Zigbee2MQTT or Matter, the same devices can appear in both at the same time, so you can run them side by side. For anything Gladys doesn't cover yet, an external integration can usually fill the gap, and both platforms can also talk over MQTT or HTTP. When you are ready, your Zigbee2MQTT network, your Z-Wave stick and your Matter devices move to Gladys without pairing them again: the step-by-step guide is in the documentation, Migrate from Home Assistant.",
+      "You don't have to migrate everything at once. Using Zigbee2MQTT or Matter, the same devices can appear in both at the same time, so you can run them side by side. For anything Gladys doesn't cover yet, an external integration can usually fill the gap, and both platforms can also talk over MQTT or HTTP. When you are ready, your Zigbee2MQTT network, your Z-Wave stick and your Matter devices move to Gladys without pairing them again: the step-by-step guide is in the documentation.",
+    link: { label: "Migrate from Home Assistant →", href: "/docs/installation/migrate-from-home-assistant/" },
   },
   {
     question: "Are there free alternatives to Home Assistant?",
@@ -595,7 +596,8 @@ export const alternativeFaqFr = [
   {
     question: "Puis-je migrer de Home Assistant vers Gladys ?",
     answer:
-      "Vous n'êtes pas obligé de tout migrer d'un coup. Avec Zigbee2MQTT ou Matter, les mêmes appareils peuvent apparaître dans les deux en même temps : vous pouvez donc les faire tourner côte à côte. Pour ce que Gladys ne couvre pas encore, une intégration externe comble généralement le manque, et les deux plateformes peuvent aussi communiquer en MQTT ou HTTP. Quand vous êtes prêt, votre réseau Zigbee2MQTT, votre clé Z-Wave et vos appareils Matter passent dans Gladys sans être ré-appairés : la procédure pas à pas est dans la documentation, Migrer depuis Home Assistant.",
+      "Vous n'êtes pas obligé de tout migrer d'un coup. Avec Zigbee2MQTT ou Matter, les mêmes appareils peuvent apparaître dans les deux en même temps : vous pouvez donc les faire tourner côte à côte. Pour ce que Gladys ne couvre pas encore, une intégration externe comble généralement le manque, et les deux plateformes peuvent aussi communiquer en MQTT ou HTTP. Quand vous êtes prêt, votre réseau Zigbee2MQTT, votre clé Z-Wave et vos appareils Matter passent dans Gladys sans être ré-appairés : la procédure pas à pas est dans la documentation.",
+    link: { label: "Migrer depuis Home Assistant →", href: "/fr/docs/installation/migrate-from-home-assistant/" },
   },
   {
     question: "Existe-t-il des alternatives gratuites à Home Assistant ?",
@@ -633,7 +635,8 @@ export const alternativeFaqDe = [
   {
     question: "Kann ich von Home Assistant zu Gladys wechseln?",
     answer:
-      "Du musst nicht alles auf einmal umziehen. Mit Zigbee2MQTT oder Matter können dieselben Geräte gleichzeitig in beiden Systemen erscheinen, sodass du beide parallel betreiben kannst. Für alles, was Gladys noch nicht abdeckt, schließt meist eine externe Integration die Lücke, und beide Plattformen können außerdem über MQTT oder HTTP miteinander kommunizieren. Wenn du bereit bist, ziehen dein Zigbee2MQTT-Netzwerk, dein Z-Wave-Stick und deine Matter-Geräte zu Gladys um, ohne neu angelernt zu werden: Die Schritt-für-Schritt-Anleitung steht in der Dokumentation, Von Home Assistant umziehen.",
+      "Du musst nicht alles auf einmal umziehen. Mit Zigbee2MQTT oder Matter können dieselben Geräte gleichzeitig in beiden Systemen erscheinen, sodass du beide parallel betreiben kannst. Für alles, was Gladys noch nicht abdeckt, schließt meist eine externe Integration die Lücke, und beide Plattformen können außerdem über MQTT oder HTTP miteinander kommunizieren. Wenn du bereit bist, ziehen dein Zigbee2MQTT-Netzwerk, dein Z-Wave-Stick und deine Matter-Geräte zu Gladys um, ohne neu angelernt zu werden: Die Schritt-für-Schritt-Anleitung steht in der Dokumentation.",
+    link: { label: "Von Home Assistant umziehen →", href: "/de/docs/installation/migrate-from-home-assistant/" },
   },
   {
     question: "Gibt es kostenlose Alternativen zu Home Assistant?",
@@ -671,7 +674,8 @@ export const alternativeFaqEs = [
   {
     question: "¿Puedo migrar de Home Assistant a Gladys?",
     answer:
-      "No tienes por qué migrarlo todo de golpe. Con Zigbee2MQTT o Matter, los mismos dispositivos pueden aparecer en ambos a la vez, así que puedes usarlos en paralelo. Para todo lo que Gladys todavía no cubre, una integración externa suele poder llenar el hueco, y ambas plataformas también pueden comunicarse por MQTT o HTTP. Cuando estés listo, tu red Zigbee2MQTT, tu dongle Z-Wave y tus dispositivos Matter pasan a Gladys sin volver a emparejarlos: el procedimiento paso a paso está en la documentación, Migrar desde Home Assistant.",
+      "No tienes por qué migrarlo todo de golpe. Con Zigbee2MQTT o Matter, los mismos dispositivos pueden aparecer en ambos a la vez, así que puedes usarlos en paralelo. Para todo lo que Gladys todavía no cubre, una integración externa suele poder llenar el hueco, y ambas plataformas también pueden comunicarse por MQTT o HTTP. Cuando estés listo, tu red Zigbee2MQTT, tu dongle Z-Wave y tus dispositivos Matter pasan a Gladys sin volver a emparejarlos: el procedimiento paso a paso está en la documentación.",
+    link: { label: "Migrar desde Home Assistant →", href: "/es/docs/installation/migrate-from-home-assistant/" },
   },
   {
     question: "¿Hay alternativas gratuitas a Home Assistant?",

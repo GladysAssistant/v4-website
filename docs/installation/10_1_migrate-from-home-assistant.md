@@ -59,7 +59,7 @@ You can do both in a row: start with option A, then switch to option B when you 
 1. **Create an MQTT user for Gladys.** The Mosquitto broker add-on of Home Assistant accepts the Home Assistant users: create a user dedicated to Gladys in **Settings > People > Users**. You can also add one under `logins` in the configuration of the Mosquitto add-on.
 2. In Gladys, go to **Integrations > Zigbee2MQTT**, **Setup** tab. In step 1 of the wizard, click on **I already have a Zigbee2MQTT**.
 3. Enter:
-   - the **MQTT broker address**: `mqtt://IP_OF_HOME_ASSISTANT:1883`;
+   - the **MQTT broker address**: `mqtt://IP_OF_HOME_ASSISTANT:1883` (the Mosquitto add-on opens port 1883 by default);
    - the **User** and the **Password** you just created;
    - the **Zigbee2MQTT interface address** (optional). On Home Assistant, the Zigbee2MQTT interface usually opens only from the Home Assistant sidebar: leave this field empty, unless you opened its port in the network settings of the add-on.
 4. Click on **Connect**. Your devices show up in the **Discover** tab: [add them to Gladys](/docs/integrations/zigbee2mqtt#add-devices).
@@ -82,6 +82,7 @@ Your whole Zigbee network lives in the data folder of Zigbee2MQTT and on the coo
 - You have SSH access to the Gladys machine.
 - You keep **the same Zigbee dongle** as in Home Assistant: the network settings are stored on it.
 - Zigbee2MQTT is not set up in Gladys yet. If it is (you used option A, or you installed it to test), first click on **Reset the integration** in the **Advanced settings** of the `Setup` tab. Do it **before** copying the files: the reset deletes the Zigbee2MQTT folder of Gladys. The devices you already added in Gladys are kept.
+- If this Gladys already runs its own Zigbee network, with devices you use, these devices are not part of the Home Assistant network: you will have to pair them again on it after the move. Keep a copy of `/var/lib/gladysassistant/zigbee2mqtt/z2m` before the reset, in case you want to go back.
 
 :::
 
@@ -91,33 +92,25 @@ In Home Assistant, stop the **Zigbee2MQTT** add-on and turn off its **Start on b
 
 #### 2. Get the Zigbee2MQTT folder
 
-With the **Samba share** or **Terminal & SSH** add-on, get the folder of Zigbee2MQTT. It is the `zigbee2mqtt` folder of the Home Assistant configuration: `config/zigbee2mqtt` on the Samba share, `/homeassistant/zigbee2mqtt` (or `/config/zigbee2mqtt`, depending on the version of the add-on) in the terminal. The files that matter:
+With the **Samba share** or **Terminal & SSH** add-on, get the folder of Zigbee2MQTT. It is the `zigbee2mqtt` folder of the Home Assistant configuration: `config/zigbee2mqtt` on the Samba share, `/homeassistant/zigbee2mqtt` (or `/config/zigbee2mqtt`, depending on the version of the add-on) in the terminal. If you changed the `data_path` option of the add-on, the folder is at that path instead.
 
-- `configuration.yaml`, and `devices.yaml` and `groups.yaml` if they exist;
-- `database.db`;
-- `coordinator_backup.json`;
-- `state.json` (optional: the last known states).
+Take **the whole folder**, not only some files. Besides `configuration.yaml`, `database.db` and `coordinator_backup.json`, it can hold `devices.yaml` and `groups.yaml` (the names of your devices), `secret.yaml` (the network key, when the configuration reads it with `!secret`), `state.json` (the last known states) or an `external_converters` folder. Only the `log` folder is not needed.
 
 Keep a copy of this folder as it is: it is your way back.
 
-#### 3. Copy the files to the Gladys machine
+#### 3. Copy the folder to the Gladys machine
 
-Copy these files to the Zigbee2MQTT folder of Gladys: `/var/lib/gladysassistant/zigbee2mqtt/z2m/` on a standard installation. Create the folder if it does not exist yet:
+Its content goes into the Zigbee2MQTT folder of Gladys: `/var/lib/gladysassistant/zigbee2mqtt/z2m/` on a standard installation. For example, from your computer, send the folder to your home folder on the Gladys machine with `scp`:
+
+```bash
+scp -r zigbee2mqtt USER@IP_OF_GLADYS:~
+```
+
+Then, on the Gladys machine, copy its content into the Zigbee2MQTT folder of Gladys, created if it does not exist yet:
 
 ```bash
 sudo mkdir -p /var/lib/gladysassistant/zigbee2mqtt/z2m
-```
-
-For example, from your computer, send the files to your home folder on the Gladys machine with `scp`:
-
-```bash
-scp configuration.yaml database.db coordinator_backup.json state.json USER@IP_OF_GLADYS:~
-```
-
-Then, on the Gladys machine, move them into the folder (add `devices.yaml` and `groups.yaml` if you have them):
-
-```bash
-sudo mv ~/configuration.yaml ~/database.db ~/coordinator_backup.json ~/state.json /var/lib/gladysassistant/zigbee2mqtt/z2m/
+sudo cp -r ~/zigbee2mqtt/. /var/lib/gladysassistant/zigbee2mqtt/z2m/
 ```
 
 If you installed Gladys with Docker in another folder than `/var/lib/gladysassistant`, use your folder instead.
@@ -140,7 +133,7 @@ mqtt:
 
 #### 5. Install Zigbee2MQTT from Gladys
 
-Plug the Zigbee dongle into the Gladys machine. If Gladys runs in a virtual machine, pass the dongle through to it (see the [Proxmox guide](/docs/installation/proxmox)).
+Plug the Zigbee dongle into the Gladys machine. If Gladys runs in a virtual machine, pass the dongle through to it (see the [Proxmox guide](/docs/installation/proxmox)). With a network coordinator (SLZB-06…), there is nothing to plug in: in the wizard, click on **Network coordinator (SLZB-06…)?** and enter its address (see [Use a network coordinator](/docs/integrations/zigbee2mqtt#use-a-network-coordinator)).
 
 In Gladys, go to **Integrations > Zigbee2MQTT**, **Setup** tab, and follow the [setup wizard](/docs/integrations/zigbee2mqtt#install-zigbee2mqtt-with-the-setup-wizard): Gladys recognizes the most common dongles (ConBee II, SONOFF ZBDongle-P and ZBDongle-E…); otherwise, choose its model in the list. Click on **Install**.
 
@@ -194,12 +187,12 @@ Matter devices can be controlled by several controllers at once (multi-admin). S
 Gladys becomes a controller of the device, next to Home Assistant: the device keeps working with Gladys once Home Assistant is turned off.
 
 :::warning[Thread devices]
-A Matter over Thread device needs a **Thread border router** on your network, and Gladys is not one. If yours is the one of Home Assistant (the OpenThread Border Router add-on, with a Home Assistant Connect ZBT-1 or ZBT-2 dongle, for example), your Thread devices stop answering when you turn Home Assistant off. Before that, read [If your device uses Thread only](/docs/integrations/matter#if-your-device-uses-thread-only), and ask on the forum if in doubt.
+A Matter over Thread device needs a **Thread border router** on your network, and Gladys is not one. If yours is the one of Home Assistant (the OpenThread Border Router add-on, with a Home Assistant Connect ZBT-1 or ZBT-2 dongle, for example), your Thread devices stop answering when you turn Home Assistant off. Another border router (Apple TV, HomePod, Nest Hub…) only takes over if it is on the **same Thread network**, and it often forms its own. Before turning Home Assistant off, stop the OpenThread Border Router add-on and check that your Thread devices still answer in Gladys. Read [If your device uses Thread only](/docs/integrations/matter#if-your-device-uses-thread-only), and ask on the forum if in doubt.
 :::
 
 ## MQTT devices and other integrations
 
-**MQTT devices.** Since Gladys 4.86, the [MQTT integration](/docs/integrations/mqtt) understands the **Home Assistant Discovery** protocol: devices that publish their configuration on the `homeassistant/` topic of the broker (ESPHome with MQTT, OpenMQTTGateway, DIY devices…) show up on their own in its **Discovery** tab. You can first connect the MQTT integration to the Mosquitto of Home Assistant, then point your devices to the broker of Gladys before turning Home Assistant off.
+**MQTT devices.** Since Gladys 4.86, the [MQTT integration](/docs/integrations/mqtt) understands the **Home Assistant Discovery** protocol: devices that publish their configuration on the `homeassistant/` topic of the broker (ESPHome with MQTT, OpenMQTTGateway, DIY devices…) show up on their own in its **Discovery** tab. You can first connect the MQTT integration to the Mosquitto of Home Assistant. Before turning Home Assistant off, point your devices to the MQTT broker installed by Gladys, connect the MQTT integration to this broker, then restart the devices: they publish their discovery messages again when they reconnect.
 
 Don't add your Zigbee devices from there: Zigbee2MQTT can publish Home Assistant discovery messages too, but use the Zigbee2MQTT integration for them, which supports them fully.
 
@@ -220,7 +213,7 @@ Before turning Home Assistant off for good, check that:
 
 - every radio (Zigbee dongle, Z-Wave stick) is plugged into the Gladys machine, and its add-on is stopped in Home Assistant;
 - no device uses the Mosquitto broker of Home Assistant anymore (Tasmota, Shelly, ESPHome…): point them to the broker of Gladys;
-- your Thread devices have a border router other than Home Assistant (see [Matter](#matter));
+- your Thread devices still answer in Gladys with the OpenThread Border Router add-on of Home Assistant stopped (see [Matter](#matter));
 - your scenes run in Gladys.
 
 Keep a backup of Home Assistant for a few weeks: it's your plan B.
